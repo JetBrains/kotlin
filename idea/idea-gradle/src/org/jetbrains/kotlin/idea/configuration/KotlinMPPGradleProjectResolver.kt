@@ -34,17 +34,15 @@ import org.jetbrains.kotlin.config.ExternalSystemTestTask
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
-import org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver.Companion.fullName
-import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesDependencySubstitutor
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesFixer
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
-import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.MODULES_OUTPUTS
@@ -58,7 +56,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 @Order(ExternalSystemConstants.UNORDERED + 1)
-open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
+open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionCompat() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinMPPGradleModelBuilder::class.java, Unit::class.java)
     }
@@ -67,10 +65,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         return setOf(KotlinMPPGradleModel::class.java)
     }
 
-    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData> {
-        return super.createModule(gradleModule, projectDataNode).also {
-            initializeModuleData(gradleModule, it, projectDataNode, resolverCtx)
-        }
+    override fun initializeModuleNode(
+        gradleModule: IdeaModule,
+        moduleDataNode: DataNode<ModuleData>,
+        projectDataNode: DataNode<ProjectData>
+    ) {
+        initializeModuleData(gradleModule, moduleDataNode, projectDataNode, resolverCtx)
     }
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
