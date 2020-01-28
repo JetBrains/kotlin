@@ -236,29 +236,6 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    // NOTE(lmr): I'm not sure this is a pattern we can support long term...
-    fun testFunctionInstanceZeroArgs() = forComposerParam(true, false) { testCompile(
-        """
-        import androidx.compose.*
-
-        @Composable
-        fun Bar() {}
-
-        class Foo {
-            @Composable
-            operator fun invoke() {
-                val foo = object: Function0<Unit> {
-                    @Composable
-                    override fun invoke() {
-                        Bar()
-                    }
-                }
-                foo()
-            }
-        }
-        """
-    ) }
-
     fun testExtensionFunctions() = forComposerParam(true, false) { testCompile(
         """
 

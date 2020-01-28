@@ -113,6 +113,39 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testInlineComposableProperty(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    package x
+
+                    import androidx.compose.Composable
+
+                    class Foo {
+                      @Composable val value: Int get() = 123
+                    }
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import androidx.compose.Composable
+                    import x.Foo
+
+                    val foo = Foo()
+
+                    @Composable fun Test() {
+                        print(foo.value)
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
     fun testNestedInlineIssue(): Unit = forComposerParam(true, false) {
         compile(
             "TestG", mapOf(
