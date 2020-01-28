@@ -1061,11 +1061,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("ambiguityOnExtensionFunctions.kt")
-        public void testAmbiguityOnExtensionFunctions() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/ambiguityOnExtensionFunctions.kt");
-        }
-
         @TestMetadata("asImports.kt")
         public void testAsImports() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
