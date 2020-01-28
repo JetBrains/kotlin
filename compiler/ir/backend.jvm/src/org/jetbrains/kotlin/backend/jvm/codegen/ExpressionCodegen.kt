@@ -278,6 +278,7 @@ class ExpressionCodegen(
     }
 
     private fun writeParameterInLocalVariableTable(startLabel: Label, endLabel: Label) {
+        if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return
         if (!irFunction.isStatic) {
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }
@@ -286,9 +287,7 @@ class ExpressionCodegen(
             writeValueParameterInLocalVariableTable(extensionReceiverParameter, startLabel, endLabel, true)
         }
         for (param in irFunction.valueParameters) {
-            if (!param.origin.isSynthetic) {
-                writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
-            }
+            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
         }
     }
 

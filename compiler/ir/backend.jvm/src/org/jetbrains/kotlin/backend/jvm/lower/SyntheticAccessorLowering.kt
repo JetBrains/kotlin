@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -177,7 +179,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
-                "marker", context.ir.symbols.defaultConstructorMarker.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                "constructor_marker".synthesizedString, context.ir.symbols.defaultConstructorMarker.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             )
 
             accessor.body = IrExpressionBodyImpl(
