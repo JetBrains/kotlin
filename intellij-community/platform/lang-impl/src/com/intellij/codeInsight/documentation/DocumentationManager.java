@@ -70,7 +70,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
-import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.UIUtil;
@@ -257,7 +256,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       }
     };
     ApplicationManager.getApplication().getMessageBus().connect(project).subscribe(AnActionListener.TOPIC, actionListener);
-    myUpdateDocAlarm = new Alarm(myProject);
+    myUpdateDocAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
   }
 
   private void closeDocHint() {
@@ -792,54 +791,62 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     ModalityState modality = ModalityState.defaultModalityState();
 
     myUpdateDocAlarm.addRequest(() -> {
+      if (myProject.isDisposed()) return;
       LOG.debug("Started fetching documentation...");
 
-      ReadAction
-        .<Runnable>nonBlocking(() -> {
-          try {
-            PsiElement element = collector.element;
-            String text = element.isValid() ? collector.getDocumentation() : null;
-            LOG.debug("Documentation fetched successfully:\n", text);
-            return () -> {
-              if (!element.isValid()) {
-                LOG.debug("Element for which documentation was requested is not valid");
-                callback.setDone();
-                return;
-              }
-              String currentText = component.getText();
-              if (text == null) {
-                component.setText(CodeInsightBundle.message("no.documentation.found"), element, collector.provider);
-              }
-              else if (text.isEmpty()) {
-                component.setText(currentText, element, collector.provider);
-              }
-              else {
-                component.setData(element, text, collector.effectiveUrl, collector.ref, collector.provider);
-              }
-              if (wasEmpty) {
-                component.clearHistory();
-              }
-              callback.setDone();
-            };
-          }
-          catch (Throwable e) {
-            LOG.info(e);
-            return () -> {
-              //noinspection InstanceofCatchParameter
-              String message = e instanceof IndexNotReadyException
-                               ? "Documentation is not available until indices are built."
-                               : CodeInsightBundle.message("javadoc.external.fetch.error.message");
-              component.setText(message, null, collector.provider);
-              component.clearHistory();
-              callback.setDone();
-            };
-          }
-        })
-        .withDocumentsCommitted(myProject)
-        .coalesceBy(myUpdateDocAlarm)
-        .finishOnUiThread(modality, Runnable::run)
-        .submit(AppExecutorUtil.getAppExecutorService())
-        .onError(e -> GuiUtils.invokeLaterIfNeeded(() -> callback.setDone(), modality));
+      PsiElement element = ReadAction.compute(() -> collector.element.isValid() ? collector.element : null);
+      if (element == null) {
+        LOG.debug("Element for which documentation was requested is not available anymore");
+        return;
+      }
+
+      Throwable fail = null;
+      String text = null;
+      try {
+        text = collector.getDocumentation();
+      }
+      catch (Throwable e) {
+        LOG.info(e);
+        fail = e;
+      }
+
+      if (fail != null) {
+        Throwable finalFail = fail;
+        GuiUtils.invokeLaterIfNeeded(() -> {
+          String message = finalFail instanceof IndexNotReadyException
+                           ? "Documentation is not available until indices are built."
+                           : CodeInsightBundle.message("javadoc.external.fetch.error.message");
+          component.setText(message, null, collector.provider);
+          component.clearHistory();
+          callback.setDone();
+        }, ModalityState.any());
+        return;
+      }
+
+      LOG.debug("Documentation fetched successfully:\n", text);
+
+      String finalText = text;
+      PsiDocumentManager.getInstance(myProject).performLaterWhenAllCommitted(() -> {
+        if (!element.isValid()) {
+          LOG.debug("Element for which documentation was requested is not valid");
+          callback.setDone();
+          return;
+        }
+        String currentText = component.getText();
+        if (finalText == null) {
+          component.setText(CodeInsightBundle.message("no.documentation.found"), element, collector.provider);
+        }
+        else if (finalText.isEmpty()) {
+          component.setText(currentText, element, collector.provider);
+        }
+        else {
+          component.setData(element, finalText, collector.effectiveUrl, collector.ref, collector.provider);
+        }
+        if (wasEmpty) {
+          component.clearHistory();
+        }
+        callback.setDone();
+      }, modality);
     }, 10);
     return callback;
   }
@@ -1125,14 +1132,17 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     @Override
     @Nullable
     public String getDocumentation() {
-      provider = getProviderFromElement(element, originalElement);
+      provider = ReadAction.compute(() -> getProviderFromElement(element, originalElement));
       LOG.debug("Using provider ", provider);
 
-      SmartPsiElementPointer<?> originalPointer = element.getUserData(ORIGINAL_ELEMENT_KEY);
-      PsiElement originalPsi = originalPointer != null ? originalPointer.getElement() : null;
-
       if (provider instanceof ExternalDocumentationProvider) {
-        List<String> urls = provider.getUrlFor(element, originalPsi);
+        List<String> urls = ReadAction.compute(
+          () -> {
+            SmartPsiElementPointer originalElementPtr = element.getUserData(ORIGINAL_ELEMENT_KEY);
+            PsiElement originalElement = originalElementPtr != null ? originalElementPtr.getElement() : null;
+            return provider.getUrlFor(element, originalElement);
+          }
+        );
         LOG.debug("External documentation URLs: ", urls);
         if (urls != null) {
           for (String url : urls) {
@@ -1147,16 +1157,19 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
         }
       }
 
-      if (!element.isValid()) return null;
-
-      String doc = onHover ? provider.generateHoverDoc(element, originalPsi) : provider.generateDoc(element, originalPsi);
-      if (element instanceof PsiFile) {
-        String fileDoc = generateFileDoc((PsiFile)element, doc == null);
-        if (fileDoc != null) {
-          doc = doc == null ? fileDoc : doc + fileDoc;
+      return ReadAction.nonBlocking(() -> {
+        if (!element.isValid()) return null;
+        SmartPsiElementPointer<?> originalPointer = element.getUserData(ORIGINAL_ELEMENT_KEY);
+        PsiElement originalPsi = originalPointer != null ? originalPointer.getElement() : null;
+        String doc = onHover ? provider.generateHoverDoc(element, originalPsi) : provider.generateDoc(element, originalPsi);
+        if (element instanceof PsiFile) {
+          String fileDoc = generateFileDoc((PsiFile)element, doc == null);
+          if (fileDoc != null) {
+            doc = doc == null ? fileDoc : doc + fileDoc;
+          }
         }
-      }
-      return doc;
+        return doc;
+      }).executeSynchronously();
     }
   }
 
