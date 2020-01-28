@@ -30,7 +30,7 @@ public class MoveArrangementMatchingRuleUpAction extends AbstractMoveArrangement
 
   public MoveArrangementMatchingRuleUpAction() {
     getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.rule.move.up.text"));
-    getTemplatePresentation().setDescription(ApplicationBundle.message("arrangement.action.rule.move.up.description"));
+    getTemplatePresentation().setDescription(() -> ApplicationBundle.message("arrangement.action.rule.move.up.description"));
     getTemplatePresentation().setIcon(IconUtil.getMoveUpIcon());
     setEnabledInModalContext(true);
   }

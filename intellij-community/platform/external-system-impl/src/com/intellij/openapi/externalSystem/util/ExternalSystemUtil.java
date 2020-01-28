@@ -450,7 +450,7 @@ public final class ExternalSystemUtil {
               String systemId = id.getProjectSystemId().getReadableName();
               rerunImportAction.getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.refresh.project.text", systemId));
               rerunImportAction.getTemplatePresentation()
-                .setDescription(ExternalSystemBundle.message("action.refresh.project.description", systemId));
+                .setDescription(() -> ExternalSystemBundle.message("action.refresh.project.description", systemId));
               rerunImportAction.getTemplatePresentation().setIcon(AllIcons.Actions.Refresh);
 
               if (isPreviewMode) return;

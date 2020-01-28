@@ -30,7 +30,7 @@ public class AddArrangementSectionRuleAction extends AddArrangementRuleAction {
 
   public AddArrangementSectionRuleAction() {
     getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.section.rule.add.text"));
-    getTemplatePresentation().setDescription(ApplicationBundle.message("arrangement.action.section.rule.add.description"));
+    getTemplatePresentation().setDescription(() -> ApplicationBundle.message("arrangement.action.section.rule.add.description"));
     getTemplatePresentation().setIcon(AllIcons.CodeStyle.AddNewSectionRule);
   }
 

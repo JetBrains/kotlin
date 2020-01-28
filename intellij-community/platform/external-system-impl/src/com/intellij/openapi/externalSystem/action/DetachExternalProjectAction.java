@@ -30,7 +30,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
   public DetachExternalProjectAction() {
     super(ProjectData.class);
     getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.detach.external.project.text", "External"));
-    getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.detach.external.project.description"));
+    getTemplatePresentation().setDescription(() -> ExternalSystemBundle.message("action.detach.external.project.description"));
     getTemplatePresentation().setIcon(AllIcons.General.Remove);
   }
 

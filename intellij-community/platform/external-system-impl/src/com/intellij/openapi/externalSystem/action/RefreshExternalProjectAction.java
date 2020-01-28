@@ -33,7 +33,7 @@ public class RefreshExternalProjectAction extends ExternalSystemNodeAction<Abstr
   public RefreshExternalProjectAction() {
     super(AbstractExternalEntityData.class);
     getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.refresh.project.text", "External"));
-    getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.refresh.project.description", "External"));
+    getTemplatePresentation().setDescription(() -> ExternalSystemBundle.message("action.refresh.project.description", "External"));
   }
 
   @Override
@@ -46,7 +46,7 @@ public class RefreshExternalProjectAction extends ExternalSystemNodeAction<Abstr
     final String systemIdNameDescription = systemId != null ? systemId.getReadableName() : "external";
     Presentation presentation = e.getPresentation();
     presentation.setText(() -> ExternalSystemBundle.message("action.refresh.project.text", systemIdNameText));
-    presentation.setDescription(ExternalSystemBundle.message("action.refresh.project.description", systemIdNameDescription));
+    presentation.setDescription(() -> ExternalSystemBundle.message("action.refresh.project.description", systemIdNameDescription));
   }
 
   @Override

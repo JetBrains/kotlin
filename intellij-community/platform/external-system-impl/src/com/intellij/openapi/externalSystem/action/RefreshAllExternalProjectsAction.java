@@ -31,7 +31,7 @@ import java.util.List;
 public class RefreshAllExternalProjectsAction extends AnAction implements AnAction.TransparentUpdate, DumbAware {
   public RefreshAllExternalProjectsAction() {
     getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.refresh.all.projects.text", "External"));
-    getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.refresh.all.projects.description", "external"));
+    getTemplatePresentation().setDescription(() -> ExternalSystemBundle.message("action.refresh.all.projects.description", "external"));
   }
 
   @Override
@@ -50,7 +50,7 @@ public class RefreshAllExternalProjectsAction extends AnAction implements AnActi
 
     final String name = StringUtil.join(systemIds, projectSystemId -> projectSystemId.getReadableName(), ",");
     e.getPresentation().setText(() -> ExternalSystemBundle.message("action.refresh.all.projects.text", name));
-    e.getPresentation().setDescription(ExternalSystemBundle.message("action.refresh.all.projects.description", name));
+    e.getPresentation().setDescription(() -> ExternalSystemBundle.message("action.refresh.all.projects.description", name));
 
     ExternalSystemProcessingManager processingManager = ServiceManager.getService(ExternalSystemProcessingManager.class);
     e.getPresentation().setEnabled(!processingManager.hasTaskOfTypeInProgress(ExternalSystemTaskType.RESOLVE_PROJECT, project));

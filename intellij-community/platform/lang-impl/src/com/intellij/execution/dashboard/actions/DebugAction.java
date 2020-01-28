@@ -38,12 +38,12 @@ public class DebugAction extends ExecutorAction {
     Presentation presentation = e.getPresentation();
     if (running) {
       presentation.setText(() -> ExecutionBundle.message("run.dashboard.restart.debugger.action.name"));
-      presentation.setDescription(ExecutionBundle.message("run.dashboard.restart.debugger.action.description"));
+      presentation.setDescription(() -> ExecutionBundle.message("run.dashboard.restart.debugger.action.description"));
       presentation.setIcon(AllIcons.Actions.RestartDebugger);
     }
     else {
       presentation.setText(() -> ExecutionBundle.message("run.dashboard.debug.action.name"));
-      presentation.setDescription(ExecutionBundle.message("run.dashboard.debug.action.description"));
+      presentation.setDescription(() -> ExecutionBundle.message("run.dashboard.debug.action.description"));
       presentation.setIcon(AllIcons.Actions.StartDebugger);
     }
   }

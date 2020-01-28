@@ -26,11 +26,11 @@ public class FavoritesCompactEmptyMiddlePackagesAction extends FavoritesToolbarB
     // see com.intellij.ide.projectView.impl.ProjectViewImpl.HideEmptyMiddlePackagesAction.update
     if (getViewSettings().isFlattenPackages()) {
       presentation.setText(() -> IdeBundle.message("action.hide.empty.middle.packages"));
-      presentation.setDescription(IdeBundle.message("action.show.hide.empty.middle.packages"));
+      presentation.setDescription(() -> IdeBundle.message("action.show.hide.empty.middle.packages"));
     }
     else {
       presentation.setText(() -> IdeBundle.message("action.compact.empty.middle.packages"));
-      presentation.setDescription(IdeBundle.message("action.show.compact.empty.middle.packages"));
+      presentation.setDescription(() -> IdeBundle.message("action.show.compact.empty.middle.packages"));
     }
 
   }

@@ -30,7 +30,7 @@ public class MoveArrangementMatchingRuleDownAction extends AbstractMoveArrangeme
 
   public MoveArrangementMatchingRuleDownAction() {
     getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.rule.move.down.text"));
-    getTemplatePresentation().setDescription(ApplicationBundle.message("arrangement.action.rule.move.down.description"));
+    getTemplatePresentation().setDescription(() -> ApplicationBundle.message("arrangement.action.rule.move.down.description"));
     getTemplatePresentation().setIcon(IconUtil.getMoveDownIcon());
     setEnabledInModalContext(true);
   }
