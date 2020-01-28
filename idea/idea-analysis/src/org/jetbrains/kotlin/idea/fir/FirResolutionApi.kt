@@ -193,8 +193,10 @@ private fun FirDeclaration.runResolve(
     if (designation.all { it.resolvePhase >= toPhase }) {
         return
     }
+    val scopeSession = ScopeSession()
     val transformer = FirDesignatedBodyResolveTransformerForIDE(
         designation.iterator(), state.getSession(psi as KtElement),
+        scopeSession,
         implicitTypeOnly = toPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
     )
     file.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
@@ -203,8 +205,8 @@ private fun FirDeclaration.runResolve(
 private class FirDesignatedBodyResolveTransformerForIDE(
     private val designation: Iterator<FirElement>,
     session: FirSession,
-    scopeSession: ScopeSession = ScopeSession(),
-    implicitTypeOnly: Boolean = true
+    scopeSession: ScopeSession,
+    implicitTypeOnly: Boolean
 ) : FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,

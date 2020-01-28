@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
-class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
+class FirTypeResolveTransformer(private val scopeSession: ScopeSession) : FirAbstractTreeTransformerWithSuperTypes(
     phase = FirResolvePhase.TYPES,
     reversedScopePriority = true
 ) {
@@ -25,7 +26,6 @@ class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         session = file.session
-        val scopeSession = ScopeSession()
         return withScopeCleanup {
             towerScope.addImportingScopes(file, session, scopeSession)
             typeResolverTransformer = FirSpecificTypeResolverTransformer(towerScope, session)

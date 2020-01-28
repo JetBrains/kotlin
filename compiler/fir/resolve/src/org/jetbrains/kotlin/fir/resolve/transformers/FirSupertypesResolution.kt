@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class FirSupertypeResolverTransformer : FirTransformer<Nothing?>() {
+class FirSupertypeResolverTransformer(
+    private val scopeSession: ScopeSession
+) : FirTransformer<Nothing?>() {
     private val supertypeComputationSession = SupertypeComputationSession()
-    private val scopeSession = ScopeSession()
+
     private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {

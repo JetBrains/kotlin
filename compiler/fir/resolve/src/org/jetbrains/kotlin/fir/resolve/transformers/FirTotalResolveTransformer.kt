@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 // TODO: rework, see rr/FIR/semoro-dev FirStagesTransformerFactory
 class FirTotalResolveTransformer {
 
+    private val scopeSession = ScopeSession()
+
     val transformers: List<FirTransformer<Nothing?>> =
         FirResolvePhase.values()
             .drop(1) // to remove RAW_FIR phase
-            .map { it.createTransformerByPhase() }
+            .map { it.createTransformerByPhase(scopeSession) }
 
     fun processFiles(files: List<FirFile>) {
         for (transformer in transformers) {

@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
 @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
-class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
-    private val scopeSession = ScopeSession()
+class FirBodyResolveTransformerAdapter(private val scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
