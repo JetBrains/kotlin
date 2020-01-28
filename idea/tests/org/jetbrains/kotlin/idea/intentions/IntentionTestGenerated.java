@@ -764,6 +764,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addBraces/forWithComment.kt");
         }
 
+        @TestMetadata("hasCommentOnNextLine.kt")
+        public void testHasCommentOnNextLine() throws Exception {
+            runTest("idea/testData/intentions/addBraces/hasCommentOnNextLine.kt");
+        }
+
+        @TestMetadata("hasCommentOnNextLine2.kt")
+        public void testHasCommentOnNextLine2() throws Exception {
+            runTest("idea/testData/intentions/addBraces/hasCommentOnNextLine2.kt");
+        }
+
         @TestMetadata("ifElseWithComment.kt")
         public void testIfElseWithComment() throws Exception {
             runTest("idea/testData/intentions/addBraces/ifElseWithComment.kt");

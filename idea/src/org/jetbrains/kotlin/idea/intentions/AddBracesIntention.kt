@@ -32,8 +32,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         val expression = element.getTargetExpression(caretOffset) ?: return false
         if (expression is KtBlockExpression) return false
 
-        val parent = expression.parent
-        return when (parent) {
+        return when (val parent = expression.parent) {
             is KtContainerNode -> {
                 val description = parent.description() ?: return false
                 text = "Add braces to '$description' statement"
@@ -90,7 +89,9 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         val nextComment = when {
             element is KtDoWhileExpression -> null // bound to the closing while
             element is KtIfExpression && expression === element.then && element.`else` != null -> null // bound to else
-            else -> element.getNextSiblingIgnoringWhitespace().takeIf { it is PsiComment }
+            else -> element.getNextSiblingIgnoringWhitespace().takeIf {
+                it is PsiComment && it.getLineNumber() == element.getLineNumber(start = false)
+            }
         }
 
         val saver = when {
