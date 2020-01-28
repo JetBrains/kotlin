@@ -170,7 +170,8 @@ class CallableReferencesCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
     val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
-    val expectedType: UnwrappedType?
+    val expectedType: UnwrappedType?,
+    private val csBuilder: ConstraintSystemOperation
 ) : CandidateFactory<CallableReferenceCandidate> {
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
@@ -333,7 +334,9 @@ class CallableReferencesCandidateFactory(
 
         return when (varargMappingState) {
             VarargMappingState.UNMAPPED -> {
-                if (KotlinBuiltIns.isArrayOrPrimitiveArray(expectedParameterType)) {
+                if (KotlinBuiltIns.isArrayOrPrimitiveArray(expectedParameterType) ||
+                    csBuilder.isTypeVariable(expectedParameterType)
+                ) {
                     val arrayType = builtins.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType)
                         ?: builtins.getArrayType(Variance.OUT_VARIANCE, elementType)
                     arrayType to VarargMappingState.MAPPED_WITH_ARRAY

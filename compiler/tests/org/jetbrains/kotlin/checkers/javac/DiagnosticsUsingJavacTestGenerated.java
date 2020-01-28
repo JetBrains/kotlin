@@ -1836,6 +1836,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/functionReferenceWithDefaultValueAsOtherFunctionType_enabled.kt");
             }
 
+            @TestMetadata("genericCallWithReferenceAgainstVararg.kt")
+            public void testGenericCallWithReferenceAgainstVararg() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/genericCallWithReferenceAgainstVararg.kt");
+            }
+
+            @TestMetadata("genericCallWithReferenceAgainstVarargAndKFunction.kt")
+            public void testGenericCallWithReferenceAgainstVarargAndKFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/genericCallWithReferenceAgainstVarargAndKFunction.kt");
+            }
+
             @TestMetadata("kt15439_completeCall.kt")
             public void testKt15439_completeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt15439_completeCall.kt");

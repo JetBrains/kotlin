@@ -1,0 +1,5 @@
+package
+
+public fun containsRegex(/*0*/ vararg otherPatterns: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+public fun </*0*/ A1> fun2(/*0*/ f: kotlin.reflect.KFunction1<A1, kotlin.Unit>, /*1*/ a: A1): kotlin.Unit
+public fun main(): kotlin.Unit
