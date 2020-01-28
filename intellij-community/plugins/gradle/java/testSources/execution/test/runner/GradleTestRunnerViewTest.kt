@@ -2,9 +2,11 @@
 package org.jetbrains.plugins.gradle.execution.test.runner
 
 import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.execution.impl.ConsoleViewImpl
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.TestConsoleProperties
+import com.intellij.execution.testframework.sm.runner.SMTRunnerNodeDescriptor
 import com.intellij.openapi.externalSystem.execution.ExternalSystemExecutionConsoleManager
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTask
@@ -15,11 +17,13 @@ import com.intellij.testFramework.ExtensionTestUtil.maskExtensions
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndGet
 import com.intellij.util.ui.tree.TreeUtil
+import groovy.json.StringEscapeUtils.escapeJava
 import org.jetbrains.plugins.gradle.importing.GradleBuildScriptBuilderEx
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Test
+import javax.swing.tree.DefaultMutableTreeNode
 
 class GradleTestRunnerViewTest : GradleImportingTestCase() {
 
@@ -90,5 +94,90 @@ class GradleTestRunnerViewTest : GradleImportingTestCase() {
                  "  test\n" +
                  "  test",
                  treeStringPresentation.trim())
+  }
+
+  @TargetVersions("2.14+")
+  @Test
+  fun `test console empty lines and output without eol at the end`() {
+    val testOutputText = "test \noutput\n\ntext"
+    createProjectSubFile("src/test/java/my/pack/AppTest.java",
+                         """package my.pack;
+                            import org.junit.Test;
+                            import static org.junit.Assert.fail;
+                            public class AppTest {
+                                @Test
+                                public void test() {
+                                    System.out.println("${escapeJava(testOutputText)}");
+                                }
+                            }""".trimIndent())
+
+    val scriptOutputText = "script \noutput\n\ntext\n"
+    val scriptOutputTextWOEol = "text w/o eol"
+    importProject(GradleBuildScriptBuilderEx()
+                    .withJavaPlugin()
+                    .withJUnit("4.12")
+                    .addBuildScriptPrefix("print(\"${escapeJava(scriptOutputText)}\")")
+                    .addPostfix("print(\"${escapeJava(scriptOutputTextWOEol)}\")")
+                    .generate())
+
+    var testsExecutionConsole: GradleTestsExecutionConsole? = null
+    maskExtensions(ExternalSystemExecutionConsoleManager.EP_NAME,
+                   listOf(object : GradleTestsExecutionConsoleManager() {
+                     override fun attachExecutionConsole(project: Project,
+                                                         task: ExternalSystemTask,
+                                                         env: ExecutionEnvironment?,
+                                                         processHandler: ProcessHandler?): GradleTestsExecutionConsole? {
+                       testsExecutionConsole = super.attachExecutionConsole(project, task, env, processHandler)
+                       return testsExecutionConsole
+                     }
+                   }),
+                   testRootDisposable)
+
+    val settings = ExternalSystemTaskExecutionSettings().apply {
+      externalProjectPath = projectPath
+      taskNames = listOf("clean", "test")
+      scriptParameters = "--quiet"
+      externalSystemIdString = GradleConstants.SYSTEM_ID.id
+    }
+
+    ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID,
+                               myProject, GradleConstants.SYSTEM_ID, null,
+                               ProgressExecutionMode.NO_PROGRESS_SYNC)
+
+    val treeStringPresentation = runInEdtAndGet {
+      val tree = testsExecutionConsole!!.resultsViewer.treeView!!
+      TestConsoleProperties.HIDE_PASSED_TESTS.set(testsExecutionConsole!!.properties, false)
+      TreeUtil.expandAll(tree)
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      PlatformTestUtil.waitWhileBusy(tree)
+
+      val testsRootNode = TreeUtil.findNode(tree.model.root as DefaultMutableTreeNode) {
+        val userObject = it.userObject
+        userObject is SMTRunnerNodeDescriptor && userObject.element == testsExecutionConsole!!.resultsViewer.testsRootNode
+      }
+      TreeUtil.selectNode(tree, testsRootNode)
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      PlatformTestUtil.waitWhileBusy(tree)
+      return@runInEdtAndGet PlatformTestUtil.print(tree, true)
+    }
+
+    assertEquals("-[[root]]\n" +
+                 " -my.pack.AppTest\n" +
+                 "  test",
+                 treeStringPresentation.trim())
+
+    val console = testsExecutionConsole!!.console as ConsoleViewImpl
+    val consoleText = runInEdtAndGet {
+      console.flushDeferredText()
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      console.text
+    }
+
+    val consoleTextWithoutFirstLine = consoleText.substringAfter("\n")
+    assertTrue(consoleTextWithoutFirstLine.contains(testOutputText))
+    assertEquals("script \n" +
+                 "output\n" +
+                 "text\n" +
+                 "text w/o eol\n", consoleTextWithoutFirstLine.substringBefore(testOutputText))
   }
 }
