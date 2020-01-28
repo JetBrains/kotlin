@@ -5,5 +5,5 @@ FILE: vararg.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|()
-        R|/foo|(String(!))
+        R|/foo|(vararg(String(!)))
     }

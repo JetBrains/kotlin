@@ -6,6 +6,6 @@ public final annotation class Anno : R|kotlin/Annotation| {
     public final val t: R|kotlin/Array<out java/lang/annotation/ElementType>|
         public get(): R|kotlin/Array<out java/lang/annotation/ElementType>|
 
-    public constructor(vararg t: R|kotlin/Array<out java/lang/annotation/ElementType>|): R|test/Anno|
+    public constructor(vararg varargElementType = R|java/lang/annotation/ElementType|t: R|kotlin/Array<out java/lang/annotation/ElementType>|): R|test/Anno|
 
 }

@@ -23,7 +23,7 @@ public final annotation class EnumArrayAnno : R|kotlin/Annotation| {
     public final val value: R|kotlin/Array<out test/E>|
         public get(): R|kotlin/Array<out test/E>|
 
-    public constructor(vararg value: R|kotlin/Array<out test/E>|): R|test/EnumArrayAnno|
+    public constructor(vararg varargElementType = R|test/E|value: R|kotlin/Array<out test/E>|): R|test/EnumArrayAnno|
 
 }
 

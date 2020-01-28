@@ -1,1 +1,2 @@
-public final fun varargCharSequence(a: R|kotlin/Int|, vararg b: R|kotlin/Array<out java/lang/Integer>|): R|kotlin/Int|
+public final fun varargCharSequence(a: R|kotlin/Int|, vararg varargElementType = R|java/lang/Integer|b: R|kotlin/Array<out java/lang/Integer>|): R|kotlin/Int|
+

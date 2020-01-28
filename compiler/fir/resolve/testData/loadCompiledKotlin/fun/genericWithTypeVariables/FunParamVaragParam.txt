@@ -1,1 +1,2 @@
-public final fun <P> funParamVarargParam(a: R|kotlin/Int|, vararg b: R|kotlin/Array<out P>|): R|kotlin/Int|
+public final fun <P> funParamVarargParam(a: R|kotlin/Int|, vararg varargElementType = R|P|b: R|kotlin/Array<out P>|): R|kotlin/Int|
+

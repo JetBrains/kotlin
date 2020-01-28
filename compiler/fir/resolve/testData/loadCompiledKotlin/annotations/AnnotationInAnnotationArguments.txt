@@ -32,7 +32,7 @@ public final annotation class StringOptions : R|kotlin/Annotation| {
     public final val option: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
-    public constructor(vararg option: R|kotlin/Array<out kotlin/String>|): R|test/StringOptions|
+    public constructor(vararg varargElementType = R|kotlin/String|option: R|kotlin/Array<out kotlin/String>|): R|test/StringOptions|
 
 }
 

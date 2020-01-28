@@ -1,5 +1,5 @@
 public open class MethodWithVararg : R|kotlin/Any| {
-    public open fun foo(vararg s: R|kotlin/Array<out kotlin/String>|): R|kotlin/Unit|
+    public open fun foo(vararg varargElementType = R|kotlin/String|s: R|kotlin/Array<out kotlin/String>|): R|kotlin/Unit|
 
     public constructor(): R|test/MethodWithVararg|
 

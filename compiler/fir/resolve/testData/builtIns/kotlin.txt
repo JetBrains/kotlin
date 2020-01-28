@@ -1,14 +1,14 @@
-public final inline fun <reified T> arrayOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
+public final inline fun <reified T> arrayOf(vararg varargElementType = R|T|elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
 
 public final fun <reified T> arrayOfNulls(size: R|kotlin/Int|): R|kotlin/Array<T?>|
 
-public final fun booleanArrayOf(vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
+public final fun booleanArrayOf(vararg varargElementType = R|kotlin/Boolean|elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
 
-public final fun byteArrayOf(vararg elements: R|kotlin/ByteArray|): R|kotlin/ByteArray|
+public final fun byteArrayOf(vararg varargElementType = R|kotlin/Byte|elements: R|kotlin/ByteArray|): R|kotlin/ByteArray|
 
-public final fun charArrayOf(vararg elements: R|kotlin/CharArray|): R|kotlin/CharArray|
+public final fun charArrayOf(vararg varargElementType = R|kotlin/Char|elements: R|kotlin/CharArray|): R|kotlin/CharArray|
 
-public final fun doubleArrayOf(vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray|
+public final fun doubleArrayOf(vararg varargElementType = R|kotlin/Double|elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray|
 
 public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
 
@@ -16,13 +16,13 @@ public final inline fun <reified T> emptyArray(): R|kotlin/Array<T>|
 
 @R|kotlin/SinceKotlin|(version = String(1.1)) public final inline fun <reified T> enumValues(): R|kotlin/Array<T>|
 
-public final fun floatArrayOf(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
+public final fun floatArrayOf(vararg varargElementType = R|kotlin/Float|elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
 
-public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
+public final fun intArrayOf(vararg varargElementType = R|kotlin/Int|elements: R|kotlin/IntArray|): R|kotlin/IntArray|
 
-public final fun longArrayOf(vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray|
+public final fun longArrayOf(vararg varargElementType = R|kotlin/Long|elements: R|kotlin/LongArray|): R|kotlin/LongArray|
 
-public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
+public final fun shortArrayOf(vararg varargElementType = R|kotlin/Short|elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
 
 public final operator fun R|kotlin/String?|.plus(other: R|kotlin/Any?|): R|kotlin/String|
 
@@ -1019,7 +1019,7 @@ public abstract class Number : R|kotlin/Any| {
     public final val imports: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
-    public constructor(expression: R|kotlin/String|, vararg imports: R|kotlin/Array<out kotlin/String>|): R|kotlin/ReplaceWith|
+    public constructor(expression: R|kotlin/String|, vararg varargElementType = R|kotlin/String|imports: R|kotlin/Array<out kotlin/String>|): R|kotlin/ReplaceWith|
 
 }
 
@@ -1196,7 +1196,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
     public final val names: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
-    public constructor(vararg names: R|kotlin/Array<out kotlin/String>|): R|kotlin/Suppress|
+    public constructor(vararg varargElementType = R|kotlin/String|names: R|kotlin/Array<out kotlin/String>|): R|kotlin/Suppress|
 
 }
 
