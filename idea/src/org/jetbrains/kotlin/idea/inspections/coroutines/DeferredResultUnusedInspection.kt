@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.coroutines
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.AbstractResultUnusedChecker
@@ -26,9 +27,13 @@ class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = false
         return if (inspection.standardOnly) {
             resolvedCall.resultingDescriptor.fqNameOrNull() in fqNamesAll
         } else {
-            val returnTypeClassifier = resolvedCall.resultingDescriptor.returnType?.constructor?.declarationDescriptor
-            val importableFqName = returnTypeClassifier?.importableFqName
-            importableFqName == deferred || importableFqName == deferredExperimental
+            fun isDeferred(descriptor: CallableDescriptor): Boolean {
+                val importableFqName = descriptor.returnType?.constructor?.declarationDescriptor?.importableFqName ?: return false
+                return importableFqName == deferred || importableFqName == deferredExperimental
+            }
+
+            val resultingDescriptor = resolvedCall.resultingDescriptor ?: return false
+            isDeferred(resultingDescriptor) && resultingDescriptor.valueParameters.none(::isDeferred)
         }
     }
 ) {
