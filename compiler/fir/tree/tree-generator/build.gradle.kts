@@ -22,8 +22,11 @@ dependencies {
     compile(project(":compiler:ir.tree"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    Platform[193].orLower {
+        compileOnly(intellijDep()) { includeJars("picocontainer", rootProject = rootProject) }
+    }
     compileOnly(intellijDep()) {
-        includeJars("trove4j", "picocontainer", rootProject = rootProject)
+        includeJars("trove4j", rootProject = rootProject)
     }
 
     Platform[192].orHigher {
