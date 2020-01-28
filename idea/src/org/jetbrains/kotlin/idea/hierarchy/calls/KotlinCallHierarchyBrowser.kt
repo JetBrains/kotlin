@@ -15,9 +15,6 @@
  */
 package org.jetbrains.kotlin.idea.hierarchy.calls
 
-import com.intellij.ide.hierarchy.CallHierarchyBrowserBase
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
-import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.ide.hierarchy.JavaHierarchyUtil
 import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.openapi.actionSystem.ActionGroup
@@ -33,7 +30,7 @@ import javax.swing.JTree
 
 class KotlinCallHierarchyBrowser(element: PsiElement) :
     CallHierarchyBrowserBase(element.project, element) {
-    override fun createTrees(type2TreeMap: MutableMap<String, JTree>) {
+    override fun createTrees(trees: MutableMap<HierarchyScopeType, JTree>) {
         val group = ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP) as ActionGroup
         val baseOnThisMethodAction = BaseOnThisMethodAction()
 
@@ -48,7 +45,7 @@ class KotlinCallHierarchyBrowser(element: PsiElement) :
             ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).shortcutSet,
             tree1
         )
-        type2TreeMap[CALLEE_TYPE] = tree1
+        trees[getCalleeTypeCompat()] = tree1
 
         val tree2 = createTree(false)
         PopupHandler.installPopupHandler(
@@ -61,7 +58,7 @@ class KotlinCallHierarchyBrowser(element: PsiElement) :
             ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).shortcutSet,
             tree2
         )
-        type2TreeMap[CALLER_TYPE] = tree2
+        trees[getCallerTypeCompat()] = tree2
     }
 
     override fun getElementFromDescriptor(descriptor: HierarchyNodeDescriptor): PsiElement? {
@@ -73,13 +70,13 @@ class KotlinCallHierarchyBrowser(element: PsiElement) :
     }
 
     override fun createHierarchyTreeStructure(
-        typeName: String,
+        type: HierarchyScopeType,
         psiElement: PsiElement
     ): HierarchyTreeStructure? {
         if (psiElement !is KtElement) return null
-        return when (typeName) {
-            CALLER_TYPE -> KotlinCallerTreeStructure(psiElement, currentScopeType)
-            CALLEE_TYPE -> KotlinCalleeTreeStructure(psiElement, currentScopeType)
+        return when (type) {
+            getCallerTypeCompat() -> KotlinCallerTreeStructure(psiElement, currentScopeType)
+            getCalleeTypeCompat() -> KotlinCalleeTreeStructure(psiElement, currentScopeType)
             else -> null
         }
     }

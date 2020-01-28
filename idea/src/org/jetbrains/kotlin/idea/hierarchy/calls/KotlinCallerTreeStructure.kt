@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.idea.hierarchy.calls
 
 import com.intellij.find.findUsages.JavaFindUsagesOptions
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
-import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor
-import com.intellij.ide.hierarchy.call.CallerMethodsTreeStructure
 import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
@@ -65,9 +62,8 @@ class KotlinCallerTreeStructure(
         callerToDescriptorMap: MutableMap<PsiElement, NodeDescriptor<*>>
     ): Collection<Any> {
         if (nodeDescriptor is CallHierarchyNodeDescriptor) {
-            val member /* : PsiMember in 193, : PsiMethod in 192 */ =
-                extractMemberFromDescriptor(nodeDescriptor) ?: return emptyList()
-            return CallerMethodsTreeStructure(myProject, member, scopeType).getChildElements(nodeDescriptor).toList()
+            val psiMethod = nodeDescriptor.enclosingElement as? PsiMethod ?: return emptyList()
+            return createCallerMethodsTreeStructure(myProject, psiMethod, scopeType).getChildElements(nodeDescriptor).toList()
         }
 
         if (element !is KtDeclaration) return emptyList()

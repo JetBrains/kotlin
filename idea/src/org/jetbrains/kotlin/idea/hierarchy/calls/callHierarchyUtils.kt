@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.calls
 
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor
 import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.psi.PsiElement
