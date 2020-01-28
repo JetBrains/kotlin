@@ -488,6 +488,10 @@ fun main(args: Array<String>) {
         testClass<AbstractIrBytecodeTextTest> {
             model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
         }
+
+        testClass<AbstractIrAsmLikeInstructionListingTest> {
+            model("codegen/asmLike", targetBackend = TargetBackend.JVM_IR)
+        }
     }
 
     testGroup(
