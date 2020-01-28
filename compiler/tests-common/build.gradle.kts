@@ -45,6 +45,15 @@ dependencies {
     Platform[193].orLower {
         testCompile(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }
     }
+    Platform[201].orHigher {
+        testCompile(intellijDep()) {
+            includeJars(
+                "testFramework",
+                "testFramework.core",
+                rootProject = rootProject
+            )
+        }
+    }
     testCompile(intellijDep()) {
         includeJars(
             "jps-model",
