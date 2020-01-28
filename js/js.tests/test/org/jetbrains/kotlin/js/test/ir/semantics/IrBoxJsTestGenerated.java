@@ -2138,6 +2138,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/function/manglingClashWithFunctionsWithoutParameters.kt");
             }
 
+            @TestMetadata("manglingImportedFromObjectWithNI.kt")
+            public void testManglingImportedFromObjectWithNI() throws Exception {
+                runTest("js/js.translator/testData/box/expression/function/manglingImportedFromObjectWithNI.kt");
+            }
+
             @TestMetadata("manglingStability.kt")
             public void testManglingStability() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/manglingStability.kt");
