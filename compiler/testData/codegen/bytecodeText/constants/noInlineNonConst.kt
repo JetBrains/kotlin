@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 val x = 1
 
 class A {

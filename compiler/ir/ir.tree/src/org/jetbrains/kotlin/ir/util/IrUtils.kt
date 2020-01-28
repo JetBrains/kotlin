@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -154,14 +153,6 @@ fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.
 fun IrExpression.isTrueConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == true
 
 fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind.Boolean && this.value == false
-
-fun IrExpression.coerceToUnit(builtins: IrBuiltIns): IrExpression {
-    val valueType = getKotlinType(this)
-    return coerceToUnitIfNeeded(valueType, builtins)
-}
-
-private fun getKotlinType(irExpression: IrExpression) =
-    irExpression.type.toKotlinType()
 
 fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
     return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))
