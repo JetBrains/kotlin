@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform;
 import javax.swing.*;
 import java.util.*;
 
-public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
+public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
     private static final Map<String, String> soruceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
     private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
