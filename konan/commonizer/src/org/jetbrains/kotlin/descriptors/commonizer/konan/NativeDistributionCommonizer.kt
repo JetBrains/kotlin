@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeModuleForCommonization.DeserializedModule
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeModuleForCommonization.SyntheticModule
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EmptyDescriptorTable
+import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.library.*
@@ -99,7 +100,7 @@ class NativeDistributionCommonizer(
         return librariesByTargets.mapValues { (target, libraries) ->
             val storageManager = LockBasedStorageManager("Target $target")
 
-            val rawStdlibModule = KonanFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+            val rawStdlibModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
                 library = stdlib,
                 languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                 storageManager = storageManager,
@@ -107,7 +108,7 @@ class NativeDistributionCommonizer(
             )
 
             val otherModules = libraries.map { library ->
-                val rawModule = KonanFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                val rawModule = DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                     library = library,
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     storageManager = storageManager,

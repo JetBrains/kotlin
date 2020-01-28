@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersio
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ProjectContext
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.library.KonanFactories
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.library.isInterop
@@ -50,23 +51,25 @@ import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.IOException
+
+private val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
 fun KotlinLibrary.createPackageFragmentProvider(
     storageManager: StorageManager,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor
 ): PackageFragmentProvider? {
-
     if (safeMetadataVersion?.isCompatible() != true) return null
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(this)
 
     val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
-    return KonanFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
+    return NativeFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
         this,
         CachingIdeKonanLibraryMetadataLoader,
         libraryProto.packageFragmentNameList,
@@ -132,7 +135,7 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
     val stdlibInfo = moduleInfo.findNativeStdlib() ?: return DefaultBuiltIns.Instance
     val konanLibrary = stdlibInfo.getCapability(NativeLibraryInfo.NATIVE_LIBRARY_CAPABILITY)!!
 
-    val builtInsModule = KonanFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+    val builtInsModule = NativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
         KotlinBuiltIns.BUILTINS_MODULE_NAME,
         storageManager,
         DeserializedKlibModuleOrigin(konanLibrary),
@@ -144,7 +147,7 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(konanLibrary)
 
-    val stdlibFragmentProvider = KonanFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
+    val stdlibFragmentProvider = NativeFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
         konanLibrary,
         CachingIdeKonanLibraryMetadataLoader,
         libraryProto.packageFragmentNameList,
@@ -159,7 +162,7 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
             listOf(
                 stdlibFragmentProvider,
                 functionInterfacePackageFragmentProvider(storageManager, builtInsModule),
-                (KonanFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
+                (NativeFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
                     .createForwardDeclarationHackPackagePartProvider(storageManager, builtInsModule)
             )
         )

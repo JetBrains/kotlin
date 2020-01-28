@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.createDefaultKonanResolvedModuleDescriptorsFactory
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.konan.library.KonanFactories.DefaultDeserializedDescriptorFactory
-import org.jetbrains.kotlin.konan.library.KonanFactories.createDefaultKonanResolvedModuleDescriptorsFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
