@@ -451,7 +451,16 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): Code {
-        data.pushReturnValue(Complex(expression.symbol.owner, mutableListOf()))
+        val objectState = Complex(expression.symbol.owner, mutableListOf())
+        val newFrame = data.copy().apply { addVar(Variable(expression.symbol.descriptor.thisAsReceiverParameter, objectState)) }
+
+        val constructor = expression.symbol.owner.declarations.single { it is IrConstructor } as IrConstructor
+        val constructorBody = constructor.body?.statements?.get(1) as? IrBlock
+        val irAnnotatedSetFields = constructorBody?.statements?.filterIsInstance<IrSetField>()
+            ?.filter { it.symbol.owner.correspondingPropertySymbol!!.owner.hasAnnotation(compileTimeAnnotation) }
+        irAnnotatedSetFields?.forEach { irSetField -> irSetField.interpret(newFrame).also { if (it != Code.NEXT) return it } }
+
+        data.pushReturnValue(objectState)
         return Code.NEXT
     }
 
