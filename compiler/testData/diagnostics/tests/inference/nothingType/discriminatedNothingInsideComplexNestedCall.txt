@@ -1,0 +1,7 @@
+package
+
+public inline fun </*0*/ reified V> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<V?>
+public fun expanded(/*0*/ maxCapacity: kotlin.Int, /*1*/ newCapacity: kotlin.Int, /*2*/ buffer: kotlin.Array<kotlin.Any?>): kotlin.Unit
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun </*0*/ S> toArray(/*0*/ array: kotlin.Array<S>): kotlin.Array<S>
+public fun </*0*/ T> kotlin.Array<T>.copyOf(/*0*/ newSize: kotlin.Int): kotlin.Array<T?>
