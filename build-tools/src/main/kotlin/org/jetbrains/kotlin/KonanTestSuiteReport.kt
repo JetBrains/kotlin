@@ -13,7 +13,7 @@ enum class TestStatus {
     SKIPPED
 }
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class Statistics(
         var passed: Int = 0,
         var failed: Int = 0,
@@ -42,13 +42,13 @@ val Statistics.total: Int
 
 class TestFailedException(msg:String) : RuntimeException(msg)
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class KonanTestGroupReport(val name:String, val suites:List<KonanTestSuiteReport>)
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class KonanTestSuiteReport(val name: String, val tests: List<KonanTestCaseReport>)
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class KonanTestCaseReport(val name:String, val status: TestStatus, @Optional val comment:String? = null)
 
 class KonanTestSuiteReportEnvironment(val name:String, val project: Project, val statistics: Statistics) {

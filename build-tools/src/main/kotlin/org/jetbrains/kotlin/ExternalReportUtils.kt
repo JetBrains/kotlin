@@ -2,12 +2,12 @@ package org.jetbrains.kotlin
 
 import kotlinx.io.PrintWriter
 import kotlinx.serialization.*
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 import java.io.File
 import java.io.FileReader
 
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class ExternalTestReport(val statistics: Statistics, val groups: List<KonanTestGroupReport>)
 
 @ImplicitReflectionSerializer
