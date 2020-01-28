@@ -15,15 +15,15 @@ dependencies {
     // BEWARE: Uast should not depend on IDEA.
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
+    testCompileOnly(intellijDep())
+
     if (Platform.P191.orLower()) {
         compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
     }
 
     if (Platform.P192.orHigher()) {
         compileOnly(intellijDep()) { includeJars("platform-impl") }
         compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-        testCompileOnly(intellijDep()) { includeJars("platform-impl") }
         testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
         testRuntime(intellijPluginDep("java"))
     }
@@ -34,8 +34,6 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
-
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
