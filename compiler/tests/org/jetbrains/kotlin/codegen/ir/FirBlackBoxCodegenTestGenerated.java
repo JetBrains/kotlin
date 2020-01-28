@@ -1962,6 +1962,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/callableReference/bound/boundJvmFieldInInterfaceCompanion.kt");
             }
 
+            @TestMetadata("boundReferenceToOverloadedFunction.kt")
+            public void testBoundReferenceToOverloadedFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/boundReferenceToOverloadedFunction.kt");
+            }
+
             @TestMetadata("captureVarInInitBlock.kt")
             public void testCaptureVarInInitBlock() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/captureVarInInitBlock.kt");
