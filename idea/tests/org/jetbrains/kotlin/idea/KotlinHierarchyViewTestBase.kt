@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.idea;
 
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
-import org.junit.runner.RunWith;
-
-import java.io.File;
-import java.io.IOException;
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
+import java.io.IOException
 
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public abstract class KotlinHierarchyViewTestBase extends KotlinLightCodeInsightFixtureTestCase {
