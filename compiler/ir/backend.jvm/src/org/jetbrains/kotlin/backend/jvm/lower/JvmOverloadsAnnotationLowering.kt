@@ -48,7 +48,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
 
     private fun generateWrappers(target: IrFunction, irClass: IrClass) {
         val numDefaultParameters = target.valueParameters.count { it.defaultValue != null }
-        for (i in 0 until numDefaultParameters) {
+        for (i in numDefaultParameters - 1 downTo 0) {
             val wrapper = generateWrapper(target, i)
             irClass.addMember(wrapper)
         }
