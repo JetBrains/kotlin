@@ -4,10 +4,10 @@
  */
 package org.jetbrains.kotlin.idea
 
-import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
+import org.jetbrains.kotlin.idea.hierarchy.calls.HierarchyTreeStructure
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
@@ -20,16 +20,12 @@ abstract class KotlinHierarchyViewTestBase : KotlinLightCodeInsightFixtureTestCa
 
     @Throws(Exception::class)
     protected open fun doHierarchyTest(
-        treeStructureComputable: Computable<out HierarchyTreeStructure?>,
+        treeStructureComputable: Computable<out HierarchyTreeStructure>,
         vararg fileNames: String
     ) {
-        configure(fileNames)
-        val expectedStructure = loadExpectedStructure()
-        hierarchyFixture.doHierarchyTest(treeStructureComputable.compute(), expectedStructure)
-    }
-
-    private fun configure(fileNames: Array<String>) {
         myFixture.configureByFiles(*fileNames)
+        val expectedStructure = loadExpectedStructure()
+        doHierarchyTestCompat(hierarchyFixture, treeStructureComputable, expectedStructure)
     }
 
     @Throws(IOException::class)

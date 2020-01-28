@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.calls
 
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.call.CallReferenceProcessor
 import com.intellij.ide.hierarchy.call.JavaCallHierarchyData
 import com.intellij.ide.util.treeView.NodeDescriptor

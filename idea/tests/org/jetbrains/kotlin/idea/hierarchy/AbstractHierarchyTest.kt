@@ -4,9 +4,11 @@
  */
 package org.jetbrains.kotlin.idea.hierarchy
 
-import com.intellij.ide.hierarchy.*
+import com.intellij.ide.hierarchy.HierarchyProvider
+import com.intellij.ide.hierarchy.LanguageCallHierarchy
+import com.intellij.ide.hierarchy.LanguageMethodHierarchy
+import com.intellij.ide.hierarchy.LanguageTypeHierarchy
 import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase
-import com.intellij.ide.hierarchy.call.CallerMethodsTreeStructure
 import com.intellij.ide.hierarchy.type.SubtypesHierarchyTreeStructure
 import com.intellij.ide.hierarchy.type.SupertypesHierarchyTreeStructure
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure
@@ -16,7 +18,10 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintException
 import com.intellij.rt.execution.junit.ComparisonDetailsExtractor
 import com.intellij.testFramework.LightProjectDescriptor
@@ -25,8 +30,7 @@ import com.intellij.util.ArrayUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinHierarchyViewTestBase
-import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCalleeTreeStructure
-import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerTreeStructure
+import org.jetbrains.kotlin.idea.hierarchy.calls.*
 import org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideTreeStructure
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -86,7 +90,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
     }
 
     private val superTypesHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
+        get() = Computable {
             SupertypesHierarchyTreeStructure(
                 project,
                 getElementAtCaret(LanguageTypeHierarchy.INSTANCE) as PsiClass
@@ -94,7 +98,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         }
 
     private val subTypesHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
+        get() = Computable {
             SubtypesHierarchyTreeStructure(
                 project,
                 getElementAtCaret(LanguageTypeHierarchy.INSTANCE) as PsiClass,
@@ -103,7 +107,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         }
 
     private val typeHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
+        get() = Computable {
             TypeHierarchyTreeStructure(
                 project,
                 getElementAtCaret(LanguageTypeHierarchy.INSTANCE) as PsiClass,
@@ -112,7 +116,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         }
 
     private val callerHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
+        get() = Computable {
             KotlinCallerTreeStructure(
                 (getElementAtCaret(LanguageCallHierarchy.INSTANCE) as KtElement),
                 HierarchyBrowserBaseEx.SCOPE_PROJECT
@@ -120,16 +124,16 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         }
 
     private val callerJavaHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
-            CallerMethodsTreeStructure(
+        get() = Computable {
+            createCallerMethodsTreeStructure(
                 project,
-                (getElementAtCaret(LanguageCallHierarchy.INSTANCE) as PsiMember),
+                (getElementAtCaret(LanguageCallHierarchy.INSTANCE) as PsiMethod),
                 HierarchyBrowserBaseEx.SCOPE_PROJECT
             )
         }
 
     private val calleeHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
+        get() = Computable {
             KotlinCalleeTreeStructure(
                 (getElementAtCaret(LanguageCallHierarchy.INSTANCE) as KtElement),
                 HierarchyBrowserBaseEx.SCOPE_PROJECT
@@ -137,7 +141,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         }
 
     private val overrideHierarchyStructure: Computable<HierarchyTreeStructure>
-        private get() = Computable {
+        get() = Computable {
             KotlinOverrideTreeStructure(
                 project,
                 (getElementAtCaret(LanguageMethodHierarchy.INSTANCE) as KtCallableDeclaration)
@@ -154,7 +158,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
     }
 
     private val dataContext: DataContext
-        private get() {
+        get() {
             val editor = editor
             val context = MapDataContext()
             context.put(CommonDataKeys.PROJECT, project)
@@ -169,7 +173,8 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
         }
 
     protected val filesToConfigure: Array<String>
-        protected get() {
+        get() {
+            val folderName = folderName ?: error("folderName should be initialized")
             val files: MutableList<String> = ArrayList(2)
             FileUtil.processFilesRecursively(
                 File(folderName)
@@ -180,7 +185,7 @@ abstract class AbstractHierarchyTest : KotlinHierarchyViewTestBase() {
                 }
                 true
             }
-            Collections.sort(files)
+            files.sort()
             return ArrayUtil.toStringArray(files)
         }
 

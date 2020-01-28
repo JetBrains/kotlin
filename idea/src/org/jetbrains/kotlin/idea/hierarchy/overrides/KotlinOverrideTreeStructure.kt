@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.idea.hierarchy.overrides
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
-import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.project.Project
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.hierarchy.calls.HierarchyNodeDescriptor
+import org.jetbrains.kotlin.idea.hierarchy.calls.HierarchyTreeStructure
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
