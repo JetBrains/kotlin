@@ -16,29 +16,22 @@
 
 package androidx.compose.plugins.kotlin
 
-import android.app.Activity
-import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.compose.Compose
 import androidx.compose.Composer
 import androidx.compose.currentComposerNonNull
-import androidx.compose.runWithCurrent
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import java.io.File
 import java.net.URLClassLoader
 
+@Ignore("b/148457543")
 @RunWith(ComposeRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
@@ -222,7 +215,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             )
         )
     }
-
 
     @Test
     fun testComposableOrderIssue(): Unit = forComposerParam(true, false) {
