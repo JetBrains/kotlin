@@ -8,26 +8,23 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.SkipWhenEmpty
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import java.io.File
 
 open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
     lateinit var type: KotlinJsIrType
 
-    @InputFiles
-    @SkipWhenEmpty
-    override fun getSource(): FileTree {
-        // compile from sources, support compile from klib whe it will be supported
-        val jsIrCompilation = taskData.compilation as KotlinJsIrCompilation
-        return project.files(jsIrCompilation.allSources).asFileTree
-    }
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(
+        emptyList<File>() as FileTree,
+        emptyList()
+    )
 
     @OutputFile
     val outputFileProperty: RegularFileProperty = project.newFileProperty {
