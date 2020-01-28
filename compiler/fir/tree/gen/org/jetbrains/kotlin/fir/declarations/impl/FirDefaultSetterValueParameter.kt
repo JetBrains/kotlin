@@ -42,6 +42,7 @@ class FirDefaultSetterValueParameter(
     override var setter: FirPropertyAccessor? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var defaultValue: FirExpression? = null
+    override var varargElementType: FirTypeRef? = null
     override val isCrossinline: Boolean = false
     override val isNoinline: Boolean = false
     override val isVararg: Boolean = false
@@ -60,6 +61,7 @@ class FirDefaultSetterValueParameter(
         setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         defaultValue?.accept(visitor, data)
+        varargElementType?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
@@ -101,6 +103,7 @@ class FirDefaultSetterValueParameter(
         delegate = delegate?.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         defaultValue = defaultValue?.transformSingle(transformer, data)
+        varargElementType = varargElementType?.transformSingle(transformer, data)
         return this
     }
 

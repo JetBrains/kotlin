@@ -552,12 +552,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             parents += modifiableVariable.withArg(valueParameter)
             defaultTrue("isVal", true)
             defaultFalse("isVar", withGetter = true)
+            defaultNull("varargElementType")
             defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", "delegateFieldSymbol", withGetter = true)
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {
             default("name", "Name.identifier(\"value\")")
-            defaultNull("defaultValue", "initializer", "delegate", "receiverTypeRef", "delegateFieldSymbol", "getter", "setter")
+            defaultNull("defaultValue", "initializer", "delegate", "receiverTypeRef", "delegateFieldSymbol", "getter", "setter", "varargElementType")
             defaultFalse("isCrossinline", "isNoinline", "isVararg", "isVar")
             defaultTrue("isVal")
         }

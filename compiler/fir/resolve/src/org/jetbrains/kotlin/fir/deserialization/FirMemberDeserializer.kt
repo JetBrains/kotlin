@@ -323,6 +323,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isVararg = proto.varargElementType(c.typeTable) != null
             ).apply {
                 annotations += c.annotationDeserializer.loadValueParameterAnnotations(proto, c.nameResolver)
+                varargElementType = proto.varargElementType(c.typeTable)?.toTypeRef(c)
             }
         }.toList()
     }

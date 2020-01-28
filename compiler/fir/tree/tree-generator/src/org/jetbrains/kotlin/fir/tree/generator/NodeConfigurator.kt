@@ -327,6 +327,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         valueParameter.configure {
             parentArg(variable, "F", valueParameter)
             +field("defaultValue", expression, nullable = true)
+            +field("varargElementType", typeRef, nullable = true)
             generateBooleanFields("crossinline", "noinline", "vararg")
         }
 
@@ -424,6 +425,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         namedArgumentExpression.configure {
             +name
+        }
+
+        varargArgumentExpression.configure {
+            +fieldList("arguments", expression)
+            +field("varargElementType", typeRef)
         }
 
         resolvedQualifier.configure {

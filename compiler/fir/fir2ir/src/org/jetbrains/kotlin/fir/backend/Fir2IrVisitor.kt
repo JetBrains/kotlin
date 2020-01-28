@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
@@ -672,6 +673,13 @@ class Fir2IrVisitor(
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: Any?): IrElement {
         // TODO: change this temporary hack to something correct
         return wrappedArgumentExpression.expression.toIrExpression()
+    }
+
+    override fun visitVarargArgumentExpression(varargArgumentExpression: FirVarargArgumentExpression, data: Any?): IrElement {
+        val irReturnType = varargArgumentExpression.typeRef.toIrType(session, declarationStorage)
+        return IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irReturnType,
+                            varargArgumentExpression.varargElementType.toIrType(session, declarationStorage),
+                            varargArgumentExpression.arguments.map { it.toIrExpression() })
     }
 
     private fun FirReference.statementOrigin(): IrStatementOrigin? {

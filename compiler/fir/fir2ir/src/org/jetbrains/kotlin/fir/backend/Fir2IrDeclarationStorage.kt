@@ -686,7 +686,8 @@ class Fir2IrDeclarationStorage(
                 IrValueParameterImpl(
                     startOffset, endOffset, origin, symbol,
                     valueParameter.name, index, type,
-                    null, valueParameter.isCrossinline, valueParameter.isNoinline
+                    valueParameter.varargElementType?.toIrType(session, this),
+                    valueParameter.isCrossinline, valueParameter.isNoinline
                 ).apply {
                     descriptor.bind(this)
                     if (valueParameter.defaultValue != null) {

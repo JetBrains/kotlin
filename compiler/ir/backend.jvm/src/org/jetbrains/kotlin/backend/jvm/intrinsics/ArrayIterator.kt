@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
@@ -29,11 +31,15 @@ object ArrayIterator : IntrinsicMethod() {
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        val owner = context.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
+        val isPrimitive = ((expression.type as? IrSimpleType)?.arguments?.size ?: 0) == 0
+        val owner =
+            if (isPrimitive) context.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
+            else context.typeMapper.mapClass(context.irBuiltIns.arrayClass.owner)
+
         return IrIntrinsicFunction.create(expression, signature, context, owner) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =
-                if (AsmUtil.isPrimitive(owner.elementType))
+                if (isPrimitive)
                     "kotlin/jvm/internal/ArrayIteratorsKt"
                 else
                     "kotlin/jvm/internal/ArrayIteratorKt"

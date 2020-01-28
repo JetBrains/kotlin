@@ -89,6 +89,7 @@ fun ConeKotlinType.toIrType(
 
 private fun getPrimitiveArrayType(classId: ClassId?, irBuiltIns: IrBuiltIns): IrClassifierSymbol? {
     val irType = when (classId) {
+        ClassId(FqName("kotlin"), FqName("Array"), false) -> return irBuiltIns.arrayClass
         ClassId(FqName("kotlin"), FqName("BooleanArray"), false) -> irBuiltIns.booleanType
         ClassId(FqName("kotlin"), FqName("ByteArray"), false) -> irBuiltIns.byteType
         ClassId(FqName("kotlin"), FqName("CharArray"), false) -> irBuiltIns.charType

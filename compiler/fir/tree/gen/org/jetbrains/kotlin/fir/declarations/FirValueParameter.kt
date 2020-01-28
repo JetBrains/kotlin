@@ -38,6 +38,7 @@ abstract class FirValueParameter : FirPureAbstractElement(), FirVariable<FirValu
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
     abstract val defaultValue: FirExpression?
+    abstract val varargElementType: FirTypeRef?
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
     abstract val isVararg: Boolean

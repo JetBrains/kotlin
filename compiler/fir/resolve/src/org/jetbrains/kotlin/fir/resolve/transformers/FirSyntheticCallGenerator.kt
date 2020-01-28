@@ -122,7 +122,8 @@ class FirSyntheticCallGenerator(
             )
         val fakeCallElement = FirFunctionCallImpl(null).copy(calleeReference = reference, arguments = arguments)
 
-        return callCompleter.completeCall(fakeCallElement, expectedTypeRef).arguments[0] as FirCallableReferenceAccess?
+        val argument = callCompleter.completeCall(fakeCallElement, expectedTypeRef).arguments[0]
+        return ((argument as? FirVarargArgumentExpression)?.arguments?.get(0) ?: argument) as FirCallableReferenceAccess?
     }
 
     private fun generateCalleeReferenceWithCandidate(
