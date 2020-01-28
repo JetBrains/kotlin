@@ -44,7 +44,7 @@ fun use(a: A, b: B, c: C) {
     c.f()
 
     A.D
-    B.<!AMBIGUITY!>D<!>
+    B.D
     C.D
 
     A.bar()

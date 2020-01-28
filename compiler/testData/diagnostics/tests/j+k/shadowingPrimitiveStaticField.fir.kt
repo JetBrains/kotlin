@@ -4,9 +4,9 @@ import aa.B
 
 fun use() {
     // checking that CONST is of platform type
-    B.<!AMBIGUITY!>CONST<!> = null
-    B.<!AMBIGUITY!>CONST<!>?.<!UNRESOLVED_REFERENCE!>length<!>
-    B.<!AMBIGUITY!>CONST<!>.<!UNRESOLVED_REFERENCE!>length<!>
+    B.CONST = null
+    B.CONST?.length
+    B.CONST.length
 }
 
 // FILE: aa/A.java

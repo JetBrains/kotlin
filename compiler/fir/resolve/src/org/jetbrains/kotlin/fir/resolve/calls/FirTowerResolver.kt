@@ -82,23 +82,25 @@ class FirTowerResolver(
         resolvedQualifier: FirResolvedQualifier,
         manager: TowerResolveManager
     ): CandidateCollector {
-        val qualifierScope = if (resolvedQualifier.classId == null) {
-            FirExplicitSimpleImportingScope(
-                listOf(
-                    FirResolvedImportImpl(
-                        FirImportImpl(source = null, importedFqName = FqName.topLevel(info.name), isAllUnder = false, aliasName = null),
-                        resolvedQualifier.packageFqName,
-                        relativeClassName = null
-                    )
-                ), session, components.scopeSession
+        val qualifierScopes = if (resolvedQualifier.classId == null) {
+            listOf(
+                FirExplicitSimpleImportingScope(
+                    listOf(
+                        FirResolvedImportImpl(
+                            FirImportImpl(source = null, importedFqName = FqName.topLevel(info.name), isAllUnder = false, aliasName = null),
+                            resolvedQualifier.packageFqName,
+                            relativeClassName = null
+                        )
+                    ), session, components.scopeSession
+                )
             )
         } else {
-            QualifierReceiver(resolvedQualifier).qualifierScope(session, components.scopeSession)
+            QualifierReceiver(resolvedQualifier).qualifierScopes(session, components.scopeSession)
         }
 
-        if (qualifierScope != null) {
+        for ((depth, qualifierScope) in qualifierScopes.withIndex()) {
             manager.processLevel(
-                ScopeTowerLevel(session, components, qualifierScope), info.noStubReceiver(), TowerGroup.Qualifier
+                ScopeTowerLevel(session, components, qualifierScope), info.noStubReceiver(), TowerGroup.Qualifier(depth)
             )
             if (collector.isSuccess()) return collector
         }

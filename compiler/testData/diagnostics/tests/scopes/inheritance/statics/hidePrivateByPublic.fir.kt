@@ -30,7 +30,7 @@ fun test() {
     B.a
     B.foo()
     B.foo(1)
-    B.<!AMBIGUITY!>b<!>
+    B.b
     B.bar()
     B.bar(1)
 }

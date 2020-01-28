@@ -28,5 +28,5 @@ fun test() {
     B.field
 
     E.<!AMBIGUITY!>field<!>
-    O.<!AMBIGUITY!>field<!>
+    O.field
 }

@@ -12,7 +12,7 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
 
     class Weakened(depth: Int) : WithDepth(-10, depth)
 
-    object Qualifier : TowerGroupKind(0)
+    class Qualifier(depth: Int) : WithDepth(0, depth)
 
     class TopPrioritized(depth: Int) : WithDepth(1, depth)
 
@@ -47,7 +47,7 @@ class TowerGroup private constructor(private val list: List<TowerGroupKind>) : C
 
         val Start = kindOf(TowerGroupKind.Start)
 
-        val Qualifier = kindOf(TowerGroupKind.Qualifier)
+        fun Qualifier(depth: Int) = kindOf(TowerGroupKind.Qualifier(depth))
 
         val Member = kindOf(TowerGroupKind.Member)
 
@@ -67,8 +67,6 @@ class TowerGroup private constructor(private val list: List<TowerGroupKind>) : C
     private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(list + kind)
 
     fun Weakened(depth: Int) = kindOf(TowerGroupKind.Weakened(depth))
-
-    val Qualifier get() = kindOf(TowerGroupKind.Qualifier)
 
     val Member get() = kindOf(TowerGroupKind.Member)
 

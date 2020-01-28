@@ -13,4 +13,4 @@ public class Bbb extends Aaa {
 
 // FILE: b.kt
 
-fun foo() = Bbb.<!AMBIGUITY!>i<!>
+fun foo() = Bbb.i

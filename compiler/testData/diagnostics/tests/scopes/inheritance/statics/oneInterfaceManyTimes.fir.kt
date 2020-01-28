@@ -47,7 +47,7 @@ fun test() {
     D.bar()
     D.baz()
 
-    E.<!AMBIGUITY!>a<!>
+    E.a
     E.b
     E.c
     E.bar()

@@ -25,8 +25,8 @@ public class O implements A, B {
 
 fun test() {
     A.field
-    B.<!AMBIGUITY!>field<!>
+    B.field
 
     E.<!AMBIGUITY!>field<!>
-    O.<!AMBIGUITY!>field<!>
+    O.field
 }
