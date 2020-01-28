@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
+import com.intellij.DynamicBundle;
 import com.intellij.codeInsight.ContainerProvider;
 import com.intellij.codeInsight.runner.JavaMainMethodProvider;
 import com.intellij.core.JavaCoreApplicationEnvironment;
@@ -31,6 +32,7 @@ public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnviron
     }
 
     private static void registerExtensionPoints() {
+        registerApplicationExtensionPoint(DynamicBundle.LanguageBundleEP.EP_NAME, DynamicBundle.LanguageBundleEP.class);
         registerApplicationExtensionPoint(FileContextProvider.EP_NAME, FileContextProvider.class);
 
         registerApplicationExtensionPoint(MetaDataContributor.EP_NAME, MetaDataContributor.class);
