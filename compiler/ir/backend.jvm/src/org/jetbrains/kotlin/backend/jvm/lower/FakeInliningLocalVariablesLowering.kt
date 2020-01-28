@@ -14,12 +14,8 @@ import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -44,16 +40,11 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
         }
     }
 
-    override fun handleInlineFunctionCallableReferenceParam(valueArgument: IrCallableReference) {
-        // Do not record inline function callable reference parameters. They will not be used.
-    }
-
-    override fun handleInlineFunctionLambdaParam(lambdaReference: IrFunctionReference, callee: IrFunction, callSite: IrDeclaration?) {
-        // Do not record lambda parameters. Instead deal with them now.
-        val lambda = lambdaReference.symbol.owner
+    override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
+        val lambda = argument.symbol.owner
         if (lambda.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
             val argumentToFunctionName = context.methodSignatureMapper.mapFunctionName(callee)
-            val lambdaReferenceName = context.getLocalClassType(lambdaReference)!!.internalName.substringAfterLast("/")
+            val lambdaReferenceName = context.getLocalClassType(argument)!!.internalName.substringAfterLast("/")
             val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"
             lambda.addFakeLocalVariable(localName)
         }

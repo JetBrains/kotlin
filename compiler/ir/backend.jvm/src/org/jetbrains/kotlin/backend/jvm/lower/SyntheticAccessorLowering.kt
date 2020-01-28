@@ -41,11 +41,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+    data class LambdaCallSite(val scope: IrDeclaration, val crossinline: Boolean)
+
     private val pendingAccessorsToAdd = mutableListOf<IrFunction>()
-    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
+    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, LambdaCallSite>()
 
     override fun lower(irFile: IrFile) {
-        inlineLambdaToCallSite.putAll(IrInlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
+        irFile.accept(object : IrInlineReferenceLocator(context) {
+            override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
+                inlineLambdaToCallSite[argument.symbol.owner] = LambdaCallSite(scope, parameter.isCrossinline)
+            }
+        }, null)
+
         irFile.transformChildrenVoid(this)
 
         for (accessor in pendingAccessorsToAdd) {
@@ -509,16 +516,18 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 this == JavaVisibilities.PROTECTED_AND_PACKAGE ||
                 this == JavaVisibilities.PROTECTED_STATIC_VISIBILITY
 
-    private fun IrDeclaration.getAccessContext(withSuper: Boolean): IrDeclarationContainer? = when {
+    private fun IrDeclaration.getAccessContext(allowSamePackage: Boolean): IrDeclarationContainer? = when {
         this is IrDeclarationContainer -> this
-        // For inline lambdas, we can navigate to the only call site directly.
-        this in inlineLambdaToCallSite -> inlineLambdaToCallSite[this]?.getAccessContext(withSuper)
+        // For inline lambdas, we can navigate to the only call site directly. Crossinline lambdas might be inlined
+        // into other classes in the same package, so private/super require accessors anyway.
+        this in inlineLambdaToCallSite ->
+            inlineLambdaToCallSite[this]!!.takeIf { allowSamePackage || !it.crossinline }?.scope?.getAccessContext(allowSamePackage)
         // Accesses from inline functions can actually be anywhere; even private inline functions can be
         // inlined into a different class, e.g. a callable reference. For protected inline functions
         // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
         // TODO scan nested classes for calls to private inline functions?
         this is IrFunction && isInline -> null
-        else -> (parent as? IrDeclaration)?.getAccessContext(withSuper)
+        else -> (parent as? IrDeclaration)?.getAccessContext(allowSamePackage)
     }
 
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
@@ -547,7 +556,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
-        val contextDeclarationContainer = (currentScope!!.irElement as IrDeclaration).getAccessContext(withSuper) ?: return false
+        val contextDeclarationContainer =
+            (currentScope!!.irElement as IrDeclaration).getAccessContext(declaration.visibility.isProtected && !withSuper) ?: return false
 
         val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer.getPackageFragment()?.fqName
         val fromSubclassOfReceiversClass = contextDeclarationContainer is IrClass && symbolDeclarationContainer is IrClass &&

@@ -641,17 +641,18 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun markSuspendLambdas(irElement: IrElement): Pair<List<SuspendLambdaInfo>, List<IrFunction>> {
         val suspendLambdas = arrayListOf<SuspendLambdaInfo>()
         val capturesCrossinline = mutableSetOf<IrCallableReference>()
-        val visitor = object : IrInlineReferenceLocator(context) {
+        val inlineReferences = mutableSetOf<IrCallableReference>()
+        irElement.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
-            override fun handleInlineFunctionCallableReferenceParam(valueArgument: IrCallableReference) {
-                super.handleInlineFunctionCallableReferenceParam(valueArgument)
-                val getValue = (valueArgument as? IrGetValue) ?: return
+            override fun visitInlineReference(argument: IrCallableReference) {
+                inlineReferences.add(argument)
+                val getValue = (argument as? IrGetValue) ?: return
                 val parameter = getValue.symbol.owner as? IrValueParameter ?: return
                 if (parameter.isCrossinline) {
-                    capturesCrossinline += valueArgument
+                    capturesCrossinline += argument
                 }
             }
 
@@ -676,9 +677,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     )
                 }
             }
-        }
-        irElement.acceptChildrenVoid(visitor)
-        return suspendLambdas to visitor.inlineReferences.map { it.symbol.owner as IrFunction }
+        })
+        return suspendLambdas to inlineReferences.map { it.symbol.owner as IrFunction }
     }
 
     private class SuspendLambdaInfo(
