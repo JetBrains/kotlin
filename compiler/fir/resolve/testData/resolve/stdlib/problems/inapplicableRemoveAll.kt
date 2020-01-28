@@ -1,5 +1,5 @@
 fun test(list: MutableList<String>) {
-    list.<!AMBIGUITY!>removeAll<!> {
-        <!UNRESOLVED_REFERENCE!>it<!>.<!AMBIGUITY!>isEmpty<!>()
+    list.removeAll {
+        it.isEmpty()
     }
 }

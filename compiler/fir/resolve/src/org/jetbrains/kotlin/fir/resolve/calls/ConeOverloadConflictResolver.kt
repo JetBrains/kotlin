@@ -29,10 +29,28 @@ class ConeOverloadConflictResolver(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean
     ): Set<Candidate> {
+        return chooseMaximallySpecificCandidates(candidates, discriminateGenerics, discriminateSAMs = true)
+    }
+
+    private fun chooseMaximallySpecificCandidates(
+        candidates: Set<Candidate>,
+        discriminateGenerics: Boolean,
+        discriminateSAMs: Boolean
+    ): Set<Candidate> {
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
         if (discriminateGenerics) {
             findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
+        }
+
+        if (discriminateSAMs) {
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesSAM }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(filtered, discriminateGenerics, discriminateSAMs = false)
+            }
         }
 
         return candidates

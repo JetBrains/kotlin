@@ -11,8 +11,8 @@ public interface Runnable {
 // FILE: k.kt
 
 fun fail() {
-    <!AMBIGUITY!>foo<!>({ }, { })
-    <!AMBIGUITY!>foo<!>(::bar, { })
+    foo({ }, { })
+    foo(::bar, { })
 }
 
 fun foo(f: Runnable, selector: () -> Unit) {}

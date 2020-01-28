@@ -21,6 +21,6 @@ interface B {
 interface C : B, Other
 
 fun test(c: C) {
-    c.<!AMBIGUITY!>pluginManagement<!> {
+    c.pluginManagement {
     }
 }

@@ -104,6 +104,7 @@ class Candidate(
     lateinit var freshVariables: List<ConeTypeVariable>
     var resultingTypeForCallableReference: ConeKotlinType? = null
     var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
+    var usesSAM: Boolean = false
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
     val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()

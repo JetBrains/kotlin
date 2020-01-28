@@ -306,7 +306,9 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
-    return samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType) ?: return null
+    return samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType).apply {
+        usesSAM = true
+    } ?: return null
 }
 
 internal fun FirExpression.getExpectedType(
