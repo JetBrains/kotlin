@@ -1353,6 +1353,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/boundInnerGenericConstructor.kt");
             }
 
+            @TestMetadata("caoWithAdaptationForSam.kt")
+            public void testCaoWithAdaptationForSam() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/caoWithAdaptationForSam.kt");
+            }
+
             @TestMetadata("constructorWithAdaptedArguments.kt")
             public void testConstructorWithAdaptedArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/constructorWithAdaptedArguments.kt");
@@ -1368,11 +1373,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/importedFromObject.kt");
             }
 
-            @TestMetadata("letArrayOf.kt")
-            public void testLetArrayOf() throws Exception {
-                runTest("compiler/testData/ir/irText/expressions/callableReferences/letArrayOf.kt");
-            }
-
             @TestMetadata("typeArguments.kt")
             public void testTypeArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/typeArguments.kt");
@@ -1381,6 +1381,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             @TestMetadata("unboundMemberReferenceWithAdaptedArguments.kt")
             public void testUnboundMemberReferenceWithAdaptedArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/unboundMemberReferenceWithAdaptedArguments.kt");
+            }
+
+            @TestMetadata("withAdaptationForSam.kt")
+            public void testWithAdaptationForSam() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/withAdaptationForSam.kt");
             }
 
             @TestMetadata("withAdaptedArguments.kt")
