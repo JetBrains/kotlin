@@ -65,17 +65,6 @@ interface KotlinJsSubTargetDsl {
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
 
-interface KotlinJsIrSubTargetDsl {
-    fun testTask(body: KotlinJsTest.() -> Unit)
-    fun testTask(fn: Closure<*>) {
-        testTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
-}
-
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun runTask(body: KotlinWebpack.() -> Unit)
     fun runTask(fn: Closure<*>) {
@@ -112,36 +101,6 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     }
 }
 
-interface KotlinJsIrBrowserDsl : KotlinJsIrSubTargetDsl {
-    fun runTask(body: KotlinWebpack.() -> Unit)
-    fun runTask(fn: Closure<*>) {
-        runTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    @ExperimentalDistributionDsl
-    fun distribution(body: Distribution.() -> Unit)
-
-    @ExperimentalDistributionDsl
-    fun distribution(fn: Closure<*>) {
-        distribution {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    fun webpackTask(body: KotlinWebpack.() -> Unit)
-    fun webpackTask(fn: Closure<*>) {
-        webpackTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-}
-
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
-    fun runTask(body: NodeJsExec.() -> Unit)
-}
-
-interface KotlinJsIrNodeDsl : KotlinJsIrSubTargetDsl {
     fun runTask(body: NodeJsExec.() -> Unit)
 }
