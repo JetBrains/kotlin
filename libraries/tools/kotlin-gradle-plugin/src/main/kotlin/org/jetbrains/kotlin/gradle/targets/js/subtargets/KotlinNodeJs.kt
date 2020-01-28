@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinNodeJsIr
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import javax.inject.Inject
@@ -20,18 +21,27 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
 
     private val runTaskName = disambiguateCamelCased("run")
 
+    private val irNodejs: KotlinNodeJsIr?
+        get() = target.irTarget?.nodejs
+
     override fun produceKotlinLibrary() {
         super.produceKotlinLibrary()
-        target.irTarget?.nodejs?.produceKotlinLibrary()
+        irNodejs?.produceKotlinLibrary()
     }
 
     override fun produceExecutable() {
         super.produceExecutable()
-        target.irTarget?.nodejs?.produceExecutable()
+        irNodejs?.produceExecutable()
     }
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
+        irNodejs?.runTask(body)
+    }
+
+    override fun testTask(body: KotlinJsTest.() -> Unit) {
+        super<KotlinJsSubTarget>.testTask(body)
+        irNodejs?.testTask(body)
     }
 
     override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
