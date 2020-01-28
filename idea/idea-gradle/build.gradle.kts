@@ -17,6 +17,8 @@ dependencies {
 
     compile(project(":js:js.frontend"))
 
+    compile(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("gradle"))
     Platform[193].orHigher {

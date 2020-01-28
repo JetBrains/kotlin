@@ -13,7 +13,8 @@ dependencies {
         compileOnly(intellijPluginDep("java"))
     }
     compile(project(":kotlin-native:kotlin-native-library-reader"))
-    
+    compile(project(":kotlin-native:kotlin-native-utils"))
+
     testCompileOnly(intellijDep())
     testRuntimeOnly(intellijDep())
 }
