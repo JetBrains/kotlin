@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Example
 {
     var a1 = 0
