@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import javax.inject.Inject
@@ -547,7 +548,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         }
 
     private fun isHybridKotlinJsLibrary(file: File): Boolean =
-        LibraryUtils.isKotlinJavascriptLibrary(file) && LibraryUtils.isKotlinJavascriptIrLibrary(file)
+        LibraryUtils.isKotlinJavascriptLibrary(file) && isKotlinLibrary(file)
 
     private fun KotlinJsOptions.isPreIrBackendDisabled(): Boolean =
         listOf(
@@ -570,7 +571,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     private val libraryFilter: (File) -> Boolean
         get() = if (kotlinOptions.isIrBackendEnabled()) {
             if (kotlinOptions.isPreIrBackendDisabled()) {
-                LibraryUtils::isKotlinJavascriptIrLibrary
+                ::isKotlinLibrary
             } else {
                 ::isHybridKotlinJsLibrary
             }
