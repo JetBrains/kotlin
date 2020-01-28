@@ -51,10 +51,5 @@ class JsIrLinker(
     override fun readFileCount(moduleDescriptor: ModuleDescriptor) =
         moduleDescriptor.kotlinLibrary.fileCount()
 
-    override fun checkAccessibility(declarationDescriptor: DeclarationDescriptor): Boolean {
-        require(declarationDescriptor is DeclarationDescriptorWithVisibility)
-        return declarationDescriptor.isPublishedApi() || declarationDescriptor.visibility.let { it.isPublicAPI || it == Visibilities.INTERNAL }
-    }
-
     private val ModuleDescriptor.userName get() = kotlinLibrary.libraryFile.absolutePath
 }

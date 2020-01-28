@@ -527,7 +527,6 @@ abstract class KotlinIrLinker(
     protected abstract fun readFile(moduleDescriptor: ModuleDescriptor, fileIndex: Int): ByteArray
     protected abstract fun readFileCount(moduleDescriptor: ModuleDescriptor): Int
 
-    protected abstract fun checkAccessibility(declarationDescriptor: DeclarationDescriptor): Boolean
     protected open fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState<*> {
         error("Deserializer for declaration $key is not found")
     }
@@ -555,10 +554,6 @@ abstract class KotlinIrLinker(
 
         //
         if (!topLevelDescriptor.shouldBeDeserialized()) return null
-
-        require(checkAccessibility(topLevelDescriptor)) {
-            "Locally accessible declarations should not be accessed here $topLevelDescriptor"
-        }
 
         if (topLevelDescriptor !is DeserializedClassDescriptor && topLevelDescriptor !is DeserializedCallableMemberDescriptor) {
             return null
