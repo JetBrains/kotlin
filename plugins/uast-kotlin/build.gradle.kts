@@ -40,7 +40,7 @@ dependencies {
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
-    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native")) { isTransitive = false }
     testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-android"))

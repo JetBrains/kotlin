@@ -6,8 +6,6 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(project(":kotlin-native:kotlin-native-library-reader"))
-
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-native"))
 

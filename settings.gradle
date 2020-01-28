@@ -125,7 +125,7 @@ include ":kotlin-build-common",
         ":js:js.dce",
         ":js:js.tests",
         ":kotlin-native:kotlin-native-utils",
-        ":kotlin-native:kotlin-native-library-reader",
+        ":native:frontend.native",
         ":kotlin-native:commonizer",
         ":jps-plugin",
         ":kotlin-jps-plugin",
@@ -406,7 +406,7 @@ project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
 project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-metadata" as File
 project(':kotlin-native:kotlin-native-utils').projectDir = "$rootDir/konan/utils" as File
-project(':kotlin-native:kotlin-native-library-reader').projectDir = "$rootDir/konan/library-reader" as File
+project(':native:frontend.native').projectDir = "$rootDir/native/frontend" as File
 project(':kotlin-native:commonizer').projectDir = "$rootDir/konan/commonizer" as File
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
