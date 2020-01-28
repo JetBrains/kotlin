@@ -941,6 +941,45 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     )
 
+    @Test
+    fun testInnerClass(): Unit = checkApi(
+        """
+            interface A {
+                fun b() {}
+            }
+            class C {
+                val foo = 1
+                inner class D : A {
+                    override fun b() {
+                        print(foo)
+                    }
+                }
+            }
+        """,
+        """
+            public abstract interface A {
+              public abstract b()V
+              public final static INNERCLASS A%DefaultImpls A DefaultImpls
+            }
+            public final class A%DefaultImpls {
+              public static b(LA;)V
+              public final static INNERCLASS A%DefaultImpls A DefaultImpls
+            }
+            public final class C {
+              public <init>()V
+              private final I foo
+              public final getFoo()I
+              public final INNERCLASS C%D C D
+            }
+            public final class C%D implements A {
+              public <init>(LC;)V
+              public b()V
+              final synthetic LC; this%0
+              public final INNERCLASS C%D C D
+            }
+        """
+    )
+
     override fun setUp() {
         ComposeFlags.COMPOSER_PARAM = true
         super.setUp()
