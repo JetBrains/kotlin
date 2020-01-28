@@ -1,10 +1,10 @@
 public final class Foo$Bar : java/lang/Object {
     final Foo this$0
 
-    public void <init>(Foo $outer) {
+    public void <init>(Foo this$0) {
         Local variables:
             0 this: LFoo$Bar;
-            1 $outer: LFoo;
+            1 this$0: LFoo;
     }
 
     public final void bar() {

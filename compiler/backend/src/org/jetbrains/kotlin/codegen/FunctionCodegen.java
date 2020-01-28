@@ -805,6 +805,8 @@ public class FunctionCodegen {
             else if (kind == JvmMethodParameterKind.RECEIVER) {
                 parameterName = AsmUtil.getNameForReceiverParameter(
                         functionDescriptor, typeMapper.getBindingContext(), state.getLanguageVersionSettings());
+            } else if (kind == JvmMethodParameterKind.OUTER) {
+                parameterName = CAPTURED_THIS_FIELD; //should be 'this$X' depending on inner class nesting
             }
             else {
                 String lowercaseKind = kind.name().toLowerCase();

@@ -1,7 +1,7 @@
 public final class foo/Kotlin$A : java/lang/Object {
     final foo.Kotlin this$0
 
-    public void <init>(foo.Kotlin $outer)
+    public void <init>(foo.Kotlin this$0)
 
     public final void fooArray2()
 }
