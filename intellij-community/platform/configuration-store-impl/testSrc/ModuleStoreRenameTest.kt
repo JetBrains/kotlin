@@ -101,7 +101,7 @@ internal class ModuleStoreRenameTest {
   // project structure
   @Test
   fun `rename module using model`() = runBlocking<Unit> {
-    saveModules()
+    saveProjectState()
 
     val storage = module.storage
     val oldFile = storage.file
@@ -124,7 +124,7 @@ internal class ModuleStoreRenameTest {
   }
 
   private suspend fun testRenameModule() {
-    saveModules()
+    saveProjectState()
     val storage = module.storage
     val oldFile = storage.file
     assertThat(oldFile).isRegularFile
@@ -151,13 +151,13 @@ internal class ModuleStoreRenameTest {
     // ensure that macro value updated
     assertThat(module.stateStore.storageManager.expandMacros(StoragePathMacros.MODULE_FILE)).isEqualTo(newFile.systemIndependentPath)
 
-    dependentModule.stateStore.save()
+    saveProjectState()
     assertThat(dependentModule.storage.file.readText()).contains("""<orderEntry type="module" module-name="$newName" />""")
   }
 
   @Test
   fun `rename module parent virtual dir`() = runBlocking {
-    saveModules()
+    saveProjectState()
     val storage = module.storage
     val oldFile = storage.file
     val parentVirtualDir = storage.virtualFile!!.parent
@@ -182,14 +182,14 @@ internal class ModuleStoreRenameTest {
 
   @Test
   fun `rename module source root`() = runBlocking<Unit>(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
-    saveModules()
+    saveProjectState()
     val storage = module.storage
     val parentVirtualDir = storage.virtualFile!!.parent
     val src = VfsTestUtil.createDir(parentVirtualDir, "foo")
     withContext(AppUIExecutor.onUiThread().inWriteAction().coroutineDispatchingContext()) {
       PsiTestUtil.addSourceContentToRoots(module, src, false)
     }
-    module.stateStore.save()
+    saveProjectState()
 
     val rootManager = module.rootManager as ModuleRootManagerEx
     val stateModificationCount = rootManager.modificationCountForTests
@@ -201,8 +201,7 @@ internal class ModuleStoreRenameTest {
     assertThat(stateModificationCount).isLessThan(rootManager.modificationCountForTests)
   }
 
-  private suspend fun saveModules() {
-    module.stateStore.save()
-    dependentModule.stateStore.save()
+  private suspend fun saveProjectState() {
+    projectRule.project.stateStore.save()
   }
 }
