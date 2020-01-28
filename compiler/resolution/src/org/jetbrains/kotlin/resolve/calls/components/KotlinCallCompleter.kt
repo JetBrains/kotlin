@@ -51,14 +51,22 @@ class KotlinCallCompleter(
         candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
         candidate.checkSamWithVararg(diagnosticHolder)
 
-        return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
-            candidate.runCompletion(
-                CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle),
-                diagnosticHolder,
-                resolutionCallbacks
-            )
-        else
-            candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)
+        val completionMode =
+            CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle)
+
+        return when (completionMode) {
+            ConstraintSystemCompletionMode.FULL -> {
+                if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate)) {
+                    candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
+                } else {
+                    candidate.asCallResolutionResult(
+                        ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder, forwardToInferenceSession = true
+                    )
+                }
+            }
+            ConstraintSystemCompletionMode.PARTIAL ->
+                candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
+        }
     }
 
     private fun KotlinResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
@@ -210,7 +218,8 @@ class KotlinCallCompleter(
 
     fun KotlinResolutionCandidate.asCallResolutionResult(
         type: ConstraintSystemCompletionMode,
-        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder
+        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
+        forwardToInferenceSession: Boolean = false
     ): CallResolutionResult {
         val systemStorage = getSystem().asReadOnlyStorage()
         val allDiagnostics = diagnosticsHolder.getDiagnostics() + this.diagnosticsFromResolutionParts
@@ -222,7 +231,7 @@ class KotlinCallCompleter(
         return if (type == ConstraintSystemCompletionMode.FULL) {
             CompletedCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
         } else {
-            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage, forwardToInferenceSession)
         }
     }
 

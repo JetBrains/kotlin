@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ x: kotlin.collections.List<kotlin.String>): kotlin.Unit
+public fun </*0*/ K> materialize(): K
+public fun test(): kotlin.Unit
