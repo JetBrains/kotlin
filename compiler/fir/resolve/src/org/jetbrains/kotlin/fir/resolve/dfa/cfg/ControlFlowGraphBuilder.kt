@@ -51,6 +51,10 @@ class ControlFlowGraphBuilder {
     var levelCounter: Int = 0
         private set
 
+    private var idCounter: Int = 0
+
+    fun createId(): Int = idCounter++
+
     fun isTopLevel(): Boolean = graphs.size == 1
 
     // ----------------------------------- Named function -----------------------------------
