@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.maven
 
-import com.intellij.codeInspection.CommonProblemDescriptor
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.codeInspection.QuickFix
 import com.intellij.ide.highlighter.JavaFileType
@@ -119,7 +119,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
             val (problem, quickfix) = suggestedFix
             val file = rangesToFixFiles.entries.first { (_, range) -> index + 1 in range }.key
 
-            quickfix.applyFix(problem)
+            applyFix(quickfix, problem)
 
             KotlinTestUtils.assertEqualsToFile(file, document.text.trim())
 
@@ -147,21 +147,24 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         }
     }
 
-    private fun QuickFix<CommonProblemDescriptor>.applyFix(desc: ProblemDescriptorBase) {
-        CommandProcessor.getInstance().executeCommand(myProject, {
-            ApplicationManager.getApplication().runWriteAction {
-                applyFix(myProject, desc)
+    private fun <D: ProblemDescriptor> applyFix(quickFix: QuickFix<in D>, desc: D) {
+        CommandProcessor.getInstance().executeCommand(
+            myProject,
+            {
+                ApplicationManager.getApplication().runWriteAction {
+                    quickFix.applyFix(myProject, desc)
 
-                val manager = PsiDocumentManager.getInstance(myProject)
-                val document = manager.getDocument(PsiManager.getInstance(myProject).findFile(myProjectPom)!!)!!
-                manager.doPostponedOperationsAndUnblockDocument(document)
-                manager.commitDocument(document)
-                FileDocumentManager.getInstance().saveDocument(document)
+                    val manager = PsiDocumentManager.getInstance(myProject)
+                    val document = manager.getDocument(PsiManager.getInstance(myProject).findFile(myProjectPom)!!)!!
+                    manager.doPostponedOperationsAndUnblockDocument(document)
+                    manager.commitDocument(document)
+                    FileDocumentManager.getInstance().saveDocument(document)
+                }
 
-            }
-
-            println(myProjectPom.contentsToByteArray().toString(Charsets.UTF_8))
-        }, "quick-fix-$name", "Kotlin")
+                println(myProjectPom.contentsToByteArray().toString(Charsets.UTF_8))
+            },
+            "quick-fix-$name", "Kotlin",
+        )
     }
 
     private fun mkJavaFile() {
