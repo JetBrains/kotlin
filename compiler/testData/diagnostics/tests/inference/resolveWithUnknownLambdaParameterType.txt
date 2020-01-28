@@ -1,0 +1,12 @@
+package
+
+public fun baz(/*0*/ f: (kotlin.Int) -> kotlin.String): kotlin.Unit
+
+public object Foo {
+    private constructor Foo()
+    public final fun baz(/*0*/ vararg anys: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun testResolvedToMember(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
