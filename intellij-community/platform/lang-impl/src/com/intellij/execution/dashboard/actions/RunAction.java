@@ -36,12 +36,12 @@ public class RunAction extends ExecutorAction {
   protected void update(@NotNull AnActionEvent e, boolean running) {
     Presentation presentation = e.getPresentation();
     if (running) {
-      presentation.setText(ExecutionBundle.message("run.dashboard.rerun.action.name"));
+      presentation.setText(() -> ExecutionBundle.message("run.dashboard.rerun.action.name"));
       presentation.setDescription(ExecutionBundle.message("run.dashboard.rerun.action.description"));
       presentation.setIcon(AllIcons.Actions.Restart);
     }
     else {
-      presentation.setText(ExecutionBundle.message("run.dashboard.run.action.name"));
+      presentation.setText(() -> ExecutionBundle.message("run.dashboard.run.action.name"));
       presentation.setDescription(ExecutionBundle.message("run.dashboard.run.action.description"));
       presentation.setIcon(AllIcons.Actions.Execute);
     }

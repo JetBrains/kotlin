@@ -64,7 +64,7 @@ public class RunInspectionAction extends GotoActionBase implements DataProvider 
 
   public RunInspectionAction(String predefinedText) {
     myPredefinedText = predefinedText;
-    getTemplatePresentation().setText(IdeBundle.message("goto.inspection.action.text"));
+    getTemplatePresentation().setText(() -> IdeBundle.message("goto.inspection.action.text"));
   }
 
   @Override

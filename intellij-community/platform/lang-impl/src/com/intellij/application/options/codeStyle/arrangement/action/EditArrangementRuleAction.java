@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class EditArrangementRuleAction extends AbstractArrangementRuleAction implements DumbAware, Toggleable {
 
   public EditArrangementRuleAction() {
-    getTemplatePresentation().setText(ApplicationBundle.message("arrangement.action.rule.edit.text"));
+    getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.rule.edit.text"));
     getTemplatePresentation().setDescription(ApplicationBundle.message("arrangement.action.rule.edit.description"));
     getTemplatePresentation().setIcon(IconUtil.getEditIcon());
     setEnabledInModalContext(true);

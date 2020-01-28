@@ -38,7 +38,7 @@ public class IgnoreExternalProjectAction extends ExternalSystemToggleAction {
   private static final Logger LOG = Logger.getInstance(IgnoreExternalProjectAction.class);
 
   public IgnoreExternalProjectAction() {
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.ignore.external.projects.text", "External", 1));
+    getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.ignore.external.projects.text", "External", 1));
     getTemplatePresentation()
       .setDescription(ExternalSystemBundle.message("action.ignore.external.projects.description", "external", 1));
   }

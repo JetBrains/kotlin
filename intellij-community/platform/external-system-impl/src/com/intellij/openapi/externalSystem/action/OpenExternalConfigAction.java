@@ -19,7 +19,7 @@ public class OpenExternalConfigAction extends ExternalSystemNodeAction<ExternalC
 
   public OpenExternalConfigAction() {
     super(ExternalConfigPathAware.class);
-    getTemplatePresentation().setText(ExternalSystemBundle.message("action.open.config.text", "External"));
+    getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.open.config.text", "External"));
     getTemplatePresentation().setDescription(ExternalSystemBundle.message("action.open.config.description", "external"));
   }
 
@@ -34,7 +34,7 @@ public class OpenExternalConfigAction extends ExternalSystemNodeAction<ExternalC
     if (config == null) return false;
 
     ProjectSystemId externalSystemId = getSystemId(e);
-    e.getPresentation().setText(ExternalSystemBundle.message("action.open.config.text", externalSystemId.getReadableName()));
+    e.getPresentation().setText(() -> ExternalSystemBundle.message("action.open.config.text", externalSystemId.getReadableName()));
     e.getPresentation().setDescription(ExternalSystemBundle.message("action.open.config.description", externalSystemId.getReadableName()));
     final ExternalSystemUiAware uiAware = getExternalSystemUiAware(e);
     if (uiAware != null) {

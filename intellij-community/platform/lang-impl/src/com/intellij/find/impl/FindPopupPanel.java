@@ -521,7 +521,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     DefaultActionGroup tabOptionsGroup = new DefaultActionGroup() {{
       Presentation presentation = getTemplatePresentation();
-      presentation.setText(FindBundle.message("find.popup.show.tab.options"));
+      presentation.setText(() -> FindBundle.message("find.popup.show.tab.options"));
       presentation.setIcon(AllIcons.General.GearPlain);
       setPopup(true);
       setShortcutSet(CustomShortcutSet.fromString("alt ctrl DOWN"));

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class GradleRefreshProjectDependenciesAction extends RefreshExternalProjectAction {
   public GradleRefreshProjectDependenciesAction() {
-    getTemplatePresentation().setText(GradleBundle.message("gradle.action.refresh.dependencies.text"));
+    getTemplatePresentation().setText(() -> GradleBundle.message("gradle.action.refresh.dependencies.text"));
     getTemplatePresentation().setDescription(GradleBundle.message("gradle.action.refresh.dependencies.description"));
   }
 

@@ -142,11 +142,11 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     }
 
     if (isPackage) {
-      presentation.setText(IdeBundle.message("action.package"));
+      presentation.setText(() -> IdeBundle.message("action.package"));
       presentation.setIcon(PlatformIcons.PACKAGE_ICON);
     }
     else {
-      presentation.setText(IdeBundle.message("action.directory"));
+      presentation.setText(() -> IdeBundle.message("action.directory"));
       presentation.setIcon(PlatformIcons.FOLDER_ICON);
     }
   }

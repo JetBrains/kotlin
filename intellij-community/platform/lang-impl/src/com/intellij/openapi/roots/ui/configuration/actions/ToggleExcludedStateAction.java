@@ -37,7 +37,7 @@ public class ToggleExcludedStateAction extends ContentEntryEditingAction {
     super(tree);
     myEntryTreeEditor = entryEditor;
     final Presentation templatePresentation = getTemplatePresentation();
-    templatePresentation.setText(ProjectBundle.message("module.toggle.excluded.action"));
+    templatePresentation.setText(() -> ProjectBundle.message("module.toggle.excluded.action"));
     templatePresentation.setDescription(ProjectBundle.message("module.toggle.excluded.action.description"));
     templatePresentation.setIcon(AllIcons.Modules.ExcludeRoot);
   }
@@ -72,6 +72,6 @@ public class ToggleExcludedStateAction extends ContentEntryEditingAction {
   public void update(@NotNull final AnActionEvent e) {
     super.update(e);
     final Presentation presentation = e.getPresentation();
-    presentation.setText(ProjectBundle.message("module.toggle.excluded.action"));
+    presentation.setText(() -> ProjectBundle.message("module.toggle.excluded.action"));
   }
 }

@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class RemoveArrangementRuleAction extends AbstractArrangementRuleAction implements DumbAware {
 
   public RemoveArrangementRuleAction() {
-    getTemplatePresentation().setText(ApplicationBundle.message("arrangement.action.rule.remove.text"));
+    getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.rule.remove.text"));
     getTemplatePresentation().setDescription(ApplicationBundle.message("arrangement.action.rule.remove.description"));
     getTemplatePresentation().setIcon(IconUtil.getRemoveIcon());
     setEnabledInModalContext(true);

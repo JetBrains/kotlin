@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class EditRuleAliasesDefinitionAction extends AnAction {
 
   public EditRuleAliasesDefinitionAction() {
-    getTemplatePresentation().setText(ApplicationBundle.message("arrangement.action.alias.rule.add.edit.text"));
+    getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.alias.rule.add.edit.text"));
     getTemplatePresentation().setDescription(ApplicationBundle.message("arrangement.action.alias.rule.add.edit.description"));
     getTemplatePresentation().setIcon(AllIcons.General.GearPlain);
   }

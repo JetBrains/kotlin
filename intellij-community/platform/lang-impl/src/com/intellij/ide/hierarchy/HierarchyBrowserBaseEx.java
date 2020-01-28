@@ -684,7 +684,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
       else {
         String typeName = ElementDescriptionUtil.getElementDescription(selectedElement, UsageViewTypeLocation.INSTANCE);
         if (StringUtil.isNotEmpty(typeName)) {
-          presentation.setText(IdeBundle.message("action.base.on.this.0", StringUtil.capitalize(typeName)));
+          presentation.setText(() -> IdeBundle.message("action.base.on.this.0", StringUtil.capitalize(typeName)));
         }
         presentation.setEnabled(isEnabled(browser, selectedElement));
       }
