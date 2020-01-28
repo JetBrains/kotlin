@@ -38,7 +38,7 @@ class FirResolvedCallableReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildResolvedCallableReference(init: FirResolvedCallableReferenceBuilder.() -> Unit): FirResolvedCallableReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

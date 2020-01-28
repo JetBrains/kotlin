@@ -60,7 +60,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     }
 
 
-    @UseExperimental(PrivateForInline::class)
+    @OptIn(PrivateForInline::class)
     internal inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {
         if (!implicitTypeOnly) return l()
         implicitTypeOnly = false
@@ -149,11 +149,11 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override var container: FirDeclaration
             get() = containerIfAny!!
             private set(value) {
-                @UseExperimental(PrivateForInline::class)
+                @OptIn(PrivateForInline::class)
                 containerIfAny = value
             }
 
-        @UseExperimental(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
         inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
             val prevContainer = containerIfAny
             containerIfAny = declaration
@@ -162,7 +162,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             return result
         }
 
-        @UseExperimental(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
         inline fun <T> withLocalContext(localContext: FirLocalContext, f: () -> T): T {
             val existedStack = this.implicitReceiverStack
             val existedLocalScopes = this.localScopes
@@ -178,7 +178,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             }
         }
 
-        @UseExperimental(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
         inline fun <R> withLocalScopesCleanup(l: () -> R): R {
             val initialLocalScopes = localScopes
             return try {
@@ -188,7 +188,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             }
         }
 
-        @UseExperimental(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
         fun addLocalScope(localScope: FirLocalScope) {
             localScopes = localScopes.add(localScope)
         }
@@ -221,7 +221,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             localContextForAnonymousFunctions.clear()
         }
 
-        @UseExperimental(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
         private inline fun updateLastScope(transform: FirLocalScope.() -> FirLocalScope) {
             val lastScope = localScopes.lastOrNull() ?: return
             localScopes = localScopes.set(localScopes.size - 1, lastScope.transform())

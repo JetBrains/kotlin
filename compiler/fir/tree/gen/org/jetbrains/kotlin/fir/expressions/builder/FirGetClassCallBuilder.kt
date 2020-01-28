@@ -47,7 +47,7 @@ class FirGetClassCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fi
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildGetClassCall(init: FirGetClassCallBuilder.() -> Unit = {}): FirGetClassCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

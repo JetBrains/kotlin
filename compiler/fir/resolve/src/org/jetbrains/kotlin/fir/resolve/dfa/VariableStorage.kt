@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-@UseExperimental(DfaInternals::class)
+@OptIn(DfaInternals::class)
 class VariableStorage(val session: FirSession) {
     private var counter = 1
     private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
@@ -149,7 +149,7 @@ class VariableStorage(val session: FirSession) {
         syntheticVariables.clear()
     }
 
-    @UseExperimental(ExperimentalContracts::class)
+    @OptIn(ExperimentalContracts::class)
     fun AbstractFirBasedSymbol<*>?.isStable(originalFir: FirElement): Boolean {
         contract {
             returns(true) implies(this@isStable != null)

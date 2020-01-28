@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-@UseExperimental(TypeRefinement::class)
+@OptIn(TypeRefinement::class)
 class KotlinTypeRefinerImpl(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager

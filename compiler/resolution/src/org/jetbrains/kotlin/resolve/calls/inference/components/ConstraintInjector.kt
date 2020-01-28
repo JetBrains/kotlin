@@ -139,7 +139,7 @@ class ConstraintInjector(
             return baseContext.prepareType(type)
         }
 
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
             return if (type is KotlinType) {
                 kotlinTypeRefiner.refineType(type)

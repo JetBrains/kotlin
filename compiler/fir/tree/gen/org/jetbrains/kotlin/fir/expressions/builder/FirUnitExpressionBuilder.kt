@@ -27,7 +27,7 @@ class FirUnitExpressionBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirExpression {
         return FirUnitExpression(
             source,
@@ -37,7 +37,7 @@ class FirUnitExpressionBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildUnitExpression(init: FirUnitExpressionBuilder.() -> Unit = {}): FirExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

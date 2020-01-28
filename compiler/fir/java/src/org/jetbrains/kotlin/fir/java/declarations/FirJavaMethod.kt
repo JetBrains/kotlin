@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_OPERATION_NAMES
 import kotlin.properties.Delegates
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirJavaMethod @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,
@@ -80,7 +80,7 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
     var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaMethod {
         val status = FirDeclarationStatusImpl(visibility, modality).apply {
             isStatic = this@FirJavaMethodBuilder.isStatic

@@ -67,7 +67,7 @@ public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Array<*>,
     if (isEmpty()) defaultValue() else this
 
 
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 @SinceKotlin("1.3")
 @PublishedApi
 @kotlin.jvm.JvmName("contentDeepEquals")
@@ -120,7 +120,7 @@ internal fun <T> Array<out T>.contentDeepToStringImpl(): String {
     }
 }
 
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 private fun <T> Array<out T>.contentDeepToStringInternal(result: StringBuilder, processed: MutableList<Array<*>>) {
     if (this in processed) {
         result.append("[...]")

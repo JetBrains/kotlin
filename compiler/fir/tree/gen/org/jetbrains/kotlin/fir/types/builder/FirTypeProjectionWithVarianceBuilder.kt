@@ -35,7 +35,7 @@ class FirTypeProjectionWithVarianceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildTypeProjectionWithVariance(init: FirTypeProjectionWithVarianceBuilder.() -> Unit): FirTypeProjectionWithVariance {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

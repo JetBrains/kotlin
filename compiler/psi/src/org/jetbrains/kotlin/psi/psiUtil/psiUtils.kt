@@ -484,7 +484,7 @@ fun LazyParseablePsiElement.getContainingKtFile(): KtFile {
     throw IllegalStateException("KtElement not inside KtFile: $file with text \"$fileString\" for element $this of type ${this::class.java} node = ${this.node}")
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun KtExpression.isNull(): Boolean {
     contract {
         returns(true) implies (this@isNull is KtConstantExpression)

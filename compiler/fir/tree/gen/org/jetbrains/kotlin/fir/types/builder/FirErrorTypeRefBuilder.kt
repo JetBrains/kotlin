@@ -40,7 +40,7 @@ class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildErrorTypeRef(init: FirErrorTypeRefBuilder.() -> Unit): FirErrorTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

@@ -36,7 +36,7 @@ class FirDelegateFieldReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildDelegateFieldReference(init: FirDelegateFieldReferenceBuilder.() -> Unit): FirDelegateFieldReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

@@ -352,7 +352,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 val servicesClient = services.clientSide
                 val compResultsClient = kotlinCompilerClient.createCompResults().clientSide
                 val threadCount = 10
-                @UseExperimental(ObsoleteCoroutinesApi::class)
+                @OptIn(ObsoleteCoroutinesApi::class)
                 fun runThread(i: Int) =
                     async(newSingleThreadContext("thread_$i")) {
                         val jar = tmpdir.absolutePath + File.separator + "hello.$i.jar"

@@ -338,7 +338,7 @@ public fun Random.nextLong(range: LongRange): Long = when {
 internal expect fun defaultPlatformRandom(): Random
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 internal fun fastLog2(value: Int): Int = 31 - value.countLeadingZeroBits()
 
 /** Takes upper [bitCount] bits (0..32) from this number. */

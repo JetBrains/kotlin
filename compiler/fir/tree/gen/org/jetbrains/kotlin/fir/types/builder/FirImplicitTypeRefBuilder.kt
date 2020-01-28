@@ -30,7 +30,7 @@ class FirImplicitTypeRefBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildImplicitTypeRef(init: FirImplicitTypeRefBuilder.() -> Unit = {}): FirImplicitTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

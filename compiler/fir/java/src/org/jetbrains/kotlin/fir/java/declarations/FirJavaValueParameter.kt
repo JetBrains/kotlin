@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,
@@ -48,7 +48,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
 @FirBuilderDsl
 class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaValueParameter {
         return FirJavaValueParameter(
             source,

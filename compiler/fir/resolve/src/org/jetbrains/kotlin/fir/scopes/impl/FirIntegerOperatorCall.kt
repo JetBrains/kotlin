@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirIntegerOperatorCall @FirImplementationDetail constructor(
     source: FirSourceElement?,
     typeRef: FirTypeRef,
@@ -60,7 +60,7 @@ class FirIntegerOperatorCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder,
     override val arguments: MutableList<FirExpression> = mutableListOf()
     lateinit var calleeReference: FirNamedReference
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirIntegerOperatorCall {
         return FirIntegerOperatorCall(
             source,

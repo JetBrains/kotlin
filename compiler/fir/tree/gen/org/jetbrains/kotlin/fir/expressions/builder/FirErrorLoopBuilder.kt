@@ -42,7 +42,7 @@ class FirErrorLoopBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildErrorLoop(init: FirErrorLoopBuilder.() -> Unit): FirErrorLoop {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

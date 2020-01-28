@@ -46,7 +46,7 @@ class FirBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildBlock(init: FirBlockBuilder.() -> Unit = {}): FirBlock {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

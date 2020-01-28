@@ -163,7 +163,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         flow.backwardsAliasMap = flow.backwardsAliasMap.put(original, variables - alias)
     }
 
-    @UseExperimental(DfaInternals::class)
+    @OptIn(DfaInternals::class)
     private fun PersistentFlow.getApprovedTypeStatementsDiff(variable: RealVariable, parentFlow: PersistentFlow): MutableTypeStatement {
         var flow = this
         val result = MutableTypeStatement(variable)

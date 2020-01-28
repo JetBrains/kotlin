@@ -32,7 +32,7 @@ class FirExplicitSuperReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildExplicitSuperReference(init: FirExplicitSuperReferenceBuilder.() -> Unit): FirSuperReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

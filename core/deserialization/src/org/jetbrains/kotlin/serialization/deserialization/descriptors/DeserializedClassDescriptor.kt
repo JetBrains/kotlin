@@ -227,7 +227,7 @@ class DeserializedClassDescriptor(
         }
 
         private val refinedSupertypes = c.storageManager.createLazyValue {
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
             kotlinTypeRefiner.refineSupertypes(classDescriptor)
         }
 

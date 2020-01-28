@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
     source: FirSourceElement?,
     session: FirSession,

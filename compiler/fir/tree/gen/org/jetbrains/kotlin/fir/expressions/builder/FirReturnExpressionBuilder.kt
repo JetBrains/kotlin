@@ -50,7 +50,7 @@ class FirReturnExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionB
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildReturnExpression(init: FirReturnExpressionBuilder.() -> Unit): FirReturnExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

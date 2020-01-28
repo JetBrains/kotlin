@@ -34,7 +34,7 @@ class FirErrorNamedReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildErrorNamedReference(init: FirErrorNamedReferenceBuilder.() -> Unit): FirErrorNamedReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

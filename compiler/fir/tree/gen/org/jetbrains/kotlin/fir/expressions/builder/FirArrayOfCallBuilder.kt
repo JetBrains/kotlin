@@ -47,7 +47,7 @@ class FirArrayOfCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fir
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildArrayOfCall(init: FirArrayOfCallBuilder.() -> Unit = {}): FirArrayOfCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

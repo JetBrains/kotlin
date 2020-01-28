@@ -3,8 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseExperimental(ExperimentalTime::class)
-
+@file:OptIn(ExperimentalTime::class)
 package kotlin.jdk8.time.test
 
 import kotlin.random.Random

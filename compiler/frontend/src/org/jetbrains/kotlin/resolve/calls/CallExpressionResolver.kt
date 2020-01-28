@@ -378,7 +378,7 @@ class CallExpressionResolver(
 
         val selector = element.selector
 
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         var selectorTypeInfo =
             getUnsafeSelectorTypeInfo(receiver, callOperationNode, selector, context, initialDataFlowInfoForArguments)
                 .run {

@@ -47,7 +47,7 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildStringConcatenationCall(init: FirStringConcatenationCallBuilder.() -> Unit = {}): FirStringConcatenationCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

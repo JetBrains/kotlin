@@ -778,7 +778,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     private val PARALLEL_THREADS_TO_COMPILE = 10
     private val PARALLEL_WAIT_TIMEOUT_S = 60L
 
-    @UseExperimental(ObsoleteCoroutinesApi::class)
+    @OptIn(ObsoleteCoroutinesApi::class)
     private fun runCompile(
         daemon: CompileServiceAsync,
         resultCodes: Array<Int?>,
@@ -878,7 +878,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         const val connectionFailedErr = -100
     }
 
-    @UseExperimental(ObsoleteCoroutinesApi::class)
+    @OptIn(ObsoleteCoroutinesApi::class)
     fun ignore_testParallelDaemonStart() {
 
         val doneLatch = CountDownLatch(ParallelStartParams.threads)

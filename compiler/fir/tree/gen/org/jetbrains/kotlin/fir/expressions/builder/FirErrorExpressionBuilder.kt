@@ -47,7 +47,7 @@ class FirErrorExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildErrorExpression(init: FirErrorExpressionBuilder.() -> Unit): FirErrorExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

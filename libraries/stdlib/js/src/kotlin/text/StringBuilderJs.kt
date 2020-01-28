@@ -46,7 +46,7 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
         return this
     }
 
-    @UseExperimental(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalStdlibApi::class)
     actual override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder = this.appendRange(value, startIndex, endIndex)
 
     /**

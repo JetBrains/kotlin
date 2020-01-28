@@ -43,7 +43,7 @@ class FirVarargArgumentsExpressionBuilder : FirAnnotationContainerBuilder, FirEx
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildVarargArgumentsExpression(init: FirVarargArgumentsExpressionBuilder.() -> Unit): FirVarargArgumentsExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

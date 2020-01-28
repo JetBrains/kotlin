@@ -32,7 +32,7 @@ class FirContractDescriptionBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildContractDescription(init: FirContractDescriptionBuilder.() -> Unit = {}): FirContractDescription {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

@@ -46,7 +46,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
     with(implementation) {
         if (requiresOptIn) {
-            println("@UseExperimental(FirImplementationDetail::class)")
+            println("@OptIn(FirImplementationDetail::class)")
         }
         if (!isPublic) {
             print("internal ")

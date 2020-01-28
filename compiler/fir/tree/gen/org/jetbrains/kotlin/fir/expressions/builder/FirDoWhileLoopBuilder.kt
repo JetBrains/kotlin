@@ -43,7 +43,7 @@ class FirDoWhileLoopBuilder : FirLoopBuilder, FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildDoWhileLoop(init: FirDoWhileLoopBuilder.() -> Unit): FirDoWhileLoop {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

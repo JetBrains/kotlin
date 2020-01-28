@@ -77,7 +77,7 @@ class FirSealedClassBuilder : AbstractFirRegularClassBuilder, FirAnnotationConta
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildSealedClass(init: FirSealedClassBuilder.() -> Unit): FirSealedClass {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

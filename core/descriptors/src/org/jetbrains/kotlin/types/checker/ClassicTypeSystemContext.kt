@@ -685,7 +685,7 @@ fun Variance.convertVariance(): TypeVariance {
 }
 
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun requireOrDescribe(condition: Boolean, value: Any?) {
     contract {
         returns() implies condition

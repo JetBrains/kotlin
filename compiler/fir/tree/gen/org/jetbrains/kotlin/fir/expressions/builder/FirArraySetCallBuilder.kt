@@ -58,7 +58,7 @@ class FirArraySetCallBuilder : FirQualifiedAccessBuilder, FirAnnotationContainer
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildArraySetCall(init: FirArraySetCallBuilder.() -> Unit): FirArraySetCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

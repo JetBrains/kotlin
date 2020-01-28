@@ -196,7 +196,7 @@ class IntegerOperatorsTypeUpdater(val approximator: IntegerLiteralTypeApproximat
     }
 }
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 private fun FirFunctionCall.toOperatorCall(): FirIntegerOperatorCall {
     if (this is FirIntegerOperatorCall) return this
     return FirIntegerOperatorCall(

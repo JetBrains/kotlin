@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@UseExperimental(DfaInternals::class)
+@OptIn(DfaInternals::class)
 abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     protected val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) {

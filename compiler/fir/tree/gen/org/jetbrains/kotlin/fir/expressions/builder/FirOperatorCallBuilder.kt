@@ -51,7 +51,7 @@ class FirOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fi
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildOperatorCall(init: FirOperatorCallBuilder.() -> Unit): FirOperatorCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

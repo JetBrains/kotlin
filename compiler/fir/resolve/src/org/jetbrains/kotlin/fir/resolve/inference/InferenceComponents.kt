@@ -41,7 +41,7 @@ class InferenceComponents(
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
-    @UseExperimental(PrivateForInline::class)
+    @OptIn(PrivateForInline::class)
     inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
         val oldSession = this.inferenceSession
         this.inferenceSession = inferenceSession

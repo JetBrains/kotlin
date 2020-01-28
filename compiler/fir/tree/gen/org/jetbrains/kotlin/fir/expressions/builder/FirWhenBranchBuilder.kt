@@ -35,7 +35,7 @@ class FirWhenBranchBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildWhenBranch(init: FirWhenBranchBuilder.() -> Unit): FirWhenBranch {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

@@ -38,7 +38,7 @@ open class FirBodyResolveTransformer(
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         components.cleanContextForAnonymousFunction()
-        @UseExperimental(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
         components.file = file
         packageFqName = file.packageFqName
         return withScopeCleanup(components.topLevelScopes) {

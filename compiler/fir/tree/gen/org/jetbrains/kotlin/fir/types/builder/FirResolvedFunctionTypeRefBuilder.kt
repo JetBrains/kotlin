@@ -46,7 +46,7 @@ class FirResolvedFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildResolvedFunctionTypeRef(init: FirResolvedFunctionTypeRefBuilder.() -> Unit): FirResolvedFunctionTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

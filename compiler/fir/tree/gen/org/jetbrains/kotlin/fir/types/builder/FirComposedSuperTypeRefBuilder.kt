@@ -36,7 +36,7 @@ class FirComposedSuperTypeRefBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildComposedSuperTypeRef(init: FirComposedSuperTypeRefBuilder.() -> Unit = {}): FirComposedSuperTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

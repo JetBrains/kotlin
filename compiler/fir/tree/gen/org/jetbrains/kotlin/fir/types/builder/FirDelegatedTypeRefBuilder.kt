@@ -34,7 +34,7 @@ class FirDelegatedTypeRefBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildDelegatedTypeRef(init: FirDelegatedTypeRefBuilder.() -> Unit): FirDelegatedTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

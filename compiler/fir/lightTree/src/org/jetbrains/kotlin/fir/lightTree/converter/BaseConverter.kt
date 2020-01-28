@@ -106,7 +106,7 @@ open class BaseConverter(
         return kidsRef.get()
     }
 
-    @UseExperimental(ExperimentalContracts::class)
+    @OptIn(ExperimentalContracts::class)
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {

@@ -73,7 +73,7 @@ open class FirClassImplBuilder : AbstractFirRegularClassBuilder, FirAnnotationCo
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildClassImpl(init: FirClassImplBuilder.() -> Unit): FirRegularClass {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

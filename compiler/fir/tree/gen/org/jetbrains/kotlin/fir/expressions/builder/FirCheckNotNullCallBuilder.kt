@@ -45,7 +45,7 @@ class FirCheckNotNullCallBuilder : FirAnnotationContainerBuilder, FirExpressionB
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildCheckNotNullCall(init: FirCheckNotNullCallBuilder.() -> Unit = {}): FirCheckNotNullCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

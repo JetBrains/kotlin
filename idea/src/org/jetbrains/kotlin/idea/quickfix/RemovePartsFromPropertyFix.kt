@@ -81,7 +81,7 @@ open class RemovePartsFromPropertyFix(
             // The ideal fix would be using a String that needs to be rendered instead of actual type
             //
             // But calling another type refinement also helps because it makes KotlinType instance using new module descriptor
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
             typeToAdd = replaceElement.getResolutionFacade().frontendService<KotlinTypeRefiner>().refineType(typeToAdd)
 
             SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, replaceElement, typeToAdd)

@@ -46,7 +46,7 @@ class FirThrowExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildThrowExpression(init: FirThrowExpressionBuilder.() -> Unit): FirThrowExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

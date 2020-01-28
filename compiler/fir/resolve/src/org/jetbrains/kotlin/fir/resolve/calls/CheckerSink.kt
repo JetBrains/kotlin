@@ -20,7 +20,7 @@ abstract class CheckerSink {
     abstract suspend fun yield()
 }
 
-@UseExperimental(PrivateForInline::class)
+@OptIn(PrivateForInline::class)
 suspend inline fun CheckerSink.yieldIfNeed() {
     if (needYielding) {
         yield()

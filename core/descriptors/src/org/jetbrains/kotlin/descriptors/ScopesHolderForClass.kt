@@ -22,7 +22,7 @@ class ScopesHolderForClass<T : MemberScope> private constructor(
         scopeFactory(kotlinTypeRefinerForOwnerModule)
     }
 
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     fun getScope(kotlinTypeRefiner: KotlinTypeRefiner): T {
         /*
          * That check doesn't break anything, because scopeForOwnerModule _will_ anyway refine supertypes from module of
