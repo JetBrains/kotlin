@@ -76,7 +76,7 @@ fun loadProjectWithName(path: String, name: String): Project? =
 fun closeProject(project: Project) {
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
-    projectManagerEx.forceCloseProject(project, true)
+    projectManagerEx.forceCloseProjectEx(project, true)
 }
 
 fun runStartupActivities(project: Project) {

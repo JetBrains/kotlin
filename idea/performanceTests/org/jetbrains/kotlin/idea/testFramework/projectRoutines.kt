@@ -22,9 +22,9 @@ import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
-import java.nio.file.Paths
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.nio.file.Paths
 
 fun commitAllDocuments() {
     val fileDocumentManager = FileDocumentManager.getInstance()
@@ -72,7 +72,7 @@ fun loadProjectWithName(path: String, name: String): Project? =
 fun closeProject(project: Project) {
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
-    projectManagerEx.forceCloseProject(project, true)
+    projectManagerEx.forceCloseProjectEx(project, true)
 }
 
 fun runStartupActivities(project: Project) {
