@@ -1,6 +1,7 @@
 <idea-plugin url="https://www.jetbrains.com/help/idea/gradle.html">
   <name>Gradle</name>
   <id>com.intellij.gradle</id>
+  <category>Build Tools</category>
   <vendor>JetBrains</vendor>
   <description>
       <![CDATA[
