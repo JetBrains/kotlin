@@ -12,6 +12,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.ExporterToTextFile;
 import com.intellij.ide.impl.FlattenModulesToggleAction;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
@@ -751,7 +752,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class ShowDetailedInformationAction extends AnAction {
     private ShowDetailedInformationAction() {
-      super("Show indirect dependencies");
+      super(() -> ActionsBundle.message("action.ShowDetailedInformationAction.text"));
     }
 
     @Override
@@ -788,7 +789,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class RemoveFromScopeAction extends AnAction {
     private RemoveFromScopeAction() {
-      super("Remove from scope");
+      super(() -> ActionsBundle.message("action.RemoveFromScopeAction.text"));
     }
 
     @Override
@@ -811,7 +812,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class AddToScopeAction extends AnAction {
     private AddToScopeAction() {
-      super("Add to scope");
+      super(() -> ActionsBundle.message("action.AddToScopeAction.text"));
     }
 
     @Override

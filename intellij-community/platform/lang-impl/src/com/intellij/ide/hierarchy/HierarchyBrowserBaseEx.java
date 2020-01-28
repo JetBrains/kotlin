@@ -13,6 +13,7 @@ import com.intellij.ide.projectView.impl.ProjectViewTree;
 import com.intellij.ide.util.scopeChooser.EditScopesDialog;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.TreeBuilderUtil;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -793,7 +794,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
     private final class ConfigureScopesAction extends AnAction {
       private ConfigureScopesAction() {
-        super("Configure...");
+        super(() -> ActionsBundle.message("action.ConfigureScopesAction.text"));
       }
 
       @Override

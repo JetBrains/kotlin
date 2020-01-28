@@ -16,6 +16,7 @@
 
 package com.intellij.internal;
 
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
@@ -36,7 +37,7 @@ import java.util.List;
 
 public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAware {
   public ComputeVirtualFileNameStatAction() {
-    super("Compute VF Name Statistics");
+    super(() -> ActionsBundle.message("action.ComputeVirtualFileNameStatAction.text"));
   }
 
   @Override

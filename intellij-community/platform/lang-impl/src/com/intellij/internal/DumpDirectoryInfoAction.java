@@ -15,6 +15,7 @@
  */
 package com.intellij.internal;
 
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -31,7 +32,7 @@ public class DumpDirectoryInfoAction extends AnAction {
   public static final Logger LOG = Logger.getInstance(DumpDirectoryInfoAction.class);
 
   public DumpDirectoryInfoAction() {
-    super("Dump Directory Info");
+    super(() -> ActionsBundle.message("action.DumpDirectoryInfoAction.text"));
   }
 
   @Override

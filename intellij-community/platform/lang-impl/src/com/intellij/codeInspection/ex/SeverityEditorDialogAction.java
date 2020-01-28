@@ -2,6 +2,7 @@
 package com.intellij.codeInspection.ex;
 
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
@@ -12,9 +13,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Dmitry Batkovich
  */
 public class SeverityEditorDialogAction extends AnAction implements DumbAware {
-
   public SeverityEditorDialogAction() {
-    super("Show Severities Editor");
+    super(() -> ActionsBundle.message("action.SeverityEditorDialogAction.text"));
   }
 
   @Override
