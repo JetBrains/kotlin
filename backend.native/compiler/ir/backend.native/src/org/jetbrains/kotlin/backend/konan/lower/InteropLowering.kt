@@ -50,7 +50,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-internal abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
+internal class InteropLowering(context: Context) : FileLoweringPass {
+    // TODO: merge these lowerings.
+    private val part1 = InteropLoweringPart1(context)
+    private val part2 = InteropLoweringPart2(context)
+
+    override fun lower(irFile: IrFile) {
+        part1.lower(irFile)
+        part2.lower(irFile)
+    }
+}
+
+private abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
     protected inline fun <T> generateWithStubs(element: IrElement? = null, block: KotlinStubs.() -> T): T =
             createKotlinStubs(element).block()
@@ -105,7 +116,7 @@ internal abstract class BaseInteropIrTransformer(private val context: Context) :
     protected abstract fun addTopLevel(declaration: IrDeclaration)
 }
 
-internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransformer(context), FileLoweringPass {
+private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransformer(context), FileLoweringPass {
 
     private val symbols get() = context.ir.symbols
 
@@ -799,7 +810,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
 /**
  * Lowers some interop intrinsic calls.
  */
-internal class InteropLoweringPart2(val context: Context) : FileLoweringPass {
+private class InteropLoweringPart2(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformer(context, irFile)
         irFile.transformChildrenVoid(transformer)

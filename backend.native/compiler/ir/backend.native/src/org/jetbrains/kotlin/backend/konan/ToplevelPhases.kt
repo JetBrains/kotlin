@@ -335,8 +335,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
                                 enumClassPhase then
                                 delegationPhase then
                                 callableReferencePhase then
-                                interopPart1Phase then
-                                interopPart2Phase then
+                                interopPhase then
                                 varargPhase then
                                 compileTimeEvaluatePhase then
                                 coroutinesPhase then

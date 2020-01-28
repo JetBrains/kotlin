@@ -239,18 +239,11 @@ internal val callableReferencePhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(delegationPhase) // TODO: make weak dependency on `testProcessorPhase`
 )
 
-internal val interopPart1Phase = makeKonanFileLoweringPhase(
-        ::InteropLoweringPart1,
-        name = "InteropPart1",
-        description = "Interop lowering, part 1",
-        prerequisite = setOf(inlinePhase)
-)
-
-internal val interopPart2Phase = makeKonanFileLoweringPhase(
-        ::InteropLoweringPart2,
-        name = "InteropPart2",
-        description = "Interop lowering, part 2",
-        prerequisite = setOf(localFunctionsPhase)
+internal val interopPhase = makeKonanFileLoweringPhase(
+        ::InteropLowering,
+        name = "Interop",
+        description = "Interop lowering",
+        prerequisite = setOf(inlinePhase, localFunctionsPhase)
 )
 
 internal val varargPhase = makeKonanFileLoweringPhase(
