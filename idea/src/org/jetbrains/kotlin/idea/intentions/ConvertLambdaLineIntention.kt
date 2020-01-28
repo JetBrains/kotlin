@@ -7,32 +7,54 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.idea.inspections.RedundantSemicolonInspection
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 
 sealed class ConvertLambdaLineIntention(private val toMultiLine: Boolean) : SelfTargetingIntention<KtLambdaExpression>(
-    KtLambdaExpression::class.java, "Convert to ${if (toMultiLine) "multi" else "single"}-line"
+    KtLambdaExpression::class.java, "Convert to ${if (toMultiLine) "multi" else "single"}-line lambda"
 ) {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         val functionLiteral = element.functionLiteral
         val body = functionLiteral.bodyBlockExpression ?: return false
         val startLine = functionLiteral.getLineNumber(start = true)
         val endLine = functionLiteral.getLineNumber(start = false)
-        return toMultiLine && startLine == endLine
-                || !toMultiLine && startLine != endLine && body.statements.size <= 1 && body.allChildren.none { it is PsiComment }
+        return if (toMultiLine) {
+            startLine == endLine
+        } else {
+            if (startLine == endLine) return false
+            val allChildren = body.allChildren
+            if (allChildren.any { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }) return false
+            val first = allChildren.first?.getNextSiblingIgnoringWhitespace(withItself = true) ?: return true
+            val last = allChildren.last?.getPrevSiblingIgnoringWhitespace(withItself = true)
+            first.getLineNumber(start = true) == last?.getLineNumber(start = false)
+        }
     }
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val functionLiteral = element.functionLiteral
-        val body = functionLiteral.bodyBlockExpression?.text ?: ""
+        val body = functionLiteral.bodyBlockExpression ?: return
+        val psiFactory = KtPsiFactory(element)
+        if (toMultiLine) {
+            body.allChildren.forEach {
+                if (it.node.elementType == KtTokens.SEMICOLON) {
+                    body.addAfter(psiFactory.createNewLine(), it)
+                    if (RedundantSemicolonInspection.isRedundantSemicolon(it)) it.delete()
+                }
+            }
+        }
+        val bodyText = body.text
         val startLineBreak = if (toMultiLine) "\n" else ""
-        val endLineBreak = if (toMultiLine && body != "") "\n" else ""
+        val endLineBreak = if (toMultiLine && bodyText != "") "\n" else ""
         element.replace(
-            KtPsiFactory(element).createLambdaExpression(
+            psiFactory.createLambdaExpression(
                 functionLiteral.valueParameters.joinToString { it.text },
-                "$startLineBreak$body$endLineBreak"
+                "$startLineBreak$bodyText$endLineBreak"
             )
         )
     }

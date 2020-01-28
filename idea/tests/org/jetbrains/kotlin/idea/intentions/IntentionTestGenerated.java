@@ -4701,7 +4701,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
 
         public void testAllFilesPresentInConvertLambdaToMultiLine() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLambdaToMultiLine"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/convertLambdaToMultiLine"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("multiLine.kt")
@@ -5107,17 +5107,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
 
         public void testAllFilesPresentInConvertLambdaToSingleLine() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertLambdaToSingleLine"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/convertLambdaToSingleLine"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
-        @TestMetadata("hasComment.kt")
-        public void testHasComment() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToSingleLine/hasComment.kt");
+        @TestMetadata("hasEolComment.kt")
+        public void testHasEolComment() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToSingleLine/hasEolComment.kt");
         }
 
-        @TestMetadata("notSingleStatement.kt")
-        public void testNotSingleStatement() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToSingleLine/notSingleStatement.kt");
+        @TestMetadata("multiLineBody.kt")
+        public void testMultiLineBody() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToSingleLine/multiLineBody.kt");
+        }
+
+        @TestMetadata("multiLineBody2.kt")
+        public void testMultiLineBody2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToSingleLine/multiLineBody2.kt");
+        }
+
+        @TestMetadata("multiLineBody3.kt")
+        public void testMultiLineBody3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToSingleLine/multiLineBody3.kt");
         }
 
         @TestMetadata("simple.kt")

@@ -2,7 +2,6 @@
 // WITH_RUNTIME
 fun test(list: List<String>) {
     list.forEach { item ->
-        // comment
-        println(item)
+        println(item) // comment
     }<caret>
 }
