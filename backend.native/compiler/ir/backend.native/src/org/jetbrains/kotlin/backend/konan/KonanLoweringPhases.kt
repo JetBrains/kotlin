@@ -250,7 +250,7 @@ internal val varargPhase = makeKonanFileLoweringPhase(
         ::VarargInjectionLowering,
         name = "Vararg",
         description = "Vararg lowering",
-        prerequisite = setOf(callableReferencePhase, defaultParameterExtentPhase)
+        prerequisite = setOf(callableReferencePhase, defaultParameterExtentPhase, interopPhase)
 )
 
 internal val compileTimeEvaluatePhase = makeKonanFileLoweringPhase(
