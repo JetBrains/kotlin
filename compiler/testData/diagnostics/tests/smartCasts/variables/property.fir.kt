@@ -7,5 +7,5 @@ fun bar(s: String): Int {
 
 fun foo(m: MyClass): Int {
     m.p = "xyz"
-    return bar(m.p)
+    return <!INAPPLICABLE_CANDIDATE!>bar<!>(m.p)
 }

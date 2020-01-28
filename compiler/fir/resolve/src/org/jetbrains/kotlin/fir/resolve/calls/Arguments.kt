@@ -254,9 +254,7 @@ private fun checkApplicabilityForArgumentType(
     }
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
-            if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-                csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-            }
+            csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
             return
         }
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {

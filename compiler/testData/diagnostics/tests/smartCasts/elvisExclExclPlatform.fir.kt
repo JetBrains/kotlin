@@ -19,7 +19,7 @@ fun bar(x: String) = x
 fun test(x: String?): Any {
     val y = My.create()
     val z = x ?: y!!
-    bar(y)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(y)
     // !! / ?. is necessary here, because y!! above may not be executed
     y?.hashCode()
     y!!.hashCode()

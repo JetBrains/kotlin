@@ -8,7 +8,7 @@ fun main() {
     val y: Foo? = null
     
     x.<!INAPPLICABLE_CANDIDATE!>foo<!>(y)
-    x!!.foo(y)
+    x!!.<!INAPPLICABLE_CANDIDATE!>foo<!>(y)
     x.foo(y!!)
     x!!.foo(y!!)
     
@@ -18,8 +18,8 @@ fun main() {
     
     a.<!INAPPLICABLE_CANDIDATE!>foo<!>(b.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
     a!!.foo(b.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
-    a.foo(b!!.foo(c))
-    a!!.foo(b!!.foo(c))
+    a.foo(b!!.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
+    a!!.foo(b!!.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
     a.foo(b.foo(c!!))
     a!!.foo(b.foo(c!!))
     a.foo(b!!.foo(c!!))

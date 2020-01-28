@@ -7,6 +7,6 @@ fun foo(a: MutableMap<String, String>, x: String?) {
 }
 
 fun foo1(a: MutableMap<String, String>, x: String?) {
-    a[x] = x!!
+    <!INAPPLICABLE_CANDIDATE!>a[x] = x!!<!>
     a[x!!] = x
 }

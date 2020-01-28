@@ -15,7 +15,7 @@ class B {
 fun test() {
     if (A.x != null) {
         useInt(A.x)
-        useInt(B.x)
+        <!INAPPLICABLE_CANDIDATE!>useInt<!>(B.x)
     }
 }
 

@@ -5,5 +5,5 @@
 fun foo(i: Int) {}
 
 fun test(s: String?) {
-    foo(s?.length)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(s?.length)
 }

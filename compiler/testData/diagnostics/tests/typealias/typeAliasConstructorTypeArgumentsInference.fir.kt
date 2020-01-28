@@ -21,7 +21,7 @@ class Pair<X, Y>(val x: X, val y: Y)
 typealias PL<T> = Pair<T, List<T>>
 typealias PN<T> = Pair<T, Num<T>>
 
-val test5 = PL(1, null)
+val test5 = <!INAPPLICABLE_CANDIDATE!>PL<!>(1, null)
 
 
 class Foo<T>(val p: Pair<T, T>)

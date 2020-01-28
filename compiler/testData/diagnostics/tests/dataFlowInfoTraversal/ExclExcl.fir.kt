@@ -1,7 +1,7 @@
 fun bar(x: Int) = x + 1
 
 fun f1(x: Int?) {
-    bar(x)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
     if (x != null) bar(x!!)
     if (x == null) bar(x!!)
 }

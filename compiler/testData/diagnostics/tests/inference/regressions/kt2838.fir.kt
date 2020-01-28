@@ -8,7 +8,7 @@ fun <T> bar(a: T, b: Map<T, String>) = b.get(a)
 
 fun test(a: Int) {
     foo(a, null)
-    bar(a, null)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(a, null)
 }
 fun test1(a: Int) {
     foo(a, throw Exception())

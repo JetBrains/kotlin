@@ -6,7 +6,7 @@ package kt1293
 fun main() {
     val intArray = arrayOfNulls<Int>(10)
     val i : Int = intArray[0]
-    requiresInt(intArray[0])
+    <!INAPPLICABLE_CANDIDATE!>requiresInt<!>(intArray[0])
 }
 
 fun requiresInt(i: Int) {}

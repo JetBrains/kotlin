@@ -7,7 +7,7 @@ class A {
 fun foo() {
     val x: Int? = null
 
-    A().bar(x)
+    A().<!INAPPLICABLE_CANDIDATE!>bar<!>(x)
     if (x == null) return
     A().bar(x)
 }

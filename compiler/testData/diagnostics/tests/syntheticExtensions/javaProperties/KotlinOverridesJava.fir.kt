@@ -23,7 +23,7 @@ fun foo(k: KotlinClass) {
 
     k.setSomething4("")
     k.<!VARIABLE_EXPECTED!>something4<!> += ""
-    k.setSomething4(null)
+    k.<!INAPPLICABLE_CANDIDATE!>setSomething4<!>(null)
     k.something4 = null
 
     useString(k.getSomething5())

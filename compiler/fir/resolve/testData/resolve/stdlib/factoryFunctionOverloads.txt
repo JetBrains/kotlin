@@ -27,5 +27,5 @@ FILE: factoryFunctionOverloads.kt
     public final fun foo(c: R|C|, b: R|B|, bn: R|B?|): R|kotlin/Unit| {
         lval x: R|A| = R|/A|(R|<local>/c|)
         lval y: R|A| = R|/A.A|(R|<local>/b|)
-        lval z: R|A| = R|/A.A|(R|<local>/bn|)
+        lval z: R|A| = R|/A|(R|<local>/bn|)
     }

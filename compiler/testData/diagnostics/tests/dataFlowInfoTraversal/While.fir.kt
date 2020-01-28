@@ -3,7 +3,7 @@ fun bar(x: Int): Int = x + 1
 fun foo() {
     val x: Int? = null
     while (x == null) {
-        bar(x)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
     }
     bar(x)
     
@@ -15,8 +15,8 @@ fun foo() {
     
     val z: Int? = null
     while (z == null) {
-        bar(z)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(z)
         break
     }
-    bar(z)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(z)
 }
