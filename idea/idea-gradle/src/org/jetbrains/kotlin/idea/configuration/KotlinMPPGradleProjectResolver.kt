@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
-import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.MODULES_OUTPUTS
@@ -55,7 +54,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 @Order(ExternalSystemConstants.UNORDERED + 1)
-open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
+open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionCompat() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinMPPGradleModelBuilder::class.java, Unit::class.java)
     }
@@ -64,10 +63,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         return setOf(KotlinMPPGradleModel::class.java)
     }
 
-    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData> {
-        return super.createModule(gradleModule, projectDataNode).also {
-            initializeModuleData(gradleModule, it, projectDataNode, resolverCtx)
-        }
+    override fun initializeModuleNode(
+        gradleModule: IdeaModule,
+        moduleDataNode: DataNode<ModuleData>,
+        projectDataNode: DataNode<ProjectData>
+    ) {
+        initializeModuleData(gradleModule, moduleDataNode, projectDataNode, resolverCtx)
     }
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
