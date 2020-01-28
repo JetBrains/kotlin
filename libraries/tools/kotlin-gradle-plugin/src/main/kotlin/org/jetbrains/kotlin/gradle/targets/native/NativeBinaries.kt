@@ -81,7 +81,7 @@ sealed class NativeBinary(
         get() = linkTaskProvider.get()
 
     val linkTaskProvider: TaskProvider<out KotlinNativeLink>
-        get() = project.tasks.withType(KotlinNativeLink::class.java).named(linkTaskName)
+        get() = project.tasks.named(linkTaskName, KotlinNativeLink::class.java)
 
     // Output access.
     // TODO: Provide output configurations and integrate them with Gradle Native.
