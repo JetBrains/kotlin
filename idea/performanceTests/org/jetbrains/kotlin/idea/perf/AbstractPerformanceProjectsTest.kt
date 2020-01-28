@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import com.intellij.codeInsight.daemon.*
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.IdentifierHighlighterPassFactory
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.ide.highlighter.ModuleFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
-import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
@@ -67,7 +67,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     // myProject is not required for all potential perf test cases
     protected var myProject: Project? = null
     private lateinit var jdk18: Sdk
-    private lateinit var myApplication: IdeaTestApplication
+    private lateinit var myApplication: TestApplicationManager
 
     override fun isStressTest(): Boolean = true
 
@@ -76,7 +76,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     override fun setUp() {
         super.setUp()
 
-        myApplication = IdeaTestApplication.getInstance()
+        myApplication = TestApplicationManager.getInstance()
         runWriteAction {
             val jdkTableImpl = JavaAwareProjectJdkTableImpl.getInstanceEx()
             val homePath = if (jdkTableImpl.internalJdk.homeDirectory!!.name == "jre") {
