@@ -38,7 +38,7 @@ public class ToggleBookmarkWithMnemonicAction extends ToggleBookmarkAction {
         e.getPresentation().setVisible(false);
       }
       else {
-        e.getPresentation().setText("Set Bookmark with Mnemonic");
+        e.getPresentation().setText(() -> IdeBundle.message("action.presentation.ToggleBookmarkWithMnemonicAction.text"));
       }
     }
     else {

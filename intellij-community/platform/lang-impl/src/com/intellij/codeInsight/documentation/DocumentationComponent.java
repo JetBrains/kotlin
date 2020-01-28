@@ -1283,7 +1283,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     private EditDocumentationSourceAction() {
       super(true);
       getTemplatePresentation().setIcon(AllIcons.Actions.EditSource);
-      getTemplatePresentation().setText("Edit Source");
+      getTemplatePresentation().setText(() -> CodeInsightBundle.message("action.presentation.DocumentationComponent.text"));
     }
 
     @Override

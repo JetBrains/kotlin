@@ -15,6 +15,7 @@
  */
 package com.intellij.ide.actions;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.openapi.actionSystem.impl.Utils;
@@ -86,7 +87,7 @@ abstract class WeighingActionGroup extends ActionGroup {
 
     ActionGroup other = new ExcludingActionGroup(delegate, heaviest);
     other.setPopup(true);
-    other.getTemplatePresentation().setText("Other...");
+    other.getTemplatePresentation().setText(() -> IdeBundle.message("action.presentation.WeighingActionGroup.text"));
     return new AnAction[]{chosen, new Separator(), other};
   }
 

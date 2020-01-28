@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.lookup.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CodeCompletionFeatures;
 import com.intellij.codeInsight.completion.ShowHideIntentionIconLookupAction;
@@ -312,7 +313,7 @@ class LookupUi {
       AnAction showIntentionAction = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
       if (showIntentionAction != null) {
         copyShortcutFrom(showIntentionAction);
-        getTemplatePresentation().setText("Click or Press");
+        getTemplatePresentation().setText(() -> CodeInsightBundle.message("action.presentation.LookupUi.text"));
       }
     }
 
