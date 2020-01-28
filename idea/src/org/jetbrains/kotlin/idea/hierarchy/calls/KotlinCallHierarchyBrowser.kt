@@ -13,88 +13,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.idea.hierarchy.calls
 
-package org.jetbrains.kotlin.idea.hierarchy.calls;
+import com.intellij.ide.hierarchy.CallHierarchyBrowserBase
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
+import com.intellij.ide.hierarchy.HierarchyTreeStructure
+import com.intellij.ide.hierarchy.JavaHierarchyUtil
+import com.intellij.ide.util.treeView.NodeDescriptor
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.ui.PopupHandler
+import org.jetbrains.kotlin.psi.KtElement
+import java.util.*
+import javax.swing.JTree
 
-import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
-import com.intellij.ide.hierarchy.JavaHierarchyUtil;
-import com.intellij.ide.util.treeView.NodeDescriptor;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.ui.PopupHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtElement;
-
-import javax.swing.*;
-import java.util.Comparator;
-import java.util.Map;
-
-public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
-    public KotlinCallHierarchyBrowser(@NotNull PsiElement element) {
-        super(element.getProject(), element);
-    }
-
-    @Override
-    protected void createTrees(@NotNull Map<String, JTree> type2TreeMap) {
-        ActionGroup group = (ActionGroup) ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP);
-
-        JTree tree1 = createTree(false);
-        PopupHandler.installPopupHandler(tree1, group, ActionPlaces.CALL_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
-        BaseOnThisMethodAction baseOnThisMethodAction = new BaseOnThisMethodAction();
+class KotlinCallHierarchyBrowser(element: PsiElement) :
+    CallHierarchyBrowserBase(element.project, element) {
+    override fun createTrees(type2TreeMap: MutableMap<String, JTree>) {
+        val group =
+            ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP) as ActionGroup
+        val tree1 = createTree(false)
+        PopupHandler.installPopupHandler(
+            tree1,
+            group,
+            ActionPlaces.CALL_HIERARCHY_VIEW_POPUP,
+            ActionManager.getInstance()
+        )
+        val baseOnThisMethodAction =
+            BaseOnThisMethodAction()
         baseOnThisMethodAction.registerCustomShortcutSet(
-                ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).getShortcutSet(), tree1
-        );
-        type2TreeMap.put(CALLEE_TYPE, tree1);
-
-        JTree tree2 = createTree(false);
-        PopupHandler.installPopupHandler(tree2, group, ActionPlaces.CALL_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
+            ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).shortcutSet,
+            tree1
+        )
+        type2TreeMap[CALLEE_TYPE] = tree1
+        val tree2 = createTree(false)
+        PopupHandler.installPopupHandler(
+            tree2,
+            group,
+            ActionPlaces.CALL_HIERARCHY_VIEW_POPUP,
+            ActionManager.getInstance()
+        )
         baseOnThisMethodAction.registerCustomShortcutSet(
-                ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).getShortcutSet(), tree2
-        );
-        type2TreeMap.put(CALLER_TYPE, tree2);
+            ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).shortcutSet,
+            tree2
+        )
+        type2TreeMap[CALLER_TYPE] = tree2
     }
 
-    private static PsiElement getTargetElement(@NotNull HierarchyNodeDescriptor descriptor) {
-        if (descriptor instanceof KotlinCallHierarchyNodeDescriptor) {
-            return descriptor.getPsiElement();
+    override fun getElementFromDescriptor(descriptor: HierarchyNodeDescriptor): PsiElement? {
+        return getTargetElement(descriptor)
+    }
+
+    override fun isApplicableElement(element: PsiElement): Boolean {
+        return if (element is PsiClass) false else isCallHierarchyElement(element) // PsiClass is not allowed at the hierarchy root
+    }
+
+    override fun createHierarchyTreeStructure(
+        typeName: String,
+        psiElement: PsiElement
+    ): HierarchyTreeStructure? {
+        if (psiElement !is KtElement) return null
+        if (typeName == CALLER_TYPE) {
+            return KotlinCallerTreeStructure(psiElement, currentScopeType)
         }
-        return null;
+        return if (typeName == CALLEE_TYPE) {
+            KotlinCalleeTreeStructure(psiElement, currentScopeType)
+        } else null
     }
 
-    @Override
-    protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
-        return getTargetElement(descriptor);
+    override fun getComparator(): Comparator<NodeDescriptor<*>> {
+        return JavaHierarchyUtil.getComparator(myProject)
     }
 
-    @Override
-    protected boolean isApplicableElement(@NotNull PsiElement element) {
-        if (element instanceof PsiClass) return false; // PsiClass is not allowed at the hierarchy root
-        return CallHierarchyUtilsKt.isCallHierarchyElement(element);
-    }
-
-    @Override
-    protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
-        if (!(psiElement instanceof KtElement)) return null;
-
-        if (typeName.equals(CALLER_TYPE)) {
-            return new KotlinCallerTreeStructure((KtElement) psiElement, getCurrentScopeType());
+    companion object {
+        private fun getTargetElement(descriptor: HierarchyNodeDescriptor): PsiElement? {
+            return (descriptor as? KotlinCallHierarchyNodeDescriptor)?.psiElement
         }
-
-        if (typeName.equals(CALLEE_TYPE)) {
-            return new KotlinCalleeTreeStructure((KtElement) psiElement, getCurrentScopeType());
-        }
-
-        return null;
-    }
-
-    @Override
-    protected Comparator<NodeDescriptor> getComparator() {
-        return JavaHierarchyUtil.getComparator(myProject);
     }
 }
