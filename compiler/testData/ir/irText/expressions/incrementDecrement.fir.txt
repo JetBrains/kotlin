@@ -17,10 +17,11 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
   PROPERTY name:arr visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Cannot bind 3 arguments to intArrayOf call with 1 parameters' type=kotlin.IntArray
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
+        CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+            CONST Int type=kotlin.Int value=3
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:public modality:FINAL <> () returnType:kotlin.IntArray
       correspondingProperty: PROPERTY name:arr visibility:public modality:FINAL [val]
       BLOCK_BODY

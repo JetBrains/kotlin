@@ -21,11 +21,11 @@ FILE fqName:<root> fileName:/withAdaptationForSam.kt
     VALUE_PARAMETER name:foo index:0 type:<root>.IFoo
     BLOCK_BODY
   FUN name:withVararg visibility:public modality:FINAL <> (xs:kotlin.IntArray) returnType:kotlin.Int
-    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray
+    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun withVararg (xs: kotlin.IntArray): kotlin.Int declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=42
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useFoo]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun withVararg (xs: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>

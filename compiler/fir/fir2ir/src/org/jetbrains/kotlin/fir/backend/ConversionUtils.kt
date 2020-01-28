@@ -59,7 +59,7 @@ fun ConeKotlinType.toIrType(
     return when (this) {
         is ConeKotlinErrorType -> createErrorType()
         is ConeLookupTagBasedType -> {
-            val irSymbol = getPrimitiveArrayType(this.classId, irBuiltIns) ?: run {
+            val irSymbol = getArrayType(this.classId, irBuiltIns) ?: run {
                 val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
                 firSymbol.toIrSymbol(session, declarationStorage)
             }
@@ -87,8 +87,9 @@ fun ConeKotlinType.toIrType(
     }
 }
 
-private fun getPrimitiveArrayType(classId: ClassId?, irBuiltIns: IrBuiltIns): IrClassifierSymbol? {
+private fun getArrayType(classId: ClassId?, irBuiltIns: IrBuiltIns): IrClassifierSymbol? {
     val irType = when (classId) {
+        ClassId(FqName("kotlin"), FqName("Array"), false) -> return irBuiltIns.arrayClass
         ClassId(FqName("kotlin"), FqName("BooleanArray"), false) -> irBuiltIns.booleanType
         ClassId(FqName("kotlin"), FqName("ByteArray"), false) -> irBuiltIns.byteType
         ClassId(FqName("kotlin"), FqName("CharArray"), false) -> irBuiltIns.charType

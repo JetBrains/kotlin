@@ -92,6 +92,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -470,6 +471,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
         visitElement(namedArgumentExpression)
+    }
+
+    open fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) {
+        visitElement(varargArgumentsExpression)
     }
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -926,6 +931,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?) {
         visitNamedArgumentExpression(namedArgumentExpression)
+    }
+
+    final override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: Nothing?) {
+        visitVarargArgumentsExpression(varargArgumentsExpression)
     }
 
     final override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?) {

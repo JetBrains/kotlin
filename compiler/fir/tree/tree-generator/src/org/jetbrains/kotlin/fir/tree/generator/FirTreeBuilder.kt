@@ -107,6 +107,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val lambdaArgumentExpression = element("LambdaArgumentExpression", Expression, wrappedArgumentExpression)
     val spreadArgumentExpression = element("SpreadArgumentExpression", Expression, wrappedArgumentExpression)
     val namedArgumentExpression = element("NamedArgumentExpression", Expression, wrappedArgumentExpression)
+    val varargArgumentsExpression = element("VarargArgumentsExpression", Expression, expression)
 
     val resolvedQualifier = element("ResolvedQualifier", Expression, expression)
     val resolvedReifiedParameterReference = element("ResolvedReifiedParameterReference", Expression, expression)

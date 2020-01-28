@@ -102,17 +102,20 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
         context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
 
     private val IrFunctionSymbol.isArrayOf: Boolean
-        get() = this == context.ir.symbols.arrayOf || owner.isPrimitiveArrayOf
+        get() = owner.isArrayOf
 
     private val IrFunctionSymbol.isEmptyArray: Boolean
-        get() = owner.name.asString() == "emptyArray" && (owner.parent as? IrPackageFragment)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+        get() = owner.name.asString() == "emptyArray" &&
+                (owner.parent as? IrPackageFragment)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 
     companion object {
         private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
             (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
                 .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
+        private const val ARRAY_OF_NAME = "arrayOf"
 
-        private val IrFunction.isPrimitiveArrayOf: Boolean
+
+        private val IrFunction.isArrayOf: Boolean
             get() {
                 val parent = when (val directParent = parent) {
                     is IrClass -> directParent.getPackageFragment() ?: return false
@@ -120,7 +123,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
                     else -> return false
                 }
                 return parent.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
-                        name.asString() in PRIMITIVE_ARRAY_OF_NAMES &&
+                        name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
                         extensionReceiverParameter == null &&
                         dispatchReceiverParameter == null &&
                         valueParameters.size == 1 &&

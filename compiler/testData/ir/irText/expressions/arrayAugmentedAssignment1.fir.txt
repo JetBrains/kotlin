@@ -2,10 +2,11 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.IntArray
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.IntArray declared in <root>'
-        ERROR_CALL 'Cannot bind 3 arguments to intArrayOf call with 1 parameters' type=kotlin.IntArray
-          CONST Int type=kotlin.Int value=1
-          CONST Int type=kotlin.Int value=2
-          CONST Int type=kotlin.Int value=3
+        CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+            CONST Int type=kotlin.Int value=3
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>'

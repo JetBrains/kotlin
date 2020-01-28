@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirVarargArgumentsExpressionImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
+import java.lang.Math.min
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
@@ -189,7 +192,36 @@ class FirCallCompletionResultsWriterTransformer(
             }
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
-                result.transformArguments(this, subCandidate.createArgumentsMapping()).transformExplicitReceiver(integerApproximator, null)
+                val vararg = subCandidate.argumentMapping?.values?.firstOrNull { it.isVararg }
+                result.transformArguments(this, subCandidate.createArgumentsMapping()).apply {
+                    if (vararg != null && this is FirFunctionCallImpl) {
+                        // Create a FirVarargArgumentExpression for the vararg arguments
+                        val resolvedArrayType = vararg.returnTypeRef.substitute(subCandidate)
+                        val resolvedElementType = resolvedArrayType.arrayElementType(session)
+                        val varargArgument = FirVarargArgumentsExpressionImpl(
+                            null,
+                            vararg.returnTypeRef.withReplacedConeType(resolvedElementType)
+                        )
+                        varargArgument.replaceTypeRef(
+                            vararg.returnTypeRef.withReplacedConeType(
+                                vararg.returnTypeRef.substitute(
+                                    subCandidate
+                                )
+                            )
+                        )
+                        var firstIndex = arguments.size
+                        for ((i, arg) in arguments.withIndex()) {
+                            if (subCandidate.argumentMapping!![arg]?.isVararg ?: false) {
+                                firstIndex = min(firstIndex, i)
+                                varargArgument.arguments.add(arg)
+                            }
+                        }
+                        for (arg in varargArgument.arguments) {
+                            arguments.remove(arg)
+                        }
+                        arguments.add(firstIndex, varargArgument)
+                    }
+                }.transformExplicitReceiver(integerApproximator, null)
             }
         }
 
@@ -199,14 +231,16 @@ class FirCallCompletionResultsWriterTransformer(
         ).compose()
     }
 
+    private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType =
+        coneTypeUnsafe<ConeKotlinType>()
+            .let { candidate.substitutor.substituteOrSelf(it) }
+            .let { finalSubstitutor.substituteOrSelf(it) }
+
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         return argumentMapping?.map { (argument, valueParameter) ->
-                val expectedType = valueParameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-                    .let { substitutor.substituteOrSelf(it) }
-                    .let { finalSubstitutor.substituteOrSelf(it) }
-
-                argument.expandArgument() to expectedType
-            }
+            val expectedType = valueParameter.returnTypeRef.substitute(this)
+            argument.unwrapArgument() to expectedType
+        }
             ?.toMap()?.toExpectedType()
     }
 
@@ -330,7 +364,7 @@ private fun ExpectedArgumentType.getExpectedType(argument: FirExpression): ConeK
 private fun Map<FirExpression, ConeKotlinType>.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ArgumentsMap(this)
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
 
-private fun FirExpression.expandArgument(): FirExpression = when (this) {
+private fun FirExpression.unwrapArgument(): FirExpression = when (this) {
     is FirWrappedArgumentExpression -> expression
     else -> this
 }

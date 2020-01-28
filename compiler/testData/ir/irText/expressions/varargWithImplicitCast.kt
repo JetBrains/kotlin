@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 fun testScalar(a: Any): IntArray {
     if (a !is Int) return intArrayOf()
     return intArrayOf(a)

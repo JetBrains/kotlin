@@ -17,7 +17,7 @@ FILE: default.kt
         R|/bar|(Int(1), Double(2.0), Boolean(true), String(my))
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(Int(1), Boolean(true))
         R|/baz|(Int(1))
-        R|/baz|(Int(1), String(my), String(yours))
+        R|/baz|(Int(1), vararg(String(my), String(yours)))
         R|/baz|(Int(1), z = Boolean(true))
         <Inapplicable(INAPPLICABLE): [/baz]>#(Int(0), String(), Boolean(false))
     }
