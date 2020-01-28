@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubtargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
@@ -29,7 +29,7 @@ open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: 
     KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinJsSubtargetContainerDsl {
+    KotlinJsSubTargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 

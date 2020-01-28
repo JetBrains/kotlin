@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
-interface KotlinJsSubtargetContainerDsl : KotlinTarget {
+interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     val nodejs: KotlinJsNodeDsl
 
     val browser: KotlinJsBrowserDsl

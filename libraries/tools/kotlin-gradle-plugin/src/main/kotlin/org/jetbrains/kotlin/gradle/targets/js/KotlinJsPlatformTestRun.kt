@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSourceSupport
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubtargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -51,7 +51,7 @@ class JsAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsRepor
 
 open class KotlinJsReportAggregatingTestRun(
     testRunName: String,
-    override val target: KotlinJsSubtargetContainerDsl
+    override val target: KotlinJsSubTargetContainerDsl
 ) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsAggregatingExecutionSource, KotlinJsPlatformTestRun>(testRunName),
     KotlinTargetTestRun<JsAggregatingExecutionSource>,
     CompilationExecutionSourceSupport<KotlinJsCompilation> {
