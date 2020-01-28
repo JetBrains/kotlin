@@ -13,22 +13,23 @@ import org.jetbrains.kotlin.psi.KtFile
 
 internal fun KtFile.dumpStructureText(): String {
     val sb = StringBuilder()
-    this.accept(object : PsiElementVisitor() {
-        override fun visitElement(element: PsiElement?) {
-            if (element is PsiWhiteSpace) {
-                if (sb.lastOrNull() !in listOf(' ', '{', '}', '(', ')')) {
-                    sb.append(" ")
+    this.accept(
+        object : PsiElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                if (element is PsiWhiteSpace) {
+                    if (sb.lastOrNull() !in listOf(' ', '{', '}', '(', ')')) {
+                        sb.append(" ")
+                    }
+                    return
                 }
-                return
+                if (element is LeafPsiElement) {
+                    sb.append(element.text)
+                    return
+                }
+                element.acceptChildren(this)
             }
-            if (element is LeafPsiElement) {
-                sb.append(element.text)
-                return
-            }
-            element?.acceptChildren(this)
-
-        }
-    })
+        },
+    )
 
     return sb.toString().trim()
 }
