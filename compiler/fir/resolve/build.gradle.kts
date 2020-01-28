@@ -19,7 +19,10 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", "extensions", rootProject = rootProject) }
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
+    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util", "asm-all", "extensions", rootProject = rootProject) }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

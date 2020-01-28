@@ -23,7 +23,10 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi", "log4j", "jdom", "jps-model") }
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi") }
+    }
+    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jdom", "jps-model") }
     testRuntime(project(":kotlin-reflect"))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }

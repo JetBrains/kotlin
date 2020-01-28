@@ -44,9 +44,11 @@ dependencies {
     testCompile(androidDxJar()) { isTransitive = false }
     testCompile(commonDep("com.android.tools:r8"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    Platform[193].orLower {
+        testCompile(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
     testCompile(intellijDep()) {
         includeJars(
-            "openapi",
             "jps-model",
             "extensions",
             "util",

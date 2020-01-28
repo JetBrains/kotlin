@@ -18,7 +18,10 @@ dependencies {
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
 
-    compileOnly(intellijDep()) { includeJars("platform-api", "openapi", "extensions", "util") }
+    Platform[193].orLower {
+        compileOnly(intellijDep()) { includeJars("openapi") }
+    }
+    compileOnly(intellijDep()) { includeJars("platform-api", "extensions", "util") }
     compileOnly(intellijDep("gradle"))
 }
 
