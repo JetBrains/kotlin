@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCompilerRunner
+import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -42,6 +44,12 @@ open class KonanCacheTask: DefaultTask() {
     @Input
     var cacheKind: KonanCacheKind = KonanCacheKind.STATIC
 
+    @Input
+    /** Path to a compiler distribution that is used to build this cache. */
+    val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).apply {
+        set(project.provider { project.file(project.konanHome) })
+    }
+
     @TaskAction
     fun compile() {
         val args = listOf(
@@ -51,6 +59,6 @@ open class KonanCacheTask: DefaultTask() {
             "-Xadd-cache=${originalKlib.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
         )
-        KonanCompilerRunner(project).run(args)
+        KonanCompilerRunner(project, konanHome = compilerDistributionPath.get().absolutePath).run(args)
     }
 }

@@ -108,7 +108,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
                 originalKlib = tasks[libName].installDir
                 cacheRoot = file("$konanHome/klib/cache")
 
-                dependsOn "${targetName}StdlibCache"
+                dependsOn ":${targetName}StdlibCache"
                 dependsOn tasks[libName]
                 dependsOn df.config.depends.collect {
                     def depName = defFileToLibName(targetName, it)
@@ -157,7 +157,3 @@ task cache {
     group = BasePlugin.BUILD_GROUP
     description = "Builds all the compilation caches"
 }
-
-
-
-

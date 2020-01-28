@@ -39,7 +39,8 @@ internal abstract class KonanCliRunner(
         val toolName: String,
         val fullName: String,
         val project: Project,
-        private val additionalJvmArgs: List<String>
+        private val additionalJvmArgs: List<String>,
+        private val konanHome: String
 ): KonanToolRunner {
     override val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
 
@@ -56,7 +57,7 @@ internal abstract class KonanCliRunner(
         setOf("java.endorsed.dirs")
 
     override val classpath: FileCollection =
-            project.fileTree("${project.konanHome}/konan/lib/")
+            project.fileTree("$konanHome/konan/lib/")
             .apply { include("*.jar")  }
 
     override val jvmArgs = HostManager.defaultJvmArgs.toMutableList().apply {
@@ -69,8 +70,8 @@ internal abstract class KonanCliRunner(
     }
 
     override val additionalSystemProperties = mutableMapOf(
-            "konan.home" to project.konanHome,
-            "java.library.path" to "${project.konanHome}/konan/nativelib"
+            "konan.home" to konanHome,
+            "java.library.path" to "$konanHome/konan/nativelib"
     )
 
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
@@ -113,9 +114,11 @@ internal abstract class KonanCliRunner(
     }
 }
 
-internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
-    : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs)
-{
+internal class KonanInteropRunner(
+        project: Project,
+        additionalJvmArgs: List<String> = emptyList(),
+        konanHome: String = project.konanHome
+) : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs, konanHome) {
     init {
         if (HostManager.host == KonanTarget.MINGW_X64) {
 	    //TODO: Oh-ho-ho fix it in more convinient way.
@@ -129,8 +132,9 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
 internal class KonanCompilerRunner(
     project: Project,
     additionalJvmArgs: List<String> = emptyList(),
-    val useArgFile: Boolean = true
-) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs)
+    val useArgFile: Boolean = true,
+    konanHome: String = project.konanHome
+) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs, konanHome)
 {
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) {
@@ -150,5 +154,8 @@ internal class KonanCompilerRunner(
     }
 }
 
-internal class KonanKlibRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
-    : KonanCliRunner("klib", "Klib management tool", project, additionalJvmArgs)
+internal class KonanKlibRunner(
+        project: Project,
+        additionalJvmArgs: List<String> = emptyList(),
+        konanHome: String = project.konanHome
+) : KonanCliRunner("klib", "Klib management tool", project, additionalJvmArgs, konanHome)

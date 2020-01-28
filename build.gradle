@@ -405,6 +405,18 @@ task distEndorsedLibraries {
     dependsOn "${hostName}CrossDistEndorsedLibraries"
 }
 
+task distStdlibCache {
+    if (hostName in cacheableTargetNames) {
+        dependsOn("${hostName}StdlibCache")
+    }
+}
+
+task distEndorsedCache {
+    if (hostName in cacheableTargetNames) {
+        dependsOn("${hostName}EndorsedCache")
+    }
+}
+
 def stdlib = 'klib/common/stdlib'
 def stdlibDefaultComponent = "$stdlib/default"
 def endorsedLibs = 'klib/common/endorsedLibraries'
@@ -431,6 +443,14 @@ task crossDistEndorsedLibraries(type: Copy) {
 
 task crossDistPlatformLibs {
     dependsOn.addAll(targetList.collect { "${it}PlatformLibs" })
+}
+
+task crossDistStdlibCache {
+    dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
+}
+
+task crossDistEndorsedCache {
+    dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}EndorsedCache" })
 }
 
 targetList.each { target ->
@@ -469,6 +489,16 @@ targetList.each { target ->
         }
     }
 
+    if (target in cacheableTargetNames) {
+        task "${target}StdlibCache" {
+            dependsOn ":platformLibs:${target}StdlibCache"
+        }
+
+        task "${target}EndorsedCache" {
+            dependsOn ":endorsedLibraries:${target}Cache"
+        }
+    }
+
     task("${target}CrossDist") {
         dependsOn "${target}CrossDistRuntime", 'distCompiler', 'commonDistRuntime', "${target}CrossDistEndorsedLibraries"
     }
@@ -497,66 +527,55 @@ task crossDist {
     dependsOn 'crossDistRuntime', 'distCompiler', 'crossDistEndorsedLibraries'
 }
 
-task bundle(type: (isWindows()) ? Zip : Tar) {
-    dependsOn("distDef")
-    if (isMac()) {
-      dependsOn('bundleRestricted')
-    }
-    def simpleOsName = HostManager.simpleOsName()
-    baseName = "kotlin-native-$simpleOsName-$konanVersionFull"
-    from("$project.rootDir/dist") {
-        include '**'
-        exclude 'dependencies'
-        exclude 'klib/testLibrary'
-        into baseName
-    }
-    from(project.rootDir) {
-        include 'licenses/**'
-        into baseName
-    }
-    if (isWindows()) {
-        zip64 true
-    } else {
-        extension = 'tar.gz'
-        compression = Compression.GZIP
-    }
+task bundle {
+    dependsOn 'bundleRegular', 'bundlePrebuilt'
 }
 
-task bundleRestricted(type: Tar) {
-    dependsOn("distDef")
+task bundleRegular(type: (isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.simpleOsName()
-    baseName = "kotlin-native-restricted-$simpleOsName-$konanVersionFull"
+    archiveBaseName.set("kotlin-native-$simpleOsName-$konanVersionFull")
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
-        platformManager.targetValues.each { target ->
-            if (PlatformInfo.isAppleTarget(target)) {
-                exclude "klib/platform/${target.name}"
-                exclude {
-                    // Exclude platform libraries caches too.
-                    !it.isDirectory() && it.relativePath.startsWithAny("klib/cache/${target.name}-g") &&
-                            it.name != "libstdlib-cache.a"
-                }
-            }
+        // Don't include platform libraries into the bundle (generate them at the user side instead).
+        exclude 'klib/platform'
+        exclude {
+            // Exclude platform libraries caches too.
+            !it.isDirectory() && it.relativePath.startsWithAny("klib/cache") &&
+                    it.name != "libstdlib-cache.a" && it.name != "libkotlinx-cli-cache.a"
         }
-        exclude '**/xcode_license.pdf'
-        into baseName
+        into archiveBaseName
     }
     from(project.rootDir) {
         include 'licenses/**'
         exclude '**/xcode_license.pdf'
-        into baseName
+        into archiveBaseName
     }
-
-    extension = 'tar.gz'
-    compression = Compression.GZIP
 }
 
-configure([bundle, bundleRestricted]) {
-    dependsOn('crossDistPlatformLibs')
-    dependsOn('crossDist')
-    dependsOn('distSources')
+task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
+    dependsOn("crossDistPlatformLibs")
+    def simpleOsName = HostManager.simpleOsName()
+    archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName-$konanVersionFull")
+    from("$project.rootDir/dist") {
+        include '**'
+        exclude 'dependencies'
+        exclude 'klib/testLibrary'
+        into archiveBaseName
+    }
+    from(project.rootDir) {
+        include 'licenses/**'
+        into archiveBaseName
+    }
+}
+
+configure([bundleRegular, bundlePrebuilt]) {
+    dependsOn("crossDist")
+    dependsOn("crossDistStdlibCache")
+    dependsOn("crossDistEndorsedCache")
+    dependsOn("distSources")
+    dependsOn("distDef")
     from(project.rootDir) {
         include 'DISTRO_README.md'
         rename {
@@ -569,7 +588,14 @@ configure([bundle, bundleRestricted]) {
         into baseName
     }
 
-    destinationDir = file('.')
+    destinationDirectory.set(file('.'))
+
+    if (isWindows()) {
+        zip64 true
+    } else {
+        archiveExtension.set('tar.gz')
+        compression = Compression.GZIP
+    }
 }
 
 task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
@@ -577,19 +603,19 @@ task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
     dependsOn('dist')
     dependsOn('distSources')
     def simpleOsName = HostManager.simpleOsName()
-    baseName = "kotlin-native-dist-$simpleOsName-$konanVersionFull"
+    archiveBaseName.set("kotlin-native-dist-$simpleOsName-$konanVersionFull")
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'
-        into baseName
+        into archiveBaseName
     }
 
-    destinationDir = file('.')
+    destinationDirectory.set(file('.'))
 
     if (isWindows()) {
         zip64 true
     } else {
-        extension = 'tar.gz'
+        archiveExtension.set('tar.gz')
         compression = Compression.GZIP
     }
 }

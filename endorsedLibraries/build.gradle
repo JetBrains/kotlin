@@ -1,3 +1,15 @@
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+
+buildscript {
+    repositories {
+        maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
+    }
+}
+
 def endorsedLibrariesList = ['kotlinx.cli']
 
 def toTaskName(library) {
@@ -29,6 +41,27 @@ targetList.each { target ->
             from(project("$library").file("build/${target}${ toTaskName(library) }")) {
                 include('**')
                 into("${library.replaceAll("\\.", "-")}")
+            }
+        }
+    }
+
+    if (target in cacheableTargetNames) {
+        def cacheTask = task("${target}Cache")
+
+        endorsedLibrariesList.each { library ->
+            def libraryName = library.replaceAll("\\.", "-")
+            def dist = rootProject.file("dist")
+            task("${target}${toTaskName(library)}Cache", type: KonanCacheTask) {
+                it.target = target
+                originalKlib = file("${project.buildDir}/$libraryName")
+                cacheRoot = file("$dist/klib/cache")
+                compilerDistributionPath.set(distDir)
+
+                dependsOn "${target}EndorsedLibraries"
+                dependsOn ":${target}CrossDist"
+                dependsOn ":${target}StdlibCache"
+
+                cacheTask.dependsOn it
             }
         }
     }
