@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
 
@@ -21,10 +20,22 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
     lateinit var type: KotlinJsIrType
 
-    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(
-        emptyList<File>() as FileTree,
-        emptyList()
-    )
+    @Internal
+    override fun getSource(): FileTree = super.getSource()
+
+    @get:SkipWhenEmpty
+    @get:InputDirectory
+    val entryModule: File
+        get() = File(
+            (taskData.compilation as KotlinJsIrCompilation)
+                .output
+                .classesDirs
+                .asPath
+        )
+
+    override fun skipCondition(inputs: IncrementalTaskInputs): Boolean {
+        return !inputs.isIncremental && !entryModule.exists()
+    }
 
     @OutputFile
     val outputFileProperty: RegularFileProperty = project.newFileProperty {
@@ -43,7 +54,9 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     }
 
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
-        freeCompilerArgs += additionalCompilerArgs.toList() + PRODUCE_JS
+        freeCompilerArgs += additionalCompilerArgs.toList() +
+                PRODUCE_JS +
+                "$ENTRY_IR_MODULE=${entryModule.canonicalPath}"
     }
 }
 

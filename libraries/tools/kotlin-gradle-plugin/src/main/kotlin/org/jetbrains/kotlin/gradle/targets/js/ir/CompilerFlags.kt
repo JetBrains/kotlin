@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
  * @see [compiler/testData/cli/js/jsExtraHelp.out]
  */
 
+const val ENTRY_IR_MODULE = "-Xinclude"
+
 const val DISABLE_PRE_IR = "-Xir-only"
 const val ENABLE_DCE = "-Xir-dce"
 
