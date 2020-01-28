@@ -366,7 +366,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression)
         if (syntheticElseNode != null) {
             syntheticElseNode.mergeIncomingFlow()
-            val previousConditionExitNode = syntheticElseNode.previousNodes.single() as? WhenBranchConditionExitNode
+            val previousConditionExitNode = syntheticElseNode.firstPreviousNode as? WhenBranchConditionExitNode
             // previous node for syntheticElseNode can be not WhenBranchConditionExitNode in case of `when` without any branches
             // in that case there will be when enter or subject access node
             if (previousConditionExitNode != null) {
@@ -474,11 +474,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun enterSafeCall(qualifiedAccess: FirQualifiedAccess) {
         if (!qualifiedAccess.safe) return
         val node = graphBuilder.enterSafeCall(qualifiedAccess).mergeIncomingFlow()
-        val previousNode = node.alivePreviousNodes.first()
+        val previousNode = node.firstPreviousNode
         val shouldFork: Boolean
         var flow = if (previousNode is ExitSafeCallNode) {
             shouldFork = false
-            previousNode.alivePreviousNodes.getOrNull(1)?.flow ?: node.flow
+            previousNode.secondPreviousNode?.flow ?: node.flow
         } else {
             shouldFork = true
             node.flow
@@ -684,9 +684,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun exitLeftArgumentOfBinaryBooleanOperator(leftNode: CFGNode<*>, rightNode: CFGNode<*>, isAnd: Boolean) {
-        val parentFlow = leftNode.alivePreviousNodes.first().flow
+        val parentFlow = leftNode.firstPreviousNode.flow
         leftNode.flow = logicSystem.forkFlow(parentFlow)
-        val leftOperandVariable = variableStorage.getOrCreateVariable(leftNode.previousNodes.first().fir)
+        val leftOperandVariable = variableStorage.getOrCreateVariable(leftNode.firstPreviousNode.fir)
         rightNode.flow = logicSystem.approveStatementsInsideFlow(
             parentFlow,
             leftOperandVariable eq isAnd,
@@ -751,7 +751,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
 
     private fun exitBooleanNot(functionCall: FirFunctionCall, node: FunctionCallNode) {
-        val booleanExpressionVariable = variableStorage.getOrCreateVariable(node.previousNodes.first().fir)
+        val booleanExpressionVariable = variableStorage.getOrCreateVariable(node.firstPreviousNode.fir)
         val variable = variableStorage.getOrCreateVariable(functionCall)
         logicSystem.replaceVariableFromConditionInStatements(
             node.flow,
@@ -789,10 +789,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             flowOnNodes[this.origin] = value
         }
 
-    private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) previousNodes.first() else this
+    private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
 
     private fun <T : CFGNode<*>> T.mergeIncomingFlow(updateReceivers: Boolean = false): T = this.also { node ->
-        val previousFlows = node.alivePreviousNodes.map { it.flow }
+        val previousFlows = if (node.isDead)
+            node.previousNodes.map { it.flow }
+        else
+            node.previousNodes.mapNotNull { prev -> prev.takeIf { !it.isDead }?.flow }
         val flow = logicSystem.joinFlow(previousFlows)
         if (updateReceivers) {
             logicSystem.updateAllReceivers(flow)

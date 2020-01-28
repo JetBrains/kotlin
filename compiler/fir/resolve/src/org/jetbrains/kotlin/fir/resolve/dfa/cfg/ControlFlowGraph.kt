@@ -32,6 +32,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     val previousNodes = mutableListOf<CFGNode<*>>()
     val followingNodes = mutableListOf<CFGNode<*>>()
 
+    val firstPreviousNode: CFGNode<*> get() = previousNodes.first()
+
     abstract val fir: E
     var isDead: Boolean = false
 
@@ -45,8 +47,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     }
 }
 
-val CFGNode<*>.aliveFollowingNodes: List<CFGNode<*>> get() = if (isDead) followingNodes else followingNodes.filterNot { it.isDead }
-val CFGNode<*>.alivePreviousNodes: List<CFGNode<*>> get() = if (isDead) previousNodes else previousNodes.filterNot { it.isDead }
 
 interface EnterNode
 interface ExitNode
@@ -173,7 +173,10 @@ class EnterContractNode(owner: ControlFlowGraph, override val fir: FirFunctionCa
 class ExitContractNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int, id: Int) : CFGNode<FirFunctionCall>(owner, level, id), ExitNode
 
 class EnterSafeCallNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int, id: Int) : CFGNode<FirQualifiedAccess>(owner, level, id)
-class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int, id: Int) : CFGNode<FirQualifiedAccess>(owner, level, id)
+class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirQualifiedAccess, level: Int, id: Int) : CFGNode<FirQualifiedAccess>(owner, level, id) {
+    val lastPreviousNode: CFGNode<*> get() = previousNodes.last()
+    val secondPreviousNode: CFGNode<*>? get() = previousNodes.getOrNull(1)
+}
 
 // ----------------------------------- Other -----------------------------------
 
