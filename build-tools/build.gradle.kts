@@ -86,3 +86,11 @@ compileGroovy.apply {
     classpath += project.files(compileKotlin.destinationDir)
     dependsOn(compileKotlin)
 }
+
+val kotlinCompilerPluginClasspath by configurations.getting
+
+kotlinCompilerPluginClasspath.resolutionStrategy.eachDependency {
+    if (requested.group == "org.jetbrains.kotlin" && requested.name == "kotlin-serialization") {
+        useVersion(buildKotlinVersion)
+    }
+}
