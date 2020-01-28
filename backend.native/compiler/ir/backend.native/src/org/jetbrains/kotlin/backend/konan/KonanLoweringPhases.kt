@@ -243,7 +243,7 @@ internal val interopPhase = makeKonanFileLoweringPhase(
         ::InteropLowering,
         name = "Interop",
         description = "Interop lowering",
-        prerequisite = setOf(inlinePhase, localFunctionsPhase)
+        prerequisite = setOf(inlinePhase, localFunctionsPhase, callableReferencePhase)
 )
 
 internal val varargPhase = makeKonanFileLoweringPhase(

@@ -41,6 +41,11 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
+    companion object {
+        fun isLoweredCallableReference(declaration: IrDeclaration): Boolean =
+                declaration.origin == DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
+    }
+
     private val kTypeGenerator = KTypeGenerator(context)
 
     override fun lower(irFile: IrFile) {
