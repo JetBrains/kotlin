@@ -16,6 +16,7 @@
 
 package androidx.compose.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -70,6 +71,44 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public synthetic bridge invoke()Ljava/lang/Object;
               final static INNERCLASS TestKt%Example%4 null null
               OUTERCLASS TestKt Example (Landroidx/compose/Composer;)V
+            }
+        """
+    )
+
+    @Ignore("turn this test back on once the runtime is compiled with composer param turned on")
+    @Test
+    fun testAmbientCurrent(): Unit = checkApi(
+        """
+            val a = ambientOf { 123 }
+            @Composable fun Foo() {
+                val b = a.current
+                print(b)
+            }
+        """,
+        """
+            public final class TestKt {
+              private final static Landroidx/compose/ProvidableAmbient; a
+              public final static getA()Landroidx/compose/ProvidableAmbient;
+              public final static Foo(Landroidx/compose/Composer;)V
+              public final static synthetic Foo()V
+              public final static <clinit>()V
+              final static INNERCLASS TestKt%Foo%1 null null
+              final static INNERCLASS TestKt%a%1 null null
+            }
+            final class TestKt%Foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>(Landroidx/compose/Composer;)V
+              public final invoke()V
+              private final synthetic Landroidx/compose/Composer; %%composer
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS TestKt%Foo%1 null null
+              OUTERCLASS TestKt Foo (Landroidx/compose/Composer;)V
+            }
+            final class TestKt%a%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>()V
+              public final invoke()I
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS TestKt%a%1 null null
+              OUTERCLASS TestKt <clinit> ()V
             }
         """
     )
