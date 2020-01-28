@@ -94,6 +94,7 @@ class ComposerParamTransformer(
 
         val typeRemapper = ComposerTypeRemapper(
             context,
+            symbolRemapper,
             typeTranslator,
             composerTypeDescriptor
         )
@@ -514,6 +515,7 @@ class ComposerParamTransformer(
         originalDeclarations.mapTo(declarations) { d ->
             val typeRemapper = ComposerTypeRemapper(
                 context,
+                symbolRemapper,
                 typeTranslator,
                 composerTypeDescriptor
             )

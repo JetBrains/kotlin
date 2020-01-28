@@ -32,8 +32,15 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -92,6 +99,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
 
 class ComposerTypeRemapper(
     private val context: JvmBackendContext,
+    private val symbolRemapper: SymbolRemapper,
     private val typeTranslator: TypeTranslator,
     private val composerTypeDescriptor: ClassDescriptor
 ) : TypeRemapper {
@@ -125,22 +133,49 @@ class ComposerTypeRemapper(
         // This is basically creating the KotlinType and then converting to an IrType. Consider
         // rewriting to just create the IrType directly, which would probably be more efficient.
         if (type !is IrSimpleType) return type
-        if (!type.isFunction()) return type
-        if (!type.isComposable()) return type
-        if (!shouldTransform) return type
+        if (!type.isFunction()) return underlyingRemapType(type)
+        if (!type.isComposable()) return underlyingRemapType(type)
+        if (!shouldTransform) return underlyingRemapType(type)
         val oldArguments = type.toKotlinType().arguments
         val newArguments =
             oldArguments.subList(0, oldArguments.size - 1) +
                     TypeProjectionImpl(composerTypeDescriptor.defaultType) +
                     oldArguments.last()
 
-        return context
+        val transformedComposableType = context
             .irBuiltIns
             .builtIns
             .getFunction(oldArguments.size) // return type is an argument, so this is n + 1
             .defaultType
             .replace(newArguments)
-            .toIrType()
+            .toIrType() as IrSimpleType
+
+        return underlyingRemapType(transformedComposableType)
     }
+
+    private fun underlyingRemapType(type: IrSimpleType): IrType {
+        return IrSimpleTypeImpl(
+            null,
+            symbolRemapper.getReferencedClassifier(type.classifier),
+            type.hasQuestionMark,
+            type.arguments.map { remapTypeArgument(it) },
+            type.annotations.map { it.transform(deepCopy, null) as IrConstructorCall },
+            type.abbreviation?.remapTypeAbbreviation()
+        )
+    }
+
+    private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
+        if (typeArgument is IrTypeProjection)
+            makeTypeProjection(this.remapType(typeArgument.type), typeArgument.variance)
+        else
+            typeArgument
+
+    private fun IrTypeAbbreviation.remapTypeAbbreviation() =
+        IrTypeAbbreviationImpl(
+            symbolRemapper.getReferencedTypeAlias(typeAlias),
+            hasQuestionMark,
+            arguments.map { remapTypeArgument(it) },
+            annotations
+        )
 }
 
