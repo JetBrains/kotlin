@@ -166,7 +166,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         kotlinScopeProvider,
                         this
                     ).apply klass@{
-                        resolvePhase = FirResolvePhase.DECLARATIONS
+                        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                         typeParameters.addAll((1..arity).map {
                             FirTypeParameterImpl(
                                 null,
@@ -222,7 +222,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                                 functionStatus,
                                 FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name))
                             ).apply {
-                                resolvePhase = FirResolvePhase.DECLARATIONS
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
                                     val parameterName = Name.identifier("p${index + 1}")
                                     FirValueParameterImpl(

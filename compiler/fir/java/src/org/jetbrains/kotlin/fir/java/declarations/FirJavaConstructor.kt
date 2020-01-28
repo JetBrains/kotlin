@@ -49,7 +49,7 @@ class FirJavaConstructor(
         this.isInner = isInner
     }
 
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
     init {
         symbol.bind(this)

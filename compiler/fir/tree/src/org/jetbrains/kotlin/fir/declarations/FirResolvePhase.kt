@@ -22,5 +22,6 @@ enum class FirResolvePhase {
     companion object {
         // Short-cut
         val DECLARATIONS = STATUS
+        val ANALYZED_DEPENDENCIES = BODY_RESOLVE
     }
 }

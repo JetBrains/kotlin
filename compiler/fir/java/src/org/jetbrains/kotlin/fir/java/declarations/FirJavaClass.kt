@@ -54,7 +54,7 @@ class FirJavaClass internal constructor(
         status.isInline = false
     }
 
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
     override val superTypeRefs = mutableListOf<FirTypeRef>()
 

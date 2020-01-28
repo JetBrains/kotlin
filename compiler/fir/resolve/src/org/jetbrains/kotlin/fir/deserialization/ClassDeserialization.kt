@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -78,7 +79,7 @@ fun deserializeClassToSymbol(
         )
     }
     firClass.apply {
-        resolvePhase = FirResolvePhase.DECLARATIONS
+        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         val context =
             parentContext?.childContext(
                 classProto.typeParameterList,
@@ -136,7 +137,7 @@ fun deserializeClassToSymbol(
                         isStatic = true
                     }
                 ).apply {
-                    resolvePhase = FirResolvePhase.DECLARATIONS
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 }
 
                 property

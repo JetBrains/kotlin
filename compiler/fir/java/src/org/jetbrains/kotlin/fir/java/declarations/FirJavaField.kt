@@ -46,7 +46,7 @@ class FirJavaField(
         isOverride = false
     }
     override val receiverTypeRef: FirTypeRef? get() = null
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     override val isVal: Boolean = true
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null

@@ -181,7 +181,7 @@ class JavaClassEnhancementScope(
                     FirVariableSymbol(this.name),
                     defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
                 ).apply {
-                    resolvePhase = FirResolvePhase.DECLARATIONS
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     annotations += valueParameter.annotations
                 }
             }
@@ -213,7 +213,7 @@ class JavaClassEnhancementScope(
                         symbol
                     )
                 }.apply {
-                    resolvePhase = FirResolvePhase.DECLARATIONS
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     this.valueParameters += newValueParameters
                     this.typeParameters += firMethod.typeParameters
                 }
@@ -228,7 +228,7 @@ class JavaClassEnhancementScope(
                 if (!isAccessor) FirNamedFunctionSymbol(methodId)
                 else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId)
             ).apply {
-                resolvePhase = FirResolvePhase.DECLARATIONS
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 this.valueParameters += newValueParameters
                 this.typeParameters += firMethod.typeParameters
             }

@@ -146,7 +146,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 local.typeDeserializer.type(proto.underlyingType(c.typeTable))
             )
         ).apply {
-            resolvePhase = FirResolvePhase.DECLARATIONS
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
         }
     }
@@ -184,7 +184,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             false,
             status
         ).apply {
-            resolvePhase = FirResolvePhase.DECLARATIONS
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
             getter = FirDefaultPropertyGetter(null, c.session, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags)))
@@ -234,7 +234,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             status,
             symbol
         ).apply {
-            resolvePhase = FirResolvePhase.DECLARATIONS
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += local.annotationDeserializer.loadFunctionAnnotations(proto, local.nameResolver)
@@ -290,7 +290,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 symbol
             )
         }.apply {
-            resolvePhase = FirResolvePhase.DECLARATIONS
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.typeParameters += typeParameters
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += local.annotationDeserializer.loadConstructorAnnotations(proto, local.nameResolver)
