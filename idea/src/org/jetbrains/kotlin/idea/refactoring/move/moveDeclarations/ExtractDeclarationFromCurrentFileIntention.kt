@@ -160,6 +160,7 @@ class ExtractDeclarationFromCurrentFileIntention :
                 /* searchInComments = */ true,
                 /* searchForTextOccurrences = */ true,
                 /* deleteEmptySourceFiles = */ true,
+                /* moveMppDeclarations = */ false,
                 callBack
             ).showWithTransaction()
         }

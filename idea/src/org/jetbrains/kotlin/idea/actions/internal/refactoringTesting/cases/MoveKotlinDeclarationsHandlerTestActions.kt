@@ -156,6 +156,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
         searchInComments: Boolean,
         searchForTextOccurrences: Boolean,
         deleteEmptySourceFiles: Boolean,
+        moveMppDeclarations: Boolean,
         moveCallback: MoveCallback?
     ) {
         val selectedElementsToMove = mutableSetOf<KtNamedDeclaration>()
@@ -181,6 +182,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
             isDeleteEmptyFiles = randomBoolean(),
             isUpdatePackageDirective = randomBoolean(),
             isFullFileMove = randomBoolean(),
+            applyMPPDeclarations = true,
             moveCallback = null
         )
 

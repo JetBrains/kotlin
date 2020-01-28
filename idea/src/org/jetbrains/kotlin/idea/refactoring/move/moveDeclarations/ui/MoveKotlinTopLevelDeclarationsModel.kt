@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
+import org.jetbrains.kotlin.idea.util.collectAllExpectAndActualDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyActual
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -48,6 +51,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     val isDeleteEmptyFiles: Boolean,
     val isUpdatePackageDirective: Boolean,
     val isFullFileMove: Boolean,
+    val applyMPPDeclarations: Boolean,
     val moveCallback: MoveCallback?
 ) : Model<BaseRefactoringProcessor> {
 
@@ -58,6 +62,8 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         ?: throw ConfigurationException(KotlinBundle.message("text.cannot.determine.source.directory"))
 
     private val sourceFiles: Set<KtFile> = elementsToMove.mapTo(mutableSetOf()) { it.containingKtFile }
+
+    private val elementsToMoveHasMPP = applyMPPDeclarations && elementsToMove.any { it.isEffectivelyActual() || it.isExpectDeclaration() }
 
     private val singleSourceFileMode = sourceFiles.size == 1
 
@@ -187,7 +193,11 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         if (isMoveToPackage) selectMoveTargetToPackage() else selectMoveTargetToFile()
 
     private fun verifyBeforeRun() {
+        if (!isMoveToPackage && elementsToMoveHasMPP)
+            throw ConfigurationException(KotlinBundle.message("text.cannot.move.expect.actual.declaration.to.file"))
+
         if (elementsToMove.isEmpty()) throw ConfigurationException(KotlinBundle.message("text.at.least.one.file.must.be.selected"))
+
         if (sourceFiles.isEmpty()) throw ConfigurationException("None elements were selected")
         if (singleSourceFileMode && fileNameInPackage.isBlank()) throw ConfigurationException(KotlinBundle.message("text.file.name.cannot.be.empty"))
 
@@ -219,6 +229,8 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     }
 
     private fun tryMoveFile(throwOnConflicts: Boolean): BaseRefactoringProcessor? {
+
+        if (elementsToMoveHasMPP) return null
 
         val targetFileName = if (sourceFiles.size > 1) null else fileNameInPackage
         if (targetFileName != null) checkTargetFileName(targetFileName)
@@ -260,14 +272,21 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     }
 
     private fun moveDeclaration(throwOnConflicts: Boolean): BaseRefactoringProcessor {
+
+        val elementsWithMPPIfNeeded =
+            if (elementsToMoveHasMPP) elementsToMove
+                .flatMap { it.collectAllExpectAndActualDeclaration() }
+                .filterIsInstance<KtNamedDeclaration>()
+            else elementsToMove
+
         val target = selectMoveTarget()
-        for (element in elementsToMove) {
+        for (element in elementsWithMPPIfNeeded) {
             target.verify(element.containingFile)?.let { throw ConfigurationException(it) }
         }
 
         val options = MoveDeclarationsDescriptor(
             project,
-            MoveSource(elementsToMove),
+            MoveSource(elementsWithMPPIfNeeded),
             target,
             MoveDeclarationsDelegate.TopLevel,
             isSearchInComments,

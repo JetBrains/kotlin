@@ -34,6 +34,7 @@ internal interface MoveKotlinDeclarationsHandlerActions {
         searchInComments: Boolean,
         searchForTextOccurrences: Boolean,
         deleteEmptySourceFiles: Boolean,
+        moveMppDeclarations: Boolean,
         moveCallback: MoveCallback?
     )
 

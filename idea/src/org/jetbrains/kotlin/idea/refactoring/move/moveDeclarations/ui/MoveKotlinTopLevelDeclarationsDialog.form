@@ -116,7 +116,7 @@
                       <text resource-bundle="messages/KotlinBundle" key="label.text.update.package.directive"/>
                     </properties>
                   </component>
-                  <grid id="69aba" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="69aba" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -158,6 +158,15 @@
                         <properties>
                           <selected value="true"/>
                           <text resource-bundle="messages/KotlinBundle" key="checkbox.text.delete.empty.source.files"/>
+                        </properties>
+                      </component>
+                      <component id="cc60d" class="javax.swing.JCheckBox" binding="cbApplyMPPDeclarationsMove">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <selected value="true"/>
+						  <text resource-bundle="messages/KotlinBundle" key="label.text.move.expect.actual.counterparts"/>
                         </properties>
                       </component>
                     </children>

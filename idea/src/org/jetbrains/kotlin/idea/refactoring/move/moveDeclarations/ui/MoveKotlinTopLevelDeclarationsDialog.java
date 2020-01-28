@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTab
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinFileChooserDialog;
+import org.jetbrains.kotlin.idea.util.ExpectActualUtilKt;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.psi.KtPureElement;
@@ -75,6 +77,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JCheckBox cbUpdatePackageDirective;
     private JCheckBox cbDeleteEmptySourceFiles;
     private JCheckBox cbSearchReferences;
+    private JCheckBox cbApplyMPPDeclarationsMove;
     private KotlinMemberSelectionTable memberTable;
 
     private class MemberSelectionerInfoChangeListener implements MemberInfoChangeListener<KtNamedDeclaration, KotlinMemberInfo> {
@@ -100,6 +103,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         @Override
         public void memberInfoChanged(@NotNull MemberInfoChange<KtNamedDeclaration, KotlinMemberInfo> event) {
+            updateControls();
             updatePackageDirectiveCheckBox();
             updateFileNameInPackageField();
             // Update file name field only if it user hasn't changed it to some non-default value
@@ -119,6 +123,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             boolean searchInComments,
             boolean searchForTextOccurrences,
             boolean deleteEmptySourceFiles,
+            boolean moveMppDeclarations,
             @Nullable MoveCallback moveCallback
     ) {
         super(project, true);
@@ -132,7 +137,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         setTitle(MoveHandler.REFACTORING_NAME);
 
-        initSearchOptions(searchInComments, searchForTextOccurrences, deleteEmptySourceFiles);
+        initSearchOptions(searchInComments, searchForTextOccurrences, deleteEmptySourceFiles, moveMppDeclarations);
 
         initPackageChooser(targetPackageName, targetDirectory, sourceFiles);
 
@@ -190,6 +195,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         selectionPanel.getTable().setMemberInfoModel(memberInfoModel);
         selectionPanel.getTable().addMemberInfoChangeListener(memberInfoModel);
         selectionPanel.getTable().addMemberInfoChangeListener(new MemberSelectionerInfoChangeListener(memberInfos));
+        cbApplyMPPDeclarationsMove.addChangeListener(e -> updateControls());
         memberInfoPanel.add(selectionPanel, BorderLayout.CENTER);
     }
 
@@ -229,10 +235,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         cbUpdatePackageDirective.setSelected(arePackagesAndDirectoryMatched(sourceFiles));
     }
 
-    private void initSearchOptions(boolean searchInComments, boolean searchForTextOccurences, boolean deleteEmptySourceFiles) {
+    private void initSearchOptions(boolean searchInComments, boolean searchForTextOccurences, boolean deleteEmptySourceFiles, boolean moveMppDeclarations) {
         cbSearchInComments.setSelected(searchInComments);
         cbSearchTextOccurrences.setSelected(searchForTextOccurences);
         cbDeleteEmptySourceFiles.setSelected(deleteEmptySourceFiles);
+        cbApplyMPPDeclarationsMove.setSelected(moveMppDeclarations);
     }
 
     private void initMoveToButtons(boolean moveToPackage) {
@@ -327,7 +334,30 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         );
     }
 
+    private boolean isMppDeclarationSelected() {
+        for(KtNamedDeclaration element : getSelectedElementsToMove()) {
+            if (ExpectActualUtilKt.isEffectivelyActual(element, true) ||
+                ExpectActualUtilKt.isExpectDeclaration(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void updateControls() {
+
+        boolean mppDeclarationSelected = isMppDeclarationSelected();
+        cbApplyMPPDeclarationsMove.setEnabled(mppDeclarationSelected);
+
+        boolean needToMoveMPPDeclarations = mppDeclarationSelected && cbApplyMPPDeclarationsMove.isSelected();
+
+        if (needToMoveMPPDeclarations) {
+            if (!rbMoveToPackage.isSelected()) {
+                rbMoveToPackage.setSelected(true);
+            }
+        }
+        UIUtil.setEnabled(rbMoveToFile, !needToMoveMPPDeclarations, true);
+
         boolean moveToPackage = rbMoveToPackage.isSelected();
         classPackageChooser.setEnabled(moveToPackage);
         updateFileNameInPackageField();
@@ -363,6 +393,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         refactoringSettings.MOVE_SEARCH_FOR_TEXT = cbSearchTextOccurrences.isSelected();
         refactoringSettings.MOVE_DELETE_EMPTY_SOURCE_FILES = cbDeleteEmptySourceFiles.isSelected();
         refactoringSettings.MOVE_PREVIEW_USAGES = isPreviewUsages();
+        refactoringSettings.MOVE_MPP_DECLARATIONS = cbApplyMPPDeclarationsMove.isSelected();
 
         RecentsManager.getInstance(myProject).registerRecentEntry(RECENTS_KEY, getTargetPackage());
     }
@@ -401,6 +432,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper) destinationFolderCB.getComboBox().getSelectedItem();
         PsiDirectory selectedPsiDirectory = selectedItem != null ? selectedItem.getDirectory() : initialTargetDirectory;
 
+        boolean mppDeclarationSelected = cbApplyMPPDeclarationsMove.isSelected() && isMppDeclarationSelected();
+
         return new MoveKotlinTopLevelDeclarationsModel(
                 myProject,
                 getSelectedElementsToMoveChecked(),
@@ -415,6 +448,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 cbDeleteEmptySourceFiles.isSelected(),
                 cbUpdatePackageDirective.isSelected(),
                 isFullFileMove(),
+                mppDeclarationSelected,
                 moveCallback
         );
     }
