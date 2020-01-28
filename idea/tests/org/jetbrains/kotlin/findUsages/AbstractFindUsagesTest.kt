@@ -40,7 +40,6 @@ import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.idea.core.util.clearDialogsResults
 import org.jetbrains.kotlin.idea.core.util.setDialogsResult
-import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.refactoring.CHECK_SUPER_METHODS_YES_NO_DIALOG
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
@@ -322,15 +321,15 @@ internal fun findUsages(
                     }
                 }
             } else {
-                ProgressManager.getInstance().run(object : Task(project, "", false) {
-                    override fun isModal() = true
-
-                    override fun run(indicator: ProgressIndicator) {
-                        project.runReadActionInSmartMode {
-                            handler.processElementUsages(psiElement, processor, options)
+                ProgressManager.getInstance().run(
+                    object : Task.Modal(project, "", false) {
+                        override fun run(indicator: ProgressIndicator) {
+                            project.runReadActionInSmartMode {
+                                handler.processElementUsages(psiElement, processor, options)
+                            }
                         }
-                    }
-                })
+                    },
+                )
             }
         }
 
