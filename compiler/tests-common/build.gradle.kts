@@ -45,7 +45,7 @@ dependencies {
     testCompile(commonDep("com.android.tools:r8"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     Platform[193].orLower {
-        testCompile(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+        testCompile(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }
     }
     testCompile(intellijDep()) {
         includeJars(
@@ -58,7 +58,6 @@ dependencies {
             "idea_rt",
             "guava",
             "trove4j",
-            "picocontainer",
             "asm-all",
             "log4j",
             "jdom",

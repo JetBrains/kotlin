@@ -197,11 +197,11 @@ extra["IntellijCoreDependencies"] =
         "jdom",
         "jna",
         "log4j",
-        "picocontainer",
+        if (Platform[201].orHigher()) null else "picocontainer",
         "snappy-in-java",
         "streamex",
         "trove4j"
-    )
+    ).filterNotNull()
 
 
 extra["compilerModules"] = arrayOf(

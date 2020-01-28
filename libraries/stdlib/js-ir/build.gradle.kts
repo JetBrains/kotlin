@@ -31,8 +31,13 @@ dependencies {
     fullJsIrCli(project(":js:js.dce"))
     fullJsIrCli(project(":kotlin-reflect"))
     fullJsIrCli(intellijCoreDep()) { includeJars("intellij-core") }
+    if (Platform[193].orLower()) {
+        fullJsIrCli(intellijDep()) {
+            includeJars("picocontainer", rootProject = rootProject)
+        }
+    }
     fullJsIrCli(intellijDep()) {
-        includeJars("picocontainer", "trove4j", "guava", "jdom", "asm-all", rootProject = rootProject)
+        includeJars("trove4j", "guava", "jdom", "asm-all", rootProject = rootProject)
     }
 }
 
