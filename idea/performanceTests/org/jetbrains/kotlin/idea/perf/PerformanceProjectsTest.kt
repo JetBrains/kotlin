@@ -10,7 +10,6 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.propertyBased.MadTestingUtil
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
@@ -235,7 +234,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         val project = myProject!!
         val disposable = Disposer.newDisposable("perfKtsFileAnalysis $fileName")
 
-        MadTestingUtil.enableAllInspections(project, disposable)
+        enableAllInspectionsCompat(project, disposable)
 
         replaceWithCustomHighlighter()
 
