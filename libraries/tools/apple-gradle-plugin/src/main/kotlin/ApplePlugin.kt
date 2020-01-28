@@ -11,11 +11,7 @@ import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
 import com.jetbrains.cidr.xcode.frameworks.AppleProductType
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
-import com.jetbrains.cidr.xcode.model.PBXBuildPhase
-import com.jetbrains.cidr.xcode.model.PBXCopyFilesBuildPhase
-import com.jetbrains.cidr.xcode.model.PBXDictionary
-import com.jetbrains.cidr.xcode.model.PBXTarget
-import com.jetbrains.cidr.xcode.model.PBXProjectFileManipulator
+import com.jetbrains.cidr.xcode.model.*
 import com.jetbrains.cidr.xcode.plist.Plist
 import com.jetbrains.cidr.xcode.plist.XMLPlistDriver
 import org.gradle.api.*
@@ -199,17 +195,17 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
                 addFile(file.path, emptyArray(), mainGroup, false)
             }
 
-            fun addTargetFiles(targetMemberships: Array<PBXTarget>, sourceDirectorySet: SourceDirectorySet) {
+            fun addTargetFiles(targetMemberships: Array<PBXTarget>, group: PBXGroup, sourceDirectorySet: SourceDirectorySet) {
                 for (file in sourceDirectorySet.srcDirs.flatMap {
                     it.listFiles()?.apply { sort() }?.asList() ?: emptyList()
                 }) { // don't flatten
-                    addFile(file.path, targetMemberships, sourcesGroup, false)
+                    addFile(file.path, targetMemberships, group, false)
                 }
             }
 
             val targetMemberships = arrayOf(pbxTarget)
-            addTargetFiles(targetMemberships, sourceDirectorySet)
-            addTargetFiles(arrayOf(pbxTestTarget), testSourceDirectorySet)
+            addTargetFiles(targetMemberships, sourcesGroup, sourceDirectorySet)
+            addTargetFiles(arrayOf(pbxTestTarget), testSourcesGroup, testSourceDirectorySet)
 
             val embedFrameworksPhase = addBuildPhase(
                 PBXBuildPhase.Type.COPY_FILES, mapOf(
