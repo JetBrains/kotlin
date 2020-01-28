@@ -411,11 +411,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         break;
       }
       catch (Exception e) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          LOG.info(e);
-        } else {
-          LOG.info(e);
-        }
+        LOG.info(e);
         boolean instantiatedStorage = storage != null;
         try {
           if (storage != null) storage.close();
@@ -1697,5 +1693,5 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       return extension instanceof PsiDependentIndex;
     }
   }
-  public static boolean DO_TRACE_STUB_INDEX_UPDATE = SystemProperties.getBooleanProperty("idea.trace.stub.index.update", false);
+  public static final boolean DO_TRACE_STUB_INDEX_UPDATE = SystemProperties.getBooleanProperty("idea.trace.stub.index.update", false);
 }
