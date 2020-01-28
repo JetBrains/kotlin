@@ -34,14 +34,13 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 open class FunctionCodegen(
     private val irFunction: IrFunction,
     private val classCodegen: ClassCodegen,
-    private val inlinedInto: ExpressionCodegen? = null
+    private val inlinedInto: ExpressionCodegen? = null,
 ) {
     val context = classCodegen.context
     val state = classCodegen.state
@@ -65,9 +64,20 @@ open class FunctionCodegen(
         }
 
         if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            AnnotationCodegen(classCodegen, context, methodVisitor::visitAnnotation).genAnnotations(
+            object : AnnotationCodegen(classCodegen, context) {
+                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                    return methodVisitor.visitAnnotation(descr, visible)
+                }
+
+                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                    return methodVisitor.visitTypeAnnotation(
+                        TypeReference.newTypeReference(TypeReference.METHOD_RETURN).value, path, descr, visible
+                    )
+                }
+            }.genAnnotations(
                 functionView,
-                signature.asmMethod.returnType
+                signature.asmMethod.returnType,
+                irFunction.returnType
             )
             // Not generating parameter annotations for default stubs fixes KT-7892, though
             // this certainly looks like a workaround for a javac bug.
@@ -216,7 +226,14 @@ open class FunctionCodegen(
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
         getAnnotationDefaultValueExpression()?.let { defaultValueExpression ->
-            val annotationCodegen = AnnotationCodegen(classCodegen, context) { _, _ -> methodVisitor.visitAnnotationDefault() }
+            val annotationCodegen = object: AnnotationCodegen(
+                classCodegen,
+                context
+            ) {
+                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                    return methodVisitor.visitAnnotationDefault()
+                }
+            }
             annotationCodegen.generateAnnotationDefaultValue(defaultValueExpression)
         }
     }
@@ -282,13 +299,22 @@ private fun generateParameterAnnotations(
         }
 
         if (!kind.isSkippedInGenericSignature) {
-            AnnotationCodegen(innerClassConsumer, context) { descriptor, visible ->
-                mv.visitParameterAnnotation(
-                    i - syntheticParameterCount,
-                    descriptor,
-                    visible
-                )
-            }.genAnnotations(annotated, parameterSignature.asmType)
+            object : AnnotationCodegen(innerClassConsumer, context) {
+                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                    return mv.visitParameterAnnotation(
+                        i - syntheticParameterCount,
+                        descr,
+                        visible
+                    )
+                }
+
+                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                    return mv.visitTypeAnnotation(
+                        TypeReference.newFormalParameterReference(i - syntheticParameterCount).value,
+                        path, descr, visible
+                    )
+                }
+            }.genAnnotations(annotated, parameterSignature.asmType, annotated?.type)
         }
     }
 }

@@ -556,6 +556,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (declarationDescriptor as? ClassDescriptor)?.isInline == true
     }
 
+    override fun TypeConstructorMarker.isInnerClass(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return (declarationDescriptor as? ClassDescriptor)?.isInner == true
+    }
+
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is TypeParameterDescriptor, this::errorMessage)
         return representativeUpperBound

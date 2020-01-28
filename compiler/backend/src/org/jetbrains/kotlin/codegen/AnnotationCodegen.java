@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.*;
@@ -675,9 +676,9 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        Iterable<TypePathInfo> infos =
-                new TypeAnnotationCollector().collectTypeAnnotations(type, TypeReference.METHOD_FORMAL_PARAMETER);
-        for (TypePathInfo info : infos) {
+        Iterable<TypePathInfo<AnnotationDescriptor>> infos =
+                new PsiTypeAnnotationCollector().collectTypeAnnotations(type);
+        for (TypePathInfo<AnnotationDescriptor> info : infos) {
             for (AnnotationDescriptor annotationDescriptor : info.getAnnotations()) {
                 genAnnotation(annotationDescriptor, info.getPath(), true);
             }

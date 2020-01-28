@@ -461,6 +461,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return toFirRegularClass()?.isInline == true
     }
 
+    override fun TypeConstructorMarker.isInnerClass(): Boolean {
+        return toFirRegularClass()?.isInner == true
+    }
+
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
         return this.fir.bounds.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }

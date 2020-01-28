@@ -45,8 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 
 open class ClassCodegen protected constructor(
@@ -125,7 +124,15 @@ open class ClassCodegen protected constructor(
             signature.superclassName,
             signature.interfaces.toTypedArray()
         )
-        AnnotationCodegen(this, context, visitor.visitor::visitAnnotation).genAnnotations(irClass, null)
+        object : AnnotationCodegen(this@ClassCodegen, context) {
+            override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                return visitor.visitor.visitAnnotation(descr, visible)
+            }
+        }.genAnnotations(
+            irClass,
+            null,
+            null
+        )
 
         val nestedClasses = irClass.declarations.mapNotNull { declaration ->
             if (declaration is IrClass) {
@@ -328,7 +335,15 @@ open class ClassCodegen protected constructor(
             fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value
         )
 
-        AnnotationCodegen(this, context, fv::visitAnnotation).genAnnotations(field, fieldType)
+        object : AnnotationCodegen(this@ClassCodegen, context) {
+            override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                return fv.visitAnnotation(descr, visible)
+            }
+
+            override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                return fv.visitTypeAnnotation(TypeReference.newTypeReference(TypeReference.FIELD).value,path, descr, visible)
+            }
+        }.genAnnotations(field, fieldType, field.type)
 
         val descriptor = field.metadata?.descriptor
         if (descriptor != null) {
