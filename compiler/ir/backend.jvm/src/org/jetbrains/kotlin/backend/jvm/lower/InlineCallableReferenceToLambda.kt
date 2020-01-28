@@ -50,9 +50,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
     private var inlinableReferences = mutableSetOf<IrCallableReference>()
 
     override fun lower(irFile: IrFile) {
-        IrInlineReferenceLocator.scan(context, irFile).let {
-            inlinableReferences.addAll(it.inlineReferences)
-        }
+        inlinableReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
         irFile.transformChildrenVoid(this)
     }
 
