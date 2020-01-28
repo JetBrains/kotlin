@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
+import org.jetbrains.kotlin.idea.PlatformVersion;
 import org.jetbrains.kotlin.idea.util.VersioningKt;
 
 import javax.swing.*;
@@ -32,6 +33,8 @@ public class KotlinLanguageConfigurationForm {
 
     public KotlinLanguageConfigurationForm() {
         showVerifierDisabledStatus();
+
+        useNewProjectWizardCheckBox.setVisible(!isAndroidStudio());
 
         String pluginVersion = KotlinPluginUtil.getPluginVersion();
 
@@ -109,5 +112,11 @@ public class KotlinLanguageConfigurationForm {
         else {
             verifierDisabledText.setText("");
         }
+    }
+
+    private static boolean isAndroidStudio() {
+        PlatformVersion platformVersion = PlatformVersion.Companion.getCurrent();
+        if (platformVersion == null) return false;
+        return platformVersion.getPlatform().equals(PlatformVersion.Platform.ANDROID_STUDIO);
     }
 }
