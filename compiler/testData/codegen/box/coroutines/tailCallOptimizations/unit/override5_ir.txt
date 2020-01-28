@@ -78,7 +78,7 @@ public final class Override5Kt {
     private static field c: kotlin.coroutines.Continuation
     inner class Override5Kt$box$1
     inner class Override5Kt$inlineMe$1
-    public final static method <clinit>(): void
+    static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method getC(): kotlin.coroutines.Continuation

@@ -377,7 +377,7 @@ public interface Sink {
 public final class SourceCrossinline$Factory {
     synthetic final static @org.jetbrains.annotations.NotNull field $$INSTANCE: SourceCrossinline$Factory
     inner class SourceCrossinline$Factory
-    public final static method <clinit>(): void
+    static method <clinit>(): void
     private method <init>(): void
 }
 
@@ -385,6 +385,6 @@ public final class SourceCrossinline$Factory {
 public interface SourceCrossinline {
     public final static @org.jetbrains.annotations.NotNull field Factory: SourceCrossinline$Factory
     inner class SourceCrossinline$Factory
-    public static method <clinit>(): void
+    static method <clinit>(): void
     public abstract @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }

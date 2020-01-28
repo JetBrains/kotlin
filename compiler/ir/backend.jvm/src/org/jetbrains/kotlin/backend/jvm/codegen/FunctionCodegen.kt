@@ -177,6 +177,7 @@ open class FunctionCodegen(
         ) Opcodes.ACC_BRIDGE else 0
         val modalityFlag = when ((irFunction as? IrSimpleFunction)?.modality) {
             Modality.FINAL -> when {
+                irFunction.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                 classCodegen.irClass.isInterface && irFunction.body != null -> 0
                 !classCodegen.irClass.isAnnotationClass || irFunction.isStatic -> Opcodes.ACC_FINAL
                 else -> Opcodes.ACC_ABSTRACT
