@@ -42,7 +42,7 @@ class KotlinAwareDelegatingMoveDestination(
     private val targetDirectory: PsiDirectory?
 ) : MoveDestination by delegate {
     override fun analyzeModuleConflicts(
-        elements: MutableCollection<PsiElement>,
+        elements: Collection<PsiElement>,
         conflicts: MultiMap<PsiElement, String>,
         usages: Array<out UsageInfo>
     ) {
