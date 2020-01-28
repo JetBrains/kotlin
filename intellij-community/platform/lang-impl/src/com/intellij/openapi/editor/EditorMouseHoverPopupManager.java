@@ -479,10 +479,19 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     @Nullable
     private Info calcInfo(@NotNull Editor editor) {
       HighlightInfo info = getHighlightInfo();
-      if (info != null && (info.getDescription() == null || info.getToolTip() == null)) {
-        info = null;
+      HighlightInfo infoToUse = null;
+      TooltipAction tooltipAction = null;
+      if (info != null && info.getDescription() != null && info.getToolTip() != null) {
+        infoToUse = info;
+        try {
+          tooltipAction = ReadAction.nonBlocking(() -> TooltipActionProvider.calcTooltipAction(info, editor)).executeSynchronously();
+        }
+        catch (IndexNotReadyException ignored) {
+        }
+        catch (Exception e) {
+          LOG.warn(e);
+        }
       }
-      TooltipAction tooltipAction = info == null ? null : TooltipActionProvider.calcTooltipAction(info, editor);
 
       String quickDocMessage = null;
       PsiElement targetElement = null;
@@ -517,7 +526,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
           LOG.warn(e);
         }
       }
-      return info == null && quickDocMessage == null ? null : new Info(info, tooltipAction, quickDocMessage, targetElement);
+      return infoToUse == null && quickDocMessage == null ? null : new Info(infoToUse, tooltipAction, quickDocMessage, targetElement);
     }
 
     private enum Relation {
