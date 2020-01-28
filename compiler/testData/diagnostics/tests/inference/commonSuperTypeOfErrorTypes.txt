@@ -1,0 +1,19 @@
+package
+
+public fun </*0*/ T> consume(/*0*/ x: Foo<out T>, /*1*/ y: Foo<out T>): kotlin.Unit
+public fun </*0*/ T> materialize(): T
+public fun test(): kotlin.Unit
+
+public final class Bar</*0*/ S> {
+    public constructor Bar</*0*/ S>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

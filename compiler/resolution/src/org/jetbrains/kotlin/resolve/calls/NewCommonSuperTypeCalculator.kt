@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.types.AbstractFlexibilityChecker.hasDifferentFlexibi
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object NewCommonSuperTypeCalculator {
     // TODO: Bridge for old calls
@@ -96,6 +97,10 @@ object NewCommonSuperTypeCalculator {
         contextStubTypesEqualToAnything: AbstractTypeCheckerContext,
         contextStubTypesNotEqual: AbstractTypeCheckerContext
     ): SimpleTypeMarker {
+        if (types.all { it is ErrorType }) {
+            return ErrorUtils.createErrorType("CST(${types.joinToString()}")
+        }
+
         // i.e. result type also should be marked nullable
         val notAllNotNull =
             types.any { !isStubRelatedType(it) && !AbstractNullabilityChecker.isSubtypeOfAny(contextStubTypesEqualToAnything, it) }

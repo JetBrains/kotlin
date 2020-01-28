@@ -9866,6 +9866,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/coerceFunctionLiteralToSuspend.kt");
         }
 
+        @TestMetadata("commonSuperTypeOfErrorTypes.kt")
+        public void testCommonSuperTypeOfErrorTypes() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfErrorTypes.kt");
+        }
+
         @TestMetadata("completeInferenceIfManyFailed.kt")
         public void testCompleteInferenceIfManyFailed() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/completeInferenceIfManyFailed.kt");
