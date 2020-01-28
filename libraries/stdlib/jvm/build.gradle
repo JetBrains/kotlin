@@ -106,11 +106,10 @@ artifacts {
 
 javadocJar()
 
-task dexMethodCount(type: DexMethodCount) {
-    from jar
-    ownPackages = ['kotlin']
+DexMethodCountKt.dexMethodCount(project) { task ->
+    task.from(jar)
+    task.ownPackages = ['kotlin']
 }
-check.dependsOn(dexMethodCount)
 
 compileKotlin {
     kotlinOptions {

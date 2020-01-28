@@ -217,12 +217,11 @@ val modularJar by task<Jar> {
     callGroovy("manifestAttributes", manifest, project, "Main", true)
 }
 
-val dexMethodCount by task<DexMethodCount> {
+dexMethodCount {
     dependsOn(result)
     jarFile = result.get().outputs.files.single()
     ownPackages = listOf("kotlin.reflect")
 }
-tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->
