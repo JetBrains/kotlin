@@ -160,7 +160,7 @@ class MoveKotlinDeclarationsProcessor(
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         val targetContainerFqName = descriptor.moveTarget.targetContainerFqName?.let {
             if (it.isRoot) UsageViewBundle.message("default.package.presentable.name") else it.asString()
-        }
+        } ?: UsageViewBundle.message("default.package.presentable.name")
         return MoveMultipleElementsViewDescriptor(elementsToMove.toTypedArray(), targetContainerFqName)
     }
 
