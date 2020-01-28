@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -15,33 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
-
-class FirDesignatedBodyResolveTransformer(
-    private val designation: Iterator<FirElement>,
-    session: FirSession,
-    scopeSession: ScopeSession = ScopeSession(),
-    implicitTypeOnly: Boolean = true
-) : FirBodyResolveTransformer(
-    session,
-    phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    implicitTypeOnly = implicitTypeOnly,
-    scopeSession = scopeSession
-) {
-    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): CompositeTransformResult<E> {
-        if (designation.hasNext()) {
-            designation.next().visitNoTransform(this, data)
-            return element.compose()
-        }
-        return super.transformElement(element, data)
-    }
-
-    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        return components.withContainer(declaration) {
-            declaration.replaceResolvePhase(transformerPhase)
-            transformElement(declaration, data)
-        }
-    }
-}
 
 @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
 class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {

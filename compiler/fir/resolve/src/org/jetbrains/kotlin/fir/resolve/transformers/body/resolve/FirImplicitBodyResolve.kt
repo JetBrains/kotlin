@@ -49,6 +49,9 @@ class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() 
     }
 }
 
+fun createReturnTypeCalculatorForIDE(session: FirSession, scopeSession: ScopeSession): ReturnTypeCalculator =
+    ReturnTypeCalculatorWithJump(session, scopeSession, ImplicitBodyResolveComputationSession())
+
 // TODO: This class is unused because it's effectively unneeded while we have mutable trees
 // Once we decide to switch to persistent trees this, it should be applied to each file
 // If the decision is to stay with mutable trees, this class should be removed

@@ -127,8 +127,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
             IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx)
         override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)
+
+        @PublishedApi
         internal var containerIfAny: FirDeclaration? = null
-            private set
 
         override var container: FirDeclaration
             get() = containerIfAny!!
@@ -136,7 +137,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
                 containerIfAny = value
             }
 
-        internal inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
+        inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
             val prevContainer = containerIfAny
             containerIfAny = declaration
             val result = f()
