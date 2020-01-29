@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1854,6 +1854,21 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("kt32267.kt")
             public void testKt32267() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt32267.kt");
+            }
+
+            @TestMetadata("kt34314.kt")
+            public void testKt34314() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt34314.kt");
+            }
+
+            @TestMetadata("kt34314_lambda.kt")
+            public void testKt34314_lambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt34314_lambda.kt");
+            }
+
+            @TestMetadata("kt35959.kt")
+            public void testKt35959() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt35959.kt");
             }
 
             @TestMetadata("kt7430_wrongClassOnLHS.kt")

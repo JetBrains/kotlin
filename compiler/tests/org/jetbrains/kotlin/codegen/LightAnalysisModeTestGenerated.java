@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -6332,6 +6332,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/kt31784.kt");
         }
 
+        @TestMetadata("kt35967.kt")
+        public void testKt35967() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt35967.kt");
+        }
+
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt", "kotlin.coroutines.experimental");
@@ -12571,6 +12576,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/kt10822.kt");
         }
 
+        @TestMetadata("kt35684.kt")
+        public void testKt35684() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt35684.kt");
+        }
+
         @TestMetadata("lastExpressionOfLambdaWithNothingConstraint.kt")
         public void testLastExpressionOfLambdaWithNothingConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
@@ -16989,27 +16999,27 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MultiModule extends AbstractLightAnalysisModeTest {
-            @TestMetadata("expectActualLink.kt")
-            public void ignoreExpectActualLink() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt");
-            }
-
-            @TestMetadata("expectActualMemberLink.kt")
-            public void ignoreExpectActualMemberLink() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt");
-            }
-
-            @TestMetadata("expectActualTypealiasLink.kt")
-            public void ignoreExpectActualTypealiasLink() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInMultiModule() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("expectActualLink.kt")
+            public void testExpectActualLink() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt");
+            }
+
+            @TestMetadata("expectActualMemberLink.kt")
+            public void testExpectActualMemberLink() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt");
+            }
+
+            @TestMetadata("expectActualTypealiasLink.kt")
+            public void testExpectActualTypealiasLink() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt");
             }
         }
     }
