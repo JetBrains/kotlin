@@ -68,7 +68,8 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         @NonNls val secondFqName: String,
         @NonNls val replacement: String,
         @NonNls val additionalArgument: String? = null,
-        val withNotNullAssertion: Boolean = false
+        val withNotNullAssertion: Boolean = false,
+        val enableSuspendFunctionCall: Boolean = true
     ) {
         private fun String.convertToShort() = takeLastWhile { it != '.' }
 
