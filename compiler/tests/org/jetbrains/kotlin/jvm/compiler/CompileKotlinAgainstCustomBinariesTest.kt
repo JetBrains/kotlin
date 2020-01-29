@@ -498,7 +498,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val version = intArrayOf(1, 0, 1) // legacy coroutines metadata
         val options = listOf("-language-version", "1.2", "-Xcoroutines=enable")
         val library = transformJar(
-            compileLibrary("library", additionalOptions = options, extraClassPath = listOf(ForTestCompileRuntime.coroutinesCompatForTests())),
+            compileLibrary(
+                "library",
+                additionalOptions = options,
+                extraClassPath = listOf(ForTestCompileRuntime.coroutinesCompatForTests()),
+                checkKotlinOutput = { actual ->
+                    // TODO KT-36240
+                    assertEquals(
+                        "warning: language version 1.2 is deprecated and its support will be removed in a future version of Kotlin\nOK\n",
+                        actual
+                    )
+                }
+            ),
             { _, bytes ->
                 val (resultBytes, removedCounter) = stripSuspensionMarksToImitateLegacyCompiler(
                     WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { name, _ ->
