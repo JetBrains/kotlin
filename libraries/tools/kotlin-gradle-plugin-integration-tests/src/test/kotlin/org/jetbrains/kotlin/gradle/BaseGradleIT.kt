@@ -621,9 +621,11 @@ Finished executing task ':$taskName'|
         }.single()
 
     fun Project.gradleSettingsScript(): File =
-        listOf("settings.gradle", "settings.gradle.kts").mapNotNull {
-            File(projectDir, it).takeIf(File::exists)
-        }.single()
+        listOf("settings.gradle", "settings.gradle.kts").map {
+            File(projectDir, it)
+        }.run {
+            singleOrNull { it.exists() } ?: first()
+        }
 
     /**
      * @param assertionFileName path to xml with expected test results, relative to test resources root
