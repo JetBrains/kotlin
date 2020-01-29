@@ -85,7 +85,7 @@ class FirControlFlowGraphRenderVisitor(
 
             var color = RED
             sortedNodes.forEach {
-                if (it is EnterNode) {
+                if (it is EnterNodeMarker) {
                     enterCluster(color)
                     color = BLUE
                 }
@@ -100,7 +100,7 @@ class FirControlFlowGraphRenderVisitor(
                     attributes += "fillcolor=gray"
                 }
                 println(indices.getValue(it), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
-                if (it is ExitNode) {
+                if (it is ExitNodeMarker) {
                     exitCluster()
                 }
             }
