@@ -23,7 +23,8 @@ class RemoveReturnLabelFix(element: KtReturnExpression) : KotlinQuickFixAction<K
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtReturnExpression>? {
             val returnExpression = diagnostic.psiElement as? KtReturnExpression ?: return null
-            return RemoveReturnLabelFix(returnExpression)
+            return if (returnExpression.labeledExpression == null) null
+            else RemoveReturnLabelFix(returnExpression)
         }
     }
 }

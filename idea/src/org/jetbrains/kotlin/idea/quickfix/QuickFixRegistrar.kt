@@ -627,6 +627,8 @@ class QuickFixRegistrar : QuickFixContributor {
         CONSTRUCTOR_IN_OBJECT.registerFactory(ChangeObjectToClassFix)
 
         REDUNDANT_LABEL_WARNING.registerFactory(RemoveRedundantLabelFix)
+        NOT_A_FUNCTION_LABEL.registerFactory(RemoveReturnLabelFix)
+        NOT_A_FUNCTION_LABEL_WARNING.registerFactory(RemoveReturnLabelFix)
 
         ACCIDENTAL_OVERRIDE.registerFactory(MakePrivateAndOverrideMemberFix.AccidentalOverrideFactory)
 
