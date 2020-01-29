@@ -1704,6 +1704,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertLambdaToMultiLineIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertLambdaToSingleLineIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <lang.inspectionSuppressor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInspectionSuppressor"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
