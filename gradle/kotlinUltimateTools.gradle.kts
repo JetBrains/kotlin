@@ -73,7 +73,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         add("compile", project(":idea:idea-native"))
         add("compile", project(":idea:idea-gradle-native"))
         add("compile", project(":idea:kotlin-gradle-tooling"))
-        add("compile", project(":kotlin-native:kotlin-native-utils"))
+        add("compile", project(":native:kotlin-native-utils"))
 
         val (ideName, ideVersion) = guessIDEParams()
 

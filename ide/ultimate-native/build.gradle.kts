@@ -18,7 +18,7 @@ dependencies {
     compile(project(":idea:idea-jvm")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
     compile(project(":kotlin-util-io")) { isTransitive = false }
-    compile(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+    compile(project(":native:kotlin-native-utils")) { isTransitive = false }
     compile(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "util", "jdom") }
