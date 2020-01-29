@@ -133,6 +133,8 @@ public final class EditorMouseHoverPopupManager implements Disposable {
   public void dispose() {}
 
   private void handleMouseMoved(@NotNull EditorMouseEvent e) {
+    long startTimestamp = System.currentTimeMillis();
+
     cancelCurrentProcessing();
 
     if (ignoreEvent(e)) return;
@@ -148,7 +150,6 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       closeHint();
       return;
     }
-    long startTimestamp = e.getMouseEvent().getWhen();
     myPreparationTask = ReadAction.nonBlocking(() -> createContext(editor, targetOffset, startTimestamp))
       .coalesceBy(this)
       .withDocumentsCommitted(Objects.requireNonNull(editor.getProject()))
