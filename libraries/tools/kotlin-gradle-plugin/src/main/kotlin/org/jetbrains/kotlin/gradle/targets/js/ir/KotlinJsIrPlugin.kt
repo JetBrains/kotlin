@@ -28,7 +28,7 @@ open class KotlinJsIrPlugin(
         val kotlinExtension = project.kotlinExtension as KotlinJsIrProjectExtension
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
 
-        val target = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion).createTarget("jsIr")
+        val target = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion).createTarget("Js")
 
         kotlinExtension.target = target
 

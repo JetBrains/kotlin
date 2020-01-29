@@ -26,9 +26,6 @@ open class KotlinJsIrTargetPreset(
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType)
     }
 
-    // TODO Remove when IR and Legacy targets swap
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? = "js"
-
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator(kotlinPluginVersion)
 
