@@ -178,8 +178,8 @@ class MemoizedInlineClassReplacements {
 
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 val name = when (parameter) {
-                    function.dispatchReceiverParameter -> Name.identifier("\$this")
-                    function.extensionReceiverParameter -> Name.identifier("\$receiver")
+                    function.dispatchReceiverParameter -> Name.identifier("arg$index")
+                    function.extensionReceiverParameter -> Name.identifier("\$this\$${function.name}")
                     else -> parameter.name
                 }
                 val parameterOrigin = when (parameter) {
