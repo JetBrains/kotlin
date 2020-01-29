@@ -69,6 +69,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     )
                 }
             }
+            argument.type.isNullable() && !type.isNullable() && argument.type.erasedUpperBound == type.erasedUpperBound ->
+                irNotEquals(argument, irNull())
             else -> irIs(argument, type.makeNotNull())
         }
     }
