@@ -25,7 +25,7 @@ fun test_3() {
     }
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@<!DEPRECATION!>UseExperimental<!>(ExperimentalTypeInference::class)
 fun <U> sequence(@BuilderInference block: suspend Inv<U>.() -> Unit): U = null!!
 
 interface Inv<T> {
