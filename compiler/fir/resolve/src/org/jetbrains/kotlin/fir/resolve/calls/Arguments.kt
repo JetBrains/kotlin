@@ -207,7 +207,7 @@ fun Candidate.resolvePlainArgumentType(
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
     val session = sink.components.session
-    val capturedType = prepareCapturedType(argumentType, session)
+    val capturedType = prepareCapturedType(argumentType)
 
     val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.inferenceContext)
     if (isReceiver && isSafeCall) {
@@ -220,12 +220,20 @@ fun Candidate.resolvePlainArgumentType(
     checkApplicabilityForArgumentType(csBuilder, capturedType, expectedType, position, isReceiver, isDispatch, nullableExpectedType, sink)
 }
 
-fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, session: FirSession): ConeKotlinType {
-    if (argumentType.typeArguments.isEmpty() || argumentType !is ConeClassLikeType) return argumentType
+fun Candidate.prepareCapturedType(argumentType: ConeKotlinType): ConeKotlinType {
+    return captureTypeFromExpressionOrNull(argumentType) ?: argumentType
+}
+
+private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinType): ConeKotlinType? {
+    if (argumentType is ConeFlexibleType) {
+        return captureTypeFromExpressionOrNull(argumentType.lowerBound)
+    }
+
+    if (argumentType.typeArguments.isEmpty() || argumentType !is ConeClassLikeType) return null
 
     return bodyResolveComponents.inferenceComponents.ctx.captureFromArguments(
         argumentType, CaptureStatus.FROM_EXPRESSION
-    ) as? ConeKotlinType ?: argumentType
+    ) as? ConeKotlinType
 }
 
 private fun checkApplicabilityForArgumentType(
