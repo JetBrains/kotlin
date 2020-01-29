@@ -142,6 +142,8 @@ open class FunctionCodegen(
             origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
             // This is just a template for inliner
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
+            // This is just a bridge to the function with the continuation
+            origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
             // Continuations are generated for suspendImpls
             parentAsClass.functions.none {
                 it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX &&
