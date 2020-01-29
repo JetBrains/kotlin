@@ -15,11 +15,6 @@
       <implementation-class>com.jetbrains.konan.MPPWorkspace</implementation-class>
     </component>
   </project-components>
-  <application-components>
-    <component>
-      <implementation-class>com.jetbrains.cidr.xcode.frameworks.AppleSdkManager</implementation-class>
-    </component>
-  </application-components>
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
