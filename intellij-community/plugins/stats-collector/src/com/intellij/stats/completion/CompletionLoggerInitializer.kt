@@ -4,6 +4,7 @@ package com.intellij.stats.completion
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
+import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.reporting.isUnitTestMode
@@ -59,7 +60,7 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
   }
 
   private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language): Boolean {
-    if (CompletionTrackerDisabler.isDisabled()) return false
+    if (CompletionTrackerDisabler.isDisabled() || !getPluginInfo(language::class.java).isSafeToReport()) return false
     val application = ApplicationManager.getApplication()
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
 
