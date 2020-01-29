@@ -18,9 +18,12 @@ class MobileRunConfigurationType : ConfigurationTypeBase(
     AllIcons.RunConfigurations.Application
 ) {
     init {
-        addFactory(object : ConfigurationFactory(this) {
-            override fun createTemplateConfiguration(project: Project): RunConfiguration =
-                AppleRunConfiguration(project, this, name)
-        })
+        addFactory(MobileConfigurationFactory(this))
+    }
+}
+
+class MobileConfigurationFactory(type: MobileRunConfigurationType) : ConfigurationFactory(type) {
+    override fun createTemplateConfiguration(project: Project): RunConfiguration {
+        return AppleRunConfiguration(project, this, name)
     }
 }

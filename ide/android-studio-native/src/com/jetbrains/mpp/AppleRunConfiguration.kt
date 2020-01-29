@@ -23,7 +23,7 @@ import org.jdom.Element
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
 
-class AppleRunConfiguration(project: Project, configurationFactory: ConfigurationFactory, name: String) :
+class AppleRunConfiguration(project: Project, configurationFactory: MobileConfigurationFactory, name: String) :
     LocatableConfigurationBase<Element>(project, configurationFactory, name) {
 
     var xcodeproj: String? = MPPWorkspace.getInstance(project).xcproject
