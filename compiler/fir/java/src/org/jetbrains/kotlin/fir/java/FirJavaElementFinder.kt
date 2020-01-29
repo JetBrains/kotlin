@@ -57,7 +57,7 @@ class FirJavaElementFinder(
     }
 
     override fun findClasses(qualifiedName: String, scope: GlobalSearchScope): Array<PsiClass> {
-        return findClass(qualifiedName, scope)?.let(::arrayOf) ?: emptyArray()
+        return findClass(qualifiedName, scope)?.let { arrayOf(it) } ?: emptyArray()
     }
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
