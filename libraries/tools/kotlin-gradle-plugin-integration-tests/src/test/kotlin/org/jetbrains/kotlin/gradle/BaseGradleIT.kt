@@ -627,6 +627,11 @@ Finished executing task ':$taskName'|
             singleOrNull { it.exists() } ?: first()
         }
 
+    fun Project.gradleProperties(): File =
+        listOf("gradle.properties").mapNotNull {
+            File(projectDir, it).takeIf(File::exists)
+        }.single()
+
     /**
      * @param assertionFileName path to xml with expected test results, relative to test resources root
      */

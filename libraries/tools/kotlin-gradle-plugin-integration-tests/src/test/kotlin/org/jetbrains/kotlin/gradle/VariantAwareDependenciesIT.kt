@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class VariantAwareDependenciesIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.None
@@ -39,6 +40,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             gradleBuildScript(innerProject.projectName).appendText("\nrepositories { jcenter() }; dependencies { compile rootProject }")
 
             testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.klib")
+            }
+
+            gradleProperties().appendText("\nkotlin.js.mode=legacy")
+
+            assertTrue { gradleProperties().readText().contains("kotlin.js.mode=legacy") }
+
+            testResolveAllConfigurations(
+                subproject = innerProject.projectName,
+                skipSetup = true
+            ) {
                 assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.jar")
             }
         }
