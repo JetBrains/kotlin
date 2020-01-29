@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -14,4 +15,9 @@ object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     }
 
     override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
+
+    override val excludedImports: List<FqName> =
+        listOf("identityHashCode").map {
+            FqName("kotlin.native.$it")
+        }
 }
