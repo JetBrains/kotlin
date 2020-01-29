@@ -13,9 +13,8 @@ import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
-import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -26,15 +25,19 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.LayeredIcon;
+import com.intellij.ui.TextIcon;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.TIntArrayList;
@@ -70,6 +73,13 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    */
   protected int[] errorCount;
 
+  private final AnAction nextErrorAction;
+  private final AnAction prevErrorAction;
+  private final AnAction separatorAction;
+  private LayeredIcon statusIcon;
+
+  private static final int ICON_GAP = JBUI.scale(5);
+
   /**
    * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
    */
@@ -85,13 +95,17 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
 
     ActionManager am = ActionManager.getInstance();
-    AnAction nextError = am.getAction("GotoNextError");
-    nextError.getTemplatePresentation().setIcon(AllIcons.General.ArrowDown);
 
-    AnAction prevError = am.getAction("GotoPreviousError");
-    prevError.getTemplatePresentation().setIcon(AllIcons.General.ArrowUp);
+    nextErrorAction = am.getAction("GotoNextError");
+    nextErrorAction.getTemplatePresentation().setIcon(AllIcons.General.ArrowDown);
+    nextErrorAction.getTemplatePresentation().setDisabledIcon(IconLoader.getDisabledIcon(AllIcons.General.ArrowDown));
 
-    actions = new DefaultActionGroup(new StatusAction(), Separator.create(), nextError, prevError);
+    prevErrorAction = am.getAction("GotoPreviousError");
+    prevErrorAction.getTemplatePresentation().setIcon(AllIcons.General.ArrowUp);
+    prevErrorAction.getTemplatePresentation().setDisabledIcon(IconLoader.getDisabledIcon(AllIcons.General.ArrowUp));
+
+    separatorAction = Separator.create();
+    actions = new DefaultActionGroup(new StatusAction(), separatorAction, nextErrorAction, prevErrorAction);
 
     refresh(null);
 
@@ -379,8 +393,45 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   @Override
-  public void refreshActions() {
+  public void refreshActions(Editor editor) {
+    DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
+    int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
+    List<Icon> statusIcons = new ArrayList<>();
 
+    for (int i = lastNotNullIndex; i >= 0; i--) {
+      if (status.errorCount[i] > 0) {
+        statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
+        TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
+                                     editor.getColorsScheme().getDefaultForeground(), null, 0);
+        Font font = editor.getComponent().getFont().deriveFont(Font.PLAIN, 10);
+        icon.setFont(font);
+        statusIcons.add(icon);
+      }
+    }
+
+    boolean showActions = statusIcons.size() > 0;
+    nextErrorAction.getTemplatePresentation().setVisible(showActions);
+    prevErrorAction.getTemplatePresentation().setVisible(showActions);
+    separatorAction.getTemplatePresentation().setVisible(showActions);
+
+    if (showActions) {
+      statusIcon = new LayeredIcon(statusIcons.size());
+      int maxIconHeight = statusIcons.stream().mapToInt(i -> i.getIconHeight()).max().orElse(0);
+      for (int i = 0, xShift = 0; i < statusIcons.size(); i += 2) {
+        Icon icon = statusIcons.get(i);
+        int yShift = (maxIconHeight - icon.getIconHeight()) / 2;
+        statusIcon.setIcon(icon, i, xShift, yShift);
+        xShift += icon.getIconWidth();
+
+        icon = statusIcons.get(i + 1);
+        yShift = (maxIconHeight - icon.getIconHeight()) / 2;
+        statusIcon.setIcon(icon, i + 1, xShift, yShift);
+        xShift += icon.getIconWidth() + ICON_GAP;
+      }
+    }
+    else {
+      statusIcon = null;
+    }
   }
 
   @Override
@@ -388,7 +439,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     return actions;
   }
 
-  private static class StatusAction extends AnAction implements CustomComponentAction {
+  private class StatusAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       System.out.println("StatusAction");
@@ -396,17 +447,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-    }
-
-    @Override
-    public @NotNull JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
-      return new StatusActionButton(this, presentation);
-    }
-  }
-
-  private static class StatusActionButton extends ActionButton {
-    private StatusActionButton(AnAction action, Presentation presentation) {
-      super(action, presentation, ActionPlaces.EDITOR_INSPECTIONS_POPUP, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
+      if (e.getPresentation().getIcon() != statusIcon) {
+        e.getPresentation().setIcon(statusIcon);
+      }
     }
   }
 }
