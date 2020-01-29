@@ -83,6 +83,8 @@ class KotlinUFunctionCallExpression(
                 KotlinUIdentifier(
                     calleeExpression.constructorReferenceExpression?.getReferencedNameElement() ?: calleeExpression, this
                 )
+            is KtLambdaExpression ->
+                KotlinUIdentifier(calleeExpression.functionLiteral.lBrace, this)
             else -> KotlinUIdentifier(calleeExpression, this)
         }
     }

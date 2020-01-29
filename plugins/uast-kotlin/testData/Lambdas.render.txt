@@ -13,4 +13,8 @@ public final class LambdasKt {
         }
         invoke()
     }
+    public static final fun lambdaInPlaceCall() : void {
+        while (invoke()) {
+        }
+    }
 }

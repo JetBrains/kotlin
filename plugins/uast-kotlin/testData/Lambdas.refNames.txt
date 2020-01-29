@@ -1,0 +1,20 @@
+Stream -> USimpleNameReferenceExpression (identifier = Stream) from KtDotQualifiedExpression
+stream -> USimpleNameReferenceExpression (identifier = stream) from KtDotQualifiedExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+util -> USimpleNameReferenceExpression (identifier = util) from KtNameReferenceExpression
+stream -> USimpleNameReferenceExpression (identifier = stream) from KtNameReferenceExpression
+Stream -> USimpleNameReferenceExpression (identifier = Stream) from KtNameReferenceExpression
+filter -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtDotQualifiedExpression
+empty -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+Stream -> USimpleNameReferenceExpression (identifier = Stream) from KtNameReferenceExpression
+empty -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+filter -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+isEmpty -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+it -> USimpleNameReferenceExpression (identifier = it) from KtNameReferenceExpression
+isEmpty -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+Unit -> USimpleNameReferenceExpression (identifier = Unit) from KtNameReferenceExpression
+selectItemFunction -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+Local -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+baz -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
