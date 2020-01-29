@@ -47,6 +47,8 @@ public class AsmCodeGenerator {
   public static final String LOAD_LABEL_TEXT_METHOD = "$$$loadLabelText$$$";
   public static final String LOAD_BUTTON_TEXT_METHOD = "$$$loadButtonText$$$";
   public static final String GET_FONT_METHOD_NAME = "$$$getFont$$$";
+  public static final String GET_MESSAGE_FROM_BUNDLE = "$$$getMessageFromBundle$$$";
+  public static final String CACHED_GET_BUNDLE_METHOD = "$$$cachedGetBundleMethod$$$";
 
   private static final Type ourButtonGroupType = Type.getType(ButtonGroup.class);
   private static final Type ourBorderFactoryType = Type.getType(BorderFactory.class);
