@@ -317,7 +317,7 @@ private class ProjectMppDependencyMetadataExtractor(
         doProcessFiles: Boolean
     ): Map<String, FileCollection> =
         dependencyProject.multiplatformExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
-            .filter { it.defaultSourceSet.name in visibleSourceSetNames }
+            .filter { it.name in visibleSourceSetNames }
             .associate { it.defaultSourceSet.name to it.output.classesDirs }
 }
 

@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
@@ -53,7 +54,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
 
         args.moduleName = this@KotlinCompileCommon.moduleName
 
-        if (PropertiesProvider(project.rootProject).enableCommonKlibs == true) {
+        if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true) {
             args.klibBasedMpp = true
         }
 

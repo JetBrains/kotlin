@@ -108,7 +108,7 @@ class KlibBasedMppIT : BaseGradleIT() {
 
                 fun classpathHasKNStdlib(classpath: Iterable<String>) = classpath.any { "klib/common/stdlib" in it.replace("\\", "/") }
 
-                assertFalse(classpathHasKNStdlib(getClasspath(":compileKotlinMetadata")))
+                assertFalse(classpathHasKNStdlib(getClasspath(":compileCommonMainKotlinMetadata")))
                 assertFalse(classpathHasKNStdlib(getClasspath(":compileJvmAndJsMainKotlinMetadata")))
             }
         }
