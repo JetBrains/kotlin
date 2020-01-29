@@ -26,7 +26,6 @@ import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.usageView.UsageInfo
 import com.intellij.util.FilteredQuery
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -71,12 +70,12 @@ class KotlinFindClassUsagesHandler(
         )
     }
 
-    override fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Searcher {
         return MySearcher(element, processor, options)
     }
 
     private class MySearcher(
-        element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions
+        element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions
     ) : Searcher(element, processor, options) {
 
         private val kotlinOptions = options as KotlinClassFindUsagesOptions
