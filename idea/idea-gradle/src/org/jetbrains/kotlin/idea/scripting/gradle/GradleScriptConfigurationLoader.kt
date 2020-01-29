@@ -69,8 +69,6 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
             return true
         }
 
-        ScriptConfigurationManager.clearManualConfigurationLoadingIfNeeded(vFile)
-
         // Gradle read files from FS
         GlobalScope.launch(EDT(project)) {
             runWriteAction {

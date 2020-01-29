@@ -175,12 +175,6 @@ interface ScriptConfigurationManager {
             (getInstance(project) as AbstractScriptConfigurationManager).clearCaches()
         }
 
-        fun clearManualConfigurationLoadingIfNeeded(file: VirtualFile) {
-            if (file.LOAD_CONFIGURATION_MANUALLY == true) {
-                file.LOAD_CONFIGURATION_MANUALLY = null
-            }
-        }
-
         fun markFileWithManualConfigurationLoading(file: VirtualFile) {
             file.LOAD_CONFIGURATION_MANUALLY = true
         }
