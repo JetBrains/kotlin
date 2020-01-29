@@ -49,9 +49,9 @@ data class File constructor(internal val javaPath: Path) {
     val isFile
         get() = Files.isRegularFile(javaPath)
     val isAbsolute
-        get() = javaPath.isAbsolute()
+        get() = javaPath.isAbsolute
     val listFiles: List<File>
-        get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map { File(it) } }
+        get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map(::File) }
     val listFilesOrEmpty: List<File>
         get() = if (exists) listFiles else emptyList()
 
