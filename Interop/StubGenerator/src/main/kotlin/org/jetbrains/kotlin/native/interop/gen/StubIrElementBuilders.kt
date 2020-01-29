@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.*
 
@@ -200,16 +201,16 @@ internal class EnumStubBuilder(
         override val context: StubsBuildingContext,
         private val enumDef: EnumDef
 ) : StubElementBuilder {
+
+    private val classifier = (context.mirror(EnumType(enumDef)) as TypeMirror.ByValue).valueType.classifier
+    private val baseTypeMirror = context.mirror(enumDef.baseType)
+    private val baseType = baseTypeMirror.argType.toStubIrType()
+
     override fun build(): List<StubIrElement> {
         if (!context.isStrictEnum(enumDef)) {
             return generateEnumAsConstants(enumDef)
         }
-        val baseTypeMirror = context.mirror(enumDef.baseType)
-        val baseType = baseTypeMirror.argType.toStubIrType()
-
-        val clazz = (context.mirror(EnumType(enumDef)) as TypeMirror.ByValue).valueType.classifier
         val constructorParameter = FunctionParameterStub("value", baseType)
-
         val valueProperty = PropertyStub(
                 name = "value",
                 type = baseType,
@@ -229,25 +230,119 @@ internal class EnumStubBuilder(
                 }
         val (canonicalConstants, aliasConstants) = enumDef.constants.partition { canonicalsByValue[it.value] == it }
 
-        val canonicalEntries = canonicalConstants.map { constant ->
-            val literal = context.tryCreateIntegralStub(enumDef.baseType, constant.value)
-                    ?: error("Cannot create enum value ${constant.value} of type ${enumDef.baseType}")
-            val aliases = aliasConstants.filter { it.value == constant.value }.map { EnumEntryStub.Alias(it.name) }
-            EnumEntryStub(constant.name, literal, aliases, StubOrigin.EnumEntry(constant))
-        }
+        val canonicalEntriesWithAliases = canonicalConstants
+                .sortedBy { it.value } // TODO: Is it stable enough?
+                .mapIndexed { index, constant ->
+                    val literal = context.tryCreateIntegralStub(enumDef.baseType, constant.value)
+                            ?: error("Cannot create enum value ${constant.value} of type ${enumDef.baseType}")
+                    val entry = EnumEntryStub(constant.name, literal, StubOrigin.EnumEntry(constant), index)
+                    val aliases = aliasConstants
+                            .filter { it.value == constant.value }
+                            .map { constructAliasProperty(it, entry) }
+                    entry to aliases
+                }
         val origin = StubOrigin.Enum(enumDef)
-        val primaryConstructor = ConstructorStub(listOf(constructorParameter), emptyList(), isPrimary = true, origin = origin)
-        val enum = ClassStub.Enum(clazz, canonicalEntries,
+        val primaryConstructor = ConstructorStub(
+                parameters = listOf(constructorParameter),
+                annotations = emptyList(),
+                isPrimary = true,
+                origin = origin,
+                visibility = VisibilityModifier.PRIVATE
+        )
+
+        val byValueFunction = FunctionStub(
+                name = "byValue",
+                returnType = ClassifierStubType(classifier),
+                parameters = listOf(FunctionParameterStub("value", baseType)),
+                origin = StubOrigin.Synthetic.EnumByValue(enumDef),
+                receiver = null,
+                modality = MemberStubModality.FINAL,
+                annotations = emptyList()
+        )
+
+        val companion = ClassStub.Companion(
+                classifier = classifier.nested("Companion"),
+                properties = canonicalEntriesWithAliases.flatMap { it.second },
+                methods = listOf(byValueFunction)
+        )
+        val enumVarClass = constructEnumVarClass().takeIf { context.generationMode == GenerationMode.METADATA }
+        val kotlinEnumType = ClassifierStubType(Classifier.topLevel("kotlin", "Enum"),
+                listOf(TypeArgumentStub(ClassifierStubType(classifier))))
+        val enum = ClassStub.Enum(
+                classifier = classifier,
+                superClassInit = SuperClassInit(kotlinEnumType),
+                entries = canonicalEntriesWithAliases.map { it.first },
+                companion = companion,
                 constructors = listOf(primaryConstructor),
                 properties = listOf(valueProperty),
                 origin = origin,
-                interfaces = listOf(context.platform.getRuntimeType("CEnum"))
+                interfaces = listOf(context.platform.getRuntimeType("CEnum")),
+                childrenClasses = listOfNotNull(enumVarClass)
         )
         context.bridgeComponentsBuilder.enumToTypeMirror[enum] = baseTypeMirror
-
         return listOf(enum)
     }
 
+    private fun constructAliasProperty(enumConstant: EnumConstant, entry: EnumEntryStub): PropertyStub {
+        val aliasAnnotation = AnnotationStub.CEnumEntryAlias(entry.name)
+                .takeIf { context.generationMode == GenerationMode.METADATA }
+        return PropertyStub(
+                enumConstant.name,
+                ClassifierStubType(classifier),
+                kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.GetEnumEntry(entry)),
+                origin = StubOrigin.EnumEntry(enumConstant),
+                annotations = listOfNotNull(aliasAnnotation)
+        )
+    }
+
+    private fun constructEnumVarClass(): ClassStub.Simple {
+
+        val enumVarClassifier = classifier.nested("Var")
+
+        val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
+        val superClass = context.platform.getRuntimeType("CEnumVar")
+        require(superClass is ClassifierStubType)
+        val primaryConstructor = ConstructorStub(
+                parameters = listOf(rawPtrConstructorParam),
+                isPrimary = true,
+                annotations = emptyList(),
+                origin = StubOrigin.Synthetic.DefaultConstructor
+        )
+        val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
+
+        val baseIntegerTypeSize = when (val unwrappedType = enumDef.baseType.unwrapTypedefs()) {
+            is IntegerType -> unwrappedType.size.toLong()
+            CharType -> 1L
+            else -> error("Incorrect base type for enum ${classifier.fqName}")
+        }
+        val typeSize = IntegralConstantStub(baseIntegerTypeSize, 4, true)
+        val companionSuper = (context.platform.getRuntimeType("CPrimitiveVar") as ClassifierStubType).nested("Type")
+        val varSizeAnnotation = AnnotationStub.CEnumVarTypeSize(baseIntegerTypeSize.toInt())
+                .takeIf { context.generationMode == GenerationMode.METADATA }
+        val companion = ClassStub.Companion(
+                classifier = enumVarClassifier.nested("Companion"),
+                superClassInit = SuperClassInit(companionSuper, listOf(typeSize)),
+                annotations = listOfNotNull(varSizeAnnotation)
+        )
+        val valueProperty = PropertyStub(
+                name = "value",
+                type = ClassifierStubType(classifier),
+                kind = PropertyStub.Kind.Var(
+                        PropertyAccessor.Getter.ExternalGetter(),
+                        PropertyAccessor.Setter.ExternalSetter()
+                ),
+                origin = StubOrigin.Synthetic.EnumVarValueField(enumDef)
+        )
+        return ClassStub.Simple(
+                classifier = enumVarClassifier,
+                constructors = listOf(primaryConstructor),
+                superClassInit = superClassInit,
+                companion = companion,
+                modality = ClassStubModality.NONE,
+                origin = StubOrigin.VarOf(StubOrigin.Enum(enumDef)),
+                properties = listOf(valueProperty)
+        )
+    }
 
     private fun EnumConstant.isMoreCanonicalThan(other: EnumConstant): Boolean = with(other.name.toLowerCase()) {
         contains("min") || contains("max") ||

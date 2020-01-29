@@ -211,6 +211,13 @@ sealed class AnnotationStub(val classifier: Classifier) {
     class Deprecated(val message: String, val replaceWith: String) :
             AnnotationStub(Classifier.topLevel("kotlin", "Deprecated"))
 
+
+    class CEnumEntryAlias(val entryName: String) :
+            AnnotationStub(Classifier.topLevel(cinteropInternalPackage, "CEnumEntryAlias"))
+
+    class CEnumVarTypeSize(val size: Int) :
+            AnnotationStub(Classifier.topLevel(cinteropInternalPackage, "CEnumVarTypeSize"))
+
     private companion object {
         val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")
     }
@@ -407,6 +414,11 @@ sealed class PropertyAccessor : FunctionalStub {
             override val annotations: List<AnnotationStub> = emptyList()
             val typeParameters: List<StubType> = listOf(pointedType)
         }
+
+        class GetEnumEntry(
+                val enumEntryStub: EnumEntryStub,
+                override val annotations: List<AnnotationStub> = emptyList()
+        ) : Getter()
     }
 
     sealed class Setter : PropertyAccessor() {
@@ -472,11 +484,9 @@ class ConstructorStub(
 class EnumEntryStub(
         val name: String,
         val constant: IntegralConstantStub,
-        val aliases: List<Alias>,
-        val origin: StubOrigin.EnumEntry
-) {
-    class Alias(val name: String)
-}
+        val origin: StubOrigin.EnumEntry,
+        val ordinal: Int
+)
 
 class TypealiasStub(
         val alias: Classifier,

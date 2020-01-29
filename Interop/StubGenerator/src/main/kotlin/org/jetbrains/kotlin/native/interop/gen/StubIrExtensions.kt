@@ -71,3 +71,19 @@ val ClassStub.explicitPrimaryConstructor: ConstructorStub?
 
 fun ClassStub.nestedName(): String =
         classifier.relativeFqName.substringAfterLast('.')
+
+fun ConstantStub.determineConstantAnnotationClassifier(): Classifier = when (this) {
+    is StringConstantStub -> "String"
+    is IntegralConstantStub -> when (size) {
+        1 -> if (isSigned) "Byte" else "UByte"
+        2 -> if (isSigned) "Short" else "UShort"
+        4 -> if (isSigned) "Int" else "UInt"
+        8 -> if (isSigned) "Long" else "ULong"
+        else -> error("Integral constant with unexpected size of $size.")
+    }
+    is DoubleConstantStub -> when (size) {
+        4 -> "Float"
+        8 -> "Double"
+        else -> error("Real constant with unexpected size of $size.")
+    }
+}.let { Classifier.topLevel(cinteropInternalPackage, "ConstantValue").nested(it) }

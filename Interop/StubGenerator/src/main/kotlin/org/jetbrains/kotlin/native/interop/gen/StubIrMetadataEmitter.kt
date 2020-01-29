@@ -114,6 +114,9 @@ internal class ModuleMetadataEmitter(
                     km.constructors += elements.constructors.toList()
                     km.companionObject = element.companion?.nestedName()
                     km.uniqId = data.uniqIds.uniqIdForClass(element)
+                    if (element is ClassStub.Enum) {
+                        element.entries.mapTo(km.klibEnumEntries) { mapEnumEntry(it, classVisitingContext) }
+                    }
                 }
             }
             // Metadata stores classes as flat list.
@@ -180,6 +183,16 @@ internal class ModuleMetadataEmitter(
         override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: VisitingContext): List<Any> =
                 simpleStubContainer.children.map { it.accept(this, data) } +
                         simpleStubContainer.simpleContainers.flatMap { visitSimpleStubContainer(it, data) }
+
+        private fun mapEnumEntry(enumEntry: EnumEntryStub, data: VisitingContext): KlibEnumEntry =
+                with (MappingExtensions(data.typeParametersInterner)) {
+                    KlibEnumEntry(
+                            name = enumEntry.name,
+                            uniqId = data.uniqIds.uniqIdForEnumEntry(enumEntry, data.container as ClassStub.Enum),
+                            ordinal = enumEntry.ordinal,
+                            annotations = mutableListOf(enumEntry.constant.mapToConstantAnnotation())
+                    )
+                }
     }
 }
 
@@ -371,6 +384,12 @@ private class MappingExtensions(
                     ("replaceWith" to replaceWith(replaceWith)),
                     ("level" to deprecationLevel(DeprecationLevel.ERROR))
             )
+            is AnnotationStub.CEnumEntryAlias -> mapOfNotNull(
+                    ("entryName" to entryName).asAnnotationArgument()
+            )
+            is AnnotationStub.CEnumVarTypeSize -> mapOfNotNull(
+                    ("size" to KmAnnotationArgument.IntValue(size))
+            )
         }
         return KmAnnotation(classifier.fqNameSerialized, args)
     }
@@ -490,6 +509,12 @@ private class MappingExtensions(
             else -> error("Floating-point constant of value $value with unexpected size of $size.")
         }
     }
+
+    fun ConstantStub.mapToConstantAnnotation(): KmAnnotation =
+            KmAnnotation(
+                    determineConstantAnnotationClassifier().fqNameSerialized,
+                    mapOf("value" to mapToAnnotationArgument())
+            )
 
     private val TypeParameterType.id: Int
         get() = typeParameterDeclaration.id

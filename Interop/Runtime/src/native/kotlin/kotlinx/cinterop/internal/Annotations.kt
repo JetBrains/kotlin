@@ -31,3 +31,46 @@ public annotation class CCall(val id: String) {
     @Retention(AnnotationRetention.BINARY)
     annotation class Consumed
 }
+
+/**
+ * Collection of annotations that allow to store
+ * constant values.
+ */
+public object ConstantValue {
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Byte(val value: kotlin.Byte)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Short(val value: kotlin.Short)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Int(val value: kotlin.Int)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Long(val value: kotlin.Long)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class UByte(val value: kotlin.UByte)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class UShort(val value: kotlin.UShort)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class UInt(val value: kotlin.UInt)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class ULong(val value: kotlin.ULong)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Float(val value: kotlin.Float)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Double(val value: kotlin.Double)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class String(val value: kotlin.String)
+}
+
+/**
+ * Denotes property that is an alias to some enum entry.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+public annotation class CEnumEntryAlias(val entryName: String)
+
+/**
+ * Stores instance size of the type T: CEnumVar.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+public annotation class CEnumVarTypeSize(val size: Int)
