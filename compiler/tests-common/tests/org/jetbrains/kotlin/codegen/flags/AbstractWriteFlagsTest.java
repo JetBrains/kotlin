@@ -249,7 +249,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
         @Override
         public FieldVisitor visitField(int access, @NotNull String name, @NotNull String desc, String signature, Object value) {
-            if (name.equals(propertyName) || (propertySignature == null || propertySignature.equals(desc))) {
+            if (name.equals(propertyName) && (propertySignature == null || propertySignature.equals(desc))) {
                 this.access = access;
                 isExists = true;
             }
