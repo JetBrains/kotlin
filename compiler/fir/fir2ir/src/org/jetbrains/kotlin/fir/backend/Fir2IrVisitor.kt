@@ -679,7 +679,12 @@ class Fir2IrVisitor(
         val irReturnType = varargArgumentsExpression.typeRef.toIrType(session, declarationStorage)
         return IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irReturnType,
                             varargArgumentsExpression.varargElementType.toIrType(session, declarationStorage),
-                            varargArgumentsExpression.arguments.map { it.toIrExpression() })
+                            varargArgumentsExpression.arguments.map { arg ->
+                                arg.toIrExpression().run {
+                                    if (arg is FirSpreadArgumentExpression) IrSpreadElementImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
+                                    else this
+                                }
+                            })
     }
 
     private fun FirReference.statementOrigin(): IrStatementOrigin? {

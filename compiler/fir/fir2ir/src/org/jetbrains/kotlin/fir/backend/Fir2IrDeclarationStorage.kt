@@ -689,7 +689,8 @@ class Fir2IrDeclarationStorage(
                 IrValueParameterImpl(
                     startOffset, endOffset, origin, symbol,
                     valueParameter.name, index, type,
-                    valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.arrayElementType(session)?.toIrType(session, this, irBuiltIns),
+                    if (!valueParameter.isVararg) null
+                    else valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.arrayElementType(session)?.toIrType(session, this, irBuiltIns),
                     valueParameter.isCrossinline, valueParameter.isNoinline
                 ).apply {
                     descriptor.bind(this)

@@ -19,9 +19,9 @@ FILE fqName:<root> fileName:/samConversionOnCallableReference.kt
   FUN name:foo0 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:foo1 visibility:public modality:FINAL <> (xs:kotlin.IntArray) returnType:kotlin.Int
-    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray
+    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo1 (xs: kotlin.IntArray): kotlin.Int declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
   FUN name:use visibility:public modality:FINAL <> (r:<root>.KRunnable) returnType:kotlin.Unit
     VALUE_PARAMETER name:r index:0 type:<root>.KRunnable
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/samConversionOnCallableReference.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testSamCosntructorOnAdapted (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/KRunnable]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun foo1 (xs: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+          FUNCTION_REFERENCE 'public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testSamConversion visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -43,4 +43,4 @@ FILE fqName:<root> fileName:/samConversionOnCallableReference.kt
   FUN name:testSamConversionOnAdapted visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun foo1 (xs: kotlin.IntArray): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
