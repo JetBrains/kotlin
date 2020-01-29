@@ -32,15 +32,15 @@ import util.HashSet
 class LinkedHashMap<K, V> : java.util.LinkedHashMap<K, V>()
 
 fun test_1() {
-    val map = <!AMBIGUITY!>HashMap<!><Int, Int>() // <- should be util.HashMap
+    val map = HashMap<Int, Int>() // <- should be util.HashMap
 }
 
 fun test_2() {
-    val set = <!AMBIGUITY!>HashSet<!><Int>() // <- should be util.HashSet
+    val set = HashSet<Int>() // <- should be util.HashSet
 }
 
 fun test_3() {
-    val list = <!AMBIGUITY!>ArrayList<!><Int>() // <- should be foo.ArrayList
+    val list = ArrayList<Int>() // <- should be foo.ArrayList
 }
 
 fun test_4() {

@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractFirUseSiteMemberScope(
@@ -48,9 +45,11 @@ abstract class AbstractFirUseSiteMemberScope(
         }
 
         superTypesScope.processFunctionsByName(name) {
-            val overriddenBy = it.getOverridden(overrideCandidates)
-            if (overriddenBy == null) {
-                add(it)
+            if (it !is FirConstructorSymbol) {
+                val overriddenBy = it.getOverridden(overrideCandidates)
+                if (overriddenBy == null) {
+                    add(it)
+                }
             }
         }
     }
