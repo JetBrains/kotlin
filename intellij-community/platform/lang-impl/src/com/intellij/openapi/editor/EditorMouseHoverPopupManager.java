@@ -492,6 +492,9 @@ public final class EditorMouseHoverPopupManager implements Disposable {
         }
         catch (IndexNotReadyException ignored) {
         }
+        catch (ProcessCanceledException e) {
+          throw e;
+        }
         catch (Exception e) {
           LOG.warn(e);
         }
