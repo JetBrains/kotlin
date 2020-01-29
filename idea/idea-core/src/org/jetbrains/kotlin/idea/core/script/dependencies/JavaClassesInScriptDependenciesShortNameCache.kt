@@ -24,7 +24,7 @@ import com.intellij.psi.impl.java.stubs.index.JavaShortClassNameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StubIndex
-import com.intellij.util.Processor
+import org.jetbrains.kotlin.idea.caches.PsiMethodProcessor
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
 // Allow searching java classes in jars in script dependencies, this is needed for stuff like completion and autoimport
@@ -47,7 +47,7 @@ class JavaClassesInScriptDependenciesShortNameCache(private val project: Project
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
 
-    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>) = true
+    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: PsiMethodProcessor) = true
 
     override fun getAllFieldNames() = emptyArray<String>()
 
