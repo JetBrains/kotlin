@@ -133,11 +133,9 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     }
 
     private fun generateDocumentedAnnotation(irClass: IrClass) {
-        if (irClass.hasAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) &&
-            !irClass.hasAnnotation(FqName("java.lang.annotation.Documented"))
-        ) {
-            return
-        }
+        if (!irClass.hasAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) ||
+            irClass.hasAnnotation(FqName("java.lang.annotation.Documented"))
+        ) return
 
         irClass.annotations.add(
             IrConstructorCallImpl.fromSymbolOwner(
