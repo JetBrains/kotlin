@@ -226,6 +226,9 @@ public class AtomicReference<T>(private var value_: T) {
     // A spinlock to fix potential ARC race.
     private var lock: Int = 0
 
+    // Optimization for speeding up access.
+    private var cookie: Int = 0
+
     /**
      * Creates a new atomic reference pointing to given [ref].
      * @throws InvalidMutabilityException if reference is not frozen.
@@ -297,6 +300,9 @@ public class AtomicReference<T>(private var value_: T) {
 public class FreezableAtomicReference<T>(private var value_: T) {
     // A spinlock to fix potential ARC race.
     private var lock: Int = 0
+
+    // Optimization for speeding up access.
+    private var cookie: Int = 0
 
     /**
      * The referenced value.

@@ -52,6 +52,7 @@ extern "C" void ExceptionReporterLaunchpad(KRef reporter, KRef throwable);
 
 KRef currentUnhandledExceptionHook = nullptr;
 int32_t currentUnhandledExceptionHookLock = 0;
+int32_t currentUnhandledExceptionHookCookie = 0;
 
 #if USE_GCC_UNWIND
 struct Backtrace {
@@ -211,13 +212,14 @@ void ThrowException(KRef exception) {
 
 OBJ_GETTER(Kotlin_setUnhandledExceptionHook, KRef hook) {
   RETURN_RESULT_OF(SwapHeapRefLocked,
-    &currentUnhandledExceptionHook, currentUnhandledExceptionHook, hook, &currentUnhandledExceptionHookLock);
+    &currentUnhandledExceptionHook, currentUnhandledExceptionHook, hook, &currentUnhandledExceptionHookLock,
+    &currentUnhandledExceptionHookCookie);
 }
 
 void OnUnhandledException(KRef throwable) {
   ObjHolder handlerHolder;
   auto* handler = SwapHeapRefLocked(&currentUnhandledExceptionHook, currentUnhandledExceptionHook, nullptr,
-     &currentUnhandledExceptionHookLock, handlerHolder.slot());
+     &currentUnhandledExceptionHookLock,  &currentUnhandledExceptionHookCookie, handlerHolder.slot());
   if (handler == nullptr) {
     ReportUnhandledException(throwable);
   } else {

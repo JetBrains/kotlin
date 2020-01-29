@@ -521,11 +521,13 @@ MODEL_VARIANTS(void, UpdateHeapRefIfNull, ObjHeader** location, const ObjHeader*
 MODEL_VARIANTS(void, UpdateReturnRef, ObjHeader** returnSlot, const ObjHeader* object);
 // Compares and swaps reference with taken lock.
 OBJ_GETTER(SwapHeapRefLocked,
-    ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
+    ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock,
+    int32_t* cookie) RUNTIME_NOTHROW;
 // Sets reference with taken lock.
-void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
+void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock,
+    int32_t* cookie) RUNTIME_NOTHROW;
 // Reads reference with taken lock.
-OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock) RUNTIME_NOTHROW;
+OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) RUNTIME_NOTHROW;
 // Called on frame enter, if it has object slots.
 MODEL_VARIANTS(void, EnterFrame, ObjHeader** start, int parameters, int count);
 // Called on frame leave, if it has object slots.

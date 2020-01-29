@@ -39,6 +39,9 @@ internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferen
     // Spinlock, potentially taken when materializing or removing 'referred' object.
     var lock: Int = 0
 
+    // Optimization for concurrent access.
+    var cookie: Int = 0
+
     @SymbolName("Konan_WeakReferenceCounter_get")
     external override fun get(): Any?
 }
