@@ -13,6 +13,6 @@ class Kotlin(s: @TypeAnn("1") String, p: @TypeAnn("123") String) {
     private constructor(s: @TypeAnn("private") String) : this("1", "2")
 
     fun foo() {
-        { Kotlin("123") }()
+        object { fun foo() = Kotlin("123") }.foo()
     }
 }

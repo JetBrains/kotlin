@@ -1,13 +1,7 @@
-final class foo/Kotlin$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static foo.Kotlin$foo$1 INSTANCE
-
-    static void <clinit>()
-
+public final class foo/Kotlin$foo$1 : java/lang/Object {
     void <init>()
 
-    public java.lang.Object invoke()
-
-    public final foo.Kotlin invoke()
+    public final foo.Kotlin foo()
 }
 
 public final class foo/Kotlin : java/lang/Object {
