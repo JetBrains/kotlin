@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -35,6 +39,12 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                             it.isSubtypeOf(JsPlatformAnalyzerServices.builtIns.charSequence.defaultType)
                         }
                     ) return@check false
+                }
+                if (!conversion.enableSuspendFunctionCall) {
+                    val isCallingSuspendFunction = firstResolvedCall.call.callElement.anyDescendantOfType<KtCallExpression> {
+                        it.getResolvedCall(context)?.resultingDescriptor?.isSuspend == true
+                    }
+                    if (isCallingSuspendFunction) return@check false
                 }
                 true
             } ?: return
@@ -99,8 +109,8 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.text.filter", "kotlin.text.isNotEmpty", "any"),
             Conversion("kotlin.text.filter", "kotlin.text.isEmpty", "none"),
 
-            Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo"),
-            Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString"),
+            Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo", enableSuspendFunctionCall = false),
+            Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString", enableSuspendFunctionCall = false),
             Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull"),
 
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
