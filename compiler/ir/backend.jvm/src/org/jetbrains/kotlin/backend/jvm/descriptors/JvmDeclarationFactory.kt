@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -33,7 +35,8 @@ import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 class JvmDeclarationFactory(
-    private val methodSignatureMapper: MethodSignatureMapper
+    private val methodSignatureMapper: MethodSignatureMapper,
+    private val languageVersionSettings: LanguageVersionSettings
 ) : DeclarationFactory {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
@@ -137,12 +140,21 @@ class JvmDeclarationFactory(
     override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
             val isNotMappedCompanion = singleton.isCompanion && !isMappedIntrinsicCompanionObject(singleton.descriptor)
+            val useProperVisibilityForCompanion =
+                languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
+                        && singleton.isCompanion
+                        && !singleton.parentAsClass.isInterface
             buildField {
                 name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
                 type = singleton.defaultType
                 origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
                 isFinal = true
                 isStatic = true
+                visibility = when {
+                    !useProperVisibilityForCompanion -> Visibilities.PUBLIC
+                    singleton.visibility == Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+                    else -> singleton.visibility
+                }
             }.apply {
                 parent = if (isNotMappedCompanion) singleton.parent else singleton
             }
