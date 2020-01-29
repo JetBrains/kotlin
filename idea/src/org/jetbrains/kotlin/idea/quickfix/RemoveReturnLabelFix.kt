@@ -5,16 +5,25 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtReturnExpression
 
-class RemoveReturnLabelFix(private val labelName: String) : LocalQuickFix {
-    override fun getName() = "Remove redundant '@$labelName'"
+class RemoveReturnLabelFix(element: KtReturnExpression) : KotlinQuickFixAction<KtReturnExpression>(element) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        element?.labeledExpression?.delete()
+    }
 
-    override fun getFamilyName() = name
+    override fun getFamilyName(): String = "Remove redundant label"
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        descriptor.psiElement?.delete()
+    override fun getText(): String = "Remove redundant ${element?.getLabelName()?.let { "'@$it'" } ?: "label"}"
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtReturnExpression>? {
+            val returnExpression = diagnostic.psiElement as? KtReturnExpression ?: return null
+            return RemoveReturnLabelFix(returnExpression)
+        }
     }
 }

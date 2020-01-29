@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
@@ -25,7 +26,7 @@ class RedundantReturnLabelInspection : AbstractKotlinInspection() {
                 label,
                 "Redundant '@$labelName'",
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                RemoveReturnLabelFix(labelName),
+                IntentionWrapper(RemoveReturnLabelFix(returnExpression), returnExpression.containingKtFile),
             )
         },
     )
