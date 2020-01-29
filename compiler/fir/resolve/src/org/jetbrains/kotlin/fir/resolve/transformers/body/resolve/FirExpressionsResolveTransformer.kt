@@ -89,13 +89,24 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                         qualifiedAccessExpression.resultType = callee.superTypeRef
                     }
                     else -> {
-                        val superTypeRefFromStack = implicitReceiverStack.lastDispatchReceiver()
-                            ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
-                            ?: FirErrorTypeRefImpl(
-                                qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
-                            )
-                        qualifiedAccessExpression.resultType = superTypeRefFromStack
-                        callee.replaceSuperTypeRef(superTypeRefFromStack)
+                        val superTypeRefs = implicitReceiverStack.lastDispatchReceiver()?.boundSymbol?.phasedFir?.superTypeRefs
+                        val resultType = when {
+                            superTypeRefs?.isNotEmpty() != true -> {
+                                FirErrorTypeRefImpl(
+                                    qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
+                                )
+                            }
+                            superTypeRefs.size == 1 -> {
+                                superTypeRefs.single()
+                            }
+                            else -> {
+                                FirComposedSuperTypeRefImpl(qualifiedAccessExpression.source).apply {
+                                    this.superTypeRefs += superTypeRefs.map { it as FirResolvedTypeRef }
+                                }
+                            }
+                        }
+                        qualifiedAccessExpression.resultType = resultType
+                        callee.replaceSuperTypeRef(resultType)
                     }
                 }
                 qualifiedAccessExpression

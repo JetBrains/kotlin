@@ -268,6 +268,8 @@ class FirResolveBench(val withProgress: Boolean) {
                         visitTypeRef(implicitTypeRef)
                     }
 
+                    override fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef) {}
+
                     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
                         resolvedTypes++
                         val type = resolvedTypeRef.type

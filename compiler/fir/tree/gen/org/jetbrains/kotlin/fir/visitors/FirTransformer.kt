@@ -116,6 +116,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 
@@ -568,6 +569,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(implicitTypeRef, data)
     }
 
+    open fun transformComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
+        return transformElement(composedSuperTypeRef, data)
+    }
+
     open fun transformContractDescription(contractDescription: FirContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
         return transformElement(contractDescription, data)
     }
@@ -1014,6 +1019,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
         return transformImplicitTypeRef(implicitTypeRef, data)
+    }
+
+    final override fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
+        return transformComposedSuperTypeRef(composedSuperTypeRef, data)
     }
 
     final override fun visitContractDescription(contractDescription: FirContractDescription, data: D): CompositeTransformResult<FirContractDescription> {

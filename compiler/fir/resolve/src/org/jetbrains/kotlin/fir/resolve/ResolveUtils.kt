@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.isSuperReferenceExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -371,8 +372,10 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             val receiverResultType = explicitReceiver.resultType
             if (receiverResultType is FirResolvedTypeRef) {
                 receiverResultType.type.isNullable
-            } else {
+            } else if (receiverResultType !is FirComposedSuperTypeRef || !explicitReceiver.isSuperReferenceExpression()){
                 throw AssertionError("Receiver ${explicitReceiver.render()} type is unresolved: ${receiverResultType.render()}")
+            } else {
+                false
             }
         } else {
             false

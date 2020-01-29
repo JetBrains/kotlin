@@ -22,8 +22,8 @@ FILE: incorrectSuperCall.kt
         }
 
         public final override fun foo(): R|kotlin/Unit| {
-            super<R|A|>.<Unresolved name: foo>#()
-            super<R|A|>.R|/A.bar|()
+            super<R|A|R|B|>.R|/B.foo|()
+            super<R|A|R|B|>.<Ambiguity: bar, [/A.bar, /B.bar]>#()
         }
 
     }

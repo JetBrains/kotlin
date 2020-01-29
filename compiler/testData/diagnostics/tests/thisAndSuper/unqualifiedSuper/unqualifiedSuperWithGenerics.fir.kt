@@ -8,15 +8,15 @@ interface GenericBaseInterface<T> {
 
 class GenericDerivedClass<T> : GenericBaseClass<T>(), GenericBaseInterface<T> {
     override fun foo(x: T): T = super.foo(x)
-    override fun bar(x: T): T = super.<!UNRESOLVED_REFERENCE!>bar<!>(x)
+    override fun bar(x: T): T = super.bar(x)
 }
 
 class SpecializedDerivedClass : GenericBaseClass<Int>(), GenericBaseInterface<String> {
     override fun foo(x: Int): Int = super.foo(x)
-    override fun bar(x: String): String = super.<!UNRESOLVED_REFERENCE!>bar<!>(x)
+    override fun bar(x: String): String = super.bar(x)
 }
 
 class MixedDerivedClass<T> : GenericBaseClass<Int>(), GenericBaseInterface<T> {
     override fun foo(x: Int): Int = super.foo(x)
-    override fun bar(x: T): T = super.<!UNRESOLVED_REFERENCE!>bar<!>(x)
+    override fun bar(x: T): T = super.bar(x)
 }

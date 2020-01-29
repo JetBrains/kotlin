@@ -16,7 +16,7 @@ class C : A(), B {
     }
 
     override fun bar() {
-        super@C.<!UNRESOLVED_REFERENCE!>bar<!>()
+        super@C.bar()
     }
 
     inner class D : A(), Q {
@@ -26,8 +26,8 @@ class C : A(), B {
         }
 
         override fun qux() {
-            super@C.<!UNRESOLVED_REFERENCE!>qux<!>()
-            super@D.<!UNRESOLVED_REFERENCE!>qux<!>()
+            super@C.qux()
+            super@D.qux()
         }
     }
 }

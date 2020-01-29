@@ -9,8 +9,8 @@ open class B {
 
 class C : A, B() {
     override fun foo() {
-        super.<!UNRESOLVED_REFERENCE!>foo<!>()
+        super.foo()
 
-        super.bar() // should be ambiguity
+        super.<!AMBIGUITY!>bar<!>() // should be ambiguity (NB: really we should have overridden bar in C)
     }
 }

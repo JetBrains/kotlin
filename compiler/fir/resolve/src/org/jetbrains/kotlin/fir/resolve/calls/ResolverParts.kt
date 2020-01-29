@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -33,6 +36,13 @@ abstract class ResolutionStage {
 
 abstract class CheckerStage : ResolutionStage()
 
+internal fun FirExpression.isSuperReferenceExpression(): Boolean {
+    return if (this is FirQualifiedAccessExpression) {
+        val calleeReference = calleeReference
+        calleeReference is FirSuperReference
+    } else false
+}
+
 internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val receiverKind = candidate.explicitReceiverKind
@@ -40,7 +50,7 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         // TODO: add invoke cases
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
-                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier) {
+                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
                     return sink.yieldApplicability(CandidateApplicability.WRONG_RECEIVER)
                 }
             }
@@ -106,7 +116,10 @@ internal sealed class CheckReceivers : ResolutionStage() {
         val explicitReceiverKind = candidate.explicitReceiverKind
 
         if (expectedReceiverType != null) {
-            if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeCheckedAgainstExplicit()) {
+            if (explicitReceiverExpression != null &&
+                explicitReceiverKind.shouldBeCheckedAgainstExplicit() &&
+                !explicitReceiverExpression.isSuperReferenceExpression()
+            ) {
                 candidate.resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,

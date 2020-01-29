@@ -14,9 +14,9 @@ class C : T {
         fun T.buzz() {}
         fun T.buzz1() {}
         super.foo() // OK
-        super.bar() // Error
+        super.<!UNRESOLVED_REFERENCE!>bar<!>() // Error
         super.buzz() // OK, resolved to a member
-        super.buzz1() // Resolved to an extension
+        super.<!INAPPLICABLE_CANDIDATE!>buzz1<!>() // Resolved to an extension
         super.<!INAPPLICABLE_CANDIDATE!>buzz1<!>("") // Resolved to a member
     }
 }

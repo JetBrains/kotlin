@@ -12,7 +12,7 @@ class A<E>() : C(), T {
     fun test() {
         super
         super<T>
-        super.<!UNRESOLVED_REFERENCE!>foo<!>()
+        super.foo()
         super<T>.foo()
         super<C>.bar()
         super<T>@A.foo()

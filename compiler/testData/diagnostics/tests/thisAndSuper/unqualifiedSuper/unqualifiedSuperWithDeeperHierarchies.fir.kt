@@ -43,8 +43,8 @@ class DeepDerived : DeepBase(), DeepInterface {
             super.deeperBaseProp
 
     fun callsSuperInterfaceFuns() {
-        super.<!UNRESOLVED_REFERENCE!>deeperInterfaceFun<!>()
-        super.<!UNRESOLVED_REFERENCE!>deepInterfaceFun<!>()
+        super.deeperInterfaceFun()
+        super.deepInterfaceFun()
         super<DeepInterface>.deeperInterfaceFun()
         super<DeepInterface>.deepInterfaceFun()
     }

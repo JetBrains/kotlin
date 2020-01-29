@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             RETURN type=kotlin.Nothing from='public final fun f (): kotlin.String declared in <root>.A.Y'
               CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
                 $this: CALL 'public open fun f (): kotlin.String declared in <root>.A' type=kotlin.String origin=null
-                  $this: ERROR_CALL 'Unresolved reference: super<R|A|>' type=<root>.A
+                  $this: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
                 other: CONST String type=kotlin.String value="#Y"
     ENUM_ENTRY name:Z
       class: CLASS ENUM_ENTRY name:Z modality:FINAL visibility:local superTypes:[<root>.A]

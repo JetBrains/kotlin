@@ -49,7 +49,7 @@ class ManySupers2: Foo2(), C {
     fun foo() {
         super<Foo2>.test()
         super<C>.test()
-        super.test()
+        super.<!AMBIGUITY!>test<!>()
     }
 }
 
@@ -57,6 +57,6 @@ class ManySupers3: Bar2(), C {
     fun foo() {
         super<Bar2>.test()
         super<C>.test()
-        super.test()
+        super.<!AMBIGUITY!>test<!>()
     }
 }
