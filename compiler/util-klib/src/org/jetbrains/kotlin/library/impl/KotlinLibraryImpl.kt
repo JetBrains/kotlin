@@ -260,10 +260,11 @@ fun createKotlinLibraryComponents(
     }
 }
 
+@Deprecated("Use resolveSingleFileKlib() instead", replaceWith = ReplaceWith("resolveSingleFileKlib()"))
 fun createKotlinLibrary(libraryFile: File): KotlinLibrary = resolveSingleFileKlib(libraryFile)
 
 fun isKotlinLibrary(libraryFile: File): Boolean = try {
-    createKotlinLibrary(libraryFile)
+    resolveSingleFileKlib(libraryFile)
     true
 } catch (e: Throwable) {
     false
