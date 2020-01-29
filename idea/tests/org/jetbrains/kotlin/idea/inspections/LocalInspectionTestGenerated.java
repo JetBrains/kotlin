@@ -6621,6 +6621,49 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ProhibitRepeatedUseSiteTargetAnnotationsMigration extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInProhibitRepeatedUseSiteTargetAnnotationsMigration() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration/simple.kt");
+        }
+
+        @TestMetadata("simple2.kt")
+        public void testSimple2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration/simple2.kt");
+        }
+
+        @TestMetadata("simple3.kt")
+        public void testSimple3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration/simple3.kt");
+        }
+
+        @TestMetadata("simple4.kt")
+        public void testSimple4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration/simple4.kt");
+        }
+
+        @TestMetadata("simple5.kt")
+        public void testSimple5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration/simple5.kt");
+        }
+
+        @TestMetadata("simple6.kt")
+        public void testSimple6() throws Exception {
+            runTest("idea/testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration/simple6.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/prohibitTypeParametersForLocalVariablesMigration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

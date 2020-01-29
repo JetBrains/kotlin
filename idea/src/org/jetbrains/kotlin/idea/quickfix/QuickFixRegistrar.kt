@@ -633,6 +633,9 @@ class QuickFixRegistrar : QuickFixContributor {
         ANNOTATION_ON_SUPERCLASS.registerFactory(RemoveAnnotationFix)
         ANNOTATION_ON_SUPERCLASS_WARNING.registerFactory(RemoveAnnotationFix)
 
+        REPEATED_ANNOTATION.registerFactory(RemoveAnnotationFix)
+        REPEATED_ANNOTATION_WARNING.registerFactory(RemoveAnnotationFix)
+
         ACCIDENTAL_OVERRIDE.registerFactory(MakePrivateAndOverrideMemberFix.AccidentalOverrideFactory)
 
     }

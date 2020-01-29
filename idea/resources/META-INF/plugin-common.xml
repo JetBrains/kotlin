@@ -3169,6 +3169,16 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitRepeatedUseSiteTargetAnnotationsMigrationInspection"
+                     displayName="This annotation is not repeatable since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ObsoleteExperimentalCoroutinesInspection"
                      displayName="Experimental coroutines usages are deprecated since 1.3"
                      groupPath="Kotlin"
