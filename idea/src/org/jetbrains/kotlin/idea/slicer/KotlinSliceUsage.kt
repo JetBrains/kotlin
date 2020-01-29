@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
+import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.psi.KtExpression
 
 open class KotlinSliceUsage : SliceUsage {
@@ -57,11 +57,11 @@ open class KotlinSliceUsage : SliceUsage {
 
     override fun canBeLeaf() = element != null && lambdaLevel == 0
 
-    public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: Processor<SliceUsage>) {
+    public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
         InflowSlicer(element as? KtExpression ?: return, uniqueProcessor, this).processChildren()
     }
 
-    public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: Processor<SliceUsage>) {
+    public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
         OutflowSlicer(element as? KtExpression ?: return, uniqueProcessor, this).processChildren()
     }
 }

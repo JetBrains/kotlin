@@ -16,9 +16,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.slicer.JavaSliceUsage
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
@@ -122,7 +121,7 @@ private fun KtParameter.canProcess() = !isVarArg
 
 abstract class Slicer(
     protected val element: KtExpression,
-    protected val processor: Processor<SliceUsage>,
+    protected val processor: SliceUsageProcessor,
     protected val parentUsage: KotlinSliceUsage
 ) {
     protected class PseudocodeCache {
@@ -151,7 +150,7 @@ abstract class Slicer(
 
 class InflowSlicer(
     element: KtExpression,
-    processor: Processor<SliceUsage>,
+    processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
     private fun PsiElement.processHierarchyDownwardAndPass() {
@@ -382,7 +381,7 @@ class InflowSlicer(
 
 class OutflowSlicer(
     element: KtExpression,
-    processor: Processor<SliceUsage>,
+    processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
     private fun KtDeclaration.processVariable() {

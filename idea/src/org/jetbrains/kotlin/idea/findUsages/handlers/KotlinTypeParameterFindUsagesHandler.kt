@@ -21,8 +21,6 @@ import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -39,7 +37,7 @@ class KotlinTypeParameterFindUsagesHandler(
         )
     }
 
-    override fun createSearcher(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Searcher {
         return object : Searcher(element, processor, options) {
             override fun buildTaskList(forHighlight: Boolean): Boolean {
                 addTask {

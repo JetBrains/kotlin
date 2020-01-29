@@ -24,8 +24,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
-import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -75,7 +73,7 @@ class DelegatingFindMemberUsagesHandler(
         return kotlinHandler.getFindUsagesOptions(dataContext)
     }
 
-    override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+    override fun processElementUsages(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Boolean {
         val (handler, handlerOptions) = runReadAction { getHandlerAndOptions(element, options) } ?: return true
         return handler.processElementUsages(element, processor, handlerOptions!!)
     }
