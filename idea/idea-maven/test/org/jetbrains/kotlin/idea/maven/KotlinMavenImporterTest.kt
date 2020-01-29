@@ -2024,8 +2024,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         with(facetSettings) {
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
-            Assert.assertEquals("1.1", languageLevel!!.description)
-            Assert.assertEquals("1.1", apiLevel!!.description)
+            Assert.assertEquals(LanguageVersion.KOTLIN_1_1.description, languageLevel!!.description)
+            Assert.assertEquals(LanguageVersion.KOTLIN_1_1.description, apiLevel!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
         }
     }
@@ -2247,8 +2247,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         with(facetSettings("myModule1")) {
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
-            Assert.assertEquals("1.1", languageLevel!!.description)
-            Assert.assertEquals("1.0", apiLevel!!.description)
+            Assert.assertEquals(LanguageVersion.KOTLIN_1_1, languageLevel!!)
+            Assert.assertEquals(LanguageVersion.KOTLIN_1_0, apiLevel!!)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
                 listOf("-Xdump-declarations-to=dumpDir2"),
@@ -2258,8 +2258,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         with(facetSettings("myModule2")) {
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
-            Assert.assertEquals("1.1", languageLevel!!.description)
-            Assert.assertEquals("1.0", apiLevel!!.description)
+            Assert.assertEquals(LanguageVersion.KOTLIN_1_1, languageLevel!!)
+            Assert.assertEquals(LanguageVersion.KOTLIN_1_0, apiLevel!!)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
                 listOf("-Xdump-declarations-to=dumpDir", "-java-parameters", "-kotlin-home", "temp2"),

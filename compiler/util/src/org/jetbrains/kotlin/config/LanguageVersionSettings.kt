@@ -249,7 +249,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         get() = this <= LATEST_STABLE
 
     val isDeprecated: Boolean
-        get() = this >= OLDEST_DEPRECATED && this < FIRST_SUPPORTED
+        get() = OLDEST_DEPRECATED <= this && this < FIRST_SUPPORTED
 
     val isUnsupported: Boolean
         get() = this < OLDEST_DEPRECATED
@@ -258,7 +258,12 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         get() = "$major.$minor"
 
     override val description: String
-        get() = if (isStable) versionString else "$versionString (EXPERIMENTAL)"
+        get() = when {
+            !isStable -> "$versionString (EXPERIMENTAL)"
+            isDeprecated -> "$versionString (DEPRECATED)"
+            isUnsupported -> "$versionString (UNSUPPORTED)"
+            else -> versionString
+        }
 
     override fun toString() = versionString
 

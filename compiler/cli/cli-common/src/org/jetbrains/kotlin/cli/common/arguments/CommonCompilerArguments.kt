@@ -585,7 +585,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         if (value == null) null
         else LanguageVersion.fromVersionString(value)
             ?: run {
-                val versionStrings = LanguageVersion.values().map(LanguageVersion::description)
+                val versionStrings = LanguageVersion.values().filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
                 val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
                 collector.report(CompilerMessageSeverity.ERROR, message, null)
                 null

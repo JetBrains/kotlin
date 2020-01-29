@@ -70,8 +70,8 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
             ?: error("Facet settings are not found")
 
         Assert.assertEquals(false, settings.useProjectSettings)
-        Assert.assertEquals("1.0", settings.languageLevel!!.description)
-        Assert.assertEquals("1.0", settings.apiLevel!!.description)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, settings.languageLevel!!)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, settings.apiLevel!!)
     }
 
     fun testProject107InconsistentVersionInConfig() {
@@ -79,8 +79,8 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
             ?: error("Facet settings are not found")
 
         Assert.assertEquals(false, settings.useProjectSettings)
-        Assert.assertEquals("1.0", settings.languageLevel!!.description)
-        Assert.assertEquals("1.0", settings.apiLevel!!.description)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, settings.languageLevel!!)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, settings.apiLevel!!)
     }
 
     fun testFacetWithProjectSettings() {
@@ -88,8 +88,8 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
             ?: error("Facet settings are not found")
 
         Assert.assertEquals(true, settings.useProjectSettings)
-        Assert.assertEquals("1.1", settings.languageLevel!!.description)
-        Assert.assertEquals("1.1", settings.apiLevel!!.description)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_1, settings.languageLevel!!)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_1, settings.apiLevel!!)
         Assert.assertEquals(
             "-version -Xallow-kotlin-package -Xskip-metadata-version-check",
             settings.compilerSettings!!.additionalArguments

@@ -206,8 +206,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
         K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
         assertEquals(false, settings.getUseProjectSettings());
-        assertEquals("1.1", settings.getLanguageLevel().getDescription());
-        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(LanguageVersion.KOTLIN_1_1, settings.getLanguageLevel());
+        assertEquals(LanguageVersion.KOTLIN_1_0, settings.getApiLevel());
         assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
@@ -221,8 +221,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
         K2JSCompilerArguments arguments = (K2JSCompilerArguments) settings.getCompilerArguments();
         assertEquals(false, settings.getUseProjectSettings());
-        assertEquals("1.1", settings.getLanguageLevel().getDescription());
-        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(LanguageVersion.KOTLIN_1_1, settings.getLanguageLevel());
+        assertEquals(LanguageVersion.KOTLIN_1_0, settings.getApiLevel());
         assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
@@ -236,8 +236,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
         K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
         assertEquals(false, settings.getUseProjectSettings());
-        assertEquals("1.1", settings.getLanguageLevel().getDescription());
-        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(LanguageVersion.KOTLIN_1_1, settings.getLanguageLevel());
+        assertEquals(LanguageVersion.KOTLIN_1_0, settings.getApiLevel());
         assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
@@ -251,8 +251,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
         K2JSCompilerArguments arguments = (K2JSCompilerArguments) settings.getCompilerArguments();
         assertEquals(false, settings.getUseProjectSettings());
-        assertEquals("1.1", settings.getLanguageLevel().getDescription());
-        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(LanguageVersion.KOTLIN_1_1, settings.getLanguageLevel());
+        assertEquals(LanguageVersion.KOTLIN_1_0, settings.getApiLevel());
         assertEquals(JsPlatforms.INSTANCE.getDefaultJsPlatform(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
@@ -266,8 +266,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
         K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
         assertEquals(false, settings.getUseProjectSettings());
-        assertEquals("1.1", settings.getLanguageLevel().getDescription());
-        assertEquals("1.0", settings.getApiLevel().getDescription());
+        assertEquals(LanguageVersion.KOTLIN_1_1, settings.getLanguageLevel());
+        assertEquals(LanguageVersion.KOTLIN_1_0, settings.getApiLevel());
         assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
         assertEquals("1.1", arguments.getLanguageVersion());
         assertEquals("1.0", arguments.getApiVersion());
