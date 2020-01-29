@@ -23,9 +23,9 @@ class WrongIncDec() {
 fun testWrongIncDec() {
   var x = WrongIncDec()
   x++
-  <!AMBIGUITY!>++<!>x
+  ++x
   x--
-  <!AMBIGUITY!>--<!>x
+  --x
 }
 
 class UnitIncDec() {

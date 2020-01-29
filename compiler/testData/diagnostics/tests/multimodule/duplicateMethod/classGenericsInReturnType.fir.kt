@@ -31,6 +31,6 @@ import p.*
 
 fun test(b: B<String>?) {
     if (b is C) {
-        b?.<!AMBIGUITY!>foo<!>()
+        b?.foo()
     }
 }

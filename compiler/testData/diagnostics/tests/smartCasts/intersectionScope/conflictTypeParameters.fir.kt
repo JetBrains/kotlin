@@ -8,6 +8,6 @@ interface B {
 
 fun test(c: Any) {
     if (c is B && c is A) {
-        c.<!AMBIGUITY!>foo<!><String, Int>()
+        c.foo<String, Int>()
     }
 }

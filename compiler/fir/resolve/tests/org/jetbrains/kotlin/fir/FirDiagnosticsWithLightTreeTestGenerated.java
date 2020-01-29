@@ -143,6 +143,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/genericFunctions.kt");
     }
 
+    @TestMetadata("intersectionScope.kt")
+    public void testIntersectionScope() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/intersectionScope.kt");
+    }
+
     @TestMetadata("intersectionTypes.kt")
     public void testIntersectionTypes() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/intersectionTypes.kt");

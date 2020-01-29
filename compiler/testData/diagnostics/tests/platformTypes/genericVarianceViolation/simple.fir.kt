@@ -37,7 +37,7 @@ fun main(
     a.foo(it)
 
     // Iterators
-    a.<!AMBIGUITY!>foo<!>(ml.<!AMBIGUITY!>iterator<!>())
+    a.foo(ml.iterator())
     a.foo(l.iterator())
 
     // Sets

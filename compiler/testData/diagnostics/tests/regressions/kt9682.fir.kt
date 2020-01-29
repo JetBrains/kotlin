@@ -15,7 +15,7 @@ interface IFoo {
 fun test() {
     val foo : Foo = Foo2()
     foo as IFoo
-    foo.<!AMBIGUITY!>bar<!>() // Should be resolved to Foo#bar
+    foo.bar() // Should be resolved to Foo#bar
 }
 
 interface IFoo2 {
@@ -24,5 +24,5 @@ interface IFoo2 {
 
 fun test2(foo: Foo) {
     foo as IFoo2
-    foo.<!AMBIGUITY!>bar<!>() // should be ambiguity
+    foo.bar() // should be ambiguity
 }

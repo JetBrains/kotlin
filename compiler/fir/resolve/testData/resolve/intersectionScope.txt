@@ -1,0 +1,25 @@
+FILE: intersectionScope.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface C : R|A| {
+    }
+    public final fun main(c: R|C|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/c| !is R|B|) ->  {
+                ^main Unit
+            }
+        }
+
+        R|<local>/c|.R|/B.foo|()
+    }

@@ -10,6 +10,6 @@ interface B {
 
 fun test(c: Any) {
     if (c is B && c is A) {
-        c.<!AMBIGUITY!>foo<!><String, Int>().<!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+        c.foo<String, Int>().checkType { _<Int>() }
     }
 }

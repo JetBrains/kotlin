@@ -13,9 +13,9 @@ interface B: A {
 
 fun test(a: A) {
     if (a is B && a is C) {
-        a.<!AMBIGUITY!>foo<!> = ""
-        a.<!AMBIGUITY!>foo<!> = null
+        a.foo = ""
+        a.foo = null
 
-        a.<!AMBIGUITY!>foo<!>.<!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+        a.foo.checkType { _<String>() }
     }
 }

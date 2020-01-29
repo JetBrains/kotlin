@@ -14,6 +14,6 @@ interface B : Common {
 
 fun test(c: Common) {
     if (c is B && c is A) {
-        c.<!AMBIGUITY!>foo<!>().<!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+        c.foo().checkType { _<String>() }
     }
 }
