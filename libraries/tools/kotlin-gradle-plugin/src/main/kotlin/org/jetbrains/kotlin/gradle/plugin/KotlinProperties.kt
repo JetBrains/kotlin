@@ -97,6 +97,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableCommonKlibs: Boolean?
         get() = booleanProperty("kotlin.mpp.enableCommonKlibs")
 
+    val enableCompatibilityMetadataVariant: Boolean?
+        get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant")
+
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 

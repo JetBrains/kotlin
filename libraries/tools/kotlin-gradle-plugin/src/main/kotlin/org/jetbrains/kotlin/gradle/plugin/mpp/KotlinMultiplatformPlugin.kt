@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
+import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -246,9 +248,13 @@ class KotlinMultiplatformPlugin(
         val (group, name, _) = groupNameVersion
 
         val project = target.project
-        val metadataApiLegacyElements = project.configurations.getByName(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME)
+        val commonMain = project.kotlinExtension.sourceSets?.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+            ?: return true
 
-        return metadataApiLegacyElements.allDependencies.any { it.group == group && it.name == name }
+        // Only the commonMain API dependencies can be published for consumers who can't read Gradle project metadata
+        val commonMainApi = project.sourceSetDependencyConfigurationByScope(commonMain, KotlinDependencyScope.API_SCOPE)
+
+        return commonMainApi.allDependencies.any { it.group == group && it.name == name }
     }
 
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {

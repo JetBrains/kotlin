@@ -75,7 +75,7 @@ open class TransformKotlinGranularMetadata
             lazy {
                 KotlinMetadataTargetConfigurator.dependsOnWithInterCompilationDependencies(project, kotlinSourceSet).map {
                     project.tasks.withType(TransformKotlinGranularMetadata::class.java)
-                        .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it))
+                        .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
                         .transformation
                 }
             }

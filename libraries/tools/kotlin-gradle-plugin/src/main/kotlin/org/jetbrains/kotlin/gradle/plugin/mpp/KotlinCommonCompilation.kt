@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
@@ -21,4 +22,9 @@ class KotlinCommonCompilation(
 ) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(target, name), KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon
+
+    internal val isKlibCompilation: Boolean
+        get() = PropertiesProvider(target.project).enableCommonKlibs == true && !forceCompilationToKotlinMetadata
+
+    internal var forceCompilationToKotlinMetadata: Boolean = false
 }

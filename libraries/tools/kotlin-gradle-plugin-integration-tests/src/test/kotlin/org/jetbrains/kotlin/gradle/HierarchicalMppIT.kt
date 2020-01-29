@@ -167,7 +167,7 @@ class HierarchicalMppIT : BaseGradleIT() {
             publishedMetadataJar.checkAllEntryNamesArePresent(
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
 
-                "commonMain/META-INF/my-lib-foo.kotlin_module",
+                "commonMain/META-INF/my-lib-foo_commonMain.kotlin_module",
                 "commonMain/com/example/foo/FooKt.kotlin_metadata",
 
                 "jvmAndJsMain/META-INF/my-lib-foo_jvmAndJsMain.kotlin_module",
@@ -205,7 +205,7 @@ class HierarchicalMppIT : BaseGradleIT() {
             publishedMetadataJar.checkAllEntryNamesArePresent(
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
 
-                "commonMain/META-INF/my-lib-bar.kotlin_module",
+                "commonMain/META-INF/my-lib-bar_commonMain.kotlin_module",
                 "commonMain/com/example/bar/BarKt.kotlin_metadata",
 
                 "jvmAndJsMain/META-INF/my-lib-bar_jvmAndJsMain.kotlin_module",
