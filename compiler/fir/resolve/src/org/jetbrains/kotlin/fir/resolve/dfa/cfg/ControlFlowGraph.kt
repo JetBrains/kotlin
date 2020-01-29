@@ -24,13 +24,34 @@ class ControlFlowGraph(val name: String, val kind: Kind) {
     }
 }
 
+enum class EdgeKind {
+    Simple, Dead
+}
+
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, private val id: Int) {
+    companion object {
+        fun addEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean) {
+            from.followingNodes += to
+            to.previousNodes += from
+            if (kind != EdgeKind.Simple) {
+                from.outgoingEdges[to] = kind
+                to.incomingEdges[from] = kind
+            }
+            if (propagateDeadness && kind == EdgeKind.Dead) {
+                to.isDead = true
+            }
+        }
+    }
+
     init {
         owner.nodes += this
     }
 
-    val previousNodes = mutableListOf<CFGNode<*>>()
-    val followingNodes = mutableListOf<CFGNode<*>>()
+    val previousNodes: MutableList<CFGNode<*>> = mutableListOf()
+    val followingNodes: MutableList<CFGNode<*>> = mutableListOf()
+
+    val incomingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
+    val outgoingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
 
     val firstPreviousNode: CFGNode<*> get() = previousNodes.first()
 
@@ -46,7 +67,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         return id
     }
 }
-
 
 interface EnterNode
 interface ExitNode

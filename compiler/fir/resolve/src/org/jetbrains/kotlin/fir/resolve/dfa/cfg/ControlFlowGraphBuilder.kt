@@ -314,7 +314,7 @@ class ControlFlowGraphBuilder {
         val conditionExitNode = createLoopConditionExitNode(loop.condition)
         addNewSimpleNode(conditionExitNode)
         val conditionConstBooleanValue = conditionExitNode.booleanConstValue
-        addEdge(conditionExitNode, loopExitNodes.top(), isDead = conditionConstBooleanValue == true)
+        addEdge(conditionExitNode, loopExitNodes.top(), propagateDeadness = false, isDead = conditionConstBooleanValue == true)
         val loopBlockEnterNode = createLoopBlockEnterNode(loop)
         addNewSimpleNode(loopBlockEnterNode, conditionConstBooleanValue == false)
         levelCounter++
@@ -431,11 +431,11 @@ class ControlFlowGraphBuilder {
 
         val leftExitNode = createBinaryOrExitLeftOperandNode(binaryLogicExpression).also {
             addEdge(previousNode, it)
-            addEdge(it, binaryOrExitNodes.top(), isDead = leftBooleanValue == false)
+            addEdge(it, binaryOrExitNodes.top(), propagateDeadness = false, isDead = leftBooleanValue == false)
         }
 
         val rightExitNode = createBinaryOrEnterRightOperandNode(binaryLogicExpression).also {
-            addEdge(leftExitNode, it, isDead = leftBooleanValue == true)
+            addEdge(leftExitNode, it, propagateDeadness = true, isDead = leftBooleanValue == true)
             lastNodes.push(it)
             levelCounter++
         }
@@ -639,13 +639,14 @@ class ControlFlowGraphBuilder {
     fun exitSafeCall(qualifiedAccess: FirQualifiedAccess): ExitSafeCallNode {
         return exitSafeCallNodes.pop().also {
             addNewSimpleNode(it)
+            it.markAsDeadIfNecessary()
         }
     }
 
     // -------------------------------------------------------------------------------------------------------------------------
 
     private fun CFGNode<*>.markAsDeadIfNecessary() {
-        isDead = previousNodes.all { it.isDead }
+        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all { it == EdgeKind.Dead }
     }
 
     private fun addNodeThatReturnsNothing(node: CFGNode<*>) {
@@ -674,22 +675,9 @@ class ControlFlowGraphBuilder {
         return oldNode
     }
 
-    private fun addDeadEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean) {
-        val stub = createStubNode()
-        addEdge(from, stub)
-        addEdge(stub, to, propagateDeadness = propagateDeadness)
-    }
-
     private fun addEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean = true, isDead: Boolean = false) {
-        if (isDead) {
-            addDeadEdge(from, to, propagateDeadness)
-            return
-        }
-        if (propagateDeadness && from.isDead) {
-            to.isDead = true
-        }
-        from.followingNodes += to
-        to.previousNodes += from
+        val kind = if (isDead || from.isDead || to.isDead) EdgeKind.Dead else EdgeKind.Simple
+        CFGNode.addEdge(from, to, kind, propagateDeadness)
     }
 
     private val FirFunction<*>.invocationKind: InvocationKind?

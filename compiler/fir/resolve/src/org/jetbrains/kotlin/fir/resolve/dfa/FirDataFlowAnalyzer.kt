@@ -709,6 +709,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         val flow = node.mergeIncomingFlow().flow
 
+        /*
+         * TODO: Here we should handle case when one of arguments is dead (e.g. in cases `false && expr` or `true || expr`)
+         *  But since conditions with const are rare it can be delayed
+         */
+
         val leftVariable = variableStorage.getOrCreateVariable(binaryLogicExpression.leftOperand)
         val rightVariable = variableStorage.getOrCreateVariable(binaryLogicExpression.rightOperand)
         val operatorVariable = variableStorage.getOrCreateVariable(binaryLogicExpression)
@@ -795,7 +800,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val previousFlows = if (node.isDead)
             node.previousNodes.map { it.flow }
         else
-            node.previousNodes.mapNotNull { prev -> prev.takeIf { !it.isDead }?.flow }
+            node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges[it] != EdgeKind.Dead }?.flow }
         val flow = logicSystem.joinFlow(previousFlows)
         if (updateReceivers) {
             logicSystem.updateAllReceivers(flow)
