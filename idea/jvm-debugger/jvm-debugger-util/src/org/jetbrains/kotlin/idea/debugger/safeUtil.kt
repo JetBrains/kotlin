@@ -89,10 +89,6 @@ fun Field.safeType(): Type? {
     return wrapClassNotLoadedException { type() }
 }
 
-fun Method.safeSignature() {
-    wrapIllegalArgumentExceptionException { signature() }
-}
-
 private inline fun <T> wrapAbsentInformationException(block: () -> T): T? {
     return try {
         block()
@@ -101,14 +97,6 @@ private inline fun <T> wrapAbsentInformationException(block: () -> T): T? {
     } catch (e: AbsentInformationEvaluateException) {
         null
     } catch (e: InternalException) {
-        null
-    }
-}
-
-private inline fun <T> wrapIllegalArgumentExceptionException(block: () -> T): T? {
-    return try {
-        block()
-    } catch (e: IllegalArgumentException) {
         null
     }
 }

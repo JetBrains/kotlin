@@ -21,7 +21,6 @@ class CoroutineViewDebugSessionListener(
     val log by logger
 
     override fun sessionPaused() {
-        log.info("XListener: sessionPaused")
         val suspendContext = session.suspendContext ?: return requestClear()
         xCoroutineView.alarm.cancel()
         renew(suspendContext)
@@ -29,34 +28,24 @@ class CoroutineViewDebugSessionListener(
 
     override fun sessionResumed() {
         xCoroutineView.saveState()
-        log.info("XListener: sessionResumed")
         val suspendContext = session.suspendContext ?: return requestClear()
         renew(suspendContext)
     }
 
     override fun sessionStopped() {
-        log.info("XListener: sessionStopped")
         val suspendContext = session.suspendContext ?: return requestClear()
         renew(suspendContext)
     }
 
     override fun stackFrameChanged() {
         xCoroutineView.saveState()
-        log.info("XListener: stackFrameChanged")
-//        val suspendContext = session.suspendContext ?: return requestClear()
-//        log.warn("stackFrameChanged ${session}")
-//        renew(suspendContext)
     }
 
     override fun beforeSessionResume() {
-        log.info("XListener: beforeSessionResume")
-        log.warn("beforeSessionResume ${session}")
     }
 
     override fun settingsChanged() {
-        log.info("XListener: settingsChanged")
         val suspendContext = session.suspendContext ?: return requestClear()
-        log.warn("settingsChanged ${session}")
         renew(suspendContext)
     }
 

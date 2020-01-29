@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.safeLineNumber
 import org.jetbrains.kotlin.idea.debugger.safeLocation
 import org.jetbrains.kotlin.idea.debugger.safeMethod
-import org.jetbrains.kotlin.idea.debugger.safeSignature
-
 
 class CoroutineBuilder(val suspendContext: XSuspendContext) {
     private val coroutineStackFrameProvider = CoroutineAsyncStackTraceProvider()
@@ -172,7 +170,7 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
 
     private fun isInvokeSuspendNegativeLineMethodFrame(frame: StackFrameProxyImpl) =
         frame.safeLocation()?.safeMethod()?.name() == "invokeSuspend" &&
-                frame.safeLocation()?.safeMethod()?.safeSignature() ?: "" == "(Ljava/lang/Object;)Ljava/lang/Object;" &&
+                frame.safeLocation()?.safeMethod()?.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;" &&
                 frame.safeLocation()?.safeLineNumber() ?: 0 < 0
 }
 
