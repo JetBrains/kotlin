@@ -4,7 +4,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
+import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -107,7 +109,7 @@ private var Context.symbolTable: SymbolTable? by Context.nullValue()
 
 internal val createSymbolTablePhase = konanUnitPhase(
         op = {
-            this.symbolTable = SymbolTable()
+            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc))
         },
         name = "CreateSymbolTable",
         description = "Create SymbolTable"
@@ -143,7 +145,7 @@ internal val psiToIrPhase = konanUnitPhase(
             val symbolTable = symbolTable!!
 
             val translator = Psi2IrTranslator(config.configuration.languageVersionSettings,
-                    Psi2IrConfiguration(false))
+                    Psi2IrConfiguration(false), KonanIdSignaturer(KonanManglerDesc))
             val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 
             translator.addPostprocessingStep { module ->
@@ -240,6 +242,12 @@ internal val psiToIrPhase = konanUnitPhase(
             if (this.stdlibModule in modulesWithoutDCE) {
                 functionIrClassFactory.buildAllClasses()
             }
+            modulesWithoutDCE
+                    .filter(ModuleDescriptor::isFromInteropLibrary)
+                    .forEach(irProviderForCEnumsAndCStructs::buildAllEnumsAndStructsFrom)
+
+            module.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
+
             irModule = module
             irModules = deserializer.modules.filterValues { llvmModuleSpecification.containsModule(it) }
             ir.symbols = symbols
@@ -279,18 +287,17 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
 internal val serializerPhase = konanUnitPhase(
         op = {
             val mppKlibs = config.configuration.get(CommonConfigurationKeys.KLIB_MPP)?:false
-            val descriptorTable = DescriptorTable.createDefault()
 
             serializedIr = irModule?.let { ir ->
                 KonanIrModuleSerializer(
-                    this, ir.irBuiltins, descriptorTable, expectDescriptorToSymbol, skipExpects = !mppKlibs
+                    this, ir.irBuiltins, expectDescriptorToSymbol, skipExpects = !mppKlibs
                 ).serializedIrModule(ir)
             }
 
             val serializer = KlibMetadataMonolithicSerializer(
                 this.config.configuration.languageVersionSettings,
                 config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-                descriptorTable, !mppKlibs)
+                !mppKlibs)
             serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
         name = "Serializer",

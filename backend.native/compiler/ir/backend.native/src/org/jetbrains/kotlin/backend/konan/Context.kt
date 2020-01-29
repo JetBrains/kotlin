@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.library.SerializedIrModule
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
  */
 
-internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler by KonanManglerForBE {
+internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
     private val bridgesDescriptors = mutableMapOf<Pair<IrSimpleFunction, BridgeDirections>, IrSimpleFunction>()

@@ -33,7 +33,8 @@ class IrProviderForInteropStubs(
                 //  So for now we relate on correct behavior of subsequent providers.
                 symbol.isBound -> null
                 isSpecialInteropCase(symbol) -> null
-                symbol.descriptor.module.isFromInteropLibrary() -> provideIrDeclaration(symbol)
+                symbol.isPublicApi && symbol.signature.run { IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test() } ->
+                    provideIrDeclaration(symbol)
                 else -> null
             }
 

@@ -259,6 +259,7 @@ fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {
 
 
 val IrConstructor.isObjCConstructor get() = this.annotations.hasAnnotation(objCConstructorFqName)
+val ConstructorDescriptor.isObjCConstructor get() = this.annotations.hasAnnotation(objCConstructorFqName)
 
 // TODO-DCE-OBJC-INIT: Selector should be preserved by DCE.
 fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
@@ -270,9 +271,20 @@ fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
     }
 }
 
+fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
+    return this.annotations.findAnnotation(objCConstructorFqName)?.let {
+        val initSelector = it.getAnnotationStringValue("initSelector")
+        this.constructedClass.unsubstitutedMemberScope.getContributedDescriptors().asSequence()
+                .filterIsInstance<FunctionDescriptor>()
+                .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
+    }
+}
+
 val IrFunction.hasObjCFactoryAnnotation get() = this.annotations.hasAnnotation(objCFactoryFqName)
+val FunctionDescriptor.hasObjCFactoryAnnotation get() = this.annotations.hasAnnotation(objCFactoryFqName)
 
 val IrFunction.hasObjCMethodAnnotation get() = this.annotations.hasAnnotation(objCMethodFqName)
+val FunctionDescriptor.hasObjCMethodAnnotation get() = this.annotations.hasAnnotation(objCMethodFqName)
 
 fun FunctionDescriptor.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
     val factoryAnnotation = this.annotations.findAnnotation(objCFactoryFqName) ?: return null

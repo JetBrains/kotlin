@@ -71,7 +71,8 @@ internal class IrProviderForCEnumAndCStructStubs(
         }
 
     fun canHandleSymbol(symbol: IrSymbol): Boolean {
-        if (!symbol.descriptor.module.isFromInteropLibrary()) return false
+        if (!symbol.isPublicApi) return false
+        if (symbol.signature.run { !IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test() }) return false
         return symbol.findCEnumDescriptor(interopBuiltIns) != null
                 || symbol.findCStructDescriptor(interopBuiltIns) != null
     }
