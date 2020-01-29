@@ -36,6 +36,7 @@ private val myCbEnableAddingCaretsOnDoubleCtrlArrows           get() = CheckboxD
 private val myCbSmartIndentOnEnter                             get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.smart.indent"), codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
 private val myCbInsertPairCurlyBraceOnEnter                    get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.insert.pair.curly.brace"), codeInsightSettings::INSERT_BRACE_ON_ENTER.toBinding())
 private val myCbInsertJavadocStubOnEnter                       get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.javadoc.stub.after.slash.star.star"), codeInsightSettings::JAVADOC_STUB_ON_ENTER.toBinding())
+internal val myCbHonorCamelHumpsWhenSelectingByClicking         get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.honor.camelhumps.words.settings.on.double.click"), PropertyBinding(editorSettings::isMouseClickSelectionHonorsCamelWords, editorSettings::setMouseClickSelectionHonorsCamelWords))
 // @formatter:on
 
 private val childOptions = EditorSmartKeysConfigurable().configurables
@@ -54,7 +55,8 @@ internal val editorSmartKeysOptionDescriptors = listOf(
   myCbEnableAddingCaretsOnDoubleCtrlArrows,
   myCbSmartIndentOnEnter,
   myCbInsertPairCurlyBraceOnEnter,
-  myCbInsertJavadocStubOnEnter
+  myCbInsertJavadocStubOnEnter,
+  myCbHonorCamelHumpsWhenSelectingByClicking
 ).map(CheckboxDescriptor::asOptionDescriptor) + childOptions
 
 @NonNls
@@ -95,6 +97,9 @@ class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompos
       }
       row {
         checkBox(myCbCamelWords)
+      }
+      row {
+        checkBox(myCbHonorCamelHumpsWhenSelectingByClicking)
       }
       row {
         checkBox(myCbSurroundSelectionOnTyping)
