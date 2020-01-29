@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForInteropStubs
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumStubs
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -201,14 +202,16 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
                     symbolTable, generatorContext.irBuiltIns, reflectionTypes)
-            // TODO: Add special handling for enums and structs.
-            val irProviderForInteropStubs = IrProviderForInteropStubs { false }
             val symbols = KonanSymbols(this, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
             val stubGenerator = DeclarationStubGenerator(
                     moduleDescriptor, symbolTable,
                     config.configuration.languageVersionSettings
             )
-            val irProviders = listOf(irProviderForInteropStubs, functionIrClassFactory, deserializer, stubGenerator)
+            val irProviderForCEnums = IrProviderForCEnumStubs(generatorContext, interopBuiltIns, stubGenerator, symbols)
+            val irProviderForInteropStubs = IrProviderForInteropStubs { symbol ->
+                irProviderForCEnums.canHandleSymbol(symbol)
+            }
+            val irProviders = listOf(irProviderForCEnums, irProviderForInteropStubs, functionIrClassFactory, deserializer, stubGenerator)
             stubGenerator.setIrProviders(irProviders)
 
             expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
@@ -236,6 +239,8 @@ internal val psiToIrPhase = konanUnitPhase(
             functionIrClassFactory.module =
                     (listOf(irModule!!) + deserializer.modules.values)
                             .single { it.descriptor.isKonanStdlib() }
+
+            irProviderForCEnums.module = module
         },
         name = "Psi2Ir",
         description = "Psi to IR conversion",
