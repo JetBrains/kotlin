@@ -16,6 +16,7 @@
 package com.intellij.packageDependencies.actions;
 
 import com.intellij.analysis.AnalysisScope;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -25,7 +26,7 @@ public class AnalyzeDependenciesOnSpecifiedTargetAction extends AnAction {
   public static final DataKey<GlobalSearchScope> TARGET_SCOPE_KEY = DataKey.create("MODULE_DEPENDENCIES_TARGET_SCOPE");
 
   public AnalyzeDependenciesOnSpecifiedTargetAction() {
-    super("Analyze Dependencies on Specified Target");
+    super(() -> ActionsBundle.message("action.AnalyzeDependenciesOnSpecifiedTargetAction.text"));
   }
 
   @Override

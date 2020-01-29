@@ -76,7 +76,6 @@ public class ModuleToDoNode extends BaseToDoNode<Module> {
 
   @Override
   public void update(@NotNull PresentationData presentation) {
-    if (DumbService.getInstance(getProject()).isDumb()) return;
     String newName = getValue().getName();
     int todoItemCount = getTodoItemCount(getValue());
     presentation.setLocationString(IdeBundle.message("node.todo.group", todoItemCount));

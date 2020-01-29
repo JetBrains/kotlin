@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.profile.codeInspection.ui;
 
+import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.ex.Descriptor;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
@@ -45,7 +46,7 @@ public abstract class ScopesChooser extends ComboBoxAction implements DumbAware 
     myProject = project;
     myExcludedScopeNames = excludedScopeNames == null ? Collections.emptySet() : ContainerUtil.newHashSet(excludedScopeNames);
     setPopupTitle(TITLE);
-    getTemplatePresentation().setText("In All Scopes");
+    getTemplatePresentation().setText(() -> InspectionsBundle.message("action.presentation.ScopesChooser.text"));
   }
 
   @NotNull

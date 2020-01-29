@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.lookup.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CodeCompletionFeatures;
 import com.intellij.codeInsight.completion.ShowHideIntentionIconLookupAction;
@@ -11,6 +12,7 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
@@ -311,7 +313,7 @@ class LookupUi {
       AnAction showIntentionAction = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
       if (showIntentionAction != null) {
         copyShortcutFrom(showIntentionAction);
-        getTemplatePresentation().setText("Click or Press");
+        getTemplatePresentation().setText(() -> CodeInsightBundle.message("action.presentation.LookupUi.text"));
       }
     }
 
@@ -330,7 +332,7 @@ class LookupUi {
   private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
     private boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
     private ChangeSortingAction() {
-      super("Sort by Name");
+      super(() -> ActionsBundle.message("action.ChangeSortingAction.text"));
     }
 
     @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.statistic.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -25,7 +25,7 @@ import static com.intellij.internal.statistic.beans.MetricEventFactoryKt.newBool
 import static com.intellij.internal.statistic.beans.MetricEventUtilKt.addBoolIfDiffers;
 import static com.intellij.internal.statistic.beans.MetricEventUtilKt.addIfDiffers;
 
-class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
+final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
   @NotNull
   @Override
   public String getGroupId() {
@@ -43,7 +43,7 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     Set<MetricEvent> set = new HashSet<>();
 
     EditorSettingsExternalizable es = EditorSettingsExternalizable.getInstance();
-    EditorSettingsExternalizable esDefault = new EditorSettingsExternalizable();
+    EditorSettingsExternalizable esDefault = new EditorSettingsExternalizable(new EditorSettingsExternalizable.OsSpecificState());
     addBoolIfDiffers(set, es, esDefault, s -> s.isVirtualSpace(), "caretAfterLineEnd");
     addBoolIfDiffers(set, es, esDefault, s -> s.isCaretInsideTabs(), "caretInsideTabs");
     addBoolIfDiffers(set, es, esDefault, s -> s.isAdditionalPageAtBottom(), "virtualSpaceAtFileBottom");

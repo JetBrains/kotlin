@@ -15,7 +15,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.CommonProcessors;
@@ -327,7 +327,7 @@ public class NavBarModel {
       if (w1 != w2) return -w1 + w2;
       String s1 = NavBarPresentation.calcPresentableText(o1, false);
       String s2 = NavBarPresentation.calcPresentableText(o2, false);
-      return Comparing.compare(s1, s2, String.CASE_INSENSITIVE_ORDER);
+      return StringUtil.naturalCompare(s1, s2);
     }
 
     private static int getWeight(Object object) {

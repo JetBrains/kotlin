@@ -74,6 +74,11 @@ public class GradleConsoleProperties extends SMTRunnerConsoleProperties {
     return GRADLE_TEST_LOCATOR;
   }
 
+  @Override
+  public boolean isEditable() {
+    return true;
+  }
+
   @NotNull
   private ToggleBooleanProperty createShowInternalNodesAction(TestConsoleProperties target) {
     String text = GradleBundle.message("gradle.test.show.internal.nodes.action.name");

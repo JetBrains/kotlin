@@ -36,7 +36,7 @@ public final class BrowseTypeHierarchyAction extends BrowseHierarchyActionBase {
   public final void update(@NotNull final AnActionEvent event){
     final Presentation presentation = event.getPresentation();
     if (!ActionPlaces.isMainMenuOrActionSearch(event.getPlace())) {
-      presentation.setText(IdeBundle.message("action.browse.type.hierarchy"));
+      presentation.setText(() -> IdeBundle.message("action.browse.type.hierarchy"));
     }
     super.update(event);
   }

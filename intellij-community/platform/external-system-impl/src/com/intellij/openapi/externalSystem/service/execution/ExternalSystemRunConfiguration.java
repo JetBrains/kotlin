@@ -250,7 +250,7 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
       Presentation presentation = event.getPresentation();
       ExecutionEnvironment environment = getEnvironment(event);
       if (environment != null) {
-        presentation.setText(ExecutionBundle.message("rerun.configuration.action.name",
+        presentation.setText(() -> ExecutionBundle.message("rerun.configuration.action.name",
                                                      StringUtil.escapeMnemonics(environment.getRunProfile().getName())));
         Icon icon = ExecutionManagerImpl.isProcessRunning(getDescriptor(event))
                     ? AllIcons.Actions.Restart

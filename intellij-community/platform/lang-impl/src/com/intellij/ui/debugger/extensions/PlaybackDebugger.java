@@ -3,6 +3,7 @@
 package com.intellij.ui.debugger.extensions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
@@ -155,9 +156,10 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   private class SaveAction extends AnAction {
-    private SaveAction() {
-      super("Save", "", AllIcons.Actions.Menu_saveall);
-    }
+  SaveAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.save"),
+          () -> IdeBundle.message("action.AnAction.description.save"), AllIcons.Actions.Menu_saveall);
+  }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
@@ -197,10 +199,10 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   private class SetScriptFileAction extends AnAction {
-
-    private SetScriptFileAction() {
-      super("Set Script File", "", AllIcons.Actions.Menu_open);
-    }
+  SetScriptFileAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.set.script.file"),
+          () -> IdeBundle.message("action.AnAction.description.set.script.file"), AllIcons.Actions.Menu_open);
+  }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -214,9 +216,10 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   private class NewScriptAction extends AnAction {
-    private NewScriptAction() {
-      super("New Script", "", AllIcons.Actions.New);
-    }
+  NewScriptAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.new.script"),
+          () -> IdeBundle.message("action.AnAction.description.new.script"), AllIcons.Actions.New);
+  }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -266,9 +269,10 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   private class StopAction extends AnAction {
-    private StopAction() {
-      super("Stop", null, AllIcons.Actions.Suspend);
-    }
+  StopAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.stop"),
+          () -> IdeBundle.message("action.AnAction.description.stop"), AllIcons.Actions.Suspend);
+  }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
@@ -285,9 +289,10 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   private class ActivateFrameAndRun extends AnAction {
-    private ActivateFrameAndRun() {
-      super("Activate Frame And Run", "", AllIcons.Nodes.Deploy);
-    }
+  ActivateFrameAndRun() {
+    super(() -> IdeBundle.message("action.AnAction.text.activate.frame.and.run"),
+          () -> IdeBundle.message("action.AnAction.description.activate.frame.and.run"), AllIcons.Nodes.Deploy);
+  }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -301,10 +306,10 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   }
 
   private class RunOnFameActivationAction extends AnAction {
-
-    private RunOnFameActivationAction() {
-      super("Run On Frame Activation", "", AllIcons.RunConfigurations.TestState.Run);
-    }
+  RunOnFameActivationAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.run.on.frame.activation"),
+          () -> IdeBundle.message("action.AnAction.description.run.on.frame.activation"), AllIcons.RunConfigurations.TestState.Run);
+  }
 
     @Override
     public void update(@NotNull AnActionEvent e) {

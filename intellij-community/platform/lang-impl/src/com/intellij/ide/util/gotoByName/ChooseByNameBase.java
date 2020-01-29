@@ -451,7 +451,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
     if (checkBoxName != null) {
       if (myCheckBoxShortcut != null) {
-        new DumbAwareAction("change goto check box", null, null) {
+        new DumbAwareAction(() -> IdeBundle.message("action.AnActionButton.text.change.goto.check.box")) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             myCheckBox.setSelected(!myCheckBox.isSelected());

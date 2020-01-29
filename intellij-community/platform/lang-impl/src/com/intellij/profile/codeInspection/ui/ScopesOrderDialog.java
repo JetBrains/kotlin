@@ -1,6 +1,7 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.profile.codeInspection.ui;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.scopeChooser.ScopeChooserConfigurable;
@@ -55,7 +56,7 @@ public class ScopesOrderDialog extends DialogWrapper {
       public void run(AnActionButton anActionButton) {
         ListUtil.moveSelectedItemsUp(myOptionsList);
       }
-    }).addExtraAction(new AnActionButton("Edit Scopes", AllIcons.Actions.Edit) {
+    }).addExtraAction(new AnActionButton(() -> CodeInsightBundle.message("action.AnActionButton.text.edit.scopes"), AllIcons.Actions.Edit) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         ShowSettingsUtil.getInstance().editConfigurable(project, new ScopeChooserConfigurable(project));

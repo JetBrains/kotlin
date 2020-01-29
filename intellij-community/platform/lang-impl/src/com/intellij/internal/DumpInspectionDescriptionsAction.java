@@ -4,6 +4,7 @@ package com.intellij.internal;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -33,7 +34,7 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
   private static final Logger LOG = Logger.getInstance(DumpInspectionDescriptionsAction.class);
 
   public DumpInspectionDescriptionsAction() {
-    super("Dump inspection descriptions");
+    super(() -> ActionsBundle.message("action.DumpInspectionDescriptionsAction.text"));
   }
 
   @Override

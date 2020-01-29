@@ -47,7 +47,11 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
   }
 
   protected fun assertSyncViewSelectedNode(nodeText: String, consoleText: String) {
-    assertExecutionTreeNode(syncViewManager, nodeText, consoleText, true)
+    assertExecutionTreeNode(syncViewManager, nodeText, { assertEquals(consoleText, it) }, true)
+  }
+
+  protected fun assertSyncViewSelectedNode(nodeText: String, assertSelected: Boolean, consoleTextChecker: (String?) -> Unit) {
+    assertExecutionTreeNode(syncViewManager, nodeText, consoleTextChecker, assertSelected)
   }
 
   protected fun assertSyncViewRerunActions() {
@@ -59,7 +63,7 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
   }
 
   protected fun assertBuildViewSelectedNode(nodeText: String, consoleText: String) {
-    assertExecutionTreeNode(buildViewManager, nodeText, consoleText, true)
+    assertExecutionTreeNode(buildViewManager, nodeText, { assertEquals(consoleText, it) }, true)
   }
 
   private fun assertExecutionTree(viewManager: TestViewManager, expected: String, ignoreTasksOrder: Boolean) {
@@ -98,7 +102,10 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     return list
   }
 
-  private fun assertExecutionTreeNode(viewManager: TestViewManager, nodeText: String, consoleText: String, assertSelected: Boolean) {
+  private fun assertExecutionTreeNode(viewManager: TestViewManager,
+                                      nodeText: String,
+                                      consoleTextChecker: (String?) -> Unit,
+                                      assertSelected: Boolean) {
     val recentBuild = viewManager.getRecentBuild()
     val buildView = viewManager.getBuildsMap()[recentBuild]
     val eventView = buildView!!.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
@@ -115,7 +122,7 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
         userObject is ExecutionNode && userObject.name == nodeText
       }
     }
-    if (!assertSelected && node != tree.selectionPath!!.lastPathComponent) {
+    if (!assertSelected && node != tree.selectionPath?.lastPathComponent) {
       edt {
         TreeUtil.selectNode(tree, node)
         PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
@@ -126,7 +133,7 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     if (node != selectedPathComponent) {
       assertEquals(node.toString(), selectedPathComponent.toString())
     }
-    assertEquals(consoleText, eventView.selectedNodeConsoleText)
+    consoleTextChecker.invoke(eventView.selectedNodeConsoleText)
   }
 
   interface TestViewManager : ViewManager {

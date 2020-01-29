@@ -18,6 +18,7 @@ import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetrie
 import com.intellij.util.indexing.snapshot.*;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -37,6 +38,9 @@ import java.util.concurrent.locks.ReadWriteLock;
  */
 public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Key, Value, Input> implements UpdatableIndex<Key, Value, Input>{
   private static final Logger LOG = Logger.getInstance(VfsAwareMapReduceIndex.class);
+
+  @ApiStatus.Internal
+  public static int VERSION = 0;
 
   static {
     if (!DebugAssertions.DEBUG) {

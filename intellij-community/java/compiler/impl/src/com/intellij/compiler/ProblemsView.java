@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler;
 
 import com.intellij.compiler.progress.CompilerTask;
@@ -29,11 +29,20 @@ public abstract class ProblemsView {
     }
 
     public static ProblemsView getInstance(@NotNull Project project) {
-      return project.getService(ProblemsView.class);
+      return ProblemsView.getInstance(project);
     }
   }
 
-  protected ProblemsView(Project project) {
+  public static ProblemsView getInstance(@NotNull Project project) {
+    return project.getService(ProblemsView.class);
+  }
+
+  @Nullable
+  public static ProblemsView getInstanceIfCreated(@NotNull Project project) {
+    return project.getServiceIfCreated(ProblemsView.class);
+  }
+
+  protected ProblemsView(@NotNull Project project) {
     myProject = project;
   }
 
@@ -72,5 +81,4 @@ public abstract class ProblemsView {
     }
     return ArrayUtilRt.toStringArray(lines);
   }
-
 }

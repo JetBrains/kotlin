@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -80,34 +66,35 @@ public class CreateDirectoryOrPackageHandler implements InputValidatorEx {
     while (tokenizer.hasMoreTokens()) {
       final String token = tokenizer.nextToken();
       if (!tokenizer.hasMoreTokens() && (token.equals(".") || token.equals(".."))) {
-        myErrorText = "Can't create a directory with name '" + token + "'";
+        myErrorText = IdeBundle.message("error.invalid.directory.name", token);
         return false;
       }
       if (vFile != null) {
         if (firstToken && "~".equals(token)) {
           final VirtualFile userHomeDir = VfsUtil.getUserHomeDir();
           if (userHomeDir == null) {
-            myErrorText = "User home directory not found";
+            myErrorText = IdeBundle.message("error.user.home.directory.not.found");
             return false;
           }
           vFile = userHomeDir;
         }
         else if ("..".equals(token)) {
-          vFile = vFile.getParent();
-          if (vFile == null) {
-            myErrorText = "Not a valid directory";
+          final VirtualFile parent = vFile.getParent();
+          if (parent == null) {
+            myErrorText = IdeBundle.message("error.invalid.directory", vFile.getPresentableUrl() + File.separatorChar + "..");
             return false;
           }
+          vFile = parent;
         }
         else if (!".".equals(token)){
           final VirtualFile child = vFile.findChild(token);
           if (child != null) {
             if (!child.isDirectory()) {
-              myErrorText = "A file with name '" + token + "' already exists";
+              myErrorText = IdeBundle.message("error.file.with.name.already.exists", token);
               return false;
             }
             else if (!tokenizer.hasMoreTokens()) {
-              myErrorText = "A directory with name '" + token + "' already exists";
+              myErrorText = IdeBundle.message("error.directory.with.name.already.exists", token);
               return false;
             }
           }
@@ -115,12 +102,12 @@ public class CreateDirectoryOrPackageHandler implements InputValidatorEx {
         }
       }
       if (FileTypeManager.getInstance().isFileIgnored(token)) {
-        myErrorText = "Trying to create a " + (myIsDirectory ? "directory" : "package") +
-                      " with an ignored name, the result will not be visible";
+        myErrorText = myIsDirectory ? IdeBundle.message("warning.create.directory.with.ignored.name", token)
+                                    : IdeBundle.message("warning.create.package.with.ignored.name", token);
         return true;
       }
       if (!myIsDirectory && token.length() > 0 && !PsiDirectoryFactory.getInstance(myProject).isValidPackageName(token)) {
-        myErrorText = "Not a valid package name, it will not be possible to create a Java class inside";
+        myErrorText = IdeBundle.message("error.invalid.java.package.name");
         return true;
       }
       firstToken = false;

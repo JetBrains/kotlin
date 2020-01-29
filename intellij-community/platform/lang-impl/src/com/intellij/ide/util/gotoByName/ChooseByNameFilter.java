@@ -3,6 +3,7 @@ package com.intellij.ide.util.gotoByName;
 
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
@@ -192,7 +193,8 @@ public abstract class ChooseByNameFilter<T> {
 
   private class FilterAction extends ToggleAction implements DumbAware {
     FilterAction() {
-      super("Filter", "Filter files by type", AllIcons.General.Filter);
+      super(() -> IdeBundle.message("action.ToggleAction.text.filter"),
+            () -> IdeBundle.message("action.ToggleAction.text.filter.files.by.type"), AllIcons.General.Filter);
     }
 
     @Override

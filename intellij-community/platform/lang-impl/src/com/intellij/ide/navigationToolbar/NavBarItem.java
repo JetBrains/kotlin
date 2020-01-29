@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.navigationToolbar.ui.NavBarUI;
@@ -72,6 +72,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
       setMyBorder(null);
       setBorder(null);
       setPaintFocusBorder(false);
+      setIconOpaque(false);
       if (myPanel.allowNavItemsFocus()) {
         // Take ownership of Tab/Shift-Tab navigation (to move focus out of nav bar panel), as
         // navigation between items is handled by the Left/Right cursor keys. This is similar
@@ -81,6 +82,10 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
         addKeyListener(new KeyHandler());
         addFocusListener(new FocusHandler());
       }
+    }
+    else {
+      setIconOpaque(true);
+      setFocusBorderAroundIcon(true);
     }
 
     update();
@@ -116,7 +121,6 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
     final boolean focused = isFocusedOrPopupElement();
     final boolean selected = isSelected();
 
-    setFocusBorderAroundIcon(false);
     setBackground(myUI.getBackground(selected, focused));
 
     Color fg = myUI.getForeground(selected, focused, isInactive());
@@ -210,11 +214,6 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
   @Override
   protected boolean shouldDrawBackground() {
     return isSelected() && isFocusedOrPopupElement();
-  }
-
-  @Override
-  public boolean isIconOpaque() {
-    return false;
   }
 
   @Override

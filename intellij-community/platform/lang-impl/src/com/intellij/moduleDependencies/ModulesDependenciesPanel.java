@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.moduleDependencies;
 
 import com.intellij.CommonBundle;
@@ -277,7 +277,7 @@ public class ModulesDependenciesPanel extends JPanel implements Disposable {
       }
     });
 
-    group.add(new ToggleAction(AnalysisScopeBundle.message("action.module.dependencies.tests"), null, AllIcons.Modules.TestSourceFolder) {
+    group.add(new ToggleAction(AnalysisScopeBundle.message("action.module.dependencies.tests"), null, AllIcons.Nodes.TestSourceFolder) {
       @Override
       public boolean isSelected(@NotNull AnActionEvent e) {
         return myState.includeTests;

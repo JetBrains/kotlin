@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ToggleSelectionOnlyAction extends ToggleAction implements ContextAwareShortcutProvider, DumbAware {
   public ToggleSelectionOnlyAction() {
-    super("Search in Selection Only", null, AllIcons.Actions.InSelection);
+    super(() -> null, () -> null, AllIcons.Actions.InSelection);
   }
 
   @Override

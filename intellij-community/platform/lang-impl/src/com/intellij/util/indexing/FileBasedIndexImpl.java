@@ -679,7 +679,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           if (!RebuildStatus.isOk(indexId)) {
             throw new ServiceNotReadyException();
           }
-          if (ourDumbModeAccessType.get() == null) {
+          if (ourDumbModeAccessType.get() == null || !ActionUtil.isDumbMode(project)) {
             forceUpdate(project, filter, restrictedFile);
           }
           if (!areUnsavedDocumentsIndexed(indexId)) { // todo: check scope ?

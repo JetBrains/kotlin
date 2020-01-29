@@ -16,6 +16,7 @@
 
 package com.intellij.ui.debugger;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public class ShowUiDebuggerAction extends DumbAwareAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setText("UI Debugger");
+    e.getPresentation().setText(() -> IdeBundle.message("action.presentation.ShowUiDebuggerAction.text"));
   }
 
   @Override

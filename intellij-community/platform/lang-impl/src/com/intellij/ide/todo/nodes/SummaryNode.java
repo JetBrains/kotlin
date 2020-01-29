@@ -11,7 +11,6 @@ import com.intellij.ide.todo.TodoTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -86,7 +85,6 @@ public class SummaryNode extends BaseToDoNode<ToDoSummary> {
 
   @Override
   public void update(@NotNull PresentationData presentation) {
-    if (DumbService.getInstance(getProject()).isDumb()) return;
     int todoItemCount = getTodoItemCount(getValue());
     int fileCount = getFileCount(getValue());
     presentation.setPresentableText(IdeBundle.message("node.todo.summary", todoItemCount, fileCount));

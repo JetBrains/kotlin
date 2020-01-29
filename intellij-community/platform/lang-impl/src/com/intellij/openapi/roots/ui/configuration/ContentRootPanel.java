@@ -23,6 +23,7 @@ import com.intellij.ui.roots.IconActionComponent;
 import com.intellij.ui.roots.ResizingWrapper;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
@@ -63,8 +64,8 @@ public abstract class ContentRootPanel extends JPanel {
 
   public interface ActionCallback {
     void deleteContentEntry();
-    void deleteContentFolder(ContentEntry contentEntry, ContentFolder contentFolder);
-    void navigateFolder(ContentEntry contentEntry, ContentFolder contentFolder);
+    void deleteContentFolder(ContentEntry contentEntry, ContentFolderRef contentFolderRef);
+    void navigateFolder(ContentEntry contentEntry, ContentFolderRef contentFolderRef);
     void onSourceRootPropertiesChanged(@NotNull SourceFolder folder);
   }
 
@@ -108,15 +109,16 @@ public abstract class ContentRootPanel extends JPanel {
       Collection<SourceFolder> folders = folderByType.get(editor.getRootType());
       if (folders.isEmpty()) continue;
 
-      ContentFolder[] foldersArray = folders.toArray(new ContentFolder[0]);
-      final JComponent sourcesComponent = createFolderGroupComponent(editor.getRootsGroupTitle(), foldersArray, editor.getRootsGroupColor(),
+      List<ContentFolderRef> folderRefs = ContainerUtil.map(folders, ContentFolderRefImpl::new);
+      final JComponent sourcesComponent = createFolderGroupComponent(editor.getRootsGroupTitle(), folderRefs, editor.getRootsGroupColor(),
                                                                      editor);
       add(sourcesComponent, constraints);
     }
 
     ExcludeFolder[] excluded = getContentEntry().getExcludeFolders();
     if (excluded.length > 0) {
-      final JComponent excludedComponent = createFolderGroupComponent(ProjectBundle.message("module.paths.excluded.group"), excluded,
+      List<ContentFolderRef> folderRefs = ContainerUtil.map(excluded, ContentFolderRefImpl::new);
+      final JComponent excludedComponent = createFolderGroupComponent(ProjectBundle.message("module.paths.excluded.group"), folderRefs,
                                                                       EXCLUDED_COLOR, null);
       this.add(excludedComponent, constraints);
     }
@@ -144,27 +146,27 @@ public abstract class ContentRootPanel extends JPanel {
   }
 
   protected JComponent createFolderGroupComponent(String title,
-                                                  ContentFolder[] folders,
+                                                  List<? extends ContentFolderRef> folders,
                                                   Color foregroundColor,
                                                   @Nullable ModuleSourceRootEditHandler<?> editor) {
-    final JPanel panel = new JPanel(new GridLayoutManager(folders.length, 3, JBUI.insets(1, 17, 0, 5), 0, 1));
+    final JPanel panel = new JPanel(new GridLayoutManager(folders.size(), 3, JBUI.insets(1, 17, 0, 5), 0, 1));
     panel.setOpaque(false);
 
-    for (int idx = 0; idx < folders.length; idx++) {
-      final ContentFolder folder = folders[idx];
-      final int verticalPolicy = idx == folders.length - 1? GridConstraints.SIZEPOLICY_CAN_GROW : GridConstraints.SIZEPOLICY_FIXED;
-      panel.add(createFolderComponent(folder, foregroundColor, editor), new GridConstraints(idx, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW | GridConstraints.SIZEPOLICY_CAN_SHRINK, verticalPolicy, null, null, null));
+    for (int idx = 0; idx < folders.size(); idx++) {
+      ContentFolderRef folderRef = folders.get(idx);
+      final int verticalPolicy = idx == folders.size() - 1? GridConstraints.SIZEPOLICY_CAN_GROW : GridConstraints.SIZEPOLICY_FIXED;
+      panel.add(createFolderComponent(folderRef, foregroundColor, editor), new GridConstraints(idx, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW | GridConstraints.SIZEPOLICY_CAN_SHRINK, verticalPolicy, null, null, null));
       int column = 1;
       int colspan = 2;
 
       if (editor != null) {
-        JComponent additionalComponent = createRootPropertiesEditor(editor, (SourceFolder)folder);
+        JComponent additionalComponent = createRootPropertiesEditor(editor, (SourceFolder)folderRef.getContentFolder());
         if (additionalComponent != null) {
           panel.add(additionalComponent, new GridConstraints(idx, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, verticalPolicy, null, null, null));
           colspan = 1;
         }
       }
-      panel.add(createFolderDeleteComponent(folder, editor), new GridConstraints(idx, column, 1, colspan, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, verticalPolicy, null, null, null));
+      panel.add(createFolderDeleteComponent(folderRef, editor), new GridConstraints(idx, column, 1, colspan, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, verticalPolicy, null, null, null));
     }
 
     final JLabel titleLabel = new JLabel(title);
@@ -192,10 +194,11 @@ public abstract class ContentRootPanel extends JPanel {
     myComponentToForegroundMap.put(component, foreground);
   }
 
-  private <P extends JpsElement> JComponent createFolderComponent(final ContentFolder folder, Color foreground, ModuleSourceRootEditHandler<P> editor) {
-    final VirtualFile folderFile = folder.getFile();
+  private <P extends JpsElement> JComponent createFolderComponent(ContentFolderRef folderRef, Color foreground, ModuleSourceRootEditHandler<P> editor) {
+    final VirtualFile folderFile = folderRef.getFile();
     final VirtualFile contentEntryFile = getContentEntry().getFile();
-    final String properties = folder instanceof SourceFolder? StringUtil.notNullize(editor.getPropertiesString((P)((SourceFolder)folder).getJpsElement().getProperties())) : "";
+    ContentFolder folder = folderRef.getContentFolder();
+    final String properties = folder instanceof SourceFolder ? StringUtil.notNullize(editor.getPropertiesString((P)((SourceFolder)folder).getJpsElement().getProperties())) : "";
     if (folderFile != null && contentEntryFile != null) {
       String path = folderFile.equals(contentEntryFile)? "." : VfsUtilCore.getRelativePath(folderFile, contentEntryFile, File.separatorChar);
       HoverHyperlinkLabel hyperlinkLabel = new HoverHyperlinkLabel(path + properties, foreground);
@@ -203,14 +206,14 @@ public abstract class ContentRootPanel extends JPanel {
       hyperlinkLabel.addHyperlinkListener(new HyperlinkListener() {
         @Override
         public void hyperlinkUpdate(HyperlinkEvent e) {
-          myCallback.navigateFolder(getContentEntry(), folder);
+          myCallback.navigateFolder(getContentEntry(), folderRef);
         }
       });
       registerTextComponent(hyperlinkLabel, foreground);
       return new UnderlinedPathLabel(hyperlinkLabel);
     }
     else {
-      String path = toRelativeDisplayPath(folder.getUrl(), getContentEntry().getUrl());
+      String path = toRelativeDisplayPath(folderRef.getUrl(), getContentEntry().getUrl());
       final JLabel pathLabel = new JLabel(path + properties);
       pathLabel.setOpaque(false);
       pathLabel.setForeground(JBColor.RED);
@@ -219,13 +222,13 @@ public abstract class ContentRootPanel extends JPanel {
     }
   }
 
-  private JComponent createFolderDeleteComponent(final ContentFolder folder, @Nullable ModuleSourceRootEditHandler<?> editor) {
+  private JComponent createFolderDeleteComponent(final ContentFolderRef folderRef, @Nullable ModuleSourceRootEditHandler<?> editor) {
     final String tooltipText;
-    if (folder.getFile() != null && getContentEntry().getFile() != null) {
+    if (folderRef.getFile() != null && getContentEntry().getFile() != null) {
       if (editor != null) {
         tooltipText = editor.getUnmarkRootButtonText();
       }
-      else if (folder instanceof ExcludeFolder) {
+      else if (folderRef.getContentFolder() instanceof ExcludeFolder) {
         tooltipText = ProjectBundle.message("module.paths.include.excluded.tooltip");
       }
       else {
@@ -236,7 +239,7 @@ public abstract class ContentRootPanel extends JPanel {
       tooltipText = ProjectBundle.message("module.paths.remove.tooltip");
     }
     return new IconActionComponent(AllIcons.Actions.Close, AllIcons.Actions.CloseHovered, tooltipText,
-                                   () -> myCallback.deleteContentFolder(getContentEntry(), folder));
+                                   () -> myCallback.deleteContentFolder(getContentEntry(), folderRef));
   }
 
   public boolean isExcludedOrUnderExcludedDirectory(final VirtualFile file) {
@@ -335,4 +338,26 @@ public abstract class ContentRootPanel extends JPanel {
     }
   }
 
+  private static class ContentFolderRefImpl implements ContentFolderRef {
+    private final ContentFolder myContentFolder;
+
+    private ContentFolderRefImpl(ContentFolder contentFolder) {
+      myContentFolder = contentFolder;
+    }
+
+    @Override
+    public @Nullable VirtualFile getFile() {
+      return myContentFolder.getFile();
+    }
+
+    @Override
+    public @NotNull String getUrl() {
+      return myContentFolder.getUrl();
+    }
+
+    @Override
+    public @Nullable ContentFolder getContentFolder() {
+      return myContentFolder;
+    }
+  }
 }

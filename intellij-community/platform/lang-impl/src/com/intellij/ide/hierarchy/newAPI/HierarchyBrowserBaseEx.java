@@ -14,6 +14,7 @@ import com.intellij.ide.projectView.impl.ProjectViewTree;
 import com.intellij.ide.util.scopeChooser.EditScopesDialog;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.TreeBuilderUtil;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -602,7 +603,8 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   protected class AlphaSortAction extends ToggleAction {
     public AlphaSortAction() {
-      super(IdeBundle.message("action.sort.alphabetically"), IdeBundle.message("action.sort.alphabetically"), AllIcons.ObjectBrowser.Sorted);
+      super(() -> IdeBundle.message("action.sort.alphabetically"), () -> IdeBundle.message("action.sort.alphabetically"),
+            AllIcons.ObjectBrowser.Sorted);
     }
 
     @Override
@@ -681,7 +683,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
       else {
         String typeName = ElementDescriptionUtil.getElementDescription(selectedElement, UsageViewTypeLocation.INSTANCE);
         if (StringUtil.isNotEmpty(typeName)) {
-          presentation.setText(IdeBundle.message("action.base.on.this.0", StringUtil.capitalize(typeName)));
+          presentation.setText(() -> IdeBundle.message("action.base.on.this.0", StringUtil.capitalize(typeName)));
         }
         presentation.setEnabled(isEnabled(browser, selectedElement));
       }
@@ -791,7 +793,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
     private final class ConfigureScopesAction extends AnAction {
       private ConfigureScopesAction() {
-        super("Configure...");
+        super(() -> ActionsBundle.message("action.ConfigureScopesAction.text"));
       }
 
       @Override

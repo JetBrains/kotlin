@@ -16,6 +16,7 @@
 
 package com.intellij.internal;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -37,14 +38,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class LoadAllContentsAction extends AnAction implements DumbAware {
+  LoadAllContentsAction() {
+    super(() -> IdeBundle.message("action.AnAction.text.load.all.files.content"),
+          () -> IdeBundle.message("action.AnAction.description.load.all.files.content"), null);
+  }
   private static final Logger LOG = Logger.getInstance(LoadAllContentsAction.class);
 
   private final AtomicInteger count = new AtomicInteger();
   private final AtomicLong totalSize = new AtomicLong();
-
-  public LoadAllContentsAction() {
-    super("Load All Files Content", "Measure FileUtil.loadFile() for all files in the project", null);
-  }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {

@@ -22,7 +22,7 @@ public class HideAllToolWindowsTest extends ToolWindowManagerTestCase {
     for (int i = 0; i < extensions.size(); i++) {
       ToolWindowEP extension = extensions.get(i);
       String id = extension.id;
-      if (id.equals("Structure") || id.equals("Favorites")) {
+      if (id.equals("Structure") || id.equals("Favorites") || id.equals("Ant")) {
         continue;
       }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.server;
 
 import com.intellij.compiler.CompilerMessageImpl;
@@ -104,7 +104,7 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
     }
     final CmdlineRemoteProto.Message.BuilderMessage.CompileMessage.Kind kind = message.getKind();
     if (kind == CmdlineRemoteProto.Message.BuilderMessage.CompileMessage.Kind.PROGRESS) {
-      final ProblemsView view = ProblemsView.SERVICE.getInstance(myProject);
+      final ProblemsView view = ProblemsView.getInstance(myProject);
       if (message.hasDone()) {
         view.setProgress(message.getText(), message.getDone());
       }
@@ -125,7 +125,7 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
             ReadAction.run(() -> informWolf(myProject, message));
           }
           if (msg != null) {
-            ProblemsView.SERVICE.getInstance(myProject).addMessage(msg, sessionId);
+            ProblemsView.getInstance(myProject).addMessage(msg, sessionId);
           }
         }
       }
@@ -143,7 +143,7 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
     }
     final String msg = "Auto build failure: " + descr;
     CompilerManager.NOTIFICATION_GROUP.createNotification(msg, MessageType.INFO);
-    ProblemsView.SERVICE.getInstance(myProject).addMessage(new CompilerMessageImpl(myProject, CompilerMessageCategory.ERROR, msg), sessionId);
+    ProblemsView.getInstance(myProject).addMessage(new CompilerMessageImpl(myProject, CompilerMessageCategory.ERROR, msg), sessionId);
   }
 
   @Override
@@ -178,9 +178,11 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
       }
     }
     if (!myProject.isDisposed()) {
-      final ProblemsView view = ProblemsView.SERVICE.getInstance(myProject);
-      view.clearProgress();
-      view.clearOldMessages(null, sessionId);
+      ProblemsView view = ProblemsView.getInstanceIfCreated(myProject);
+      if (view != null) {
+        view.clearProgress();
+        view.clearOldMessages(null, sessionId);
+      }
     }
   }
 

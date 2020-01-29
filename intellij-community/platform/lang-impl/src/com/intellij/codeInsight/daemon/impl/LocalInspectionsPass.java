@@ -17,6 +17,7 @@ import com.intellij.diagnostic.PluginException;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.lang.annotation.ProblemGroup;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
@@ -529,7 +530,9 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     HighlightInfoType level = ProblemDescriptorUtil.highlightTypeFromDescriptor(descriptor, severity, mySeverityRegistrar);
     @NonNls String message = ProblemDescriptorUtil.renderDescriptionMessage(descriptor, element);
 
-    String shortName = toolWrapper.getShortName();
+    ProblemGroup problemGroup = descriptor.getProblemGroup();
+    String problemName = problemGroup != null ? problemGroup.getProblemName() : null;
+    String shortName = problemName != null ? problemName : toolWrapper.getShortName();
     final HighlightDisplayKey key = HighlightDisplayKey.find(shortName);
     final InspectionProfile inspectionProfile = myProfileWrapper.getInspectionProfile();
     if (!inspectionProfile.isToolEnabled(key, getFile())) return;

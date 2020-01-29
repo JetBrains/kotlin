@@ -498,10 +498,12 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   private final static class MyBuildController implements BuildController {
     private final BuildController myDelegate;
     private final GradleBuild myMainGradleBuild;
+    private final Model myMyMainGradleBuildRootProject;
 
     private MyBuildController(@NotNull BuildController buildController, @NotNull GradleBuild mainGradleBuild) {
       myDelegate = buildController;
       myMainGradleBuild = mainGradleBuild;
+      myMyMainGradleBuildRootProject = myMainGradleBuild.getRootProject();
     }
 
     @Override
@@ -510,7 +512,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         //noinspection unchecked
         return (T)myMainGradleBuild;
       }
-      return myDelegate.getModel(aClass);
+      return myDelegate.getModel(myMyMainGradleBuildRootProject, aClass);
     }
 
     @Override
@@ -519,7 +521,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         //noinspection unchecked
         return (T)myMainGradleBuild;
       }
-      return myDelegate.findModel(aClass);
+      return myDelegate.findModel(myMyMainGradleBuildRootProject, aClass);
     }
 
     @Override
@@ -550,12 +552,12 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     @Override
     public <T, P> T getModel(Class<T> aClass, Class<P> aClass1, Action<? super P> action)
       throws UnsupportedVersionException {
-      return myDelegate.getModel(aClass, aClass1, action);
+      return myDelegate.getModel(myMyMainGradleBuildRootProject, aClass, aClass1, action);
     }
 
     @Override
     public <T, P> T findModel(Class<T> aClass, Class<P> aClass1, Action<? super P> action) {
-      return myDelegate.findModel(aClass, aClass1, action);
+      return myDelegate.findModel(myMyMainGradleBuildRootProject, aClass, aClass1, action);
     }
 
     @Override

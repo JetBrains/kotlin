@@ -153,13 +153,13 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
         return builder;
       }
     };
-    allTodosContent.setComponent(myAllTodos);
+    allTodosContent.setComponent(wrapWithDumbModeSpoiler(myAllTodos));
     allTodosContent.setPreferredFocusableComponent(myAllTodos.getTree());
     Disposer.register(this, myAllTodos);
     if (toolWindow instanceof ToolWindowEx) {
       DefaultActionGroup group = new DefaultActionGroup() {
         {
-          getTemplatePresentation().setText(IdeBundle.message("group.view.options"));
+          getTemplatePresentation().setText(() -> IdeBundle.message("group.view.options"));
           setPopup(true);
           add(myAllTodos.createAutoScrollToSourceAction());
           addSeparator();
@@ -179,7 +179,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
       }
     };
     Disposer.register(this, myCurrentFileTodosPanel);
-    currentFileTodosContent.setComponent(myCurrentFileTodosPanel);
+    currentFileTodosContent.setComponent(wrapWithDumbModeSpoiler(myCurrentFileTodosPanel));
     currentFileTodosContent.setPreferredFocusableComponent(myCurrentFileTodosPanel.getTree());
 
     String tabName = getTabNameForChangeList(ChangeListManager.getInstance(myProject).getDefaultChangeList().getName());
@@ -193,13 +193,13 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
       }
     };
     Disposer.register(this, myChangeListTodosPanel);
-    myChangeListTodosContent.setComponent(myChangeListTodosPanel);
+    myChangeListTodosContent.setComponent(wrapWithDumbModeSpoiler(myChangeListTodosPanel));
     myChangeListTodosContent.setPreferredFocusableComponent(myCurrentFileTodosPanel.getTree());
 
     Content scopeBasedTodoContent = contentFactory.createContent(null, "Scope Based", false);
     myScopeBasedTodosPanel = new ScopeBasedTodosPanel(myProject, state.current, scopeBasedTodoContent);
     Disposer.register(this, myScopeBasedTodosPanel);
-    scopeBasedTodoContent.setComponent(myScopeBasedTodosPanel);
+    scopeBasedTodoContent.setComponent(wrapWithDumbModeSpoiler(myScopeBasedTodosPanel));
 
     myContentManager = toolWindow.getContentManager();
 
@@ -276,25 +276,16 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
     @Override
     public void propertyChange(PropertyChangeEvent e) {
       if (TodoConfiguration.PROP_TODO_PATTERNS.equals(e.getPropertyName()) || TodoConfiguration.PROP_TODO_FILTERS.equals(e.getPropertyName())) {
-        _updateFilters();
+        updateFilters();
       }
-    }
-
-    private void _updateFilters() {
-      try {
-        if (!DumbService.isDumb(myProject)) {
-          updateFilters();
-          return;
-        }
-      }
-      catch (ProcessCanceledException ignore) { }
-      DumbService.getInstance(myProject).smartInvokeLater(this::_updateFilters);
     }
 
     private void updateFilters() {
-      for (TodoPanel panel : myPanels) {
-        panel.updateTodoFilter();
-      }
+      try {
+        for (TodoPanel panel : myPanels) {
+          panel.updateTodoFilter();
+        }
+      } catch (ProcessCanceledException ignore) { }
     }
   }
 
@@ -343,7 +334,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
         return todoTreeBuilder;
       }
     };
-    content.setComponent(panel);
+    content.setComponent(wrapWithDumbModeSpoiler(panel));
     Disposer.register(this, panel);
 
     if (myContentManager == null) {
@@ -360,5 +351,13 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
         myPanels.remove(panel);
       }
     });
+  }
+
+  @NotNull
+  private JComponent wrapWithDumbModeSpoiler(@NotNull TodoPanel panel) {
+    return DumbService.getInstance(myProject).wrapWithSpoiler(panel, () -> {
+      panel.rebuildCache();
+      panel.updateTree();
+    }, panel);
   }
 }

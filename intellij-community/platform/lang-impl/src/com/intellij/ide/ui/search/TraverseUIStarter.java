@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.ui.search;
 
 import com.intellij.application.options.OptionsContainingConfigurable;
@@ -7,7 +7,9 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.impl.AllFileTemplatesConfigurable;
 import com.intellij.ide.fileTemplates.impl.BundledFileTemplate;
-import com.intellij.ide.plugins.*;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManagerConfigurable;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -46,7 +48,7 @@ import java.util.*;
  * Pass {@code true} as the second parameter to have searchable options split by modules.
  */
 @SuppressWarnings({"CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"})
-public class TraverseUIStarter implements ApplicationStarter {
+public final class TraverseUIStarter implements ApplicationStarter {
   private static final String OPTIONS = "options";
   private static final String CONFIGURABLE = "configurable";
   private static final String ID = "id";
@@ -77,7 +79,7 @@ public class TraverseUIStarter implements ApplicationStarter {
     System.out.println("Starting searchable options index builder");
     try {
       startup(OUTPUT_PATH, SPLIT_BY_RESOURCE_PATH);
-      ((ApplicationEx)ApplicationManager.getApplication()).exit(true, true);
+      ((ApplicationEx)ApplicationManager.getApplication()).exit(ApplicationEx.FORCE_EXIT | ApplicationEx.EXIT_CONFIRMED);
     }
     catch (Throwable e) {
       System.out.println("Searchable options index builder failed");

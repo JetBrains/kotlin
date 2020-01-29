@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.application.runWriteAction
@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.impl.storage.ClasspathStorage
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.project.isDirectoryBased
+import com.intellij.project.stateStore
 import com.intellij.testFramework.*
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.io.parentSystemIndependentPath
@@ -61,7 +62,7 @@ class ModuleStoreTest {
       assertThat(getOptionValue("foo")).isEqualTo("bar")
 
       setOption("foo", "not bar")
-      stateStore.save()
+      project.stateStore.save()
     }
 
     projectRule.loadModule(moduleFile).useAndDispose {
@@ -69,7 +70,7 @@ class ModuleStoreTest {
 
       setOption("foo", "not bar")
       // ensure that save the same data will not lead to any problems (like "Content equals, but it must be handled not on this level")
-      stateStore.save()
+      project.stateStore.save()
     }
   }
 
@@ -89,14 +90,14 @@ class ModuleStoreTest {
     val moduleFile = tempDirManager.newPath("module", refreshVfs = true).resolve("test.iml")
     projectRule.createModule(moduleFile).useAndDispose {
       ModuleRootModificationUtil.addContentRoot(this, moduleFile.parentSystemIndependentPath)
-      stateStore.save()
+      project.stateStore.save()
       assertThat(moduleFile).isRegularFile
       assertThat(moduleFile.readText()).startsWith("""
       <?xml version="1.0" encoding="UTF-8"?>
       <module type="JAVA_MODULE" version="4">""".trimIndent())
 
       ClasspathStorage.setStorageType(ModuleRootManager.getInstance(this), "eclipse")
-      stateStore.save()
+      project.stateStore.save()
       assertThat(moduleFile).isEqualTo("""
       <?xml version="1.0" encoding="UTF-8"?>
       <module classpath="eclipse" classpath-dir="$ESCAPED_MODULE_DIR" type="JAVA_MODULE" version="4" />""")
@@ -122,7 +123,7 @@ class ModuleStoreTest {
       //
       ModuleRootModificationUtil.addContentRoot(this, root.resolve(moduleName).systemIndependentPath)
       assertThat(contentRootUrls).hasSize(1)
-      stateStore.save()
+      project.stateStore.save()
     }
 
     fun removeContentRoot(module: Module) {
@@ -227,7 +228,9 @@ inline fun <T> Module.useAndDispose(task: Module.() -> T): T {
     return task()
   }
   finally {
-    ModuleManager.getInstance(project).disposeModule(this)
+    runInEdtAndWait {
+      ModuleManager.getInstance(project).disposeModule(this)
+    }
   }
 }
 

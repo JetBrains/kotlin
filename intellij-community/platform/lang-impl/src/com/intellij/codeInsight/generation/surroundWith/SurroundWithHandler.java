@@ -10,6 +10,7 @@ import com.intellij.codeInsight.template.impl.SurroundWithLogger;
 import com.intellij.codeInsight.template.impl.SurroundWithTemplateHandler;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageSurrounders;
 import com.intellij.lang.folding.CustomFoldingSurroundDescriptor;
@@ -263,7 +264,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
 
   private static class ConfigureTemplatesAction extends AnAction {
     private ConfigureTemplatesAction() {
-      super("Configure Live Templates...");
+      super(() -> ActionsBundle.message("action.ConfigureTemplatesAction.text"));
     }
 
     @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.search.scope;
 
 import com.intellij.ide.scratch.ScratchUtil;
@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin Bulenkov
- * @author Sergey Malenkov
  */
 public final class NonProjectFilesScope extends NamedScope {
   public static final String NAME = IdeUICustomization.getInstance().getNonProjectFilesScopeTitle();

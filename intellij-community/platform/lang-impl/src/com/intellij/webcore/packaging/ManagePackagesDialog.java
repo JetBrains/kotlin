@@ -2,6 +2,7 @@
 package com.intellij.webcore.packaging;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.plugins.PluginManagerMain;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.Application;
@@ -85,7 +86,8 @@ public class ManagePackagesDialog extends DialogWrapper {
     myNotificationArea = new PackagesNotificationPanel();
     myNotificationsAreaPlaceholder.add(myNotificationArea.getComponent(), BorderLayout.CENTER);
 
-    final AnActionButton reloadButton = new AnActionButton("Reload List of Packages", AllIcons.Actions.Refresh) {
+    final AnActionButton reloadButton =
+      new AnActionButton(() -> IdeBundle.message("action.AnActionButton.text.reload.list.of.packages"), AllIcons.Actions.Refresh) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         myPackages.setPaintBusy(true);

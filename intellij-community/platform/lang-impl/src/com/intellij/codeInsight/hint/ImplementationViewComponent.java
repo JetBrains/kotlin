@@ -484,7 +484,7 @@ public class ImplementationViewComponent extends JPanel {
 
   private class BackAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     BackAction() {
-      super(CodeInsightBundle.message("quick.definition.back"), null, AllIcons.Actions.Back);
+      super(() -> CodeInsightBundle.message("quick.definition.back"), AllIcons.Actions.Back);
     }
 
     @Override
@@ -502,7 +502,7 @@ public class ImplementationViewComponent extends JPanel {
 
   private class ForwardAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     ForwardAction() {
-      super(CodeInsightBundle.message("quick.definition.forward"), null, AllIcons.Actions.Forward);
+      super(() -> CodeInsightBundle.message("quick.definition.forward"), AllIcons.Actions.Forward);
     }
 
     @Override

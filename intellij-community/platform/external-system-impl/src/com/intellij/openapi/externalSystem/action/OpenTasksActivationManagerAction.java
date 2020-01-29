@@ -25,9 +25,9 @@ public class OpenTasksActivationManagerAction extends ExternalSystemNodeAction<A
 
   public OpenTasksActivationManagerAction() {
     super(AbstractExternalEntityData.class);
-    getTemplatePresentation().setText(ExternalSystemBundle.message("external.system.task.activation.title"));
+    getTemplatePresentation().setText(() -> ExternalSystemBundle.message("external.system.task.activation.title"));
     getTemplatePresentation().setDescription(
-      ExternalSystemBundle.message("external.system.task.activation.description", "external system"));
+      () -> ExternalSystemBundle.message("external.system.task.activation.description", "external system"));
   }
 
   @Override
@@ -38,9 +38,9 @@ public class OpenTasksActivationManagerAction extends ExternalSystemNodeAction<A
     final Object externalData = selectedNodes.get(0).getData();
 
     ProjectSystemId projectSystemId = getSystemId(e);
-    e.getPresentation().setText(ExternalSystemBundle.message("external.system.task.activation.title"));
+    e.getPresentation().setText(() -> ExternalSystemBundle.message("external.system.task.activation.title"));
     e.getPresentation().setDescription(
-      ExternalSystemBundle.message("external.system.task.activation.description", projectSystemId.getReadableName()));
+      () -> ExternalSystemBundle.message("external.system.task.activation.description", projectSystemId.getReadableName()));
     final boolean isProjectNode = externalData instanceof ProjectData || externalData instanceof ModuleData;
     return isProjectNode && StringUtil.isNotEmpty(((ExternalConfigPathAware) externalData).getLinkedExternalProjectPath());
   }

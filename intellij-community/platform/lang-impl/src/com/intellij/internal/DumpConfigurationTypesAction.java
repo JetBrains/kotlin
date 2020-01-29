@@ -2,6 +2,7 @@
 package com.intellij.internal;
 
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DumpConfigurationTypesAction extends AnAction implements DumbAware {
   public DumpConfigurationTypesAction() {
-    super("Dump Configurations");
+    super(() -> ActionsBundle.message("action.DumpConfigurationTypesAction.text"));
   }
 
   @Override

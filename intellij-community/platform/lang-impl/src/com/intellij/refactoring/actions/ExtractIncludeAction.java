@@ -2,6 +2,7 @@
 
 package com.intellij.refactoring.actions;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.TitledHandler;
 import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
@@ -38,7 +39,7 @@ public class ExtractIncludeAction extends BasePlatformRefactoringAction {
       e.getPresentation().setText(((TitledHandler) handler).getActionTitle());
     }
     else {
-      e.getPresentation().setText("Include File...");
+      e.getPresentation().setText(() -> IdeBundle.message("action.presentation.ExtractIncludeAction.text"));
     }
   }
 

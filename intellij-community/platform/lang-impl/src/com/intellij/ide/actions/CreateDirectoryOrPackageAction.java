@@ -63,7 +63,8 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     EP = ExtensionPointName.create("com.intellij.createDirectoryCompletionContributor");
 
   public CreateDirectoryOrPackageAction() {
-    super(IdeBundle.message("action.create.new.directory.or.package"), IdeBundle.message("action.create.new.directory.or.package"), null);
+    super(() -> IdeBundle.message("action.create.new.directory.or.package"),
+          () -> IdeBundle.message("action.create.new.directory.or.package"), null);
   }
 
   @Override
@@ -141,11 +142,11 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     }
 
     if (isPackage) {
-      presentation.setText(IdeBundle.message("action.package"));
+      presentation.setText(() -> IdeBundle.message("action.package"));
       presentation.setIcon(PlatformIcons.PACKAGE_ICON);
     }
     else {
-      presentation.setText(IdeBundle.message("action.directory"));
+      presentation.setText(() -> IdeBundle.message("action.directory"));
       presentation.setIcon(PlatformIcons.FOLDER_ICON);
     }
   }

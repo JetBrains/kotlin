@@ -29,7 +29,8 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
 
   private final Path myStubIndicesRoot;
 
-  public StubHashBasedIndexGenerator(@NotNull Path outRoot) {
+  public StubHashBasedIndexGenerator(@NotNull Path outRoot,
+                                     @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
     super(
       EnumeratorIntegerDescriptor.INSTANCE,
       new SerializedStubTreeDataExternalizer(true, null, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
@@ -39,7 +40,7 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
 
     myStubIndicesRoot = outRoot.resolve(StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName()));
 
-    for (StubIndexExtension<?, ?> stubIndexExtension : StubIndexExtension.EP_NAME.getExtensionList()) {
+    for (StubIndexExtension<?, ?> stubIndexExtension : stubIndexExtensions) {
       FileBasedIndexExtension<?, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);
       HashBasedIndexGenerator<?, Void> hashBasedIndexGenerator = createGenerator(extension);
       myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), hashBasedIndexGenerator);

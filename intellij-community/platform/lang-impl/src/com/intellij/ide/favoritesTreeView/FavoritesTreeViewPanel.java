@@ -18,7 +18,6 @@ import com.intellij.ide.util.EditorHelper;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -596,16 +595,10 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     }
   }
 
-  //DockContainer methods
-
+  @NotNull
   @Override
   public RelativeRectangle getAcceptArea() {
     return new RelativeRectangle(myTree);
-  }
-
-  @Override
-  public RelativeRectangle getAcceptAreaFallback() {
-    return getAcceptArea();
   }
 
   @NotNull
@@ -639,23 +632,8 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
   }
 
   @Override
-  public void closeAll() {
-  }
-
-  @Override
-  public void addListener(Listener listener, Disposable parent) {
-    throw new UnsupportedOperationException("Method is not supported");
-  }
-
-  @Override
   public boolean isEmpty() {
     return myTree.isEmpty();
-  }
-
-  @Nullable
-  @Override
-  public Image startDropOver(@NotNull DockableContent content, RelativePoint point) {
-    return null;
   }
 
   @Nullable
@@ -670,10 +648,6 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       myTree.setSelectionPath(treePath);
     }
     return null;
-  }
-
-  @Override
-  public void resetDropOver(@NotNull DockableContent content) {
   }
 
   @Override

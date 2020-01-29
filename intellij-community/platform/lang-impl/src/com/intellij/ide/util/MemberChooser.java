@@ -795,8 +795,8 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
   private class SortEmAction extends ToggleAction {
     SortEmAction() {
-      super(IdeBundle.message("action.sort.alphabetically"),
-            IdeBundle.message("action.sort.alphabetically"), AllIcons.ObjectBrowser.Sorted);
+      super(() -> IdeBundle.message("action.sort.alphabetically"), () -> IdeBundle.message("action.sort.alphabetically"),
+            AllIcons.ObjectBrowser.Sorted);
     }
 
     @Override
@@ -843,8 +843,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
   private class ExpandAllAction extends AnAction {
     ExpandAllAction() {
-      super(IdeBundle.message("action.expand.all"), IdeBundle.message("action.expand.all"),
-            AllIcons.Actions.Expandall);
+      super(() -> IdeBundle.message("action.expand.all"), () -> IdeBundle.message("action.expand.all"), AllIcons.Actions.Expandall);
     }
 
     @Override
@@ -855,8 +854,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
   private class CollapseAllAction extends AnAction {
     CollapseAllAction() {
-      super(IdeBundle.message("action.collapse.all"), IdeBundle.message("action.collapse.all"),
-            AllIcons.Actions.Collapseall);
+      super(() -> IdeBundle.message("action.collapse.all"), () -> IdeBundle.message("action.collapse.all"), AllIcons.Actions.Collapseall);
     }
 
     @Override

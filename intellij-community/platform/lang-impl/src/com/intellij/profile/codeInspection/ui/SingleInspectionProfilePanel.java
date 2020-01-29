@@ -445,7 +445,10 @@ public class SingleInspectionProfilePanel extends JPanel {
 
     actions.add(actionManager.createExpandAllAction(myTreeExpander, myTreeTable));
     actions.add(actionManager.createCollapseAllAction(myTreeExpander, myTreeTable));
-    actions.add(new DumbAwareAction("Reset to Empty", "Reset to empty", AllIcons.Actions.Unselectall) {
+    actions.add(new DumbAwareAction(
+      () -> InspectionsBundle.message("action.DumbAware.SingleInspectionProfilePanel.text.reset.to.empty"),
+      () -> InspectionsBundle.message("action.DumbAware.SingleInspectionProfilePanel.description.reset.to.empty"),
+      AllIcons.Actions.Unselectall) {
       @Override
       public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(!isDisposed() && myProfile.isExecutable(myProjectProfileManager.getProject()));

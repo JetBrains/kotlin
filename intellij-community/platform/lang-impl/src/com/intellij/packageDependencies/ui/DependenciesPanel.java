@@ -12,6 +12,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.ExporterToTextFile;
 import com.intellij.ide.impl.FlattenModulesToggleAction;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
@@ -485,7 +486,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class CloseAction extends AnAction implements DumbAware {
     CloseAction() {
-      super(CommonBundle.message("action.close"), AnalysisScopeBundle.message("action.close.dependency.description"),
+      super(() -> CommonBundle.message("action.close"), () -> AnalysisScopeBundle.message("action.close.dependency.description"),
             AllIcons.Actions.Cancel);
     }
 
@@ -499,8 +500,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class FlattenPackagesAction extends ToggleAction {
     FlattenPackagesAction() {
-      super(AnalysisScopeBundle.message("action.flatten.packages"),
-            AnalysisScopeBundle.message("action.flatten.packages"),
+      super(() -> AnalysisScopeBundle.message("action.flatten.packages"), () -> AnalysisScopeBundle.message("action.flatten.packages"),
             PlatformIcons.FLATTEN_PACKAGES_ICON);
     }
 
@@ -519,7 +519,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class ShowFilesAction extends ToggleAction {
     ShowFilesAction() {
-      super(AnalysisScopeBundle.message("action.show.files"), AnalysisScopeBundle.message("action.show.files.description"),
+      super(() -> AnalysisScopeBundle.message("action.show.files"), () -> AnalysisScopeBundle.message("action.show.files.description"),
             AllIcons.FileTypes.Unknown);
     }
 
@@ -541,7 +541,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class ShowModulesAction extends ToggleAction {
     ShowModulesAction() {
-      super(AnalysisScopeBundle.message("action.show.modules"), AnalysisScopeBundle.message("action.show.modules.description"),
+      super(() -> AnalysisScopeBundle.message("action.show.modules"), () -> AnalysisScopeBundle.message("action.show.modules.description"),
             AllIcons.Actions.GroupByModule);
     }
 
@@ -585,8 +585,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class GroupByScopeTypeAction extends ToggleAction {
     GroupByScopeTypeAction() {
-      super(AnalysisScopeBundle.message("action.group.by.scope.type"), AnalysisScopeBundle.message("action.group.by.scope.type.description"),
-            AllIcons.Actions.GroupByTestProduction);
+      super(() -> AnalysisScopeBundle.message("action.group.by.scope.type"),
+            () -> AnalysisScopeBundle.message("action.group.by.scope.type.description"), AllIcons.Actions.GroupByTestProduction);
     }
 
     @Override
@@ -605,8 +605,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class FilterLegalsAction extends ToggleAction {
     FilterLegalsAction() {
-      super(AnalysisScopeBundle.message("action.show.illegals.only"), AnalysisScopeBundle.message("action.show.illegals.only.description"),
-            AllIcons.General.Filter);
+      super(() -> AnalysisScopeBundle.message("action.show.illegals.only"),
+            () -> AnalysisScopeBundle.message("action.show.illegals.only.description"), AllIcons.General.Filter);
     }
 
     @Override
@@ -631,7 +631,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class EditDependencyRulesAction extends AnAction {
     EditDependencyRulesAction() {
-      super(AnalysisScopeBundle.message("action.edit.rules"), AnalysisScopeBundle.message("action.edit.rules.description"),
+      super(() -> AnalysisScopeBundle.message("action.edit.rules"), () -> AnalysisScopeBundle.message("action.edit.rules.description"),
             AllIcons.General.Settings);
     }
 
@@ -752,7 +752,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class ShowDetailedInformationAction extends AnAction {
     private ShowDetailedInformationAction() {
-      super("Show indirect dependencies");
+      super(() -> ActionsBundle.message("action.ShowDetailedInformationAction.text"));
     }
 
     @Override
@@ -789,7 +789,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class RemoveFromScopeAction extends AnAction {
     private RemoveFromScopeAction() {
-      super("Remove from scope");
+      super(() -> ActionsBundle.message("action.RemoveFromScopeAction.text"));
     }
 
     @Override
@@ -812,7 +812,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class AddToScopeAction extends AnAction {
     private AddToScopeAction() {
-      super("Add to scope");
+      super(() -> ActionsBundle.message("action.AddToScopeAction.text"));
     }
 
     @Override
@@ -865,7 +865,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class SelectInLeftTreeAction extends AnAction {
     SelectInLeftTreeAction() {
-      super(AnalysisScopeBundle.message("action.select.in.left.tree"), AnalysisScopeBundle.message("action.select.in.left.tree.description"), null);
+      super(() -> AnalysisScopeBundle.message("action.select.in.left.tree"),
+            () -> AnalysisScopeBundle.message("action.select.in.left.tree.description"), null);
     }
 
     @Override
@@ -905,8 +906,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class MarkAsIllegalAction extends AnAction {
     MarkAsIllegalAction() {
-      super(AnalysisScopeBundle.message("mark.dependency.illegal.text"), AnalysisScopeBundle.message("mark.dependency.illegal.text"),
-            AllIcons.Actions.Lightning);
+      super(() -> AnalysisScopeBundle.message("mark.dependency.illegal.text"),
+            () -> AnalysisScopeBundle.message("mark.dependency.illegal.text"), AllIcons.Actions.Lightning);
     }
 
     @Override

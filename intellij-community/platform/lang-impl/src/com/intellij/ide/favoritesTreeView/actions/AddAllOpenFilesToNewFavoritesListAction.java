@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 
 class AddAllOpenFilesToNewFavoritesListAction extends AnAction implements DumbAware {
   AddAllOpenFilesToNewFavoritesListAction() {
-    super(IdeBundle.message("action.add.all.open.tabs.to.new.favorites.list"),
-          IdeBundle.message("action.add.to.new.favorites.list"), AllIcons.General.Add);
+    super(() -> IdeBundle.message("action.add.all.open.tabs.to.new.favorites.list"),
+          () -> IdeBundle.message("action.add.to.new.favorites.list"), AllIcons.General.Add);
   }
 
   @Override

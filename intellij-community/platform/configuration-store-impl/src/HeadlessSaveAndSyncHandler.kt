@@ -22,8 +22,6 @@ internal class HeadlessSaveAndSyncHandler : BaseSaveAndSyncHandler() {
 
   override fun unblockSyncOnFrameActivation() {}
 
-  override fun disableAutoSave(): AccessToken = AccessToken.EMPTY_ACCESS_TOKEN
-
   override fun saveSettingsUnderModalProgress(componentManager: ComponentManager): Boolean {
     StoreUtil.saveSettings(componentManager, forceSavingAllSettings = true)
     return true

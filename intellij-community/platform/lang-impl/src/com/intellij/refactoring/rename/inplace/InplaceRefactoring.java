@@ -614,10 +614,9 @@ public abstract class InplaceRefactoring {
   }
 
   protected void showDialogAdvertisement(final String actionId) {
-    final Keymap keymap = KeymapManager.getInstance().getActiveKeymap();
-    final Shortcut[] shortcuts = keymap.getShortcuts(actionId);
-    if (shortcuts.length > 0) {
-      setAdvertisementText("Press " + KeymapUtil.getShortcutText(shortcuts[0]) + " to show dialog with more options");
+    final Shortcut shortcut = KeymapUtil.getPrimaryShortcut(actionId);
+    if (shortcut != null) {
+      setAdvertisementText("Press " + KeymapUtil.getShortcutText(shortcut) + " to show dialog with more options");
     }
   }
 

@@ -2,6 +2,7 @@
 package com.intellij.largeFilesEditor.search.actions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -19,7 +20,7 @@ public class FindAllAction extends AnAction implements DumbAware {
 
     getTemplatePresentation().setDescription("Search the whole file from the beginning " +
                                              "and show matching strings in the tool window");
-    getTemplatePresentation().setText("Search All");
+    getTemplatePresentation().setText(() -> IdeBundle.message("action.presentation.FindAllAction.text"));
     getTemplatePresentation().setIcon(AllIcons.Actions.FindEntireFile);
   }
 

@@ -5,6 +5,8 @@ import com.intellij.ide.structureView.StructureViewModel
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder
 import com.intellij.ide.ui.UISettings
+import com.intellij.ide.util.treeView.smartTree.NodeProvider
+import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageStructureViewBuilder
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -67,7 +69,7 @@ abstract class StructureAwareNavBarModelExtension : AbstractNavBarModelExtension
   }
 
   private fun findParentInModel(root: StructureViewTreeElement, psiElement: PsiElement): PsiElement? {
-    for (child in root.children) {
+    for (child in childrenFromNodeAndProviders(root)) {
       if ((child as StructureViewTreeElement).value == psiElement) {
         return root.value as? PsiElement
       }
@@ -91,19 +93,25 @@ abstract class StructureAwareNavBarModelExtension : AbstractNavBarModelExtension
     return model
   }
 
-  private fun processStructureViewChildren(root: StructureViewTreeElement,
+  private fun processStructureViewChildren(parent: StructureViewTreeElement,
                                            `object`: Any,
                                            processor: Processor<Any>): Boolean {
-    if (root.value == `object`) {
-      return root.children
+    if (parent.value == `object`) {
+      return childrenFromNodeAndProviders(parent)
         .filterIsInstance<StructureViewTreeElement>()
         .all { processor.process(it.value) }
     }
 
-    return root.children
+    return childrenFromNodeAndProviders(parent)
       .filterIsInstance<StructureViewTreeElement>()
       .all { processStructureViewChildren(it, `object`, processor) }
   }
 
+  private fun childrenFromNodeAndProviders(parent: StructureViewTreeElement): List<TreeElement> {
+    return parent.children.toList() + applicableNodeProviders.flatMap { it.provideNodes(parent) }
+  }
+
   override fun normalizeChildren() = false
+
+  protected open val applicableNodeProviders: List<NodeProvider<*>> = emptyList()
 }

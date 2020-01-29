@@ -4,6 +4,7 @@ package com.intellij.ui.tabs;
 
 import com.intellij.codeEditor.printing.CodeEditorBundle;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.scopeChooser.EditScopesDialog;
 import com.intellij.openapi.Disposable;
@@ -80,7 +81,7 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
     };
 
     final JPanel panel = ToolbarDecorator.createDecorator(myLocalTable)
-      .addExtraAction(new AnActionButton("Share", AllIcons.Actions.Share) {
+      .addExtraAction(new AnActionButton(() -> IdeBundle.message("action.AnActionButton.text.share"), AllIcons.Actions.Share) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           share();
@@ -116,7 +117,7 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
     final JPanel sharedPanel = new JPanel(new BorderLayout());
     sharedPanel.setBorder(IdeBorderFactory.createTitledBorder(CodeEditorBundle.message("file.colors.shared.colors"), false, JBUI.insetsTop(8)).setShowLine(false));
     final JPanel shared = ToolbarDecorator.createDecorator(mySharedTable)
-      .addExtraAction(new AnActionButton("Unshare", AllIcons.Actions.Unshare) {
+      .addExtraAction(new AnActionButton(() -> IdeBundle.message("action.AnActionButton.text.unshare"), AllIcons.Actions.Unshare) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           unshare();

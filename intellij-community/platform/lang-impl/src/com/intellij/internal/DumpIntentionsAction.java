@@ -18,6 +18,7 @@ package com.intellij.internal;
 
 import com.intellij.codeInsight.intention.impl.config.IntentionActionMetaData;
 import com.intellij.codeInsight.intention.impl.config.IntentionManagerSettings;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -39,7 +40,7 @@ import java.util.Map;
 
 public class DumpIntentionsAction extends AnAction implements DumbAware {
   public DumpIntentionsAction() {
-    super("Dump Intentions");
+    super(() -> ActionsBundle.message("action.DumpIntentionsAction.text"));
   }
 
   @Override

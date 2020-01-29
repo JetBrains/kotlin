@@ -2,6 +2,7 @@
 package com.intellij.openapi.util.registry;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.ui.RegistryBooleanOptionDescriptor;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
@@ -161,7 +162,7 @@ public class RegistryUi implements Disposable {
     @Override
     public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(!myTable.isEditing() && myTable.getSelectedRow() >= 0);
-      e.getPresentation().setText("Revert to Default");
+      e.getPresentation().setText(() -> IdeBundle.message("action.presentation.RegistryUi.text"));
       e.getPresentation().setIcon(AllIcons.General.Reset);
 
       if (e.getPresentation().isEnabled()) {
@@ -189,7 +190,7 @@ public class RegistryUi implements Disposable {
     @Override
     public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(!myTable.isEditing() && myTable.getSelectedRow() >= 0);
-      e.getPresentation().setText("Edit");
+      e.getPresentation().setText(() -> IdeBundle.message("action.presentation.RegistryUi.text.edit"));
       e.getPresentation().setIcon(AllIcons.Actions.EditSource);
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.icons.AllIcons;
@@ -17,8 +17,6 @@ import javax.swing.Icon;
 
 /**
  * This class is intended to combine all providers for batch usages.
- *
- * @author Sergey Malenkov
  */
 public final class CompoundIconProvider extends IconProvider {
   private static final IconProvider INSTANCE = new CompoundIconProvider();

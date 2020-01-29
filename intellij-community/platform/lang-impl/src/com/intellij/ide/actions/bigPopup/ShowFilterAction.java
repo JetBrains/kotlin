@@ -3,6 +3,7 @@ package com.intellij.ide.actions.bigPopup;
 
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -27,7 +28,8 @@ public abstract class ShowFilterAction extends ToggleAction implements DumbAware
   private JBPopup myFilterPopup;
 
   public ShowFilterAction() {
-    super("Filter", "Show filters popup", AllIcons.General.Filter);
+    super(() -> IdeBundle.message("action.ToggleAction.show.filter.text.filter"),
+          () -> IdeBundle.message("action.ToggleAction.show.filter.description.show.filters.popup"), AllIcons.General.Filter);
   }
 
   @Override
