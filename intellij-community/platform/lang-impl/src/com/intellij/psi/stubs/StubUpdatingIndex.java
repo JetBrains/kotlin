@@ -7,18 +7,21 @@ import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.util.KeyedExtensionCollector;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.BitUtil;
+import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
@@ -35,6 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
   implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
@@ -293,11 +297,16 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
       if (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
         // load stub serializers before usage
-        for (FileType fileType : FileTypeRegistry.getInstance().getRegisteredFileTypes()) {
-          StubVersionMap.getVersionOwner(fileType);
-        }
+        FileTypeRegistry.getInstance().getRegisteredFileTypes();
+        getExtensions(LanguageParserDefinitions.INSTANCE).forEach(ParserDefinition::getFileNodeType);
+        getExtensions(BinaryFileStubBuilders.INSTANCE).forEach(builder -> {});
       }
 
+    }
+
+    private static  <T> Stream<T> getExtensions(KeyedExtensionCollector<T, ?> ex) {
+      ExtensionPoint<KeyedLazyInstance<T>> point = ex.getPoint();
+      return point == null ? Stream.empty() : point.extensions().map(KeyedLazyInstance::getInstance);
     }
 
     @Override
