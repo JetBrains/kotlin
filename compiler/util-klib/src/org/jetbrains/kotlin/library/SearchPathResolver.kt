@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.util.*
 
 const val KOTLIN_STDLIB_NAME = "stdlib"
 
-interface SearchPathResolver<L: KotlinLibrary> : WithLogger {
+interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     val searchRoots: List<File>
     fun resolutionSequence(givenPath: String): Sequence<File>
     fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean = false): L
@@ -18,19 +18,19 @@ interface SearchPathResolver<L: KotlinLibrary> : WithLogger {
     fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
 }
 
-interface SearchPathResolverWithAttributes<L: KotlinLibrary>: SearchPathResolver<L> {
+interface SearchPathResolverWithAttributes<L : KotlinLibrary> : SearchPathResolver<L> {
     val knownAbiVersions: List<KotlinAbiVersion>?
     val knownCompilerVersions: List<CompilerVersion>?
 }
 
 // This is a simple library resolver that only cares for file names.
-abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary> (
-        repositories: List<String>,
-        directLibs: List<String>,
-        val distributionKlib: String?,
-        val localKotlinDir: String?,
-        val skipCurrentDir: Boolean,
-        override val logger: Logger
+abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
+    repositories: List<String>,
+    directLibs: List<String>,
+    val distributionKlib: String?,
+    val localKotlinDir: String?,
+    val skipCurrentDir: Boolean,
+    override val logger: Logger
 ) : SearchPathResolver<L> {
 
     val localHead: File?
@@ -96,14 +96,14 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary> (
         return sequence.filterNotNull()
     }
 
-    private fun Sequence<File>.filterOutPre_1_4_libraries(): Sequence<File>  = this.filter{
-            if (it.isPre_1_4_Library) {
-                logger.warning("Skipping \"$it\" as it is a pre 1.4 library")
-                false
-            } else {
-                true
-            }
+    private fun Sequence<File>.filterOutPre_1_4_libraries(): Sequence<File> = this.filter {
+        if (it.isPre_1_4_Library) {
+            logger.warning("Skipping \"$it\" as it is a pre 1.4 library")
+            false
+        } else {
+            true
         }
+    }
 
     override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
         val givenPath = unresolved.path
@@ -171,15 +171,15 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary> (
 }
 
 fun CompilerVersion.compatible(other: CompilerVersion) =
-        this.major == other.major
-        && this.minor == other.minor
-        && this.maintenance == other.maintenance
+    this.major == other.major
+            && this.minor == other.minor
+            && this.maintenance == other.maintenance
 
 
 // This is a library resolver aware of attributes shared between platforms,
 // such as abi version.
 // JS and Native resolvers are inherited from this one.
-abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
+abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     repositories: List<String>,
     directLibs: List<String>,
     override val knownAbiVersions: List<KotlinAbiVersion>?,
@@ -190,8 +190,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
     override val logger: Logger,
     private val knownIrProviders: List<String>
 ) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
-    SearchPathResolverWithAttributes<L>
-{
+    SearchPathResolverWithAttributes<L> {
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
         val candidatePath = candidate.libraryFile.absolutePath
 
@@ -239,13 +238,14 @@ class SingleKlibComponentResolver(
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
 }
 
-fun resolveSingleFileKlib(libraryFile: File,
-    logger: Logger = object  : Logger {
-            override fun log(message: String) {}
-            override fun error(message: String) = kotlin.error("e: $message")
-            override fun warning(message: String) {}
-            override fun fatal(message: String) = kotlin.error("e: $message")
-        }
+fun resolveSingleFileKlib(
+    libraryFile: File,
+    logger: Logger = object : Logger {
+        override fun log(message: String) {}
+        override fun error(message: String) = kotlin.error("e: $message")
+        override fun warning(message: String) {}
+        override fun fatal(message: String) = kotlin.error("e: $message")
+    }
 ): KotlinLibrary {
     return SingleKlibComponentResolver(libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger).resolve(libraryFile.absolutePath)
 }
