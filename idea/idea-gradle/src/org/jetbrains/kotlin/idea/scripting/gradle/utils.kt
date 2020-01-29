@@ -36,8 +36,9 @@ fun isInAffectedGradleProjectFiles(project: Project, filePath: String): Boolean 
 }
 
 fun isInAffectedGradleProjectFiles(files: Set<String>, filePath: String): Boolean {
-    // todo: avoid isUnitTestMode usage
-    if (ApplicationManager.getApplication().isUnitTestMode) return true
+    if (ApplicationManager.getApplication().isUnitTestModeWithoutAffectedGradleProjectFilesCheck) {
+        return true
+    }
 
     return filePath in files
 }

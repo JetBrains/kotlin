@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,7 +21,13 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
 
         configureScriptFile(rootDir, buildGradleKts)
 
-        ScriptConfigurationManager.markFileWithManualConfigurationLoading(myFile.virtualFile)
+        testAffectedGradleProjectFiles = true
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+
+        testAffectedGradleProjectFiles = false
     }
 
     private val loaderForOutOfProjectScripts by lazy {
