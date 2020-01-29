@@ -490,10 +490,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (valueParameter.isVararg) {
             print("vararg ")
         }
-        if (valueParameter.varargElementType != null) {
-            print("varargElementType = ")
-            valueParameter.varargElementType!!.accept(this)
-        }
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
             print(valueParameter.name.toString() + ": ")
         }
@@ -663,9 +659,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         lambdaArgumentExpression.expression.accept(this)
     }
 
-    override fun visitVarargArgumentExpression(varargArgumentExpression: FirVarargArgumentExpression) {
+    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) {
         print("vararg(")
-        varargArgumentExpression.arguments.renderSeparated()
+        varargArgumentsExpression.arguments.renderSeparated()
         print(")")
     }
 

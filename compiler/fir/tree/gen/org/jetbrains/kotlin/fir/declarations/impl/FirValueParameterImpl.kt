@@ -45,7 +45,6 @@ open class FirValueParameterImpl(
     override var getter: FirPropertyAccessor? = null
     override var setter: FirPropertyAccessor? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var varargElementType: FirTypeRef? = null
 
     init {
         symbol.bind(this)
@@ -61,7 +60,6 @@ open class FirValueParameterImpl(
         setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         defaultValue?.accept(visitor, data)
-        varargElementType?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
@@ -103,7 +101,6 @@ open class FirValueParameterImpl(
         delegate = delegate?.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         defaultValue = defaultValue?.transformSingle(transformer, data)
-        varargElementType = varargElementType?.transformSingle(transformer, data)
         return this
     }
 

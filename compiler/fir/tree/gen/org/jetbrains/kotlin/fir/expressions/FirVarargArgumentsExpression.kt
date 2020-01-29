@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirVarargArgumentExpression : FirPureAbstractElement(), FirExpression {
+abstract class FirVarargArgumentsExpression : FirPureAbstractElement(), FirExpression {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract val arguments: List<FirExpression>
     abstract val varargElementType: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVarargArgumentExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVarargArgumentsExpression(this, data)
 }

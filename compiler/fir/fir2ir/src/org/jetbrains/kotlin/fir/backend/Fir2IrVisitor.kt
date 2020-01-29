@@ -675,11 +675,11 @@ class Fir2IrVisitor(
         return wrappedArgumentExpression.expression.toIrExpression()
     }
 
-    override fun visitVarargArgumentExpression(varargArgumentExpression: FirVarargArgumentExpression, data: Any?): IrElement {
-        val irReturnType = varargArgumentExpression.typeRef.toIrType(session, declarationStorage)
+    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: Any?): IrElement {
+        val irReturnType = varargArgumentsExpression.typeRef.toIrType(session, declarationStorage)
         return IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irReturnType,
-                            varargArgumentExpression.varargElementType.toIrType(session, declarationStorage),
-                            varargArgumentExpression.arguments.map { it.toIrExpression() })
+                            varargArgumentsExpression.varargElementType.toIrType(session, declarationStorage),
+                            varargArgumentsExpression.arguments.map { it.toIrExpression() })
     }
 
     private fun FirReference.statementOrigin(): IrStatementOrigin? {

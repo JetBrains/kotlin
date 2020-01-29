@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirVarargArgumentExpressionImpl(
+class FirVarargArgumentsExpressionImpl(
     override val source: FirSourceElement?,
     override var varargElementType: FirTypeRef
-) : FirVarargArgumentExpression(), FirAbstractAnnotatedElement {
+) : FirVarargArgumentsExpression(), FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val arguments: MutableList<FirExpression> = mutableListOf()
@@ -34,7 +34,7 @@ class FirVarargArgumentExpressionImpl(
         varargElementType.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVarargArgumentExpressionImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         arguments.transformInplace(transformer, data)
