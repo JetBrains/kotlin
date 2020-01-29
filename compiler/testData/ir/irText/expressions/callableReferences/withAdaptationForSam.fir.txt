@@ -20,9 +20,6 @@ FILE fqName:<root> fileName:/withAdaptationForSam.kt
   FUN name:useFoo visibility:public modality:FINAL <> (foo:<root>.IFoo) returnType:kotlin.Unit
     VALUE_PARAMETER name:foo index:0 type:<root>.IFoo
     BLOCK_BODY
-  FUN name:useVarargFoo visibility:public modality:FINAL <> (foos:kotlin.Array<<root>.IFoo>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:foos index:0 type:kotlin.Array<<root>.IFoo>
-    BLOCK_BODY
   FUN name:withVararg visibility:public modality:FINAL <> (xs:kotlin.IntArray) returnType:kotlin.Int
     VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray
     BLOCK_BODY

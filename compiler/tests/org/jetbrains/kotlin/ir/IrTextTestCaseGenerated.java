@@ -1499,6 +1499,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
             }
 
+            @TestMetadata("samConversionInVarargs.kt")
+            public void testSamConversionInVarargs() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.kt");
+            }
+
             @TestMetadata("samConversionOnCallableReference.kt")
             public void testSamConversionOnCallableReference() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionOnCallableReference.kt");

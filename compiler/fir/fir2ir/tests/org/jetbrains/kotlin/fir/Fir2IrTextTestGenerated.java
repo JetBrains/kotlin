@@ -1500,6 +1500,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
             }
 
+            @TestMetadata("samConversionInVarargs.kt")
+            public void testSamConversionInVarargs() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.kt");
+            }
+
             @TestMetadata("samConversionOnCallableReference.kt")
             public void testSamConversionOnCallableReference() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionOnCallableReference.kt");

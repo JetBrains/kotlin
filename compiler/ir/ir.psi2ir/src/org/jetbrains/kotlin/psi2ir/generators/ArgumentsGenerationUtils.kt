@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi.KtElement
@@ -447,6 +444,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         }
 
         val samKotlinType = samConversion.getSamTypeForValueParameter(underlyingValueParameter)
+            ?: underlyingValueParameter.varargElementType // If we have a vararg, vararg element type will be taken
             ?: underlyingValueParameter.type
 
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
@@ -460,14 +458,44 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
 
         val irSamType = substitutedSamType.toIrType()
 
-        call.irValueArgumentsByIndex[i] =
+        fun samConvertScalarExpression(irArgument: IrExpression) =
             IrTypeOperatorCallImpl(
-                originalArgument.startOffset, originalArgument.endOffset,
+                irArgument.startOffset, irArgument.endOffset,
                 irSamType,
                 IrTypeOperator.SAM_CONVERSION,
                 irSamType,
-                castArgumentToFunctionalInterfaceForSamType(originalArgument, substitutedSamType)
+                castArgumentToFunctionalInterfaceForSamType(irArgument, substitutedSamType)
             )
+
+        call.irValueArgumentsByIndex[i] =
+            if (originalArgument !is IrVararg) {
+                samConvertScalarExpression(originalArgument)
+            } else {
+                if (underlyingValueParameter.varargElementType == null) {
+                    throw AssertionError("Vararg parameter expected for vararg argument: $underlyingValueParameter")
+                }
+
+                val substitutedVarargType =
+                    typeSubstitutor.substitute(underlyingValueParameter.type, Variance.INVARIANT)
+                        ?: throw AssertionError(
+                            "Failed to substitute vararg type in SAM conversion: " +
+                                    "type=${underlyingValueParameter.type}, " +
+                                    "substitutionContext=$substitutionContext"
+                        )
+
+                IrVarargImpl(
+                    originalArgument.startOffset, originalArgument.endOffset,
+                    substitutedVarargType.toIrType(),
+                    irSamType
+                ).apply {
+                    originalArgument.elements.mapTo(elements) {
+                        if (it is IrExpression)
+                            samConvertScalarExpression(it)
+                        else
+                            throw AssertionError("Unsupported: spread vararg element with SAM conversion")
+                    }
+                }
+            }
     }
 }
 

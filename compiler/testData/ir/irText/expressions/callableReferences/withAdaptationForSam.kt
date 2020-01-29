@@ -6,15 +6,9 @@ fun interface IFoo {
 
 fun useFoo(foo: IFoo) {}
 
-fun useVarargFoo(vararg foos: IFoo) {}
-
 fun withVararg(vararg xs: Int) = 42
 
 fun test() {
     useFoo(::withVararg)
 }
 
-// TODO
-//fun testVarargOfSams() {
-//    useVarargFoo(::withVararg)
-//}
