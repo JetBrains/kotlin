@@ -177,7 +177,7 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
           textField({ editorSettings.softWrapFileMasks }, { editorSettings.softWrapFileMasks = it })
             .growPolicy(GrowPolicy.MEDIUM_TEXT)
             .applyToComponent { emptyText.text = message("soft.wraps.file.masks.empty.text") }
-            .comment(message("soft.wraps.file.masks.hint")) // TODO: move comment under field itself
+            .commentComponent(message("soft.wraps.file.masks.hint"))
             .enableIf(useSoftWraps.selected)
         }
         row {
