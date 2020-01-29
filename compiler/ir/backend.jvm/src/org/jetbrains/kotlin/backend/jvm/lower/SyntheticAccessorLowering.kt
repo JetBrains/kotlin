@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
@@ -48,7 +49,12 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun lower(irFile: IrFile) {
         irFile.accept(object : IrInlineReferenceLocator(context) {
-            override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
+            override fun visitInlineLambda(
+                argument: IrFunctionReference,
+                callee: IrFunction,
+                parameter: IrValueParameter,
+                scope: IrDeclaration
+            ) {
                 inlineLambdaToCallSite[argument.symbol.owner] = LambdaCallSite(scope, parameter.isCrossinline)
             }
         }, null)
@@ -167,7 +173,11 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent = this.parent) =
         if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
             val classes = allScopes.map { it.irElement }.filterIsInstance<IrClass>()
-            classes.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
+            val companions = classes.mapNotNull { it.companionObject() }.filterIsInstance<IrClass>()
+            val objectsInScope =
+                classes.flatMap { it.declarations.filter(IrDeclaration::isAnonymousObject).filterIsInstance<IrClass>() }
+            val candidates = objectsInScope + companions + classes
+            candidates.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
         } else parent
 
     private fun IrConstructor.makeConstructorAccessor(): IrConstructorImpl {
@@ -185,7 +195,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
-                "constructor_marker".synthesizedString, context.ir.symbols.defaultConstructorMarker.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                "constructor_marker".synthesizedString,
+                context.ir.symbols.defaultConstructorMarker.defaultType,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             )
 
             accessor.body = IrExpressionBodyImpl(
