@@ -98,7 +98,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         private val javaInspection = UnusedDeclarationInspection()
 
-        private val KOTLIN_ADDITIONAL_ANNOTATIONS = listOf("kotlin.test.*")
+        private val KOTLIN_ADDITIONAL_ANNOTATIONS = listOf("kotlin.test.*", "kotlin.js.JsName")
 
         private val KOTLIN_BUILTIN_ENUM_FUNCTIONS = listOf(FqName("kotlin.enumValues"), FqName("kotlin.enumValueOf"))
 

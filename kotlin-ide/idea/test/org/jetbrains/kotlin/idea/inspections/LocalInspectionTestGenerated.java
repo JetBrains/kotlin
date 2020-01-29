@@ -12343,6 +12343,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/unusedSymbol/internal.kt");
         }
 
+        @TestMetadata("jsName.kt")
+        public void testJsName() throws Exception {
+            runTest("testData/inspectionsLocal/unusedSymbol/jsName.kt");
+        }
+
         @TestMetadata("propertyOfInlineClassType.kt")
         public void testPropertyOfInlineClassType() throws Exception {
             runTest("testData/inspectionsLocal/unusedSymbol/propertyOfInlineClassType.kt");
