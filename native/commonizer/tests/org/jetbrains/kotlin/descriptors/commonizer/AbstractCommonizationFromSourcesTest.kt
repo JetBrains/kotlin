@@ -65,7 +65,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             val testDir = testDirectoryName
 
             return File(getHomeDirectory())
-                .resolve("konan/commonizer/testData")
+                .resolve("native/commonizer/testData")
                 .resolve(testCaseDir)
                 .resolve(testDir)
                 .also(::assertIsDirectory)

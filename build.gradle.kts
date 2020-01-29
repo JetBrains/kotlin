@@ -613,7 +613,7 @@ tasks {
     register("konan-tests") {
         dependsOn("dist")
         dependsOn(
-            ":kotlin-native:commonizer:test"
+            ":native:kotlin-native-commonizer:test"
         )
     }
 

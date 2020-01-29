@@ -25,7 +25,7 @@ dependencies {
     compile(kotlinStdlib())
 
     compile(project(":kotlin-util-klib-metadata"))
-    compile(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+    compile(project(":native:kotlin-native-utils")) { isTransitive = false }
     compile(project(":native:frontend.native")) { isTransitive = false }
 
     testCompile(commonDep("junit:junit"))
