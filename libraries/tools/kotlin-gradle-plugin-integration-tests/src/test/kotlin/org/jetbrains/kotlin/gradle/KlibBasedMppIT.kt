@@ -12,10 +12,6 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
-/** FIXME (sergey.igushkin): please enable these tests back as soon as the Kotlin/Native version that is bundled with the
- *        Kotlin distribution supports compilation to klib and targetless klibs.
- */
-@Ignore
 class KlibBasedMppIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.0")
 
@@ -54,8 +50,6 @@ class KlibBasedMppIT : BaseGradleIT() {
     private val dependencyModuleName = "project-dep"
 
     private fun testBuildWithDependency(configureDependency: Project.() -> Unit) = with(Project("common-klib-lib-and-app")) {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
         embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName)
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
@@ -75,10 +69,10 @@ class KlibBasedMppIT : BaseGradleIT() {
             }
         """.trimIndent())
 
-        projectDir.resolve("src/iosMain/kotlin/LibIosMainUsage.kt").appendText("\n" + """
+        projectDir.resolve("src/linuxMain/kotlin/LibLinuxMainUsage.kt").appendText("\n" + """
             package com.h0tk3y.hmpp.klib.demo.test
             
-            import com.projectdep.libIosMainFun as libFun
+            import com.projectdep.libLinuxMainFun as libFun
             
             private fun useProjectDep() {
                 libFun()
@@ -87,7 +81,7 @@ class KlibBasedMppIT : BaseGradleIT() {
 
         val tasksToExecute = listOf(
             ":compileJvmAndJsMainKotlinMetadata",
-            ":compileIosMainKotlinMetadata"
+            ":compileLinuxMainKotlinMetadata"
         )
 
         build("assemble") {
@@ -95,8 +89,9 @@ class KlibBasedMppIT : BaseGradleIT() {
 
             assertTasksExecuted(*tasksToExecute.toTypedArray())
 
-            assertFileExists("build/classes/kotlin/metadata/jvmAndJsMain/manifest")
-            assertFileExists("build/classes/kotlin/metadata/iosMain/${projectName}_iosMain.klib")
+            assertFileExists("build/classes/kotlin/metadata/commonMain/default/manifest")
+            assertFileExists("build/classes/kotlin/metadata/jvmAndJsMain/default/manifest")
+            assertFileExists("build/classes/kotlin/metadata/linuxMain/${projectName}_linuxMain.klib")
 
             // Check that the common and JVM+JS source sets don't receive the Kotlin/Native stdlib in the classpath:
             run {
@@ -155,7 +150,7 @@ class KlibBasedMppIT : BaseGradleIT() {
 
         setupDependencies(this@with)
 
-        val compileNativeMetadataTaskName = "compileIosMainKotlinMetadata"
+        val compileNativeMetadataTaskName = "compileLinuxMainKotlinMetadata"
         build(":$compileNativeMetadataTaskName") {
             assertSuccessful()
         }

@@ -15,13 +15,18 @@ kotlin {
 	jvm()
 	js()
 
-	ios()
+	linuxX64()
+	linuxArm64()
 
 	sourceSets {
 		val commonMain by getting {
 			dependencies {
 				implementation(kotlin("stdlib-common"))
 			}
+		}
+
+		val linuxMain by creating {
+			dependsOn(commonMain)
 		}
 
 		val jvmAndJsMain by creating {
@@ -41,6 +46,10 @@ kotlin {
 				implementation(kotlin("stdlib-js"))
 			}
 		}
+
+		configure(listOf(linuxX64(), linuxArm64())) {
+			compilations["main"].defaultSourceSet.dependsOn(linuxMain)
+		}
 	}
 }
 
@@ -52,8 +61,8 @@ publishing {
 
 tasks {
 	val skipCompilationOfTargets = setOf(
-		"iosArm64",
-		"iosX64"
+		"linuxX64",
+		"linuxArm64"
 	)
 	all { 
 		val target = name.removePrefix("compileKotlin").decapitalize()
