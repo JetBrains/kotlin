@@ -595,16 +595,10 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     }
   }
 
-  //DockContainer methods
-
+  @NotNull
   @Override
   public RelativeRectangle getAcceptArea() {
     return new RelativeRectangle(myTree);
-  }
-
-  @Override
-  public RelativeRectangle getAcceptAreaFallback() {
-    return getAcceptArea();
   }
 
   @NotNull
