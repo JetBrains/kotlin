@@ -12,6 +12,7 @@
       <item index="2" class="java.lang.String" itemvalue="org.gradle.api.tasks.options.Option" />
     </list>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FacetAutodetectingManager">
     <autodetection-disabled>
       <facet-type id="Python">
