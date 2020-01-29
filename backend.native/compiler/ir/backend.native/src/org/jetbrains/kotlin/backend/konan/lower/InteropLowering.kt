@@ -864,6 +864,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             return generateWithStubs { generateCCall(expression, builder, isInvoke = false) }
         }
 
+        tryGenerateEnumVarValueAccess(expression, symbols, builder)?.let { return it }
+
         val intrinsicType = tryGetIntrinsicType(expression)
 
         if (intrinsicType != null) {
