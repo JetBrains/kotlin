@@ -35,8 +35,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.keymap.Keymap;
-import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -861,6 +859,7 @@ public abstract class InplaceRefactoring {
     if (borderColor != null) {
       balloonBuilder.setBorderColor(borderColor);
     }
+    adjustBalloon(balloonBuilder);
 
     myBalloon = balloonBuilder.createBalloon();
     Disposer.register(myProject, myBalloon);
@@ -873,6 +872,10 @@ public abstract class InplaceRefactoring {
     });
     EditorUtil.disposeWithEditor(myEditor, myBalloon);
     myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
+    showBalloonInEditor();
+  }
+
+  protected void showBalloonInEditor() {
     final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
     myBalloon.show(new PositionTracker<Balloon>(myEditor.getContentComponent()) {
       @Override
@@ -894,6 +897,9 @@ public abstract class InplaceRefactoring {
         return myTarget;
       }
     }, Balloon.Position.above);
+  }
+
+  protected void adjustBalloon(BalloonBuilder builder) {
   }
 
   protected void releaseIfNotRestart() {
