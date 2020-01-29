@@ -17,5 +17,5 @@ interface B : A {
 // FILE: main.kt
 
 fun test(visitor: KtVisitor<String, Unit>, element: B) {
-    element.<!AMBIGUITY!>accept<!>(visitor, Unit)
+    element.accept(visitor, Unit)
 }

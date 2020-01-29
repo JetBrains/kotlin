@@ -31,7 +31,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
             val baseIsFlexible = substitutedBaseType.isFlexible()
             val candidateIsFlexible = substitutedCandidateType.isFlexible()
             if (baseIsFlexible == candidateIsFlexible) {
-                return strictEqualTypes(context, substitutedCandidateType, substitutedBaseType)
+                return AbstractTypeChecker.equalTypes(context, substitutedCandidateType, substitutedBaseType)
             }
             val lowerBound: SimpleTypeMarker
             val upperBound: SimpleTypeMarker
