@@ -13,6 +13,7 @@ import com.intellij.ide.plugins.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.*
@@ -242,13 +243,13 @@ class KotlinPluginUpdater : Disposable {
         val notification = notificationGroup.createNotification(
             "Kotlin",
             "A new version ${update.pluginDescriptor.version} of the Kotlin plugin is available. <b><a href=\"#\">Install</a></b>",
-            NotificationType.INFORMATION
-        ) { notification, _ ->
-            notification.expire()
-            installPluginUpdate(update) {
-                notifyPluginUpdateAvailable(update)
-            }
-        }
+            NotificationType.INFORMATION,
+            NotificationListener { notification, _ ->
+                notification.expire()
+                installPluginUpdate(update) {
+                    notifyPluginUpdateAvailable(update)
+                }
+            })
 
         notification.notify(null)
     }
@@ -303,13 +304,14 @@ class KotlinPluginUpdater : Disposable {
         val notification = notificationGroup.createNotification(
             "Kotlin",
             "Plugin update was not installed$fullMessage. <a href=\"#\">See the log for more information</a>",
-            NotificationType.INFORMATION
-        ) { notification, _ ->
-            val logFile = File(PathManager.getLogPath(), "idea.log")
-            ShowFilePathAction.openFile(logFile)
+            NotificationType.INFORMATION,
+            NotificationListener { notification, _ ->
+                val logFile = File(PathManager.getLogPath(), "idea.log")
+                ShowFilePathAction.openFile(logFile)
 
-            notification.expire()
-        }
+                notification.expire()
+            }
+        )
 
         notification.notify(null)
     }
