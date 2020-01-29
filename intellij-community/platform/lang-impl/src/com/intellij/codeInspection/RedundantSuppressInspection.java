@@ -19,7 +19,6 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashMap;
 import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -142,6 +141,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
           GlobalInspectionTool globalTool = global.getTool();
           //when graph is needed, results probably depend on outer files so absence of results on one file (in current context) doesn't guarantee anything
           if (globalTool.isGraphNeeded()) continue;
+          if (globalTool instanceof RedundantSuppressInspection) continue;
           descriptors = new ArrayList<>(InspectionEngine.runInspectionOnFile(file, global, globalContext));
         }
         else {
