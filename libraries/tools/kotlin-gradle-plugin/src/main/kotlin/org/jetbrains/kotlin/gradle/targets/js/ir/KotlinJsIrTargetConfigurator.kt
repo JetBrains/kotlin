@@ -52,7 +52,8 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun createJarTasks(target: KotlinJsIrTarget): Pair<String, Zip> {
         val (_, task) = super.createJarTasks(target)
-        task.archiveExtension.set(KLIB_TYPE)
+        // not archiveExtension because it is since Gradle 5.1 only
+        task.extension = KLIB_TYPE
 
         return KLIB_TYPE to task
     }
