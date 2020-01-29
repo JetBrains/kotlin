@@ -37,6 +37,11 @@ public abstract class ProblemsView {
     return project.getService(ProblemsView.class);
   }
 
+  @Nullable
+  public static ProblemsView getInstanceIfCreated(@NotNull Project project) {
+    return project.getServiceIfCreated(ProblemsView.class);
+  }
+
   protected ProblemsView(@NotNull Project project) {
     myProject = project;
   }

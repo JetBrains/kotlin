@@ -178,9 +178,11 @@ class AutoMakeMessageHandler extends DefaultMessageHandler {
       }
     }
     if (!myProject.isDisposed()) {
-      ProblemsView view = ProblemsView.getInstance(myProject);
-      view.clearProgress();
-      view.clearOldMessages(null, sessionId);
+      ProblemsView view = ProblemsView.getInstanceIfCreated(myProject);
+      if (view != null) {
+        view.clearProgress();
+        view.clearOldMessages(null, sessionId);
+      }
     }
   }
 
