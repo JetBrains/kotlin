@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.fields
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -176,14 +179,21 @@ class ClassGenerator(
         val superClass = superTypeConstructorDescriptor as? ClassDescriptor
             ?: throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
 
-        val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType, delegateNumber)
-        val irDelegateField = context.symbolTable.declareField(
-            ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
-            IrDeclarationOrigin.DELEGATE,
-            delegateDescriptor, delegateDescriptor.type.toIrType(),
-            createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
-        )
-        irClass.addMember(irDelegateField)
+        val propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(ktDelegateExpression, irClass.descriptor, context.bindingContext)
+
+        val irDelegateField: IrField = if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, context.bindingContext)) {
+            irClass.properties.first { it.descriptor == propertyDescriptor }.backingField!!
+        } else {
+            val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType, delegateNumber)
+            context.symbolTable.declareField(
+                ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
+                IrDeclarationOrigin.DELEGATE,
+                delegateDescriptor, delegateDescriptor.type.toIrType(),
+                createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
+            ).apply {
+                irClass.addMember(this)
+            }
+        }
 
         val delegatesMap = DelegationResolver.getDelegates(irClass.descriptor, superClass, delegateType)
         val delegatedMembers = delegatesMap.keys.toList().sortedByRenderer()
