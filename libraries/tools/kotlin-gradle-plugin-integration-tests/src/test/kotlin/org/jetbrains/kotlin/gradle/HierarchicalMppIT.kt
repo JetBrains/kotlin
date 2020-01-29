@@ -167,14 +167,14 @@ class HierarchicalMppIT : BaseGradleIT() {
             publishedMetadataJar.checkAllEntryNamesArePresent(
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
 
-                "commonMain/manifest",
-                "commonMain/linkdata/package_com.example/",
+                "commonMain/default/manifest",
+                "commonMain/default/linkdata/package_com.example/",
 
-                "jvmAndJsMain/manifest",
-                "jvmAndJsMain/linkdata/package_com.example/",
+                "jvmAndJsMain/default/manifest",
+                "jvmAndJsMain/default/linkdata/package_com.example/",
 
-                "linuxAndJsMain/manifest",
-                "linuxAndJsMain/linkdata/package_com.example/"
+                "linuxAndJsMain/default/manifest",
+                "linuxAndJsMain/default/linkdata/package_com.example/"
             )
 
             val parsedProjectStructureMetadata: KotlinProjectStructureMetadata = publishedMetadataJar.getProjectStructureMetadata()
@@ -205,14 +205,14 @@ class HierarchicalMppIT : BaseGradleIT() {
             publishedMetadataJar.checkAllEntryNamesArePresent(
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
 
-                "commonMain/manifest",
-                "commonMain/linkdata/package_com.example.bar/",
+                "commonMain/default/manifest",
+                "commonMain/default/linkdata/package_com.example.bar/",
 
-                "jvmAndJsMain/manifest",
-                "jvmAndJsMain/linkdata/package_com.example.bar/",
+                "jvmAndJsMain/default/manifest",
+                "jvmAndJsMain/default/linkdata/package_com.example.bar/",
 
-                "linuxAndJsMain/manifest",
-                "linuxAndJsMain/linkdata/package_com.example.bar/"
+                "linuxAndJsMain/default/manifest",
+                "linuxAndJsMain/default/linkdata/package_com.example.bar/"
             )
 
             val parsedProjectStructureMetadata: KotlinProjectStructureMetadata = publishedMetadataJar.getProjectStructureMetadata()
