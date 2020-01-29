@@ -310,15 +310,18 @@ private class SupertypeComputationSession {
         }
 
         supertypeStatusMap[classLikeDeclaration] = SupertypeComputationStatus.Computed(resolvedTypesRefs)
+        newClassifiersForBreakingLoops.add(classLikeDeclaration)
     }
 
+    private val newClassifiersForBreakingLoops = mutableListOf<FirClassLikeDeclaration<*>>()
+    private val breakLoopsDfsVisited = hashSetOf<FirClassLikeDeclaration<*>>()
+
     fun breakLoops(session: FirSession) {
-        val visited = hashSetOf<FirClassLikeDeclaration<*>>()
         val inProcess = hashSetOf<FirClassLikeDeclaration<*>>()
 
         fun dfs(classLikeDeclaration: FirClassLikeDeclaration<*>) {
+            if (classLikeDeclaration in breakLoopsDfsVisited) return
             val supertypeComputationStatus = supertypeStatusMap[classLikeDeclaration] ?: return
-            if (classLikeDeclaration in visited) return
             if (classLikeDeclaration in inProcess) return
 
             inProcess.add(classLikeDeclaration)
@@ -351,12 +354,13 @@ private class SupertypeComputationSession {
             }
 
             inProcess.remove(classLikeDeclaration)
-            visited.add(classLikeDeclaration)
+            breakLoopsDfsVisited.add(classLikeDeclaration)
         }
 
-        for (classifier in supertypeStatusMap.keys) {
+        for (classifier in newClassifiersForBreakingLoops) {
             dfs(classifier)
         }
+        newClassifiersForBreakingLoops.clear()
     }
 }
 
