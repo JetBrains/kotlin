@@ -399,8 +399,9 @@ fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String
     if (declarationsToMove.isEmpty()) return null
     val representative = declarationsToMove.singleOrNull()
         ?: declarationsToMove.filterIsInstance<KtClassOrObject>().singleOrNull()
-    val newFileName = representative?.run { "$name.${KotlinFileType.EXTENSION}" }
-        ?: declarationsToMove.first().containingFile.name
+    val newFileName = representative?.run {
+        if (containingKtFile.isScript()) "$name.kts" else "$name.${KotlinFileType.EXTENSION}"
+    } ?: declarationsToMove.first().containingFile.name
     return newFileName.capitalize()
 }
 
