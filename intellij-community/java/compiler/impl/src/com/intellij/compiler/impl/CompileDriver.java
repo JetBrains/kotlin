@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.impl;
 
 import com.intellij.CommonBundle;
@@ -290,7 +290,7 @@ public final class CompileDriver {
           if (compileContext.shouldUpdateProblemsView() && kind == CmdlineRemoteProto.Message.BuilderMessage.CompileMessage.Kind.JPS_INFO) {
             // treat JPS_INFO messages in a special way: add them as info messages to the problems view
             final Project project = compileContext.getProject();
-            ProblemsView.SERVICE.getInstance(project).addMessage(
+            ProblemsView.getInstance(project).addMessage(
               new CompilerMessageImpl(project, category, messageText),
               compileContext.getSessionId()
             );
