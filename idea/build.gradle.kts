@@ -27,10 +27,15 @@ sourceSets {
             "idea-completion/tests",
             "idea-live-templates/tests"
         )
+        if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
+            java.srcDirs("performanceTests")
+        }
     }
 
     "performanceTest" {
-        java.srcDirs("performanceTests")
+        if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
+            java.srcDirs("performanceTests")
+        }
     }
 }
 
