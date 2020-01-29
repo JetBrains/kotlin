@@ -630,6 +630,9 @@ class QuickFixRegistrar : QuickFixContributor {
         NOT_A_FUNCTION_LABEL.registerFactory(RemoveReturnLabelFix)
         NOT_A_FUNCTION_LABEL_WARNING.registerFactory(RemoveReturnLabelFix)
 
+        ANNOTATION_ON_SUPERCLASS.registerFactory(RemoveAnnotationFix)
+        ANNOTATION_ON_SUPERCLASS_WARNING.registerFactory(RemoveAnnotationFix)
+
         ACCIDENTAL_OVERRIDE.registerFactory(MakePrivateAndOverrideMemberFix.AccidentalOverrideFactory)
 
     }
