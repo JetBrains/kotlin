@@ -167,14 +167,14 @@ class HierarchicalMppIT : BaseGradleIT() {
             publishedMetadataJar.checkAllEntryNamesArePresent(
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
 
-                "commonMain/META-INF/my-lib-foo_commonMain.kotlin_module",
-                "commonMain/com/example/foo/FooKt.kotlin_metadata",
+                "commonMain/manifest",
+                "commonMain/linkdata/package_com.example/",
 
-                "jvmAndJsMain/META-INF/my-lib-foo_jvmAndJsMain.kotlin_module",
-                "jvmAndJsMain/com/example/foo/FooJvmAndJsKt.kotlin_metadata",
+                "jvmAndJsMain/manifest",
+                "jvmAndJsMain/linkdata/package_com.example/",
 
-                "linuxAndJsMain/META-INF/my-lib-foo_linuxAndJsMain.kotlin_module",
-                "linuxAndJsMain/com/example/foo/FooLinuxAndJsKt.kotlin_metadata"
+                "linuxAndJsMain/manifest",
+                "linuxAndJsMain/linkdata/package_com.example/"
             )
 
             val parsedProjectStructureMetadata: KotlinProjectStructureMetadata = publishedMetadataJar.getProjectStructureMetadata()
@@ -205,14 +205,14 @@ class HierarchicalMppIT : BaseGradleIT() {
             publishedMetadataJar.checkAllEntryNamesArePresent(
                 "META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME",
 
-                "commonMain/META-INF/my-lib-bar_commonMain.kotlin_module",
-                "commonMain/com/example/bar/BarKt.kotlin_metadata",
+                "commonMain/manifest",
+                "commonMain/linkdata/package_com.example.bar/",
 
-                "jvmAndJsMain/META-INF/my-lib-bar_jvmAndJsMain.kotlin_module",
-                "jvmAndJsMain/com/example/bar/BarJvmAndJsKt.kotlin_metadata",
+                "jvmAndJsMain/manifest",
+                "jvmAndJsMain/linkdata/package_com.example.bar/",
 
-                "linuxAndJsMain/META-INF/my-lib-bar_linuxAndJsMain.kotlin_module",
-                "linuxAndJsMain/com/example/bar/BarLinuxAndJsKt.kotlin_metadata"
+                "linuxAndJsMain/manifest",
+                "linuxAndJsMain/linkdata/package_com.example.bar/"
             )
 
             val parsedProjectStructureMetadata: KotlinProjectStructureMetadata = publishedMetadataJar.getProjectStructureMetadata()
@@ -376,7 +376,7 @@ class HierarchicalMppIT : BaseGradleIT() {
                     ModuleDependencyIdentifier(it.first, it.second)
                 }.toSet()
             },
-            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.METADATA }
+            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB }
         )
     }
 

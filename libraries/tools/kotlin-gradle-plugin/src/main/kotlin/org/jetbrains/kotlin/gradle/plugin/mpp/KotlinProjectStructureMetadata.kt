@@ -41,10 +41,8 @@ sealed class SourceSetMetadataLayout(
         fun byName(name: String): SourceSetMetadataLayout? = values.firstOrNull { it.name == name }
 
         fun chooseForProducingProject(project: Project) =
-            if (PropertiesProvider(project.rootProject).enableCommonKlibs == true)
-                KLIB
-            else
-                METADATA
+            /** A producing project will now only generate Granular source sets metadata as a KLIB */
+            KLIB
     }
 }
 

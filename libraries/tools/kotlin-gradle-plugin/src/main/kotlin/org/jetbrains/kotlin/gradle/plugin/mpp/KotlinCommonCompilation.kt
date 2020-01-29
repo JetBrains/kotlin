@@ -24,7 +24,7 @@ class KotlinCommonCompilation(
         get() = super.compileKotlinTask as KotlinCompileCommon
 
     internal val isKlibCompilation: Boolean
-        get() = PropertiesProvider(target.project).enableCommonKlibs == true && !forceCompilationToKotlinMetadata
+        get() = PropertiesProvider(target.project).enableGranularSourceSetsMetadata == true && !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
 }
