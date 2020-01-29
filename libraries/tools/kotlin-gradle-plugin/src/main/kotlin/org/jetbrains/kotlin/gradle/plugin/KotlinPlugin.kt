@@ -378,7 +378,7 @@ internal class KotlinJsIrSourceSetProcessor(
                 taskName
             )
         }.forEach { taskName ->
-            project.tasks.named(taskName) {
+            project.tasks.named(taskName).configure {
                 it.dependsOn(kotlinTask)
             }
         }
