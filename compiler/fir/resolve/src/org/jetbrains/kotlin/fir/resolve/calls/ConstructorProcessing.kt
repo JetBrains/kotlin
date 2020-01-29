@@ -39,9 +39,8 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
         processor,
         session,
         bodyResolveComponents.scopeSession,
-        name,
-            noInnerConstructors
-        )
+        noInnerConstructors
+    )
 
     processSyntheticConstructors(
         matchedClassSymbol,
@@ -131,7 +130,6 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     scopeSession: ScopeSession,
-    name: Name,
     noInner: Boolean
 ) {
     try {
@@ -152,7 +150,8 @@ private fun processConstructors(
 
             val constructorName = when (matchedSymbol) {
                 is FirTypeAliasSymbol -> finalExpansionName(matchedSymbol, session) ?: return
-                is FirClassSymbol -> name
+                is FirRegularClassSymbol -> matchedSymbol.fir.name
+                else -> return
             }
 
             //TODO: why don't we use declared member scope at this point?
