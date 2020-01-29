@@ -15,6 +15,7 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -337,8 +338,10 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
     HighlightInfo info = null;
     if (!Registry.is("ide.disable.editor.tooltips")) {
-      info = ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project))
-        .findHighlightByOffset(editor.getDocument(), offset, false);
+      DaemonCodeAnalyzerImpl daemonCodeAnalyzer = (DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(project);
+      boolean highestPriorityOnly = !Registry.is("ide.tooltip.showAllSeverities");
+      info = daemonCodeAnalyzer
+        .findHighlightsByOffset(editor.getDocument(), offset, false, highestPriorityOnly, HighlightSeverity.INFORMATION);
     }
 
     PsiElement elementForQuickDoc = null;

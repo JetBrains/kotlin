@@ -628,13 +628,22 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
                                       final int offset,
                                       final boolean includeFixRange,
                                       @NotNull HighlightSeverity minSeverity) {
+    return findHighlightsByOffset(document, offset, includeFixRange, true,minSeverity);
+  }
+
+  public HighlightInfo findHighlightsByOffset(@NotNull Document document,
+                                      final int offset,
+                                      final boolean includeFixRange,
+                                      final boolean highestPriorityOnly,
+                                      @NotNull HighlightSeverity minSeverity) {
     final List<HighlightInfo> foundInfoList = new SmartList<>();
     processHighlightsNearOffset(document, myProject, minSeverity, offset, includeFixRange,
         info -> {
           if (info.getSeverity() == HighlightInfoType.ELEMENT_UNDER_CARET_SEVERITY || info.type == HighlightInfoType.TODO) {
             return true;
           }
-          if (!foundInfoList.isEmpty()) {
+
+          if (!foundInfoList.isEmpty() && highestPriorityOnly) {
             HighlightInfo foundInfo = foundInfoList.get(0);
             int compare = foundInfo.getSeverity().compareTo(info.getSeverity());
             if (compare < 0) {
@@ -650,6 +659,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
     if (foundInfoList.isEmpty()) return null;
     if (foundInfoList.size() == 1) return foundInfoList.get(0);
+    foundInfoList.sort(Comparator.comparing(HighlightInfo::getSeverity).reversed());
     return HighlightInfoComposite.create(foundInfoList);
   }
 
