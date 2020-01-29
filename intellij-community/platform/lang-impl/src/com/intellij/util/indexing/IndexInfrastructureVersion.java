@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.hash.ContentHashEnumerator;
-import com.intellij.util.io.DigestUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +35,15 @@ public class IndexInfrastructureVersion {
     myBaseIndexes = ImmutableSortedMap.copyOf(baseIndexes);
     myFileBasedIndexVersions = ImmutableSortedMap.copyOf(fileBasedIndexVersions);
     myStubIndexVersions = ImmutableSortedMap.copyOf(stubIndexVersions);
+  }
+
+  @Override
+  public String toString() {
+    return "IndexInfrastructureVersion{" +
+           "myBaseIndexes=" + myBaseIndexes +
+           ", myFileBasedIndexVersions=" + myFileBasedIndexVersions +
+           ", myStubIndexVersions=" + myStubIndexVersions +
+           '}';
   }
 
   @NotNull
