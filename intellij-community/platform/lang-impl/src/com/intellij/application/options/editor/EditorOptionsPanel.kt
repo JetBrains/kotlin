@@ -96,7 +96,7 @@ internal val optionDescriptors: List<OptionDescription> = listOf(
 ).map(CheckboxDescriptor::asOptionDescriptor)
 
 
-class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithEpDependencies {
+class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
   companion object {
     const val ID = "preferences.editor"
 
@@ -125,8 +125,6 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
     }
   }
 
-  override fun getDependencies() = setOf(ErrorOptionsProviderEP.EP_NAME)
-
   override fun createPanel(): DialogPanel {
     return panel {
       titledRow(message("group.advanced.mouse.usages")) {
@@ -138,20 +136,6 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
         row { checkBox(virtualSpace) }
         row { checkBox(caretInsideTabs) }
         row { checkBox(virtualPageAtBottom) }
-      }
-      titledRow(message("group.brace.highlighting")) {
-        row { checkBox(highlightBraces) }
-        row { checkBox(highlightScope) }
-        row { checkBox(highlightIdentifierUnderCaret) }
-      }
-      titledRow(message("group.formatting")) {
-        row { checkBox(showNotificationAfterReformatCodeCheckBox) }
-        row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
-      }
-      titledRow(message("group.refactorings")) {
-        row { checkBox(renameLocalVariablesInplace) }
-        row { checkBox(preselectCheckBox) }
-        row { checkBox(showInlineDialogForCheckBox) }
       }
       titledRow(message("editor.options.scrolling")) {
         row { checkBox(cdSmoothScrolling) }
@@ -221,33 +205,6 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
           }
         }
       }
-      titledRow(message("group.error.highlighting")) {
-        row {
-          cell(isFullWidth = true) {
-            label(message("editbox.error.stripe.mark.min.height.pixels"))
-            intTextField(codeAnalyzerSettings::getErrorStripeMarkMinHeight, codeAnalyzerSettings::setErrorStripeMarkMinHeight, columns = 4)
-          }
-        }
-        row {
-          cell(isFullWidth = true) {
-            label(message("editbox.autoreparse.delay.ms"))
-            intTextField(codeAnalyzerSettings::getAutoReparseDelay, codeAnalyzerSettings::setAutoReparseDelay, columns = 4)
-          }
-        }
-        row { checkBox(cdNextErrorGoesToErrorsFirst) }
-
-        for (errorConfigurable in ConfigurableWrapper.createConfigurables(ErrorOptionsProviderEP.EP_NAME)) {
-          val panel = errorConfigurable.createComponent()
-          if (panel != null) {
-            row {
-              component(panel)
-                .onIsModified { errorConfigurable.isModified }
-                .onReset { errorConfigurable.reset() }
-                .onApply { errorConfigurable.apply() }
-            }
-          }
-        }
-      }
       titledRow(message("editor.options.others.group")) {
         row {
           var stripTrailing: ComboBox<*>? = null
@@ -280,11 +237,6 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
         }
         row { checkBox(cdEnsureBlankLineBeforeCheckBox) }
         row {
-          checkBox(cdShowQuickDocOnMouseMove).apply {
-            onApply { service<QuickDocOnMouseOverManager>().setEnabled(component.isSelected) }
-          }
-        }
-        row {
           fun fireLSTSettingsChanged() {
             ApplicationManager.getApplication().messageBus.syncPublisher(LineStatusTrackerSettingListener.TOPIC).settingsUpdated()
           }
@@ -295,13 +247,6 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
             checkBox(cdShowWhitespacesInLSTGutterCheckBox)
               .enableIf(showLstGutter.selected)
               .onApply(::fireLSTSettingsChanged)
-          }
-        }
-        row {
-          cell(isFullWidth = true) {
-            label(message("editor.options.tooltip.delay"))
-            intTextField(editorSettings::getTooltipsDelay, editorSettings::setTooltipsDelay, range = 1..5000, columns = 4)
-            label(message("editor.options.ms"))
           }
         }
       }
@@ -319,6 +264,72 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID), WithE
       uiSettings.fireUISettingsChanged()
       restartDaemons()
       ApplicationManager.getApplication().messageBus.syncPublisher(EditorOptionsListener.OPTIONS_PANEL_TOPIC).changesApplied()
+    }
+  }
+}
+
+class EditorCodeEditingConfigurable : BoundConfigurable(message("title.code.editing"), ID), WithEpDependencies {
+  companion object {
+    const val ID = "preferences.editor.code.editing"
+  }
+
+  override fun getDependencies() = setOf(ErrorOptionsProviderEP.EP_NAME)
+
+  override fun createPanel(): DialogPanel {
+    return panel {
+      titledRow(message("group.brace.highlighting")) {
+        row { checkBox(highlightBraces) }
+        row { checkBox(highlightScope) }
+        row { checkBox(highlightIdentifierUnderCaret) }
+      }
+      titledRow(message("group.formatting")) {
+        row { checkBox(showNotificationAfterReformatCodeCheckBox) }
+        row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
+      }
+      titledRow(message("group.refactorings")) {
+        row { checkBox(renameLocalVariablesInplace) }
+        row { checkBox(preselectCheckBox) }
+        row { checkBox(showInlineDialogForCheckBox) }
+      }
+      titledRow(message("group.error.highlighting")) {
+        row {
+          cell(isFullWidth = true) {
+            label(message("editbox.error.stripe.mark.min.height.pixels"))
+            intTextField(codeAnalyzerSettings::getErrorStripeMarkMinHeight, codeAnalyzerSettings::setErrorStripeMarkMinHeight, columns = 4)
+          }
+        }
+        row {
+          cell(isFullWidth = true) {
+            label(message("editbox.autoreparse.delay.ms"))
+            intTextField(codeAnalyzerSettings::getAutoReparseDelay, codeAnalyzerSettings::setAutoReparseDelay, columns = 4)
+          }
+        }
+        row { checkBox(cdNextErrorGoesToErrorsFirst) }
+
+        for (errorConfigurable in ConfigurableWrapper.createConfigurables(ErrorOptionsProviderEP.EP_NAME)) {
+          val panel = errorConfigurable.createComponent()
+          if (panel != null) {
+            row {
+              component(panel)
+                .onIsModified { errorConfigurable.isModified }
+                .onReset { errorConfigurable.reset() }
+                .onApply { errorConfigurable.apply() }
+            }
+          }
+        }
+      }
+      row {
+        checkBox(cdShowQuickDocOnMouseMove).apply {
+          onApply { service<QuickDocOnMouseOverManager>().setEnabled(component.isSelected) }
+        }
+      }
+      row {
+        cell(isFullWidth = true) {
+          label(message("editor.options.tooltip.delay"))
+          intTextField(editorSettings::getTooltipsDelay, editorSettings::setTooltipsDelay, range = 1..5000, columns = 4)
+          label(message("editor.options.ms"))
+        }
+      }
     }
   }
 }
