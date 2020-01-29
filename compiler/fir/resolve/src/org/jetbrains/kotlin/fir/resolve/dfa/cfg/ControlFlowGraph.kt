@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("Reformat")
+
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.FirElement
@@ -15,9 +17,18 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class ControlFlowGraph(val name: String, val kind: Kind) {
-    val nodes = mutableListOf<CFGNode<*>>()
+    private val _nodes: MutableList<CFGNode<*>> = mutableListOf()
+
+    val nodes: List<CFGNode<*>> get() = _nodes
+
+    internal fun addNode(node: CFGNode<*>) {
+        _nodes += node
+    }
+
     lateinit var enterNode: CFGNode<*>
+        internal set
     lateinit var exitNode: CFGNode<*>
+        internal set
 
     enum class Kind {
         Function, ClassInitializer, PropertyInitializer, TopLevel
@@ -30,12 +41,12 @@ enum class EdgeKind {
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, private val id: Int) {
     companion object {
-        fun addEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean) {
-            from.followingNodes += to
-            to.previousNodes += from
+        internal fun addEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean) {
+            from._followingNodes += to
+            to._previousNodes += from
             if (kind != EdgeKind.Simple) {
-                from.outgoingEdges[to] = kind
-                to.incomingEdges[from] = kind
+                from._outgoingEdges[to] = kind
+                to._incomingEdges[from] = kind
             }
             if (propagateDeadness && kind == EdgeKind.Dead) {
                 to.isDead = true
@@ -44,19 +55,29 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     }
 
     init {
-        owner.nodes += this
+        @Suppress("LeakingThis")
+        owner.addNode(this)
     }
 
-    val previousNodes: MutableList<CFGNode<*>> = mutableListOf()
-    val followingNodes: MutableList<CFGNode<*>> = mutableListOf()
+    private val _previousNodes: MutableList<CFGNode<*>> = mutableListOf()
+    private val _followingNodes: MutableList<CFGNode<*>> = mutableListOf()
 
-    val incomingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
-    val outgoingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
+    val previousNodes: List<CFGNode<*>> get() = _previousNodes
+    val followingNodes: List<CFGNode<*>> get() = _followingNodes
 
-    val firstPreviousNode: CFGNode<*> get() = previousNodes.first()
+    private val _incomingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
+    private val _outgoingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
+
+    val incomingEdges: Map<CFGNode<*>, EdgeKind> get() = _incomingEdges
+    val outgoingEdges: Map<CFGNode<*>, EdgeKind> get() = _outgoingEdges
 
     abstract val fir: E
     var isDead: Boolean = false
+        protected set
+
+    internal fun updateDeadStatus() {
+        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all { it == EdgeKind.Dead }
+    }
 
     final override fun equals(other: Any?): Boolean {
         if (other !is CFGNode<*>) return false
@@ -67,6 +88,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         return id
     }
 }
+
+val CFGNode<*>.firstPreviousNode: CFGNode<*> get() = previousNodes.first()
 
 interface EnterNode
 interface ExitNode

@@ -131,7 +131,7 @@ class ControlFlowGraphBuilder {
             }
             lexicalScopes.pop()
         }
-        exitNode.markAsDeadIfNecessary()
+        exitNode.updateDeadStatus()
         val graph = if (!isInplace) {
             graphs.pop()
         } else {
@@ -175,7 +175,7 @@ class ControlFlowGraphBuilder {
             functionExitNodes.top().also {
                 addEdge(lastNodes.pop(), it)
                 lastNodes.push(it)
-                it.markAsDeadIfNecessary()
+                it.updateDeadStatus()
             }
         } else {
             levelCounter--
@@ -201,7 +201,7 @@ class ControlFlowGraphBuilder {
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph> {
         val topLevelVariableExitNode = topLevelVariableInitializerExitNodes.pop().also {
             addNewSimpleNode(it)
-            it.markAsDeadIfNecessary()
+            it.updateDeadStatus()
         }
         levelCounter--
         exitNodes.pop()
@@ -285,7 +285,7 @@ class ControlFlowGraphBuilder {
                 addEdge(this, whenExitNode)
             }
         } else null
-        whenExitNode.markAsDeadIfNecessary()
+        whenExitNode.updateDeadStatus()
         lastNodes.push(whenExitNode)
         levelCounter--
         return whenExitNode to syntheticElseBranchNode
@@ -332,7 +332,7 @@ class ControlFlowGraphBuilder {
             addEdge(loopBlockExitNode, conditionEnterNode, propagateDeadness = false)
         }
         val loopExitNode = loopExitNodes.pop()
-        loopExitNode.markAsDeadIfNecessary()
+        loopExitNode.updateDeadStatus()
         lastNodes.push(loopExitNode)
         levelCounter--
         return loopBlockExitNode to loopExitNode
@@ -373,7 +373,7 @@ class ControlFlowGraphBuilder {
         addEdge(conditionExitNode, blockEnterNode, propagateDeadness = false, isDead = conditionBooleanValue == false)
         val loopExit = loopExitNodes.pop()
         addEdge(conditionExitNode, loopExit, propagateDeadness = false, isDead = conditionBooleanValue == true)
-        loopExit.markAsDeadIfNecessary()
+        loopExit.updateDeadStatus()
         lastNodes.push(loopExit)
         levelCounter--
         return conditionExitNode to loopExit
@@ -410,7 +410,7 @@ class ControlFlowGraphBuilder {
         return binaryAndExitNodes.pop().also {
             val rightNode = lastNodes.pop()
             addEdge(rightNode, it, propagateDeadness = false, isDead = it.leftOperandNode.booleanConstValue == false)
-            it.markAsDeadIfNecessary()
+            it.updateDeadStatus()
             lastNodes.push(it)
         }
     }
@@ -456,7 +456,7 @@ class ControlFlowGraphBuilder {
         return binaryOrExitNodes.pop().also {
             val rightNode = lastNodes.pop()
             addEdge(rightNode, it, propagateDeadness = false)
-            it.markAsDeadIfNecessary()
+            it.updateDeadStatus()
             lastNodes.push(it)
         }
     }
@@ -531,7 +531,7 @@ class ControlFlowGraphBuilder {
         levelCounter--
         catchNodeStorages.pop()
         val node = tryExitNodes.pop()
-        node.markAsDeadIfNecessary()
+        node.updateDeadStatus()
         lastNodes.push(node)
         return node
     }
@@ -616,7 +616,7 @@ class ControlFlowGraphBuilder {
         levelCounter--
         return initBlockExitNodes.pop().also {
             addNewSimpleNode(it)
-            it.markAsDeadIfNecessary()
+            it.updateDeadStatus()
             lexicalScopes.pop()
             exitNodes.pop()
             graphs.pop()
@@ -639,15 +639,11 @@ class ControlFlowGraphBuilder {
     fun exitSafeCall(qualifiedAccess: FirQualifiedAccess): ExitSafeCallNode {
         return exitSafeCallNodes.pop().also {
             addNewSimpleNode(it)
-            it.markAsDeadIfNecessary()
+            it.updateDeadStatus()
         }
     }
 
     // -------------------------------------------------------------------------------------------------------------------------
-
-    private fun CFGNode<*>.markAsDeadIfNecessary() {
-        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all { it == EdgeKind.Dead }
-    }
 
     private fun addNodeThatReturnsNothing(node: CFGNode<*>) {
         /*
