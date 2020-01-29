@@ -13,12 +13,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 
-open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
-    companion object {
-        internal const val outsidePlaceholder = "// OUTSIDE_SECTIONS"
-        internal const val insidePlaceholder = "// INSIDE_SECTIONS"
-    }
+private const val outsidePlaceholder = "// OUTSIDE_SECTIONS"
+private const val insidePlaceholder = "// INSIDE_SECTIONS"
 
+class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
     private lateinit var testFiles: TestFiles
 
     data class TestFiles(val buildKts: KtFile, val settings: KtFile, val prop: PsiFile)
