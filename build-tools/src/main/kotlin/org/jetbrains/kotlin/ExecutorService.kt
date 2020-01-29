@@ -424,8 +424,10 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
             data class DeviceTarget(val name: String, val udid: String, val state: String, val type: String)
             split("\n")
                     .filter { it.isNotEmpty() }
-                    .map { Json(JsonConfiguration.Default).parse(DeviceTarget.serializer(), it) }
-                    .first {
+                    .map {
+                        Json(JsonConfiguration.Stable.copy(strictMode = false))
+                            .parse(DeviceTarget.serializer(), it)
+                    }.first {
                         it.type == "device" && deviceName?.run { this == it.name } ?: true
                     }
                     .udid
