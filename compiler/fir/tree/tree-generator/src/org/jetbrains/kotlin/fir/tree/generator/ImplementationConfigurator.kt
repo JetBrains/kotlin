@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementa
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.Object
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.OpenClass
+import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
     private lateinit var abstractAnnotatedElement: Implementation
