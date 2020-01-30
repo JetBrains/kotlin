@@ -83,18 +83,15 @@ class CompletionModeCalculator {
             while (typesToProcess.isNotEmpty()) {
                 val type = typesToProcess.poll() ?: break
 
-                fixationDirectionForTopLevel(type)?.let { directionForVariable ->
+                if (!type.contains { it.typeConstructor() in notFixedTypeVariables })
+                    continue
+
+                val fixationDirectionsFromType = mutableSetOf<FixationDirectionForVariable>()
+                collectRequiredDirectionsForVariables(type, TypeVariance.OUT, fixationDirectionsFromType)
+
+                for (directionForVariable in fixationDirectionsFromType) {
                     updateDirection(directionForVariable)
                     enqueueTypesFromConstraints(directionForVariable.variable)
-                }
-
-                // find all variables in type and make requirements for them
-                type.contains { typePart ->
-                    for (directionForVariable in directionsForVariablesInTypeArguments(typePart)) {
-                        updateDirection(directionForVariable)
-                        enqueueTypesFromConstraints(directionForVariable.variable)
-                    }
-                    false
                 }
             }
         }
@@ -130,42 +127,62 @@ class CompletionModeCalculator {
 
         private data class FixationDirectionForVariable(val variable: VariableWithConstraints, val direction: FixationDirection)
 
-        private fun CsCompleterContext.fixationDirectionForTopLevel(type: KotlinTypeMarker): FixationDirectionForVariable? {
-            return notFixedTypeVariables[type.typeConstructor()]?.let {
-                FixationDirectionForVariable(it, FixationDirection.TO_SUBTYPE)
+        private fun CsCompleterContext.collectRequiredDirectionsForVariables(
+            type: KotlinTypeMarker, outerVariance: TypeVariance,
+            fixationDirectionsCollector: MutableSet<FixationDirectionForVariable>
+        ) {
+            val typeArgumentsCount = type.argumentsCount()
+            if (typeArgumentsCount > 0) {
+                for (position in 0 until typeArgumentsCount) {
+                    val argument = type.getArgument(position)
+                    val parameter = type.typeConstructor().getParameter(position)
+
+                    if (argument.isStarProjection())
+                        continue
+
+                    collectRequiredDirectionsForVariables(
+                        argument.getType(),
+                        compositeVariance(outerVariance, argument, parameter),
+                        fixationDirectionsCollector
+                    )
+                }
+            } else {
+                processTypeWithoutParameters(type, outerVariance, fixationDirectionsCollector)
             }
         }
 
-        private fun CsCompleterContext.directionsForVariablesInTypeArguments(type: KotlinTypeMarker): List<FixationDirectionForVariable> {
-            assert(type.argumentsCount() == type.typeConstructor().parametersCount()) {
-                "Arguments and parameters count don't match for type $type. " +
-                        "Arguments: ${type.argumentsCount()}, parameters: ${type.typeConstructor().parametersCount()}"
+        private fun CsCompleterContext.compositeVariance(
+            outerVariance: TypeVariance,
+            argument: TypeArgumentMarker,
+            parameter: TypeParameterMarker
+        ): TypeVariance {
+            val effectiveArgumentVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+                ?: TypeVariance.INV // conflicting variance
+            return when (outerVariance) {
+                TypeVariance.INV -> TypeVariance.INV
+                TypeVariance.OUT -> effectiveArgumentVariance
+                TypeVariance.IN -> effectiveArgumentVariance.reversed()
             }
+        }
 
-            val directionsForVariables = mutableListOf<FixationDirectionForVariable>()
+        private fun TypeVariance.reversed(): TypeVariance = when (this) {
+            TypeVariance.IN -> TypeVariance.OUT
+            TypeVariance.OUT -> TypeVariance.IN
+            TypeVariance.INV -> TypeVariance.INV
+        }
 
-            for (position in 0 until type.argumentsCount()) {
-                val argument = type.getArgument(position)
-                if (!argument.getType().mayBeTypeVariable())
-                    continue
-
-                val variableWithConstraints = notFixedTypeVariables[argument.getType().typeConstructor()] ?: continue
-
-                val parameter = type.typeConstructor().getParameter(position)
-                val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-                    ?: TypeVariance.INV
-
-                val direction = when (effectiveVariance) {
-                    TypeVariance.IN -> FixationDirection.EQUALITY // Assuming that variables in contravariant positions are fixed to subtype
-                    TypeVariance.OUT -> FixationDirection.TO_SUBTYPE
-                    TypeVariance.INV -> FixationDirection.EQUALITY
-                }
-
-                val requirement = FixationDirectionForVariable(variableWithConstraints, direction)
-                directionsForVariables.add(requirement)
+        private fun CsCompleterContext.processTypeWithoutParameters(
+            type: KotlinTypeMarker, compositeVariance: TypeVariance,
+            newRequirementsCollector: MutableSet<FixationDirectionForVariable>
+        ) {
+            val variableWithConstraints = notFixedTypeVariables[type.typeConstructor()] ?: return
+            val direction = when (compositeVariance) {
+                TypeVariance.IN -> FixationDirection.EQUALITY // Assuming that variables in contravariant positions are fixed to subtype
+                TypeVariance.OUT -> FixationDirection.TO_SUBTYPE
+                TypeVariance.INV -> FixationDirection.EQUALITY
             }
-
-            return directionsForVariables
+            val requirement = FixationDirectionForVariable(variableWithConstraints, direction)
+            newRequirementsCollector.add(requirement)
         }
 
         private fun CsCompleterContext.hasProperConstraint(

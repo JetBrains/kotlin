@@ -10609,9 +10609,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/basic.kt");
                 }
 
+                @TestMetadata("definetlyNotNullType.kt")
+                public void testDefinetlyNotNullType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/definetlyNotNullType.kt");
+                }
+
                 @TestMetadata("equalityConstraintUpstairs.kt")
                 public void testEqualityConstraintUpstairs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/equalityConstraintUpstairs.kt");
+                }
+
+                @TestMetadata("flexibleType.kt")
+                public void testFlexibleType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/flexibleType.kt");
+                }
+
+                @TestMetadata("intersectionType.kt")
+                public void testIntersectionType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/intersectionType.kt");
                 }
 
                 @TestMetadata("kt33166.kt")
@@ -10619,9 +10634,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/kt33166.kt");
                 }
 
+                @TestMetadata("kt36233.kt")
+                public void testKt36233() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/kt36233.kt");
+                }
+
                 @TestMetadata("lambdaWithVariableAndNothing.kt")
                 public void testLambdaWithVariableAndNothing() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/lambdaWithVariableAndNothing.kt");
+                }
+
+                @TestMetadata("nestedVariance.kt")
+                public void testNestedVariance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/nestedVariance.kt");
+                }
+
+                @TestMetadata("nothingFromNestedCall.kt")
+                public void testNothingFromNestedCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/nothingFromNestedCall.kt");
                 }
 
                 @TestMetadata("partialForIlt.kt")
