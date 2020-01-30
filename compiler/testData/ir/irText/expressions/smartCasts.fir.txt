@@ -26,15 +26,19 @@ FILE fqName:<root> fileName:/smartCasts.kt
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
         message: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-          $this: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.String origin=null
+          $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
       CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        s: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.String origin=null
+        s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+          GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
       CALL 'public final fun expectsInt (i: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         i: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-          $this: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.String origin=null
+          $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
       CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: CALL 'public final fun overloaded (s: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
-          s: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.String origin=null
+          s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -46,7 +50,8 @@ FILE fqName:<root> fileName:/smartCasts.kt
             CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun overloaded (s: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
-          s: GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.String origin=null
+          s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+            GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -57,4 +62,5 @@ FILE fqName:<root> fileName:/smartCasts.kt
           then: RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Any): kotlin.String declared in <root>'
             CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Any): kotlin.String declared in <root>'
-        GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.String origin=null
+        TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+          GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null

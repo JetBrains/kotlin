@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 fun test1d(x: Double, y: Double) = x.compareTo(y)
 fun test2d(x: Double, y: Any) = y is Double && x.compareTo(y) == 0
 fun test3d(x: Any, y: Any) = x is Double && y is Double && x.compareTo(y) == 0

@@ -1,3 +1,7 @@
+// FIR inserts incorrect smart casts based on the cast in the
+// lambda. However, that cast can fail and the failure can be caught
+// by the inline function.
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
