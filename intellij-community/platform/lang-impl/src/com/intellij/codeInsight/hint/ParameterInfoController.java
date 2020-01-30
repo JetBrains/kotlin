@@ -21,15 +21,18 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
-import com.intellij.openapi.progress.util.ProgressWindow;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.openapi.ui.popup.Balloon.Position;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -39,16 +42,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.HintHint;
-import com.intellij.ui.HintListener;
 import com.intellij.ui.LightweightHint;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.components.JBLoadingPanel;
-import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.Alarm;
+import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
-import com.intellij.util.ui.AsyncProcessIcon;
-import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,25 +59,18 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.Consumer;
-
-import static com.intellij.codeInsight.hint.ParameterInfoTaskRunnerUtil.runTask;
 
 public class ParameterInfoController extends UserDataHolderBase implements Disposable {
   private static final Logger LOG = Logger.getInstance(ParameterInfoController.class);
   private static final String WHITESPACE = " \t";
-
-  private static final String LOADING_TAG = "loading";
-  private static final String COMPONENT_TAG = "component";
-
   private final Project myProject;
   @NotNull private final Editor myEditor;
 
   private final RangeMarker myLbraceMarker;
-  private final JBLoadingPanel myLoadingPanel;
   private LightweightHint myHint;
   private final ParameterInfoComponent myComponent;
   private boolean myKeepOnHintHidden;
@@ -103,8 +95,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     for (int i = 0; i < allControllers.size(); ++i) {
       ParameterInfoController controller = allControllers.get(i);
 
-      int lbraceOffset = controller.myLbraceMarker.getStartOffset();
-      if (lbraceOffset == offset) {
+      if (controller.myLbraceMarker.getStartOffset() == offset) {
         if (controller.myKeepOnHintHidden || controller.myHint.isVisible()) return controller;
         Disposer.dispose(controller);
         //noinspection AssignmentToForLoopParameter
@@ -151,28 +142,6 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     myProvider = new MyBestLocationPointProvider(editor);
     myLbraceMarker = editor.getDocument().createRangeMarker(lbraceOffset, lbraceOffset);
     myComponent = new ParameterInfoComponent(descriptors, editor, handler, requestFocus, true);
-    myLoadingPanel = new JBLoadingPanel(null, panel -> new LoadingDecorator(panel, this, ProgressWindow.DEFAULT_PROGRESS_DIALOG_POSTPONE_TIME_MILLIS, false, new AsyncProcessIcon("ShowParameterInfo")){
-      protected NonOpaquePanel customizeLoadingLayer(JPanel parent, JLabel text, AsyncProcessIcon icon) {
-        parent.setLayout(new FlowLayout(FlowLayout.LEFT));
-        final NonOpaquePanel result = new NonOpaquePanel();
-        result.add(icon);
-        parent.add(result);
-        return result;
-      }
-
-      @Override
-      protected void _startLoading(boolean takeSnapshot) {
-          super._startLoading(takeSnapshot);
-          showHintLoading(true);
-      }
-    }) {
-      @Override
-      public String toString() {
-        return myComponent.toString();
-      }
-    };
-    myLoadingPanel.add(new JBLabel(EmptyIcon.ICON_18));
-    myLoadingPanel.add(new JBLabel(CodeInsightBundle.message("parameter.info.progress.title")));
     myHint = createHint();
     myKeepOnHintHidden = !showHint;
     mySingleParameterInfo = !showHint;
@@ -236,8 +205,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
 
   private LightweightHint createHint() {
     JPanel wrapper = new WrapperPanel();
-    wrapper.add(myLoadingPanel, LOADING_TAG);
-    wrapper.add(myComponent, COMPONENT_TAG);
+    wrapper.add(myComponent);
     return new LightweightHint(wrapper);
   }
 
@@ -252,37 +220,9 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     myEditor.getCaretModel().removeCaretListener(myEditorCaretListener);
   }
 
-  public boolean showLoading(HintListener hintListener) {
-    if (myKeepOnHintHidden || myHint.isVisible()) {
-      myLoadingPanel.startLoading();
-      myHint.addHintListener(hintListener);
-
-      return true;
-    }
-    return false;
-  }
-
-  public void hideLoading(HintListener hintListener) {
-    if (myKeepOnHintHidden || myHint.isVisible()) {
-      myLoadingPanel.stopLoading();
-      showHintLoading(false);
-    }
-    myHint.removeHintListener(hintListener);
-  }
-
-  private void showHintLoading(boolean showLoading) {
-    if (myKeepOnHintHidden || myHint.isVisible()) {
-      JComponent component = myHint.getComponent();
-      CardLayout layout = (CardLayout)component.getLayout();
-      layout.show(component, showLoading ? LOADING_TAG : COMPONENT_TAG);
-      myHint.pack();
-    }
-  }
-
   public void showHint(boolean requestFocus, boolean singleParameterInfo) {
     if (myHint.isVisible()) {
-      JComponent myHintComponent = myHint.getComponent();
-      myHintComponent.removeAll();
+      myHint.getComponent().remove(myComponent);
       hideHint();
       myHint = createHint();
     }
@@ -425,18 +365,36 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
 
   private void executeFindElementForUpdatingParameterInfo(UpdateParameterInfoContext context,
                                                           @NotNull Consumer<PsiElement> elementForUpdatingConsumer) {
-    runTask(myProject,
+    final Component focusOwner = IdeFocusManager.getInstance(myProject).getFocusOwner();
+    ProgressManager.getInstance().run(
+      new Task.Backgroundable(myProject, CodeInsightBundle.message("parameter.info.progress.title"), true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          assert !ApplicationManager.getApplication().isDispatchThread() :
+            "Show parameter info on dispatcher thread leads to live lock";
+
+          final VisibleAreaListener visibleAreaListener = new CancelProgressOnScrolling(indicator);
+
+          myEditor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
+
+          ProgressIndicatorUtils.awaitWithCheckCanceled(
             ReadAction
               .nonBlocking(() -> {
                 return myHandler.findElementForUpdatingParameterInfo(context);
               }).withDocumentsCommitted(myProject)
+              .cancelWith(indicator)
               .expireWhen(() -> getCurrentOffset() != context.getOffset())
-              .coalesceBy(this)
-              .expireWith(this),
-            elementForUpdatingConsumer,
-            CodeInsightBundle.message("parameter.info.progress.title"),
-            myLbraceMarker.getStartOffset(),
-            myEditor);
+              .coalesceBy(ParameterInfoController.this)
+              .expireWith(ParameterInfoController.this)
+              .finishOnUiThread(ModalityState.defaultModalityState(), elementForUpdating -> {
+                if (Objects.equals(focusOwner, IdeFocusManager.getInstance(myProject).getFocusOwner())) {
+                  elementForUpdatingConsumer.consume(elementForUpdating);
+                }
+              })
+              .submit(AppExecutorUtil.getAppExecutorService())
+              .onProcessed(ignore -> myEditor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener)));
+        }
+      });
   }
 
   private void executeUpdateParameterInfo(PsiElement elementForUpdating,
@@ -448,32 +406,44 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
       return;
     }
 
-    runTask(myProject,
-            ReadAction.nonBlocking(() -> {
-                try {
-                  myHandler.updateParameterInfo(elementForUpdating, context);
-                  return elementForUpdating;
-                }
-                catch (IndexNotReadyException e) {
-                  DumbService.getInstance(myProject)
-                    .showDumbModeNotification(CodeInsightBundle.message("parameter.info.indexing.mode.not.supported"));
-                }
-                return null;
-              })
-              .withDocumentsCommitted(myProject)
-              .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() ||
-                                getCurrentOffset() != context.getOffset() ||
-                                !elementForUpdating.isValid())
-              .expireWith(this),
-            element -> {
-              if (element != null && continuation != null) {
+    final Component focusOwner = IdeFocusManager.getInstance(myProject).getFocusOwner();
+    ProgressManager.getInstance().run(
+      new Task.Backgroundable(myProject, CodeInsightBundle.message("parameter.info.progress.title"), true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          assert !ApplicationManager.getApplication().isDispatchThread() :
+            "Show parameter info on dispatcher thread leads to live lock";
+
+          final VisibleAreaListener visibleAreaListener = new CancelProgressOnScrolling(indicator);
+
+          myEditor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
+
+          ProgressIndicatorUtils.awaitWithCheckCanceled(ReadAction
+            .nonBlocking(() -> {
+              try {
+                myHandler.updateParameterInfo(elementForUpdating, context);
+                return elementForUpdating;
+              }
+              catch (IndexNotReadyException e) {
+                DumbService.getInstance(myProject)
+                  .showDumbModeNotification(CodeInsightBundle.message("parameter.info.indexing.mode.not.supported"));
+              }
+              return null;
+            })
+            .withDocumentsCommitted(myProject)
+            .cancelWith(indicator)
+            .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() && !ApplicationManager.getApplication().isHeadlessEnvironment() || getCurrentOffset() != context.getOffset() || !elementForUpdating.isValid())
+            .expireWith(ParameterInfoController.this)
+            .finishOnUiThread(ModalityState.defaultModalityState(), element -> {
+              if (element != null && continuation != null && Objects.equals(focusOwner, IdeFocusManager.getInstance(myProject).getFocusOwner())) {
                 context.applyUIChanges();
                 continuation.run();
               }
-            },
-            CodeInsightBundle.message("parameter.info.progress.title"),
-            myLbraceMarker.getStartOffset(),
-            myEditor);
+            })
+            .submit(AppExecutorUtil.getAppExecutorService())
+            .onProcessed(ignore -> myEditor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener)));
+        }
+      });
   }
 
   @HintManager.PositionFlags
@@ -577,7 +547,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     }
   }
 
-  private static int getParameterIndex(@NotNull PsiElement[] parameters, @NotNull IElementType delimiter, int offset) {
+  private static int getParameterIndex(PsiElement @NotNull [] parameters, @NotNull IElementType delimiter, int offset) {
     for (int i = 0; i < parameters.length; i++) {
       PsiElement parameter = parameters[i];
       TextRange textRange = parameter.getTextRange();
@@ -967,7 +937,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
 
   private static class WrapperPanel extends JPanel {
     WrapperPanel() {
-      super(new CardLayout());
+      super(new BorderLayout());
       setBorder(JBUI.Borders.empty());
     }
 

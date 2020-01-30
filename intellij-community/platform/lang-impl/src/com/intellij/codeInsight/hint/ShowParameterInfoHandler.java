@@ -11,26 +11,33 @@ import com.intellij.lang.Language;
 import com.intellij.lang.parameterInfo.LanguageParameterInfo;
 import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.VisibleAreaListener;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LightweightHint;
+import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
-
-import static com.intellij.codeInsight.hint.ParameterInfoTaskRunnerUtil.runTask;
 
 public class ShowParameterInfoHandler implements CodeInsightActionHandler {
   private static final ParameterInfoHandler[] EMPTY_HANDLERS = new ParameterInfoHandler[0];
@@ -75,6 +82,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
                             boolean requestFocus, boolean singleParameterHint,
                             String progressTitle,
                             Consumer<IndexNotReadyException> indexNotReadyExceptionConsumer) {
+    final Component focusOwner = IdeFocusManager.getInstance(project).getFocusOwner();
     final DumbService dumbService = DumbService.getInstance(project);
 
     final int initialOffset = editor.getCaretModel().getOffset();
@@ -82,82 +90,98 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
     Lookup lookup = LookupManager.getInstance(project).getActiveLookup();
     LookupElement lookupElement = lookup != null ? lookup.getCurrentItem() : null;
 
-    runTask(project,
-            ReadAction.nonBlocking(() -> {
-              final int offset = editor.getCaretModel().getOffset();
-              final int fileLength = file.getTextLength();
-              if (fileLength == 0) return null;
+    ProgressManager.getInstance().run(
+      new Task.Backgroundable(project, progressTitle, true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          assert !ApplicationManager.getApplication().isWriteAccessAllowed() :
+            "Show parameter info under write action could lead to live lock";
 
-              // file.findElementAt(file.getTextLength()) returns null but we may need to show parameter info at EOF offset (for example in SQL)
-              final int offsetForLangDetection = offset > 0 && offset == fileLength ? offset - 1 : offset;
-              final Language language = PsiUtilCore.getLanguageAtOffset(file, offsetForLangDetection);
+          final VisibleAreaListener visibleAreaListener = new CancelProgressOnScrolling(indicator);
 
-              final ShowParameterInfoContext context = new ShowParameterInfoContext(
-                editor,
-                project,
-                file,
-                offset,
-                lbraceOffset,
-                requestFocus,
-                singleParameterHint
-              );
+          editor.getScrollingModel().addVisibleAreaListener(visibleAreaListener);
 
-              context.setHighlightedElement(highlightedElement);
-              context.setRequestFocus(requestFocus);
+          ProgressIndicatorUtils.awaitWithCheckCanceled(ReadAction
+          .nonBlocking(() -> {
+            final int offset = editor.getCaretModel().getOffset();
+            final int fileLength = file.getTextLength();
+            if (fileLength == 0) return null;
 
-              final ParameterInfoHandler<PsiElement, Object>[] handlers =
-                ObjectUtils.notNull(getHandlers(project, language, file.getViewProvider().getBaseLanguage()), EMPTY_HANDLERS);
+            // file.findElementAt(file.getTextLength()) returns null but we may need to show parameter info at EOF offset (for example in SQL)
+            final int offsetForLangDetection = offset > 0 && offset == fileLength ? offset - 1 : offset;
+            final Language language = PsiUtilCore.getLanguageAtOffset(file, offsetForLangDetection);
 
-              if (lookup != null) {
-                if (lookupElement != null) {
-                  for (ParameterInfoHandler<PsiElement, Object> handler : handlers) {
-                    if (handler.couldShowInLookup()) {
-                      final Object[] items = handler.getParametersForLookup(lookupElement, context);
-                      if (items != null && items.length > 0) {
-                        return (Runnable)() -> {
-                          showLookupEditorHint(items, editor, handler, requestFocus);
-                        };
-                      }
-                      return null;
+            final ShowParameterInfoContext context = new ShowParameterInfoContext(
+              editor,
+              project,
+              file,
+              offset,
+              lbraceOffset,
+              requestFocus,
+              singleParameterHint
+            );
+
+            context.setHighlightedElement(highlightedElement);
+            context.setRequestFocus(requestFocus);
+
+            final ParameterInfoHandler<PsiElement, Object>[] handlers =
+              ObjectUtils.notNull(getHandlers(project, language, file.getViewProvider().getBaseLanguage()), EMPTY_HANDLERS);
+
+            if (lookup != null) {
+              if (lookupElement != null) {
+                for (ParameterInfoHandler<PsiElement, Object> handler : handlers) {
+                  if (handler.couldShowInLookup()) {
+                    final Object[] items = handler.getParametersForLookup(lookupElement, context);
+                    if (items != null && items.length > 0) {
+                      return (Runnable)() -> {
+                        showLookupEditorHint(items, editor, handler, requestFocus);
+                      };
                     }
+                    return null;
                   }
                 }
-                return null;
-              }
-
-              dumbService.setAlternativeResolveEnabled(true);
-              try {
-                for (int i = 0; i < handlers.length; i++) {
-                  ParameterInfoHandler<PsiElement, Object> handler = handlers[i];
-                  PsiElement element = handler.findElementForParameterInfo(context);
-                  if (element != null) {
-                    return (Runnable)() -> {
-                      if (element.isValid()) {
-                        handler.showParameterInfo(element, context);
-                      }
-                    };
-                  }
-                }
-              }
-              catch (IndexNotReadyException e) {
-                indexNotReadyExceptionConsumer.accept(e);
-              }
-              finally {
-                dumbService.setAlternativeResolveEnabled(false);
               }
               return null;
-            })
-              .withDocumentsCommitted(project)
-              .expireWhen(() -> editor.getCaretModel().getOffset() != initialOffset)
-              .coalesceBy(ShowParameterInfoHandler.class, editor),
+            }
+
+            dumbService.setAlternativeResolveEnabled(true);
+            try {
+              for (int i = 0; i < handlers.length; i++) {
+                ParameterInfoHandler<PsiElement, Object> handler = handlers[i];
+                PsiElement element = handler.findElementForParameterInfo(context);
+                if (element != null) {
+                  return (Runnable)() -> {
+                    if (element.isValid()) {
+                      handler.showParameterInfo(element, context);
+                    }
+                  };
+                }
+              }
+            }
+            catch (IndexNotReadyException e) {
+              indexNotReadyExceptionConsumer.consume(e);
+            }
+            finally {
+              dumbService.setAlternativeResolveEnabled(false);
+            }
+            return null;
+          })
+          .withDocumentsCommitted(project)
+          .finishOnUiThread(
+            ModalityState.defaultModalityState(),
             continuation -> {
-              if (continuation != null) {
+              if (continuation != null && Objects.equals(focusOwner, IdeFocusManager.getInstance(project).getFocusOwner())) {
                 continuation.run();
               }
-            },
-            progressTitle,
-            initialOffset,
-            editor);
+            })
+          .cancelWith(indicator)
+          .expireWhen(() -> editor.getCaretModel().getOffset() != initialOffset)
+          .coalesceBy(ShowParameterInfoHandler.class, editor)
+          .submit(AppExecutorUtil.getAppExecutorService())
+          .onProcessed(ignore -> editor.getScrollingModel().removeVisibleAreaListener(visibleAreaListener)));
+        }
+      }
+    );
   }
 
   private static void showLookupEditorHint(Object[] descriptors,
@@ -179,8 +203,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
     });
   }
 
-  @Nullable
-  public static ParameterInfoHandler[] getHandlers(Project project, final Language... languages) {
+  public static ParameterInfoHandler @Nullable [] getHandlers(Project project, final Language... languages) {
     Set<ParameterInfoHandler> handlers = new LinkedHashSet<>();
     DumbService dumbService = DumbService.getInstance(project);
     for (final Language language : languages) {
