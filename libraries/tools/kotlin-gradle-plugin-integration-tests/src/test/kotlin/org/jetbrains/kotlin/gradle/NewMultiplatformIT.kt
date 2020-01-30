@@ -862,7 +862,10 @@ class NewMultiplatformIT : BaseGradleIT() {
         val repoDir = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
             setupWorkingDir()
             projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
-            build("publish") { assertSuccessful() }
+            build(
+                "publish",
+                options = defaultBuildOptions().copy(jsMode = JsMode.LEGACY)
+            ) { assertSuccessful() }
             projectDir.resolve("repo")
         }
 
