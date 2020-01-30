@@ -35,7 +35,16 @@ interface State {
     }
 
     fun setState(newVar: Variable)
+
+    /**
+     * This method is used for passing a copy of a state.
+     * It is necessary then copy change its state's value, but the original one must remain the same.
+     *
+     * @see copyReceivedValue.kt
+     * @see tryFinally.kt
+     */
     fun copy(): State
+
     fun getIrFunction(descriptor: FunctionDescriptor): IrFunction?
 }
 

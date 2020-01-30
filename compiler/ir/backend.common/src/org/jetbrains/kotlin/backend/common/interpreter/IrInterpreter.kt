@@ -480,7 +480,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression.argument.interpret(data)
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                // coercion to unit means that return value isn't used
+                expression.argument.interpret(data).apply { if (this == Code.NEXT) data.popReturnValue() }
+            }
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 val code = expression.argument.interpret(data)
                 if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
