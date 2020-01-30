@@ -254,7 +254,12 @@ class ComposerParamTransformer(
             startOffset,
             endOffset,
             type,
-            ownerFn.symbol
+            ownerFn.symbol,
+            ownerFn.symbol.descriptor,
+            typeArgumentsCount,
+            valueArgumentsCount + 1, // +1 for the composer param
+            origin,
+            superQualifierSymbol
         ).also {
             it.copyAttributes(this)
             context.state.irTrace.record(
@@ -343,7 +348,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrFunction.copyAsComposableDecoy(): IrSimpleFunction {
-        return copy(isInline = false).also { fn ->
+        return copy().also { fn ->
             fn.origin = COMPOSABLE_DECOY_IMPL
             (fn as IrFunctionImpl).metadata = metadata
             val errorClass = getTopLevelClass(FqName("kotlin.NotImplementedError"))

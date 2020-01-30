@@ -41,6 +41,109 @@ import java.net.URLClassLoader
 class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
+    fun testCrossinlineEmittable(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    package x
+
+                    import androidx.compose.Composable
+                    import android.widget.LinearLayout
+
+                    @Composable inline fun row(crossinline children: @Composable() () -> Unit) {
+                        LinearLayout {
+                            children()
+                        }
+                    }
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import androidx.compose.Composable
+                    import x.row
+
+                    @Composable fun Test() {
+                        row { }
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testNonCrossinlineComposable(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    package x
+
+                    import androidx.compose.Composable
+                    import androidx.compose.Pivotal
+
+                    @Composable
+                    inline fun <T> key(
+                        block: @Composable() () -> T
+                    ): T = block()
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import androidx.compose.Composable
+                    import x.key
+
+                    @Composable fun Test() {
+                        key { }
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testNonCrossinlineComposableNoGenerics(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    package x
+
+                    import androidx.compose.Composable
+                    import androidx.compose.Pivotal
+
+                    @Composable
+                    inline fun key(
+                        @Suppress("UNUSED_PARAMETER")
+                        @Pivotal
+                        v1: Int,
+                        block: @Composable() () -> Int
+                    ): Int = block()
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import androidx.compose.Composable
+                    import x.key
+
+                    @Composable fun Test() {
+                        key(123) { 456 }
+                    }
+                """
+                )
+            )
+        , dumpClasses = true)
+    }
+
+    @Test
     fun testRemappedTypes(): Unit = forComposerParam(true, false) {
         compile(
             "TestG", mapOf(

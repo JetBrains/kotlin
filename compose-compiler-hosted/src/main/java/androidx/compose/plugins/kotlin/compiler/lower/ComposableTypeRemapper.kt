@@ -23,16 +23,24 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
@@ -43,12 +51,14 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -58,8 +68,8 @@ import org.jetbrains.kotlin.types.replace
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     val context: JvmBackendContext,
-    symbolRemapper: SymbolRemapper,
-    typeRemapper: TypeRemapper,
+    val symbolRemapper: DeepCopySymbolRemapper,
+    val typeRemapper: TypeRemapper,
     symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
 ) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
 
@@ -69,6 +79,10 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         return super.visitFunction(declaration).also { it.copyMetadataFrom(declaration) }
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
+        return super.visitSimpleFunction(declaration).also { it.copyMetadataFrom(declaration) }
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty {
@@ -87,6 +101,82 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             }
         }
     }
+
+    override fun visitCall(expression: IrCall): IrCall {
+        val ownerFn = expression.symbol.owner as? IrSimpleFunction
+        // If we are calling an external function, we want to "remap" the types of its signature
+        // as well, since if it is @Composable it will have its unmodified signature. These
+        // functions won't be traversed by default by the DeepCopyIrTreeWithSymbols so we have to
+        // do it ourself here.
+        if (
+            ownerFn != null &&
+            ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        ) {
+            symbolRemapper.visitSimpleFunction(ownerFn)
+            val newFn = super.visitSimpleFunction(ownerFn).also {
+                it.parent = ownerFn.parent
+                it.correspondingPropertySymbol = ownerFn.correspondingPropertySymbol
+                it.patchDeclarationParents(it.parent)
+            }
+            val newCallee = symbolRemapper.getReferencedSimpleFunction(newFn.symbol)
+            return shallowCopyCall(expression, newCallee).apply {
+                copyRemappedTypeArgumentsFrom(expression)
+                transformValueArguments(expression)
+            }
+        }
+        return super.visitCall(expression)
+    }
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols, except with newCallee as a parameter */
+    private fun shallowCopyCall(expression: IrCall, newCallee: IrSimpleFunctionSymbol): IrCall {
+        return IrCallImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            newCallee,
+            newCallee.descriptor,
+            expression.typeArgumentsCount,
+            expression.valueArgumentsCount,
+            mapStatementOrigin(expression.origin),
+            symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+        }.copyAttributes(expression)
+    }
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols */
+    private fun IrMemberAccessExpression.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression) {
+        assert(typeArgumentsCount == other.typeArgumentsCount) {
+            "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
+        }
+        for (i in 0 until typeArgumentsCount) {
+            putTypeArgument(i, other.getTypeArgument(i)?.remapType())
+        }
+    }
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols */
+    private fun <T : IrMemberAccessExpression> T.transformValueArguments(original: T) {
+        transformReceiverArguments(original)
+        for (i in 0 until original.valueArgumentsCount) {
+            putValueArgument(i, original.getValueArgument(i)?.transform())
+        }
+    }
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols */
+    private fun <T : IrMemberAccessExpression> T.transformReceiverArguments(original: T): T =
+        apply {
+            dispatchReceiver = original.dispatchReceiver?.transform()
+            extensionReceiver = original.extensionReceiver?.transform()
+        }
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols */
+    private inline fun <reified T : IrElement> T.transform() =
+        transform(this@DeepCopyIrTreeWithSymbolsPreservingMetadata, null) as T
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols */
+    private fun IrType.remapType() = typeRemapper.remapType(this)
+
+    /* copied verbatim from DeepCopyIrTreeWithSymbols */
+    private fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
 
     private fun IrElement.copyMetadataFrom(owner: IrMetadataSourceOwner) {
         when (this) {
