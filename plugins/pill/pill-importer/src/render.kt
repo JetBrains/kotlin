@@ -3,19 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch", "FunctionName")
 package org.jetbrains.kotlin.pill
 
 import java.io.File
 
-class PFile(val path: File, val text: String) {
+class PFile(val path: File, private val text: String) {
+    constructor(path: File, xml: XmlNode) : this(path, xml.toString())
+
     fun write() {
         path.parentFile.mkdirs()
         path.writeText(text)
     }
 }
-
-fun PFile(path: File, xml: xml) = PFile(path, xml.toString())
 
 fun render(project: PProject): List<PFile> {
     val files = mutableListOf<PFile>()
@@ -45,7 +44,8 @@ private fun renderModulesFile(project: PProject) = PFile(
 
 private fun renderModule(project: PProject, module: PModule) = PFile(
     module.moduleFile,
-    xml("module",
+    xml(
+        "module",
         "type" to "JAVA_MODULE",
         "version" to 4
     ) {
@@ -93,7 +93,8 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
             }
         }
 
-        xml("component",
+        xml(
+            "component",
             "name" to "NewModuleRootManager",
             "LANGUAGE_LEVEL" to "JDK_${platformVersion.replace('.', '_')}",
             "inherit-compiler-output" to "true"
@@ -179,7 +180,7 @@ private fun renderLibrary(project: PProject, library: PLibrary): PFile {
         })
 }
 
-private fun renderLibraryToXml(library: PLibrary, pathContext: PathContext, named: Boolean = true): xml {
+private fun renderLibraryToXml(library: PLibrary, pathContext: PathContext, named: Boolean = true): XmlNode {
     val args = if (named) arrayOf("name" to library.renderName()) else emptyArray()
 
     return xml("library", *args) {

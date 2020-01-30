@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch")
-
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
@@ -31,7 +29,7 @@ interface OpaqueDependencyMapper {
 
 sealed class ArtifactElement {
     private val myChildren = mutableListOf<ArtifactElement>()
-    val children get() = myChildren
+    private val children get() = myChildren
 
     fun add(child: ArtifactElement) {
         myChildren += child
@@ -41,9 +39,9 @@ sealed class ArtifactElement {
         myChildren += children
     }
 
-    abstract fun render(context: PathContext): xml
+    abstract fun render(context: PathContext): XmlNode
 
-    fun renderRecursively(context: PathContext): xml {
+    fun renderRecursively(context: PathContext): XmlNode {
         return render(context).apply {
             children.forEach { add(it.renderRecursively(context)) }
         }
@@ -66,7 +64,7 @@ sealed class ArtifactElement {
     }
 
     data class FileCopy(val source: File, val outputFileName: String? = null) : ArtifactElement() {
-        override fun render(context: PathContext): xml {
+        override fun render(context: PathContext): XmlNode {
             val args = mutableListOf("id" to "file-copy", "path" to context(source))
             if (outputFileName != null) {
                 args += "output-file-name" to outputFileName
@@ -104,21 +102,21 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: Opa
 
     root.add(Directory("lib").apply {
         val librariesConfiguration = prepareIdeaPluginProject.configurations.getByName("libraries")
-        add(getArtifactElements(rootProject, librariesConfiguration, dependencyMapper, false))
+        add(getArtifactElements(librariesConfiguration, dependencyMapper, false))
 
         add(Directory("jps").apply {
             val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
             add(Archive(prepareJpsPluginProject.name + ".jar").apply {
                 val jpsPluginConfiguration = prepareIdeaPluginProject.configurations.getByName("jpsPlugin")
-                add(getArtifactElements(rootProject, jpsPluginConfiguration, dependencyMapper, true))
+                add(getArtifactElements(jpsPluginConfiguration, dependencyMapper, true))
             })
         })
 
         add(Archive("kotlin-plugin.jar").apply {
             add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
 
-            val embeddedConfiguration = prepareIdeaPluginProject.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
-            add(getArtifactElements(rootProject, embeddedConfiguration, dependencyMapper, true))
+            val embeddedConfiguration = prepareIdeaPluginProject.configurations.getByName(EMBEDDED_CONFIGURATION_NAME)
+            add(getArtifactElements(embeddedConfiguration, dependencyMapper, true))
         })
     })
 
@@ -130,7 +128,6 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: Opa
 }
 
 private fun getArtifactElements(
-    rootProject: Project,
     configuration: Configuration,
     dependencyMapper: OpaqueDependencyMapper,
     extractDependencies: Boolean
@@ -155,8 +152,11 @@ private fun getArtifactElements(
             is PDependency.Library -> artifacts += ProjectLibrary(dependency.name)
             is PDependency.ModuleLibrary -> {
                 val files = dependency.library.classes
-                if (extractDependencies) files.mapTo(artifacts) { ExtractedDirectory(it) }
-                else  files.mapTo(artifacts) { FileCopy(it) }
+                if (extractDependencies) {
+                    files.mapTo(artifacts) { ExtractedDirectory(it) }
+                } else {
+                    files.mapTo(artifacts) { FileCopy(it) }
+                }
             }
         }
     }

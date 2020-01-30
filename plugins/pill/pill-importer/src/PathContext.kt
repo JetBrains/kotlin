@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
@@ -45,7 +44,7 @@ class ProjectContext private constructor(private val projectDir: File) : PathCon
     }
 }
 
-class ModuleContext(val project: PProject, val module: PModule) : PathContext {
+class ModuleContext(private val project: PProject, val module: PModule) : PathContext {
     override fun invoke(file: File): String {
         if (!file.startsWith(project.rootDirectory)) {
             return simplifyUserHomeDirPath(file.absolutePath)

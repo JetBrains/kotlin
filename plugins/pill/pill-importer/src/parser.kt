@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
@@ -19,7 +18,7 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import org.jetbrains.kotlin.pill.PSourceRoot.*
-import org.jetbrains.kotlin.pill.PillExtension.*
+import org.jetbrains.kotlin.pill.PillExtensionMirror.*
 import java.io.File
 
 class ParserContext(val variant: Variant)
@@ -112,13 +111,13 @@ fun parse(project: Project, context: ParserContext): PProject = with(context) {
     }
 
     fun Project.matchesSelectedVariant(): Boolean {
-        val extension = this.extensions.findByType(PillExtension::class.java) ?: return true
+        val extension = this.findPillExtensionMirror() ?: return true
         val projectVariant = extension.variant.takeUnless { it == Variant.DEFAULT } ?: Variant.BASE
         return projectVariant in context.variant.includes
     }
 
     val (includedProjects, excludedProjects) = project.allprojects
-        .partition { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) && it.matchesSelectedVariant() }
+        .partition { it.plugins.hasPlugin("jps-compatible") && it.matchesSelectedVariant() }
 
     val modules = includedProjects.flatMap { parseModules(it, excludedProjects) }
     val artifacts = parseArtifacts(project)
@@ -258,7 +257,7 @@ private fun getExcludedDirs(project: Project, excludedProjects: List<Project>): 
     fun getJavaExcludedDirs() = project.plugins.findPlugin(IdeaPlugin::class.java)
         ?.model?.module?.excludeDirs?.toList() ?: emptyList()
 
-    fun getPillExcludedDirs() = project.extensions.getByType(PillExtension::class.java).excludedDirs
+    fun getPillExcludedDirs() = project.findPillExtensionMirror()?.excludedDirs ?: emptyList()
 
     return getPillExcludedDirs() + getJavaExcludedDirs() + project.buildDir +
             (if (project == project.rootProject) excludedProjects.map { it.buildDir } else emptyList())

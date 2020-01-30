@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.pill
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.kotlin.dsl.extra
@@ -18,7 +16,9 @@ import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
-class JpsCompatiblePlugin : Plugin<Project> {
+const val EMBEDDED_CONFIGURATION_NAME = "embedded"
+
+class JpsCompatiblePluginTasks(private val rootProject: Project, private val platformDir: File, private val resourcesDir: File) {
     companion object {
         private val DIST_LIBRARIES = listOf(
             ":kotlin-annotations-jvm",
@@ -55,33 +55,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
     }
 
-    override fun apply(project: Project) {
-        project.configurations.maybeCreate(EmbeddedComponents.CONFIGURATION_NAME)
-        project.extensions.create("pill", PillExtension::class.java)
-
-        // 'jpsTest' does not require the 'tests-jar' artifact
-        project.configurations.create("jpsTest")
-
-        if (project == project.rootProject) {
-            project.tasks.create("pill") {
-                doLast { pill(project) }
-
-                if (System.getProperty("pill.android.tests", "false") == "true") {
-                    TaskUtils.useAndroidSdk(this)
-                    TaskUtils.useAndroidJar(this)
-                }
-            }
-
-            project.tasks.create("unpill") {
-                doLast { unpill(project) }
-            }
-        }
-    }
-
     private lateinit var projectDir: File
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
-    private lateinit var platformDir: File
     private lateinit var intellijCoreDir: File
     private var isAndroidStudioPlatform: Boolean = false
 
@@ -90,25 +66,24 @@ class JpsCompatiblePlugin : Plugin<Project> {
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
-            ?: error("Invalid platform version: $platformVersion")
-        platformDir = IntellijRootUtils.getIntellijRootDir(project)
+                ?: error("Invalid platform version: $platformVersion")
         intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
         isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
 
-    private fun pill(rootProject: Project) {
+    fun pill() {
         initEnvironment(rootProject)
 
         val variantOptionValue = System.getProperty("pill.variant", "base").toUpperCase()
-        val variant = PillExtension.Variant.values().firstOrNull { it.name == variantOptionValue }
-                ?: run {
-                    rootProject.logger.error("Invalid variant name: $variantOptionValue")
-                    return
-                }
+        val variant = PillExtensionMirror.Variant.values().firstOrNull { it.name == variantOptionValue }
+            ?: run {
+                rootProject.logger.error("Invalid variant name: $variantOptionValue")
+                return
+            }
 
         rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
 
-        if (variant == PillExtension.Variant.NONE || variant == PillExtension.Variant.DEFAULT) {
+        if (variant == PillExtensionMirror.Variant.NONE || variant == PillExtensionMirror.Variant.DEFAULT) {
             rootProject.logger.error("'none' and 'default' should not be passed as a Pill variant property value")
             return
         }
@@ -142,8 +117,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
         files.forEach { it.write() }
     }
 
-    private fun unpill(project: Project) {
-        initEnvironment(project)
+    fun unpill() {
+        initEnvironment(rootProject)
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
@@ -170,7 +145,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun copyRunConfigurations() {
-        val runConfigurationsDir = File(projectDir, "buildSrc/src/main/resources/runConfigurations")
+        val runConfigurationsDir = File(resourcesDir, "runConfigurations")
         val targetDir = File(projectDir, ".idea/runConfigurations")
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
         val additionalIdeaArgs = if (isAndroidStudioPlatform) "-Didea.platform.prefix=AndroidStudio" else ""
@@ -296,7 +271,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         workspaceFile.writeText(postProcessedXml)
     }
 
-    private class DependencyPatcher(private val rootProject: Project): Function2<PProject, PDependency, List<PDependency>> {
+    private class DependencyPatcher(private val rootProject: Project) : Function2<PProject, PDependency, List<PDependency>> {
         private val mappings: Map<String, Optional<PLibrary>> = run {
             val distLibDir = File(rootProject.extra["distLibDir"].toString())
             val result = HashMap<String, Optional<PLibrary>>()

@@ -16,5 +16,6 @@ versions.jar.picocontainer=1.2
 versions.jar.serviceMessages=2019.1.4
 ignore.jar.snappy-in-java=true
 versions.gradle-api=4.5.1
+versions.shadow=5.2.0
 ignore.jar.common=true
 ignore.jar.lombok-ast=true

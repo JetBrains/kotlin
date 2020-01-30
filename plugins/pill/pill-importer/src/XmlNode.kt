@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch", "ClassName")
 package org.jetbrains.kotlin.pill
 
 import shadow.org.jdom2.Document
@@ -11,14 +10,12 @@ import shadow.org.jdom2.Element
 import shadow.org.jdom2.output.Format
 import shadow.org.jdom2.output.XMLOutputter
 
-class xml(val name: String, private vararg val args: Pair<String, Any>, block: xml.() -> Unit = {}) {
-    private companion object {
-        fun makeXml(name: String, vararg args: Pair<String, Any>, block: xml.() -> Unit = {}): xml {
-            return xml(name, *args, block = block)
-        }
-    }
+fun xml(name: String, vararg args: Pair<String, Any>, block: XmlNode.() -> Unit = {}): XmlNode {
+    return XmlNode(name, args.asList(), block)
+}
 
-    private val children = mutableListOf<xml>()
+class XmlNode(val name: String, private val args: List<Pair<String, Any>>, block: XmlNode.() -> Unit = {}) {
+    private val children = mutableListOf<XmlNode>()
     private var value: Any? = null
 
     init {
@@ -26,11 +23,11 @@ class xml(val name: String, private vararg val args: Pair<String, Any>, block: x
         block()
     }
 
-    fun xml(name: String, vararg args: Pair<String, Any>, block: xml.() -> Unit = {}) {
-        children += makeXml(name, *args, block = block)
+    fun xml(name: String, vararg args: Pair<String, Any>, block: XmlNode.() -> Unit = {}) {
+        children += XmlNode(name, args.asList(), block = block)
     }
 
-    fun add(xml: xml) {
+    fun add(xml: XmlNode) {
         children += xml
     }
 
