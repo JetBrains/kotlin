@@ -14,14 +14,14 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:x index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+      VALUE_PARAMETER name:x index:0 type:kotlin.IntArray
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'x: kotlin.IntArray [vararg] declared in <root>.C.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'x: kotlin.IntArray declared in <root>.C.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.IntArray
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.C

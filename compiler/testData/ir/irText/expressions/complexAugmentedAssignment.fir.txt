@@ -114,13 +114,13 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Unit
-    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    VALUE_PARAMETER name:a index:0 type:kotlin.IntArray
     BLOCK_BODY
       VAR name:i type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-          $this: GET_VAR 'a: kotlin.IntArray [vararg] declared in <root>.test1' type=kotlin.IntArray origin=null
+          $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
           index: BLOCK type=kotlin.Int origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
               GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
                 $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
             GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-        $this: GET_VAR 'a: kotlin.IntArray [vararg] declared in <root>.test1' type=kotlin.IntArray origin=null
+        $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
         index: BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null

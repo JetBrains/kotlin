@@ -24,4 +24,5 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
       RETURN type=kotlin.Nothing from='public final fun testSpread (a: kotlin.Any): kotlin.IntArray declared in <root>'
         CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
           elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-            GET_VAR 'a: kotlin.Any declared in <root>.testSpread' type=kotlin.IntArray origin=null
+            SPREAD_ELEMENT
+              GET_VAR 'a: kotlin.Any declared in <root>.testSpread' type=kotlin.IntArray origin=null

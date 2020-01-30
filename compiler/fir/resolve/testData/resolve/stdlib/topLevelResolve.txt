@@ -23,7 +23,7 @@ FILE: topLevelResolve.kt
             R|<local>/it|.R|kotlin/Int.times|(Int(2))
         }
         )
-        lval second: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/intArrayOf|(Int(4), Int(5), Int(6)).R|kotlin/collections/map|<R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=UNKNOWN>  {
+        lval second: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/intArrayOf|(vararg(Int(4), Int(5), Int(6))).R|kotlin/collections/map|<R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=UNKNOWN>  {
             R|<local>/it|.R|kotlin/Int.times|(Int(2))
         }
         )
