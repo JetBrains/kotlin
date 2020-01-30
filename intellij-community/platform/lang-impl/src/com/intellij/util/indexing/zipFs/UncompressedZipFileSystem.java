@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.zipFs;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -19,14 +20,17 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UncompressedZipFileSystem extends FileSystem {
-  @NotNull
-  private final JBZipFile myUncompressedZip;
-  @NotNull
-  private final FileChannel myChannel;
+  private static final Logger LOG = Logger.getInstance(UncompressedZipFileSystem.class);
+
+  private volatile JBZipFile myUncompressedZip;
+  private volatile FileChannel myChannel;
+  private volatile ZipTreeNode myRoot;
+
   @NotNull
   private final Path myUncompressedZipPath;
+  @NotNull
   private final UncompressedZipFileSystemProvider myProvider;
-  private final ZipTreeNode myRoot = new ZipTreeNode();
+
   // probably should be eliminated
   private final Set<FileChannel> myOpenFiles = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -34,9 +38,7 @@ public class UncompressedZipFileSystem extends FileSystem {
     myUncompressedZipPath = uncompressedZip;
     myProvider = provider;
     assert uncompressedZip.getFileSystem() == FileSystems.getDefault();
-    myUncompressedZip = new JBZipFile(uncompressedZip.toFile());
-    myChannel = FileChannel.open(uncompressedZip, StandardOpenOption.READ);
-    buildTree();
+    sync();
   }
 
   @NotNull
@@ -51,8 +53,31 @@ public class UncompressedZipFileSystem extends FileSystem {
     return channel;
   }
 
+  public void sync() throws IOException {
+    try {
+      if (myUncompressedZip != null) {
+        try {
+          myUncompressedZip.close();
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+    } finally {
+      myUncompressedZip = new JBZipFile(myUncompressedZipPath.toFile());
+      if (myChannel == null) {
+        myChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
+      } else {
+        myChannel.force(true);
+      }
+      buildTree();
+    }
+  }
+
   private void buildTree() {
+    myRoot = new ZipTreeNode();
     for (JBZipEntry entry : myUncompressedZip.getEntries()) {
+      if (entry.isDirectory()) continue;
       List<String> names = StringUtil.split(entry.getName(), getSeparator());
       ZipTreeNode current = myRoot;
       for (int i = 0; i < names.size(); i++) {

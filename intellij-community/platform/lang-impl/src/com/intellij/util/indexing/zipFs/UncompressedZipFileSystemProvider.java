@@ -48,6 +48,13 @@ public class UncompressedZipFileSystemProvider extends FileSystemProvider {
 
   @Override
   public FileChannel newFileChannel(Path path, Set<? extends OpenOption> options, FileAttribute<?>... attrs) throws IOException {
+    assert options != null;
+    //TODO we should not open a zip to write
+    //if (options.contains(StandardOpenOption.CREATE) ||
+    //    options.contains(StandardOpenOption.CREATE_NEW) ||
+    //    options.contains(StandardOpenOption.WRITE)) {
+    //  throw new UnsupportedOperationException();
+    //}
     UncompressedZipFileSystem.ZipTreeNode node = find(path);
     if (node.isDirectory()) {
       throw new IllegalArgumentException(path.toString());
