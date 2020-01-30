@@ -1467,6 +1467,7 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     expression.callableReference.toFirSourceElement(), expression.callableReference.getReferencedNameAsName(), null
                 )
                 explicitReceiver = expression.receiverExpression?.toFirExpression("Incorrect receiver expression")
+                safe = expression.hasQuestionMarks
             }
         }
 

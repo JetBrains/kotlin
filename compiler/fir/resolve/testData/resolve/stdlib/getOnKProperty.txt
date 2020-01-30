@@ -4,7 +4,7 @@ FILE: getOnKProperty.kt
             ^ Int(42)
         }
     public final fun test(): R|kotlin/Unit| {
-        lval f: R|kotlin/reflect/KProperty1<kotlin/Any, kotlin/Int>| = Q|kotlin/Any|::R|/meaning|
+        lval f: R|kotlin/reflect/KProperty1<kotlin/Any, kotlin/Int>| = Q|kotlin/Any|?::R|/meaning|
         R|<local>/f|.<Inapplicable(INAPPLICABLE): [kotlin/reflect/KProperty1.get]>#(Null(null))
         R|<local>/f|.R|FakeOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(String())
     }

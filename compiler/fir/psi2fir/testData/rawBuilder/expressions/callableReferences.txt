@@ -29,3 +29,5 @@ FILE: callableReferences.kt
         public? get(): <implicit>
     public? final? val test7: <implicit> = ::baz#
         public? get(): <implicit>
+    public? final? val test8: <implicit> = A#?::foo#
+        public? get(): <implicit>

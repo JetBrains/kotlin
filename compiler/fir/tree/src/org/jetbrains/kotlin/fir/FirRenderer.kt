@@ -944,6 +944,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
         callableReferenceAccess.annotations.renderAnnotations()
         callableReferenceAccess.explicitReceiver?.accept(this)
+        if (callableReferenceAccess.safe) {
+            print("?")
+        }
         print("::")
         callableReferenceAccess.calleeReference.accept(this)
     }
