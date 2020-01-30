@@ -774,6 +774,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extensionOnObject.kt");
             }
 
+            @TestMetadata("extensionSafeCall.kt")
+            public void testExtensionSafeCall() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extensionSafeCall.kt");
+            }
+
             @TestMetadata("farInvokeExtension.kt")
             public void testFarInvokeExtension() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
