@@ -65,7 +65,7 @@ class WorkersIT : BaseGradleIT() {
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
                     kotlinClassesDir(sourceSet = "js/main") +
-                            if (jsMode == JsMode.IR) "manifest" else "new-mpp-parallel.js"
+                            if (jsMode == JsMode.IR) "default/manifest" else "new-mpp-parallel.js"
                 )
                 expectedKotlinOutputFiles.forEach { assertFileExists(it) }
                 assertSubstringCount("Loaded GradleKotlinCompilerWork", 1)
