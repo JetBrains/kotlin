@@ -157,10 +157,24 @@ public final class IndexInfrastructureVersion {
       //it is required to be able to read indexes files on the IDE
       if (!version.getBaseIndexes().equals(getBaseIndexes())) continue;
 
-      // right now we have to rebuild all the stub indexes if only one
-      // has the different version. We count stub indexes as one bulk for now
-      // missing stub indexes counts too, we will have to do too much work to recover!
-      if (!version.getStubIndexVersions().equals(getStubIndexVersions())) continue;
+      // stub indexes has to be grouped by file types
+      // because they can only be rebuild if a stub tree for
+      // a given file is openned or re-built
+      // right now we simply ignore that fact
+      int commonStubIndexesCount = Sets.intersection(
+        version.getStubIndexVersions().entrySet(),
+        getStubIndexVersions().entrySet()
+      ).size();
+
+      //a magic number - we skip loading if there are too few indexes matched
+      //should we check for the StubUpdatingIndex here as well?
+      if (commonStubIndexesCount < 3) continue;
+
+      //how may of included in the remote index versions are different?
+      int stubIndexesDiff = Sets.difference(
+        version.getStubIndexVersions().entrySet(),
+        getStubIndexVersions().entrySet()
+      ).size();
 
 
       //how many common indexes are there?
@@ -173,22 +187,17 @@ public final class IndexInfrastructureVersion {
       //should we check for the StubUpdatingIndex here as well?
       if (commonFileIndexesCount < 3) continue;
 
-      // file based indexes are independent
-      // we only need to count how different they are
-      // is it OK that we have more indexers then in the given version
+      // how many of included in the downloadable index versions are different?
       int fileBasedDiff = Sets.difference(
         version.getFileBasedIndexVersions().entrySet(),
         getFileBasedIndexVersions().entrySet()
       ).size();
 
-
-
-      //too huge difference in versions
-      if (fileBasedDiff > 2 * getFileBasedIndexVersions().size() / 3) continue;
+      int negativeScope = fileBasedDiff + stubIndexesDiff;
 
       //computing min of the score
-      if (bestScore == null || bestScore > fileBasedDiff) {
-        bestScore = fileBasedDiff;
+      if (bestScore == null || bestScore > negativeScope) {
+        bestScore = negativeScope;
         bestVersion = version;
       }
     }
