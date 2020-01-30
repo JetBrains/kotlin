@@ -27,9 +27,6 @@ class AsyncStackTraceContext(
     val method: Method
 ) {
     val log by logger
-    val debugMetadataKtType = context.findClassSafe(
-        DEBUG_METADATA_KT
-    )!!
 
     private companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
@@ -76,20 +73,33 @@ class AsyncStackTraceContext(
         val continuationType = continuation.referenceType() as? ClassType ?: return
         val baseContinuationSupertype = findBaseContinuationSuperSupertype(continuationType) ?: return
 
-        val location = createLocation(continuation)
+        val debugMetadataKtType = debugMetadataKtType()
+        if (debugMetadataKtType is ClassType) {
+            val location = createLocation(continuation, debugMetadataKtType)
 
-        location?.let {
-            val spilledVariables = getSpilledVariables(continuation) ?: emptyList()
-            consumer.add(DefaultCoroutineStackFrameItem(location, spilledVariables))
+            location?.let {
+                val spilledVariables = getSpilledVariables(continuation, debugMetadataKtType) ?: emptyList()
+                consumer.add(DefaultCoroutineStackFrameItem(location, spilledVariables))
+            }
+
+            val completionField = baseContinuationSupertype.fieldByName("completion") ?: return
+            val completion = continuation.getValue(completionField) as? ObjectReference ?: return
+            collectFramesRecursively(completion, consumer)
         }
-
-        val completionField = baseContinuationSupertype.fieldByName("completion") ?: return
-        val completion = continuation.getValue(completionField) as? ObjectReference ?: return
-        collectFramesRecursively(completion, consumer)
     }
 
-    private fun createLocation(continuation: ObjectReference): GeneratedLocation? {
-        val instance = invokeGetStackTraceElement(continuation) ?: return null
+    fun debugMetadataKtType(): ClassType? {
+        val debugMetadataKtType = context.findClassSafe(DEBUG_METADATA_KT)
+        if (debugMetadataKtType != null) {
+            return debugMetadataKtType
+        } else {
+            log.warn("Continuation information found but no $DEBUG_METADATA_KT class exists. Please check kotlin-stdlib version.")
+        }
+        return null
+    }
+
+    private fun createLocation(continuation: ObjectReference, debugMetadataKtType: ClassType): GeneratedLocation? {
+        val instance = invokeGetStackTraceElement(continuation, debugMetadataKtType) ?: return null
         val className = context.invokeMethodAsString(instance, "getClassName") ?: return null
         val methodName = context.invokeMethodAsString(instance, "getMethodName") ?: return null
         val lineNumber = context.invokeMethodAsInt(instance, "getLineNumber")?.takeIf {
@@ -99,10 +109,10 @@ class AsyncStackTraceContext(
         return GeneratedLocation(context.debugProcess, locationClass, methodName, lineNumber)
     }
 
-    private fun invokeGetStackTraceElement(continuation: ObjectReference): ObjectReference? {
+    private fun invokeGetStackTraceElement(continuation: ObjectReference, debugMetadataKtType: ClassType): ObjectReference? {
         val stackTraceElement =
             context.invokeMethodAsObject(debugMetadataKtType, "getStackTraceElement", continuation) ?: return null
-        // redundant i believe
+
         stackTraceElement.referenceType().takeIf { it.name() == StackTraceElement::class.java.name } ?: return null
 
         context.keepReference(stackTraceElement)
@@ -110,7 +120,13 @@ class AsyncStackTraceContext(
     }
 
     fun getSpilledVariables(continuation: ObjectReference): List<XNamedValue>? {
+        debugMetadataKtType()?.let {
+            return getSpilledVariables(continuation, it)
+        }
+        return null
+    }
 
+    fun getSpilledVariables(continuation: ObjectReference, debugMetadataKtType: ClassType): List<XNamedValue>? {
         val rawSpilledVariables =
             context.invokeMethodAsArray(
                 debugMetadataKtType,
