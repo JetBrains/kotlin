@@ -2488,7 +2488,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
 
   static class More extends JPanel {
     static final More instance = new More();
-    final JLabel label = new JLabel("    ... more   ");
+    final JLabel label = new JLabel(IdeBundle.message("search.everywhere.points.spaces.more"));
 
     private More() {
       super(new BorderLayout());
