@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.fir.tree.generator.call
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
+import org.jetbrains.kotlin.fir.tree.generator.printer.call
 
 abstract class AbstractFirTreeImplementationConfigurator {
     private val elementsWithImpl = mutableSetOf<Element>()

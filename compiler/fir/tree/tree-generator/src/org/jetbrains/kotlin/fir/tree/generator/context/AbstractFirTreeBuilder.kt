@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Type
+import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import kotlin.reflect.KClass
 
 abstract class AbstractFirTreeBuilder {

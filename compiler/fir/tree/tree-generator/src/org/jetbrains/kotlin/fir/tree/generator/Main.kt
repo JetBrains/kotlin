@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.printer.GENERATED_MESSAGE
+import org.jetbrains.kotlin.fir.tree.generator.printer.printElements
 import java.io.File
 
 

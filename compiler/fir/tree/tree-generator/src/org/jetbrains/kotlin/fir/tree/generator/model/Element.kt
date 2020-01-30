@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.fir.tree.generator.typeWithArguments
+import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
+import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 
 interface KindOwner : Importable {
     var kind: Implementation.Kind?
