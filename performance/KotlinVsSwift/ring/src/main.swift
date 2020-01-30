@@ -7,8 +7,8 @@ import Foundation
 import benchmark
 
 var runner = BenchmarksRunner()
-let args = KotlinArray(size: Int32(CommandLine.arguments.count - 1), init: {index in
-    CommandLine.arguments[Int(truncating: index) + 1]
+let args = KotlinArray<NSString>(size: Int32(CommandLine.arguments.count - 1), init: {index in
+    CommandLine.arguments[Int(truncating: index) + 1] as NSString
 })
 
 let companion = BenchmarkEntryWithInit.Companion()

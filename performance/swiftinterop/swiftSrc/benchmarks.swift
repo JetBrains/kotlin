@@ -40,7 +40,7 @@ class SwiftInteropBenchmarks {
     let BENCHMARK_SIZE = 10000
     let SMALL_BENCHMARK_SIZE = 50
     let MEDIUM_BENCHMARK_SIZE = 100
-    var multigraph = Multigraph()
+    var multigraph = Multigraph<NSNumber>()
     var cityMap = CityMap()
 
     func randomInt(border: Int) -> Int {
@@ -88,11 +88,11 @@ class SwiftInteropBenchmarks {
     }
 
     func initMultigraph(size: Int) {
-        multigraph = Multigraph()
+        multigraph = Multigraph<NSNumber>()
         for i in 1...size {
-            multigraph.addEdge(from: i, to: i + 1, cost: SimpleCost(cost: (i + 1) % i ))
-            multigraph.addEdge(from: i, to: i * 2, cost: SimpleCost(cost: (i * 2) % i))
-            multigraph.addEdge(from: i + 5, to: i, cost: SimpleCost(cost: (i + 5) % i))
+            multigraph.addEdge(from: NSNumber(value: i), to: NSNumber(value: i + 1), cost: SimpleCost(cost: (i + 1) % i ))
+            multigraph.addEdge(from: NSNumber(value: i), to: NSNumber(value: i * 2), cost: SimpleCost(cost: (i * 2) % i))
+            multigraph.addEdge(from: NSNumber(value: i + 5), to: NSNumber(value: i), cost: SimpleCost(cost: (i + 5) % i))
         }
     }
 
@@ -134,7 +134,7 @@ class SwiftInteropBenchmarks {
         for _ in 0...SMALL_BENCHMARK_SIZE {
             var vertexes = Array(multigraph.allVertexes)
             var result = multigraph.searchRoutesWithLimits(start: 1,
-                                                           finish: SMALL_BENCHMARK_SIZE / 2 + SMALL_BENCHMARK_SIZE / 4,
+                                                           finish: NSNumber(value: SMALL_BENCHMARK_SIZE / 2 + SMALL_BENCHMARK_SIZE / 4),
                                                            limits: SimpleCost(cost: SMALL_BENCHMARK_SIZE / 5))
             var count = result.map{ $0.count }.reduce(0, +)
         }
@@ -199,7 +199,7 @@ class SwiftInteropBenchmarks {
         var edges = multigraphCopy.allEdges
         while (!edges.isEmpty) {
             multigraphCopy.removeEdge(id: UInt32(edges.randomElement()!))
-            let vertexes = multigraphCopy.allVertexes
+            let vertexes = multigraphCopy.allVertexes as! Set<NSNumber>
             multigraphCopy.removeVertex(vertex: vertexes.randomElement()!)
             edges = multigraphCopy.allEdges
         }
