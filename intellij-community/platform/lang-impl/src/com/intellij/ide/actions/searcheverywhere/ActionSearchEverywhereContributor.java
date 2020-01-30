@@ -54,7 +54,7 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
   @NotNull
   @Override
   public String getGroupName() {
-    return "Actions";
+    return IdeBundle.message("search.everywhere.group.name.actions");
   }
 
   @NotNull

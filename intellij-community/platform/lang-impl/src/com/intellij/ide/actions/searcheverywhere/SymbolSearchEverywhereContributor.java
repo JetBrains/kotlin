@@ -29,7 +29,7 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
   @NotNull
   @Override
   public String getGroupName() {
-    return "Symbols";
+    return IdeBundle.message("search.everywhere.group.name.symbols");
   }
 
   @NotNull
