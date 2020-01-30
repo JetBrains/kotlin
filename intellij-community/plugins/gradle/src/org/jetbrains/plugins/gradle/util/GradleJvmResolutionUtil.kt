@@ -13,6 +13,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.lang.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 
 const val JAVA_HOME = "JAVA_HOME"
 
@@ -27,6 +28,20 @@ fun suggestGradleJvm(project: Project, projectSdk: Sdk?, externalProjectPath: St
       ?: getAndAddExternalJdkReference()
       ?: return null
     return resolveReference(suggestedGradleJvm)
+  }
+}
+
+fun updateGradleJvm(project: Project, externalProjectPath: String) {
+  val settings = GradleSettings.getInstance(project)
+  val projectSettings = settings.getLinkedProjectSettings(externalProjectPath) ?: return
+  val gradleJvm = projectSettings.gradleJvm ?: return
+  val projectRootManager = ProjectRootManager.getInstance(project)
+  val projectSdk = projectRootManager.projectSdk ?: return
+  val gradleVersion = projectSettings.resolveGradleVersion()
+  with(GradleJvmResolutionContext(project, projectSdk, externalProjectPath, gradleVersion)) {
+    if (projectSdk.name != gradleJvm) return
+    if (!isValidAndSupported(projectSdk)) return
+    projectSettings.gradleJvm = ExternalSystemJdkUtil.USE_PROJECT_JDK
   }
 }
 

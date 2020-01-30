@@ -33,6 +33,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.jetbrains.plugins.gradle.util.GradleEnvironment
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import org.jetbrains.plugins.gradle.util.suggestGradleJvm
+import org.jetbrains.plugins.gradle.util.updateGradleJvm
 
 internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   override fun isProjectFile(file: VirtualFile): Boolean {
@@ -66,7 +67,7 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
                                         .use(MODAL_SYNC))
     ExternalSystemUtil.refreshProject(externalProjectPath,
                                       ImportSpecBuilder(project, SYSTEM_ID)
-                                        .callback(createFinalImportCallback(project, settings)))
+                                        .callback(createFinalImportCallback(project, externalProjectPath)))
   }
 
   fun setupGradleSettings(settings: GradleProjectSettings, projectDirectory: String, project: Project, projectSdk: Sdk? = null) {
@@ -98,35 +99,36 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     return FileUtil.toCanonicalPath(gradleHome.path)
   }
 
-  private fun createFinalImportCallback(project: Project, projectSettings: ExternalProjectSettings): ExternalProjectRefreshCallback {
+  private fun createFinalImportCallback(project: Project, externalProjectPath: String): ExternalProjectRefreshCallback {
     return object : ExternalProjectRefreshCallback {
       override fun onSuccess(externalProject: DataNode<ProjectData>?) {
         if (externalProject == null) return
-        val selectDataTask = {
-          val projectInfo = InternalExternalProjectInfo(SYSTEM_ID, projectSettings.externalProjectPath, externalProject)
-          val dialog = ExternalProjectDataSelectorDialog(project, projectInfo)
-          if (dialog.hasMultipleDataToSelect()) {
-            dialog.showAndGet()
-          }
-          else {
-            Disposer.dispose(dialog.disposable)
-          }
-        }
-        val importTask = {
-          ProjectDataManager.getInstance().importData(externalProject, project, false)
-        }
-        val showSelectiveImportDialog = GradleSettings.getInstance(project).showSelectiveImportDialogOnInitialImport()
-        val application = ApplicationManager.getApplication()
-        if (showSelectiveImportDialog && !application.isHeadlessEnvironment) {
-          application.invokeLater {
-            selectDataTask()
-            application.executeOnPooledThread(importTask)
-          }
+        selectDataToImport(project, externalProjectPath, externalProject)
+        importData(project, externalProject)
+        updateGradleJvm(project, externalProjectPath)
+      }
+    }
+  }
+
+  private fun selectDataToImport(project: Project, externalProjectPath: String, externalProject: DataNode<ProjectData>) {
+    val settings = GradleSettings.getInstance(project)
+    val showSelectiveImportDialog = settings.showSelectiveImportDialogOnInitialImport()
+    val application = ApplicationManager.getApplication()
+    if (showSelectiveImportDialog && !application.isHeadlessEnvironment) {
+      application.invokeAndWait {
+        val projectInfo = InternalExternalProjectInfo(SYSTEM_ID, externalProjectPath, externalProject)
+        val dialog = ExternalProjectDataSelectorDialog(project, projectInfo)
+        if (dialog.hasMultipleDataToSelect()) {
+          dialog.showAndGet()
         }
         else {
-          importTask()
+          Disposer.dispose(dialog.disposable)
         }
       }
     }
+  }
+
+  private fun importData(project: Project, externalProject: DataNode<ProjectData>) {
+    ProjectDataManager.getInstance().importData(externalProject, project, false)
   }
 }
