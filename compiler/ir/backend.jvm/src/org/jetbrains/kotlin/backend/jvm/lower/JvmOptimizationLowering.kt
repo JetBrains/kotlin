@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
     ::JvmOptimizationLowering,
-    name = "JvmBuiltinOptimizationLowering",
+    name = "JvmOptimizationLowering",
     description = "Optimize code for JVM code generation"
 )
 

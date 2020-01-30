@@ -23,4 +23,5 @@ FILE fqName:<root> fileName:/castFromAny.kt
         GET_VAR 'a: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
       CALL 'public abstract fun invoke (): kotlin.Unit declared in <root>.KRunnable' type=kotlin.Unit origin=null
         $this: CALL 'public final fun KRunnable (block: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>' type=<root>.KRunnable origin=null
-          block: GET_VAR 'a: kotlin.Any? declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
+          block: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+            GET_VAR 'a: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null

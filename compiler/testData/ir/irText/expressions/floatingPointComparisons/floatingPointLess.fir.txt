@@ -18,7 +18,8 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
               GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: GET_VAR 'x: kotlin.Double declared in <root>.test2d' type=kotlin.Double origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Double origin=null
+              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -39,8 +40,10 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Double origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Double origin=null
+              arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
+              arg1: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -63,7 +66,8 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
               GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
             then: CALL 'public final fun less (arg0: kotlin.Float, arg1: kotlin.Float): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: GET_VAR 'x: kotlin.Float declared in <root>.test2f' type=kotlin.Float origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Float origin=null
+              arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -84,8 +88,10 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun less (arg0: kotlin.Float, arg1: kotlin.Float): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Float origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Float origin=null
+              arg0: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
+              arg1: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
