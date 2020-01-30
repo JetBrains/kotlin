@@ -79,6 +79,8 @@ public class ExternalProjectSerializationService implements SerializationService
           writeString(writer, "description", project.getDescription());
           writeString(writer, "group", project.getGroup());
           writeString(writer, "version", project.getVersion());
+          writeString(writer, "sourceCompatibility", project.getSourceCompatibility());
+          writeString(writer, "targetCompatibility", project.getTargetCompatibility());
           writeString(writer, "projectDir", project.getProjectDir().getPath());
           writeString(writer, "buildDir", project.getBuildDir().getPath());
           writeFile(writer, "buildFile", project.getBuildFile());
@@ -395,6 +397,8 @@ public class ExternalProjectSerializationService implements SerializationService
           externalProject.setDescription(readString(reader, "description"));
           externalProject.setGroup(assertNotNull(readString(reader, "group")));
           externalProject.setVersion(assertNotNull(readString(reader, "version")));
+          externalProject.setSourceCompatibility(readString(reader, "sourceCompatibility"));
+          externalProject.setTargetCompatibility(readString(reader, "targetCompatibility"));
           File projectDir = readFile(reader, "projectDir");
           if (projectDir != null) {
             externalProject.setProjectDir(projectDir);

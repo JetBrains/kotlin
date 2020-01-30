@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.model;
 
 import org.gradle.tooling.model.Model;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +37,14 @@ public interface ExternalProject extends Model, Serializable {
 
   @NotNull
   String getVersion();
+
+  @ApiStatus.Experimental
+  @Nullable
+  String getSourceCompatibility();
+
+  @ApiStatus.Experimental
+  @Nullable
+  String getTargetCompatibility();
 
   @NotNull
   Map<String, ? extends ExternalProject> getChildProjects();

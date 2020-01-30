@@ -23,6 +23,10 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   private String group;
   @NotNull
   private String version;
+  @Nullable
+  private String sourceCompatibility;
+  @Nullable
+  private String targetCompatibility;
   @NotNull
   private TreeMap<String, DefaultExternalProject> childProjects;
   @NotNull
@@ -56,6 +60,8 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
     qName = externalProject.getQName();
     version = externalProject.getVersion();
     group = externalProject.getGroup();
+    sourceCompatibility = externalProject.getSourceCompatibility();
+    targetCompatibility = externalProject.getTargetCompatibility();
     description = externalProject.getDescription();
     projectDir = externalProject.getProjectDir();
     buildDir = externalProject.getBuildDir();
@@ -152,6 +158,26 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
 
   public void setVersion(@NotNull String version) {
     this.version = version;
+  }
+
+  @Override
+  @Nullable
+  public String getSourceCompatibility() {
+    return sourceCompatibility;
+  }
+
+  public void setSourceCompatibility(@Nullable String sourceCompatibility) {
+    this.sourceCompatibility = sourceCompatibility;
+  }
+
+  @Override
+  @Nullable
+  public String getTargetCompatibility() {
+    return targetCompatibility;
+  }
+
+  public void setTargetCompatibility(@Nullable String targetCompatibility) {
+    this.targetCompatibility = targetCompatibility;
   }
 
   @NotNull

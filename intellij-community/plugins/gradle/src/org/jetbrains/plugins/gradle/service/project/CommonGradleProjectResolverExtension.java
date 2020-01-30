@@ -20,6 +20,9 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -31,6 +34,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.lang.JavaVersion;
 import gnu.trove.THashSet;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.GradleModuleVersion;
@@ -61,6 +65,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.newLinkedHashSet;
@@ -92,10 +97,13 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
       ideProject.createChild(ProjectKeys.CONFIGURATION,
                              new ConfigurationDataImpl(GradleConstants.SYSTEM_ID, intellijSettings.getSettings()));
     }
+
+    populateProjectSdkModel(gradleProject, ideProject);
   }
 
   @NotNull
   @Override
+  @SuppressWarnings("deprecation")
   public DataNode<ModuleData> createModule(@NotNull IdeaModule gradleModule, @NotNull DataNode<ProjectData> projectDataNode) {
     DataNode<ModuleData> mainModuleNode = createMainModule(resolverCtx, gradleModule, projectDataNode);
     final ModuleData mainModuleData = mainModuleNode.getData();
@@ -129,10 +137,9 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
         sourceSetData.setVersion(externalProject.getVersion());
         sourceSetData.setIdeModuleGroup(moduleGroup);
 
-        sourceSetData.setSourceCompatibility(sourceSet.getSourceCompatibility());
-        sourceSetData.setPreview(sourceSet.isPreview());
-        sourceSetData.setTargetCompatibility(sourceSet.getTargetCompatibility());
-        sourceSetData.setSdkName(jdkName);
+        sourceSetData.internalSetSourceCompatibility(sourceSet.getSourceCompatibility());
+        sourceSetData.internalSetTargetCompatibility(sourceSet.getTargetCompatibility());
+        sourceSetData.internalSetSdkName(jdkName);
 
         final Set<File> artifacts = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
         if ("main".equals(sourceSet.getName())) {
@@ -161,6 +168,8 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
           projectDataNode.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS);
         assert sourceSetMap != null;
         sourceSetMap.put(moduleId, Pair.create(sourceSetDataNode, sourceSet));
+
+        populateModuleSdkModel(gradleModule, sourceSetDataNode);
       }
     }
     else {
@@ -168,18 +177,20 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
         IdeaJavaLanguageSettings languageSettings = gradleModule.getJavaLanguageSettings();
         if (languageSettings != null) {
           if (languageSettings.getLanguageLevel() != null) {
-            mainModuleData.setSourceCompatibility(languageSettings.getLanguageLevel().toString());
+            mainModuleData.internalSetSourceCompatibility(languageSettings.getLanguageLevel().toString());
           }
           if (languageSettings.getTargetBytecodeVersion() != null) {
-            mainModuleData.setTargetCompatibility(languageSettings.getTargetBytecodeVersion().toString());
+            mainModuleData.internalSetTargetCompatibility(languageSettings.getTargetBytecodeVersion().toString());
           }
         }
-        mainModuleData.setSdkName(jdkName);
+        mainModuleData.internalSetSdkName(jdkName);
       }
       catch (UnsupportedMethodException ignore) {
         // org.gradle.tooling.model.idea.IdeaModule.getJavaLanguageSettings method supported since Gradle 2.11
       }
     }
+
+    populateModuleSdkModel(gradleModule, mainModuleNode);
 
     final ProjectData projectData = projectDataNode.getData();
     if (StringUtil.equals(mainModuleData.getLinkedExternalProjectPath(), projectData.getLinkedExternalProjectPath())) {
@@ -188,6 +199,59 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
     }
 
     return mainModuleNode;
+  }
+
+  private static void populateProjectSdkModel(@NotNull IdeaProject ideaProject, @NotNull DataNode<? extends ProjectData> projectNode) {
+    String sdkName = findJdkName(ideaProject.getJdkName());
+    ProjectSdkData projectSdkData = new ProjectSdkData(sdkName);
+    projectNode.createChild(ProjectSdkData.KEY, projectSdkData);
+  }
+
+  private static void populateModuleSdkModel(@NotNull IdeaModule ideaModule, @NotNull DataNode<? extends ModuleData> moduleNode) {
+    String sdkName = findJdkName(ideaModule.getJdkName());
+    ModuleSdkData moduleSdkData = new ModuleSdkData(sdkName);
+    moduleNode.createChild(ModuleSdkData.KEY, moduleSdkData);
+  }
+
+  private static @Nullable String findJdkName(@Nullable String jdkNameOrVersion) {
+    if (jdkNameOrVersion == null) return null;
+    Sdk sdkByName = findJdkByName(jdkNameOrVersion);
+    if (sdkByName != null) return sdkByName.getName();
+    Sdk sdkByVersion = findJdkByVersion(jdkNameOrVersion);
+    if (sdkByVersion != null) return sdkByVersion.getName();
+    return jdkNameOrVersion;
+  }
+
+  private static @Nullable Sdk findJdkByName(@NotNull String jdkName) {
+    ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+    return projectJdkTable.findJdk(jdkName);
+  }
+
+  private static @Nullable Sdk findJdkByVersion(@NotNull String jdkVersionString) {
+    JavaVersion jdkVersion = JavaVersion.tryParse(jdkVersionString);
+    if (jdkVersion == null) return null;
+    ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+    List<Pair<JavaVersion, Sdk>> index = new ArrayList<>();
+    for (Sdk sdk : projectJdkTable.getAllJdks()) {
+      String versionString = getVersionString(sdk);
+      JavaVersion version = JavaVersion.tryParse(versionString);
+      if (version == null) continue;
+      index.add(new Pair<>(version, sdk));
+    }
+    return Stream.concat(
+      index.stream().filter(it -> jdkVersion.equals(it.first)),
+      index.stream().filter(it -> jdkVersion.feature == it.first.feature)
+    )
+      .findFirst()
+      .map(it -> it.second)
+      .orElse(null);
+  }
+
+  private static @Nullable String getVersionString(@NotNull Sdk sdk) {
+    String versionString = sdk.getVersionString();
+    if (versionString != null) return versionString;
+    SdkTypeId type = sdk.getSdkType();
+    return type.getVersionString(sdk);
   }
 
   private static String @NotNull [] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {

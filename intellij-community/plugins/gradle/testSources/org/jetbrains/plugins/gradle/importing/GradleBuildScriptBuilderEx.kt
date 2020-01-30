@@ -42,6 +42,18 @@ class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
     """.trimIndent())
   }
 
+  fun withPrefix(configure: GroovyBuilder.() -> Unit) = apply {
+    addPrefix(GroovyBuilder.generate(configure = configure))
+  }
+
+  fun withTaskConfiguration(name: String, configure: GroovyBuilder.() -> Unit) = apply {
+    addPostfix("""
+      $name {
+      ${GroovyBuilder.generate("  ", configure)}
+      }
+    """.trimIndent())
+  }
+
   fun withJavaPlugin() = apply {
     applyPlugin("'java'")
   }

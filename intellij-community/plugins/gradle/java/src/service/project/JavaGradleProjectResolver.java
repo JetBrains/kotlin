@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.execution.CommandLineUtil;
+import com.intellij.externalSystem.JavaModuleData;
 import com.intellij.externalSystem.JavaProjectData;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -13,6 +14,7 @@ import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
+import com.intellij.openapi.projectRoots.JavaSdkVersion;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,14 +24,13 @@ import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
+import org.gradle.api.JavaVersion;
+import org.gradle.tooling.model.idea.IdeaJavaLanguageSettings;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.model.AnnotationProcessingConfig;
-import org.jetbrains.plugins.gradle.model.AnnotationProcessingModel;
-import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
-import org.jetbrains.plugins.gradle.model.ClasspathEntryModel;
+import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.model.data.AnnotationProcessingData;
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
@@ -46,40 +47,29 @@ import java.util.*;
 @Order(ExternalSystemConstants.UNORDERED)
 public class JavaGradleProjectResolver extends AbstractProjectResolverExtension {
   private final static Logger LOG = Logger.getInstance(JavaGradleProjectResolver.class);
+
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
-    // import java project data
-    final String projectDirPath = resolverCtx.getProjectPath();
+    String compileOutputPath = getCompileOutputPath();
+    IdeaJavaLanguageSettings languageSettings = gradleProject.getJavaLanguageSettings();
+    LanguageLevel languageLevel = getLanguageLevel(languageSettings, false);
+    String targetBytecodeVersion = getTargetBytecodeVersion(languageSettings);
 
-    // Gradle API doesn't expose gradleProject compile output path yet.
-    JavaProjectData javaProjectData = new JavaProjectData(GradleConstants.SYSTEM_ID, projectDirPath + "/build/classes");
+    JavaSdkVersion jdkVersion = JavaProjectData.resolveSdkVersion(gradleProject.getJdkName());
 
-    IdeaProject ideaProject = resolverCtx.getModels().getModel(IdeaProject.class);
-    if (ideaProject != null) {
-      javaProjectData.setJdkVersion(ideaProject.getJdkName());
-    }
-    LanguageLevel resolvedLanguageLevel = null;
-    // org.gradle.tooling.model.idea.IdeaLanguageLevel.getLevel() returns something like JDK_1_6
-    String languageLevel = null;
-    if (ideaProject != null) {
-      languageLevel = ideaProject.getLanguageLevel().getLevel();
-      for (LanguageLevel level : LanguageLevel.values()) {
-        if (level.name().equals(languageLevel)) {
-          resolvedLanguageLevel = level;
-          break;
-        }
-      }
-    }
-    if (resolvedLanguageLevel != null) {
-      javaProjectData.setLanguageLevel(resolvedLanguageLevel);
-    }
-    else {
-      javaProjectData.setLanguageLevel(languageLevel);
-    }
+    JavaProjectData javaProjectData =
+      new JavaProjectData(GradleConstants.SYSTEM_ID, compileOutputPath, jdkVersion, languageLevel, targetBytecodeVersion);
 
     ideProject.createChild(JavaProjectData.KEY, javaProjectData);
 
     nextResolver.populateProjectExtraModels(gradleProject, ideProject);
+  }
+
+  @NotNull
+  private String getCompileOutputPath() {
+    String projectDirPath = resolverCtx.getProjectPath();
+    // Gradle API doesn't expose gradleProject compile output path yet.
+    return projectDirPath + "/build/classes";
   }
 
   @Override
@@ -263,5 +253,103 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
   @Override
   public Set<Class<?>> getExtraProjectModelClasses() {
     return ContainerUtil.set(AnnotationProcessingModel.class, ProjectDependencies.class);
+  }
+
+  @Override
+  public @Nullable DataNode<ModuleData> createModule(@NotNull IdeaModule gradleModule, @NotNull DataNode<ProjectData> projectDataNode) {
+    DataNode<ModuleData> moduleNode = super.createModule(gradleModule, projectDataNode);
+    if (moduleNode == null) return null;
+    ExternalProject externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject.class);
+    if (externalProject == null) return moduleNode;
+    if (resolverCtx.isResolveModulePerSourceSet()) {
+      Map<ExternalSourceSet, DataNode<GradleSourceSetData>> sourceSets = findSourceSets(gradleModule, externalProject, moduleNode);
+      for (Map.Entry<ExternalSourceSet, DataNode<GradleSourceSetData>> entry : sourceSets.entrySet()) {
+        JavaModuleData moduleData = createSourceSetModuleData(gradleModule, entry.getKey());
+        entry.getValue().createChild(JavaModuleData.KEY, moduleData);
+      }
+    }
+    JavaModuleData moduleData = createMainModuleData(gradleModule, externalProject);
+    moduleNode.createChild(JavaModuleData.KEY, moduleData);
+    return moduleNode;
+  }
+
+  private static @NotNull JavaModuleData createMainModuleData(@NotNull IdeaModule ideaModule, @NotNull ExternalProject externalProject) {
+    IdeaJavaLanguageSettings javaLanguageSettings = ideaModule.getJavaLanguageSettings();
+    LanguageLevel languageLevel = getLanguageLevel(externalProject, false);
+    if (languageLevel == null) languageLevel = getLanguageLevel(javaLanguageSettings, false);
+    String targetBytecodeVersion = externalProject.getTargetCompatibility();
+    if (targetBytecodeVersion == null) targetBytecodeVersion = getTargetBytecodeVersion(javaLanguageSettings);
+    return new JavaModuleData(GradleConstants.SYSTEM_ID, languageLevel, targetBytecodeVersion);
+  }
+
+  private static @NotNull JavaModuleData createSourceSetModuleData(@NotNull IdeaModule ideaModule, @NotNull ExternalSourceSet sourceSet) {
+    IdeaJavaLanguageSettings javaLanguageSettings = ideaModule.getJavaLanguageSettings();
+    LanguageLevel languageLevel = getLanguageLevel(sourceSet);
+    if (languageLevel == null) languageLevel = getLanguageLevel(javaLanguageSettings, sourceSet.isPreview());
+    String targetBytecodeVersion = sourceSet.getTargetCompatibility();
+    if (targetBytecodeVersion == null) targetBytecodeVersion = getTargetBytecodeVersion(javaLanguageSettings);
+    return new JavaModuleData(GradleConstants.SYSTEM_ID, languageLevel, targetBytecodeVersion);
+  }
+
+  private @NotNull Map<ExternalSourceSet, DataNode<GradleSourceSetData>> findSourceSets(
+    @NotNull IdeaModule ideaModule,
+    @NotNull ExternalProject externalProject,
+    @NotNull DataNode<ModuleData> moduleNode
+  ) {
+    Collection<DataNode<GradleSourceSetData>> sourceSetNodes = ExternalSystemApiUtil.getChildren(moduleNode, GradleSourceSetData.KEY);
+    Map<String, DataNode<GradleSourceSetData>> sourceSetIndex = new LinkedHashMap<>();
+    for (DataNode<GradleSourceSetData> sourceSetNode : sourceSetNodes) {
+      sourceSetIndex.put(sourceSetNode.getData().getId(), sourceSetNode);
+    }
+    Map<ExternalSourceSet, DataNode<GradleSourceSetData>> result = new LinkedHashMap<>();
+    for (ExternalSourceSet sourceSet : externalProject.getSourceSets().values()) {
+      String moduleId = GradleProjectResolverUtil.getModuleId(resolverCtx, ideaModule, sourceSet);
+      DataNode<GradleSourceSetData> sourceSetNode = sourceSetIndex.get(moduleId);
+      result.put(sourceSet, sourceSetNode);
+    }
+    return result;
+  }
+
+  private static @Nullable LanguageLevel getLanguageLevel(@NotNull ExternalSourceSet sourceSet) {
+    String sourceCompatibility = sourceSet.getSourceCompatibility();
+    if (sourceCompatibility == null) return null;
+    return parseLanguageLevel(sourceCompatibility, sourceSet.isPreview());
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private static @Nullable LanguageLevel getLanguageLevel(@NotNull ExternalProject externalProject, boolean isPreview) {
+    String sourceCompatibility = externalProject.getSourceCompatibility();
+    if (sourceCompatibility == null) return null;
+    return parseLanguageLevel(sourceCompatibility, isPreview);
+  }
+
+  private static @Nullable LanguageLevel getLanguageLevel(@Nullable IdeaJavaLanguageSettings languageSettings, boolean isPreview) {
+    if (languageSettings == null) return null;
+    JavaVersion languageLevel = languageSettings.getLanguageLevel();
+    if (languageLevel == null) return null;
+    return parseLanguageLevel(languageLevel.toString(), isPreview);
+  }
+
+  private static @Nullable LanguageLevel parseLanguageLevel(@NotNull String languageLevelString, boolean isPreview) {
+    LanguageLevel languageLevel = LanguageLevel.parse(languageLevelString);
+    if (languageLevel == null) return null;
+    return setPreview(languageLevel, isPreview);
+  }
+
+  private static @NotNull LanguageLevel setPreview(@NotNull LanguageLevel languageLevel, boolean isPreview) {
+    if (languageLevel.isPreview() == isPreview) return languageLevel;
+    com.intellij.util.lang.JavaVersion javaVersion = languageLevel.toJavaVersion();
+    return Arrays.stream(LanguageLevel.values())
+      .filter(it -> it.isPreview() == isPreview)
+      .filter(it -> it.toJavaVersion().equals(javaVersion))
+      .findFirst()
+      .orElse(languageLevel);
+  }
+
+  private static @Nullable String getTargetBytecodeVersion(@Nullable IdeaJavaLanguageSettings languageSettings) {
+    if (languageSettings == null) return null;
+    JavaVersion targetByteCodeVersion = languageSettings.getTargetBytecodeVersion();
+    if (targetByteCodeVersion == null) return null;
+    return targetByteCodeVersion.toString();
   }
 }

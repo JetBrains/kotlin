@@ -1,14 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing;
 
-import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.LanguageLevelModuleExtensionImpl;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.TestModuleProperties;
 import com.intellij.pom.java.LanguageLevel;
@@ -29,7 +27,7 @@ import java.util.*;
  * @author Vladislav.Soroka
  */
 @SuppressWarnings("GrUnresolvedAccess") // ignore unresolved code for injected Groovy Gradle DSL
-public class GradleMiscImportingTest extends GradleImportingTestCase {
+public class GradleMiscImportingTest extends GradleJavaImportingTestCase {
 
   /**
    * It's sufficient to run the test against one gradle version
@@ -93,6 +91,7 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
 
     assertModules("project", "project.main", "project.test");
+    assertEquals(LanguageLevel.JDK_1_5, getLanguageLevelForModule("project"));
     assertEquals(LanguageLevel.JDK_1_5, getLanguageLevelForModule("project.main"));
     assertEquals(LanguageLevel.JDK_1_8, getLanguageLevelForModule("project.test"));
   }
@@ -110,6 +109,7 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
 
     assertModules("project", "project.main", "project.test");
+    assertEquals(LanguageLevel.JDK_13, getLanguageLevelForModule("project"));
     assertEquals(LanguageLevel.JDK_13, getLanguageLevelForModule("project.main"));
     assertEquals(LanguageLevel.JDK_13_PREVIEW, getLanguageLevelForModule("project.test"));
   }
@@ -125,8 +125,8 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     );
 
     assertModules("project", "project.main", "project.test");
-    assertEquals("1.5", getBytecodeTargetLevel("project.main"));
-    assertEquals("1.8", getBytecodeTargetLevel("project.test"));
+    assertEquals("1.5", getBytecodeTargetLevelForModule("project.main"));
+    assertEquals("1.8", getBytecodeTargetLevelForModule("project.test"));
 
   }
 
@@ -285,17 +285,5 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
 
   private void assertExternalProjectId(String moduleName, String expectedId) {
     assertEquals(expectedId, ExternalSystemApiUtil.getExternalProjectId(getModule(moduleName)));
-  }
-
-  private LanguageLevel getLanguageLevelForModule(final String moduleName) {
-    return LanguageLevelModuleExtensionImpl.getInstance(getModule(moduleName)).getLanguageLevel();
-  }
-
-  private String getBytecodeTargetLevel(String moduleName) {
-    return CompilerConfiguration.getInstance(myProject).getBytecodeTargetLevel(getModule(moduleName));
-  }
-
-  private Sdk getSdkForModule(final String moduleName) {
-    return ModuleRootManager.getInstance(getModule(moduleName)).getSdk();
   }
 }

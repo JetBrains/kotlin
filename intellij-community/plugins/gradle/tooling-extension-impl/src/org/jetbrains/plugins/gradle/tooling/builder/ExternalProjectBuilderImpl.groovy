@@ -96,6 +96,8 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     defaultExternalProject.projectDir = project.projectDir
     defaultExternalProject.sourceSets = getSourceSets(project, resolveSourceSetDependencies, sourceSetFinder)
     defaultExternalProject.tasks = getTasks(project, tasksFactory)
+    defaultExternalProject.sourceCompatibility = getSourceCompatibility(project)
+    defaultExternalProject.targetCompatibility = getTargetCompatibility(project)
 
     addArtifactsData(project, defaultExternalProject)
 
@@ -193,14 +195,8 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
       downloadSources = ideaPluginModule.downloadSources
     }
 
-    def projectSourceCompatibility
-    def projectTargetCompatibility
-
-    def javaPluginConvention = JavaPluginUtil.getJavaPluginConvention(project)
-    if (javaPluginConvention != null) {
-      projectSourceCompatibility = javaPluginConvention.sourceCompatibility.toString()
-      projectTargetCompatibility = javaPluginConvention.targetCompatibility.toString()
-    }
+    def projectSourceCompatibility = getSourceCompatibility(project)
+    def projectTargetCompatibility = getTargetCompatibility(project)
 
     def result = [:] as Map<String, DefaultExternalSourceSet>
     def sourceSets = JavaPluginUtil.getSourceSetContainer(project)
@@ -498,6 +494,20 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     cleanupSharedSourceFolders(result)
 
     result
+  }
+
+  @Nullable
+  private static String getSourceCompatibility(Project project) {
+    def javaPluginConvention = JavaPluginUtil.getJavaPluginConvention(project)
+    if (javaPluginConvention == null) return null
+    return javaPluginConvention.sourceCompatibility.toString()
+  }
+
+  @Nullable
+  private static String getTargetCompatibility(Project project) {
+    def javaPluginConvention = JavaPluginUtil.getJavaPluginConvention(project)
+    if (javaPluginConvention == null) return null
+    return javaPluginConvention.targetCompatibility.toString()
   }
 
   private static void cleanupSharedSourceFolders(Map<String, ExternalSourceSet> map) {
