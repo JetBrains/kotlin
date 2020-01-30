@@ -12,8 +12,8 @@ import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMemberHandler
+import com.intellij.refactoring.move.moveMembers.MoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
@@ -425,13 +425,21 @@ private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: P
 
         val newClass = newElement.containingClass
         if (newClass != null && reference.qualifierExpression != null) {
-            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.qualifiedName, arrayOf(newElement))
+
+            val refactoringOptions = object : MoveMembersOptions {
+                override fun getMemberVisibility(): String? = PsiModifier.PUBLIC
+                override fun makeEnumConstant(): Boolean = true
+                override fun getSelectedMembers(): Array<PsiMember> = arrayOf(newElement)
+                override fun getTargetClassName(): String? = newClass.qualifiedName
+            }
+
             val moveMembersUsageInfo = MoveMembersProcessor.MoveMembersUsageInfo(
                 newElement, reference.element, newClass, reference.qualifierExpression, reference
             )
+
             val moveMemberHandler = MoveMemberHandler.EP_NAME.forLanguage(reference.element.language)
             if (moveMemberHandler != null) {
-                moveMemberHandler.changeExternalUsage(mockMoveMembersOptions, moveMembersUsageInfo)
+                moveMemberHandler.changeExternalUsage(refactoringOptions, moveMembersUsageInfo)
                 return true
             }
         }
