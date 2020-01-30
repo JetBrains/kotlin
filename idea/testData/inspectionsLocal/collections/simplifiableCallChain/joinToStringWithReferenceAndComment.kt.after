@@ -7,5 +7,5 @@ val x = listOf(1, 2, 3).joinToString(
         separator = " + ",
         // comment4
         // comment1
-        transform = Int::toString,
+        transform = Int::toString
 )
