@@ -34,7 +34,7 @@ open class KotlinJsCompilation(
 
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
-            target.disambiguationClassifier?.removePrefix(LEGACY_DISAMBIGUATION_CLASSIFIER)?.toLowerCase(),
+            target.disambiguationClassifier?.removePrefix(LEGACY_DISAMBIGUATION_CLASSIFIER),
             compilationName
         )
 }

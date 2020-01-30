@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsTargetPreset(
     project: Project,
@@ -45,10 +44,8 @@ open class KotlinJsTargetPreset(
         if (irPreset == null) {
             super.provideTargetDisambiguationClassifier(target)
         } else {
-            lowerCamelCaseName(
-                LEGACY_DISAMBIGUATION_CLASSIFIER,
-                super.provideTargetDisambiguationClassifier(target)
-            )
+            LEGACY_DISAMBIGUATION_CLASSIFIER +
+                    super.provideTargetDisambiguationClassifier(target)
         }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
