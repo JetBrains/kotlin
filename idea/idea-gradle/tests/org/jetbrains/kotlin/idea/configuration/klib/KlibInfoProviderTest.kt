@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration.klib
 
+import com.intellij.testFramework.PlatformTestUtil.getTestName
 import junit.framework.TestCase
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.KotlinTestUtils.getHomeDirectory
@@ -12,7 +13,16 @@ import java.io.File
 
 class KlibInfoProviderTest : TestCase() {
 
-    fun testKlibsFromNativeDistributionRecognized() {
+    fun testOldStyleKlibsFromNativeDistributionRecognized() = doTest()
+
+    fun testKlibsFromNativeDistributionWithSingleComponentRecognized() = doTest()
+
+    fun testKlibsFromNativeDistributionWithMultipleComponentsRecognized() = doTest()
+
+    private fun doTest() {
+        val kotlinNativeHome = testDataDir.resolve(getTestName(name, true)).resolve("kotlin-native-PLATFORM-VERSION")
+        val sourcesDir = kotlinNativeHome.resolve("sources")
+
         val klibProvider = KlibInfoProvider(kotlinNativeHome = kotlinNativeHome)
 
         val potentialKlibPaths = mutableListOf<File>()
@@ -22,7 +32,12 @@ class KlibInfoProviderTest : TestCase() {
 
         val actualKlibs = potentialKlibPaths
             .mapNotNull { klibProvider.getKlibInfo(it) as? NativeDistributionKlibInfo }
-            .associateBy { it.path.relativeTo(testDataDir) }
+            .associateBy { it.path.relativeTo(kotlinNativeHome) }
+
+        val expectedKlibsFromDistribution = generateExpectedKlibsFromDistribution(
+            kotlinNativeHome = kotlinNativeHome,
+            sourcesDir = sourcesDir
+        )
 
         assertEquals(expectedKlibsFromDistribution.keys, actualKlibs.keys)
         for (klibPath in actualKlibs.keys) {
@@ -40,52 +55,50 @@ class KlibInfoProviderTest : TestCase() {
         }
     }
 
+    private fun generateExpectedKlibsFromDistribution(kotlinNativeHome: File, sourcesDir: File) = listOf(
+        NativeDistributionKlibInfo(
+            path = kotlinNativeHome.resolve("klib", "common", "stdlib"),
+            sourcePaths = listOf(
+                sourcesDir.resolve("kotlin-stdlib-native-sources.zip"),
+                sourcesDir.resolve("kotlin-test-anotations-common-sources.zip")
+            ),
+            name = "stdlib",
+            target = null
+        ),
+        NativeDistributionKlibInfo(
+            path = kotlinNativeHome.resolve("klib", "common", "kotlinx-cli"),
+            sourcePaths = listOf(
+                sourcesDir.resolve("kotlinx-cli-common-sources.zip"),
+                sourcesDir.resolve("kotlinx-cli-native-sources.zip")
+            ),
+            name = "kotlinx-cli",
+            target = null
+        ),
+        NativeDistributionKlibInfo(
+            path = kotlinNativeHome.resolve("klib", "platform", "macos_x64", "foo"),
+            sourcePaths = emptyList(),
+            name = "foo",
+            target = KonanTarget.MACOS_X64
+        ),
+        NativeDistributionKlibInfo(
+            path = kotlinNativeHome.resolve("klib", "platform", "macos_x64", "bar"),
+            sourcePaths = emptyList(),
+            name = "bar",
+            target = KonanTarget.MACOS_X64
+        ),
+        NativeDistributionKlibInfo(
+            path = kotlinNativeHome.resolve("klib", "platform", "macos_x64", "baz"),
+            sourcePaths = emptyList(),
+            name = "baz",
+            target = KonanTarget.MACOS_X64
+        )
+    ).associateBy { it.path.relativeTo(kotlinNativeHome) }
+
     companion object {
         private val testDataDir = File(getHomeDirectory() + "/idea/testData/configuration/klib")
             .also { assertTrue("Test data directory does not exist: $it", it.isDirectory) }
 
         private val externalLibsDir = testDataDir.resolve("external-libs")
-        private val kotlinNativeHome = testDataDir.resolve("kotlin-native-PLATFORM-VERSION")
-        private val sourcesDir = kotlinNativeHome.resolve("sources")
-
-        private val expectedKlibsFromDistribution = listOf(
-            NativeDistributionKlibInfo(
-                path = kotlinNativeHome.resolve("klib", "common", "stdlib"),
-                sourcePaths = listOf(
-                    sourcesDir.resolve("kotlin-stdlib-native-sources.zip"),
-                    sourcesDir.resolve("kotlin-test-anotations-common-sources.zip")
-                ),
-                name = "stdlib",
-                target = null
-            ),
-            NativeDistributionKlibInfo(
-                path = kotlinNativeHome.resolve("klib", "common", "kotlinx-cli"),
-                sourcePaths = listOf(
-                    sourcesDir.resolve("kotlinx-cli-common-sources.zip"),
-                    sourcesDir.resolve("kotlinx-cli-native-sources.zip")
-                ),
-                name = "kotlinx-cli",
-                target = null
-            ),
-            NativeDistributionKlibInfo(
-                path = kotlinNativeHome.resolve("klib", "platform", "macos_x64", "foo"),
-                sourcePaths = emptyList(),
-                name = "foo",
-                target = KonanTarget.MACOS_X64
-            ),
-            NativeDistributionKlibInfo(
-                path = kotlinNativeHome.resolve("klib", "platform", "macos_x64", "bar"),
-                sourcePaths = emptyList(),
-                name = "bar",
-                target = KonanTarget.MACOS_X64
-            ),
-            NativeDistributionKlibInfo(
-                path = kotlinNativeHome.resolve("klib", "platform", "macos_x64", "baz"),
-                sourcePaths = emptyList(),
-                name = "baz",
-                target = KonanTarget.MACOS_X64
-            )
-        ).associateBy { it.path.relativeTo(testDataDir) }
 
         private fun File.children(): List<File> = (listFiles()?.toList() ?: emptyList())
             .also { assertTrue("$this does not have children files or directories", it.isNotEmpty()) }

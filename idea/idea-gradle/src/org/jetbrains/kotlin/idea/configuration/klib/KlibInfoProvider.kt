@@ -60,7 +60,9 @@ class KlibInfoProvider(
         val libraryPath = libraryFile.toPath()
 
         val origin = detectOrigin(libraryPath) ?: return null
-        val manifest = loadProperties(libraryPath.resolve(KLIB_MANIFEST_FILE_NAME))
+
+        val manifestFile = findManifestFile(libraryPath) ?: return null
+        val manifest = loadProperties(manifestFile)
 
         val name = manifest.getProperty(KLIB_PROPERTY_UNIQUE_NAME) ?: return null
         val target = (detectTarget(libraryPath) ?: return null).result
@@ -84,15 +86,39 @@ class KlibInfoProvider(
         else -> null
     }
 
+    private fun findManifestFile(libraryPath: Path): Path? {
+        libraryPath.resolve(KLIB_MANIFEST_FILE_NAME).let { propertiesPath ->
+            // KLIB layout without components
+            if (isRegularFile(propertiesPath)) return propertiesPath
+        }
+
+        if (!isDirectory(libraryPath)) return null
+
+        // look up through all components and find all manifest files
+        val candidates = newDirectoryStream(libraryPath).use { stream ->
+            stream.mapNotNull { componentPath ->
+                val candidate = componentPath.resolve(KLIB_MANIFEST_FILE_NAME)
+                if (isRegularFile(candidate)) candidate else null
+            }
+        }
+
+        return when (candidates.size) {
+            0 -> null
+            1 -> candidates.single()
+            else -> {
+                // there are multiple components, let's take just the first one alphabetically
+                candidates.minBy { it.getName(it.nameCount - 2).toString() }!!
+            }
+        }
+    }
+
     private fun loadProperties(propertiesPath: Path): Properties = cachedProperties.computeIfAbsent(propertiesPath) {
         val properties = Properties()
 
-        if (isRegularFile(propertiesPath)) {
-            try {
-                newInputStream(propertiesPath).use { properties.load(it) }
-            } catch (_: IOException) {
-                // do nothing
-            }
+        try {
+            newInputStream(propertiesPath).use { properties.load(it) }
+        } catch (_: IOException) {
+            // do nothing
         }
 
         properties
