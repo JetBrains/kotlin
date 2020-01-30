@@ -24,7 +24,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
@@ -61,7 +60,7 @@ import java.util.*;
  */
 public final class FavoritesTreeViewPanel extends JPanel implements DataProvider, DockContainer {
   private final FavoritesTreeStructure myFavoritesTreeStructure;
-  private FavoritesViewTreeBuilder myBuilder;
+  private final FavoritesViewTreeBuilder myBuilder;
   private final CopyPasteDelegator myCopyPasteDelegator;
 
   public static final DataKey<FavoriteTreeNodeDescriptor[]> CONTEXT_FAVORITES_ROOTS_DATA_KEY = DataKey.create("FavoritesRoot");
@@ -229,17 +228,11 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
         myBuilder.updateFromRoot();
         myTree.repaint();
       }
-    }, this);
+    }, project);
   }
 
   public void selectElement(final Object selector, final VirtualFile file, final boolean requestFocus) {
     myBuilder.selectAsync(selector, file, requestFocus);
-  }
-
-  @Override
-  public void dispose() {
-    Disposer.dispose(myBuilder);
-    myBuilder = null;
   }
 
   public DnDAwareTree getTree() {
