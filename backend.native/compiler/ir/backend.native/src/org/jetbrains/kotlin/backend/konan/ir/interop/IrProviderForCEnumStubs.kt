@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.backend.konan.ir.interop
 
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumByValueFunctionGenerator
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumCompanionGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumVarClassGenerator
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 /**
  * For the most of descriptors that come from metadata-based interop libraries
@@ -68,6 +71,14 @@ internal class IrProviderForCEnumStubs(
     fun canHandleSymbol(symbol: IrSymbol): Boolean {
         if (!symbol.descriptor.module.isFromInteropLibrary()) return false
         return symbol.findCEnumDescriptor(interopBuiltIns) != null
+    }
+
+    fun buildAllEnumsFrom(interopModule: ModuleDescriptor) {
+        interopModule.getPackageFragments()
+                .flatMap { it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) }
+                .filterIsInstance<ClassDescriptor>()
+                .filter { it.implementsCEnum(interopBuiltIns) }
+                .forEach { cEnumClassGenerator.findOrGenerateCEnum(it, irParentFor(it)) }
     }
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
