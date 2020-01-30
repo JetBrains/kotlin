@@ -139,7 +139,9 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
-            gradleBuildScript().appendText("\nrepositories { maven(\"$libLocalRepoUri\") }")
+
+            // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
+            gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
             fun CompiledProject.checkProgramCompilationCommandLine(check: (String) -> Unit) {
                 output.lineSequence().filter {
