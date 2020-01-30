@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
@@ -43,19 +44,19 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
-import java.lang.IllegalStateException
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.reflect.jvm.javaField
@@ -479,7 +480,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("(<!>|(<!(.(\".*\")*?)+?!>))")
 
         fun loadTestDataWithoutDiagnostics(file: File): String {
-            return KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
+            val textWithoutDiagnostics = KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
+            return StringUtil.convertLineSeparators(textWithoutDiagnostics.trim()).trimTrailingWhitespacesAndAddNewlineAtEOF()
         }
     }
 
