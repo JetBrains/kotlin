@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
@@ -374,6 +373,7 @@ internal class WithIndexLoopHeader(
     private val nestedLoopHeader: ForLoopHeader
     private val indexVariable: IrVariable
     private val ownsIndexVariable: Boolean
+    private val incrementIndexStatement: IrStatement?
 
     init {
         with(builder) {
@@ -396,6 +396,7 @@ internal class WithIndexLoopHeader(
             ) {
                 indexVariable = nestedLoopHeader.inductionVariable
                 ownsIndexVariable = false
+                incrementIndexStatement = null
             } else {
                 indexVariable = scope.createTemporaryVariable(
                     irInt(0),
@@ -403,11 +404,26 @@ internal class WithIndexLoopHeader(
                     isMutable = true
                 )
                 ownsIndexVariable = true
+                // `index++` during iteration initialization
+                // TODO: MUSTDO: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
+                val plusFun = indexVariable.type.getClass()!!.functions.first {
+                    it.name == OperatorNameConventions.PLUS &&
+                            it.valueParameters.size == 1 &&
+                            it.valueParameters[0].type.isInt()
+                }
+                incrementIndexStatement =
+                    irSetVar(
+                        indexVariable.symbol, irCallOp(
+                            plusFun.symbol, plusFun.returnType,
+                            irGet(indexVariable),
+                            irInt(1)
+                        )
+                    )
             }
         }
     }
 
-    // Add the index variable to the statements from the nested loop header.
+    // Add the index variable (if owned) to the statements from the nested loop header.
     override val loopInitStatements = nestedLoopHeader.loopInitStatements.let { if (ownsIndexVariable) it + indexVariable else it }
 
     override val consumesLoopVariableComponents = true
@@ -459,10 +475,10 @@ internal class WithIndexLoopHeader(
             //   if (inductionVar <= last) {
             //     do {
             //       val i = index   // ADDED
+            //       checkIndexOverflow(index++)   // ADDED
             //       val v = inductionVar
             //       inductionVar += step
             //       // Loop body
-            //       checkIndexOverflow(index++)   // ADDED
             //     } while (inductionVar <= last)
             //   }
             //
@@ -478,13 +494,14 @@ internal class WithIndexLoopHeader(
             //   var index = 0
             //   while (it.hasNext())
             //     val i = index
-            //     val v = it.next()
             //     checkIndexOverflow(index++)
+            //     val v = it.next()
+            //     // Loop body
             //   }
             //
             // We "wire" the 1st destructured component to index, and the 2nd to the loop variable value from the underlying iterable.
             loopVariableComponents[1]?.initializer = irGet(indexVariable)
-            listOfNotNull(loopVariableComponents[1]) + nestedLoopHeader.initializeIteration(
+            listOfNotNull(loopVariableComponents[1], incrementIndexStatement) + nestedLoopHeader.initializeIteration(
                 loopVariableComponents[2],
                 linkedMapOf(),
                 symbols,
@@ -494,28 +511,7 @@ internal class WithIndexLoopHeader(
 
     // Use the nested loop header to build the loop. More info in comments in initializeIteration().
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
-        nestedLoopHeader.buildLoop(builder, oldLoop, newBody).apply {
-            if (ownsIndexVariable) {
-                with(builder) {
-                    // Add `index++` to end of the loop.
-                    // TODO: MUSTDO: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
-                    val plusFun = indexVariable.type.getClass()!!.functions.first {
-                        it.name == OperatorNameConventions.PLUS &&
-                                it.valueParameters.size == 1 &&
-                                it.valueParameters[0].type.isInt()
-                    }
-                    (newLoop.body as IrContainerExpression).statements.add(
-                        irSetVar(
-                            indexVariable.symbol, irCallOp(
-                                plusFun.symbol, plusFun.returnType,
-                                irGet(indexVariable),
-                                irInt(1)
-                            )
-                        )
-                    )
-                }
-            }
-        }
+        nestedLoopHeader.buildLoop(builder, oldLoop, newBody)
 }
 
 internal class IterableLoopHeader(
