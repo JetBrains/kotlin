@@ -25,7 +25,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.extensions.ExtensionsArea;
-import com.intellij.openapi.fileTypes.FileTypeExtensionPoint;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.fileTypes.PlainTextParserDefinition;
@@ -73,7 +72,6 @@ public class KotlinCoreApplicationEnvironment extends CoreApplicationEnvironment
   private void registerExtensionPoints() {
     ExtensionsArea area = Extensions.getRootArea();
 
-    CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint.class);
     CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, FileContextProvider.class);
 
     CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, MetaDataContributor.class);
