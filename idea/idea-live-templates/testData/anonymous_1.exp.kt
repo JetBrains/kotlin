@@ -6,6 +6,6 @@ fun main(args : Array<String>) {
                 override fun run() {
                     TODO("Not yet implemented")
                 }
-            },
+            }
     )
 }
