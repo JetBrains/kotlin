@@ -6,14 +6,14 @@ fun testLambda() {
         if (x is String) return@myRun { it -> x.length <!AMBIGUITY!>+<!> it }
         if (x !is Int) return@myRun { it -> it }
 
-        { it -> x + it }
+        { it -> <!UNRESOLVED_REFERENCE!>x<!> + it }
     }
 
     val twoLambda: (Int) -> Int = myRun {
         val x: Int = 1
         run {
             val y: Int = 2
-            { x + y }
+            { x <!AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>y<!> }
         }
     }
 

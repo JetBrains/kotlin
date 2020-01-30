@@ -217,7 +217,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
             primitive.processAllContainingCallCandidates(
                 // TODO: remove this argument and relevant parameter
                 // Currently, it's used because otherwise problem happens with a lambda in a try-block (see tryWithLambdaInside test)
-                processBlocks = primitive !is FirTryExpression
+                processBlocks = true
             ) { candidate ->
                 candidate.postponedAtoms.forEach {
                     notAnalyzedArguments.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -35,8 +36,11 @@ class ControlFlowGraph(val name: String, val kind: Kind) {
     }
 }
 
-enum class EdgeKind {
-    Simple, Dead
+enum class EdgeKind(val usedInDfa: Boolean) {
+    Simple(usedInDfa = true),
+    Dead(usedInDfa = false),
+    Cfg(usedInDfa = false),
+    Dfg(usedInDfa = true)
 }
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, private val id: Int) {
@@ -98,6 +102,11 @@ interface ExitNodeMarker
 
 class FunctionEnterNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNode<FirFunction<*>>(owner, level, id), EnterNodeMarker
 class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNode<FirFunction<*>>(owner, level, id), ExitNodeMarker
+
+// ----------------------------------- Anonymous function -----------------------------------
+
+class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNode<FirAnonymousFunction>(owner, level, id)
+class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNode<FirAnonymousFunction>(owner, level, id)
 
 // ----------------------------------- Property -----------------------------------
 

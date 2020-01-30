@@ -404,6 +404,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
         return when (data) {
             ResolutionMode.ContextDependent -> {
+                dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
                 anonymousFunction.compose()
             }
             is ResolutionMode.LambdaResolution -> {

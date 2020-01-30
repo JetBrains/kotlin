@@ -544,11 +544,12 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractFirDiagnosticsWithStdlibTest> {
-            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("contracts"))
+            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("contracts", "smartcasts"))
         }
 
         testClass<AbstractFirDiagnosticsWithCfgAndStdlibTest> {
             model("resolve/stdlib/contracts", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("resolve/stdlib/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 

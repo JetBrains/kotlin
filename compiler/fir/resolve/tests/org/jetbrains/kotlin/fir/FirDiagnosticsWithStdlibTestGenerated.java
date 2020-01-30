@@ -30,7 +30,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     }
 
     public void testAllFilesPresentInStdlib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "contracts");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "contracts", "smartcasts");
     }
 
     @TestMetadata("anonymousInDelegate.kt")
@@ -620,11 +620,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("inapplicableRemoveAll.kt")
         public void testInapplicableRemoveAll() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/inapplicableRemoveAll.kt");
-        }
-
-        @TestMetadata("tryWithLambdaInside.kt")
-        public void testTryWithLambdaInside() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/tryWithLambdaInside.kt");
         }
 
         @TestMetadata("weakHashMap.kt")

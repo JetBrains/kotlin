@@ -127,6 +127,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return graph
     }
 
+    // ----------------------------------- Anonymous function -----------------------------------
+
+    fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunction)
+        enterNode.mergeIncomingFlow()
+        exitNode.mergeIncomingFlow()
+    }
+
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty) {
@@ -800,7 +808,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val previousFlows = if (node.isDead)
             node.previousNodes.map { it.flow }
         else
-            node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges[it] != EdgeKind.Dead }?.flow }
+            node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges.getValue(it).usedInDfa }?.flow }
         val flow = logicSystem.joinFlow(previousFlows)
         if (updateReceivers) {
             logicSystem.updateAllReceivers(flow)

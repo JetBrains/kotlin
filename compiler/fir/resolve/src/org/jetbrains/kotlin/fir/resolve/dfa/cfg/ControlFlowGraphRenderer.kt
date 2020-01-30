@@ -33,6 +33,8 @@ class FirControlFlowGraphRenderVisitor(
             mapOf(
                 EdgeKind.Simple to "",
                 EdgeKind.Dead to "[style=dotted]",
+                EdgeKind.Cfg to "[color=green]",
+                EdgeKind.Dfg to "[color=red]",
             )
         )
     }
@@ -203,6 +205,9 @@ private fun CFGNode<*>.render(): String =
 
                 is EnterSafeCallNode -> "Enter safe call"
                 is ExitSafeCallNode -> "Exit safe call"
+
+                is PostponedLambdaEnterNode -> "Postponed enter to lambda"
+                is PostponedLambdaExitNode -> "Postponed exit from lambda"
 
                 else -> TODO(this@render.toString())
             },

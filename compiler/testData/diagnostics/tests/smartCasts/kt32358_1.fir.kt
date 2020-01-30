@@ -13,5 +13,5 @@ fun myFun() {
     val myParent = MyParent()
     myParent.child?.nullableString ?: run { return }
 
-    myParent.child.notNull   // <- No smart cast in plugin
+    myParent.child.<!INAPPLICABLE_CANDIDATE!>notNull<!>   // <- No smart cast in plugin
 }

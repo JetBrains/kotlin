@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -180,3 +181,9 @@ fun ControlFlowGraphBuilder.createExitSafeCallNode(fir: FirQualifiedAccess): Exi
 
 fun ControlFlowGraphBuilder.createEnterSafeCallNode(fir: FirQualifiedAccess): EnterSafeCallNode =
     EnterSafeCallNode(graph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunction): PostponedLambdaExitNode =
+    PostponedLambdaExitNode(graph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createPostponedLambdaEnterNode(fir: FirAnonymousFunction): PostponedLambdaEnterNode =
+    PostponedLambdaEnterNode(graph, fir, levelCounter, createId())

@@ -334,26 +334,32 @@ digraph jumps_kt {
     subgraph cluster_31 {
         color=red
         112 [label="Enter function test_6" style="filled" fillcolor=red];
+        113 [label="Postponed enter to lambda"];
         subgraph cluster_32 {
             color=blue
-            113 [label="Enter function anonymousFunction"];
-            114 [label="Jump: ^@run Unit"];
-            115 [label="Stub" style="filled" fillcolor=gray];
-            116 [label="Exit function anonymousFunction"];
+            114 [label="Enter function anonymousFunction"];
+            115 [label="Jump: ^@run Unit"];
+            116 [label="Stub" style="filled" fillcolor=gray];
+            117 [label="Exit function anonymousFunction"];
         }
-        117 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+        118 [label="Postponed exit from lambda"];
+        119 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     ^@run Unit
 }
 )"];
-        118 [label="Exit function test_6" style="filled" fillcolor=red];
+        120 [label="Exit function test_6" style="filled" fillcolor=red];
     }
 
     112 -> {113};
-    113 -> {116 114};
-    114 -> {116};
-    114 -> {115} [style=dotted];
+    113 -> {114};
+    113 -> {118} [color=red];
+    114 -> {117 115};
+    115 -> {117};
     115 -> {116} [style=dotted];
-    116 -> {113 117};
-    117 -> {118};
+    116 -> {117} [style=dotted];
+    117 -> {114};
+    117 -> {118} [color=green];
+    118 -> {119};
+    119 -> {120};
 
 }

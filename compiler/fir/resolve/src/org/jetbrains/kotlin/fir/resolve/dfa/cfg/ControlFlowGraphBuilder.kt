@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
 
 class ControlFlowGraphBuilder {
@@ -48,6 +50,9 @@ class ControlFlowGraphBuilder {
     private val blocksOfFunctions: MutableMap<FirBlock, FirFunction<*>> = mutableMapOf()
     private val exitsOfAnonymousFunctions: MutableMap<FirAnonymousFunction, FunctionExitNode> = mutableMapOf()
 
+    private val entersToPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaEnterNode> = mutableMapOf()
+    private val exitsFromPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaExitNode> = mutableMapOf()
+
     var levelCounter: Int = 0
         private set
 
@@ -75,7 +80,7 @@ class ControlFlowGraphBuilder {
         val isInplace = invocationKind.isInplace()
 
         val previousNode = if (!isInplace && graphs.topOrNull()?.let { it.kind != ControlFlowGraph.Kind.TopLevel } == true) {
-            lastNodes.top()
+            entersToPostponedAnonymousFunctions[function.symbol] ?: lastNodes.top()
         } else {
             null
         }
@@ -86,7 +91,13 @@ class ControlFlowGraphBuilder {
 
         val enterNode = createFunctionEnterNode(function, isInplace).also {
             if (isInplace) {
-                addNewSimpleNode(it)
+                val postponedEnterNode = entersToPostponedAnonymousFunctions[function.symbol]
+                if (postponedEnterNode != null) {
+                    addEdge(postponedEnterNode, it)
+                    lastNodes.push(it)
+                } else {
+                    addNewSimpleNode(it)
+                }
             } else {
                 lexicalScopes.push(stackOf())
                 lastNodes.push(it)
@@ -120,14 +131,25 @@ class ControlFlowGraphBuilder {
         if (!isInplace) {
             exitNodes.pop()
         }
+        val postponedEnterNode = entersToPostponedAnonymousFunctions.remove(function.symbol)
+        val postponedExitNode = exitsFromPostponedAnonymousFunctions.remove(function.symbol)
         if (isInplace) {
             val enterNode = functionEnterNodes.pop()
+            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (invocationKind) {
                 InvocationKind.AT_LEAST_ONCE, InvocationKind.UNKNOWN -> addEdge(exitNode, enterNode, propagateDeadness = false)
+            }
+            if (postponedExitNode != null) {
+                CFGNode.addEdge(lastNodes.pop(), postponedExitNode, propagateDeadness = true, kind = EdgeKind.Cfg)
             }
         } else {
             if (function.body == null) {
                 addEdge(lastNodes.pop(), exitNode)
+            }
+            if (postponedExitNode != null) {
+                requireNotNull(postponedEnterNode)
+                val kind = if (postponedEnterNode.isDead) EdgeKind.Dead else EdgeKind.Cfg
+                CFGNode.addEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
             }
             lexicalScopes.pop()
         }
@@ -155,6 +177,20 @@ class ControlFlowGraphBuilder {
         return exitsOfAnonymousFunctions.getValue(function).previousNodes.mapNotNull {
             it.extractArgument() as FirStatement?
         }
+    }
+
+    // ----------------------------------- Anonymous function -----------------------------------
+
+    fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<PostponedLambdaEnterNode, PostponedLambdaExitNode> {
+        val enterNode = createPostponedLambdaEnterNode(anonymousFunction)
+        val exitNode = createPostponedLambdaExitNode(anonymousFunction)
+        val symbol = anonymousFunction.symbol
+        entersToPostponedAnonymousFunctions[symbol] = enterNode
+        exitsFromPostponedAnonymousFunctions[symbol] = exitNode
+        CFGNode.addEdge(lastNodes.pop(), enterNode, kind = EdgeKind.Simple, propagateDeadness = true)
+        CFGNode.addEdge(enterNode, exitNode, kind = EdgeKind.Dfg, propagateDeadness = true)
+        lastNodes.push(exitNode)
+        return enterNode to exitNode
     }
 
     // ----------------------------------- Block -----------------------------------
