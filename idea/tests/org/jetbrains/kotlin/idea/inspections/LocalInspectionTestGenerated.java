@@ -11441,6 +11441,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testNullable() throws Exception {
             runTest("idea/testData/inspectionsLocal/selfReferenceConstructorParameter/nullable.kt");
         }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("idea/testData/inspectionsLocal/selfReferenceConstructorParameter/vararg.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/setterBackingFieldAssignment")

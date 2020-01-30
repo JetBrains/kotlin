@@ -37,6 +37,7 @@ class SelfReferenceConstructorParameterInspection : AbstractKotlinInspection() {
         val containingClass = this.containingClass() ?: return null
         val className = containingClass.name ?: return null
         val parameter = this.parameters.firstOrNull { it.typeReference?.text == className } ?: return null
+        if (parameter.isVarArg) return null
 
         val typeReference = parameter.typeReference ?: return null
         val context = analyze(BodyResolveMode.PARTIAL)
