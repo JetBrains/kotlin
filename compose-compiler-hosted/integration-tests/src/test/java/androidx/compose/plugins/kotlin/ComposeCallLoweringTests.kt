@@ -1139,6 +1139,23 @@ fun WebComponent(
         }
     }
 
+    @Test
+    fun testInlineClassesAsComposableParameters(): Unit = forComposerParam(true, false) {
+        codegen(
+            """
+                inline class WrappedInt(val int: Int)
+
+                @Composable fun Pass(wrappedInt: WrappedInt) {
+                  wrappedInt.int
+                }
+
+                @Composable fun Bar() {
+                  Pass(WrappedInt(1))
+                }
+            """
+        )
+    }
+
     fun codegen(text: String, dumpClasses: Boolean = false) {
         codegenNoImports(
             """
