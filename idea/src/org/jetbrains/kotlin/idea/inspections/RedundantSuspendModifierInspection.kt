@@ -10,17 +10,22 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.highlighter.hasSuspendCalls
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.namedFunctionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RedundantSuspendModifierInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -38,6 +43,11 @@ class RedundantSuspendModifierInspection : AbstractKotlinInspection() {
             if (function.anyDescendantOfType<KtExpression> { it.hasSuspendCalls(context) }) {
                 return
             }
+
+            if (ReferencesSearch.search(function).any {
+                    val callableReference = it.element.parent as? KtCallableReferenceExpression
+                    callableReference?.isUsedAsExpression(callableReference.analyze(BodyResolveMode.PARTIAL_WITH_CFA)) == true
+                }) return
 
             holder.registerProblem(
                 suspendModifier,

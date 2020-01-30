@@ -7905,6 +7905,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/coroutineContext.kt");
         }
 
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSuspend/functionReference.kt");
+        }
+
+        @TestMetadata("functionReference2.kt")
+        public void testFunctionReference2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSuspend/functionReference2.kt");
+        }
+
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/override.kt");
