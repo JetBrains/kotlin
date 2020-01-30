@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirResolvedQualifierImpl(
     override val source: FirSourceElement?,
     override var packageFqName: FqName,
-    override var relativeClassFqName: FqName?
+    override var relativeClassFqName: FqName?,
+    override var safe: Boolean
 ) : FirResolvedQualifier(), FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

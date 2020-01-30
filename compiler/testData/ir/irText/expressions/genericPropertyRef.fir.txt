@@ -173,11 +173,11 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR 'value: T of <uninitialized parent> declared in <root>.<set-bar>' type=T of <uninitialized parent> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String, kotlin.String> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final bar: T of <uninitialized parent> [var]' field=null getter='public final fun <get-bar> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-bar> (value: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String, kotlin.String> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<kotlin.String, kotlin.String>
+        PROPERTY_REFERENCE 'public final bar: T of <uninitialized parent> [var]' field=null getter='public final fun <get-bar> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-bar> (value: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?>
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-barRef> (): kotlin.reflect.KMutableProperty1<kotlin.String, kotlin.String> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String, kotlin.String> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty1<kotlin.String, kotlin.String> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-barRef> (): kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null

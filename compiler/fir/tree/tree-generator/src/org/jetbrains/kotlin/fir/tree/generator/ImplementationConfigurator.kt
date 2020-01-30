@@ -323,7 +323,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(resolvedQualifier) {
-            isMutable("packageFqName", "relativeClassFqName")
+            isMutable("packageFqName", "relativeClassFqName", "safe")
             default("classId") {
                 value = """
                     |relativeClassFqName?.let {

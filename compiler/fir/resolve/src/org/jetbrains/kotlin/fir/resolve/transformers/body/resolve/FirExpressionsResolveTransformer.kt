@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirVariableAssignmentImpl
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
@@ -357,8 +358,12 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         }
 
         callableReferenceAccess.annotations.forEach { it.accept(this, data) }
-        val transformedLHS =
-            callableReferenceAccess.explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)
+        val explicitReceiver = callableReferenceAccess.explicitReceiver
+        val transformedLHS = explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)?.apply {
+            if (this is FirResolvedQualifierImpl && callableReferenceAccess.safe) {
+                this.safe = true
+            }
+        }
 
         val callableReferenceAccessWithTransformedLHS =
             if (transformedLHS != null)

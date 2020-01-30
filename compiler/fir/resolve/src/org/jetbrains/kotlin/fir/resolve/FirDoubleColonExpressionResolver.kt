@@ -69,7 +69,7 @@ class FirDoubleColonExpressionResolver(
 
     private fun shouldTryResolveLHSAsExpression(expression: FirCallableReferenceAccess): Boolean {
         val lhs = expression.explicitReceiver ?: return false
-        return lhs.canBeConsideredProperExpression() /* && !expression.hasQuestionMarks */
+        return lhs.canBeConsideredProperExpression() && !expression.safe
     }
 
     private fun shouldTryResolveLHSAsType(expression: FirCallableReferenceAccess): Boolean {
@@ -168,7 +168,7 @@ class FirDoubleColonExpressionResolver(
                     else -> ConeStarProjection
                 }
             },
-            isNullable = false // TODO: Use org.jetbrains.kotlin.psi.KtDoubleColonExpression.getHasQuestionMarks
+            isNullable = expression.safe
         )
 
         return DoubleColonLHS.Type(type)

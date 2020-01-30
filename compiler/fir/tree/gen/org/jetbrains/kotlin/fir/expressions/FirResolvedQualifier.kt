@@ -25,6 +25,7 @@ abstract class FirResolvedQualifier : FirPureAbstractElement(), FirExpression {
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
     abstract val classId: ClassId?
+    abstract val safe: Boolean
     abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)

@@ -3,6 +3,6 @@ val Any?.meaning: Int
 
 fun test() {
     val f = Any?::meaning
-    f.<!INAPPLICABLE_CANDIDATE!>get<!>(null)
+    f.get(null)
     f.get("")
 }
