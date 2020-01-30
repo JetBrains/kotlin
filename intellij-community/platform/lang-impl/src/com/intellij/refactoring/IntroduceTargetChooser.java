@@ -50,7 +50,7 @@ public class IntroduceTargetChooser {
                                                         @NotNull List<? extends T> expressions,
                                                         @NotNull Pass<? super T> callback,
                                                         @NotNull Function<? super T, String> renderer) {
-    showChooser(editor, expressions, callback, renderer, "Expressions");
+    showChooser(editor, expressions, callback, renderer, RefactoringBundle.message("introduce.target.chooser.expressions.title"));
   }
 
   public static <T extends PsiElement> void showChooser(@NotNull Editor editor,
