@@ -12,7 +12,6 @@ import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
@@ -20,12 +19,12 @@ import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.EditorMarkupModelImpl;
 import com.intellij.openapi.editor.impl.event.MarkupModelListener;
+import com.intellij.openapi.editor.markup.ErrorStatus;
 import com.intellij.openapi.editor.markup.ErrorStripeRenderer;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.FileViewProvider;
@@ -37,7 +36,7 @@ import com.intellij.ui.TextIcon;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
-import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.JBValue;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.TIntArrayList;
@@ -64,8 +63,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   boolean progressBarsEnabled;
   Boolean progressBarsCompleted;
 
-  private final DefaultActionGroup actions;
-
   /**
    * array filled with number of highlighters with a given severity.
    * errorCount[idx] == number of highlighters of severity with index idx in this markup model.
@@ -73,12 +70,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    */
   protected int[] errorCount;
 
-  private final AnAction nextErrorAction;
-  private final AnAction prevErrorAction;
-  private final AnAction separatorAction;
-  private LayeredIcon statusIcon;
-
-  private static final int ICON_GAP = JBUI.scale(5);
+  private static final JBValue ICON_GAP = new JBValue.Float(5);
+  private static final int ICON_FONT = 11;
 
   /**
    * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
@@ -93,19 +86,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     myDaemonCodeAnalyzer = project == null ? null : (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
-
-    ActionManager am = ActionManager.getInstance();
-
-    nextErrorAction = am.getAction("GotoNextError");
-    nextErrorAction.getTemplatePresentation().setIcon(AllIcons.General.ArrowDown);
-    nextErrorAction.getTemplatePresentation().setDisabledIcon(IconLoader.getDisabledIcon(AllIcons.General.ArrowDown));
-
-    prevErrorAction = am.getAction("GotoPreviousError");
-    prevErrorAction.getTemplatePresentation().setIcon(AllIcons.General.ArrowUp);
-    prevErrorAction.getTemplatePresentation().setDisabledIcon(IconLoader.getDisabledIcon(AllIcons.General.ArrowUp));
-
-    separatorAction = Separator.create();
-    actions = new DefaultActionGroup(new StatusAction(), separatorAction, nextErrorAction, prevErrorAction);
 
     refresh(null);
 
@@ -393,7 +373,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   @Override
-  public void refreshActions(Editor editor) {
+  public ErrorStatus getStatus(Editor editor) {
     DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
     int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
     List<Icon> statusIcons = new ArrayList<>();
@@ -403,19 +383,14 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
         TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
                                      editor.getColorsScheme().getDefaultForeground(), null, 0);
-        Font font = editor.getComponent().getFont().deriveFont(Font.PLAIN, 10);
+        Font font = editor.getComponent().getFont().deriveFont(Font.PLAIN, ICON_FONT);
         icon.setFont(font);
         statusIcons.add(icon);
       }
     }
 
-    boolean showActions = statusIcons.size() > 0;
-    nextErrorAction.getTemplatePresentation().setVisible(showActions);
-    prevErrorAction.getTemplatePresentation().setVisible(showActions);
-    separatorAction.getTemplatePresentation().setVisible(showActions);
-
-    if (showActions) {
-      statusIcon = new LayeredIcon(statusIcons.size());
+    if (statusIcons.size() > 0) {
+      LayeredIcon statusIcon = new LayeredIcon(statusIcons.size());
       int maxIconHeight = statusIcons.stream().mapToInt(i -> i.getIconHeight()).max().orElse(0);
       for (int i = 0, xShift = 0; i < statusIcons.size(); i += 2) {
         Icon icon = statusIcons.get(i);
@@ -426,30 +401,12 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         icon = statusIcons.get(i + 1);
         yShift = (maxIconHeight - icon.getIconHeight()) / 2;
         statusIcon.setIcon(icon, i + 1, xShift, yShift);
-        xShift += icon.getIconWidth() + ICON_GAP;
+        xShift += icon.getIconWidth() + ICON_GAP.get();
       }
+      return new ErrorStatus(statusIcon);
     }
     else {
-      statusIcon = null;
-    }
-  }
-
-  @Override
-  public @Nullable ActionGroup getActions() {
-    return actions;
-  }
-
-  private class StatusAction extends AnAction {
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-      System.out.println("StatusAction");
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-      if (e.getPresentation().getIcon() != statusIcon) {
-        e.getPresentation().setIcon(statusIcon);
-      }
+      return new ErrorStatus(null);
     }
   }
 }
