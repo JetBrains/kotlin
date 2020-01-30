@@ -21,12 +21,14 @@ import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.KoltinLibraryWriterImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.util.Logger
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
 
@@ -37,8 +39,7 @@ class NativeDistributionCommonizer(
     private val copyStdlib: Boolean,
     private val copyEndorsedLibs: Boolean,
     private val withStats: Boolean,
-    private val handleError: (String) -> Nothing,
-    private val log: (String) -> Unit
+    private val logger: Logger
 ) {
     fun run() {
         checkPreconditions()
@@ -46,36 +47,35 @@ class NativeDistributionCommonizer(
         with(ResettableClockMark()) {
             // 1. load modules
             val modulesByTargets = loadModules()
-            log("Loaded lazy (uninitialized) libraries in ${elapsedSinceLast()}")
+            logger.log("Loaded lazy (uninitialized) libraries in ${elapsedSinceLast()}")
 
             // 2. run commonization
             val result = commonize(modulesByTargets)
-            log("Commonization performed in ${elapsedSinceLast()}")
+            logger.log("Commonization performed in ${elapsedSinceLast()}")
 
             // 3. write new libraries
             saveModules(modulesByTargets, result)
-            log("Written libraries in ${elapsedSinceLast()}")
+            logger.log("Written libraries in ${elapsedSinceLast()}")
 
-            log("TOTAL: ${elapsedSinceStart()}")
+            logger.log("TOTAL: ${elapsedSinceStart()}")
         }
 
-        log("Done.")
-        log("")
+        logger.log("Done.\n")
     }
 
     private fun checkPreconditions() {
         if (!repository.isDirectory)
-            handleError("repository does not exist: $repository")
+            logger.fatal("repository does not exist: $repository")
 
         when (targets.size) {
-            0 -> handleError("no targets specified")
-            1 -> handleError("too few targets specified: $targets")
+            0 -> logger.fatal("no targets specified")
+            1 -> logger.fatal("too few targets specified: $targets")
         }
 
         when {
             !destination.exists() -> destination.mkdirs()
-            !destination.isDirectory -> handleError("output already exists: $destination")
-            destination.walkTopDown().any { it != destination } -> handleError("output is not empty: $destination")
+            !destination.isDirectory -> logger.fatal("output already exists: $destination")
+            destination.walkTopDown().any { it != destination } -> logger.fatal("output is not empty: $destination")
         }
     }
 
@@ -92,7 +92,7 @@ class NativeDistributionCommonizer(
                 ?.listFiles()
                 ?.takeIf { it.isNotEmpty() }
                 ?.map { loadLibrary(it) }
-                ?: handleError("no platform libraries found for target $target in $platformLibsPath")
+                ?: logger.fatal("no platform libraries found for target $target in $platformLibsPath")
 
             InputTarget(target.name, target) to platformLibs
         }.toMap()
@@ -142,16 +142,20 @@ class NativeDistributionCommonizer(
 
     private fun loadLibrary(location: File): KotlinLibrary {
         if (!location.isDirectory)
-            handleError("library not found: $location")
+            logger.fatal("library not found: $location")
 
-        val library = resolveSingleFileKlib(KFile(location.path))
+        val library = resolveSingleFileKlib(
+            libraryFile = KFile(location.path),
+            logger = logger,
+            strategy = ToolingSingleFileKlibResolveStrategy
+        )
 
         if (library.versions.metadataVersion == null)
-            handleError("library does not have metadata version specified in manifest: $location")
+            logger.fatal("library does not have metadata version specified in manifest: $location")
 
         val metadataVersion = library.metadataVersion
         if (metadataVersion?.isCompatible() != true)
-            handleError(
+            logger.fatal(
                 """
                 library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $location,
                 please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
@@ -172,7 +176,7 @@ class NativeDistributionCommonizer(
 
             val result = runCommonization(parameters)
             return when (result) {
-                is NothingToCommonize -> handleError("too few targets specified: ${modulesByTargets.keys}")
+                is NothingToCommonize -> logger.fatal("too few targets specified: ${modulesByTargets.keys}")
                 is CommonizationPerformed -> result
             }
         }

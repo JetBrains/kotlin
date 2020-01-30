@@ -35,8 +35,7 @@ fun main(args: Array<String>) {
         copyStdlib = true,
         copyEndorsedLibs = true,
         withStats = withStats,
-        handleError = ::printErrorAndExit,
-        log = ::println
+        logger = CliLoggerAdapter
     ).run()
 }
 

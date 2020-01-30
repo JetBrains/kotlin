@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cli
 
+import org.jetbrains.kotlin.util.Logger
 import kotlin.system.exitProcess
 
 internal fun parseArgs(
@@ -22,9 +23,13 @@ internal fun parseArgs(
     return commandLine
 }
 
-internal fun printErrorAndExit(errorMessage: String): Nothing {
-    println("Error: $errorMessage")
-    println()
+internal object CliLoggerAdapter : Logger {
+    override fun log(message: String) = println(message)
+    override fun warning(message: String) = println("Warning: $message")
 
-    exitProcess(1)
+    override fun error(message: String) = fatal(message)
+    override fun fatal(message: String): Nothing {
+        println("Error: $message\n")
+        exitProcess(1)
+    }
 }

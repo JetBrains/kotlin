@@ -38,11 +38,12 @@ import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
-import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
+import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -192,9 +193,14 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
         }
     }
 
-    private val nativeLibrary = resolveSingleFileKlib(File(libraryRoot))
+    private val nativeLibrary = resolveSingleFileKlib(
+        libraryFile = KFile(libraryRoot),
+        logger = LOG,
+        strategy = ToolingSingleFileKlibResolveStrategy
+    )
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
+
     val metadataInfo by lazy {
         val metadataVersion = nativeLibrary.safeMetadataVersion
         when {
@@ -221,6 +227,8 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
     override fun toString() = "Native" + super.toString()
 
     companion object {
+        private val LOG = IJLoggerAdapter.getInstance(NativeLibraryInfo::class.java)
+
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
 
         internal val KotlinLibrary.safeMetadataVersion get() = this.readSafe(null) { metadataVersion }

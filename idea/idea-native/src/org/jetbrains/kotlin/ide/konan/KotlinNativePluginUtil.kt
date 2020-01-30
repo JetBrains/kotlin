@@ -86,18 +86,24 @@ internal val VirtualFile.isKonanLibraryRoot: Boolean
         val extension = extension
         if (!extension.isNullOrEmpty() && extension != KLIB_FILE_EXTENSION) return false
 
-        val manifestFile = findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
+        fun checkComponent(componentFile: VirtualFile): Boolean {
+            val manifestFile = componentFile.findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
 
-        // this is a hacky way to determine whether this is a Kotlin/Native .klib or common .klib (common .klibs don't have ir)
-        // TODO(dsavvinov): introduce more robust way to detect library platform
-        val irFolder = findChild(KLIB_IR_FOLDER_NAME)
-        if (irFolder == null || irFolder.children.isEmpty()) return false
+            // this is a hacky way to determine whether this is a Kotlin/Native .klib or common .klib (common .klibs don't have ir)
+            // TODO(dsavvinov): introduce more robust way to detect library platform
+            val irFolder = componentFile.findChild(KLIB_IR_FOLDER_NAME)
+            if (irFolder == null || irFolder.children.isEmpty()) return false
 
-        val manifestProperties = try {
-            manifestFile.inputStream.use { Properties().apply { load(it) } }
-        } catch (_: IOException) {
-            return false
+            val manifestProperties = try {
+                manifestFile.inputStream.use { Properties().apply { load(it) } }
+            } catch (_: IOException) {
+                return false
+            }
+
+            return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
         }
 
-        return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
+        // run check for library root too
+        // this is necessary to recognize old style KLIBs that do not have components, and report tem to user appropriately
+        return checkComponent(this) || children?.any(::checkComponent) == true
     }
