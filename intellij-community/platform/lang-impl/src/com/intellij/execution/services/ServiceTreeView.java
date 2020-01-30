@@ -63,7 +63,7 @@ class ServiceTreeView extends ServiceView {
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
 
-    myListener = new MyViewModelListener();
+    myListener = this::rootsChanged;
     model.addModelListener(myListener);
 
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
@@ -78,7 +78,6 @@ class ServiceTreeView extends ServiceView {
 
     myTree.addTreeSelectionListener(new RestoreSelectionListener());
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
-    model.addModelListener(this::rootsChanged);
 
     Consumer<ServiceViewItem> selector = item ->
       select(item.getValue(), item.getRootContributor().getClass())
@@ -231,7 +230,12 @@ class ServiceTreeView extends ServiceView {
   }
 
   private void rootsChanged() {
+    updateSelectionPaths();
     updateNavBar();
+    updateLastSelection();
+  }
+
+  private void updateLastSelection() {
     ServiceViewItem lastSelection = myLastSelection;
     ServiceViewItem updatedItem = lastSelection == null ? null : getModel().findItem(lastSelection);
     AppUIUtil.invokeOnEdt(() -> {
@@ -251,7 +255,8 @@ class ServiceTreeView extends ServiceView {
       if (Comparing.equal(newSelection, myLastSelection)) {
         myLastSelection = newSelection;
         if (mySelected) {
-          ServiceViewDescriptor descriptor = newSelection == null ? null : newSelection.getViewDescriptor();
+          ServiceViewDescriptor descriptor = newSelection == null || (newSelection.isRemoved() && updatedItem == null) ?
+                                             null : newSelection.getViewDescriptor();
           myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
         }
       }
@@ -259,8 +264,8 @@ class ServiceTreeView extends ServiceView {
   }
 
   private void updateNavBar() {
-    AsyncPromise<ServiceViewItem> itemPromise = new AsyncPromise<>();
-    itemPromise.onSuccess(item -> {
+    AppUIUtil.invokeOnEdt(() -> {
+      ServiceViewItem item = getNavBarItem();
       if (item == null) return;
 
       getModel().getInvoker().invoke(() -> {
@@ -268,14 +273,13 @@ class ServiceTreeView extends ServiceView {
         if (updatedItem != null) {
           AppUIUtil.invokeOnEdt(() -> {
             ServiceViewItem navBarItem = getNavBarItem();
-            if (updatedItem.equals(navBarItem)) {
+            if (updatedItem.equals(navBarItem) && !updatedItem.isRemoved()) {
               myNavBarPanel.getModel().updateModel(updatedItem);
             }
           }, getProject().getDisposed());
         }
       });
-    });
-    AppUIUtil.invokeOnEdt(() -> itemPromise.setResult(getNavBarItem()), getProject().getDisposed());
+    }, getProject().getDisposed());
   }
 
   private ServiceViewItem getNavBarItem() {
@@ -283,6 +287,38 @@ class ServiceTreeView extends ServiceView {
     if (navBarModel.isEmpty()) return null;
 
     return ObjectUtils.tryCast(navBarModel.getElement(navBarModel.size() - 1), ServiceViewItem.class);
+  }
+
+  private void updateSelectionPaths() {
+    AppUIUtil.invokeOnEdt(() -> {
+      TreePath[] currentPaths = myTree.getSelectionPaths();
+      List<TreePath> selectedPaths =
+        currentPaths == null || currentPaths.length == 0 ? Collections.emptyList() : Arrays.asList(currentPaths);
+      myTreeModel.rootsChanged();
+      if (selectedPaths.isEmpty()) return;
+
+      myTreeModel.getInvoker().invokeLater(() -> {
+        List<Promise<TreePath>> pathPromises =
+          ContainerUtil.mapNotNull(selectedPaths, path -> {
+            ServiceViewItem item = ObjectUtils.tryCast(path.getLastPathComponent(), ServiceViewItem.class);
+            return item == null ? null : myTreeModel.findPath(item.getValue(), item.getRootContributor().getClass());
+          });
+        Promises.collectResults(pathPromises, true).onProcessed(paths -> {
+          if (paths != null && !paths.isEmpty() && !paths.equals(selectedPaths)) {
+            Promise<?> newSelectPromise = TreeUtil.promiseSelect(myTree, paths.stream().map(PathSelectionVisitor::new));
+            cancelSelectionUpdate();
+            if (newSelectPromise instanceof AsyncPromise) {
+              ((AsyncPromise<?>)newSelectPromise).onError(t -> {
+                if (t instanceof CancellationException) {
+                  TreeUtil.promiseExpand(myTree, paths.stream().map(path -> new PathSelectionVisitor(path.getParentPath())));
+                }
+              });
+            }
+            myUpdateSelectionPromise = newSelectPromise;
+          }
+        });
+      });
+    }, getProject().getDisposed());
   }
 
   @Override
@@ -366,41 +402,6 @@ class ServiceTreeView extends ServiceView {
       }
     }
     return result;
-  }
-
-  private class MyViewModelListener implements ServiceViewModel.ServiceViewModelListener {
-    @Override
-    public void rootsChanged() {
-      AppUIUtil.invokeOnEdt(() -> {
-        TreePath[] currentPaths = myTree.getSelectionPaths();
-        List<TreePath> selectedPaths =
-          currentPaths == null || currentPaths.length == 0 ? Collections.emptyList() : Arrays.asList(currentPaths);
-        myTreeModel.rootsChanged();
-        if (selectedPaths.isEmpty()) return;
-
-        myTreeModel.getInvoker().invokeLater(() -> {
-          List<Promise<TreePath>> pathPromises =
-            ContainerUtil.mapNotNull(selectedPaths, path -> {
-              ServiceViewItem item = ObjectUtils.tryCast(path.getLastPathComponent(), ServiceViewItem.class);
-              return item == null ? null : myTreeModel.findPath(item.getValue(), item.getRootContributor().getClass());
-            });
-          Promises.collectResults(pathPromises, true).onProcessed(paths -> {
-            if (paths != null && !paths.isEmpty() && !paths.equals(selectedPaths)) {
-              Promise<?> newSelectPromise = TreeUtil.promiseSelect(myTree, paths.stream().map(PathSelectionVisitor::new));
-              cancelSelectionUpdate();
-              if (newSelectPromise instanceof AsyncPromise) {
-                ((AsyncPromise<?>)newSelectPromise).onError(t -> {
-                  if (t instanceof CancellationException) {
-                    TreeUtil.promiseExpand(myTree, paths.stream().map(path -> new PathSelectionVisitor(path.getParentPath())));
-                  }
-                });
-              }
-              myUpdateSelectionPromise = newSelectPromise;
-            }
-          });
-        });
-      }, getProject().getDisposed());
-    }
   }
 
   private static class PathSelectionVisitor implements TreeVisitor {

@@ -160,7 +160,7 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       List<ServiceViewItem> selectedItems = serviceView.getSelectedItems();
       ServiceViewItem selectedItem = ContainerUtil.getOnlyItem(selectedItems);
-      ServiceViewDescriptor descriptor = selectedItem == null ? null : selectedItem.getViewDescriptor();
+      ServiceViewDescriptor descriptor = selectedItem == null || selectedItem.isRemoved() ? null : selectedItem.getViewDescriptor();
       DataProvider dataProvider = descriptor == null ? null : descriptor.getDataProvider();
       if (dataProvider != null) {
         return RecursionManager.doPreventingRecursion(serviceView, false, () -> dataProvider.getData(dataId));

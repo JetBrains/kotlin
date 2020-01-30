@@ -3,7 +3,6 @@ package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.DataManager;
-import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.ComponentUtil;
@@ -89,13 +88,7 @@ class ServiceViewTree extends Tree {
       if (!(node instanceof ServiceViewItem)) return null;
 
       ServiceViewOptions viewOptions = DataManager.getInstance().getDataContext(myComponent).getData(ServiceViewActionUtils.OPTIONS_KEY);
-      ServiceViewDescriptor viewDescriptor = ((ServiceViewItem)node).getViewDescriptor();
-      ItemPresentation presentation =
-        viewOptions == null ? viewDescriptor.getPresentation() : viewDescriptor.getCustomPresentation(viewOptions);
-      return presentation instanceof PresentationData ? presentation : new PresentationData(presentation.getPresentableText(),
-                                                                                            presentation.getLocationString(),
-                                                                                            presentation.getIcon(false),
-                                                                                            null);
+      return ((ServiceViewItem)node).getItemPresentation(viewOptions);
     }
 
     @Override

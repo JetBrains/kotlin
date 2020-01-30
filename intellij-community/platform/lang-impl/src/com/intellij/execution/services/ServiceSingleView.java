@@ -24,12 +24,7 @@ class ServiceSingleView extends ServiceView {
     super(new BorderLayout(), project, model, ui);
     ui.setServiceToolbar(ServiceViewActionProvider.getInstance());
     add(ui.getComponent(), BorderLayout.CENTER);
-    myListener = new ServiceViewModelListener() {
-      @Override
-      public void rootsChanged() {
-        updateItem();
-      }
-    };
+    myListener = this::updateItem;
     model.addModelListener(myListener);
     model.getInvoker().invokeLater(this::updateItem);
   }

@@ -35,7 +35,6 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
-import com.intellij.openapi.wm.impl.ToolWindowImpl;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.content.*;
@@ -99,12 +98,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         updateToolWindow(toolWindowId, ContainerUtil.intersects(activeContributors, toolWindowContributors), false);
       }
     }
-    AppUIUtil.invokeOnEdt(() -> {
-      ServiceViewContentHolder holder = getContentHolder(e.contributorClass);
-      if (holder != null) {
-        holder.processAllModels(viewModel -> viewModel.eventProcessed(e));
-      }
-    }, myProject.getDisposed());
   }
 
   private void initRoots() {
@@ -215,7 +208,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   void createToolWindowContent(@NotNull ToolWindow toolWindow) {
-    String toolWindowId = toolWindow instanceof ToolWindowImpl ? ((ToolWindowImpl)toolWindow).getId() : null;
+    String toolWindowId = toolWindow.getId();
     Collection<ServiceViewContributor<?>> contributors = myGroups.get(toolWindowId);
     if (contributors == null) return;
 
