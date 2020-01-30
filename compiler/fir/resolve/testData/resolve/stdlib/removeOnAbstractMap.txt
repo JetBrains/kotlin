@@ -1,0 +1,4 @@
+FILE: removeOnAbstractMap.kt
+    public final fun test(map: R|java/util/AbstractMap<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/MutableMap.remove]>#(String(), Null(null))
+    }

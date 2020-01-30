@@ -103,6 +103,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/functionX.kt");
     }
 
+    @TestMetadata("getOnKProperty.kt")
+    public void testGetOnKProperty() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/getOnKProperty.kt");
+    }
+
     @TestMetadata("hashMapTypeAlias.kt")
     public void testHashMapTypeAlias() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/hashMapTypeAlias.kt");
@@ -186,6 +191,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     @TestMetadata("reflectionClass.kt")
     public void testReflectionClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/reflectionClass.kt");
+    }
+
+    @TestMetadata("removeOnAbstractMap.kt")
+    public void testRemoveOnAbstractMap() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/removeOnAbstractMap.kt");
     }
 
     @TestMetadata("runOnIntegerLiteral.kt")
