@@ -53,8 +53,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             Code.NEXT -> data.popReturnValue().toIrExpression(expression)
             Code.EXCEPTION -> {
                 val message = when (val exception = data.popReturnValue()) {
+                    is Common -> (exception.fields.first { it.descriptor.name.asString() == "message" }.state as Primitive<*>).value.toString()
                     is Wrapper -> (exception.value as Throwable).message.toString()
-                    is Complex -> (exception.fields.first { it.descriptor.name.asString() == "message" }.state as Primitive<*>).value.toString()
                     else -> TODO("not supported")
                 }
                 IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, message)
@@ -295,7 +295,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return Wrapper.getConstructorMethod(owner).invokeMethod(owner, newFrame).apply { data.pushReturnValue(newFrame) }
         }
 
-        val state = Complex(parent, mutableListOf())
+        val state = Common(parent, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         val code = constructorCall.getBody()?.interpret(newFrame) ?: Code.NEXT
         state.superType = newFrame.popReturnValue() as Complex
@@ -312,8 +312,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): Code {
         if (delegatingConstructorCall.symbol.descriptor.containingDeclaration.defaultType == DefaultBuiltIns.Instance.anyType) {
-            val anyComplex = Complex(irBuiltIns.anyClass.owner, mutableListOf())
-            data.pushReturnValue(anyComplex)
+            val anyAsStateObject = Common(irBuiltIns.anyClass.owner, mutableListOf())
+            data.pushReturnValue(anyAsStateObject)
             return Code.NEXT
         }
 
@@ -453,7 +453,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): Code {
-        val objectState = Complex(expression.symbol.owner, mutableListOf())
+        val objectState = Common(expression.symbol.owner, mutableListOf())
         val newFrame = data.copy().apply { addVar(Variable(expression.symbol.descriptor.thisAsReceiverParameter, objectState)) }
 
         val constructor = expression.symbol.owner.declarations.single { it is IrConstructor } as IrConstructor
@@ -552,7 +552,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 when (val returnValue = data.popReturnValue()) {
                     is Primitive<*> -> returnValue.value.toString()
                     is Wrapper -> returnValue.value.toString()
-                    is Complex -> {
+                    is Common -> {
                         val toStringFun = returnValue.getToStringFunction()
                         val newFrame = InterpreterFrame(mutableListOf(Variable(toStringFun.symbol.getReceiver()!!, returnValue)))
                         val code = toStringFun.body?.let { toStringFun.interpret(newFrame) } ?: calculateOverridden(toStringFun, newFrame)

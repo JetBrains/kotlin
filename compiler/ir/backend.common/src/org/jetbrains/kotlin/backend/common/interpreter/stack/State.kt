@@ -104,7 +104,7 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     }
 }
 
-open class Complex(override var irClass: IrClass, override val fields: MutableList<Variable>) : State {
+abstract class Complex(override var irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superType: Complex? = null
     var instance: Complex? = null
 
@@ -117,17 +117,19 @@ open class Complex(override var irClass: IrClass, override val fields: MutableLi
         return irClass.thisReceiver!!.descriptor
     }
 
+    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+        return irClass.declarations.filterIsInstance<IrFunction>()
+            .filter { it.descriptor.name == descriptor.name }
+            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
+    }
+}
+
+class Common(override var irClass: IrClass, override val fields: MutableList<Variable>) : Complex(irClass, fields) {
     override fun setState(newVar: Variable) {
         when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
             null -> fields.add(newVar)                          // newVar isn't present in value list
             else -> fields[fields.indexOf(oldState)] = newVar   // newVar already present
         }
-    }
-
-    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
-        return irClass.declarations.filterIsInstance<IrFunction>()
-            .filter { it.descriptor.name == descriptor.name }
-            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
     }
 
     fun getToStringFunction(): IrFunctionImpl {
@@ -137,14 +139,14 @@ open class Complex(override var irClass: IrClass, override val fields: MutableLi
     }
 
     override fun copy(): State {
-        return Complex(irClass, fields).apply {
-            this@apply.superType = this@Complex.superType
-            this@apply.instance = this@Complex.instance
+        return Common(irClass, fields).apply {
+            this@apply.superType = this@Common.superType
+            this@apply.instance = this@Common.instance
         }
     }
 
     override fun toString(): String {
-        return "Complex(obj='${irClass.fqNameForIrSerialization}', super=$superType, values=$fields)"
+        return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superType, values=$fields)"
     }
 }
 
@@ -164,6 +166,10 @@ class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, 
 
         val methodType = irFunction.getMethodType()
         return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
+    }
+
+    override fun setState(newVar: Variable) {
+        throw UnsupportedOperationException("Method setState is not supported in Wrapper class")
     }
 
     companion object {
@@ -250,7 +256,7 @@ class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, 
     }
 
     override fun copy(): State {
-        return Wrapper(value, irClass)
+        return Wrapper(value, irClass).apply { this@apply.instance = this@Wrapper.instance }
     }
 
     override fun toString(): String {
@@ -271,7 +277,7 @@ class Lambda(val irFunction: IrFunction, override var irClass: IrClass) : Comple
     }
 
     override fun copy(): State {
-        return Lambda(irFunction, irClass)
+        return Lambda(irFunction, irClass).apply { this@apply.instance = this@Lambda.instance }
     }
 
     override fun toString(): String {
