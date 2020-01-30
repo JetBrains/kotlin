@@ -355,7 +355,6 @@ internal class KotlinJsIrSourceSetProcessor(
         return tasksProvider.registerKotlinJsIrTask(
             project,
             taskName,
-            KotlinJsIrLink::class.java,
             kotlinCompilation
         ) { task ->
             task.type = type

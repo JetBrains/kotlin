@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLinkWithWorkers
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
@@ -100,14 +102,14 @@ internal open class KotlinTasksProvider(val targetName: String) {
         return result
     }
 
-    fun <T : Kotlin2JsCompile> registerKotlinJsIrTask(
+    fun registerKotlinJsIrTask(
         project: Project,
         name: String,
-        taskClass: Class<out T>,
         compilation: AbstractKotlinCompilation<*>,
-        configureAction: (T) -> Unit
-    ): TaskProvider<out T> {
+        configureAction: (KotlinJsIrLink) -> Unit
+    ): TaskProvider<out KotlinJsIrLink> {
         val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<KotlinJsIrLink, KotlinJsIrLinkWithWorkers>(properties)
         val result = project.registerTask(name, taskClass) {
             configureAction(it)
         }

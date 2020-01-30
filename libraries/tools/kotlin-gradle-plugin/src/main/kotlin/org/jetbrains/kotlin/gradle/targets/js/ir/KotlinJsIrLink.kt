@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
 
+@CacheableTask
 open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
     lateinit var type: KotlinJsIrType
@@ -25,6 +26,7 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
 
     @get:SkipWhenEmpty
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     val entryModule: File
         get() = File(
             (taskData.compilation as KotlinJsIrCompilation)
