@@ -14,11 +14,15 @@ class WorkersIT : BaseGradleIT() {
     fun testParallelTasks() {
         parallelTasksImpl(
             isParallel = true,
-            jsIr = true
+            jsMode = JsMode.LEGACY
         )
+    }
+
+    @Test
+    fun testParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = true,
-            jsIr = false
+            jsMode = JsMode.IR
         )
     }
 
@@ -26,24 +30,29 @@ class WorkersIT : BaseGradleIT() {
     fun testNoParallelTasks() {
         parallelTasksImpl(
             isParallel = false,
-            jsIr = true
+            jsMode = JsMode.LEGACY
         )
+    }
+
+    @Test
+    fun testNoParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = false,
-            jsIr = false
+            jsMode = JsMode.IR
         )
     }
 
     private fun parallelTasksImpl(
         isParallel: Boolean,
-        jsIr: Boolean
+        jsMode: JsMode
     ) =
         with(Project("new-mpp-parallel")) {
-            val options = defaultBuildOptions().copy(parallelTasksInProject = isParallel, withDaemon = false)
+            val options = defaultBuildOptions().copy(
+                parallelTasksInProject = isParallel,
+                withDaemon = false,
+                jsMode = jsMode
+            )
             val traceLoading = "-Dorg.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading=true"
-            if (!jsIr) {
-                gradleProperties().appendText(jsMode(JsMode.LEGACY))
-            }
             build("assemble", traceLoading, options = options) {
                 assertSuccessful()
                 val tasks = arrayOf(":compileKotlinMetadata", ":compileKotlinJvm", ":compileKotlinJs")
@@ -56,7 +65,7 @@ class WorkersIT : BaseGradleIT() {
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
                     kotlinClassesDir(sourceSet = "js/main") +
-                            if (jsIr) "manifest" else "new-mpp-parallel.js"
+                            if (jsMode == JsMode.IR) "manifest" else "new-mpp-parallel.js"
                 )
                 expectedKotlinOutputFiles.forEach { assertFileExists(it) }
                 assertSubstringCount("Loaded GradleKotlinCompilerWork", 1)
