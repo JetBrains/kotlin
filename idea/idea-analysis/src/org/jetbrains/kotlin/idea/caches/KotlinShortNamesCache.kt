@@ -20,6 +20,7 @@ import com.intellij.util.Processor
 import com.intellij.util.Processors
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.indexing.IdFilter
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -205,11 +206,9 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
                 filter,
                 KtNamedDeclaration::class.java
             ) { ktNamedDeclaration ->
-                val methods = ktNamedDeclaration.getAccessorLightMethods()
+                val methods: Sequence<PsiMethod> = ktNamedDeclaration.getAccessorLightMethods()
                     .asSequence()
                     .filter { it.name == name }
-                    .map { it as? PsiMethod }
-                    .filterNotNull()
 
                 return@processElements methods.all { method ->
                     processor.process(method)
@@ -327,7 +326,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
     }
 
     private class CancelableArrayCollectProcessor<T> : Processor<T> {
-        val troveSet = ContainerUtil.newTroveSet<T>()
+        val troveSet = THashSet<T>()
         private val processor = Processors.cancelableCollectProcessor<T>(troveSet)
 
         override fun process(value: T): Boolean {
