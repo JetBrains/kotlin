@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.analyzer.common.configureCommonSpecificComponents
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -54,7 +53,6 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
@@ -132,7 +130,7 @@ class CompositeResolverForModuleFactory(
         val metadataProvder = container.get<MetadataPackageFragmentProvider>()
         var klibMetadataProvider: PackageFragmentProvider? = null
 
-        if (moduleInfo is CommonKlibLibraryInfo && moduleInfo.metadataInfo == CommonKlibLibraryInfo.MetadataInfo.Compatible) {
+        if (moduleInfo is CommonKlibLibraryInfo && moduleInfo.compatibilityInfo.isCompatible) {
             val library = moduleInfo.commonLibrary
             val languageVersionSettings = container.get<LanguageVersionSettings>()
 

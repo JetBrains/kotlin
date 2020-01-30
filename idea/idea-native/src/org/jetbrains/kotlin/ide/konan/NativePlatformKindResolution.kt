@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.getCapability
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -29,9 +27,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeMetadataVersion
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.MetadataInfo.Compatible
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.MetadataInfo.Incompatible
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
@@ -55,7 +50,8 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
-import java.io.IOException
+import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
+import org.jetbrains.kotlin.idea.klib.readSafe
 
 private val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
@@ -64,7 +60,7 @@ fun KotlinLibrary.createPackageFragmentProvider(
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor
 ): PackageFragmentProvider? {
-    if (safeMetadataVersion?.isCompatible() != true) return null
+    if (!getCompatibilityInfo().isCompatible) return null
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(this)
 
@@ -177,21 +173,9 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
 private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
     dependencies().lazyClosure { it.dependencies() }
         .filterIsInstance<NativeLibraryInfo>()
-        .firstOrNull { it.isStdlib && it.metadataInfo.isCompatible }
+        .firstOrNull { it.isStdlib && it.compatibilityInfo.isCompatible }
 
 class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
-
-    sealed class MetadataInfo {
-        abstract val isCompatible: Boolean
-
-        object Compatible : MetadataInfo() {
-            override val isCompatible get() = true
-        }
-
-        class Incompatible(val isOlder: Boolean) : MetadataInfo() {
-            override val isCompatible get() = false
-        }
-    }
 
     private val nativeLibrary = resolveSingleFileKlib(
         libraryFile = KFile(libraryRoot),
@@ -201,14 +185,7 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
 
-    val metadataInfo by lazy {
-        val metadataVersion = nativeLibrary.safeMetadataVersion
-        when {
-            metadataVersion == null -> Incompatible(true) // too old KLIB format, even doesn't have metadata version
-            !metadataVersion.isCompatible() -> Incompatible(!metadataVersion.isAtLeast(KlibMetadataVersion.INSTANCE))
-            else -> Compatible
-        }
-    }
+    val compatibilityInfo by lazy { nativeLibrary.getCompatibilityInfo() }
 
     override fun getLibraryRoots() = listOf(libraryRoot)
 
@@ -230,13 +207,5 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
         private val LOG = IJLoggerAdapter.getInstance(NativeLibraryInfo::class.java)
 
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
-
-        internal val KotlinLibrary.safeMetadataVersion get() = this.readSafe(null) { metadataVersion }
-
-        private fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
-            action()
-        } catch (_: IOException) {
-            defaultValue
-        }
     }
 }

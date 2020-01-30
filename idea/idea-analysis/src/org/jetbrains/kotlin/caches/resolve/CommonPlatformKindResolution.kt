@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
+import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
 import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -83,50 +82,23 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
 // TODO(dsavvinov): unify with NativeLibraryInfo
 class CommonKlibLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
 
-    sealed class MetadataInfo {
-        abstract val isCompatible: Boolean
-
-        object Compatible : MetadataInfo() {
-            override val isCompatible get() = true
-        }
-
-        class Incompatible(val isOlder: Boolean) : MetadataInfo() {
-            override val isCompatible get() = false
-        }
-    }
-
     val commonLibrary = resolveSingleFileKlib(
         libraryFile = KFile(libraryRoot),
         logger = LOG,
         strategy = ToolingSingleFileKlibResolveStrategy
     )
 
-    val metadataInfo by lazy {
-        val metadataVersion = commonLibrary.safeMetadataVersion
-        when {
-            metadataVersion == null -> MetadataInfo.Incompatible(true) // too old KLIB format, even doesn't have metadata version
-            !metadataVersion.isCompatible() -> MetadataInfo.Incompatible(!metadataVersion.isAtLeast(KlibMetadataVersion.INSTANCE))
-            else -> MetadataInfo.Compatible
-        }
-    }
+    val compatibilityInfo by lazy { commonLibrary.getCompatibilityInfo() }
 
     override fun getLibraryRoots() = listOf(libraryRoot)
 
     override val platform: TargetPlatform
         get() = CommonPlatforms.defaultCommonPlatform
 
-    override fun toString() = "Common" + super.toString()
+    override fun toString() = "CommonKlib" + super.toString()
 
     companion object {
         private val LOG = IJLoggerAdapter.getInstance(CommonKlibLibraryInfo::class.java)
-
-        internal val KotlinLibrary.safeMetadataVersion get() = this.readSafe(null) { metadataVersion }
-
-        private fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
-            action()
-        } catch (_: IOException) {
-            defaultValue
-        }
     }
 }
 

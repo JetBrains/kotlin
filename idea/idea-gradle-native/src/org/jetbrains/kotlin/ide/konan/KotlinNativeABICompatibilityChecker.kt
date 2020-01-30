@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
+import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
 
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
 class KotlinNativeABICompatibilityChecker(private val project: Project) : ProjectComponent, Disposable {
@@ -86,7 +87,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> {
         val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
             .filterIsInstance<NativeLibraryInfo>()
-            .filter { !it.metadataInfo.isCompatible }
+            .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
         val newEntries = if (cachedIncompatibleLibraries.isNotEmpty())
@@ -106,7 +107,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         val librariesByGroups = HashMap<Pair<LibraryGroup, Boolean>, MutableList<Pair<String, String>>>()
         librariesToNotify.forEach { (libraryRoot, libraryInfo) ->
-            val isOldMetadata = (libraryInfo.metadataInfo as? NativeLibraryInfo.MetadataInfo.Incompatible)?.isOlder ?: true
+            val isOldMetadata = (libraryInfo.compatibilityInfo as? IncompatibleMetadata)?.isOlder ?: true
             val (libraryName, libraryGroup) = parseIDELibraryName(libraryInfo)
             librariesByGroups.computeIfAbsent(libraryGroup to isOldMetadata) { mutableListOf() } += libraryName to libraryRoot
         }
