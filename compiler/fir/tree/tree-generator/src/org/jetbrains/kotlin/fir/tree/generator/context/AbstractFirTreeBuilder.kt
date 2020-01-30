@@ -32,6 +32,14 @@ abstract class AbstractFirTreeBuilder {
             it.parents.addAll(dependencies)
             elements += it
         }
+
+    val configurations: MutableMap<Element, () -> Unit> = mutableMapOf()
+
+    fun applyConfigurations() {
+        for (element in elements) {
+            configurations[element]?.invoke()
+        }
+    }
 }
 
 fun generatedType(type: String): Type = generatedType("", type)

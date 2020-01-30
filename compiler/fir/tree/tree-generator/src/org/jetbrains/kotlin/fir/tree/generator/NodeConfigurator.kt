@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-object NodeConfigurator : AbstractFieldConfigurator() {
-    fun configureFields() = with(FirTreeBuilder) {
+object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuilder) {
+    fun configureFields() = configure {
         AbstractFirTreeBuilder.baseFirElement.configure {
             +field("source", sourceElementType, nullable = true)
         }
