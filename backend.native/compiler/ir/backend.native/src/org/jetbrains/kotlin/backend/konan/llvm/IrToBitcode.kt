@@ -1600,7 +1600,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val globalAddress = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
                     functionGenerationContext
             )
-            if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive)
+            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.MAIN_THREAD)
                 functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.storageKind == FieldStorageKind.SHARED)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)

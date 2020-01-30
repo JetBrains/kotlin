@@ -9,14 +9,30 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-@Test fun runTest() {
-    val worker = Worker.start()
-    val future = worker.execute(TransferMode.SAFE, { 42 }) {
-        input -> input.toString()
+@Test fun runTest1() {
+    withWorker {
+        val future = execute(TransferMode.SAFE, { 42 }) { input ->
+            input.toString()
+        }
+        future.consume { result ->
+            println("Got $result")
+        }
     }
-    future.consume {
-        result -> println("Got $result")
-    }
-    worker.requestTermination().result
     println("OK")
+}
+
+var int1 = 1
+val int2 = 77
+
+@Test fun runTest2() {
+    int1++
+    withWorker {
+        executeAfter(0, {
+            assertFailsWith<IncorrectDereferenceException> {
+                int1++
+            }
+            assertEquals(2, int1)
+            assertEquals(77, int2)
+        }.freeze())
+    }
 }
