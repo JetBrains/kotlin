@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.isChar
 
 class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = callExpressionVisitor(fun(call) {
@@ -81,7 +83,10 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
                     "kotlin.primitives.$kotlinPrimitive.toString",
                     ToExtensionFunctionWithNullableReceiver
                 ) {
-                    it.valueArguments.size == 1
+                    val valueArguments = it.valueArguments
+                    if (valueArguments.size != 1) return@Replacement false
+                    javaPrimitive != "Character" ||
+                            valueArguments.first().getArgumentExpression()?.getType(it.analyze(BodyResolveMode.PARTIAL))?.isChar() == true
                 },
                 Replacement(
                     "java.lang.$javaPrimitive.compare",
