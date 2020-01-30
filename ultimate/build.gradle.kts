@@ -93,8 +93,29 @@ dependencies {
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
     if (intellijUltimateEnabled) {
+        Platform[201].orHigher {
+            testCompileOnly(intellijUltimateDep()) {
+                includeJars(
+                    "testFramework",
+                    "testFramework-java",
+                    "testFramework.core",
+                    rootProject = rootProject
+                )
+            }
+        }
+
         testCompileOnly(intellijUltimateDep()) {
-            includeJars("platform-api", "platform-impl", "gson", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject)
+            includeJars(
+                "platform-api",
+                "platform-impl",
+                "gson",
+                "trove4j",
+                "openapi",
+                "idea",
+                "util",
+                "jdom",
+                rootProject = rootProject
+            )
         }
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
