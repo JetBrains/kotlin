@@ -136,6 +136,8 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
@@ -177,6 +179,10 @@ class ComposableCallTransformer(
                                     (
                                             isNullable() &&
                                                     makeNotNullable().isStable()
+                                            ) ||
+                                    (
+                                            isInlineClassType() &&
+                                                    unsubstitutedUnderlyingType().isStable()
                                             )
                             )
             trace.record(ComposeWritableSlices.STABLE_TYPE, this, isStable)

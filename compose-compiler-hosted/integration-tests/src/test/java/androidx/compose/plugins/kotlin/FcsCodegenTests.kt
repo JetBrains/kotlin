@@ -1152,9 +1152,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
 
-        @Suppress("UNCHECKED_CAST")
-        fun View.getComposedSet(): Set<String>? = getTag(tagId) as? Set<String>
-
         compose(
             """
                 import android.view.View
@@ -1191,7 +1188,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
         ).then { activity ->
             val textView = activity.findViewById(tvId) as TextView
-            val composedSet = textView.getComposedSet() ?: error("expected a compose set to exist")
+            val composedSet = textView.getComposedSet(tagId) ?: error(
+                "expected a compose set to exist")
 
             fun assertContains(contains: Boolean, key: String) {
                 assertEquals("composedSet contains key '$key'", contains, composedSet.contains(key))
@@ -1203,7 +1201,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             assertContains(true, "ComposeMutable(new)")
         }.then { activity ->
             val textView = activity.findViewById(tvId) as TextView
-            val composedSet = textView.getComposedSet() ?: error("expected a compose set to exist")
+            val composedSet = textView.getComposedSet(tagId) ?: error("expected a compose set to exist")
 
             fun assertContains(contains: Boolean, key: String) {
                 assertEquals("composedSet contains key '$key'", contains, composedSet.contains(key))
@@ -1220,6 +1218,77 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             // since its a new one every time, we definitely don't skip
             assertContains(true, "ComposeMutable(new)")
+        }
+    }
+
+    @Test
+    fun testInlineClassMemoization(): Unit = forComposerParam(true, false) {
+        val tvId = 258
+        val tagId = (3 shl 24) or "composed_set".hashCode()
+
+        compose(
+            """
+                inline class InlineInt(val value: Int)
+                inline class InlineInlineInt(val value: InlineInt)
+                inline class InlineMutableSet(val value: MutableSet<String>)
+                fun View.setComposed(composed: Set<String>) = setTag($tagId, composed)
+
+                val composedSet = mutableSetOf<String>()
+                val constInlineInt = InlineInt(0)
+                var inc = 2
+                val constInlineMutableSet = InlineMutableSet(mutableSetOf("a"))
+
+                @Composable fun ComposedInlineInt(value: InlineInt) {
+                  composedSet.add("ComposedInlineInt(" + value + ")")
+                }
+
+                @Composable fun ComposedInlineInlineInt(value: InlineInlineInt) {
+                  composedSet.add("ComposedInlineInlineInt(" + value + ")")
+                }
+
+                @Composable fun ComposedInlineMutableSet(value: InlineMutableSet) {
+                  composedSet.add("ComposedInlineMutableSet(" + value + ")")
+                }
+            """,
+            { mapOf("text" to "") },
+            """
+                composedSet.clear()
+
+                ComposedInlineInt(constInlineInt)
+                ComposedInlineInt(InlineInt(1))
+                ComposedInlineInt(InlineInt(inc))
+                ComposedInlineInlineInt(InlineInlineInt(InlineInt(2)))
+                ComposedInlineMutableSet(constInlineMutableSet)
+
+                TextView(id=$tvId, composed=composedSet)
+
+                inc++
+            """
+        ).then { activity ->
+            val textView = activity.findViewById(tvId) as TextView
+            val composedSet = textView.getComposedSet(tagId) ?: error("expected a compose set to exist")
+
+            // All composables should execute since it's the first time.
+            assert(composedSet.contains("ComposedInlineInt(InlineInt(value=0))"))
+            assert(composedSet.contains("ComposedInlineInt(InlineInt(value=1))"))
+            assert(composedSet.contains("ComposedInlineInt(InlineInt(value=2))"))
+            assert(composedSet.contains("ComposedInlineInlineInt(InlineInlineInt(value=InlineInt(value=2)))"))
+            assert(composedSet.contains("ComposedInlineMutableSet(InlineMutableSet(value=[a]))"))
+        }.then { activity ->
+            val textView = activity.findViewById(tvId) as TextView
+            val composedSet = textView.getComposedSet(tagId) ?: error("expected a compose set to exist")
+
+            // InlineInt and InlineInlineInt are stable, so the corresponding composables should
+            // not run for values equal to previous compositions.
+            assert(!composedSet.contains("ComposedInlineInt(InlineInt(value=0))"))
+            assert(!composedSet.contains("ComposedInlineInt(InlineInt(value=1))"))
+            assert(!composedSet.contains("ComposedInlineInlineInt(InlineInlineInt(value=InlineInt(value=2)))"))
+
+            // But if a stable composable is passed a new value, it should re-run.
+            assert(composedSet.contains("ComposedInlineInt(InlineInt(value=3))"))
+
+            // And composables for inline classes with non-stable underlying types should run.
+            assert(composedSet.contains("ComposedInlineMutableSet(InlineMutableSet(value=[a]))"))
         }
     }
 
@@ -2514,4 +2583,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun View.getComposedSet(tagId: Int): Set<String>? = getTag(tagId) as? Set<String>
 }
+
