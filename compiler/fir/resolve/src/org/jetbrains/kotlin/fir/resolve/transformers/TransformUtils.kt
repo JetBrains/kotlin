@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.fir.visitors.*
 
 internal object MapArguments : FirDefaultTransformer<Map<FirElement, FirElement>>() {
     override fun <E : FirElement> transformElement(element: E, data: Map<FirElement, FirElement>): CompositeTransformResult<E> {
@@ -36,6 +32,27 @@ internal object MapArguments : FirDefaultTransformer<Map<FirElement, FirElement>
         data: Map<FirElement, FirElement>
     ): CompositeTransformResult<FirStatement> {
         return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
+    }
+
+    override fun transformBlock(block: FirBlock, data: Map<FirElement, FirElement>): CompositeTransformResult<FirStatement> {
+        if (block.statements.isEmpty()) return block.compose()
+        val transformedStatement = block.statements.last().transformSingle(this@MapArguments, data)
+        when (block) {
+            is FirBlockImpl -> block.statements[block.statements.size - 1] = transformedStatement
+            is FirSingleExpressionBlock -> block.statement = transformedStatement
+        }
+        return block.compose()
+    }
+
+    override fun transformCatch(catch: FirCatch, data: Map<FirElement, FirElement>): CompositeTransformResult<FirCatch> {
+        return catch.transformBlock(this, data).compose()
+    }
+
+    override fun transformWhenBranch(
+        whenBranch: FirWhenBranch,
+        data: Map<FirElement, FirElement>,
+    ): CompositeTransformResult<FirWhenBranch> {
+        return  whenBranch.transformResult(this, data).compose()
     }
 }
 

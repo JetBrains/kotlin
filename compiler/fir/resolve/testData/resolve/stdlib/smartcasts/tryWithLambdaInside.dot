@@ -47,7 +47,7 @@ digraph tryWithLambdaInside_kt {
                         15 [label="Exit function anonymousFunction"];
                     }
                     16 [label="Postponed exit from lambda"];
-                    17 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|(<L> = filter@fun <implicit>.<anonymous>(): <implicit> <kind=UNKNOWN>  {
+                    17 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
     R|<local>/it|
 }
 )"];
@@ -68,7 +68,7 @@ digraph tryWithLambdaInside_kt {
             24 [label="Try expression exit"];
         }
         25 [label="Jump: ^testInPlace try {
-    R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <implicit>.<anonymous>(): <implicit> <kind=UNKNOWN>  {
+    R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
         R|<local>/it|
     }
     )
@@ -119,7 +119,7 @@ finally {
                     32 [label="Access variable R|<local>/list|"];
                     33 [label="Postponed enter to lambda"];
                     34 [label="Postponed exit from lambda"];
-                    35 [label="Function call: R|<local>/list|.R|/notInPlaceFilter|(<L> = notInPlaceFilter@fun <implicit>.<anonymous>(): <implicit> {
+                    35 [label="Function call: R|<local>/list|.R|/notInPlaceFilter|(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| {
     R|<local>/it|
 }
 )"];
@@ -140,7 +140,7 @@ finally {
             42 [label="Try expression exit"];
         }
         43 [label="Jump: ^testNotInPlace try {
-    R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <implicit>.<anonymous>(): <implicit> {
+    R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| {
         R|<local>/it|
     }
     )
@@ -170,5 +170,15 @@ finally {
     43 -> {45};
     43 -> {44} [style=dotted];
     44 -> {45} [style=dotted];
+
+    subgraph cluster_15 {
+        color=red
+        46 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+        47 [label="Access variable R|<local>/it|"];
+        48 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    }
+
+    46 -> {47};
+    47 -> {48};
 
 }
