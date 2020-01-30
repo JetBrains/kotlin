@@ -54,3 +54,11 @@ org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpol
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, Broken between 20 nov and 10 dec
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testAddComma
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testAddComma2
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testAddComma5
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testAddComma6
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testChangeCommaPosition
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testChangeCommaPosition2
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testMissingLineBreak
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.TrailingComma.testMissingLineBreak2
