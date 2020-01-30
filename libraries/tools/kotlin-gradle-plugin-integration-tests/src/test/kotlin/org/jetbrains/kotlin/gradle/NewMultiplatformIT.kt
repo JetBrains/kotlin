@@ -2300,7 +2300,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 // JS:
                 assertFileExists(
                     if (jsIr) {
-                        "build/classes/kotlin/js/integrationTest/manifest"
+                        "build/classes/kotlin/js/integrationTest/default/manifest"
                     } else {
                         "build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js"
                     }
