@@ -47,7 +47,7 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
 
     private val builder = context.createIrBuilder(function)
 
-    val throwTypeCastException = context.ir.symbols.ThrowTypeCastException
+    val throwNullPointerException = context.ir.symbols.ThrowNullPointerException
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         // ignore inner functions during this pass
@@ -96,7 +96,7 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
                                 thenPart = if (typeOperand.isSimpleTypeWithQuestionMark)
                                     irNull()
                                 else
-                                    irCall(throwTypeCastException.owner),
+                                    irCall(throwNullPointerException.owner),
 
                                 elsePart = irAs(irGet(argument.owner), typeOperand.makeNotNull())
                         )
