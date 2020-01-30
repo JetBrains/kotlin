@@ -27,7 +27,7 @@ fun suggestNativeDebug(projectPath: String) {
 
     PluginsAdvertiser.NOTIFICATION_GROUP.createNotification(
         PluginsAdvertiser.DISPLAY_ID,
-        "Native Debug plugin allows debug from Idea",
+        "Native Debug provides debugger for Kotlin/Native",
         NotificationType.INFORMATION, null
     ).addAction(object : NotificationAction("Install") {
         override fun actionPerformed(e: AnActionEvent, notification: Notification) {
