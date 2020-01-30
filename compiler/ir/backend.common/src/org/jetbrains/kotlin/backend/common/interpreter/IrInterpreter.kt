@@ -165,7 +165,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
         val variableDescriptor = owner.symbol.getReceiver()!!
-        val superQualifier = (data.getVariableState(variableDescriptor) as Complex).superType!!
+        val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superType
+            ?: return calculateBuiltIns(owner.overriddenSymbols.first().owner, data)
         val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
 
         val newStates = InterpreterFrame(mutableListOf(Variable(overridden.getReceiver()!!, superQualifier)))
@@ -186,46 +187,33 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val methodName = descriptor.name.asString()
         val args = data.getAll().map { it.state }
 
-        val result: Any?
-        if (irFunction.parent.fqNameForIrSerialization.toString() == "kotlin.Any" || args.any { it !is Primitive<*> }) {
-            // if ir function is declaration in Any class OR it is ir builtin operator for non primitive types
-            val receiver = (args[0] as Complex).instance
-            result = when (methodName) {
-                "equals", "EQEQ", "EQEQEQ" -> (args[1] as Complex).instance === receiver
-                "hashCode" -> System.identityHashCode(receiver)
-                "toString" -> receiver?.irClass?.name?.asString() + "@" + System.identityHashCode(receiver).toString(16).padStart(8)
-                else -> throw IllegalStateException("Method $methodName can not be interpreted")
-            }
-        } else {
-            val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
-            val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
-            val argsValues = args
-                .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-                .map { it.value }
-            val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
+        val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
+        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
+        val argsValues = args.map { (it as? Complex)?.instance ?: (it as Primitive<*>).value }
+        val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
 
-            result = when (argsType.size) {
-                1 -> {
-                    val function = unaryFunctions[signature]
-                        ?: throw NoSuchMethodException("For given function $signature there is no entry in unary map")
-                    function.invoke(argsValues.first())
-                }
-                2 -> {
-                    val function = binaryFunctions[signature]
-                        ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
-                    when (methodName) {
-                        "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
-                        else -> function.invoke(argsValues[0], argsValues[1])
-                    }
-                }
-                3 -> {
-                    val function = ternaryFunctions[signature]
-                        ?: throw NoSuchMethodException("For given function $signature there is no entry in ternary map")
-                    function.invoke(argsValues[0], argsValues[1], argsValues[2])
-                }
-                else -> throw UnsupportedOperationException("Unsupported number of arguments")
+        val result = when (argsType.size) {
+            1 -> {
+                val function = unaryFunctions[signature]
+                    ?: throw NoSuchMethodException("For given function $signature there is no entry in unary map")
+                function.invoke(argsValues.first())
             }
+            2 -> {
+                val function = binaryFunctions[signature]
+                    ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
+                when (methodName) {
+                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
+                    else -> function.invoke(argsValues[0], argsValues[1])
+                }
+            }
+            3 -> {
+                val function = ternaryFunctions[signature]
+                    ?: throw NoSuchMethodException("For given function $signature there is no entry in ternary map")
+                function.invoke(argsValues[0], argsValues[1], argsValues[2])
+            }
+            else -> throw UnsupportedOperationException("Unsupported number of arguments")
         }
+
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Code.NEXT
     }
