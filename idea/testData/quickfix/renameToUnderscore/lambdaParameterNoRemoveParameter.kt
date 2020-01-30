@@ -3,6 +3,7 @@
 // ACTION: Remove explicit lambda parameter types (may break code)
 // ACTION: Rename to _
 // ACTION: Convert to anonymous function
+// ACTION: Convert to single-line lambda
 
 fun foo(block: (String, Int) -> Unit) {
     block("", 1)

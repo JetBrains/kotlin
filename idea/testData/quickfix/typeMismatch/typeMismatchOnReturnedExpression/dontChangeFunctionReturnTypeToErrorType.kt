@@ -1,4 +1,5 @@
 // "Change 'foo' function return type to '(x: [ERROR : NoSuchType]) -> Int'" "false"
+// ACTION: Convert to multi-line lambda
 // ACTION: Create annotation 'NoSuchType'
 // ACTION: Create class 'NoSuchType'
 // ACTION: Create enum 'NoSuchType'

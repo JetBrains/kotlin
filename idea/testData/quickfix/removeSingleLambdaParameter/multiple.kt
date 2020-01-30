@@ -4,6 +4,7 @@
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify type explicitly
 // ACTION: Convert to anonymous function
+// ACTION: Convert to multi-line lambda
 // RUNTIME_WITH_FULL_JDK
 
 fun main() {

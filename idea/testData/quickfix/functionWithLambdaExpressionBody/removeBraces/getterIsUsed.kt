@@ -2,6 +2,7 @@
 // TOOL: org.jetbrains.kotlin.idea.inspections.FunctionWithLambdaExpressionBodyInspection
 // ACTION: Convert property getter to initializer
 // ACTION: Convert to block body
+// ACTION: Convert to multi-line lambda
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify type explicitly
