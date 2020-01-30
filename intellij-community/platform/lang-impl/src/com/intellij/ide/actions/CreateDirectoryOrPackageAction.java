@@ -12,6 +12,7 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.StatisticsUtilKt;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -46,6 +47,7 @@ import com.intellij.util.containers.FList;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import javax.swing.*;
@@ -61,6 +63,9 @@ import java.util.function.Consumer;
 public class CreateDirectoryOrPackageAction extends AnAction implements DumbAware {
   private static final ExtensionPointName<CreateDirectoryCompletionContributorEP>
     EP = ExtensionPointName.create("com.intellij.createDirectoryCompletionContributor");
+
+  @TestOnly
+  public static final DataKey<String> TEST_DIRECTORY_NAME_KEY = DataKey.create("CreateDirectoryOrPackageAction.testName");
 
   public CreateDirectoryOrPackageAction() {
     super(() -> IdeBundle.message("action.create.new.directory.or.package"),
@@ -98,6 +103,15 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
         view.selectElement(element);
       }
     };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      @SuppressWarnings("TestOnlyProblems")
+      String testDirectoryName = event.getData(TEST_DIRECTORY_NAME_KEY);
+      if (testDirectoryName != null && validator.checkInput(testDirectoryName) && validator.canClose(testDirectoryName)) {
+        consumer.accept(Collections.singletonList(validator.getCreatedElement()));
+        return;
+      }
+    }
 
     if (Experiments.getInstance().isFeatureEnabled("show.create.new.element.in.popup")) {
       createLightWeightPopup(title, initialText, directory, validator, consumer).showCenteredInCurrentWindow(project);
