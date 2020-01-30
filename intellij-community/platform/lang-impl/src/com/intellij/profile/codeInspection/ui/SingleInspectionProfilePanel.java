@@ -114,15 +114,6 @@ public class SingleInspectionProfilePanel extends JPanel {
 
     // to ensure that profile initialized with proper project
     myProfile.initInspectionTools(project);
-    project.getMessageBus().connect(myDisposable).subscribe(ProfileChangeAdapter.TOPIC, new ProfileChangeAdapter() {
-      @Override
-      public void profileChanged(@Nullable InspectionProfile profile) {
-        if (myProfile == profile) {
-          initToolStates();
-          filterTree();
-        }
-      }
-    });
   }
 
   public boolean differsFromDefault() {
@@ -303,6 +294,15 @@ public class SingleInspectionProfilePanel extends JPanel {
     userActivityWatcher.register(myOptionsPanel);
     updateSelectedProfileState();
     reset();
+    myProjectProfileManager.getProject().getMessageBus().connect(myDisposable).subscribe(ProfileChangeAdapter.TOPIC, new ProfileChangeAdapter() {
+      @Override
+      public void profileChanged(@Nullable InspectionProfile profile) {
+        if (myProfile == profile) {
+          initToolStates();
+          filterTree();
+        }
+      }
+    });
   }
 
   private void updateSelectedProfileState() {
