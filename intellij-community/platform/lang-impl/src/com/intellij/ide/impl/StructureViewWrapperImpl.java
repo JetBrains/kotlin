@@ -164,7 +164,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     if (myStructureView != null) {
       myStructureView.disableStoreState();
     }
-    rebuild();
+    scheduleRebuild();
   }
 
   private void checkUpdate() {
