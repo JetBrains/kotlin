@@ -25,6 +25,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,6 +78,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   }
 
   @NotNull
+  @Nls
   protected abstract String getViewName();
 
   protected Map<BuildDescriptor, BuildView> getBuildsMap() {

@@ -24,6 +24,7 @@ import com.intellij.ui.content.*;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.Activatable;
 import com.intellij.util.ui.update.UiNotifyConnector;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -38,15 +39,15 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
     myProject = project;
   }
 
-  protected abstract String getShowInToolWindowProperty();
-  protected abstract String getAutoUpdateEnabledProperty();
+  @Nls protected abstract String getShowInToolWindowProperty();
+  @Nls protected abstract String getAutoUpdateEnabledProperty();
   protected boolean getAutoUpdateDefault() {
     return false;
   }
 
-  protected abstract String getAutoUpdateTitle();
-  protected abstract String getRestorePopupDescription();
-  protected abstract String getAutoUpdateDescription();
+  @Nls protected abstract String getAutoUpdateTitle();
+  @Nls protected abstract String getRestorePopupDescription();
+  @Nls protected abstract String getAutoUpdateDescription();
 
   protected abstract T createComponent();
   protected abstract void doUpdateComponent(@NotNull PsiElement element, PsiElement originalElement, T component);
