@@ -1091,6 +1091,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/problems/defaultJavaImportHiding.kt");
         }
 
+        @TestMetadata("definetelyNotNullForTypeParameter.kt")
+        public void testDefinetelyNotNullForTypeParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/definetelyNotNullForTypeParameter.kt");
+        }
+
         @TestMetadata("definitelyNotNullAmbiguity.kt")
         public void testDefinitelyNotNullAmbiguity() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
