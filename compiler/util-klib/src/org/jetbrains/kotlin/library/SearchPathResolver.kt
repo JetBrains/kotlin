@@ -238,14 +238,18 @@ class SingleKlibComponentResolver(
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
 }
 
-fun resolveSingleFileKlib(
-    libraryFile: File,
-    logger: Logger = object : Logger {
-        override fun log(message: String) {}
-        override fun error(message: String) = kotlin.error("e: $message")
-        override fun warning(message: String) {}
-        override fun fatal(message: String) = kotlin.error("e: $message")
-    }
-): KotlinLibrary {
-    return SingleKlibComponentResolver(libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger).resolve(libraryFile.absolutePath)
+/**
+ * Resolves KLIB libraries by:
+ * - expanding the given library path to the real path that may or may not contain ".klib" extension
+ * - searching among user-supplied libraries by "unique_name" that matches the given library name
+ * - filtering out pre-1.4 libraries (with the old style layout)
+ * - filtering out library components that have different ABI version than the ABI version of the current compiler
+ *
+ * If no match found, fails with [Logger#fatal].
+ *
+ * Typical usage scenario: compiler.
+ */
+object CompilerSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
+    override fun resolve(libraryFile: File, logger: Logger) =
+        SingleKlibComponentResolver(libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger).resolve(libraryFile.absolutePath)
 }
