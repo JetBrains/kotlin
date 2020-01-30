@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.JsMode.Companion.jsModeProp
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -172,7 +173,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Use Kotlin/JS backend mode
      */
     val jsMode: JsMode
-        get() = property("kotlin.js.mode")?.let { JsMode.byCompilerArgument(it) } ?: JsMode.IR
+        get() = property(jsModeProp)?.let { JsMode.byCompilerArgument(it) } ?: JsMode.IR
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
@@ -208,12 +209,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 }
 
-internal enum class JsMode {
+enum class JsMode {
     LEGACY,
     IR,
     MIXED;
 
     companion object {
+        const val jsModeProp = "kotlin.js.mode"
+
         fun byCompilerArgument(argument: String): JsMode? =
             JsMode.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }

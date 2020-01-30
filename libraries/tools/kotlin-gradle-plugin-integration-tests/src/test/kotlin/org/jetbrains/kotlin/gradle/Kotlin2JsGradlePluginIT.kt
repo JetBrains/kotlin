@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.plugin.JsMode
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
+import org.jetbrains.kotlin.gradle.util.jsMode
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assume.assumeFalse
 import org.junit.Test
@@ -507,26 +509,33 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
+        if (!irBackend) {
+            gradleProperties().appendText(jsMode(JsMode.LEGACY))
+        }
+
         build("build") {
             assertSuccessful()
 
-            assertTasksExecuted(
-                ":app:processDceKotlinJs",
-                ":app:browserProductionWebpack"
-            )
+            assertTasksExecuted(":app:browserProductionWebpack")
 
             assertFileExists("build/js/packages/kotlin-js-browser-base")
             assertFileExists("build/js/packages/kotlin-js-browser-lib")
             assertFileExists("build/js/packages/kotlin-js-browser-app")
-            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce")
-
-            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin.js")
-            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-app.js")
-            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-lib.js")
-            assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-base.js")
 
             assertFileExists("app/build/distributions/app.js")
-            assertFileExists("app/build/distributions/app.js.map")
+
+            if (!irBackend) {
+                assertTasksExecuted(":app:processDceKotlinJs")
+
+                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce")
+
+                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin.js")
+                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-app.js")
+                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-lib.js")
+                assertFileExists("build/js/packages/kotlin-js-browser-app/kotlin-dce/kotlin-js-browser-base.js")
+
+                assertFileExists("app/build/distributions/app.js.map")
+            }
         }
 
         build("clean", "browserDistribution") {
