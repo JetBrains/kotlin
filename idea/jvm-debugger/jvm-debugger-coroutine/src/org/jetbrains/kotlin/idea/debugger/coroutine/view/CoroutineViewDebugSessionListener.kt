@@ -50,7 +50,7 @@ class CoroutineViewDebugSessionListener(
     }
 
     fun renew(suspendContext: XSuspendContext) {
-        if(suspendContext is SuspendContextImpl && suspendContext.suspendPolicy == EventRequest.SUSPEND_ALL) {
+        if (suspendContext is SuspendContextImpl) {
             DebuggerUIUtil.invokeLater {
                 xCoroutineView.renewRoot(suspendContext)
             }
