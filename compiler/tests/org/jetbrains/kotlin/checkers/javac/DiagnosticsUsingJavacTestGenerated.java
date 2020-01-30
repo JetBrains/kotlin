@@ -5980,6 +5980,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/delegateExpressionAsLambda.kt");
                 }
 
+                @TestMetadata("delegatedExpressionWithLabeledReturnInsideLambda.kt")
+                public void testDelegatedExpressionWithLabeledReturnInsideLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/delegatedExpressionWithLabeledReturnInsideLambda.kt");
+                }
+
                 @TestMetadata("differentDelegatedExpressions.kt")
                 public void testDifferentDelegatedExpressions() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.kt");
