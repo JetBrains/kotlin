@@ -40,15 +40,18 @@ internal fun <T> Project.optionalProvider(initialize: () -> T?): ReadOnlyPropert
 
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--
-internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularFileProperty =
-    if (isGradleVersionAtLeast(5, 0)) {
-        project.objects.fileProperty().apply {
-            if (initialize != null) {
-                set(provider { RegularFile(initialize) })
-            }
-        }
+internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularFileProperty {
+    val regularFileProperty = if (isGradleVersionAtLeast(5, 0)) {
+        project.objects.fileProperty()
     } else {
         val projectLayoutClass = Class.forName("org.gradle.api.file.ProjectLayout")
         val filePropertyMethod = projectLayoutClass.getMethod("fileProperty")
         filePropertyMethod(project.layout) as RegularFileProperty
     }
+
+    return regularFileProperty.apply {
+        if (initialize != null) {
+            set(provider { RegularFile(initialize) })
+        }
+    }
+}
