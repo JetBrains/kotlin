@@ -199,8 +199,13 @@ sealed class AnnotationStub(val classifier: Classifier) {
         class Symbol(val symbolName: String) : CCall(cCallClassifier)
     }
 
-    class CStruct(val struct: String) :
-            AnnotationStub(Classifier.topLevel(cinteropInternalPackage, "CStruct"))
+    class CStruct(val struct: String) : AnnotationStub(cStructClassifier) {
+        class MemberAt(val offset: Long) : AnnotationStub(cStructClassifier.nested("MemberAt"))
+
+        class BitField(val offset: Long, val size: Int) : AnnotationStub(cStructClassifier.nested("BitField"))
+
+        class VarType(val size: Long, val align: Int) : AnnotationStub(cStructClassifier.nested("VarType"))
+    }
 
     class CNaturalStruct(val members: List<StructMember>) :
             AnnotationStub(Classifier.topLevel(cinteropPackage, "CNaturalStruct"))
@@ -220,6 +225,8 @@ sealed class AnnotationStub(val classifier: Classifier) {
 
     private companion object {
         val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")
+
+        val cStructClassifier = Classifier.topLevel(cinteropInternalPackage, "CStruct")
     }
 }
 

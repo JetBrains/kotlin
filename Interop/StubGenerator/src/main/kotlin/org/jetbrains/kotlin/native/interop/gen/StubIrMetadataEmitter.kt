@@ -390,6 +390,17 @@ private class MappingExtensions(
             is AnnotationStub.CEnumVarTypeSize -> mapOfNotNull(
                     ("size" to KmAnnotationArgument.IntValue(size))
             )
+            is AnnotationStub.CStruct.MemberAt -> mapOfNotNull(
+                    ("offset" to KmAnnotationArgument.LongValue(offset))
+            )
+            is AnnotationStub.CStruct.BitField -> mapOfNotNull(
+                    ("offset" to KmAnnotationArgument.LongValue(offset)),
+                    ("size" to KmAnnotationArgument.IntValue(size))
+            )
+            is AnnotationStub.CStruct.VarType -> mapOfNotNull(
+                    ("size" to KmAnnotationArgument.LongValue(size)),
+                    ("align" to KmAnnotationArgument.IntValue(align))
+            )
         }
         return KmAnnotation(classifier.fqNameSerialized, args)
     }

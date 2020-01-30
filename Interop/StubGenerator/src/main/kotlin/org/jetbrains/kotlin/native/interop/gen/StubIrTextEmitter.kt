@@ -497,7 +497,10 @@ class StubIrTextEmitter(
                     "ReplaceWith(${annotationStub.replaceWith.quoteAsKotlinLiteral()}), " +
                     "DeprecationLevel.ERROR)"
         is AnnotationStub.CEnumEntryAlias,
-        is AnnotationStub.CEnumVarTypeSize ->
+        is AnnotationStub.CEnumVarTypeSize,
+        is AnnotationStub.CStruct.MemberAt,
+        is AnnotationStub.CStruct.BitField,
+        is AnnotationStub.CStruct.VarType ->
             error("${annotationStub.classifier.fqName} annotation is unsupported in textual mode")
     }
 
