@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
+import org.jetbrains.kotlin.gradle.plugin.JsMode
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -2220,37 +2221,57 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testAssociateCompilations() = with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
-        setupWorkingDir()
-        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+    fun testAssociateCompilations() {
+        testAssociateCompilationsImpl(false)
+    }
 
-        val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
+    @Test
+    fun testAssociateCompilationsWithJsIr() {
+        testAssociateCompilationsImpl(true)
+    }
 
-        build(*tasks.toTypedArray()) {
-            assertSuccessful()
-            assertTasksExecuted(*tasks.toTypedArray())
+    private fun testAssociateCompilationsImpl(jsIr: Boolean) {
+        with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            if (!jsIr) {
+                gradleProperties().appendText(jsMode(JsMode.LEGACY))
+            }
 
-            // JVM:
-            checkBytecodeContains(
-                projectDir.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class"),
-                "Hello.internalFun\$new_mpp_associate_compilations",
-                "HelloTest.internalTestFun\$new_mpp_associate_compilations"
+            val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
+
+            build(*tasks.toTypedArray()) {
+                assertSuccessful()
+                assertTasksExecuted(*tasks.toTypedArray())
+
+                // JVM:
+                checkBytecodeContains(
+                    projectDir.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class"),
+                    "Hello.internalFun\$new_mpp_associate_compilations",
+                    "HelloTest.internalTestFun\$new_mpp_associate_compilations"
+                )
+                assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations.kotlin_module")
+
+                // JS:
+                assertFileExists(
+                    if (jsIr) {
+                        "build/classes/kotlin/js/integrationTest/manifest"
+                    } else {
+                        "build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js"
+                    }
+                )
+
+                // Native:
+                assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/new-mpp-associate-compilations_integrationTest.klib")
+            }
+
+            gradleBuildScript().appendText(
+                "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }"
             )
-            assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations.kotlin_module")
-
-            // JS:
-            assertFileExists("build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js")
-
-            // Native:
-            assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/new-mpp-associate-compilations_integrationTest.klib")
-        }
-
-        gradleBuildScript().appendText(
-            "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }"
-        )
-        build {
-            assertFailed()
-            assertContains(UnsatisfiedSourceSetVisibilityException::class.java.simpleName)
+            build {
+                assertFailed()
+                assertContains(UnsatisfiedSourceSetVisibilityException::class.java.simpleName)
+            }
         }
     }
 
