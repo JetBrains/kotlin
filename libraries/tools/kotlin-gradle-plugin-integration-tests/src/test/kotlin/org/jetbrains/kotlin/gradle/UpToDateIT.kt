@@ -12,7 +12,7 @@ class UpToDateIT : BaseGradleIT() {
         testMutations(
             *propertyMutationChain(
                 "compileKotlin.kotlinOptions.languageVersion",
-                "null", "'1.1'", "'1.0'", "null"
+                "null", "'1.3'", "'1.2'", "null"
             )
         )
     }
@@ -22,7 +22,7 @@ class UpToDateIT : BaseGradleIT() {
         testMutations(
             *propertyMutationChain(
                 "compileKotlin.kotlinOptions.apiVersion",
-                "null", "'1.1'", "'1.0'", "null"
+                "null", "'1.3'", "'1.2'", "null"
             )
         )
     }

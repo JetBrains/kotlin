@@ -61,7 +61,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     fun testLanguageVersion() {
         Project("languageVersion").build("build") {
             assertFailed()
-            assertContains("This type is sealed")
+            assertContains("'break' and 'continue' are not allowed in 'when' statements")
         }
     }
 

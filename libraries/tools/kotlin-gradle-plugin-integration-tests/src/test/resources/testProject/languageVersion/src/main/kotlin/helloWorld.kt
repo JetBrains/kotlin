@@ -1,3 +1,7 @@
-sealed class Base
-
-class Derived : Base()
+fun breakInWhen() {
+    while (true) {
+        when {
+            true -> break
+        }
+    }
+}
