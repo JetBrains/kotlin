@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.createTempDir
-import org.jetbrains.kotlin.gradle.util.isWindows
-import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.gradle.plugin.JsMode
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -43,9 +41,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.klib")
             }
 
-            gradleProperties().appendText("\nkotlin.js.mode=legacy")
-
-            assertTrue { gradleProperties().readText().contains("kotlin.js.mode=legacy") }
+            gradleProperties().appendText(jsMode(JsMode.LEGACY))
 
             testResolveAllConfigurations(
                 subproject = innerProject.projectName,
