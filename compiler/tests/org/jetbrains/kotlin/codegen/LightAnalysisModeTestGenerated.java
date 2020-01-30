@@ -191,6 +191,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/singleAssignmentToVarargInAnnotation.kt");
         }
 
+        @TestMetadata("syntheticMethodForJvmStaticProperty.kt")
+        public void testSyntheticMethodForJvmStaticProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/syntheticMethodForJvmStaticProperty.kt");
+        }
+
         @TestMetadata("syntheticMethodForProperty.kt")
         public void testSyntheticMethodForProperty() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/syntheticMethodForProperty.kt");
