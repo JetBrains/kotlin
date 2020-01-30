@@ -60,12 +60,16 @@ abstract class StructureAwareNavBarModelExtension : AbstractNavBarModelExtension
       val model = buildStructureViewModel(file)
       if (model != null) {
         val parentInModel = findParentInModel(model.root, psiElement)
-        if (parentInModel !is PsiFile) {
+        if (acceptParentFromModel(parentInModel)) {
           return parentInModel
         }
       }
     }
     return super.getParent(psiElement)
+  }
+
+  protected open fun acceptParentFromModel(psiElement: PsiElement?): Boolean {
+    return true
   }
 
   private fun findParentInModel(root: StructureViewTreeElement, psiElement: PsiElement): PsiElement? {
