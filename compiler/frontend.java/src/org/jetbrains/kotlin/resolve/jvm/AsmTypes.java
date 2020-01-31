@@ -58,6 +58,7 @@ public class AsmTypes {
 
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
+    public static final Type K_CLASSIFIER_TYPE = reflect("KClassifier");
     public static final Type K_DECLARATION_CONTAINER_TYPE = reflect("KDeclarationContainer");
 
     public static final Type K_FUNCTION = reflect("KFunction");
@@ -73,6 +74,8 @@ public class AsmTypes {
     public static final Type K_TYPE = reflect("KType");
     public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
     public static final Type K_TYPE_PROJECTION_COMPANION = reflect("KTypeProjection$Companion");
+    public static final Type K_TYPE_PARAMETER = reflect("KTypeParameter");
+    public static final Type K_VARIANCE = reflect("KVariance");
 
     public static final Type SUSPEND_FUNCTION_TYPE = Type.getObjectType("kotlin/coroutines/jvm/internal/SuspendFunction");
 

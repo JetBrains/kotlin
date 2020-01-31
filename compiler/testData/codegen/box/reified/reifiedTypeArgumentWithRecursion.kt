@@ -14,15 +14,17 @@ inline fun <reified T> T.causeBug() {
     x is T
     x as T
     T::class
-    typeOf<T>()
     Array<T>(1) { x }
+
+    // Non-reified type parameters with recursive bounds are not yet supported
+    // typeOf<T>()
 }
 
 interface SomeToImplement<SELF_TVAR>
 
 class Y : SomeToImplement<Y>
 
-class Something<T> where T: SomeToImplement<T> {
+class Something<Z> where Z : SomeToImplement<Z> {
     fun op() = causeBug()
 }
 

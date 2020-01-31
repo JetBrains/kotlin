@@ -25656,6 +25656,137 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 public void testTypeReferenceEqualsHashCode() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/typeReferenceEqualsHashCode.kt");
                 }
+
+                @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class NonReifiedTypeParameters extends AbstractIrBlackBoxCodegenTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInNonReifiedTypeParameters() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @TestMetadata("defaultUpperBound.kt")
+                    public void testDefaultUpperBound() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/defaultUpperBound.kt");
+                    }
+
+                    @TestMetadata("equalsOnClassParameters.kt")
+                    public void testEqualsOnClassParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnClassParameters.kt");
+                    }
+
+                    @TestMetadata("equalsOnFunctionParameters.kt")
+                    public void testEqualsOnFunctionParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnFunctionParameters.kt");
+                    }
+
+                    @TestMetadata("innerGeneric.kt")
+                    public void testInnerGeneric() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/innerGeneric.kt");
+                    }
+
+                    @TestMetadata("simpleClassParameter.kt")
+                    public void testSimpleClassParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/simpleClassParameter.kt");
+                    }
+
+                    @TestMetadata("simpleFunctionParameter.kt")
+                    public void testSimpleFunctionParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/simpleFunctionParameter.kt");
+                    }
+
+                    @TestMetadata("simplePropertyParameter.kt")
+                    public void testSimplePropertyParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/simplePropertyParameter.kt");
+                    }
+
+                    @TestMetadata("typeParameterFlags.kt")
+                    public void testTypeParameterFlags() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/typeParameterFlags.kt");
+                    }
+
+                    @TestMetadata("upperBoundUsesOuterClassParameter.kt")
+                    public void testUpperBoundUsesOuterClassParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/upperBoundUsesOuterClassParameter.kt");
+                    }
+
+                    @TestMetadata("upperBounds.kt")
+                    public void testUpperBounds() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/upperBounds.kt");
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NonReifiedTypeParameters extends AbstractIrBlackBoxCodegenTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInNonReifiedTypeParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("defaultUpperBound.kt")
+                public void testDefaultUpperBound() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/defaultUpperBound.kt");
+                }
+
+                @TestMetadata("equalsOnClassParameters.kt")
+                public void testEqualsOnClassParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/equalsOnClassParameters.kt");
+                }
+
+                @TestMetadata("equalsOnClassParametersWithReflectAPI.kt")
+                public void testEqualsOnClassParametersWithReflectAPI() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/equalsOnClassParametersWithReflectAPI.kt");
+                }
+
+                @TestMetadata("equalsOnFunctionParameters.kt")
+                public void testEqualsOnFunctionParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/equalsOnFunctionParameters.kt");
+                }
+
+                @TestMetadata("innerGeneric.kt")
+                public void testInnerGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/innerGeneric.kt");
+                }
+
+                @TestMetadata("simpleClassParameter.kt")
+                public void testSimpleClassParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/simpleClassParameter.kt");
+                }
+
+                @TestMetadata("simpleFunctionParameter.kt")
+                public void testSimpleFunctionParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/simpleFunctionParameter.kt");
+                }
+
+                @TestMetadata("simplePropertyParameter.kt")
+                public void testSimplePropertyParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/simplePropertyParameter.kt");
+                }
+
+                @TestMetadata("typeParameterFlags.kt")
+                public void testTypeParameterFlags() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/typeParameterFlags.kt");
+                }
+
+                @TestMetadata("upperBoundUsesOuterClassParameter.kt")
+                public void testUpperBoundUsesOuterClassParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/upperBoundUsesOuterClassParameter.kt");
+                }
+
+                @TestMetadata("upperBounds.kt")
+                public void testUpperBounds() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/upperBounds.kt");
+                }
             }
         }
 

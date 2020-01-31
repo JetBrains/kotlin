@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -1084,7 +1083,7 @@ class ExpressionCodegen(
                 putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
             }
 
-            generateClassInstance(mv, classType)
+            generateClassInstance(mv, classType, typeMapper)
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
         }
@@ -1093,15 +1092,6 @@ class ExpressionCodegen(
             wrapJavaClassIntoKClass(mv)
         }
         return classReference.onStack
-    }
-
-    private fun generateClassInstance(v: InstructionAdapter, classType: IrType) {
-        val asmType = typeMapper.mapType(classType)
-        if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
-            v.aconst(typeMapper.boxType(classType))
-        } else {
-            v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
-        }
     }
 
     private fun getOrCreateCallGenerator(
@@ -1144,13 +1134,12 @@ class ExpressionCodegen(
         val methodOwner = typeMapper.mapClass(callee.parentAsClass)
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
 
-        val reifiedTypeInliner = ReifiedTypeInliner(mappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
-            override fun putClassInstance(v: InstructionAdapter, type: IrType) {
-                generateClassInstance(v, type)
-            }
-
-            override fun toKotlinType(type: IrType): KotlinType = type.toKotlinType()
-        }, IrTypeCheckerContext(context.irBuiltIns), state.languageVersionSettings)
+        val reifiedTypeInliner = ReifiedTypeInliner(
+            mappings,
+            IrInlineIntrinsicsSupport(context, typeMapper),
+            IrTypeCheckerContext(context.irBuiltIns),
+            state.languageVersionSettings
+        )
 
         return IrInlineCodegen(this, state, callee, methodOwner, signature, mappings, sourceCompiler, reifiedTypeInliner)
     }
@@ -1208,4 +1197,15 @@ class ExpressionCodegen(
 
     val IrType.isReifiedTypeParameter: Boolean
         get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
+
+    companion object {
+        internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper) {
+            val asmType = typeMapper.mapType(classType)
+            if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
+                v.aconst(typeMapper.boxType(classType))
+            } else {
+                v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
+            }
+        }
+    }
 }

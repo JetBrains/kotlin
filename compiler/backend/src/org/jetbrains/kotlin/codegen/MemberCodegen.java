@@ -643,57 +643,59 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         if (!state.getClassBuilderMode().generateBodies) return;
 
-        boolean generateClassIntCtorCall = state.getGenerateOptimizedCallableReferenceSuperClasses();
-
         InstructionAdapter iv = createOrGetClInitCodegen().v;
         iv.iconst(delegatedProperties.size());
         iv.newarray(K_PROPERTY_TYPE);
 
         for (int i = 0, size = delegatedProperties.size(); i < size; i++) {
-            VariableDescriptorWithAccessors property = delegatedProperties.get(i);
-
             iv.dup();
             iv.iconst(i);
-
-            int receiverCount = (property.getDispatchReceiverParameter() != null ? 1 : 0) +
-                                (property.getExtensionReceiverParameter() != null ? 1 : 0);
-            Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
-            iv.anew(implType);
-            iv.dup();
-
-            List<Type> superCtorArgTypes = new ArrayList<>();
-            if (generateClassIntCtorCall) {
-                CallableReferenceUtilKt.generateCallableReferenceDeclarationContainerClass(iv, property, state);
-                superCtorArgTypes.add(JAVA_CLASS_TYPE);
-            } else {
-                // TODO: generate the container once and save to a local field instead (KT-10495)
-                CallableReferenceUtilKt.generateCallableReferenceDeclarationContainer(iv, property, state);
-                superCtorArgTypes.add(K_DECLARATION_CONTAINER_TYPE);
-            }
-
-            iv.aconst(property.getName().asString());
-            CallableReferenceUtilKt.generateCallableReferenceSignature(iv, property, state);
-            superCtorArgTypes.add(JAVA_STRING_TYPE);
-            superCtorArgTypes.add(JAVA_STRING_TYPE);
-
-            if (generateClassIntCtorCall) {
-                iv.aconst(CallableReferenceUtilKt.getCallableReferenceTopLevelFlag(property));
-                superCtorArgTypes.add(Type.INT_TYPE);
-            }
-
-            iv.invokespecial(
-                    implType.getInternalName(), "<init>",
-                    Type.getMethodDescriptor(Type.VOID_TYPE, superCtorArgTypes.toArray(new Type[0])), false
-            );
-            Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
-            iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
-
-            StackValue.onStack(implType).put(K_PROPERTY_TYPE, iv);
-
+            generatePropertyReference(iv, delegatedProperties.get(i), state);
             iv.astore(K_PROPERTY_TYPE);
         }
 
         iv.putstatic(thisAsmType.getInternalName(), JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, "[" + K_PROPERTY_TYPE);
+    }
+
+    public static void generatePropertyReference(
+            @NotNull InstructionAdapter iv,
+            @NotNull VariableDescriptorWithAccessors property,
+            @NotNull GenerationState state
+    ) {
+        int receiverCount = (property.getDispatchReceiverParameter() != null ? 1 : 0) +
+                            (property.getExtensionReceiverParameter() != null ? 1 : 0);
+        Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
+        iv.anew(implType);
+        iv.dup();
+
+        List<Type> superCtorArgTypes = new ArrayList<>();
+        if (state.getGenerateOptimizedCallableReferenceSuperClasses()) {
+            CallableReferenceUtilKt.generateCallableReferenceDeclarationContainerClass(iv, property, state);
+            superCtorArgTypes.add(JAVA_CLASS_TYPE);
+        } else {
+            // TODO: generate the container once and save to a local field instead (KT-10495)
+            CallableReferenceUtilKt.generateCallableReferenceDeclarationContainer(iv, property, state);
+            superCtorArgTypes.add(K_DECLARATION_CONTAINER_TYPE);
+        }
+
+        iv.aconst(property.getName().asString());
+        CallableReferenceUtilKt.generateCallableReferenceSignature(iv, property, state);
+        superCtorArgTypes.add(JAVA_STRING_TYPE);
+        superCtorArgTypes.add(JAVA_STRING_TYPE);
+
+        if (state.getGenerateOptimizedCallableReferenceSuperClasses()) {
+            iv.aconst(CallableReferenceUtilKt.getCallableReferenceTopLevelFlag(property));
+            superCtorArgTypes.add(Type.INT_TYPE);
+        }
+
+        iv.invokespecial(
+                implType.getInternalName(), "<init>",
+                Type.getMethodDescriptor(Type.VOID_TYPE, superCtorArgTypes.toArray(new Type[0])), false
+        );
+        Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
+        iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
+
+        StackValue.onStack(implType).put(K_PROPERTY_TYPE, iv);
     }
 
     public String getClassName() {

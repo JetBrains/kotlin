@@ -393,7 +393,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                                 putValueArgument(index++, kClassToJavaClass(owner, backendContext))
                                 putValueArgument(index++, irString(expression.symbol.descriptor.name.asString()))
                                 putValueArgument(index++, computeSignatureString(expression))
-                                putValueArgument(index, irInt(if (callee.parent.let { it is IrClass && it.isFileClass }) 1 else 0))
+                                putValueArgument(index, irInt(FunctionReferenceLowering.getCallableReferenceTopLevelFlag(callee)))
                             }
                             +IrInstanceInitializerCallImpl(startOffset, endOffset, referenceClass.symbol, context.irBuiltIns.unitType)
                         }

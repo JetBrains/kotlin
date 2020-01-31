@@ -50,6 +50,17 @@ internal class KTypeParameterImpl(override val descriptor: TypeParameterDescript
     override fun hashCode() =
         descriptor.hashCode()
 
+    // TODO: this temporarily duplicates TypeParameterReference.toString to prevent JPS build failure until stdlib is bootstrapped
     override fun toString() =
-        ReflectionObjectRenderer.renderTypeParameter(descriptor)
+        // TypeParameterReference.toString(this)
+        buildString {
+            when (variance) {
+                KVariance.INVARIANT -> {
+                }
+                KVariance.IN -> append("in ")
+                KVariance.OUT -> append("out ")
+            }
+
+            append(name)
+        }
 }

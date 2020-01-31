@@ -337,7 +337,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         private fun getFunctionReferenceFlags(callableReferenceTarget: IrFunction): Int {
-            val isTopLevelBit = if (callableReferenceTarget.parent.let { it is IrClass && it.isFileClass }) 1 else 0
+            val isTopLevelBit = getCallableReferenceTopLevelFlag(callableReferenceTarget)
             val adaptedCallableReferenceFlags = getAdaptedCallableReferenceFlags()
             return isTopLevelBit + (adaptedCallableReferenceFlags shl 1)
         }
@@ -518,14 +518,21 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         internal fun IrBuilderWithScope.calculateOwnerKClass(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression =
-            kClassReference(
-                if (irContainer is IrClass) irContainer.defaultType
-                else {
-                    // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
-                    // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
-                    // and construct a special KCallable object.
-                    context.ir.symbols.intrinsicsKotlinClass.defaultType
-                }
-            )
+            kClassReference(getOwnerKClassType(irContainer, context))
+
+        internal fun getOwnerKClassType(irContainer: IrDeclarationParent, context: JvmBackendContext): IrType =
+            if (irContainer is IrClass) irContainer.defaultType
+            else {
+                // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
+                // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
+                // and construct a special KCallable object.
+                context.ir.symbols.intrinsicsKotlinClass.defaultType
+            }
+
+        internal fun getCallableReferenceTopLevelFlag(declaration: IrDeclaration): Int =
+            if (isCallableReferenceTopLevel(declaration)) 1 else 0
+
+        internal fun isCallableReferenceTopLevel(declaration: IrDeclaration): Boolean =
+            declaration.parent.let { it is IrClass && it.isFileClass }
     }
 }
