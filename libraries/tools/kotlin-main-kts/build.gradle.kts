@@ -48,9 +48,6 @@ publish()
 
 noDefaultJar()
 
-val mainKtsRootPackage = "org.jetbrains.kotlin.mainKts"
-val mainKtsRelocatedDepsRootPackage = "$mainKtsRootPackage.relocatedDeps"
-
 val packJar by task<ShadowJar> {
     configurations = emptyList()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -65,7 +62,7 @@ val packJar by task<ShadowJar> {
 
     if (kotlinBuildProperties.relocation) {
         packagesToRelocate.forEach {
-            relocate(it, "$mainKtsRelocatedDepsRootPackage.$it")
+            relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
     }
 }
