@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.navigationToolbar.ui.NavBarUIManager;
@@ -10,7 +9,6 @@ import com.intellij.ide.ui.customization.CustomisedActionGroup;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeRootPaneNorthExtension;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.ScrollPaneFactory;
@@ -39,11 +37,11 @@ public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   public NavBarRootPaneExtension(@NotNull Project project) {
     myProject = project;
 
-    myProject.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, uiSettings -> toggleRunPanel(!uiSettings.getShowMainToolbar() && uiSettings.getShowNavigationBar() && !uiSettings.getPresentationMode()));
+    myProject.getMessageBus().connect().subscribe(UISettingsListener.TOPIC, uiSettings -> {
+      toggleRunPanel(!uiSettings.getShowMainToolbar() && uiSettings.getShowNavigationBar() && !uiSettings.getPresentationMode());
+    });
 
     myNavToolbarGroupExist = runToolbarExists();
-
-    Disposer.register(myProject, this);
   }
 
   @Override
@@ -94,7 +92,7 @@ public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
     return myWrapperPanel;
   }
 
-  protected void addNavigationBarPanel(JComponent wrapperPanel) {
+  private void addNavigationBarPanel(JComponent wrapperPanel) {
     wrapperPanel.add(buildNavBarPanel(), BorderLayout.CENTER);
   }
 
@@ -110,7 +108,7 @@ public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
     }
   }
 
-  protected static void alignVertically(Container container) {
+  private static void alignVertically(Container container) {
     if (container.getComponentCount() == 1) {
       Component c = container.getComponent(0);
       Insets insets = container.getInsets();
@@ -246,18 +244,22 @@ public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   }
 
   @Override
-  public void uiSettingsChanged(final UISettings settings) {
-    if (myNavigationBar != null) {
-      myNavigationBar.updateState(settings.getShowNavigationBar());
-      myWrapperPanel.setVisible(settings.getShowNavigationBar() && !UISettings.getInstance().getPresentationMode());
+  public void uiSettingsChanged(@NotNull UISettings settings) {
+    if (myNavigationBar == null) {
+      return;
+    }
 
-      myWrapperPanel.revalidate();
-      myNavigationBar.revalidate();
-      myWrapperPanel.repaint();
+    myNavigationBar.updateState(settings.getShowNavigationBar());
+    myWrapperPanel.setVisible(settings.getShowNavigationBar() && !UISettings.getInstance().getPresentationMode());
 
-      if (myWrapperPanel.getComponentCount() > 0) {
-        final Component c = myWrapperPanel.getComponent(0);
-        if (c instanceof JComponent) ((JComponent)c).setOpaque(false);
+    myWrapperPanel.revalidate();
+    myNavigationBar.revalidate();
+    myWrapperPanel.repaint();
+
+    if (myWrapperPanel.getComponentCount() > 0) {
+      Component c = myWrapperPanel.getComponent(0);
+      if (c instanceof JComponent) {
+        ((JComponent)c).setOpaque(false);
       }
     }
   }
@@ -266,15 +268,5 @@ public final class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   @NotNull
   public String getKey() {
     return NAV_BAR;
-  }
-
-  @Override
-  public void dispose() {
-    myWrapperPanel.setVisible(false);
-    myWrapperPanel = null;
-    myRunPanel = null;
-    myNavigationBar = null;
-    myScrollPane = null;
-    myProject = null;
   }
 }
