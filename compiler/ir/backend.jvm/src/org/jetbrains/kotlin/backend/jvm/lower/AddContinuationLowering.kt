@@ -603,10 +603,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 functionsStack.pop()
                 if (skip(function)) return function
 
-                // TODO: This does not work for DEFAULT_IMPLS
-                val view =
-                    (if (function.body == null) function.suspendFunctionStub(context, false)
-                    else function.getOrCreateSuspendFunctionViewIfNeeded(context)) as IrSimpleFunction
+                val view = function.getOrCreateSuspendFunctionViewIfNeeded(context) as IrSimpleFunction
 
                 if (withoutContinuationClass(function)) return view
 
