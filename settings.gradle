@@ -299,7 +299,9 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
-        ":kotlin-serialization:plugin-marker"
+        ":kotlin-serialization:plugin-marker",
+
+        ":kotlinx-stm-compiler-plugin"
 
 if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR modules in settings.gradle")
@@ -510,5 +512,7 @@ project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kot
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 project(':kotlin-serialization:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-serialization/plugin-marker")
 
+
+project(':kotlinx-stm-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-stm/kotlin-stm-compiler")
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
