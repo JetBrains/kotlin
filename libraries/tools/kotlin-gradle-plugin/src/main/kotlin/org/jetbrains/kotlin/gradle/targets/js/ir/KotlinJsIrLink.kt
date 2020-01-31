@@ -21,6 +21,7 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
     lateinit var type: KotlinJsIrType
 
+    // Not check sources, only klib module
     @Internal
     override fun getSource(): FileTree = super.getSource()
 

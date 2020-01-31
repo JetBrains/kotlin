@@ -63,7 +63,6 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
             exclude = task.excludePatterns
         )
 
-
         val mocha = npmProject.require("mocha/bin/mocha")
 
         val file = task.nodeModulesToLoad

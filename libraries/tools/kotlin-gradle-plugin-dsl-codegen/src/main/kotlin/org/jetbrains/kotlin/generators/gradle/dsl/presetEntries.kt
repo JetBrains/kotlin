@@ -43,7 +43,7 @@ internal val jvmPresetEntry = KotlinPresetEntry(
 
 internal val jsPresetEntry = KotlinPresetEntry(
     "js",
-    // need for commonization KotlinJsTargetPreset and KotlinJsIrTargetPreser
+    // need for commonization KotlinJsTargetPreset and KotlinJsIrTargetPreset
     typeName("org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset", "org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl"),
     typeName("org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl")
 )

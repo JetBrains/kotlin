@@ -49,15 +49,13 @@ open class KotlinJsTargetPreset(
         }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
-        kotlinPluginVersion,
-        irPreset?.let { KotlinJsIrTargetConfigurator(kotlinPluginVersion) }
+        kotlinPluginVersion
     )
 
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
-        forTarget as KotlinJsTarget
-        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { forTarget.irTarget })
+        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { (forTarget as KotlinJsTarget).irTarget })
     }
 
     companion object {
@@ -80,8 +78,7 @@ class KotlinJsSingleTargetPreset(
         irPreset?.let { LEGACY_DISAMBIGUATION_CLASSIFIER }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
-        kotlinPluginVersion,
-        irPreset?.let { KotlinJsIrTargetConfigurator(kotlinPluginVersion) }
+        kotlinPluginVersion
     )
 }
 

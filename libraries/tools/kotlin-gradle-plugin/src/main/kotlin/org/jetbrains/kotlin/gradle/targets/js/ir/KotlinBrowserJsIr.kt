@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
-private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.js.ir")
-
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
@@ -59,7 +57,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     @ExperimentalDceDsl
     override fun dceTask(body: KotlinJsDce.() -> Unit) {
-        log.warn("dceTask configuration is useless with IR compiler. Use @JsExport on declarations instead.")
+        project.logger.warn("dceTask configuration is useless with IR compiler. Use @JsExport on declarations instead.")
     }
 
     override fun configureMain(compilation: KotlinJsIrCompilation) {

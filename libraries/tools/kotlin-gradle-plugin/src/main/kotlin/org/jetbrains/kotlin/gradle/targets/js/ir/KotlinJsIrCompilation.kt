@@ -42,9 +42,5 @@ class KotlinJsIrCompilation(
     override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
         super.addSourcesToCompileTask(sourceSet, addAsCommonSources)
         allSources.add(sourceSet.kotlin)
-
-        listOf(productionLinkTask, developmentLinkTask).forEach {
-            it.sourceFilesExtensions(sourceSet.customSourceFilesExtensions)
-        }
     }
 }
