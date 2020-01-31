@@ -93,12 +93,12 @@ class KotlinMultiplatformPlugin(
         targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
-        setupCompilerPluginOptions(project)
+        setupAdditionalCompilerArguments(project)
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }
 
-    private fun setupCompilerPluginOptions(project: Project) {
+    private fun setupAdditionalCompilerArguments(project: Project) {
         // common source sets use the compiler options from the metadata compilation:
         val metadataCompilation =
             project.multiplatformExtension.metadata().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -130,6 +130,22 @@ class KotlinMultiplatformPlugin(
                 compilerPluginOptionsTask = lazy {
                     val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
                     project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractCompile
+                }
+
+                // Also set ad-hoc free compiler args from the internal project property
+                freeCompilerArgsProvider = project.provider {
+                    val propertyValue = with (project.extensions.extraProperties) {
+                        val sourceSetFreeCompilerArgsPropertyName = sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
+                        if (has(sourceSetFreeCompilerArgsPropertyName)) {
+                            get(sourceSetFreeCompilerArgsPropertyName)
+                        } else null
+                    }
+                    mutableListOf<String>().apply {
+                        when (propertyValue) {
+                            is String -> add(propertyValue)
+                            is Iterable<*> -> addAll(propertyValue.map { it.toString() })
+                        }
+                    }
                 }
             }
         }
@@ -282,6 +298,9 @@ class KotlinMultiplatformPlugin(
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
+
+        private fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
+            "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
 
         internal const val GRADLE_NO_METADATA_WARNING = "This build consumes Gradle module metadata but does not produce " +
                 "it when publishing Kotlin multiplatform libraries. \n" +

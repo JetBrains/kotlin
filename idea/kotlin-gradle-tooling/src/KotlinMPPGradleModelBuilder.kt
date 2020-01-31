@@ -214,6 +214,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getExperimentalAnnotationsInUse = languageSettingsClass.getMethodOrNull("getExperimentalAnnotationsInUse")
         val getCompilerPluginArguments = languageSettingsClass.getMethodOrNull("getCompilerPluginArguments")
         val getCompilerPluginClasspath = languageSettingsClass.getMethodOrNull("getCompilerPluginClasspath")
+        val getFreeCompilerArgs = languageSettingsClass.getMethodOrNull("getFreeCompilerArgs")
         @Suppress("UNCHECKED_CAST")
         return KotlinLanguageSettingsImpl(
             getLanguageVersion(gradleLanguageSettings) as? String,
@@ -222,7 +223,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             getEnabledLanguageFeatures(gradleLanguageSettings) as? Set<String> ?: emptySet(),
             getExperimentalAnnotationsInUse?.invoke(gradleLanguageSettings) as? Set<String> ?: emptySet(),
             (getCompilerPluginArguments?.invoke(gradleLanguageSettings) as? List<String> ?: emptyList()).toTypedArray(),
-            (getCompilerPluginClasspath?.invoke(gradleLanguageSettings) as? FileCollection)?.files ?: emptySet()
+            (getCompilerPluginClasspath?.invoke(gradleLanguageSettings) as? FileCollection)?.files ?: emptySet(),
+            (getFreeCompilerArgs?.invoke(gradleLanguageSettings) as? List<String>).orEmpty().toTypedArray()
         )
     }
 

@@ -22,7 +22,7 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
@@ -122,9 +122,9 @@ internal open class KotlinTasksProvider(val targetName: String) {
         project.runOnceAfterEvaluated("apply properties and language settings to ${kotlinTaskHolder.name}", kotlinTaskHolder) {
             propertiesProvider.mapKotlinTaskProperties(kotlinTaskHolder.get())
 
-            applyLanguageSettingsToKotlinTask(
+            applyLanguageSettingsToKotlinOptions(
                 compilation.defaultSourceSet.languageSettings,
-                kotlinTaskHolder.get() as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>
+                (kotlinTaskHolder.get() as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>).kotlinOptions
             )
         }
     }
