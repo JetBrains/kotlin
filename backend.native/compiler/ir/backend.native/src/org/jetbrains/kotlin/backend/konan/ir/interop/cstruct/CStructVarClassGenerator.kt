@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
-        override val stubGenerator: DeclarationStubGenerator,
         private val interopBuiltIns: InteropBuiltIns
 ) : DescriptorToIrTranslationMixin {
 
@@ -31,7 +30,7 @@ internal class CStructVarClassGenerator(
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
 
-    private val companionGenerator = CStructVarCompanionGenerator(context, stubGenerator, interopBuiltIns)
+    private val companionGenerator = CStructVarCompanionGenerator(context, interopBuiltIns)
 
     fun findOrGenerateCStruct(classDescriptor: ClassDescriptor, parent: IrDeclarationContainer): IrClass {
         val irClassSymbol = symbolTable.referenceClass(classDescriptor)

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
         private val interopBuiltIns: InteropBuiltIns,
-        stubGenerator: DeclarationStubGenerator,
         symbols: KonanSymbols
 ) : IrProvider {
 
@@ -51,15 +50,15 @@ internal class IrProviderForCEnumAndCStructStubs(
     private val filesMap = mutableMapOf<PackageFragmentDescriptor, IrFile>()
 
     private val cEnumByValueFunctionGenerator =
-            CEnumByValueFunctionGenerator(context, stubGenerator, symbols)
+            CEnumByValueFunctionGenerator(context, symbols)
     private val cEnumCompanionGenerator =
-            CEnumCompanionGenerator(context, stubGenerator, cEnumByValueFunctionGenerator)
+            CEnumCompanionGenerator(context, cEnumByValueFunctionGenerator)
     private val cEnumVarClassGenerator =
-            CEnumVarClassGenerator(context, stubGenerator, interopBuiltIns)
+            CEnumVarClassGenerator(context, interopBuiltIns)
     private val cEnumClassGenerator =
-            CEnumClassGenerator(context, stubGenerator, cEnumCompanionGenerator, cEnumVarClassGenerator)
+            CEnumClassGenerator(context, cEnumCompanionGenerator, cEnumVarClassGenerator)
     private val cStructClassGenerator =
-            CStructVarClassGenerator(context, stubGenerator, interopBuiltIns)
+            CStructVarClassGenerator(context, interopBuiltIns)
 
     var module: IrModuleFragment? = null
         set(value) {

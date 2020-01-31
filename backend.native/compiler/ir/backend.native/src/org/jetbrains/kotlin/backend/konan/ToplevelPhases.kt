@@ -207,7 +207,7 @@ internal val psiToIrPhase = konanUnitPhase(
                     moduleDescriptor, symbolTable,
                     config.configuration.languageVersionSettings
             )
-            val irProviderForCEnumsAndCStructs = IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, stubGenerator, symbols)
+            val irProviderForCEnumsAndCStructs = IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
             val irProviderForInteropStubs = IrProviderForInteropStubs(irProviderForCEnumsAndCStructs::canHandleSymbol)
             val irProviders = listOf(
                     irProviderForCEnumsAndCStructs,

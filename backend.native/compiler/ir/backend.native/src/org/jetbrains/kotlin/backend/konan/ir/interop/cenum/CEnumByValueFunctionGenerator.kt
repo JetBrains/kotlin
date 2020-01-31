@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
  */
 internal class CEnumByValueFunctionGenerator(
         context: GeneratorContext,
-        override val stubGenerator: DeclarationStubGenerator,
         private val symbols: KonanSymbols
 ) : DescriptorToIrTranslationMixin {
 

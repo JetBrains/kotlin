@@ -41,7 +41,6 @@ private val cEnumEntryValueTypes = setOf(
 
 internal class CEnumClassGenerator(
         val context: GeneratorContext,
-        override val stubGenerator: DeclarationStubGenerator,
         private val cEnumCompanionGenerator: CEnumCompanionGenerator,
         private val cEnumVarClassGenerator: CEnumVarClassGenerator
 ) : DescriptorToIrTranslationMixin {
@@ -101,20 +100,16 @@ internal class CEnumClassGenerator(
                     irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
                 }
             }
-            irProperty.getter = createFunction(
-                    propertyDescriptor.getter!!,
-                    IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-            ).also { getter ->
-                getter.correspondingPropertySymbol = irProperty.symbol
-                getter.body = irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                    +irReturn(
-                            irGetField(
-                                    irGet(getter.dispatchReceiverParameter!!),
-                                    irProperty.backingField!!
-                            )
+        }
+        val getter = irProperty.getter!!
+        getter.correspondingPropertySymbol = irProperty.symbol
+        getter.body = irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+            +irReturn(
+                    irGetField(
+                            irGet(getter.dispatchReceiverParameter!!),
+                            irProperty.backingField!!
                     )
-                }
-            }
+            )
         }
         return irProperty
     }

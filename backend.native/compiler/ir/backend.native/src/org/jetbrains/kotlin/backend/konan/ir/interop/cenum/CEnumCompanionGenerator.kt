@@ -26,7 +26,6 @@ private val cEnumEntryAliasAnnonation = FqName("kotlinx.cinterop.internal.CEnumE
 
 internal class CEnumCompanionGenerator(
         context: GeneratorContext,
-        override val stubGenerator: DeclarationStubGenerator,
         private val cEnumByValueFunctionGenerator: CEnumByValueFunctionGenerator
 ) : DescriptorToIrTranslationMixin {
 

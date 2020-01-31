@@ -28,7 +28,6 @@ private val typeSizeAnnotation = FqName("kotlinx.cinterop.internal.CEnumVarTypeS
 
 internal class CEnumVarClassGenerator(
         context: GeneratorContext,
-        override val stubGenerator: DeclarationStubGenerator,
         private val interopBuiltIns: InteropBuiltIns
 ) : DescriptorToIrTranslationMixin {
 
