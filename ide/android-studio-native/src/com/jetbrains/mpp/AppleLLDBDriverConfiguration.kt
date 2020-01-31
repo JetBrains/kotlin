@@ -16,7 +16,7 @@ class AppleLLDBDriverConfiguration : LLDBDriverConfiguration() {
         AppleLLDBDriverConfiguration::class.java,
         "",
         "LLDB.framework",
-        null
+        "LLDB.framework/Resources"
     )
 
     override fun getLLDBFrontendFile(architecture: ArchitectureType): File {
