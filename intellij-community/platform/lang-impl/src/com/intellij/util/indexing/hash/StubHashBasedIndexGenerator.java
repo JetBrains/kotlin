@@ -2,9 +2,6 @@
 package com.intellij.util.indexing.hash;
 
 import com.google.common.collect.Maps;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexExtension;
@@ -29,22 +26,31 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
 
   private final Path myStubIndicesRoot;
 
-  public StubHashBasedIndexGenerator(@NotNull Path outRoot,
-                                     @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
-    super(
-      EnumeratorIntegerDescriptor.INSTANCE,
-      new SerializedStubTreeDataExternalizer(true, SerializationManagerEx.getInstanceEx(), StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
-      new StubUpdatingIndex(StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
-      outRoot
-    );
-
-    myStubIndicesRoot = outRoot.resolve(StubUpdatingIndex.INDEX_ID.getName());
+  private StubHashBasedIndexGenerator(@NotNull SerializedStubTreeDataExternalizer externalizer,
+                                      @NotNull StubUpdatingIndex index,
+                                      @NotNull Path stubIndicesRoot,
+                                      @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
+    super(EnumeratorIntegerDescriptor.INSTANCE, externalizer, index, stubIndicesRoot.getParent());
+    myStubIndicesRoot = stubIndicesRoot;
 
     for (StubIndexExtension<?, ?> stubIndexExtension : stubIndexExtensions) {
       FileBasedIndexExtension<?, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);
       HashBasedIndexGenerator<?, Void> hashBasedIndexGenerator = createGenerator(extension);
       myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), hashBasedIndexGenerator);
     }
+  }
+
+  @NotNull
+  public static StubHashBasedIndexGenerator create(@NotNull Path stubIndicesRoot,
+                                                   @NotNull SerializationManagerEx serializationManager,
+                                                   @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
+    StubForwardIndexExternalizer<?> forwardIndexExternalizer = StubForwardIndexExternalizer.createFileLocalExternalizer(serializationManager);
+    return new StubHashBasedIndexGenerator(
+      new SerializedStubTreeDataExternalizer(true, serializationManager, forwardIndexExternalizer),
+      new StubUpdatingIndex(forwardIndexExternalizer, serializationManager),
+      stubIndicesRoot,
+      stubIndexExtensions
+    );
   }
 
   @NotNull
@@ -103,8 +109,5 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
     for (Map.Entry<StubIndexKey<?, ?>, HashBasedIndexGenerator<?, ?>> entry : myStubIndexesGeneratorMap.entrySet()) {
       entry.getValue().closeIndex();
     }
-    ((SerializationManagerEx)SerializationManager.getInstance()).flushNameStorage();
-
-    FileUtil.copyDir(PathManager.getIndexRoot(), myStubIndicesRoot.toFile(), f -> f.getName().startsWith("rep.names"));
   }
 }

@@ -28,8 +28,13 @@ public class StubSharedIndexExtension implements SharedIndexExtension<Integer, S
   @NotNull
   @Override
   public DataExternalizer<SerializedStubTree> createValueExternalizer(@NotNull Path indexPath) {
-    SerializationManagerImpl manager = new SerializationManagerImpl(indexPath.getParent().resolve("rep.names"), true);
+    SerializationManagerImpl manager = new SerializationManagerImpl(getStubSerializerNamesStorageFile(indexPath.getParent()), true);
     Disposer.register(ApplicationManager.getApplication(), manager);
     return new SerializedStubTreeDataExternalizer(true, manager, StubForwardIndexExternalizer.createFileLocalExternalizer(manager));
+  }
+
+  @NotNull
+  public static Path getStubSerializerNamesStorageFile(@NotNull Path stubIndexesRoot) {
+    return stubIndexesRoot.resolve("serializerNames").resolve("names");
   }
 }

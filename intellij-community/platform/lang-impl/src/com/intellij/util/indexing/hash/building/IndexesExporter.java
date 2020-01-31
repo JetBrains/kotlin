@@ -7,11 +7,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.stubs.SerializationManagerImpl;
 import com.intellij.psi.stubs.StubIndexExtension;
+import com.intellij.psi.stubs.StubSharedIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
@@ -101,12 +104,19 @@ public class IndexesExporter {
 
     List<StubIndexExtension<?, ?>> exportableStubIndexExtensions = StubIndexExtension.EP_NAME.getExtensionList();
 
-    StubHashBasedIndexGenerator stubGenerator = new StubHashBasedIndexGenerator(chunkRoot, exportableStubIndexExtensions);
+    Path stubIndexesRoot = chunkRoot.resolve(StubUpdatingIndex.INDEX_ID.getName());
+    Path serializerNamesStorageFile = StubSharedIndexExtension.getStubSerializerNamesStorageFile(stubIndexesRoot);
+    SerializationManagerImpl chunkSerializationManager = new SerializationManagerImpl(serializerNamesStorageFile, false);
+    StubHashBasedIndexGenerator stubGenerator = StubHashBasedIndexGenerator.create(stubIndexesRoot, chunkSerializationManager, exportableStubIndexExtensions);
 
-    List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
-    allGenerators.add(stubGenerator);
+    try {
+      List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
+      allGenerators.add(stubGenerator);
 
-    generate(chunk, allGenerators, chunkRoot, indicator);
+      generate(chunk, allGenerators, chunkRoot, indicator);
+    } finally {
+      Disposer.dispose(chunkSerializationManager);
+    }
 
     //TODO: recognize these files in FileBasedIndexImpl. Empty indices must not be rebuilt.
     deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
