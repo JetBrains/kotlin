@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -230,6 +231,10 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
 
         if (!defaultsOnly) {
             addAll(additionalCompilerOptions)
+        }
+
+        (compilation.defaultSourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
+            addAll(freeCompilerArgs)
         }
     }
 

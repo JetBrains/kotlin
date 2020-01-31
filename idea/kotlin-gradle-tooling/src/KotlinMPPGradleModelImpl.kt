@@ -66,7 +66,8 @@ data class KotlinLanguageSettingsImpl(
     override val enabledLanguageFeatures: Set<String>,
     override val experimentalAnnotationsInUse: Set<String>,
     override val compilerPluginArguments: Array<String>,
-    override val compilerPluginClasspath: Set<File>
+    override val compilerPluginClasspath: Set<File>,
+    override val freeCompilerArgs: Array<String>
 ) : KotlinLanguageSettings {
     constructor(settings: KotlinLanguageSettings) : this(
         settings.languageVersion,
@@ -75,7 +76,8 @@ data class KotlinLanguageSettingsImpl(
         settings.enabledLanguageFeatures,
         settings.experimentalAnnotationsInUse,
         settings.compilerPluginArguments,
-        settings.compilerPluginClasspath
+        settings.compilerPluginClasspath,
+        settings.freeCompilerArgs
     )
 }
 

@@ -534,18 +534,22 @@ class NewMultiplatformIT : BaseGradleIT() {
                         useExperimentalAnnotation('kotlin.contracts.ExperimentalContracts')
                         progressiveMode = true
                     }
+                    project.ext.set("kotlin.mpp.freeCompilerArgsForSourceSet.${'$'}name", ["-Xno-inline"])
                 }
             """.trimIndent()
         )
 
-        listOf("compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlin${nativeHostTargetName.capitalize()}").forEach {
+        listOf(
+            "compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlin${nativeHostTargetName.capitalize()}"
+        ).forEach {
             build(it) {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
                 assertContains(
                     "-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses",
                     " -progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                    "-Xopt-in=kotlin.contracts.ExperimentalContracts"
+                    "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+                    "-Xno-inline"
                 )
             }
         }
