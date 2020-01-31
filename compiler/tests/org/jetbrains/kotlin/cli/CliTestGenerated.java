@@ -305,6 +305,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");
         }
 
+        @TestMetadata("inlineCycle_ir.args")
+        public void testInlineCycle_ir() throws Exception {
+            runTest("compiler/testData/cli/jvm/inlineCycle_ir.args");
+        }
+
         @TestMetadata("internalArgDisableLanguageFeature.args")
         public void testInternalArgDisableLanguageFeature() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgDisableLanguageFeature.args");
@@ -553,6 +558,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("nonLocalDisabled.args")
         public void testNonLocalDisabled() throws Exception {
             runTest("compiler/testData/cli/jvm/nonLocalDisabled.args");
+        }
+
+        @TestMetadata("nonLocalDisabled_ir.args")
+        public void testNonLocalDisabled_ir() throws Exception {
+            runTest("compiler/testData/cli/jvm/nonLocalDisabled_ir.args");
         }
 
         @TestMetadata("nonexistentPathInModule.args")

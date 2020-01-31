@@ -119,14 +119,12 @@ class PsiSourceManager : SourceManager {
         fileEntriesByIrFile[irFile]
 
     fun <E : PsiElement> findPsiElement(irElement: IrElement, irFile: IrFile, psiElementClass: KClass<E>): E? {
-        val psiFileEntry = fileEntriesByIrFile[irFile]
-            ?: throw AssertionError("No PSI file for irFile $irFile")
+        val psiFileEntry = fileEntriesByIrFile[irFile] ?: return null
         return psiFileEntry.findPsiElement(irElement, psiElementClass)
     }
 
     fun findPsiElement(irElement: IrElement, irFile: IrFile): PsiElement? {
-        val psiFileEntry = fileEntriesByIrFile[irFile]
-            ?: throw AssertionError("No PSI file for irFile $irFile")
+        val psiFileEntry = fileEntriesByIrFile[irFile] ?: return null
         return psiFileEntry.findPsiElement(irElement)
     }
 

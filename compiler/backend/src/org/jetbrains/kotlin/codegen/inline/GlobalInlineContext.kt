@@ -16,12 +16,12 @@ class GlobalInlineContext(diagnostics: DiagnosticSink) {
 
     private val typesUsedInInlineFunctions = LinkedList<MutableSet<String>>()
 
-    fun enterIntoInlining(call: ResolvedCall<*>?) =
+    fun enterIntoInlining(call: InlineCall?) =
         inlineCycleReporter.enterIntoInlining(call).also {
             if (it) typesUsedInInlineFunctions.push(hashSetOf())
         }
 
-    fun exitFromInliningOf(call: ResolvedCall<*>?) {
+    fun exitFromInliningOf(call: InlineCall?) {
         inlineCycleReporter.exitFromInliningOf(call)
         val pop = typesUsedInInlineFunctions.pop()
         typesUsedInInlineFunctions.peek()?.addAll(pop)
