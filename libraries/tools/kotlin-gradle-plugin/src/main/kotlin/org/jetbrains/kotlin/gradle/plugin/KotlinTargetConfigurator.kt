@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget.Companion.IR
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget.Companion.LEGACY
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
@@ -447,6 +448,10 @@ internal fun Project.usageByName(usageName: String): Usage =
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
+
+    if (target is KotlinJsTarget) {
+        attributes.attribute(KotlinJsTarget.jsModeAttribute, LEGACY)
+    }
 
     if (target is KotlinJsIrTarget) {
         attributes.attribute(KotlinJsTarget.jsModeAttribute, IR)

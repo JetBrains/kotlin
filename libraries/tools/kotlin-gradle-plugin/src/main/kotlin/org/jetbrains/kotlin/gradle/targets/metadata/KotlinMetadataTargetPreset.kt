@@ -44,7 +44,7 @@ class KotlinMetadataTargetPreset(
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<AbstractKotlinCompilation<*>, KotlinMetadataTarget> =
         KotlinMetadataTargetConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(): KotlinMetadataTarget {
+    override fun instantiateTarget(name: String): KotlinMetadataTarget {
         return project.objects.newInstance(KotlinMetadataTarget::class.java, project)
     }
 

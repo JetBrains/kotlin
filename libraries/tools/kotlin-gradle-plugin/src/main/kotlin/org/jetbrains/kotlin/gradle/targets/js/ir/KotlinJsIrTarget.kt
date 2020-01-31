@@ -25,7 +25,13 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
-open class KotlinJsIrTarget @Inject constructor(project: Project, platformType: KotlinPlatformType) :
+open class KotlinJsIrTarget
+@Inject
+constructor(
+    project: Project,
+    platformType: KotlinPlatformType,
+    internal val mixedMode: Boolean
+) :
     KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,

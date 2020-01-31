@@ -31,7 +31,9 @@ open class KotlinJsPlugin(
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
 
-        val irPreset = if (mixedMode) KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion) else null
+        val irPreset = if (mixedMode)
+            KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion, mixedMode)
+        else null
 
         val target = KotlinJsSingleTargetPreset(project, kotlinPluginVersion, irPreset).createTarget("Js")
 

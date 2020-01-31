@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.JsMode
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 
 open class KotlinJsIrTargetPreset(
     project: Project,
-    kotlinPluginVersion: String
+    kotlinPluginVersion: String,
+    private val mixedMode: Boolean
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project,
     kotlinPluginVersion
@@ -22,8 +25,8 @@ open class KotlinJsIrTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
-    override fun instantiateTarget(): KotlinJsIrTarget {
-        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType)
+    override fun instantiateTarget(name: String): KotlinJsIrTarget {
+        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode)
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
@@ -44,9 +47,10 @@ open class KotlinJsIrTargetPreset(
 
 class KotlinJsIrSingleTargetPreset(
     project: Project,
-    kotlinPluginVersion: String
+    kotlinPluginVersion: String,
+    mixedMode: Boolean
 ) :
-    KotlinJsIrTargetPreset(project, kotlinPluginVersion) {
+    KotlinJsIrTargetPreset(project, kotlinPluginVersion, mixedMode) {
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? = null
@@ -54,3 +58,5 @@ class KotlinJsIrSingleTargetPreset(
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator(kotlinPluginVersion)
 }
+
+const val IR_TARGET_SUFFIX = "Ir"

@@ -191,6 +191,7 @@ constructor(
         )
 
         const val IR = "ir"
+        const val LEGACY = "legacy"
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
             attributesSchema.attribute(jsModeAttribute)

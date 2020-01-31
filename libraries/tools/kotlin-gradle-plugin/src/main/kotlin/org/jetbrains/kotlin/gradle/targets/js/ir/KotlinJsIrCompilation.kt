@@ -43,4 +43,16 @@ class KotlinJsIrCompilation(
         super.addSourcesToCompileTask(sourceSet, addAsCommonSources)
         allSources.add(sourceSet.kotlin)
     }
+
+    override val defaultSourceSetName: String
+        get() {
+            return lowerCamelCaseName(
+                if ((target as KotlinJsIrTarget).mixedMode)
+                    target.disambiguationClassifier
+                        ?.removeSuffix(IR_TARGET_SUFFIX)
+                else
+                    target.disambiguationClassifier,
+                compilationName
+            )
+        }
 }

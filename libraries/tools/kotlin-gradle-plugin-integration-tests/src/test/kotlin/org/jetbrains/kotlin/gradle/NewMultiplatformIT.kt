@@ -79,6 +79,13 @@ class NewMultiplatformIT : BaseGradleIT() {
     )
 
     @Test
+    fun testLibAndAppJsMixed() = doTestLibAndApp(
+        "sample-lib",
+        "sample-app",
+        JsMode.MIXED
+    )
+
+    @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
@@ -90,6 +97,13 @@ class NewMultiplatformIT : BaseGradleIT() {
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
         JsMode.IR
+    )
+
+    @Test
+    fun testLibAndAppWithGradleKotlinDslJsMixed() = doTestLibAndApp(
+        "sample-lib-gradle-kotlin-dsl",
+        "sample-app-gradle-kotlin-dsl",
+        JsMode.MIXED
     )
 
     private fun doTestLibAndApp(
@@ -233,6 +247,23 @@ class NewMultiplatformIT : BaseGradleIT() {
             ) {
                 checkAppBuild()
                 assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
+            }
+
+            if (jsMode == JsMode.MIXED) {
+                listOf(
+                    JsMode.LEGACY,
+                    JsMode.IR
+                ).forEach {
+                    build(
+                        "assemble",
+                        "resolveRuntimeDependencies",
+                        "--rerun-tasks",
+                        options = defaultBuildOptions().copy(jsMode = it)
+                    ) {
+                        checkAppBuild()
+                        assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
+                    }
+                }
             }
 
             // Now run again with a project dependency instead of a module one:

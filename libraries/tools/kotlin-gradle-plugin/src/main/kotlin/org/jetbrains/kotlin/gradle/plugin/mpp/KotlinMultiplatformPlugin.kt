@@ -159,12 +159,12 @@ class KotlinMultiplatformPlugin(
             add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
             when (propertiesProvider.jsMode) {
                 JsMode.LEGACY -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
-                JsMode.IR -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion))
+                JsMode.IR -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
                 JsMode.MIXED -> add(
                     KotlinJsTargetPreset(
                         project,
                         kotlinPluginVersion,
-                        KotlinJsIrTargetPreset(project, kotlinPluginVersion)
+                        KotlinJsIrTargetPreset(project, kotlinPluginVersion, true)
                     )
                 )
             }
