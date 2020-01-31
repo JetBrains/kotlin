@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -60,7 +57,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     // the superType.
     private val cachedImplementations = mutableMapOf<IrType, IrClass>()
     private val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
-    private var enclosingClass: IrClass? = null
+    private var enclosingContainer: IrDeclarationContainer? = null
 
     open val privateGeneratedWrapperVisibility: Visibility
         get() = Visibilities.PRIVATE
@@ -68,20 +65,22 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     abstract fun getSuperTypeForWrapper(typeOperand: IrType): IrType
 
     override fun lower(irFile: IrFile) {
-        enclosingClass = irFile.declarations.filterIsInstance<IrClass>().find { it.origin == IrDeclarationOrigin.FILE_CLASS }
+        enclosingContainer = irFile.declarations.filterIsInstance<IrClass>().find { it.origin == IrDeclarationOrigin.FILE_CLASS }
+            ?: irFile
         irFile.transformChildrenVoid()
 
         for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
-            val parentClass = wrapper.parent as IrClass
+            val parentClass = wrapper.parent as IrDeclarationContainer
             parentClass.declarations += wrapper
         }
     }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        enclosingClass = enclosingClass ?: declaration
+        val prevContainer = enclosingContainer
+        if (prevContainer == null || prevContainer is IrFile)
+            enclosingContainer = declaration
         super.visitClassNew(declaration)
-        if (enclosingClass == declaration)
-            enclosingClass = null
+        enclosingContainer = prevContainer
         return declaration
     }
 
@@ -156,7 +155,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
             superTypes += superType
-            parent = enclosingClass!!
+            parent = enclosingContainer!!
         }
 
         val field = subclass.addField {
