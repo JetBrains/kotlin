@@ -134,6 +134,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 runTest("compiler/testData/compileJavaAgainstKotlin/class/kt4050.kt");
             }
 
+            @TestMetadata("MapImpl.kt")
+            public void testMapImpl() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/class/MapImpl.kt");
+            }
+
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/class/Simple.kt");
@@ -785,6 +790,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("kt4050.kt")
             public void testKt4050() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/class/kt4050.kt");
+            }
+
+            @TestMetadata("MapImpl.kt")
+            public void testMapImpl() throws Exception {
+                runTest("compiler/testData/compileJavaAgainstKotlin/class/MapImpl.kt");
             }
 
             @TestMetadata("Simple.kt")

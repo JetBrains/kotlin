@@ -132,6 +132,11 @@ public class IrCompileJavaAgainstKotlinTestGenerated extends AbstractIrCompileJa
             runTest("compiler/testData/compileJavaAgainstKotlin/class/kt4050.kt");
         }
 
+        @TestMetadata("MapImpl.kt")
+        public void testMapImpl() throws Exception {
+            runTest("compiler/testData/compileJavaAgainstKotlin/class/MapImpl.kt");
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/compileJavaAgainstKotlin/class/Simple.kt");

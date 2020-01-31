@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -51,7 +52,12 @@ fun IrType.eraseTypeParameters() = when (this) {
     is IrErrorType -> this
     is IrSimpleType ->
         when (val owner = classifier.owner) {
-            is IrClass -> this
+            is IrClass -> IrSimpleTypeImpl(
+                classifier,
+                hasQuestionMark,
+                arguments.map { it.eraseTypeParameters() },
+                annotations
+            )
             is IrTypeParameter -> {
                 val upperBound = owner.erasedUpperBound
                 IrSimpleTypeImpl(
@@ -64,6 +70,12 @@ fun IrType.eraseTypeParameters() = when (this) {
             else -> error("Unknown IrSimpleType classifier kind: $owner")
         }
     else -> error("Unknown IrType kind: $this")
+}
+
+fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
+    is IrStarProjection -> this
+    is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
+    else -> error("Unknown IrTypeArgument kind: $this")
 }
 
 /**
