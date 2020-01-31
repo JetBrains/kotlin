@@ -771,7 +771,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
             filesSet.add(((VirtualFileWithId)fileOrDir).getId());
           }
           return true;
-        }, project, SilentProgressIndicator.create());
+        }, project, null);
         ProjectIndexableFilesFilter filter = new ProjectIndexableFilesFilter(filesSet, currentFileModCount);
         project.putUserData(ourProjectFilesSetKey, new SoftReference<>(filter));
 
