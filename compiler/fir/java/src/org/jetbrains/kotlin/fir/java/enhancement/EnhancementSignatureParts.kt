@@ -152,8 +152,8 @@ internal class EnhancementSignatureParts(
             is FirJavaTypeRef -> {
                 Pair(
                     // TODO: optimize
-                    type.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false),
-                    type.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = true)
+                    type.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, nullability = ConeNullability.NOT_NULL),
+                    type.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, nullability = ConeNullability.NULLABLE)
                 )
             }
             else -> return JavaTypeQualifiers.NONE

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -124,12 +123,12 @@ private fun JavaType?.subtreeSize(): Int {
 
 private fun coneFlexibleOrSimpleType(
     session: FirSession,
-    lowerBound: ConeLookupTagBasedType,
-    upperBound: ConeLookupTagBasedType,
+    lowerBound: ConeKotlinType,
+    upperBound: ConeKotlinType,
     isNotNullTypeParameter: Boolean
 ): ConeKotlinType {
     if (AbstractStrictEqualityTypeChecker.strictEqualTypes(session.typeContext, lowerBound, upperBound)) {
-        val lookupTag = lowerBound.lookupTag
+        val lookupTag = (lowerBound as? ConeLookupTagBasedType)?.lookupTag
         if (isNotNullTypeParameter && lookupTag is ConeTypeParameterLookupTag && !lowerBound.isMarkedNullable) {
             // TODO: we need enhancement for type parameter bounds for this code to work properly
             // At this moment, this condition is always true
@@ -164,8 +163,6 @@ private fun ClassId.mutableToReadOnly(): ClassId? {
     }
 }
 
-
-
 // Definition:
 // ErasedUpperBound(T : G<t>) = G<*> // UpperBound(T) is a type G<t> with arguments
 // ErasedUpperBound(T : A) = A // UpperBound(T) is a type A without arguments
@@ -181,8 +178,7 @@ private fun FirTypeParameter.getErasedUpperBound(
 
     val firstUpperBound = this.bounds.first().coneTypeUnsafe<ConeKotlinType>()
 
-    val firstUpperBoundClassifier = firstUpperBound
-    if (firstUpperBoundClassifier is ConeClassLikeType) {
+    if (firstUpperBound is ConeClassLikeType) {
         return firstUpperBound.withArguments(firstUpperBound.typeArguments.map { ConeStarProjection }.toTypedArray())
     }
 
@@ -225,7 +221,8 @@ fun computeProjection(
         // in T -> Comparable<Nothing>
             session.builtinTypes.nothingType.type
         else if (erasedUpperBound is ConeClassLikeType &&
-            erasedUpperBound.lookupTag.toSymbol(session)!!.firUnsafe<FirRegularClass>().typeParameters.isNotEmpty())
+            erasedUpperBound.lookupTag.toSymbol(session)!!.firUnsafe<FirRegularClass>().typeParameters.isNotEmpty()
+        )
         // T : Enum<E> -> out Enum<*>
             ConeKotlinTypeProjectionOut(erasedUpperBound)
         else
@@ -233,8 +230,6 @@ fun computeProjection(
             ConeStarProjection
     }
 }
-
-
 
 private fun JavaClassifierType.enhanceInflexibleType(
     session: FirSession,
@@ -244,9 +239,8 @@ private fun JavaClassifierType.enhanceInflexibleType(
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int
-): ConeLookupTagBasedType {
-    val classifier = classifier
-    val originalTag = when (classifier) {
+): ConeKotlinType {
+    val originalTag = when (val classifier = classifier) {
         is JavaClass -> {
             val classId = classifier.classId!!
             var mappedId = JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName())

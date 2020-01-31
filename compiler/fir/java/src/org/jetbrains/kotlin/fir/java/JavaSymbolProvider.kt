@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -95,7 +96,7 @@ class JavaSymbolProvider(
     ) {
         require(this is FirTypeParameterImpl)
         for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, isNullable = true)
+            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, nullability = ConeNullability.NULLABLE)
         }
         addDefaultBoundIfNecessary()
     }
@@ -155,7 +156,9 @@ class JavaSymbolProvider(
                     this.typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
                     for (supertype in javaClass.supertypes) {
-                        superTypeRefs += supertype.toFirResolvedTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
+                        superTypeRefs += supertype.toFirResolvedTypeRef(
+                            this@JavaSymbolProvider.session, javaTypeParameterStack, typeParametersNullability = ConeNullability.UNKNOWN
+                        )
                     }
                     // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage

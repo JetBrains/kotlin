@@ -217,10 +217,17 @@ fun coneFlexibleOrSimpleType(
     if (upperBound is ConeFlexibleType) {
         return coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
     }
-    if (typeContext != null && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound)) {
-        return lowerBound
+    return when {
+        typeContext != null && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> {
+            lowerBound
+        }
+        typeContext == null && lowerBound == upperBound -> {
+            lowerBound
+        }
+        else -> {
+            ConeFlexibleType(lowerBound, upperBound)
+        }
     }
-    return ConeFlexibleType(lowerBound, upperBound)
 }
 
 fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeContext: ConeInferenceContext? = null): T {
