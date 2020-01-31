@@ -17,6 +17,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativeRectangle;
 import com.intellij.util.IconUtil;
 import com.intellij.util.containers.JBIterable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,19 +38,16 @@ public final class FavoritesPanel {
   private final Project myProject;
   private final FavoritesTreeViewPanel myViewPanel;
   private final DnDAwareTree myTree;
-  private final AbstractTreeBuilder myTreeBuilder;
-  private final FavoritesTreeStructure myTreeStructure;
   private final Image myFavoritesImage = IconUtil.toImage(AllIcons.Toolwindows.ToolWindowFavorites);
 
-  public FavoritesPanel(Project project) {
+  public FavoritesPanel(@NotNull Project project) {
     myProject = project;
     myViewPanel = new FavoritesTreeViewPanel(myProject);
     myTree = myViewPanel.getTree();
-    myTreeBuilder = myViewPanel.getBuilder();
-    if (myTreeBuilder != null) {
-      Disposer.register(myProject, myTreeBuilder);
+    AbstractTreeBuilder treeBuilder = myViewPanel.getBuilder();
+    if (treeBuilder != null) {
+      Disposer.register(myProject, treeBuilder);
     }
-    myTreeStructure = myViewPanel.getFavoritesTreeStructure();
     setupDnD();
   }
 
@@ -234,8 +232,10 @@ public final class FavoritesPanel {
     }
   }
 
-  protected PsiFileSystemItem @Nullable [] getPsiFiles(@Nullable List<? extends File> fileList) {
-    if (fileList == null) return null;
+  private PsiFileSystemItem @Nullable [] getPsiFiles(@Nullable List<? extends File> fileList) {
+    if (fileList == null) {
+      return null;
+    }
     List<PsiFileSystemItem> sourceFiles = new ArrayList<>();
     for (File file : fileList) {
       final VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);

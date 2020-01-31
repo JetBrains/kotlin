@@ -83,7 +83,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     myFavoritesTreeStructure = new FavoritesTreeStructure(project);
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
     root.setUserObject(myFavoritesTreeStructure.getRootElement());
-    final DefaultTreeModel treeModel = new DefaultTreeModel(root);
+    DefaultTreeModel treeModel = new DefaultTreeModel(root);
     myTree = new DnDAwareTree(treeModel) {
       @Override
       public boolean isFileColorsEnabled() {
@@ -96,7 +96,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       }
     };
     myBuilder = new FavoritesViewTreeBuilder(myProject, myTree, treeModel, myFavoritesTreeStructure);
-    DockManager.getInstance(project).register(this);
+    DockManager.getInstance(project).register(this, project);
 
     TreeUtil.installActions(myTree);
     myTree.setRootVisible(false);
@@ -132,32 +132,35 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
                                         int row,
                                         boolean hasFocus) {
         super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
-        if (value instanceof DefaultMutableTreeNode) {
-          final DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-          //only favorites roots to explain
-          final Object userObject = node.getUserObject();
-          if (userObject instanceof FavoriteTreeNodeDescriptor) {
-            final FavoriteTreeNodeDescriptor favoritesTreeNodeDescriptor = (FavoriteTreeNodeDescriptor)userObject;
-            AbstractTreeNode treeNode = favoritesTreeNodeDescriptor.getElement();
-            FavoritesListProvider provider = FavoritesTreeUtil.getProvider(favoriteManager, favoritesTreeNodeDescriptor);
-            if (provider != null) {
-              Object o = myBuilder.getUi().getElementFor(value);
-              if (o instanceof AbstractTreeNode) {
-                o = ((AbstractTreeNode)o).getValue();
-              }
-              provider.customizeRenderer(this, tree, o, selected, expanded, leaf, row, hasFocus);
-              return;
+
+        if (!(value instanceof DefaultMutableTreeNode)) {
+          return;
+        }
+
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+        //only favorites roots to explain
+        final Object userObject = node.getUserObject();
+        if (userObject instanceof FavoriteTreeNodeDescriptor) {
+          final FavoriteTreeNodeDescriptor favoritesTreeNodeDescriptor = (FavoriteTreeNodeDescriptor)userObject;
+          AbstractTreeNode<?> treeNode = favoritesTreeNodeDescriptor.getElement();
+          FavoritesListProvider provider = FavoritesTreeUtil.getProvider(favoriteManager, favoritesTreeNodeDescriptor);
+          if (provider != null) {
+            Object o = myBuilder.getUi().getElementFor(value);
+            if (o instanceof AbstractTreeNode) {
+              o = ((AbstractTreeNode)o).getValue();
             }
-            final ItemPresentation presentation = treeNode.getPresentation();
-            String locationString = presentation.getLocationString();
-            if (locationString == null &&
-                node.getParent() != null &&
-                node.getParent().getParent() != null &&
-                node.getParent().getParent().getParent() == null) {
-              final String location = favoritesTreeNodeDescriptor.getLocation();
-              if (location != null && location.length() > 0) {
-                append(" (" + location + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
-              }
+            provider.customizeRenderer(this, tree, o, selected, expanded, leaf, row, hasFocus);
+            return;
+          }
+          final ItemPresentation presentation = treeNode.getPresentation();
+          String locationString = presentation.getLocationString();
+          if (locationString == null &&
+              node.getParent() != null &&
+              node.getParent().getParent() != null &&
+              node.getParent().getParent().getParent() == null) {
+            final String location = favoritesTreeNodeDescriptor.getLocation();
+            if (location != null && location.length() > 0) {
+              append(" (" + location + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
           }
         }
@@ -267,10 +270,6 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       }
     }
     return null;
-  }
-
-  public FavoritesTreeStructure getFavoritesTreeStructure() {
-    return myFavoritesTreeStructure;
   }
 
   @Override
@@ -646,13 +645,5 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
   @Override
   public boolean isDisposeWhenEmpty() {
     return false;
-  }
-
-  @Override
-  public void showNotify() {
-  }
-
-  @Override
-  public void hideNotify() {
   }
 }
