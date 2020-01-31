@@ -11,13 +11,17 @@ import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackag
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
@@ -28,14 +32,10 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isClassWithFqName
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -50,7 +50,9 @@ abstract class AndroidIrExtension : IrGenerationExtension {
     }
 }
 
-private class AndroidIrTransformer(val extension: AndroidIrExtension, val pluginContext: IrPluginContext) : IrElementTransformerVoid() {
+private class AndroidIrTransformer(val extension: AndroidIrExtension, val pluginContext: IrPluginContext) :
+    IrElementTransformerVoidWithContext() {
+
     private val cachedPackages = mutableMapOf<FqName, IrPackageFragment>()
     private val cachedClasses = mutableMapOf<FqName, IrClass>()
     private val cachedMethods = mutableMapOf<FqName, IrSimpleFunction>()
@@ -93,14 +95,14 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
             createClass(fqName.parent()).addField(fqName.shortName(), type, Visibilities.PUBLIC)
         }
 
-    override fun visitClass(declaration: IrClass): IrStatement {
+    override fun visitClassNew(declaration: IrClass): IrStatement {
         if (!declaration.isClass && !declaration.isObject)
-            return super.visitClass(declaration)
+            return super.visitClassNew(declaration)
         val containerOptions = ContainerOptionsProxy.create(declaration.descriptor)
         if ((containerOptions.cache ?: extension.getGlobalCacheImpl(declaration)) == CacheImplementation.NO_CACHE)
-            return super.visitClass(declaration)
+            return super.visitClassNew(declaration)
         if (containerOptions.containerType == AndroidContainerType.LAYOUT_CONTAINER && !extension.isExperimental(declaration))
-            return super.visitClass(declaration)
+            return super.visitClassNew(declaration)
 
         // TODO 1. actually generate the cache;
         //      2. clear it in the function added below;
@@ -113,7 +115,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
             addDispatchReceiver { type = declaration.defaultType }
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
         }
-        return super.visitClass(declaration)
+        return super.visitClassNew(declaration)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -129,6 +131,10 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
         val receiverClass = expression.extensionReceiver?.type?.classOrNull
             ?: return super.visitFunctionAccess(expression)
         val receiver = expression.extensionReceiver!!.transform(this, null)
+
+        val packageFqName = FqName(packageFragment.packageData.moduleData.module.applicationPackage)
+        val field = createField(packageFqName.child("R\$id").child(resource.name), pluginContext.irBuiltIns.intType)
+        val resourceId = IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type)
 
         val containerType = ContainerOptionsProxy.create(receiverClass.descriptor).containerType
         val result = if (expression.type.classifierOrNull?.isFragment == true) {
@@ -150,38 +156,45 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
             val fragment = appPackageFqName.child("Fragment")
             val fragmentManager = appPackageFqName.child("FragmentManager")
             val getFragmentManager = createMethod(getFragmentManagerFqName, createClass(fragmentManager).defaultType)
-            createMethod(fragmentManager.child("findFragmentById"), createClass(fragment).defaultType) {
+            createMethod(fragmentManager.child("findFragmentById"), createClass(fragment).defaultType.makeNullable()) {
                 addValueParameter("id", pluginContext.irBuiltIns.intType)
             }.callWithRanges(expression).apply {
                 dispatchReceiver = getFragmentManager.callWithRanges(expression).apply {
                     dispatchReceiver = receiver
                 }
+                putValueArgument(0, resourceId)
             }
         } else {
-            // this[.getView()|.getContainerView()].findViewById(R$id.<name>)
+            // this[.getView()?|.getContainerView()?].findViewById(R$id.<name>)
             val viewClass = createClass(FqName(AndroidConst.VIEW_FQNAME))
             val getView = when (containerType) {
                 AndroidContainerType.ACTIVITY, AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG ->
                     null
                 AndroidContainerType.FRAGMENT, AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT ->
-                    createMethod(containerType.fqName.child("getView"), viewClass.defaultType)
+                    createMethod(containerType.fqName.child("getView"), viewClass.defaultType.makeNullable())
                 AndroidContainerType.LAYOUT_CONTAINER ->
-                    createMethod(containerType.fqName.child("getContainerView"), viewClass.defaultType, true)
+                    createMethod(containerType.fqName.child("getContainerView"), viewClass.defaultType.makeNullable(), true)
                 else -> throw IllegalStateException("Invalid Android class type: $containerType") // Should never occur
             }
             val findViewByIdParent = if (getView == null) containerType.fqName else FqName(AndroidConst.VIEW_FQNAME)
-            createMethod(findViewByIdParent.child("findViewById"), viewClass.defaultType) {
+            val findViewById = createMethod(findViewByIdParent.child("findViewById"), viewClass.defaultType.makeNullable()) {
                 addValueParameter("id", pluginContext.irBuiltIns.intType)
             }.callWithRanges(expression).apply {
-                // TODO return null if getView returns null
-                dispatchReceiver = getView?.callWithRanges(expression)?.apply {
-                    dispatchReceiver = receiver
-                } ?: receiver
+                putValueArgument(0, resourceId)
             }
-        }.apply {
-            val packageFqName = FqName(packageFragment.packageData.moduleData.module.applicationPackage)
-            val field = createField(packageFqName.child("R\$id").child(resource.name), pluginContext.irBuiltIns.intType)
-            putValueArgument(0, IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type))
+            if (getView == null) {
+                findViewById.apply { dispatchReceiver = receiver }
+            } else {
+                val scope = currentScope!!.scope.scopeOwnerSymbol
+                DeclarationIrBuilder(IrGeneratorContextBase(pluginContext.irBuiltIns), scope).irBlock(expression) {
+                    val variable = irTemporary(getView.callWithRanges(expression).apply {
+                        dispatchReceiver = receiver
+                    })
+                    +irIfNull(findViewById.type, irGet(variable), irNull(), findViewById.apply {
+                        dispatchReceiver = irGet(variable)
+                    })
+                }
+            }
         }
         return with(expression) { IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, result) }
     }
