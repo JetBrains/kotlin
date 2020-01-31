@@ -981,6 +981,31 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testDexNaming(): Unit = checkApi(
+        """
+            @Composable
+            val myProperty: () -> Unit get() {
+                return {  }
+            }
+        """,
+        """
+            public final class TestKt {
+              public final static synthetic getMyProperty()Lkotlin/jvm/functions/Function0;
+              public static synthetic myProperty%annotations()V
+              public final static getMyProperty(Landroidx/compose/Composer;)Lkotlin/jvm/functions/Function0;
+              final static INNERCLASS TestKt%1 null null
+            }
+            final class TestKt%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>()V
+              public final invoke()V
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS TestKt%1 null null
+              OUTERCLASS TestKt getMyProperty (Landroidx/compose/Composer;)Lkotlin/jvm/functions/Function0;
+            }
+        """
+    )
+
+    @Test
     fun testInnerClass(): Unit = checkApi(
         """
             interface A {

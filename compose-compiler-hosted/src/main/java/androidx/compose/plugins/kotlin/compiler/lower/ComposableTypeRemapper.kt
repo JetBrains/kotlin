@@ -82,7 +82,10 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
-        return super.visitSimpleFunction(declaration).also { it.copyMetadataFrom(declaration) }
+        return super.visitSimpleFunction(declaration).also {
+            it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
+            it.copyMetadataFrom(declaration)
+        }
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty {
