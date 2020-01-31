@@ -2,7 +2,24 @@ package kotlinx.cinterop.internal
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class CStruct(val spelling: String)
+annotation class CStruct(val spelling: String) {
+    @Retention(AnnotationRetention.BINARY)
+    @Target(
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.PROPERTY_SETTER
+    )
+    annotation class MemberAt(val offset: Long)
+
+    @Retention(AnnotationRetention.BINARY)
+    @Target(
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.PROPERTY_SETTER
+    )
+    annotation class BitField(val offset: Long, val size: Int)
+
+    @Retention(AnnotationRetention.BINARY)
+    annotation class VarType(val size: Long, val align: Int)
+}
 
 @Target(
         AnnotationTarget.FUNCTION,

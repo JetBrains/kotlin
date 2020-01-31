@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumByValueFunctionG
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumCompanionGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumVarClassGenerator
+import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarClassGenerator
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 /**
  * For the most of descriptors that come from metadata-based interop libraries
  * we generate a lazy IR.
- * We use a different approach for CEnums and generate IR eagerly. Motivation:
+ * We use a different approach for CEnums and CStructVars and generate IR eagerly. Motivation:
  * 1. CEnums are "real" Kotlin enums. Thus, we need apply the same compilation approach
  *   as we use for usual Kotlin enums.
  *   Eager generation allows to reuse [EnumClassLowering], [EnumConstructorsLowering] and other
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  * 2. It is an easier and more obvious approach. Since implementation of metadata-based
  *  libraries generation already took too much time we take an easier approach here.
  */
-internal class IrProviderForCEnumStubs(
+internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
         private val interopBuiltIns: InteropBuiltIns,
         stubGenerator: DeclarationStubGenerator,
@@ -57,6 +58,8 @@ internal class IrProviderForCEnumStubs(
             CEnumVarClassGenerator(context, stubGenerator, interopBuiltIns)
     private val cEnumClassGenerator =
             CEnumClassGenerator(context, stubGenerator, cEnumCompanionGenerator, cEnumVarClassGenerator)
+    private val cStructClassGenerator =
+            CStructVarClassGenerator(context, stubGenerator, interopBuiltIns)
 
     var module: IrModuleFragment? = null
         set(value) {
@@ -71,23 +74,36 @@ internal class IrProviderForCEnumStubs(
     fun canHandleSymbol(symbol: IrSymbol): Boolean {
         if (!symbol.descriptor.module.isFromInteropLibrary()) return false
         return symbol.findCEnumDescriptor(interopBuiltIns) != null
+                || symbol.findCStructDescriptor(interopBuiltIns) != null
     }
 
-    fun buildAllEnumsFrom(interopModule: ModuleDescriptor) {
-        interopModule.getPackageFragments()
-                .flatMap { it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) }
-                .filterIsInstance<ClassDescriptor>()
-                .filter { it.implementsCEnum(interopBuiltIns) }
-                .forEach { cEnumClassGenerator.findOrGenerateCEnum(it, irParentFor(it)) }
+    fun buildAllEnumsAndStructsFrom(interopModule: ModuleDescriptor) = interopModule.getPackageFragments()
+            .flatMap { it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) }
+            .filterIsInstance<ClassDescriptor>()
+            .forEach {
+                when {
+                    it.implementsCEnum(interopBuiltIns) ->
+                        cEnumClassGenerator.findOrGenerateCEnum(it, irParentFor(it))
+                    it.inheritsFromCStructVar(interopBuiltIns) ->
+                        cStructClassGenerator.findOrGenerateCStruct(it, irParentFor(it))
+                }
+            }
+
+    private fun generateIrIfNeeded(symbol: IrSymbol) {
+        // TODO: These `findOrGenerate` calls generate a whole subtree.
+        //  This a simple but clearly suboptimal solution.
+        symbol.findCEnumDescriptor(interopBuiltIns)?.let { enumDescriptor ->
+            cEnumClassGenerator.findOrGenerateCEnum(enumDescriptor, irParentFor(enumDescriptor))
+        }
+        symbol.findCStructDescriptor(interopBuiltIns)?.let { structDescriptor ->
+            cStructClassGenerator.findOrGenerateCStruct(structDescriptor, irParentFor(structDescriptor))
+        }
     }
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         if (symbol.isBound) return symbol.owner as IrDeclaration
         if (!canHandleSymbol(symbol)) return null
-
-        val enumClassDescriptor = symbol.findCEnumDescriptor(interopBuiltIns)!!
-        // TODO: This call generates a whole subtree. This a simple but clearly suboptimal solution.
-        cEnumClassGenerator.findOrGenerateCEnum(enumClassDescriptor, irParentFor(enumClassDescriptor))
+        generateIrIfNeeded(symbol)
         return when (symbol) {
             is IrClassSymbol -> symbolTable.referenceClass(symbol.descriptor).owner
             is IrEnumEntrySymbol -> symbolTable.referenceEnumEntry(symbol.descriptor).owner
@@ -100,8 +116,8 @@ internal class IrProviderForCEnumStubs(
     private fun irParentFor(descriptor: ClassDescriptor): IrDeclarationContainer {
         val packageFragmentDescriptor = descriptor.findPackage()
         return filesMap.getOrPut(packageFragmentDescriptor) {
-            IrFileImpl(NaiveSourceBasedFileEntryImpl("CEnums"), packageFragmentDescriptor).also {
-                this@IrProviderForCEnumStubs.module?.files?.add(it)
+            IrFileImpl(NaiveSourceBasedFileEntryImpl("CTypeDefinitions"), packageFragmentDescriptor).also {
+                this@IrProviderForCEnumAndCStructStubs.module?.files?.add(it)
             }
         }
     }

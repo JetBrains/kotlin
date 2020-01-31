@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
@@ -56,6 +57,9 @@ internal interface DescriptorToIrTranslationMixin {
                 symbolTable.withScope(descriptor) {
                     descriptor.typeConstructor.supertypes.mapTo(irClass.superTypes) {
                         it.toIrType()
+                    }
+                    descriptor.annotations.mapTo(irClass.annotations) {
+                        typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(it)!!
                     }
                     irClass.createParameterDeclarations()
                     builder(irClass)
@@ -102,6 +106,9 @@ internal fun IrBuilder.irInstanceInitializer(classSymbol: IrClassSymbol): IrExpr
 internal fun ClassDescriptor.implementsCEnum(interopBuiltIns: InteropBuiltIns): Boolean =
         interopBuiltIns.cEnum in this.getSuperInterfaces()
 
+internal fun ClassDescriptor.inheritsFromCStructVar(interopBuiltIns: InteropBuiltIns): Boolean =
+        interopBuiltIns.cStructVar == this.getSuperClassNotAny()
+
 /**
  * All enums that come from interop library implement CEnum interface.
  * This function checks that given symbol located in subtree of
@@ -111,3 +118,13 @@ internal fun IrSymbol.findCEnumDescriptor(interopBuiltIns: InteropBuiltIns): Cla
         descriptor.parentsWithSelf
                 .filterIsInstance<ClassDescriptor>()
                 .firstOrNull { it.implementsCEnum(interopBuiltIns) }
+
+/**
+ * All structs that come from interop library inherit from CStructVar class.
+ * This function checks that given symbol located in subtree of
+ * CStructVar inheritor.
+ */
+internal fun IrSymbol.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
+        descriptor.parentsWithSelf
+                .filterIsInstance<ClassDescriptor>()
+                .firstOrNull { it.inheritsFromCStructVar(interopBuiltIns) }

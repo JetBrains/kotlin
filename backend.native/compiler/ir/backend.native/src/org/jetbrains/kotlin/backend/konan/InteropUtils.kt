@@ -43,6 +43,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val cEnum = this.packageScope.getContributedClass("CEnum")
     val cEnumVar = this.packageScope.getContributedClass("CEnumVar")
+    val cStructVar = this.packageScope.getContributedClass("CStructVar")
+    val cStructVarType = cStructVar.defaultType.memberScope.getContributedClass("Type")
     val cPrimitiveVar = this.packageScope.getContributedClass("CPrimitiveVar")
     val cPrimitiveVarType = cPrimitiveVar.defaultType.memberScope.getContributedClass("Type")
 

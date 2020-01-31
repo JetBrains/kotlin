@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForInteropStubs
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumStubs
+import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -207,11 +207,15 @@ internal val psiToIrPhase = konanUnitPhase(
                     moduleDescriptor, symbolTable,
                     config.configuration.languageVersionSettings
             )
-            val irProviderForCEnums = IrProviderForCEnumStubs(generatorContext, interopBuiltIns, stubGenerator, symbols)
-            val irProviderForInteropStubs = IrProviderForInteropStubs { symbol ->
-                irProviderForCEnums.canHandleSymbol(symbol)
-            }
-            val irProviders = listOf(irProviderForCEnums, irProviderForInteropStubs, functionIrClassFactory, deserializer, stubGenerator)
+            val irProviderForCEnumsAndCStructs = IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, stubGenerator, symbols)
+            val irProviderForInteropStubs = IrProviderForInteropStubs(irProviderForCEnumsAndCStructs::canHandleSymbol)
+            val irProviders = listOf(
+                    irProviderForCEnumsAndCStructs,
+                    irProviderForInteropStubs,
+                    functionIrClassFactory,
+                    deserializer,
+                    stubGenerator
+            )
             stubGenerator.setIrProviders(irProviders)
 
             expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
@@ -233,7 +237,7 @@ internal val psiToIrPhase = konanUnitPhase(
             }
             modulesWithoutDCE
                     .filter(ModuleDescriptor::isFromInteropLibrary)
-                    .forEach(irProviderForCEnums::buildAllEnumsFrom)
+                    .forEach(irProviderForCEnumsAndCStructs::buildAllEnumsAndStructsFrom)
 
             irModule = module
             irModules = deserializer.modules.filterValues { llvmModuleSpecification.containsModule(it) }
@@ -243,7 +247,7 @@ internal val psiToIrPhase = konanUnitPhase(
                     (listOf(irModule!!) + deserializer.modules.values)
                             .single { it.descriptor.isKonanStdlib() }
 
-            irProviderForCEnums.module = module
+            irProviderForCEnumsAndCStructs.module = module
         },
         name = "Psi2Ir",
         description = "Psi to IR conversion",
