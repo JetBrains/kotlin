@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // FULL_JDK
+// SKIP_JDK6
 
 import java.lang.annotation.Documented
 
