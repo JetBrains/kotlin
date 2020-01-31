@@ -240,10 +240,7 @@ public class IndexesExporter {
     try {
       FileContentImpl fc = (FileContentImpl)FileContentImpl.createByFile(file, myProject);
       byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
-      int hashId;
-      synchronized (hashEnumerator) {
-        hashId = Math.abs(hashEnumerator.enumerate(hash));
-      }
+      int hashId = Math.abs(hashEnumerator.enumerate(hash));
 
       for (HashBasedIndexGenerator<?, ?> generator : generators) {
         generator.indexFile(hashId, fc);
