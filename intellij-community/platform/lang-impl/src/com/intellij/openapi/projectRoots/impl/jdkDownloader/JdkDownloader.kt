@@ -3,6 +3,7 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -15,13 +16,18 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType.notSimpleJavaSdkTypeI
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.registry.Registry
 import java.util.function.Consumer
 import javax.swing.JComponent
 
 internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
   private val LOG = logger<JdkDownloader>()
 
-  override fun supportsDownload(sdkTypeId: SdkTypeId)= notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType().value(sdkTypeId)
+  override fun supportsDownload(sdkTypeId: SdkTypeId): Boolean {
+    if (!Registry.`is`("jdk.downloader")) return false
+    if (ApplicationManager.getApplication().isUnitTestMode) return false
+    return notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType().value(sdkTypeId)
+  }
 
   override fun showDownloadUI(sdkTypeId: SdkTypeId,
                               sdkModel: SdkModel,
