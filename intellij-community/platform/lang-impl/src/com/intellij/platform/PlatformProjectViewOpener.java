@@ -1,7 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -20,7 +21,7 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
+public final class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
   public PlatformProjectViewOpener() {
     if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isDataGrip()) {
       throw ExtensionNotApplicableException.INSTANCE;
@@ -28,18 +29,20 @@ public class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
   }
 
   @Override
-  public void configureProject(@NotNull final Project project,
-                               @NotNull final VirtualFile baseDir,
+  public void configureProject(@NotNull Project project,
+                               @NotNull VirtualFile baseDir,
                                @NotNull Ref<Module> moduleRef,
                                boolean newProject) {
-    ToolWindowManagerEx manager = (ToolWindowManagerEx)ToolWindowManager.getInstance(project);
-    ToolWindow toolWindow = manager.getToolWindow(ToolWindowId.PROJECT_VIEW);
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW);
     if (toolWindow == null) {
-      project.getMessageBus().connect().subscribe(ToolWindowManagerListener.TOPIC, new MyListener(manager, project));
+      MyListener listener = new MyListener(project);
+      Disposer.register(project, listener);
+      project.getMessageBus().connect(listener).subscribe(ToolWindowManagerListener.TOPIC, listener);
     }
     else {
-      StartupManager.getInstance(project).runWhenProjectIsInitialized(
-        (DumbAwareRunnable)() -> activateProjectToolWindow(project, toolWindow));
+      StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> {
+        activateProjectToolWindow(project, toolWindow);
+      });
     }
   }
 
@@ -52,21 +55,23 @@ public class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
     }, ModalityState.NON_MODAL);
   }
 
-  private static class MyListener implements ToolWindowManagerListener {
-    private final ToolWindowManagerEx myManager;
+  private static final class MyListener implements ToolWindowManagerListener, Disposable {
     private final Project myProject;
 
-    MyListener(ToolWindowManagerEx manager, Project project) {
-      myManager = manager;
+    MyListener(@NotNull Project project) {
       myProject = project;
     }
 
     @Override
-    public void toolWindowRegistered(@NotNull final String id) {
+    public void toolWindowRegistered(@NotNull String id) {
       if (id.equals(ToolWindowId.PROJECT_VIEW)) {
-        myManager.removeToolWindowManagerListener(this);
-        activateProjectToolWindow(myProject, myManager.getToolWindow(id));
+        Disposer.dispose(this);
+        activateProjectToolWindow(myProject, ToolWindowManagerEx.getInstanceEx(myProject).getToolWindow(id));
       }
+    }
+
+    @Override
+    public void dispose() {
     }
   }
 }
