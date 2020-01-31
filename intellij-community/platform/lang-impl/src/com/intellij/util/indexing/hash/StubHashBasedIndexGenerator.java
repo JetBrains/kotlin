@@ -33,7 +33,7 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
                                      @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
     super(
       EnumeratorIntegerDescriptor.INSTANCE,
-      new SerializedStubTreeDataExternalizer(true, null, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
+      new SerializedStubTreeDataExternalizer(true, SerializationManagerEx.getInstanceEx(), StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
       new StubUpdatingIndex(StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE),
       outRoot
     );

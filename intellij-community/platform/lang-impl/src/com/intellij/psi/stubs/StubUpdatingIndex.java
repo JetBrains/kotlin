@@ -244,7 +244,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   @NotNull
   @Override
   public DataExternalizer<SerializedStubTree> getValueExternalizer() {
-    return new SerializedStubTreeDataExternalizer(true, null, myStubIndexesExternalizer);
+    return new SerializedStubTreeDataExternalizer(true, SerializationManagerEx.getInstanceEx(), myStubIndexesExternalizer);
   }
 
   @NotNull
