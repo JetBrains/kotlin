@@ -71,7 +71,16 @@ object CompletionFUSCollector {
 }
 
 enum class FileTypeStats {
-    KT, GRADLEKTS, KTS
+    KT, GRADLEKTS, KTS;
+
+    companion object {
+        fun parseFromFileName(fileName: String): FileTypeStats? = when {
+            fileName.endsWith(".kt") -> KT
+            fileName.endsWith(".gradle.kts") -> GRADLEKTS
+            fileName.endsWith(".kts") -> KTS
+            else -> null
+        }
+    }
 }
 
 enum class CompletionTypeStats {
