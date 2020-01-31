@@ -34,6 +34,7 @@ dependencies {
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.frontend"))
     testCompile(project(":js:js.translator"))
+    testCompile(project(":native:frontend.native"))
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
