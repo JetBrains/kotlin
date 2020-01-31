@@ -19,7 +19,7 @@ import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.EditorMarkupModelImpl;
 import com.intellij.openapi.editor.impl.event.MarkupModelListener;
-import com.intellij.openapi.editor.markup.ErrorStatus;
+import com.intellij.openapi.editor.markup.AnalyzerStatus;
 import com.intellij.openapi.editor.markup.ErrorStripeRenderer;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
@@ -335,26 +335,24 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
 
     int currentSeverityErrors = 0;
-    @org.intellij.lang.annotations.Language("HTML")
-    String text = "";
+    StringBuilder text = new StringBuilder();
     for (int i = lastNotNullIndex; i >= 0; i--) {
       int count = status.errorCount[i];
       if (count > 0) {
         final HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
         String name = count > 1 ? StringUtil.pluralize(StringUtil.toLowerCase(severity.getName())) : StringUtil.toLowerCase(severity.getName());
-        text += status.errorAnalyzingFinished
+        text.append(status.errorAnalyzingFinished
                 ? DaemonBundle.message("errors.found", count, name)
-                : DaemonBundle.message("errors.found.so.far", count, name);
-        text += "<br>";
+                : DaemonBundle.message("errors.found.so.far", count, name)).append("<br/>");
         currentSeverityErrors += count;
       }
     }
     if (currentSeverityErrors == 0) {
-      text += (status.errorAnalyzingFinished
+      text.append(status.errorAnalyzingFinished
               ? DaemonBundle.message("no.errors.or.warnings.found")
-              : DaemonBundle.message("no.errors.or.warnings.found.so.far")) + "<br>";
+              : DaemonBundle.message("no.errors.or.warnings.found.so.far")).append("<br/>");
     }
-    statistics = XmlStringUtil.wrapInHtml(text);
+    statistics = XmlStringUtil.wrapInHtml(text.toString());
 
     this.icon = icon;
     return result;
@@ -373,17 +371,17 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   @Override
-  public ErrorStatus getStatus(Editor editor) {
+  public AnalyzerStatus getStatus(Editor editor) {
     DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
     int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
     List<Icon> statusIcons = new ArrayList<>();
+    Font font = editor.getComponent().getFont().deriveFont(Font.PLAIN, ICON_FONT);
 
     for (int i = lastNotNullIndex; i >= 0; i--) {
       if (status.errorCount[i] > 0) {
         statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
         TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
                                      editor.getColorsScheme().getDefaultForeground(), null, 0);
-        Font font = editor.getComponent().getFont().deriveFont(Font.PLAIN, ICON_FONT);
         icon.setFont(font);
         statusIcons.add(icon);
       }
@@ -403,10 +401,20 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         statusIcon.setIcon(icon, i + 1, xShift, yShift);
         xShift += icon.getIconWidth() + ICON_GAP.get();
       }
-      return new ErrorStatus(statusIcon);
+      return new AnalyzerStatus(statusIcon, true);
     }
     else {
-      return new ErrorStatus(null);
+      if (status.errorAnalyzingFinished) {
+        TextIcon icon = new TextIcon("Fine...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+        icon.setFont(font);
+        return new AnalyzerStatus(new LayeredIcon(icon), false);
+        //return new AnalyzerStatus(AllIcons.General.InspectionsOK, false);
+      }
+      else {
+        TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+        icon.setFont(font);
+        return new AnalyzerStatus(new LayeredIcon(icon), false);
+      }
     }
   }
 }
