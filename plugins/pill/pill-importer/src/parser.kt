@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.*
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
@@ -43,7 +44,8 @@ data class PModule(
     val contentRoots: List<PContentRoot>,
     val orderRoots: List<POrderRoot>,
     val kotlinOptions: PSourceRootKotlinOptions?,
-    val moduleForProductionSources: PModule? = null
+    val moduleForProductionSources: PModule? = null,
+    val embeddedDependencies: List<PDependency>
 )
 
 data class PContentRoot(
@@ -192,6 +194,9 @@ private fun parseModules(project: Project, excludedProjects: List<Project>): Lis
         return File(project.rootProject.projectDir, ".idea/modules/$relativePath")
     }
 
+    val embeddedDependencies = project.configurations.findByName(EMBEDDED_CONFIGURATION_NAME)
+        ?.let { parseDependencies(it) } ?: emptyList()
+
     val sourceSets = parseSourceSets(project).sortedBy { it.forTests }
     for (sourceSet in sourceSets) {
         val sourceRoots = mutableListOf<PSourceRoot>()
@@ -229,7 +234,8 @@ private fun parseModules(project: Project, excludedProjects: List<Project>): Lis
             contentRoots = contentRoots,
             orderRoots = orderRoots,
             kotlinOptions = sourceSet.kotlinOptions,
-            moduleForProductionSources = productionModule
+            moduleForProductionSources = productionModule,
+            embeddedDependencies = embeddedDependencies
         )
     }
 
@@ -247,7 +253,8 @@ private fun parseModules(project: Project, excludedProjects: List<Project>): Lis
         contentRoots = listOf(PContentRoot(project.projectDir, listOf(), getExcludedDirs(project, excludedProjects))),
         orderRoots = emptyList(),
         kotlinOptions = null,
-        moduleForProductionSources = null
+        moduleForProductionSources = null,
+        embeddedDependencies = emptyList()
     )
 
     return modules
@@ -376,11 +383,7 @@ private fun parseDependencies(project: Project, sourceSet: PSourceSet): List<POr
 
     fun process(name: String, scope: Scope) {
         val configuration = project.configurations.findByName(name) ?: return
-        for (file in configuration.resolve()) {
-            val library = PLibrary(file.name, listOf(file))
-            val dependency = PDependency.ModuleLibrary(library)
-            roots += POrderRoot(dependency, scope)
-        }
+        roots += parseDependencies(configuration).map { POrderRoot(it, scope) }
     }
 
     process(sourceSet.compileClasspathConfigurationName, Scope.PROVIDED)
@@ -391,6 +394,13 @@ private fun parseDependencies(project: Project, sourceSet: PSourceSet): List<POr
     }
 
     return roots
+}
+
+private fun parseDependencies(configuration: Configuration): List<PDependency> {
+    return configuration.resolve().map { file ->
+        val library = PLibrary(file.name, listOf(file))
+        return@map PDependency.ModuleLibrary(library)
+    }
 }
 
 val Project.pillModuleName: String

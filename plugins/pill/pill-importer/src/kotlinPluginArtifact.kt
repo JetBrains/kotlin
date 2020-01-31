@@ -23,7 +23,7 @@ class PArtifact(val artifactName: String, private val outputDir: File, private v
     }
 }
 
-interface OpaqueDependencyMapper {
+interface ArtifactDependencyMapper {
     fun map(dependency: PDependency): List<PDependency>
 }
 
@@ -88,7 +88,7 @@ sealed class ArtifactElement {
     }
 }
 
-fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: OpaqueDependencyMapper): PFile {
+fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: ArtifactDependencyMapper): PFile {
     val root = Root()
 
     fun Project.getProject(name: String) = findProject(name) ?: error("Cannot find project $name")
@@ -107,7 +107,7 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: Opa
         add(Directory("jps").apply {
             val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
             add(Archive(prepareJpsPluginProject.name + ".jar").apply {
-                val jpsPluginConfiguration = prepareIdeaPluginProject.configurations.getByName("jpsPlugin")
+                val jpsPluginConfiguration = prepareJpsPluginProject.configurations.getByName(EMBEDDED_CONFIGURATION_NAME)
                 add(getArtifactElements(jpsPluginConfiguration, dependencyMapper, true))
             })
         })
@@ -129,14 +129,12 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: Opa
 
 private fun getArtifactElements(
     configuration: Configuration,
-    dependencyMapper: OpaqueDependencyMapper,
+    dependencyMapper: ArtifactDependencyMapper,
     extractDependencies: Boolean
 ): List<ArtifactElement> {
-    val dependencies = parseDependencies(configuration, dependencyMapper)
-
     val artifacts = mutableListOf<ArtifactElement>()
 
-    for (dependency in dependencies) {
+    fun process(dependency: PDependency) {
         when (dependency) {
             is PDependency.Module -> {
                 val moduleOutput = ModuleOutput(dependency.name)
@@ -161,10 +159,11 @@ private fun getArtifactElements(
         }
     }
 
+    parseDependencies(configuration, dependencyMapper).forEach(::process)
     return artifacts
 }
 
-private fun parseDependencies(configuration: Configuration, dependencyMapper: OpaqueDependencyMapper): List<PDependency> {
+private fun parseDependencies(configuration: Configuration, dependencyMapper: ArtifactDependencyMapper): List<PDependency> {
     val dependencies = mutableListOf<PDependency>()
     for (file in configuration.resolve()) {
         val library = PLibrary(file.name, listOf(file))
