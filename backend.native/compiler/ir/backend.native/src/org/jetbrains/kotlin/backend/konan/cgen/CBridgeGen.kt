@@ -602,7 +602,7 @@ private fun IrType.isUShort() = this.isUnsigned(UnsignedType.USHORT)
 private fun IrType.isUInt() = this.isUnsigned(UnsignedType.UINT)
 private fun IrType.isULong() = this.isUnsigned(UnsignedType.ULONG)
 
-private fun IrType.isCEnumType(): Boolean {
+internal fun IrType.isCEnumType(): Boolean {
     val simpleType = this as? IrSimpleType ?: return false
     if (simpleType.hasQuestionMark) return false
     val enumClass = simpleType.classifier.owner as? IrClass ?: return false

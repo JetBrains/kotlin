@@ -198,6 +198,9 @@ internal class KonanSymbols(
 
     val nativeMemUtils = symbolTable.referenceClass(context.interopBuiltIns.nativeMemUtils)
 
+    val readBits = interopFunction("readBits")
+    val writeBits = interopFunction("writeBits")
+
     val objCExportTrapOnUndeclaredException =
             symbolTable.referenceSimpleFunction(context.builtIns.kotlinNativeInternal.getContributedFunctions(
                     Name.identifier("trapOnUndeclaredException"),
