@@ -7,7 +7,7 @@ fun test(i: Int) {
         createSample(i) { it.toString() }
     }
 
-    <!INAPPLICABLE_CANDIDATE!>takeSample<!>(bad)
+    takeSample(bad)
 }
 
 fun <T> myLazyDelegate(i: () -> T): LazyDelegate<T> = LazyDelegate(i())

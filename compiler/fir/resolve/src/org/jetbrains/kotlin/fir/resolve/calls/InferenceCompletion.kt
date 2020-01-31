@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -157,11 +157,6 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
 
                 for (lambdaAtom in candidate.postponedAtoms.filterIsInstance<ResolvedLambdaAtom>()) {
                     result.addIfNotNull(lambdaAtom.typeVariableForLambdaReturnType.toTypeConstructor())
-                    if (lambdaAtom.analyzed) {
-                        for (firStatement in lambdaAtom.returnStatements) {
-                            firStatement.collectAllTypeVariables()
-                        }
-                    }
                 }
             }
         }
@@ -231,32 +226,32 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     private fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, processor: (Candidate) -> Unit) {
         when (this) {
             is FirFunctionCall -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
                 this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
             }
 
             is FirWhenExpression -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
                 this.branches.forEach { it.result.processAllContainingCallCandidates(processBlocks, processor) }
             }
 
             is FirTryExpression -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
                 tryBlock.processAllContainingCallCandidates(processBlocks, processor)
                 catches.forEach { it.block.processAllContainingCallCandidates(processBlocks, processor) }
             }
 
             is FirCheckNotNullCall -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
                 this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
             }
 
             is FirQualifiedAccessExpression -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
             }
 
             is FirVariableAssignment -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
                 rValue.processAllContainingCallCandidates(processBlocks, processor)
             }
 
@@ -268,14 +263,26 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
             }
 
             is FirDelegatedConstructorCall -> {
-                processCandidateIfApplicable(processor)
+                processCandidateIfApplicable(processor, processBlocks)
                 this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
             }
         }
     }
 
-    private inline fun FirResolvable.processCandidateIfApplicable(processor: (Candidate) -> Unit) {
-        (calleeReference as? FirNamedReferenceWithCandidate)?.candidate?.let(processor)
+    private fun FirResolvable.processCandidateIfApplicable(
+        processor: (Candidate) -> Unit,
+        processBlocks: Boolean
+    ) {
+        val candidate = (calleeReference as? FirNamedReferenceWithCandidate)?.candidate ?: return
+        processor(candidate)
+
+        for (atom in candidate.postponedAtoms) {
+            if (atom !is ResolvedLambdaAtom || !atom.analyzed) continue
+
+            atom.returnStatements.forEach {
+                it.processAllContainingCallCandidates(processBlocks, processor)
+            }
+        }
     }
 
     private fun canWeAnalyzeIt(c: KotlinConstraintSystemCompleter.Context, argument: PostponedResolvedAtomMarker): Boolean {

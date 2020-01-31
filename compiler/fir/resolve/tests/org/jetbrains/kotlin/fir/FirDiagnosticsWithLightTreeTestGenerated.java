@@ -904,6 +904,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("nestedLambdas.kt")
+        public void testNestedLambdas() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/nestedLambdas.kt");
+        }
+
         @TestMetadata("receiverWithCapturedType.kt")
         public void testReceiverWithCapturedType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/receiverWithCapturedType.kt");
