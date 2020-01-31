@@ -2062,6 +2062,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/callableReference/bound/receiverEvaluatedOnce.kt");
             }
 
+            @TestMetadata("referenceToGetSetMethodsFromVararg.kt")
+            public void testReferenceToGetSetMethodsFromVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/referenceToGetSetMethodsFromVararg.kt");
+            }
+
             @TestMetadata("simpleFunction.kt")
             public void testSimpleFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/simpleFunction.kt");

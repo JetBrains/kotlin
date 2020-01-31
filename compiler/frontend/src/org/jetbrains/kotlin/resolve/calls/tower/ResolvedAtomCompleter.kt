@@ -369,8 +369,10 @@ class ResolvedAtomCompleter(
     }
 
     private fun ReceiverValue.updateReceiverValue(substitutor: TypeSubstitutor): ReceiverValue {
-        val newType = substitutor.safeSubstitute(type, Variance.INVARIANT)
-        return if (type != newType) replaceType(newType) else this
+        val newType = substitutor.safeSubstitute(type, Variance.INVARIANT).let {
+            typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference) ?: it
+        }
+        return if (type != newType) replaceType(newType as KotlinType) else this
     }
 
     private fun recordArgumentAdaptationForCallableReference(
