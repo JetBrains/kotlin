@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReferen
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -113,7 +114,7 @@ internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
 @DfaInternals
 internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
     get() = when (val reference = calleeReference) {
-        is FirExplicitThisReference -> reference.boundSymbol
+        is FirThisReference -> reference.boundSymbol
         is FirResolvedNamedReference -> reference.resolvedSymbol
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
