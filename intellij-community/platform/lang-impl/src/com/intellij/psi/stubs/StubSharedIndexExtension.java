@@ -8,9 +8,7 @@ import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorIntegerDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.intellij.util.io.VoidDataExternalizer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 
@@ -32,6 +30,6 @@ public class StubSharedIndexExtension implements SharedIndexExtension<Integer, S
   public DataExternalizer<SerializedStubTree> createValueExternalizer(@NotNull Path indexPath) {
     SerializationManagerImpl manager = new SerializationManagerImpl(indexPath.getParent().resolve("rep.names"), true);
     Disposer.register(ApplicationManager.getApplication(), manager);
-    return new SerializedStubTreeDataExternalizer(true, manager, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE);
+    return new SerializedStubTreeDataExternalizer(true, manager, StubForwardIndexExternalizer.createFileLocalExternalizer(manager));
   }
 }

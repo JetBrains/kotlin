@@ -54,12 +54,18 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   @NotNull
   private final StubForwardIndexExternalizer<?> myStubIndexesExternalizer;
 
+  @NotNull
+  private final SerializationManagerEx mySerializationManager;
+
   public StubUpdatingIndex() {
-    myStubIndexesExternalizer = SerializedStubTree.IDE_USED_EXTERNALIZER;
+    this(StubForwardIndexExternalizer.getIdeUsedExternalizer(SerializationManagerEx.getInstanceEx()),
+         SerializationManagerEx.getInstanceEx());
   }
 
-  public StubUpdatingIndex(@NotNull StubForwardIndexExternalizer<?> stubIndexesExternalizer) {
+  public StubUpdatingIndex(@NotNull StubForwardIndexExternalizer<?> stubIndexesExternalizer,
+                           @NotNull SerializationManagerEx serializationManager) {
     myStubIndexesExternalizer = stubIndexesExternalizer;
+    mySerializationManager = serializationManager;
   }
 
   public static boolean canHaveStub(@NotNull VirtualFile file) {
@@ -138,9 +144,13 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
             if (serializedStubTree == null) {
               Stub rootStub = StubTreeBuilder.buildStubTree(inputData, type);
               if (rootStub != null) {
-                serializedStubTree = SerializedStubTree.serializeStub(rootStub, SerializationManagerEx.getInstanceEx(), SerializedStubTree.IDE_USED_EXTERNALIZER);
+                serializedStubTree = SerializedStubTree.serializeStub(
+                  rootStub,
+                  mySerializationManager,
+                  StubForwardIndexExternalizer.getIdeUsedExternalizer(mySerializationManager)
+                );
                 if (DebugAssertions.DEBUG) {
-                  Stub deserialized = serializedStubTree.getStub(SerializationManagerEx.getInstanceEx());
+                  Stub deserialized = serializedStubTree.getStub(mySerializationManager);
                   check(deserialized, rootStub);
                 }
               }
@@ -244,7 +254,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   @NotNull
   @Override
   public DataExternalizer<SerializedStubTree> getValueExternalizer() {
-    return new SerializedStubTreeDataExternalizer(true, SerializationManagerEx.getInstanceEx(), myStubIndexesExternalizer);
+    return new SerializedStubTreeDataExternalizer(true, mySerializationManager, myStubIndexesExternalizer);
   }
 
   @NotNull
@@ -278,7 +288,15 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
         }
       });
     }
+    checkNameStorage();
     return new MyIndex(extension, storage);
+  }
+
+  private void checkNameStorage() throws StorageException {
+    if (mySerializationManager.isNameStorageCorrupted()) {
+      mySerializationManager.repairNameStorage();
+      throw new StorageException("NameStorage for stubs serialization has been corrupted");
+    }
   }
 
   private static class MyIndex extends VfsAwareMapReduceIndex<Integer, SerializedStubTree> {
@@ -294,7 +312,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       throws StorageException, IOException {
       super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(), null, null);
       ((StubUpdatingForwardIndexAccessor)getForwardIndexAccessor()).setIndex(this);
-      checkNameStorage();
 
       if (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
         // load stub serializers before usage
@@ -329,15 +346,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       }
       return index;
     }
-
-    private static void checkNameStorage() throws StorageException {
-      final SerializationManagerEx serializationManager = SerializationManagerEx.getInstanceEx();
-      if (serializationManager.isNameStorageCorrupted()) {
-        serializationManager.repairNameStorage();
-        throw new StorageException("NameStorage for stubs serialization has been corrupted");
-      }
-    }
-
 
     @Override
     protected void removeTransientDataForInMemoryKeys(int inputId, @NotNull Map<? extends Integer, ? extends SerializedStubTree> map) {
