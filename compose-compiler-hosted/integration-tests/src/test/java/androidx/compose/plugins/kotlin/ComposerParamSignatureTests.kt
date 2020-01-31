@@ -653,6 +653,54 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testSealedClassEtc(): Unit = checkApi(
+        """
+            sealed class Ambient2<T> {
+                @Composable
+                inline val current: T get() = error("")
+                @Composable fun foo() {}
+            }
+
+            abstract class ProvidableAmbient2<T> : Ambient2<T>() {}
+            class DynamicProvidableAmbient2<T> : ProvidableAmbient2<T>() {}
+            class StaticProvidableAmbient2<T> : ProvidableAmbient2<T>() {}
+        """,
+        """
+            public abstract class Ambient2 {
+              private <init>()V
+              public final synthetic getCurrent()Ljava/lang/Object;
+              public static synthetic current%annotations()V
+              public final foo(Landroidx/compose/Composer;)V
+              public final synthetic foo()V
+              public final getCurrent(Landroidx/compose/Composer;)Ljava/lang/Object;
+              public synthetic <init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+              final static INNERCLASS Ambient2%foo%1 null null
+            }
+            final class Ambient2%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+              synthetic <init>(LAmbient2;Landroidx/compose/Composer;)V
+              public final invoke()V
+              private final synthetic LAmbient2; %tmp1_rcvr
+              private final synthetic Landroidx/compose/Composer; %%composer
+              public synthetic bridge invoke()Ljava/lang/Object;
+              final static INNERCLASS Ambient2%foo%1 null null
+              OUTERCLASS Ambient2 foo (Landroidx/compose/Composer;)V
+            }
+            public abstract class ProvidableAmbient2 extends Ambient2 {
+              public <init>()V
+              public static synthetic current%annotations()V
+            }
+            public final class DynamicProvidableAmbient2 extends ProvidableAmbient2 {
+              public <init>()V
+              public static synthetic current%annotations()V
+            }
+            public final class StaticProvidableAmbient2 extends ProvidableAmbient2 {
+              public <init>()V
+              public static synthetic current%annotations()V
+            }
+        """
+    )
+
+    @Test
     fun testComposableTopLevelProperty(): Unit = checkApi(
         """
             @Composable val foo: Int get() { return 123 }
