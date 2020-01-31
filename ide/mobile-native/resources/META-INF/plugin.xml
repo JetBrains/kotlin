@@ -92,4 +92,8 @@
     <swiftSourceModuleProvider implementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftSourceModuleProvider"/>
     <customHeaderProvider implementation="com.jetbrains.swift.bridging.MobileSwiftBridgeHeaderProvider"/>
   </extensions>
+
+  <extensions defaultExtensionNs="cidr.cocoa">
+    <xcodeProjectFileProvider implementation="com.jetbrains.cidr.apple.gradle.AppleXcodeProjectFileProvider"/>
+  </extensions>
 </idea-plugin>

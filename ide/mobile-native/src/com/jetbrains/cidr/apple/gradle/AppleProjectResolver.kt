@@ -43,7 +43,9 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
                 val sourceModuleId = moduleId + "Main"
                 val testModuleId = moduleId + "Test"
 
-                val targetModel = AppleTargetModelImpl(target.name, target.sourceFolders, target.testFolders, target.bridgingHeader)
+                val targetModel = AppleTargetModelImpl(
+                    target.name, target.sourceFolders, target.testFolders, target.buildDir, target.bridgingHeader
+                )
 
                 fun addSourceSet(id: String, suffix: String, type: ExternalSystemSourceType, dirs: Set<File>) {
                     sourceSetMap.computeIfAbsent(id) {

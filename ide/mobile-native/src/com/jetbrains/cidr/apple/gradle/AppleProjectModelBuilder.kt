@@ -24,7 +24,8 @@ class AppleProjectModelBuilder : ModelBuilderService {
             val bridgingHeader = target.bridgingHeader?.let { bridgingHeader ->
                 srcDirs.firstOrNull { it.isDirectory && it.exists() }?.resolve(bridgingHeader)
             }
-            target.name.let { name -> targetModels[name] = AppleTargetModelImpl(name, srcDirs, testDirs, bridgingHeader) }
+            val buildDir = project.buildDir.resolve("apple").resolve(target.name)
+            target.name.let { name -> targetModels[name] = AppleTargetModelImpl(name, srcDirs, testDirs, buildDir, bridgingHeader) }
         }
         return AppleProjectModelImpl(targetModels)
     }

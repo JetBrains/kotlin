@@ -20,9 +20,10 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getValue
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.process.internal.ExecActionFactory
 import java.io.*
@@ -45,7 +46,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
     private val target: AppleTarget,
     private val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
-    var baseDir: File = project.buildDir.resolve("tmp/apple/${target.name}")
+    var baseDir: File = project.buildDir.resolve("apple/${target.name}")
         @OutputDirectory get
 
     var configName: String = "Debug"
@@ -255,7 +256,8 @@ private open class AppleBuildTask @Inject constructor(
     fun build() {
         val configName = "Debug"
 
-        val baseDir = project.buildDir.resolve("tmp/apple/${target.name}")
+        val generateXcodeprojTask = dependsOn.filterIsInstance<AppleGenerateXcodeProjectTask>().single()
+        val baseDir = generateXcodeprojTask.baseDir
         val projectDir = baseDir.resolve("${target.name}.xcodeproj")
 
         println("RUNNING XCODEBUILD")
