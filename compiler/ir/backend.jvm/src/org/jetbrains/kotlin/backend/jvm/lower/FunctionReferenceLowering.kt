@@ -161,7 +161,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
-            irBlock {
+            irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
                 val constructor = createConstructor()
                 createInvokeMethod(
                     if (samSuperType != null && boundReceiver != null) {
