@@ -151,7 +151,7 @@ fun test() {
     out2?.println();
     out2.<!INAPPLICABLE_CANDIDATE!>println<!>();
   }
-  out2.<!INAPPLICABLE_CANDIDATE!>println<!>()
+  out2.println()
 
 }
 
@@ -228,7 +228,7 @@ fun f6(s : String?) {
   do {
     s?.get(0)
   } while (s == null)
-  s.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+  s.get(0)
 }
 
 fun f7(s : String?, t : String?) {

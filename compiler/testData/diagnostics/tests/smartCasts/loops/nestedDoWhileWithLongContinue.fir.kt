@@ -8,7 +8,7 @@ public fun foo(p: String?, r: String?): Int {
         } while (r == null)  
     } while (!x())
     // Auto cast NOT possible due to long continue
-    r.<!INAPPLICABLE_CANDIDATE!>length<!>
+    r.length
     // Auto cast possible
     return p.length
 }

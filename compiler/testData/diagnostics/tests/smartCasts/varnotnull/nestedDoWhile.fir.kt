@@ -9,7 +9,7 @@ public fun foo(pp: String?, rr: String?): Int {
         } while (r == null)  
     } while (!x())
     // Auto cast possible
-    r.<!INAPPLICABLE_CANDIDATE!>length<!>
+    r.length
     // Auto cast possible
     return p.length
 }

@@ -11,5 +11,5 @@ public fun foo(xx: Any): Int {
         // y!! in both branches
         y.length
     } while (!(x is String))
-    return x.<!UNRESOLVED_REFERENCE!>length<!>
+    return x.length
 }

@@ -127,12 +127,12 @@ fun f13(a : A?) {
 fun f14(a : A?) {
   while (!(a is B)) {
   }
-  a.<!UNRESOLVED_REFERENCE!>bar<!>()
+  a.bar()
 }
 fun f15(a : A?) {
   do {
   } while (!(a is B))
-  a.<!UNRESOLVED_REFERENCE!>bar<!>()
+  a.bar()
 }
 
 fun getStringLength(obj : Any) : Char? {
