@@ -29,6 +29,8 @@ val GENERATED_MESSAGE = """
 fun printElements(builder: AbstractFirTreeBuilder, generationPath: File) {
     builder.elements.forEach { it.generateCode(generationPath) }
     builder.elements.flatMap { it.allImplementations }.forEach { it.generateCode(generationPath) }
+    builder.elements.flatMap { it.allImplementations }.mapNotNull { it.builder }.forEach { it.generateCode(generationPath) }
+    builder.intermediateBuilders.forEach { it.generateCode(generationPath) }
 
     printVisitor(builder.elements, generationPath)
     printVisitorVoid(builder.elements, generationPath)

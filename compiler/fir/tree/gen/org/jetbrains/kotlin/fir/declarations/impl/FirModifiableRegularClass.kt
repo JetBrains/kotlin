@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -13,8 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirRegularClass>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
+interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirRegularClass>, FirModifiableTypeParametersOwner {
     override val source: FirSourceElement?
     override val session: FirSession
     override var resolvePhase: FirResolvePhase
@@ -39,6 +41,7 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirReg
     override val name: Name
     override val symbol: FirRegularClassSymbol
     override var companionObject: FirRegularClass?
+    override val hasLazyNestedClassifiers: Boolean
     override val superTypeRefs: MutableList<FirTypeRef>
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableRegularClass
 

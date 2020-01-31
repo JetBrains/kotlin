@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -18,12 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirClassReferenceExpressionImpl(
+internal class FirClassReferenceExpressionImpl(
     override val source: FirSourceElement?,
-    override var classTypeRef: FirTypeRef
-) : FirClassReferenceExpression(), FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var classTypeRef: FirTypeRef,
+) : FirClassReferenceExpression() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

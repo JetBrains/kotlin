@@ -6,26 +6,24 @@
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.fir.FirWhenSubject
-import org.jetbrains.kotlin.fir.builder.generateContainsOperation
 import org.jetbrains.kotlin.fir.builder.generateLazyLogicalOperation
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirOperatorCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirTypeOperatorCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionImpl
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
+import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
 
 data class WhenEntry(
     val conditions: List<FirExpression>,
     val firBlock: FirBlock,
     val isElse: Boolean = false
 ) {
-    fun toFirWhenCondition(subject: FirWhenSubject): FirExpression {
+    fun toFirWhenCondition(): FirExpression {
         var firCondition: FirExpression? = null
         for (condition in conditions) {
-            val firConditionElement = condition.toFirWhenCondition(subject)
+            val firConditionElement = condition.toFirWhenCondition()
             firCondition = when (firCondition) {
                 null -> firConditionElement
                 else -> firCondition.generateLazyLogicalOperation(firConditionElement, false, null)
@@ -34,34 +32,15 @@ data class WhenEntry(
         return firCondition!!
     }
 
-    private fun FirExpression.toFirWhenCondition(subject: FirWhenSubject): FirExpression {
-        val firSubjectExpression = FirWhenSubjectExpressionImpl(null, subject)
-        return when (this) {
-            is FirOperatorCallImpl -> {
-                this.apply {
-                    arguments.add(0, firSubjectExpression)
-                }
-            }
-            is FirFunctionCall -> {
-                val firExpression = this.explicitReceiver!!
-                val isNegate = this.calleeReference.name == OperatorNameConventions.NOT
-                firExpression.generateContainsOperation(firSubjectExpression, isNegate, null, null)
-            }
-            is FirTypeOperatorCallImpl -> {
-                this.apply {
-                    arguments += firSubjectExpression
-                }
-            }
-            else -> {
-                FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unsupported when condition: ${this.javaClass}", DiagnosticKind.Syntax))
-            }
-        }
+    private fun FirExpression.toFirWhenCondition(): FirExpression {
+        return this
     }
 
     fun toFirWhenConditionWithoutSubject(): FirExpression {
-        return when (val condition = conditions.first()) {
-            is FirOperatorCallImpl -> condition.arguments.first()
-            else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
+        return when (val condition = conditions.firstOrNull()) {
+//            is FirOperatorCall -> condition.arguments.first()
+            null -> buildErrorExpression(null, FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
+            else -> condition
         }
     }
 }

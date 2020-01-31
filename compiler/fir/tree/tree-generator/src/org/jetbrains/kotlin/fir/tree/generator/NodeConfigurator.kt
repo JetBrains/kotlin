@@ -218,6 +218,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +symbol("FirRegularClassSymbol")
             +field("companionObject", regularClass, nullable = true)
+            +booleanField("hasLazyNestedClassifiers")
             +superTypeRefs(withReplace = true)
         }
 
@@ -267,7 +268,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         contractDescriptionOwner.configure {
-            +field(contractDescription).withTransform()
+            +field(contractDescription, withReplace = true).withTransform()
         }
 
         property.configure {
@@ -431,7 +432,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("packageFqName", fqNameType)
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
-            +booleanField("safe")
+            +booleanField("safe", withReplace = true)
             +typeArguments.withTransform()
         }
 

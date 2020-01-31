@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirErrorLoopImpl(
+internal class FirErrorLoopImpl(
     override val source: FirSourceElement?,
-    override val diagnostic: FirDiagnostic
-) : FirErrorLoop(), FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var label: FirLabel?,
+    override val diagnostic: FirDiagnostic,
+) : FirErrorLoop() {
     override var block: FirBlock = FirEmptyExpressionBlock()
     override var condition: FirExpression = FirErrorExpressionImpl(source, diagnostic)
-    override var label: FirLabel? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

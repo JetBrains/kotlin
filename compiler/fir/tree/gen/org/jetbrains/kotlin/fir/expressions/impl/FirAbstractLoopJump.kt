@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirAbstractLoopJump : FirLoopJump, FirAbstractAnnotatedElement {
+interface FirAbstractLoopJump : FirLoopJump {
     override val source: FirSourceElement?
     override var typeRef: FirTypeRef
     override val annotations: MutableList<FirAnnotationCall>
-    override var target: FirTarget<FirLoop>
+    override val target: FirTarget<FirLoop>
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoopJump
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef)

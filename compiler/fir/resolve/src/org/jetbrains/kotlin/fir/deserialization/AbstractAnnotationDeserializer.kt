@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
+import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -87,21 +87,21 @@ abstract class AbstractAnnotationDeserializer(
                     val name = nameResolver.getName(it.nameId)
                     val parameter = parameterByName[name] ?: return@mapNotNull null
                     val value = resolveValue(parameter.returnTypeRef, it.value, nameResolver) ?: return@mapNotNull null
-                    FirNamedArgumentExpressionImpl(
-                        null, value, false, name
-                    )
+                    buildNamedArgumentExpression {
+                        expression = value
+                        isSpread = false
+                        this.name = name
+                    }
                 }
             }
         }
 
-        return FirAnnotationCallImpl(
-            null, null,
-            symbol?.let {
-                FirResolvedTypeRefImpl(
-                    null, it.constructType(emptyList(), isNullable = false)
-                )
-            } ?: FirErrorTypeRefImpl(null, FirUnresolvedSymbolError(classId))
-        ).apply {
+        return buildAnnotationCall {
+            annotationTypeRef = symbol?.let {
+                buildResolvedTypeRef {
+                    type = it.constructType(emptyList(), isNullable = false)
+                }
+            } ?: buildErrorTypeRef { diagnostic =FirUnresolvedSymbolError(classId) }
             this.arguments += arguments
         }
     }
@@ -122,16 +122,17 @@ abstract class AbstractAnnotationDeserializer(
             BOOLEAN -> const(FirConstKind.Boolean, (value.intValue != 0L))
             STRING -> const(FirConstKind.String, nameResolver.getString(value.stringValue))
             ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
-            CLASS -> FirGetClassCallImpl(null).apply {
+            CLASS -> buildGetClassCall {
                 val classId = nameResolver.getClassId(value.classId)
                 val lookupTag = ConeClassLikeLookupTagImpl(classId)
                 val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
-                arguments += FirClassReferenceExpressionImpl(
-                    null,
-                    FirResolvedTypeRefImpl(null, referencedType)
-                )
+                arguments += buildClassReferenceExpression {
+                    classTypeRef = buildResolvedTypeRef {
+                        type = referencedType
+                    }
+                }
             }
-            ENUM -> FirFunctionCallImpl(null).apply {
+            ENUM -> buildFunctionCall {
                 val classId = nameResolver.getClassId(value.classId)
                 val entryName = nameResolver.getName(value.enumValueId)
 
@@ -142,11 +143,13 @@ abstract class AbstractAnnotationDeserializer(
                 val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
                 val enumEntrySymbol = enumEntries.find { it.name == entryName }
                 this.calleeReference = enumEntrySymbol?.let {
-                    FirResolvedNamedReferenceImpl(null, entryName, it.symbol)
-                } ?: FirErrorNamedReferenceImpl(
-                    null,
-                    FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
-                )
+                    buildResolvedNamedReference {
+                        name = entryName
+                        resolvedSymbol = it.symbol
+                    }
+                } ?: buildErrorNamedReference {
+                    diagnostic = FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
+                }
             }
 //            ARRAY -> {
 //                TODO: see AnnotationDeserializer
@@ -157,5 +160,5 @@ abstract class AbstractAnnotationDeserializer(
         return result
     }
 
-    private fun <T> const(kind: FirConstKind<T>, value: T) = FirConstExpressionImpl(null, kind, value)
+    private fun <T> const(kind: FirConstKind<T>, value: T) = buildConstExpression(null, kind, value)
 }

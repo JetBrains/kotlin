@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -18,13 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirWrappedDelegateExpressionImpl(
+internal class FirWrappedDelegateExpressionImpl(
     override val source: FirSourceElement?,
-    override var expression: FirExpression
-) : FirWrappedDelegateExpression(), FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var expression: FirExpression,
+    override var delegateProvider: FirExpression,
+) : FirWrappedDelegateExpression() {
     override val typeRef: FirTypeRef get() = expression.typeRef
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override lateinit var delegateProvider: FirExpression
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

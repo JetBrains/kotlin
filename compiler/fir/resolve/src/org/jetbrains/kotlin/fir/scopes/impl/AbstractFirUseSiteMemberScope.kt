@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -82,40 +85,39 @@ abstract class AbstractFirUseSiteMemberScope(
                     if (overriddenParameter.defaultValue != null)
                         createValueParameterCopy(overrideParameter, overriddenParameter.defaultValue).apply {
                             annotations += overrideParameter.annotations
-                        }
+                        }.build()
                     else
                         overrideParameter
                 }
-        }
+        }.build()
 
         return newSymbol
     }
 
-    protected open fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl =
-        FirSimpleFunctionImpl(
-            firSimpleFunction.source,
-            firSimpleFunction.session,
-            firSimpleFunction.returnTypeRef,
-            firSimpleFunction.receiverTypeRef,
-            firSimpleFunction.status,
-            firSimpleFunction.name,
-            newSymbol
-        )
-
-    protected open fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterImpl =
-        with(parameter) {
-            FirValueParameterImpl(
-                source,
-                session,
-                returnTypeRef,
-                name,
-                FirVariableSymbol(parameter.symbol.callableId),
-                newDefaultValue,
-                isCrossinline,
-                isNoinline,
-                isVararg
-            )
+    protected open fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionBuilder =
+        FirSimpleFunctionBuilder().apply {
+            source = firSimpleFunction.source
+            session = firSimpleFunction.session
+            returnTypeRef = firSimpleFunction.returnTypeRef
+            receiverTypeRef = firSimpleFunction.receiverTypeRef
+            name = firSimpleFunction.name
+            status = firSimpleFunction.status
+            symbol = newSymbol
         }
+
+    protected open fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterBuilder =
+        FirValueParameterBuilder().apply {
+            source = parameter.source
+            session = parameter.session
+            returnTypeRef = parameter.returnTypeRef
+            name = parameter.name
+            symbol = FirVariableSymbol(parameter.symbol.callableId)
+            defaultValue = newDefaultValue
+            isCrossinline = parameter.isCrossinline
+            isNoinline = parameter.isNoinline
+            isVararg = parameter.isVararg
+        }
+
 
     override fun processClassifiersByName(
         name: Name,

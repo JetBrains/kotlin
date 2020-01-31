@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,19 +22,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-open class FirFunctionCallImpl(
-    override val source: FirSourceElement?
-) : FirFunctionCall(), FirModifiableQualifiedAccess, FirCallWithArgumentList, FirAbstractAnnotatedElement {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var safe: Boolean = false
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
-    override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
-    override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override val arguments: MutableList<FirExpression> = mutableListOf()
-    override lateinit var calleeReference: FirNamedReference
-
+open class FirFunctionCallImpl @FirImplementationDetail constructor(
+    override val source: FirSourceElement?,
+    override var typeRef: FirTypeRef,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var safe: Boolean,
+    override val typeArguments: MutableList<FirTypeProjection>,
+    override var explicitReceiver: FirExpression?,
+    override var dispatchReceiver: FirExpression,
+    override var extensionReceiver: FirExpression,
+    override val arguments: MutableList<FirExpression>,
+    override var calleeReference: FirNamedReference,
+) : FirFunctionCall(), FirModifiableQualifiedAccess, FirCallWithArgumentList {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }

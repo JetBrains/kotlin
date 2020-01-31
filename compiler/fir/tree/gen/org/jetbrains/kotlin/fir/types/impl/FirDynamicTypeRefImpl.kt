@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -16,12 +15,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirDynamicTypeRefImpl(
+internal class FirDynamicTypeRefImpl(
     override val source: FirSourceElement?,
-    override val isMarkedNullable: Boolean
-) : FirDynamicTypeRef(), FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val isMarkedNullable: Boolean,
+) : FirDynamicTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }

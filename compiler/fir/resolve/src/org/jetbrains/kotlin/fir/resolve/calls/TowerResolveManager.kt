@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
@@ -105,9 +105,9 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
         val explicitReceiverKind: ExplicitReceiverKind,
         val group: TowerGroup
     ) {
-        private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionImpl {
+        private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
             val symbol = candidate.symbol as FirCallableSymbol<*>
-            return FirQualifiedAccessExpressionImpl(null).apply {
+            return FirQualifiedAccessExpressionBuilder().apply {
                 calleeReference = FirNamedReferenceWithCandidate(
                     null,
                     symbol.callableId.callableName,
@@ -184,7 +184,7 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
                                     it.explicitReceiver = info.explicitReceiver
                                     it.safe = info.isSafeCall
                                 }
-                                towerResolver.components.transformQualifiedAccessUsingSmartcastInfo(it)
+                                towerResolver.components.transformQualifiedAccessUsingSmartcastInfo(it.build())
                             }
 
                             val invokeFunctionInfo =

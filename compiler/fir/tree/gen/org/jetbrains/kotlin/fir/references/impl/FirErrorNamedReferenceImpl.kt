@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirErrorNamedReferenceImpl(
+internal class FirErrorNamedReferenceImpl(
     override val source: FirSourceElement?,
-    override val diagnostic: FirDiagnostic
+    override val diagnostic: FirDiagnostic,
 ) : FirErrorNamedReference() {
     override val name: Name = Name.special("<${diagnostic.reason}>")
     override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null

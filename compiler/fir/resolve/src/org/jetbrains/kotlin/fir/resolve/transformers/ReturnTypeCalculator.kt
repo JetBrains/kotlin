@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
 interface ReturnTypeCalculator {
     fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
@@ -22,12 +22,11 @@ class ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator {
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
 
-        return FirErrorTypeRefImpl(
-            null,
-            FirSimpleDiagnostic(
+        return buildErrorTypeRef {
+            diagnostic = FirSimpleDiagnostic(
                 "Cannot calculate return type during full-body resolution (local class/object?): ${declaration.render()}",
                 DiagnosticKind.InferenceError
             )
-        )
+        }
     }
 }

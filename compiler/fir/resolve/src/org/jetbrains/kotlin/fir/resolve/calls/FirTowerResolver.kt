@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.declarations.isCompanion
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -89,11 +89,13 @@ class FirTowerResolver(
             listOf(
                 FirExplicitSimpleImportingScope(
                     listOf(
-                        FirResolvedImportImpl(
-                            FirImportImpl(source = null, importedFqName = FqName.topLevel(info.name), isAllUnder = false, aliasName = null),
-                            resolvedQualifier.packageFqName,
-                            relativeClassName = null
-                        )
+                        buildResolvedImport {
+                        delegate = buildImport {
+                             importedFqName = FqName.topLevel(info.name)
+                            isAllUnder = false
+                            }
+                        packageFqName = resolvedQualifier.packageFqName
+                        }
                     ), session, components.scopeSession
                 )
             )

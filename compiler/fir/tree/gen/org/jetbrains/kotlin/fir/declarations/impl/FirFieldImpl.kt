@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -27,16 +26,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirFieldImpl(
+internal class FirFieldImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirField>,
     override val isVar: Boolean,
-    override var status: FirDeclarationStatus
-) : FirField(), FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override var status: FirDeclarationStatus,
+    override val containerSource: DeserializedContainerSource?,
+) : FirField() {
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
@@ -44,9 +46,6 @@ class FirFieldImpl(
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override var containerSource: DeserializedContainerSource? = null
 
     init {
         symbol.bind(this)

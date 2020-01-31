@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeResolveScopeForBodyResolve
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
 abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
     abstract val components: BodyResolveTransformerComponents
@@ -97,7 +97,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         val topLevelScopes: MutableList<FirScope> = mutableListOf()
         val localScopes: MutableList<FirLocalScope> = mutableListOf()
 
-        override val noExpectedType: FirTypeRef = FirImplicitTypeRefImpl(null)
+        override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
 
         override lateinit var file: FirFile
             internal set

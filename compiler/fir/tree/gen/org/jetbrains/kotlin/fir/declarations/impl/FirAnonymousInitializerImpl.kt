@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirAnonymousInitializerImpl(
+internal class FirAnonymousInitializerImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
-    override var body: FirBlock?
+    override var resolvePhase: FirResolvePhase,
+    override var body: FirBlock?,
 ) : FirAnonymousInitializer() {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         body?.accept(visitor, data)
     }

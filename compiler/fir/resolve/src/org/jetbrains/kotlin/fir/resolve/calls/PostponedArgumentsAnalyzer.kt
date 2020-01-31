@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -78,10 +78,10 @@ class PostponedArgumentsAnalyzer(
 
         val namedReference = when {
             candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
-                FirErrorNamedReferenceImpl(
-                    callableReferenceAccess.source,
-                    FirUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
-                )
+                buildErrorNamedReference {
+                    source = callableReferenceAccess.source
+                    diagnostic = FirUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
+                }
             else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
         }
 
@@ -90,7 +90,7 @@ class PostponedArgumentsAnalyzer(
             namedReference
         ).apply {
             if (candidate != null) {
-                replaceTypeRef(FirResolvedTypeRefImpl(null, candidate.resultingTypeForCallableReference!!))
+                replaceTypeRef(buildResolvedTypeRef { type = candidate.resultingTypeForCallableReference!! })
             }
         }
     }

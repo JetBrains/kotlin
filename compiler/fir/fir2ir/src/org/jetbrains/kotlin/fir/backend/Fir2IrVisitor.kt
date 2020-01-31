@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
@@ -902,15 +902,15 @@ class Fir2IrVisitor(
         if (functionCall !is FirFunctionCallImpl) {
             return functionCall
         }
-        val calleeReference = (functionCall.calleeReference as? FirResolvedNamedReferenceImpl) ?: return functionCall
+        val calleeReference = (functionCall.calleeReference as? FirResolvedNamedReference) ?: return functionCall
         val resolvedSymbol = (calleeReference.resolvedSymbol as? FirNamedFunctionSymbol) ?: return functionCall
         if (resolvedSymbol.callableId.isInvoke()) {
             functionCall.calleeReference =
-                FirResolvedNamedReferenceImpl(
-                    source = calleeReference.source,
-                    name = calleeReference.name,
-                    resolvedSymbol = resolvedSymbol.overriddenSymbol!!
-                )
+                buildResolvedNamedReference {
+                    source = calleeReference.source
+                    name = calleeReference.name
+                    this.resolvedSymbol = resolvedSymbol.overriddenSymbol!!
+                }
         }
         return functionCall
     }

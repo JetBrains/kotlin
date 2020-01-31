@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
@@ -20,7 +20,7 @@ abstract class FirAbstractSimpleImportingScope(
     scopeSession: ScopeSession
 ) : FirAbstractImportingScope(session, scopeSession, lookupInFir = true) {
 
-    protected abstract val simpleImports: Map<Name, List<FirResolvedImportImpl>>
+    protected abstract val simpleImports: Map<Name, List<FirResolvedImport>>
 
     override fun processClassifiersByName(
         name: Name,

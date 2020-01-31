@@ -30,5 +30,7 @@ abstract class FirResolvedQualifier : FirPureAbstractElement(), FirExpression {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
 
+    abstract fun replaceSafe(newSafe: Boolean)
+
     abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifier
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -62,12 +62,14 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
 
         if (resolved != null) {
             qualifierPartsToDrop = qualifierParts.size - 1
-            return FirResolvedQualifierImpl(
-                source,
-                resolved.packageFqName,
-                resolved.relativeClassFqName,
+            return buildResolvedQualifier {
+                this.source = source
+                packageFqName = resolved.packageFqName
+                relativeClassFqName = resolved.relativeClassFqName
                 safe = false
-            ).apply { resultType = typeForQualifier(this) }
+            }.apply {
+                resultType = typeForQualifier(this)
+            }
         }
 
         return null

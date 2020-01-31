@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -264,7 +264,10 @@ private class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(fir: FirElement, message: String) = FirErrorTypeRefImpl(fir.source, FirSimpleDiagnostic(message))
+private fun createErrorTypeRef(fir: FirElement, message: String) = buildErrorTypeRef {
+    source = fir.source
+    diagnostic = FirSimpleDiagnostic(message)
+}
 
 private class SupertypeComputationSession {
     private val fileScopesMap = hashMapOf<FirFile, FirImmutableCompositeScope>()

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -18,12 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirWhenSubjectExpressionImpl(
+internal class FirWhenSubjectExpressionImpl(
     override val source: FirSourceElement?,
-    override val whenSubject: FirWhenSubject
-) : FirWhenSubjectExpression(), FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val whenSubject: FirWhenSubject,
+) : FirWhenSubjectExpression() {
     override val typeRef: FirTypeRef get() = whenSubject.whenExpression.subject!!.typeRef
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

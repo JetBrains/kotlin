@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
                   $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
               BREAK label=OUTER loop.label=OUTER
               BREAK label=INNER loop.label=INNER
-              BREAK label=null loop.label=INNER
+              BREAK label=INNER loop.label=INNER
           BREAK label=OUTER loop.label=OUTER
   FUN name:testForContinue1 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>
@@ -91,5 +91,5 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
                   $this: GET_VAR 'val tmp_11: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
               CONTINUE label=OUTER loop.label=OUTER
               CONTINUE label=INNER loop.label=INNER
-              CONTINUE label=null loop.label=INNER
+              CONTINUE label=INNER loop.label=INNER
           CONTINUE label=OUTER loop.label=OUTER

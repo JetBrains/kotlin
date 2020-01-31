@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 
@@ -18,8 +19,8 @@ class FirDefaultSimpleImportingScope(
     priority: DefaultImportPriority
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
-    private fun FirImportImpl.resolve(importResolveTransformer: FirImportResolveTransformer) =
-        importResolveTransformer.transformImport(this, null).single as FirResolvedImportImpl
+    private fun FirImport.resolve(importResolveTransformer: FirImportResolveTransformer) =
+        importResolveTransformer.transformImport(this, null).single as FirResolvedImport
 
     override val simpleImports = run {
         val importResolveTransformer = FirImportResolveTransformer(session)
@@ -28,8 +29,10 @@ class FirDefaultSimpleImportingScope(
         allDefaultImports
             ?.filter { !it.isAllUnder }
             ?.map {
-                FirImportImpl(null, it.fqName, isAllUnder = false, aliasName = null)
-                    .resolve(importResolveTransformer)
+                buildImport {
+                    importedFqName = it.fqName
+                    isAllUnder = false
+                }.resolve(importResolveTransformer)
             }?.groupBy { it.importedName!! } ?: emptyMap()
     }
 }

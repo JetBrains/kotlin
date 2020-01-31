@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,23 +26,23 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirAnonymousFunctionImpl(
+internal class FirAnonymousFunctionImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override val annotations: MutableList<FirAnnotationCall>,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override var controlFlowGraphReference: FirControlFlowGraphReference,
+    override val valueParameters: MutableList<FirValueParameter>,
+    override var body: FirBlock?,
+    override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousFunctionSymbol,
-    override val isLambda: Boolean
-) : FirAnonymousFunction(), FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
+    override var label: FirLabel?,
+    override var invocationKind: InvocationKind?,
+    override val isLambda: Boolean,
+) : FirAnonymousFunction(), FirModifiableFunction<FirAnonymousFunction> {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override var body: FirBlock? = null
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override var label: FirLabel? = null
-    override var invocationKind: InvocationKind? = null
 
     init {
         symbol.bind(this)

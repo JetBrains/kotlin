@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -23,18 +23,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirTypeAliasImpl(
+internal class FirTypeAliasImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
     override val name: Name,
     override val symbol: FirTypeAliasSymbol,
-    override var expandedTypeRef: FirTypeRef
-) : FirTypeAlias(), FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-
+    override var expandedTypeRef: FirTypeRef,
+    override val annotations: MutableList<FirAnnotationCall>,
+) : FirTypeAlias(), FirModifiableTypeParametersOwner {
     init {
         symbol.bind(this)
     }

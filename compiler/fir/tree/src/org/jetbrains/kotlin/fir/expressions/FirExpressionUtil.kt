@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorLoopImpl
@@ -22,8 +25,13 @@ inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
 inline val FirAnnotationCall.classId: ClassId?
     get() = coneClassLikeType?.lookupTag?.classId
 
-fun <T> FirConstExpressionImpl(source: FirSourceElement?, kind: FirConstKind<T>, value: T?, diagnostic: FirDiagnostic): FirExpression =
-    value?.let { FirConstExpressionImpl(source, kind, it) } ?: FirErrorExpressionImpl(source, diagnostic)
+fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKind<T>, value: T?, diagnostic: FirDiagnostic): FirExpression =
+    value?.let {
+        buildConstExpression(source, kind, it)
+    } ?: buildErrorExpression {
+        this.source = source
+        this.diagnostic = diagnostic
+    }
 
 inline val FirCall.argument: FirExpression get() = arguments.first()
 
@@ -35,8 +43,16 @@ fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
     return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
 }
 
-fun FirErrorLoop(source: FirSourceElement?, diagnostic: FirDiagnostic): FirErrorLoop {
-    return FirErrorLoopImpl(source, diagnostic).apply {
-        condition = FirErrorExpressionImpl(source, diagnostic)
+fun buildErrorLoop(source: FirSourceElement?, diagnostic: FirDiagnostic): FirErrorLoop {
+    return buildErrorLoop {
+        this.source = source
+        this.diagnostic = diagnostic
+    }
+}
+
+fun buildErrorExpression(source: FirSourceElement?, diagnostic: FirDiagnostic): FirErrorExpression {
+    return buildErrorExpression {
+        this.source = source
+        this.diagnostic = diagnostic
     }
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
@@ -119,17 +119,16 @@ class FirCallCompleter(
                 needItParam -> {
                     val name = Name.identifier("it")
                     val itType = parameters.single()
-                    FirValueParameterImpl(
-                        null,
-                        session,
-                        FirResolvedTypeRefImpl(null, itType.approximateLambdaInputType()),
-                        name,
-                        FirVariableSymbol(name),
-                        defaultValue = null,
-                        isCrossinline = false,
-                        isNoinline = false,
+                    buildValueParameter {
+                        session = this@FirCallCompleter.session
+                        returnTypeRef = buildResolvedTypeRef { type = itType.approximateLambdaInputType() }
+                        this.name = name
+                        symbol = FirVariableSymbol(name)
+                        defaultValue = null
+                        isCrossinline = false
+                        isNoinline = false
                         isVararg = false
-                    )
+                    }
                 }
                 else -> null
             }

@@ -7,16 +7,14 @@ package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.CONSTRUCTOR_NAME
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -25,30 +23,23 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import kotlin.properties.Delegates
 
-class FirJavaConstructor(
+@UseExperimental(FirImplementationDetail::class)
+class FirJavaConstructor @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val session: FirSession,
     override val symbol: FirConstructorSymbol,
-    visibility: Visibility,
     override val isPrimary: Boolean,
-    isInner: Boolean,
-    override var returnTypeRef : FirTypeRef
-) : FirPureAbstractElement(), FirAbstractAnnotatedElement, FirConstructor {
+    override var returnTypeRef: FirTypeRef,
+    override val valueParameters: MutableList<FirValueParameter>,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var status: FirDeclarationStatus,
+    override var resolvePhase: FirResolvePhase,
+) : FirPureAbstractElement(), FirConstructor {
     override val receiverTypeRef: FirTypeRef? get() = null
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-
-    override var status: FirDeclarationStatus = FirDeclarationStatusImpl(visibility, Modality.FINAL).apply {
-        isExpect = false
-        isActual = false
-        isOverride = false
-        this.isInner = isInner
-    }
-
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
     init {
         symbol.bind(this)
@@ -60,9 +51,7 @@ class FirJavaConstructor(
     override val body: FirBlock?
         get() = null
 
-    override val valueParameters = mutableListOf<FirValueParameter>()
-
-    override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference()
+    override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
@@ -116,10 +105,80 @@ class FirJavaConstructor(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
-
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()
-        valueParameters.addAll(newValueParameters)
+        valueParameters += newValueParameters
     }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 }
+
+@FirBuilderDsl
+class FirJavaConstructorBuilder : FirConstructorBuilder() {
+    lateinit var visibility: Visibility
+    var isInner: Boolean by Delegates.notNull()
+    var isPrimary: Boolean by Delegates.notNull()
+
+    @UseExperimental(FirImplementationDetail::class)
+    override fun build(): FirJavaConstructor {
+        val status = FirDeclarationStatusImpl(visibility, Modality.FINAL).apply {
+            isExpect = false
+            isActual = false
+            isOverride = false
+            isInner = this@FirJavaConstructorBuilder.isInner
+        }
+
+        return FirJavaConstructor(
+            source,
+            session,
+            symbol,
+            isPrimary,
+            returnTypeRef,
+            valueParameters,
+            typeParameters,
+            annotations,
+            status,
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+        )
+    }
+
+    @Deprecated("Modification of 'body' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var body: FirBlock?
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'delegatedConstructor' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var delegatedConstructor: FirDelegatedConstructorCall?
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'resolvePhase' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var resolvePhase: FirResolvePhase
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'status' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var status: FirDeclarationStatus
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'receiverTypeRef' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var receiverTypeRef: FirTypeRef?
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+}
+
+inline fun buildJavaConstructor(init: FirJavaConstructorBuilder.() -> Unit): FirJavaConstructor {
+    return FirJavaConstructorBuilder().apply(init).build()
+}
+

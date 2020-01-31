@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -30,29 +31,29 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirPropertyImpl(
+internal class FirPropertyImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override val name: Name,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?,
     override val isVar: Boolean,
+    override var getter: FirPropertyAccessor?,
+    override var setter: FirPropertyAccessor?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val containerSource: DeserializedContainerSource?,
     override val symbol: FirPropertySymbol,
     override val isLocal: Boolean,
-    override var status: FirDeclarationStatus
-) : FirProperty(), FirModifiableVariable<FirProperty>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = if (isLocal) FirResolvePhase.DECLARATIONS else FirResolvePhase.RAW_FIR
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>? = delegate?.let { FirDelegateFieldSymbol(symbol.callableId) }
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override var status: FirDeclarationStatus,
+) : FirProperty(), FirModifiableVariable<FirProperty>, FirModifiableTypeParametersOwner {
     override val isVal: Boolean get() = !isVar
-    override var getter: FirPropertyAccessor? = null
-    override var setter: FirPropertyAccessor? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var containerSource: DeserializedContainerSource? = null
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     init {
         delegateFieldSymbol?.bind(this)

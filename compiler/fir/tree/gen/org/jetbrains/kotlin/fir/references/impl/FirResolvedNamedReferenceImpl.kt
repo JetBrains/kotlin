@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirResolvedNamedReferenceImpl(
+internal class FirResolvedNamedReferenceImpl(
     override val source: FirSourceElement?,
     override val name: Name,
-    override val resolvedSymbol: AbstractFirBasedSymbol<*>
+    override val resolvedSymbol: AbstractFirBasedSymbol<*>,
 ) : FirResolvedNamedReference() {
     override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 

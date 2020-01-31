@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 class FirExplicitSimpleImportingScope(
@@ -17,7 +17,7 @@ class FirExplicitSimpleImportingScope(
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     override val simpleImports =
-        imports.filterIsInstance<FirResolvedImportImpl>()
+        imports.filterIsInstance<FirResolvedImport>()
             .filter { !it.isAllUnder && it.importedName != null }
             .groupBy { it.aliasName ?: it.importedName!! }
 }

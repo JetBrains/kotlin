@@ -9,9 +9,7 @@ import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.CLASS_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.FUNCTION_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INHERITANCE_MODIFIER
@@ -20,11 +18,8 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MO
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PLATFORM_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PROPERTY_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VISIBILITY_MODIFIER
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class Modifier(
-    override val source: FirSourceElement? = null,
     private val classModifiers: MutableList<ClassModifier> = mutableListOf(),
     private val memberModifiers: MutableList<MemberModifier> = mutableListOf(),
     private val visibilityModifiers: MutableList<VisibilityModifier> = mutableListOf(),
@@ -33,8 +28,8 @@ class Modifier(
     private val inheritanceModifiers: MutableList<InheritanceModifier> = mutableListOf(),
     private val parameterModifiers: MutableList<ParameterModifier> = mutableListOf(),
     private val platformModifiers: MutableList<PlatformModifier> = mutableListOf()
-) : FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+) {
+    val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
@@ -156,11 +151,5 @@ class Modifier(
 
     fun hasActual(): Boolean {
         return platformModifiers.contains(PlatformModifier.ACTUAL) || platformModifiers.contains(PlatformModifier.IMPL)
-    }
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractAnnotatedElement {
-        return this
     }
 }

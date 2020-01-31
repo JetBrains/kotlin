@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
+import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
@@ -119,29 +117,29 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    override fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl {
+    override fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionBuilder {
         if (firSimpleFunction !is FirJavaMethod) return super.createFunctionCopy(firSimpleFunction, newSymbol)
-        return FirJavaMethod(
-            firSimpleFunction.session,
-            firSimpleFunction.source,
-            newSymbol,
-            firSimpleFunction.name,
-            firSimpleFunction.visibility,
-            firSimpleFunction.modality,
-            firSimpleFunction.returnTypeRef as FirJavaTypeRef,
-            firSimpleFunction.status.isStatic
-        )
+        return FirJavaMethodBuilder().apply {
+            session = firSimpleFunction.session
+            source = firSimpleFunction.source
+            symbol = newSymbol
+            name = firSimpleFunction.name
+            visibility = firSimpleFunction.visibility
+            modality = firSimpleFunction.modality
+            returnTypeRef = firSimpleFunction.returnTypeRef
+            isStatic = firSimpleFunction.status.isStatic
+        }
     }
 
-    override fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterImpl {
+    override fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterBuilder {
         if (parameter !is FirJavaValueParameter) return super.createValueParameterCopy(parameter, newDefaultValue)
-        return FirJavaValueParameter(
-            parameter.session,
-            parameter.source,
-            parameter.name,
-            parameter.returnTypeRef as FirJavaTypeRef,
-            parameter.isVararg
-        )
+        return FirJavaValueParameterBuilder().apply {
+            session = parameter.session
+            source = parameter.source
+            name = parameter.name
+            returnTypeRef = parameter.returnTypeRef as FirJavaTypeRef
+            isVararg = parameter.isVararg
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {

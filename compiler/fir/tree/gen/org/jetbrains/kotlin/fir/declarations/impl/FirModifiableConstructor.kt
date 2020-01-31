@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -13,10 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstructor, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
+abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstructor, FirModifiableTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override var resolvePhase: FirResolvePhase
@@ -39,7 +40,7 @@ abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstruct
     abstract override var controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val valueParameters: MutableList<FirValueParameter>
     abstract override var status: FirDeclarationStatus
-    abstract override var containerSource: DeserializedContainerSource?
+    abstract override val containerSource: DeserializedContainerSource?
     abstract override val annotations: MutableList<FirAnnotationCall>
     abstract override val symbol: FirConstructorSymbol
     abstract override var delegatedConstructor: FirDelegatedConstructorCall?

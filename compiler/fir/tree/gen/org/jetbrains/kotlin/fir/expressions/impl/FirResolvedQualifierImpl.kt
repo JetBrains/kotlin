@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
@@ -21,18 +19,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirResolvedQualifierImpl(
+internal class FirResolvedQualifierImpl(
     override val source: FirSourceElement?,
+    override var typeRef: FirTypeRef,
+    override val annotations: MutableList<FirAnnotationCall>,
     override var packageFqName: FqName,
     override var relativeClassFqName: FqName?,
-    override var safe: Boolean
-) : FirResolvedQualifier(), FirAbstractAnnotatedElement {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override var safe: Boolean,
+    override val typeArguments: MutableList<FirTypeProjection>,
+) : FirResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {
     ClassId(packageFqName, it, false)
 }
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -54,5 +52,9 @@ class FirResolvedQualifierImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceSafe(newSafe: Boolean) {
+        safe = newSafe
     }
 }

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -223,29 +223,28 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
             expandedType,
             session
         ) factory@{ newReturnType, newParameterTypes, newTypeParameters ->
-            FirConstructorImpl(
-                source, session,
-                returnTypeRef.withReplacedConeType(newReturnType),
-                receiverTypeRef, status,
-                FirConstructorSymbol(symbol.callableId, overriddenSymbol = symbol)
-            ).apply {
+            buildConstructor {
+                source = this@factory.source
+                this.session = session
+                returnTypeRef = this@factory.returnTypeRef.withReplacedConeType(newReturnType)
+                receiverTypeRef = this@factory.receiverTypeRef
+                status = this@factory.status
+                symbol = FirConstructorSymbol(this@factory.symbol.callableId, overriddenSymbol = this@factory.symbol)
                 resolvePhase = this@factory.resolvePhase
                 valueParameters +=
                     this@factory.valueParameters.zip(
                         newParameterTypes
                     ) { valueParameter, newParameterType ->
-                        with(valueParameter) {
-                            FirValueParameterImpl(
-                                source,
-                                session,
-                                returnTypeRef.withReplacedConeType(newParameterType),
-                                name,
-                                FirVariableSymbol(valueParameter.symbol.callableId),
-                                defaultValue,
-                                isCrossinline,
-                                isNoinline,
-                                isVararg
-                            )
+                        buildValueParameter {
+                            source = valueParameter.source
+                            this.session = session
+                            returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newParameterType)
+                            name = valueParameter.name
+                            symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                            defaultValue = valueParameter.defaultValue
+                            isCrossinline = valueParameter.isCrossinline
+                            isNoinline = valueParameter.isNoinline
+                            isVararg = valueParameter.isVararg
                         }
                     }
                 this.typeParameters += newTypeParameters

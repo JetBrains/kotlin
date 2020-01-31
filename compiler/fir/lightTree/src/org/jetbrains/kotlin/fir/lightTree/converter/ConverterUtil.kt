@@ -14,22 +14,18 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
-import org.jetbrains.kotlin.fir.expressions.impl.FirComponentCallImpl
+import org.jetbrains.kotlin.fir.expressions.builder.FirAnnotationCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildComponentCall
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -77,22 +73,8 @@ fun LighterASTNode.isExpression(): Boolean {
     }
 }
 
-fun FirTypeParametersOwner.joinTypeParameters(typeConstraints: List<TypeConstraint>) {
-    typeConstraints.forEach { typeConstraint ->
-        this.typeParameters.forEach { typeParameter ->
-            if (typeConstraint.identifier == typeParameter.name.identifier) {
-                (typeParameter as FirTypeParameterImpl).bounds += typeConstraint.firTypeRef
-//                TODO: why this is necessary?
-//                typeParameter.annotations += typeConstraint.firTypeRef.annotations
-                typeParameter.annotations += typeConstraint.annotations
-            }
-            (typeParameter as FirTypeParameterImpl).addDefaultBoundIfNecessary()
-        }
-    }
-}
-
-fun <T : FirCallWithArgumentList> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
-    if (!stubMode || this is FirAnnotationCall) {
+fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
+    if (!stubMode || this is FirAnnotationCallBuilder) {
         this.arguments += container
     }
     return this
@@ -125,27 +107,25 @@ fun generateDestructuringBlock(
     container: FirVariable<*>,
     tmpVariable: Boolean
 ): FirExpression {
-    return FirBlockImpl(null).apply {
+    return buildBlock {
         if (tmpVariable) {
             statements += container
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            statements += FirPropertyImpl(
-                null,
-                session,
-                entry.returnTypeRef,
-                null,
-                entry.name,
-                FirComponentCallImpl(null, generateResolvedAccessExpression(null, container), index + 1),
-                null,
-                isVar,
-                FirPropertySymbol(entry.name), // TODO?
-                true,
-                FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
-            ).apply {
+            statements += buildProperty {
+                this.session = session
+                returnTypeRef = entry.returnTypeRef
+                name = entry.name
+                initializer = buildComponentCall {
+                    explicitReceiver = generateResolvedAccessExpression(null, container)
+                    componentIndex = index + 1
+                }
+                this.isVar = isVar
+                symbol = FirPropertySymbol(entry.name) // TODO?
+                isLocal = true
+                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
                 annotations += entry.annotations
-                symbol.bind(this)
             }
         }
     }

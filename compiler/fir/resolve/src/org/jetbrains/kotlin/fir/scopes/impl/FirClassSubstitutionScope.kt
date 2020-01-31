@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 
 class FirClassSubstitutionScope(
@@ -127,10 +127,13 @@ class FirClassSubstitutionScope(
     ): Pair<List<FirTypeParameter>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
         val newTypeParameters = member.typeParameters.map { originalParameter ->
-            FirTypeParameterImpl(
-                originalParameter.source, originalParameter.session, originalParameter.name,
-                FirTypeParameterSymbol(), originalParameter.variance, originalParameter.isReified
-            ).apply {
+            FirTypeParameterBuilder().apply {
+                source = originalParameter.source
+                session = originalParameter.session
+                name = originalParameter.name
+                symbol = FirTypeParameterSymbol()
+                variance = originalParameter.variance
+                isReified = originalParameter.isReified
                 annotations += originalParameter.annotations
             }
         }
@@ -151,9 +154,10 @@ class FirClassSubstitutionScope(
                 }
 
                 newTypeParameter.bounds +=
-                    FirResolvedTypeRefImpl(
-                        boundTypeRef.source, additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
-                    )
+                    buildResolvedTypeRef {
+                        source = boundTypeRef.source
+                        type = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
+                    }
             }
         }
 
@@ -162,7 +166,7 @@ class FirClassSubstitutionScope(
         // While common Ir contracts expect them to be different
         // if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
 
-        return Pair(newTypeParameters, ChainedSubstitutor(substitutor, additionalSubstitutor))
+        return Pair(newTypeParameters.map { it.build() }, ChainedSubstitutor(substitutor, additionalSubstitutor))
     }
 
     private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
@@ -217,47 +221,43 @@ class FirClassSubstitutionScope(
             newParameterTypes: List<ConeKotlinType?>? = null,
             newTypeParameters: List<FirTypeParameter>? = null
         ): FirSimpleFunction {
-            return with(baseFunction) {
-                // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
-                // As second alternative, we can invent some light-weight kind of FirRegularClass
-                FirSimpleFunctionImpl(
-                    source,
-                    session,
-                    baseFunction.returnTypeRef.withReplacedReturnType(newReturnType),
-                    baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
-                    baseFunction.status,
-                    name,
-                    fakeOverrideSymbol
-                ).apply {
-                    annotations += baseFunction.annotations
-                    resolvePhase = baseFunction.resolvePhase
-                    valueParameters += baseFunction.valueParameters.zip(
-                        newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
-                    ) { valueParameter, newType ->
-                        with(valueParameter) {
-                            FirValueParameterImpl(
-                                source,
-                                session,
-                                this.returnTypeRef.withReplacedConeType(newType),
-                                name,
-                                FirVariableSymbol(valueParameter.symbol.callableId),
-                                defaultValue,
-                                isCrossinline,
-                                isNoinline,
-                                isVararg
-                            )
-                        }
-                    }
-
-                    // TODO: Fix the hack for org.jetbrains.kotlin.fir.backend.Fir2IrVisitor.addFakeOverrides
-                    // We might have added baseFunction.typeParameters in case new ones are null
-                    // But it fails at org.jetbrains.kotlin.ir.AbstractIrTextTestCase.IrVerifier.elementsAreUniqueChecker
-                    // because it shares the same declarations of type parameters between two different two functions
-                    if (newTypeParameters != null) {
-                        typeParameters += newTypeParameters
+            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
+            // As second alternative, we can invent some light-weight kind of FirRegularClass
+            return buildSimpleFunction {
+                source = baseFunction.source
+                this.session = session
+                returnTypeRef = baseFunction.returnTypeRef.withReplacedReturnType(newReturnType)
+                receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
+                name = baseFunction.name
+                status = baseFunction.status
+                symbol = fakeOverrideSymbol
+                annotations += baseFunction.annotations
+                resolvePhase = baseFunction.resolvePhase
+                valueParameters += baseFunction.valueParameters.zip(
+                    newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
+                ) { valueParameter, newType ->
+                    buildValueParameter {
+                        source = valueParameter.source
+                        this.session = session
+                        returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
+                        name = valueParameter.name
+                        symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                        defaultValue = valueParameter.defaultValue
+                        isCrossinline = valueParameter.isCrossinline
+                        isNoinline = valueParameter.isNoinline
+                        isVararg = valueParameter.isVararg
                     }
                 }
+
+                // TODO: Fix the hack for org.jetbrains.kotlin.fir.backend.Fir2IrVisitor.addFakeOverrides
+                // We might have added baseFunction.typeParameters in case new ones are null
+                // But it fails at org.jetbrains.kotlin.ir.AbstractIrTextTestCase.IrVerifier.elementsAreUniqueChecker
+                // because it shares the same declarations of type parameters between two different two functions
+                if (newTypeParameters != null) {
+                    typeParameters += newTypeParameters
+                }
             }
+
         }
 
         fun createFakeOverrideFunction(
@@ -284,23 +284,18 @@ class FirClassSubstitutionScope(
             newReturnType: ConeKotlinType? = null
         ): FirPropertySymbol {
             val symbol = FirPropertySymbol(baseSymbol.callableId, true, baseSymbol)
-            with(baseProperty) {
-                FirPropertyImpl(
-                    source,
-                    session,
-                    baseProperty.returnTypeRef.withReplacedReturnType(newReturnType),
-                    baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType),
-                    name,
-                    null,
-                    null,
-                    isVar,
-                    symbol,
-                    false,
-                    baseProperty.status
-                ).apply {
-                    resolvePhase = baseProperty.resolvePhase
-                    annotations += baseProperty.annotations
-                }
+            buildProperty {
+                source = baseProperty.source
+                this.session = session
+                returnTypeRef = baseProperty.returnTypeRef.withReplacedReturnType(newReturnType)
+                receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
+                name = baseProperty.name
+                isVar = baseProperty.isVar
+                this.symbol = symbol
+                isLocal = false
+                status = baseProperty.status
+                resolvePhase = baseProperty.resolvePhase
+                annotations += baseProperty.annotations
             }
             return symbol
         }
@@ -312,15 +307,16 @@ class FirClassSubstitutionScope(
             newReturnType: ConeKotlinType? = null
         ): FirFieldSymbol {
             val symbol = FirFieldSymbol(baseSymbol.callableId)
-            with(baseField) {
-                FirFieldImpl(
-                    source, session,
-                    baseField.returnTypeRef.withReplacedConeType(newReturnType),
-                    name, symbol, isVar, baseField.status
-                ).apply {
-                    resolvePhase = baseField.resolvePhase
-                    annotations += baseField.annotations
-                }
+            buildField {
+                source = baseField.source
+                this.session = session
+                returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
+                name = baseField.name
+                this.symbol = symbol
+                isVar = baseField.isVar
+                status = baseField.status
+                resolvePhase = baseField.resolvePhase
+                annotations += baseField.annotations
             }
             return symbol
         }
@@ -345,7 +341,9 @@ fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
     require(this is FirResolvedTypeRef || newType == null)
     if (newType == null) return this
 
-    return FirResolvedTypeRefImpl(source, newType).apply {
+    return buildResolvedTypeRef {
+        source = this@withReplacedReturnType.source
+        type = newType
         annotations += this@withReplacedReturnType.annotations
     }
 }
@@ -354,7 +352,9 @@ fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?): FirResolvedTypeRe
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
 
-    return FirResolvedTypeRefImpl(source, newType).apply {
+    return buildResolvedTypeRef {
+        source = this@withReplacedConeType.source
+        type = newType
         annotations += this@withReplacedConeType.annotations
     }
 }

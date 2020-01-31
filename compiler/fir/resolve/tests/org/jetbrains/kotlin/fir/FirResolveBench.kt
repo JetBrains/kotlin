@@ -102,7 +102,7 @@ class FirResolveBench(val withProgress: Boolean) {
             var firFile: FirFile? = null
             val time = measureNanoTime {
                 firFile = builder.buildFirFile(file)
-                (builder.session.firProvider as FirProviderImpl).recordFile(firFile!!)
+                (builder.baseSession.firProvider as FirProviderImpl).recordFile(firFile!!)
             }
             val after = vmStateSnapshot()
             val diff = after - before

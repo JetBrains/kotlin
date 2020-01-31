@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp_0: kotlin.Boolean? [val] declared in <root>.test1' type=kotlin.Boolean? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: BREAK label=null loop.label=L
+                  then: BREAK label=L loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp_1: kotlin.Boolean? [val] declared in <root>.test2' type=kotlin.Boolean? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONTINUE label=null loop.label=L
+                  then: CONTINUE label=L loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp_3: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONTINUE label=null loop.label=L
+                  then: CONTINUE label=L loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: TYPE_OP type=kotlin.collections.List<kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.collections.List<kotlin.String>
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp_6: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: BREAK label=null loop.label=L
+                  then: BREAK label=L loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: TYPE_OP type=kotlin.collections.List<kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.collections.List<kotlin.String>
@@ -132,10 +132,10 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 then: CONST Boolean type=kotlin.Boolean value=false
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: BREAK label=null loop.label=Outer
+                then: BREAK label=Outer loop.label=Outer
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
                 arg1: CONST Int type=kotlin.Int value=3
-              then: BREAK label=null loop.label=Outer
+              then: BREAK label=Outer loop.label=Outer

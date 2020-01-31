@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirUnitExpression(
-    override val source: FirSourceElement?
-) : FirPureAbstractElement(), FirExpression, FirAbstractAnnotatedElement {
+class FirUnitExpression @FirImplementationDetail constructor(
+    override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+) : FirPureAbstractElement(), FirExpression {
     override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(source)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

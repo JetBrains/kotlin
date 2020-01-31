@@ -35,6 +35,7 @@ abstract class FirSealedClass : FirPureAbstractElement(), FirRegularClass {
     abstract override val name: Name
     abstract override val symbol: FirRegularClassSymbol
     abstract override val companionObject: FirRegularClass?
+    abstract override val hasLazyNestedClassifiers: Boolean
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract val inheritors: List<ClassId>
 

@@ -7,20 +7,40 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.compositeTransformResultType
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 
+enum class ImportKind(val postfix: String) {
+    Element(""), Implementation(".impl"), Builder(".builder")
+}
 
-fun Implementation.collectImports(): List<String> {
+fun Builder.collectImports(): List<String> {
+    val parents = parents.mapNotNull { it.fullQualifiedName }
+    val builderDsl = "org.jetbrains.kotlin.fir.builder.FirBuilderDsl"
+    return when (this) {
+        is LeafBuilder -> implementation.collectImports(
+            parents,
+            ImportKind.Builder,
+        ) + implementation.fullQualifiedName!! + usedTypes.mapNotNull { it.fullQualifiedName } + builderDsl + "kotlin.contracts.*"
+        is IntermediateBuilder -> {
+            val fqns = parents + allFields.mapNotNull { it.fullQualifiedName } + allFields.flatMap {
+                it.arguments.mapNotNull { it.fullQualifiedName }
+            } + (materializedElement?.fullQualifiedName ?: throw IllegalStateException(type)) + builderDsl
+            fqns.filterRedundantImports(packageName, ImportKind.Builder)
+        }
+    }.sorted()
+}
+
+fun Implementation.collectImports(base: List<String> = emptyList(), kind: ImportKind = ImportKind.Implementation): List<String> {
     return element.collectImportsInternal(
-        listOf(
-            element.fullQualifiedName,
-        )
+        base + listOf(element.fullQualifiedName)
                 + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName }
                 + listOfNotNull(
             pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
+            firImplementationDetailType.fullQualifiedName?.takeIf { isPublic || requiresOptIn },
         ),
-        isImpl = true,
+        kind,
     )
 }
 
@@ -36,19 +56,27 @@ fun Element.collectImports(): List<String> {
     }
     return collectImportsInternal(
         baseTypes,
-        isImpl = false,
+        ImportKind.Element,
     )
 }
 
-private fun Element.collectImportsInternal(base: List<String>, isImpl: Boolean): List<String> {
+private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind): List<String> {
     val fqns = base + allFields.mapNotNull { it.fullQualifiedName } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
             typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
-    val realPackageName = if (isImpl) "$packageName.impl." else "$packageName."
-    return fqns.filter { fqn ->
+    return fqns.filterRedundantImports(packageName, kind)
+}
+
+private fun List<String>.filterRedundantImports(
+    packageName: String,
+    kind: ImportKind,
+): List<String> {
+    val realPackageName = "$packageName.${kind.postfix}"
+    return filter { fqn ->
         fqn.dropLastWhile { it != '.' } != realPackageName
     }.distinct().sorted() + "$VISITOR_PACKAGE.*"
 }
+
 
 val KindOwner.needPureAbstractElement: Boolean
     get() = (kind != Implementation.Kind.Interface) && !allParents.any { it.kind == Implementation.Kind.AbstractClass }
@@ -104,6 +132,8 @@ val Importable.typeWithArguments: String
         is Field -> type + generics + if (nullable) "?" else ""
         is Type -> type + generics
         is ImplementationWithArg -> type + generics
+        is LeafBuilder -> type + implementation.element.generics
+        is IntermediateBuilder -> type
         else -> throw IllegalArgumentException()
     }
 

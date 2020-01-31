@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirPropertyFromParameterResolvedNamedReference(
+class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val name: Name,
-    override val resolvedSymbol: AbstractFirBasedSymbol<*>
+    override val resolvedSymbol: AbstractFirBasedSymbol<*>,
 ) : FirResolvedNamedReference() {
     override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 

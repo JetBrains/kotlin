@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -65,15 +65,9 @@ class ClassWrapper(
     }
 
     fun getFirUserTypeFromClassName(): FirUserTypeRef {
-        val qualifier = FirQualifierPartImpl(
-            className
-        )
-
-        return FirUserTypeRefImpl(
-            null,
-            false
-        ).apply {
-            this.qualifier.add(qualifier)
+        return buildUserTypeRef {
+            isMarkedNullable = false
+            qualifier.add(FirQualifierPartImpl(className))
         }
     }
 }

@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_NULL_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME
@@ -111,7 +111,8 @@ private fun JavaType?.enhancePossiblyFlexible(
         }
     }
 
-    return FirResolvedTypeRefImpl(source = null, type = enhanced).apply {
+    return buildResolvedTypeRef {
+        this.type = enhanced
         this.annotations += annotations
     }
 }
@@ -361,19 +362,21 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
         val name = Name.identifier(value)
         val firEnumEntry = firElement.collectEnumEntries().find { it.name == name }
 
-        return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(null).apply {
-            calleeReference = FirResolvedNamedReferenceImpl(
-                null, name, firEnumEntry.symbol
-            )
+        return if (firEnumEntry != null) buildQualifiedAccessExpression {
+            calleeReference = buildResolvedNamedReference {
+                this.name = name
+                resolvedSymbol = firEnumEntry.symbol
+            }
         } else if (firElement is FirJavaClass) {
             val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {
                 it.isStatic && it.modality == Modality.FINAL && it.name == name
             }
             if (firStaticProperty != null) {
-                FirQualifiedAccessExpressionImpl(null).apply {
-                    calleeReference = FirResolvedNamedReferenceImpl(
-                        null, name, firStaticProperty.symbol as FirCallableSymbol<*>
-                    )
+                buildQualifiedAccessExpression {
+                    calleeReference = buildResolvedNamedReference {
+                        this.name = name
+                        resolvedSymbol = firStaticProperty.symbol as FirCallableSymbol<*>
+                    }
                 }
             } else null
         } else null
@@ -385,15 +388,15 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 
     val (number, radix) = extractRadix(value)
     return when (classId.relativeClassName.asString()) {
-        "Boolean" -> FirConstExpressionImpl(null, FirConstKind.Boolean, value.toBoolean())
-        "Char" -> FirConstExpressionImpl(null, FirConstKind.Char, value.singleOrNull() ?: return null)
-        "Byte" -> FirConstExpressionImpl(null, FirConstKind.Byte, number.toByteOrNull(radix) ?: return null)
-        "Short" -> FirConstExpressionImpl(null, FirConstKind.Short, number.toShortOrNull(radix) ?: return null)
-        "Int" -> FirConstExpressionImpl(null, FirConstKind.Int, number.toIntOrNull(radix) ?: return null)
-        "Long" -> FirConstExpressionImpl(null, FirConstKind.Long, number.toLongOrNull(radix) ?: return null)
-        "Float" -> FirConstExpressionImpl(null, FirConstKind.Float, value.toFloatOrNull() ?: return null)
-        "Double" -> FirConstExpressionImpl(null, FirConstKind.Double, value.toDoubleOrNull() ?: return null)
-        "String" -> FirConstExpressionImpl(null, FirConstKind.String, value)
+        "Boolean" -> buildConstExpression(null, FirConstKind.Boolean, value.toBoolean())
+        "Char" -> buildConstExpression(null, FirConstKind.Char, value.singleOrNull() ?: return null)
+        "Byte" -> buildConstExpression(null, FirConstKind.Byte, number.toByteOrNull(radix) ?: return null)
+        "Short" -> buildConstExpression(null, FirConstKind.Short, number.toShortOrNull(radix) ?: return null)
+        "Int" -> buildConstExpression(null, FirConstKind.Int, number.toIntOrNull(radix) ?: return null)
+        "Long" -> buildConstExpression(null, FirConstKind.Long, number.toLongOrNull(radix) ?: return null)
+        "Float" -> buildConstExpression(null, FirConstKind.Float, value.toFloatOrNull() ?: return null)
+        "Double" -> buildConstExpression(null, FirConstKind.Double, value.toDoubleOrNull() ?: return null)
+        "String" -> buildConstExpression(null, FirConstKind.String, value)
         else -> null
     }
 }

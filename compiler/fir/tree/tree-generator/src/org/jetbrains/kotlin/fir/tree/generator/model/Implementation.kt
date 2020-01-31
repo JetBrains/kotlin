@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+
 class ImplementationWithArg(
     val implementation: Implementation,
     val argument: Importable?
@@ -23,9 +27,24 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
         FieldWithDefault(it)
     }
     override var kind: Kind? = null
+        set(value) {
+            field = value
+            if (kind != Kind.FinalClass) {
+                isPublic = true
+            }
+            if (value?.hasLeafBuilder == true) {
+                builder = builder ?: LeafBuilder(this)
+            } else {
+                builder = null
+            }
+        }
 
     override val packageName = element.packageName + ".impl"
     val usedTypes = mutableListOf<Importable>()
+
+    var isPublic = false
+    var requiresOptIn = false
+    var builder: LeafBuilder? = null
 
     init {
         if (isDefault) {
@@ -55,11 +74,14 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
         }
     }
 
-    enum class Kind(val title: String) {
-        Interface("interface"),
-        FinalClass("class"),
-        OpenClass("open class"),
-        AbstractClass("abstract class"),
-        Object("object")
+    val fieldsWithoutDefault by lazy { allFields.filter { it.defaultValueInImplementation == null } }
+    val fieldsWithDefault by lazy { allFields.filter { it.defaultValueInImplementation != null } }
+
+    enum class Kind(val title: String, val hasLeafBuilder: Boolean) {
+        Interface("interface", false),
+        FinalClass("class", true),
+        OpenClass("open class", true),
+        AbstractClass("abstract class", false),
+        Object("object", false)
     }
 }

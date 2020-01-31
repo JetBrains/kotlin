@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,27 +23,27 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirDefaultSetterValueParameter(
+internal class FirDefaultSetterValueParameter(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
-    override val symbol: FirVariableSymbol<FirValueParameter>
-) : FirValueParameter(), FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override var receiverTypeRef: FirTypeRef? = null
+    override var receiverTypeRef: FirTypeRef?,
+    override val symbol: FirVariableSymbol<FirValueParameter>,
+    override var initializer: FirExpression?,
+    override var delegate: FirExpression?,
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?,
+    override val isVar: Boolean,
+    override val isVal: Boolean,
+    override var getter: FirPropertyAccessor?,
+    override var setter: FirPropertyAccessor?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var defaultValue: FirExpression?,
+    override val isCrossinline: Boolean,
+    override val isNoinline: Boolean,
+    override val isVararg: Boolean,
+) : FirValueParameter() {
     override val name: Name = Name.identifier("value")
-    override var initializer: FirExpression? = null
-    override var delegate: FirExpression? = null
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>? = null
-    override val isVar: Boolean = false
-    override val isVal: Boolean = true
-    override var getter: FirPropertyAccessor? = null
-    override var setter: FirPropertyAccessor? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var defaultValue: FirExpression? = null
-    override val isCrossinline: Boolean = false
-    override val isNoinline: Boolean = false
-    override val isVararg: Boolean = false
 
     init {
         symbol.bind(this)

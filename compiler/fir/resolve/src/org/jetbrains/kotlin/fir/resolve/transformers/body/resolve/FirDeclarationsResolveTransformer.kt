@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.impl.FirReturnExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -256,7 +256,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         prepareLocalClassForBodyResolve(anonymousObject)
         return withScopeCleanup(topLevelScopes) {
             val type = anonymousObject.defaultType()
-            anonymousObject.resultType = FirResolvedTypeRefImpl(anonymousObject.source, type)
+            anonymousObject.resultType = buildResolvedTypeRef {
+                source = anonymousObject.source
+                this.type = type
+            }
             val result = withLabelAndReceiverType(null, anonymousObject, type) {
                 transformDeclaration(anonymousObject, data)
             }
@@ -342,9 +345,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             } else {
                 result.transformReturnTypeRef(
                     transformer,
-                    withExpectedType(
-                        FirErrorTypeRefImpl(null, FirSimpleDiagnostic("empty body", DiagnosticKind.Other))
-                    )
+                    withExpectedType(buildErrorTypeRef { diagnostic = FirSimpleDiagnostic("empty body", DiagnosticKind.Other) })
                 )
             }
         }
@@ -413,7 +414,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn().compose()
             }
             is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
-                val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: FirImplicitTypeRefImpl(null)
+                val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: buildImplicitTypeRef()
                 val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
                     extractLambdaInfoFromFunctionalType(
                         it.type, it, anonymousFunction, session
@@ -427,17 +428,15 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         val itParam = when {
                             af.valueParameters.isEmpty() && singleParameterType != null -> {
                                 val name = Name.identifier("it")
-                                FirValueParameterImpl(
-                                    null,
-                                    session,
-                                    FirResolvedTypeRefImpl(null, singleParameterType),
-                                    name,
-                                    FirVariableSymbol(name),
-                                    defaultValue = null,
-                                    isCrossinline = false,
-                                    isNoinline = false,
+                                buildValueParameter {
+                                    session = this@FirDeclarationsResolveTransformer.session
+                                    returnTypeRef = buildResolvedTypeRef { type = singleParameterType }
+                                    this.name = name
+                                    symbol = FirVariableSymbol(name)
+                                    isCrossinline = false
+                                    isNoinline = false
                                     isVararg = false
-                                )
+                                }
                             }
                             else -> null
                         }
@@ -502,9 +501,13 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 object : FirDefaultTransformer<FirExpression>() {
                     override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
                         if (element == lastStatement) {
-                            val returnExpression = FirReturnExpressionImpl(element.source, lastStatement)
-                            returnExpression.target = FirFunctionTarget(null)
-                            (returnExpression.target as FirFunctionTarget).bind(this@addReturn)
+                            val returnExpression = buildReturnExpression {
+                                source = element.source
+                                result = lastStatement
+                                target = FirFunctionTarget(null, isLambda = this@addReturn.isLambda).also {
+                                    it.bind(this@addReturn)
+                                }
+                            }
                             return (returnExpression as E).compose()
                         }
                         return element.compose()
@@ -517,7 +520,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         return returnExpression.compose()
                     }
                 },
-                FirUnitExpression(null)
+                buildUnitExpression()
             )
         }
         return this
@@ -577,10 +580,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             when {
                 initializer != null -> {
                     val expectedType = when (val resultType = initializer.resultType) {
-                        is FirImplicitTypeRef -> FirErrorTypeRefImpl(
-                            null,
-                            FirSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
-                        )
+                        is FirImplicitTypeRef -> buildErrorTypeRef {
+                            diagnostic = FirSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
+                        }
                         else -> resultType
                     }
                     variable.transformReturnTypeRef(
@@ -590,10 +592,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> {
                     val expectedType = when (val resultType = variable.getter?.returnTypeRef) {
-                        is FirImplicitTypeRef -> FirErrorTypeRefImpl(
-                            null,
-                            FirSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
-                        )
+                        is FirImplicitTypeRef -> buildErrorTypeRef {
+                            diagnostic = FirSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
+                        }
                         else -> resultType
                     }
                     variable.transformReturnTypeRef(
@@ -603,7 +604,15 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 }
                 else -> {
                     variable.transformReturnTypeRef(
-                        transformer, withExpectedType(FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot infer variable type without initializer / getter / delegate", DiagnosticKind.InferenceError)))
+                        transformer,
+                        withExpectedType(
+                            buildErrorTypeRef {
+                                diagnostic = FirSimpleDiagnostic(
+                                    "Cannot infer variable type without initializer / getter / delegate",
+                                    DiagnosticKind.InferenceError,
+                                )
+                            },
+                        )
                     )
                 }
             }

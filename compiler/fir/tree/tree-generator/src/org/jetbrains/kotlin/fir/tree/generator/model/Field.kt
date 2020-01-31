@@ -17,7 +17,7 @@ sealed class Field : Importable {
     var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
 
-    open val defaultValue: String? get() = null
+    open val defaultValueInImplementation: String? get() = null
     abstract var isMutable: Boolean
     open var isMutableInInterface: Boolean = false
     open val withGetter: Boolean get() = false
@@ -30,11 +30,13 @@ sealed class Field : Importable {
     }
 
     protected fun updateFieldsInCopy(copy: Field) {
-        copy.arguments.clear()
-        copy.arguments.addAll(arguments)
-        copy.needsSeparateTransform = needsSeparateTransform
+        if (copy !is FieldWithDefault) {
+            copy.arguments.clear()
+            copy.arguments.addAll(arguments)
+            copy.needsSeparateTransform = needsSeparateTransform
+            copy.isMutable = isMutable
+        }
         copy.fromParent = fromParent
-        copy.isMutable = isMutable
     }
 
     protected abstract fun internalCopy(): Field
@@ -72,21 +74,23 @@ class FieldWithDefault(val origin: Field) : Field() {
     override val arguments: MutableList<Importable>
         get() = origin.arguments
 
-    override var defaultValue: String? = origin.defaultValue
+    override val fullQualifiedName: String?
+        get() = origin.fullQualifiedName
+
+    override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
+    var defaultValueInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable
     override var isMutableInInterface: Boolean = origin.isMutableInInterface
     override var withGetter: Boolean = false
-    override var isLateinit: Boolean = false
     override var customSetter: String? = null
     override var fromDelegate: Boolean = false
     var needAcceptAndTransform: Boolean = true
 
     override fun internalCopy(): Field {
         return FieldWithDefault(origin).also {
-            it.defaultValue = defaultValue
+            it.defaultValueInImplementation = defaultValueInImplementation
             it.isMutable = isMutable
             it.withGetter = withGetter
-            it.isLateinit = isLateinit
             it.fromDelegate = fromDelegate
             it.needAcceptAndTransform = needAcceptAndTransform
         }
@@ -136,6 +140,12 @@ class FirField(
     override val nullable: Boolean,
     override val withReplace: Boolean
 ) : Field() {
+    init {
+        if (element is ElementWithArguments) {
+            arguments += element.typeArguments.map { Type(null, it.name) }
+        }
+    }
+
     override val type: String get() = element.type
     override val packageName: String? get() = element.packageName
     override val isFirType: Boolean = true
@@ -159,7 +169,7 @@ class FieldList(
     val baseType: Importable,
     override val withReplace: Boolean
 ) : Field() {
-    override val defaultValue: String? get() = if (isMutable) "mutableListOf()" else "emptyListOf()"
+    override var defaultValueInImplementation: String? = null
     override val packageName: String? get() = baseType.packageName
     override val fullQualifiedName: String? get() = baseType.fullQualifiedName
     override val type: String = "List<${baseType.typeWithArguments}>"

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -152,10 +152,9 @@ private class ReturnTypeCalculatorWithJump(
             // TODO?
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
-                FirErrorTypeRefImpl(
-                    null,
-                    FirSimpleDiagnostic("Unsupported: implicit VP type")
-                )
+                buildErrorTypeRef {
+                    diagnostic = FirSimpleDiagnostic("Unsupported: implicit VP type")
+                }
             )
         }
 
@@ -167,7 +166,7 @@ private class ReturnTypeCalculatorWithJump(
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing ->
-                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes))
+                buildErrorTypeRef {diagnostic = FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes) }
             else -> computeReturnTypeRef(declaration)
         }
     }
@@ -185,13 +184,12 @@ private class ReturnTypeCalculatorWithJump(
         }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 
         if (file == null || outerClasses.any { it == null }) {
-            return FirErrorTypeRefImpl(
-                null,
-                FirSimpleDiagnostic(
+            return buildErrorTypeRef {
+                diagnostic = FirSimpleDiagnostic(
                     "Cannot calculate return type (local class/object?)",
                     DiagnosticKind.InferenceError
                 )
-            )
+            }
         }
         val designation = (listOf(file) + outerClasses.filterNotNull().asReversed() + listOf(declaration))
         val transformer = FirDesignatedBodyResolveTransformerForReturnTypeCalculator(

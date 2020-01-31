@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirTypeOperatorCallImpl(
+internal class FirTypeOperatorCallImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val arguments: MutableList<FirExpression>,
     override val operation: FirOperation,
-    override var conversionTypeRef: FirTypeRef
-) : FirTypeOperatorCall(), FirCallWithArgumentList, FirAbstractAnnotatedElement {
+    override var conversionTypeRef: FirTypeRef,
+) : FirTypeOperatorCall(), FirCallWithArgumentList {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val arguments: MutableList<FirExpression> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

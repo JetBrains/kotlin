@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -28,22 +28,22 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-open class FirConstructorImpl(
+internal class FirConstructorImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override val valueParameters: MutableList<FirValueParameter>,
     override var status: FirDeclarationStatus,
-    override val symbol: FirConstructorSymbol
-) : FirConstructor, FirModifiableConstructor(), FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override var containerSource: DeserializedContainerSource? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var delegatedConstructor: FirDelegatedConstructorCall? = null
-    override var body: FirBlock? = null
+    override val containerSource: DeserializedContainerSource?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val symbol: FirConstructorSymbol,
+    override var delegatedConstructor: FirDelegatedConstructorCall?,
+    override var body: FirBlock?,
+) : FirConstructor, FirModifiableConstructor() {
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override val isPrimary: Boolean get() = false
 
     init {

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
@@ -38,8 +37,9 @@ internal object MapArguments : FirDefaultTransformer<Map<FirElement, FirElement>
         if (block.statements.isEmpty()) return block.compose()
         val transformedStatement = block.statements.last().transformSingle(this@MapArguments, data)
         when (block) {
-            is FirBlockImpl -> block.statements[block.statements.size - 1] = transformedStatement
             is FirSingleExpressionBlock -> block.statement = transformedStatement
+            // TODO: dirty cast
+            else -> (block.statements as MutableList<FirStatement>)[block.statements.size - 1] = transformedStatement
         }
         return block.compose()
     }

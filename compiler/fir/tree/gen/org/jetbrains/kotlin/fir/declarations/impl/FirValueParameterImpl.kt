@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,18 +25,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-open class FirValueParameterImpl(
+open class FirValueParameterImpl @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirValueParameter>,
+    override val annotations: MutableList<FirAnnotationCall>,
     override var defaultValue: FirExpression?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
-    override val isVararg: Boolean
-) : FirValueParameter(), FirModifiableVariable<FirValueParameter>, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override val isVararg: Boolean,
+) : FirValueParameter(), FirModifiableVariable<FirValueParameter> {
     override var receiverTypeRef: FirTypeRef? = null
     override var initializer: FirExpression? = null
     override var delegate: FirExpression? = null
@@ -44,7 +46,6 @@ open class FirValueParameterImpl(
     override val isVal: Boolean get() = true
     override var getter: FirPropertyAccessor? = null
     override var setter: FirPropertyAccessor? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     init {
         symbol.bind(this)

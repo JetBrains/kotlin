@@ -33,6 +33,7 @@ interface FirRegularClass : FirMemberDeclaration, FirTypeParametersOwner, FirCla
     val name: Name
     override val symbol: FirRegularClassSymbol
     val companionObject: FirRegularClass?
+    val hasLazyNestedClassifiers: Boolean
     override val superTypeRefs: List<FirTypeRef>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)

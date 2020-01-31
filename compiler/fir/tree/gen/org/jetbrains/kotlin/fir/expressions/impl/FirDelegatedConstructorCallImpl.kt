@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirDelegatedConstructorCallImpl(
+internal class FirDelegatedConstructorCallImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val arguments: MutableList<FirExpression>,
     override var constructedTypeRef: FirTypeRef,
-    override val isThis: Boolean
-) : FirDelegatedConstructorCall(), FirCallWithArgumentList, FirAbstractAnnotatedElement {
+    override val isThis: Boolean,
+) : FirDelegatedConstructorCall(), FirCallWithArgumentList {
     override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val arguments: MutableList<FirExpression> = mutableListOf()
     override val isSuper: Boolean get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

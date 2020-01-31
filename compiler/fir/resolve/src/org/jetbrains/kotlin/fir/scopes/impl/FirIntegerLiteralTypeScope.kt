@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -80,17 +76,17 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         name to FirNamedFunctionSymbol(CallableId(name)).apply {
             createFirFunction(name, this).apply {
                 val valueParameterName = Name.identifier("arg")
-                valueParameters += FirValueParameterImpl(
-                    source = null,
-                    session,
-                    FirILTTypeRefPlaceHolder(),
-                    valueParameterName,
-                    FirVariableSymbol(name),
-                    defaultValue = null,
-                    isCrossinline = false,
-                    isNoinline = false,
+                valueParameters += buildValueParameter {
+                    source = null
+                    session = this@FirIntegerLiteralTypeScope.session
+                    returnTypeRef = FirILTTypeRefPlaceHolder()
+                    this.name = valueParameterName
+                    symbol = FirVariableSymbol(valueParameterName)
+                    defaultValue = null
+                    isCrossinline = false
+                    isNoinline = false
                     isVararg = false
-                )
+                }
             }
         }
     }.toMap()
@@ -99,6 +95,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         name to FirNamedFunctionSymbol(CallableId(name)).apply { createFirFunction(name, this) }
     }.toMap()
 
+    @UseExperimental(FirImplementationDetail::class)
     private fun createFirFunction(name: Name, symbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl = FirIntegerOperator(
         source = null,
         session,
@@ -126,7 +123,8 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
     }
 }
 
-class FirIntegerOperator(
+@UseExperimental(FirImplementationDetail::class)
+class FirIntegerOperator @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,
     returnTypeRef: FirTypeRef,
@@ -134,7 +132,21 @@ class FirIntegerOperator(
     val kind: Kind,
     status: FirDeclarationStatus,
     symbol: FirFunctionSymbol<FirSimpleFunction>
-) : FirSimpleFunctionImpl(source, session, returnTypeRef, receiverTypeRef, status, kind.operatorName, symbol) {
+) : FirSimpleFunctionImpl(
+    source,
+    session,
+    resolvePhase = FirResolvePhase.BODY_RESOLVE,
+    returnTypeRef,
+    receiverTypeRef,
+    typeParameters = mutableListOf(),
+    valueParameters = mutableListOf(),
+    body = null,
+    status,
+    containerSource = null,
+    kind.operatorName,
+    symbol,
+    annotations = mutableListOf(),
+) {
     enum class Kind(val unary: Boolean, val operatorName: Name) {
         PLUS(false, OperatorNameConventions.PLUS),
         MINUS(false, OperatorNameConventions.MINUS),
@@ -166,4 +178,3 @@ class FirILTTypeRefPlaceHolder : FirResolvedTypeRef() {
     }
 }
 
-class FirIntegerOperatorCall(source: FirSourceElement?) : FirFunctionCallImpl(source)

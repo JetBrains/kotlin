@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -107,7 +106,7 @@ class QualifierReceiver(override val explicitReceiver: FirResolvedQualifier) : A
         val (classSymbol, callableScopes) = getClassSymbolWithCallableScopes(classId, useSiteSession, scopeSession)
         if (classSymbol != null) {
             val klass = classSymbol.fir
-            val classifierScope = if (klass is FirClassImpl || klass is FirSealedClassImpl) {
+            val classifierScope = if ((klass as? FirRegularClass)?.hasLazyNestedClassifiers == false) {
                 nestedClassifierScope(klass)
             } else {
                 useSiteSession.firSymbolProvider.getNestedClassifierScope(classId)

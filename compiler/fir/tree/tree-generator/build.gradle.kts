@@ -3,6 +3,7 @@ import tasks.WriteCopyrightToFile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    application
 }
 
 val runtimeOnly by configurations
@@ -30,6 +31,10 @@ dependencies {
 val writeCopyright by task<WriteCopyrightToFile> {
     outputFile = file("$buildDir/copyright/notice.txt")
     commented = true
+}
+
+application {
+    mainClassName = "org.jetbrains.kotlin.fir.tree.generator.MainKt"
 }
 
 val processResources by tasks

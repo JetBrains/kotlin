@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -77,7 +76,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                     whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
                         whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
                         dataFlowAnalyzer.exitWhenExpression(whenExpression)
-                        whenExpression.resultType = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError))
+                        whenExpression.resultType = buildErrorTypeRef {
+                            diagnostic = FirSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError)
+                        }
                         return@with whenExpression.compose()
                     }
 
@@ -103,7 +104,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         if (branches.size == 1) return true
         if (branches.size > 2) return false
         val lastBranch = branches.last()
-        return lastBranch.condition is FirElseIfTrueCondition && lastBranch.result is FirEmptyExpressionBlock
+        return lastBranch.source != null && lastBranch.condition is FirElseIfTrueCondition && lastBranch.result is FirEmptyExpressionBlock
     }
 
     override fun transformWhenBranch(whenBranch: FirWhenBranch, data: ResolutionMode): CompositeTransformResult<FirWhenBranch> {
@@ -143,7 +144,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             val expectedTypeRef = data.expectedType
             callCompleter.completeCall(it, expectedTypeRef)
         } ?: run {
-            tryExpression.resultType = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Can't resolve try expression", DiagnosticKind.InferenceError))
+            tryExpression.resultType = buildErrorTypeRef {
+                diagnostic = FirSimpleDiagnostic("Can't resolve try expression", DiagnosticKind.InferenceError)
+            }
             tryExpression
         }
 

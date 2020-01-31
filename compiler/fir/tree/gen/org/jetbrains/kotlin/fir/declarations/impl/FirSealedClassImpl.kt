@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -28,22 +28,23 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirSealedClassImpl(
+internal class FirSealedClassImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
+    override val declarations: MutableList<FirDeclaration>,
     override val scopeProvider: FirScopeProvider,
     override val name: Name,
-    override val symbol: FirRegularClassSymbol
-) : FirSealedClass(), FirModifiableRegularClass, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override var companionObject: FirRegularClass? = null
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    override val inheritors: MutableList<ClassId> = mutableListOf()
+    override val symbol: FirRegularClassSymbol,
+    override var companionObject: FirRegularClass?,
+    override val superTypeRefs: MutableList<FirTypeRef>,
+    override val inheritors: MutableList<ClassId>,
+) : FirSealedClass(), FirModifiableRegularClass {
+    override val hasLazyNestedClassifiers: Boolean get() = false
 
     init {
         symbol.bind(this)

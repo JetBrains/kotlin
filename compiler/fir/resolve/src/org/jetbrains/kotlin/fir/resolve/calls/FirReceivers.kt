@@ -6,24 +6,30 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
-import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
+import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
+import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirQualifierScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.name.ClassId
 
 interface Receiver {
     fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope?
@@ -39,8 +45,13 @@ interface ReceiverValue : Receiver {
 }
 
 private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirExpression =
-    FirThisReceiverExpressionImpl(null, FirImplicitThisReference(symbol)).apply {
-        typeRef = FirResolvedTypeRefImpl(null, type)
+    buildThisReceiverExpression {
+        calleeReference = buildImplicitThisReference {
+            boundSymbol = symbol
+        }
+        typeRef = buildResolvedTypeRef {
+            this.type = type
+        }
     }
 
 class ClassDispatchReceiverValue(klassSymbol: FirClassSymbol<*>) : ReceiverValue {

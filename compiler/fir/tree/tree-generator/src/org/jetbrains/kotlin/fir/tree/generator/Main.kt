@@ -11,15 +11,19 @@ import java.io.File
 
 
 fun main(args: Array<String>) {
-    val generationPath = args.firstOrNull()?.let { File(it) }
-        ?: File("compiler/fir/tree/gen").absoluteFile
+//    val generationPath = args.firstOrNull()?.let { File(it) }
+//        ?: File("/home/demiurg/Programming/kotlin/kotlin/compiler/fir/tree/gen").absoluteFile
+    val generationPath = File("/home/demiurg/Programming/kotlin/kotlin/compiler/fir/tree/gen").absoluteFile
 
     NodeConfigurator.configureFields()
     detectBaseTransformerTypes(FirTreeBuilder)
     ImplementationConfigurator.configureImplementations()
     configureInterfacesAndAbstractClasses(FirTreeBuilder)
+    BuilderConfigurator.configureBuilders()
     removePreviousGeneratedFiles(generationPath)
     printElements(FirTreeBuilder, generationPath)
 //    printFieldUsageTable(FirTreeBuilder)
 //    printHierarchyGraph(FirTreeBuilder)
 }
+
+// FirTreeBuilder.constExpression.fields.first()

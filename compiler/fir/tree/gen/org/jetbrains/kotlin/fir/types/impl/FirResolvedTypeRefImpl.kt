@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -18,13 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirResolvedTypeRefImpl(
+internal class FirResolvedTypeRefImpl(
     override val source: FirSourceElement?,
-    override val type: ConeKotlinType
-) : FirResolvedTypeRef(), FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var delegatedTypeRef: FirTypeRef? = null
-
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val type: ConeKotlinType,
+    override var delegatedTypeRef: FirTypeRef?,
+) : FirResolvedTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         delegatedTypeRef?.accept(visitor, data)

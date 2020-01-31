@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -21,13 +20,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirReturnExpressionImpl(
+internal class FirReturnExpressionImpl(
     override val source: FirSourceElement?,
-    override var result: FirExpression
-) : FirReturnExpression(), FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val target: FirTarget<FirFunction<*>>,
+    override var result: FirExpression,
+) : FirReturnExpression() {
     override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override lateinit var target: FirTarget<FirFunction<*>>
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

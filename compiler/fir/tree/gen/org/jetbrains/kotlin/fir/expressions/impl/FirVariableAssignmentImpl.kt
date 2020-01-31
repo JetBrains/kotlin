@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
@@ -19,17 +19,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirVariableAssignmentImpl(
+internal class FirVariableAssignmentImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
     override var safe: Boolean,
-    override var rValue: FirExpression
-) : FirVariableAssignment(), FirModifiableQualifiedAccess, FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
-    override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
-    override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override lateinit var calleeReference: FirReference
+    override val typeArguments: MutableList<FirTypeProjection>,
+    override var explicitReceiver: FirExpression?,
+    override var dispatchReceiver: FirExpression,
+    override var extensionReceiver: FirExpression,
+    override var calleeReference: FirReference,
+    override var rValue: FirExpression,
+) : FirVariableAssignment(), FirModifiableQualifiedAccess {
     override var lValue: FirReference 
         get() = calleeReference
         set(value) {

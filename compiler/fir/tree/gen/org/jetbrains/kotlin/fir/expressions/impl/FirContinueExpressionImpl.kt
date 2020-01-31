@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractLoopJump
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirContinueExpressionImpl(
-    override val source: FirSourceElement?
-) : FirContinueExpression(), FirAbstractLoopJump, FirAbstractAnnotatedElement {
+internal class FirContinueExpressionImpl(
+    override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val target: FirTarget<FirLoop>,
+) : FirContinueExpression(), FirAbstractLoopJump {
     override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override lateinit var target: FirTarget<FirLoop>
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
