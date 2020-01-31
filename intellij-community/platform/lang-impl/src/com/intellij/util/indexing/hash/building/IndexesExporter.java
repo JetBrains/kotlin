@@ -97,7 +97,7 @@ public class IndexesExporter {
     List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
       .extensions()
-      .filter(ex -> ex.dependsOnFileContent())
+      .filter(FileBasedIndexExtension::dependsOnFileContent)
       .filter(ex -> !(ex instanceof StubUpdatingIndex))
       .collect(Collectors.toList());
     List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = ContainerUtil.map(exportableFileBasedIndexExtensions, ex -> getGenerator(chunkRoot, ex));
