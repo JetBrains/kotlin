@@ -22,7 +22,7 @@
     </dependencies>
 
     <properties>
-        <kotlin.compiler.apiVersion>1.0</kotlin.compiler.apiVersion>
+        <kotlin.compiler.apiVersion>1.2</kotlin.compiler.apiVersion>
     </properties>
 
     <build>
