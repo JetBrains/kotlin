@@ -259,11 +259,14 @@ class State {
   }
 
   Worker* addWorkerUnlocked(bool errorReporting, KRef customName) {
-    Locker locker(&lock_);
-    Worker* worker = konanConstructInstance<Worker>(nextWorkerId(), errorReporting,
-        customName);
-    if (worker == nullptr) return nullptr;
-    workers_[worker->id()] = worker;
+    Worker* worker = nullptr;
+    {
+      Locker locker(&lock_);
+      worker = konanConstructInstance<Worker>(nextWorkerId(), errorReporting, customName);
+      if (worker == nullptr) return nullptr;
+      workers_[worker->id()] = worker;
+    }
+    GC_RegisterWorker(worker);
     return worker;
   }
 
@@ -283,6 +286,7 @@ class State {
         workers_.erase(it);
       }
     }
+    GC_UnregisterWorker(worker);
     konanDestructInstance(worker);
   }
 
@@ -823,6 +827,7 @@ bool Worker::park(KLong timeoutMicroseconds, bool process) {
 }
 
 JobKind Worker::processQueueElement(bool blocking) {
+  GC_CollectorCallback(this);
   ObjHolder argumentHolder;
   ObjHolder resultHolder;
   if (terminated_) return JOB_TERMINATE;

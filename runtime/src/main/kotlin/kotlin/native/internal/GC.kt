@@ -30,6 +30,12 @@ object GC {
     external fun collect()
 
     /**
+     * Request global cyclic collector, operation is async and just triggers the collection.
+     */
+    @SymbolName("Kotlin_native_internal_GC_collectCyclic")
+    external fun collectCyclic()
+
+    /**
      * Suspend garbage collection. Release candidates are still collected, but
      * GC algorithm is not executed.
      */
@@ -78,6 +84,14 @@ object GC {
         get() = getTuneThreshold()
         set(value) = setTuneThreshold(value)
 
+
+    /**
+     * If cyclic collector for atomic references to be deployed.
+     */
+    var cyclicCollectorEnabled: Boolean
+        get() = getCyclicCollectorEnabled()
+        set(value) = setCyclicCollectorEnabled(value)
+
     /**
      * Detect cyclic references going via atomic references and return list of cycle-inducing objects
      * or `null` if the leak detector is not available. Use [Platform.isMemoryLeakCheckerActive] to check
@@ -113,4 +127,10 @@ object GC {
 
     @SymbolName("Kotlin_native_internal_GC_setTuneThreshold")
     private external fun setTuneThreshold(value: Boolean)
+
+    @SymbolName("Kotlin_native_internal_GC_getCyclicCollector")
+    private external fun getCyclicCollectorEnabled(): Boolean
+
+    @SymbolName("Kotlin_native_internal_GC_setCyclicCollector")
+    private external fun setCyclicCollectorEnabled(value: Boolean)
 }

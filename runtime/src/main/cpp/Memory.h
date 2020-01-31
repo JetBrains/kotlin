@@ -557,6 +557,11 @@ void ClearTLSRecord(MemoryState* memory, void** key) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.
 ObjHeader** LookupTLS(void** key, int index) RUNTIME_NOTHROW;
 
+// APIs for the async GC.
+void GC_RegisterWorker(void* worker) RUNTIME_NOTHROW;
+void GC_UnregisterWorker(void* worker) RUNTIME_NOTHROW;
+void GC_CollectorCallback(void* worker) RUNTIME_NOTHROW;
+
 #ifdef __cplusplus
 }
 #endif

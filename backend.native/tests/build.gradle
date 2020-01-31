@@ -2735,6 +2735,12 @@ standaloneTest("leak_detector") {
     source = "runtime/memory/leak_detector.kt"
 }
 
+standaloneTest("cycle_collector") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    flags = ['-g']
+    source = "runtime/memory/cycle_collector.kt"
+}
+
 standaloneTest("mpp1") {
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']

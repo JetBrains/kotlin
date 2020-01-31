@@ -222,7 +222,9 @@ private fun debugString(value: Any?): String {
 @Frozen
 @LeakDetectorCandidate
 @NoReorderFields
-public class AtomicReference<T>(private var value_: T) {
+public class AtomicReference<T> {
+    private var value_: T
+
     // A spinlock to fix potential ARC race.
     private var lock: Int = 0
 
@@ -233,8 +235,9 @@ public class AtomicReference<T>(private var value_: T) {
      * Creates a new atomic reference pointing to given [ref].
      * @throws InvalidMutabilityException if reference is not frozen.
      */
-    init {
+    constructor(value: T) {
         checkIfFrozen(value)
+        value_ = value
     }
 
     /**
