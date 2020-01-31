@@ -98,9 +98,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/classPropertyOverriddenByFunction.kt");
             }
 
-            @TestMetadata("defaultFunction.kt")
-            public void testDefaultFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction.kt");
+            @TestMetadata("defaultFunction_ir.kt")
+            public void testDefaultFunction_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction_ir.kt");
             }
 
             @TestMetadata("delegatedFunctionOverriddenByProperty_ir.kt")
@@ -433,9 +433,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/dataClassCopy.kt");
             }
 
-            @TestMetadata("defaults.kt")
-            public void testDefaults() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults.kt");
+            @TestMetadata("defaults_ir.kt")
+            public void testDefaults_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults_ir.kt");
             }
 
             @TestMetadata("delegationBy_ir.kt")
