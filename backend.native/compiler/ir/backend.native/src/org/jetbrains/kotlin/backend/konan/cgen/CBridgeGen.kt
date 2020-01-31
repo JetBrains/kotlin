@@ -615,6 +615,8 @@ private fun IrType.isCEnumType(): Boolean {
 // Make sure external stubs always get proper annotaions.
 private fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
+                // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
+                || this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
 
 
 private fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")
