@@ -1,25 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.codegen.SamWrapperCodegen.FUNCTION_FIELD_NAME
-import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -37,17 +31,10 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val singleAbstractMethodPhase = makeIrFilePhase(
-    ::SingleAbstractMethodLowering,
-    name = "SingleAbstractMethod",
-    description = "Replace SAM conversions with instances of interface-implementing classes"
-)
-
-class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
     // In the latter case, the names of SAM wrappers depend on the order of classes in the file. For example:
     //
@@ -75,6 +62,11 @@ class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLowerin
     private val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
     private var enclosingClass: IrClass? = null
 
+    open val privateGeneratedWrapperVisibility: Visibility
+        get() = Visibilities.PRIVATE
+
+    abstract fun getSuperTypeForWrapper(typeOperand: IrType): IrType
+
     override fun lower(irFile: IrFile) {
         enclosingClass = irFile.declarations.filterIsInstance<IrClass>().find { it.origin == IrDeclarationOrigin.FILE_CLASS }
         irFile.transformChildrenVoid()
@@ -99,7 +91,7 @@ class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLowerin
         // TODO: there must be exactly one wrapper per Java interface; ideally, if the interface has generic
         //       parameters, so should the wrapper. Currently, we just erase them and generate something that
         //       erases to the same result at codegen time.
-        val erasedSuperType = expression.typeOperand.erasedUpperBound.defaultType
+        val erasedSuperType = getSuperTypeForWrapper(expression.typeOperand)
         val superType = if (expression.typeOperand.isNullable()) erasedSuperType.makeNullable() else erasedSuperType
         val invokable = expression.argument.transform(this, null)
         context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).apply {
@@ -136,6 +128,9 @@ class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLowerin
         }
     }
 
+    private val SAM_WRAPPER_SUFFIX = "$0"
+    private val FUNCTION_FIELD_NAME = "function"
+
     // Construct a class that wraps an invokable object into an implementation of an interface:
     //     class sam$n(private val invokable: F) : Interface { override fun method(...) = invokable(...) }
     private fun createObjectProxy(superType: IrType, generatePublicWrapper: Boolean): IrClass {
@@ -153,10 +148,10 @@ class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLowerin
         val wrappedFunctionClass = context.ir.symbols.functionN(superMethod.valueParameters.size).owner
         val wrappedFunctionType = wrappedFunctionClass.defaultType
 
-        val wrapperVisibility = if (generatePublicWrapper) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+        val wrapperVisibility = if (generatePublicWrapper) Visibilities.PUBLIC else privateGeneratedWrapperVisibility
         val subclass = buildClass {
             name = wrapperName
-            origin = JvmLoweredDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
+            origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             visibility = wrapperVisibility
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
