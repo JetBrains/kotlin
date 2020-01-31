@@ -18,6 +18,7 @@ package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
 import com.intellij.concurrency.JobLauncher;
+import com.intellij.ide.IdeBundle;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -54,8 +55,6 @@ import java.util.*;
 import static com.intellij.openapi.editor.colors.EditorColors.createInjectedLanguageFragmentKey;
 
 public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
-  private static final String PRESENTABLE_NAME = "Injected fragments";
-
   InjectedGeneralHighlightingPass(@NotNull Project project,
                                   @NotNull PsiFile file,
                                   @NotNull Document document,
@@ -70,7 +69,7 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
 
   @Override
   protected String getPresentableName() {
-    return PRESENTABLE_NAME;
+    return IdeBundle.message("highlighting.pass.injected.presentable.name");
   }
 
   @Override

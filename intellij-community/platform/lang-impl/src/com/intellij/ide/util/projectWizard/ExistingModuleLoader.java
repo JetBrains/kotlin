@@ -96,7 +96,7 @@ public class ExistingModuleLoader extends ModuleBuilder {
       }
     } else {
       Messages.showErrorDialog(current, IdeBundle.message("title.module.file.does.not.exist", moduleFilePath),
-                               CommonBundle.message("title.error"));
+                               CommonBundle.getErrorTitle());
       return false;
     }
     return true;

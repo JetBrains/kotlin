@@ -47,14 +47,15 @@ public class AsmCodeGenerator {
   public static final String LOAD_LABEL_TEXT_METHOD = "$$$loadLabelText$$$";
   public static final String LOAD_BUTTON_TEXT_METHOD = "$$$loadButtonText$$$";
   public static final String GET_FONT_METHOD_NAME = "$$$getFont$$$";
+  public static final String GET_MESSAGE_FROM_BUNDLE = "$$$getMessageFromBundle$$$";
+  public static final String CACHED_GET_BUNDLE_METHOD = "$$$cachedGetBundleMethod$$$";
+  public static final String ourBorderFactoryClientProperty = "BorderFactoryClass";
 
   private static final Type ourButtonGroupType = Type.getType(ButtonGroup.class);
   private static final Type ourBorderFactoryType = Type.getType(BorderFactory.class);
   private static final Type ourBorderType = Type.getType(Border.class);
   private static final Method ourCreateTitledBorderMethod = Method.getMethod(
     "javax.swing.border.TitledBorder createTitledBorder(javax.swing.border.Border,java.lang.String,int,int,java.awt.Font,java.awt.Color)");
-
-  private static final String ourBorderFactoryClientProperty = "BorderFactoryClass";
 
   private final NestedFormLoader myFormLoader;
   private final boolean myIgnoreCustomCreation;
@@ -821,53 +822,65 @@ public class AsmCodeGenerator {
         generator.loadLocal(componentLocal);
 
         if (!borderNone) {
-          if (borderType.equals(BorderType.LINE)) {
-            if (container.getBorderColor() == null) {
-              Type colorType = Type.getType(Color.class);
-              generator.getStatic(colorType, "black", colorType);
-            }
-            else {
-              pushPropValue(generator, Color.class.getName(), container.getBorderColor());
-            }
-            generator.invokeStatic(ourBorderFactoryType,
-                                   new Method(borderFactoryMethodName, ourBorderType,
-                                              new Type[] { Type.getType(Color.class) } ));
-          }
-          else if (borderType.equals(BorderType.EMPTY) && container.getBorderSize() != null) {
-            Insets size = container.getBorderSize();
-            generator.push(size.top);
-            generator.push(size.left);
-            generator.push(size.bottom);
-            generator.push(size.right);
-            generator.invokeStatic(ourBorderFactoryType,
-                                   new Method(borderFactoryMethodName, ourBorderType,
-                                              new Type[] { Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE }));
-          }
-          else {
-            generator.invokeStatic(ourBorderFactoryType,
-                                   new Method(borderFactoryMethodName, ourBorderType, new Type[0]));
-          }
+          generateBorderFactoryMethod(container, generator, borderType, borderFactoryMethodName);
         }
         else {
           generator.push((String) null);
         }
         pushBorderProperties(container, generator, borderTitle, componentLocal);
 
-        Type borderFactoryType = ourBorderFactoryType;
-        StringDescriptor borderFactoryValue = (StringDescriptor)container.getDelegeeClientProperties().get(ourBorderFactoryClientProperty);
-        if (borderFactoryValue == null && borderTitle != null && Boolean.valueOf(System.getProperty("idea.is.internal")).booleanValue()) {
-          borderFactoryValue = StringDescriptor.create("com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent");
-          container.getDelegeeClientProperties().put(ourBorderFactoryClientProperty, borderFactoryValue);
-        }
-        if (borderFactoryValue != null && !borderFactoryValue.getValue().isEmpty()) {
-          borderFactoryType = typeFromClassName(borderFactoryValue.getValue());
-        }
+        Type borderFactoryType = borderFactoryType(container, borderTitle);
 
         generator.invokeStatic(borderFactoryType, ourCreateTitledBorderMethod);
 
         // set border
         generator.invokeVirtual(Type.getType(JComponent.class),
                                 Method.getMethod("void setBorder(javax.swing.border.Border)"));
+      }
+    }
+
+    private Type borderFactoryType(LwContainer container, StringDescriptor borderTitle) {
+      Type result = ourBorderFactoryType;
+      StringDescriptor borderFactoryValue = (StringDescriptor)container.getDelegeeClientProperties().get(ourBorderFactoryClientProperty);
+      if (borderFactoryValue == null && borderTitle != null && Boolean.valueOf(System.getProperty("idea.is.internal")).booleanValue()) {
+        borderFactoryValue = StringDescriptor.create("com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent");
+        container.getDelegeeClientProperties().put(ourBorderFactoryClientProperty, borderFactoryValue);
+      }
+      if (borderFactoryValue != null && !borderFactoryValue.getValue().isEmpty()) {
+        result = typeFromClassName(borderFactoryValue.getValue());
+      }
+      return result;
+    }
+
+    private void generateBorderFactoryMethod(LwContainer container,
+                                             GeneratorAdapter generator,
+                                             BorderType borderType,
+                                             String borderFactoryMethodName) {
+      if (borderType.equals(BorderType.LINE)) {
+        if (container.getBorderColor() == null) {
+          Type colorType = Type.getType(Color.class);
+          generator.getStatic(colorType, "black", colorType);
+        }
+        else {
+          pushPropValue(generator, Color.class.getName(), container.getBorderColor());
+        }
+        generator.invokeStatic(ourBorderFactoryType,
+                               new Method(borderFactoryMethodName, ourBorderType,
+                                          new Type[] { Type.getType(Color.class) } ));
+      }
+      else if (borderType.equals(BorderType.EMPTY) && container.getBorderSize() != null) {
+        Insets size = container.getBorderSize();
+        generator.push(size.top);
+        generator.push(size.left);
+        generator.push(size.bottom);
+        generator.push(size.right);
+        generator.invokeStatic(ourBorderFactoryType,
+                               new Method(borderFactoryMethodName, ourBorderType,
+                                          new Type[] { Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE }));
+      }
+      else {
+        generator.invokeStatic(ourBorderFactoryType,
+                               new Method(borderFactoryMethodName, ourBorderType, new Type[0]));
       }
     }
 
@@ -881,6 +894,11 @@ public class AsmCodeGenerator {
       pushPropValue(generator, "java.lang.String", borderTitle);
       generator.push(container.getBorderTitleJustification());
       generator.push(container.getBorderTitlePosition());
+      pushFont(container, generator, componentLocal);
+      pushColor(container, generator);
+    }
+
+    private void pushFont(LwContainer container, GeneratorAdapter generator, int componentLocal) {
       final FontDescriptor font = container.getBorderTitleFont();
       if (font == null) {
         generator.push((String) null);
@@ -888,6 +906,9 @@ public class AsmCodeGenerator {
       else {
         FontPropertyCodeGenerator.generatePushFont(generator, this, componentLocal, container, font, "getFont", null);
       }
+    }
+
+    private void pushColor(LwContainer container, GeneratorAdapter generator) {
       if (container.getBorderTitleColor() == null) {
         generator.push((String) null);
       }
@@ -895,6 +916,7 @@ public class AsmCodeGenerator {
         pushPropValue(generator, Color.class.getName(), container.getBorderTitleColor());
       }
     }
+
   }
 
   private class FormConstructorVisitor extends FailSafeMethodVisitor {

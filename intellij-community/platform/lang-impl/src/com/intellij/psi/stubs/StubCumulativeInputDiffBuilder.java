@@ -70,7 +70,7 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
                                                                         : newSerializedStubTree.getStubIndicesValueMap();
     Collection<StubIndexKey> affectedIndexes = getAffectedIndices(previousStubIndicesValueMap, newStubIndicesValueMap);
     if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-      StubIndexImpl.LOG.info("stub indexes update: file = " + myInputId + " indexes " + affectedIndexes);
+      StubIndexImpl.LOG.info("stub indexes" + (newSerializedStubTree == null ? "deletion" : "update") + ": file = " + myInputId + " indexes " + affectedIndexes);
     }
     updateStubIndices(
       affectedIndexes,

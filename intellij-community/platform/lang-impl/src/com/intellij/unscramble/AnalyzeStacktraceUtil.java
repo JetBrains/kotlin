@@ -51,10 +51,6 @@ public class AnalyzeStacktraceUtil {
     }
   }
 
-  public static boolean hasFilters(@NotNull Project project) {
-    return !EP_NAME.getExtensions(project).isEmpty();
-  }
-
   public interface ConsoleFactory {
     JComponent createConsoleComponent(ConsoleView consoleView, DefaultActionGroup toolbarActions);
   }

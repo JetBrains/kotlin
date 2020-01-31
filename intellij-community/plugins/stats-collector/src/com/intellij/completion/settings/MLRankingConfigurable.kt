@@ -24,15 +24,15 @@ class MLRankingConfigurable(private val supportedLanguages: List<String>)
             row {
               checkBox(language, { settings.isLanguageEnabled(language) }, { settings.setLanguageEnabled(language, it) })
                 .enableIf(enableRanking.selected)
-            }
+            }.apply { if (language === supportedLanguages.last()) largeGapAfter() }
           }
           enableRankingCheckbox = enableRanking
-        }
-        row {
-          enableRankingCheckbox?.let { enableRanking ->
-            checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
-                     { settings.isShowDiffEnabled },
-                     { settings.isShowDiffEnabled = it }).enableIf(enableRanking.selected)
+          row {
+            enableRankingCheckbox?.let { enableRanking ->
+              checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
+                       { settings.isShowDiffEnabled },
+                       { settings.isShowDiffEnabled = it }).enableIf(enableRanking.selected)
+            }
           }
         }
       }

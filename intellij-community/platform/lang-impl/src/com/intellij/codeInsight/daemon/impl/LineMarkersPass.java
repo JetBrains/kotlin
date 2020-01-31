@@ -13,6 +13,7 @@ import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
@@ -173,7 +174,8 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
           throw e;
         }
         catch (Exception e) {
-          LOG.error("During querying provider "+provider+" ("+provider.getClass()+")", e);
+          LOG.error("During querying provider " + provider + " (" + provider.getClass() + ")", e,
+                    new Attachment(containingFile.getViewProvider().getVirtualFile().getName(), containingFile.getText()));
           continue;
         }
         if (info != null) {

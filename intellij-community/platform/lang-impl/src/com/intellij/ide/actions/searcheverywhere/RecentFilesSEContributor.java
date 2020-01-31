@@ -2,6 +2,7 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.google.common.collect.Lists;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
@@ -38,7 +39,7 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
   @NotNull
   @Override
   public String getGroupName() {
-    return "Recent Files";
+    return IdeBundle.message("search.everywhere.group.name.recent.files");
   }
 
   @Override

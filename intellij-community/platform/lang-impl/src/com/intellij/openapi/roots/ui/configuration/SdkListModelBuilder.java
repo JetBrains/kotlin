@@ -58,7 +58,7 @@ public final class SdkListModelBuilder {
     mySdkTypeFilter = type -> type != null
                               && (sdkTypeFilter == null || sdkTypeFilter.value(type));
 
-    Condition<SdkTypeId> simpleJavaTypeFix = notSimpleJavaSdkTypeIfAlternativeExists();
+    Condition<SdkTypeId> simpleJavaTypeFix = SimpleJavaSdkType.notSimpleJavaSdkTypeIfAlternativeExists();
     mySdkTypeCreationFilter = type -> type != null
                                       && (!(type instanceof SdkType) || ((SdkType)type).allowCreationByUser())
                                       && mySdkTypeFilter.value(type)
@@ -322,19 +322,5 @@ public final class SdkListModelBuilder {
              : sdkType1.getComparator().compare(sdk1, sdk2);
     });
     return clone;
-  }
-
-  private static Condition<SdkTypeId> notSimpleJavaSdkTypeIfAlternativeExists() {
-    boolean hasNotSimple = Stream.of(SdkType.getAllTypes())
-      .filter(SimpleJavaSdkType.notSimpleJavaSdkType()::value)
-      .anyMatch(it -> it instanceof JavaSdkType && !(it instanceof DependentSdkType));
-
-    if (hasNotSimple) {
-      //we found another JavaSdkType (e.g. JavaSdkImpl), there is no need for SimpleJavaSdkType
-      return SimpleJavaSdkType.notSimpleJavaSdkType();
-    } else {
-      //there is only one JavaSdkType, so it is no need to filter anything
-      return id -> true;
-    }
   }
 }

@@ -10,12 +10,19 @@ class ContextFeaturesStorage(private val featuresSnapshot: Map<String, MLFeature
     val EMPTY = ContextFeaturesStorage(emptyMap())
   }
 
-  override fun binaryValue(name: String): Boolean? = (featuresSnapshot[name])?.asBinary()
+  override fun binaryValue(name: String): Boolean? = findValue<MLFeatureValue.BinaryValue>(name)?.value
 
-  override fun floatValue(name: String): Double? = (featuresSnapshot[name])?.asFloat()
+  override fun floatValue(name: String): Double? = findValue<MLFeatureValue.FloatValue>(name)?.value
 
-  override fun categoricalValue(name: String): String? = (featuresSnapshot[name])?.asCategorical()
+  override fun categoricalValue(name: String): String? = findValue<MLFeatureValue.CategoricalValue>(name)?.value
 
-  override fun asMap(): Map<String, String> = featuresSnapshot.mapValues { it.value.toString() }
+  override fun classNameValue(name: String): String? = findValue<MLFeatureValue.ClassNameValue>(name)
+    ?.let { MLFeaturesUtil.valueAsString(it) }
+
+  override fun asMap(): Map<String, String> = featuresSnapshot.mapValues { MLFeaturesUtil.valueAsString(it.value) }
+
+  private inline fun <reified T : MLFeatureValue> findValue(name: String): T? {
+    return featuresSnapshot[name] as? T
+  }
 }
 

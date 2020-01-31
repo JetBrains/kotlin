@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-abstract class ServiceViewModel implements Disposable, InvokerSupplier {
+abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceModel.ServiceModelEventListener {
   protected final ServiceModel myModel;
   protected final ServiceModelFilter myModelFilter;
   private final ServiceViewFilter myFilter;
@@ -33,6 +33,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     myModel = model;
     myModelFilter = modelFilter;
     myFilter = filter;
+    myModel.addEventListener(this);
   }
 
   @NotNull
@@ -63,8 +64,6 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
   @NotNull
   protected abstract List<? extends ServiceViewItem> doGetRoots();
-
-  abstract void eventProcessed(ServiceEvent e);
 
   void saveState(ServiceViewState viewState) {
     viewState.groupByServiceGroups = myShowGroups;
@@ -137,6 +136,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
   @Override
   public void dispose() {
+    myModel.removeEventListener(this);
   }
 
   @NotNull
@@ -335,7 +335,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     }
 
     @Override
-    void eventProcessed(ServiceEvent e) {
+    public void eventProcessed(ServiceEvent e) {
       notifyListeners();
     }
 
@@ -368,7 +368,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     }
 
     @Override
-    void eventProcessed(ServiceEvent e) {
+    public void eventProcessed(ServiceEvent e) {
       if (e.contributorClass.isInstance(myContributor)) {
         notifyListeners();
       }
@@ -414,7 +414,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     }
 
     @Override
-    void eventProcessed(ServiceEvent e) {
+    public void eventProcessed(ServiceEvent e) {
       ServiceGroupNode group = myGroupRef.get();
       if (group == null || !e.contributorClass.isInstance(group.getRootContributor())) return;
 
@@ -458,7 +458,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     }
 
     @Override
-    void eventProcessed(ServiceEvent e) {
+    public void eventProcessed(ServiceEvent e) {
       ServiceViewItem service = myServiceRef.get();
       if (service == null || !e.contributorClass.isInstance(service.getRootContributor())) return;
 
@@ -501,7 +501,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     }
 
     @Override
-    void eventProcessed(ServiceEvent e) {
+    public void eventProcessed(ServiceEvent e) {
       boolean update = false;
 
       List<ServiceViewItem> toRemove = new ArrayList<>();

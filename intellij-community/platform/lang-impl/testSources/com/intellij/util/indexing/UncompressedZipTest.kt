@@ -24,13 +24,12 @@ class UncompressedZipTest : TestCase() {
     val dir = FileUtil.createTempDirectory("zip0-fs-structure-dir", null)
 
     val file = File(dir, "a.zip")
-    val zip = JBZipFile(file)
     val str = "Hello"
     val helloBytes = str.toByteArray(Charsets.UTF_8)
-    zip.use {
-      zip.getOrCreateEntry("b.txt").data = helloBytes
-      zip.getOrCreateEntry("a/b.txt").data = helloBytes
-      zip.getOrCreateEntry("a/c.txt").data = helloBytes
+    JBZipFile(file).use {
+      it.getOrCreateEntry("b.txt").data = helloBytes
+      it.getOrCreateEntry("a/b.txt").data = helloBytes
+      it.getOrCreateEntry("a/c.txt").data = helloBytes
     }
 
     val fs = UncompressedZipFileSystem(file.toPath(), UncompressedZipFileSystemProvider())
@@ -56,6 +55,38 @@ class UncompressedZipTest : TestCase() {
     assertTrue(Files.isSameFile(pp1, pp2))
     assertTrue(Files.isSameFile(pp1, pp3))
     assertTrue(Files.isSameFile(pp2, pp3))
+
+    fs.close()
+  }
+
+  fun testFsStructureSync() {
+    val dir = FileUtil.createTempDirectory("zip0-fs-structure-dir", null)
+
+    val file = File(dir, "a.zip")
+    val helloBytes = "Hello".toByteArray(Charsets.UTF_8)
+    JBZipFile(file).use {
+      it.getOrCreateEntry("b.txt").data = helloBytes
+      it.getOrCreateEntry("a/b.txt").data = helloBytes
+      it.getOrCreateEntry("a/c.txt").data = helloBytes
+    }
+
+    val fs = UncompressedZipFileSystem(file.toPath(), UncompressedZipFileSystemProvider())
+
+    assertTrue(Files.exists(fs.getPath("b.txt")))
+    assertTrue(Files.exists(fs.getPath("a", "b.txt")))
+    assertTrue(Files.exists(fs.getPath("a", "c.txt")))
+    assertFalse(Files.exists(fs.getPath("a", "d.txt")))
+
+    JBZipFile(file).use {
+      it.getOrCreateEntry("a/d.txt").data = helloBytes
+    }
+
+    fs.sync()
+
+    assertTrue(Files.exists(fs.getPath("b.txt")))
+    assertTrue(Files.exists(fs.getPath("a", "b.txt")))
+    assertTrue(Files.exists(fs.getPath("a", "c.txt")))
+    assertTrue(Files.exists(fs.getPath("a", "d.txt")))
 
     fs.close()
   }

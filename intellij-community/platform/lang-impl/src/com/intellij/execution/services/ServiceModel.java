@@ -3,8 +3,10 @@ package com.intellij.execution.services;
 
 import com.intellij.diagnostic.PluginException;
 import com.intellij.execution.services.ServiceEventListener.ServiceEvent;
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.WeighedItem;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -40,6 +42,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
   private final Invoker myInvoker = Invoker.forBackgroundThreadWithReadAction(this);
   private final List<ServiceViewItem> myRoots = new CopyOnWriteArrayList<>();
   private volatile boolean myRootsInitialized;
+  private final List<ServiceModelEventListener> myListeners = new CopyOnWriteArrayList<>();
 
   ServiceModel(@NotNull Project project) {
     myProject = project;
@@ -53,6 +56,14 @@ class ServiceModel implements Disposable, InvokerSupplier {
   @Override
   public Invoker getInvoker() {
     return myInvoker;
+  }
+
+  void addEventListener(@NotNull ServiceModelEventListener listener) {
+    myListeners.add(listener);
+  }
+
+  void removeEventListener(@NotNull ServiceModelEventListener listener) {
+    myListeners.remove(listener);
   }
 
   @NotNull
@@ -156,6 +167,9 @@ class ServiceModel implements Disposable, InvokerSupplier {
           break;
         default:
           reset(e.contributorClass);
+      }
+      for (ServiceModelEventListener listener : myListeners) {
+        listener.eventProcessed(e);
       }
     });
   }
@@ -265,6 +279,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
     ServiceViewItem parent = item.getParent();
     while (parent instanceof ServiceGroupNode) {
+      item.markRemoved();
       parent.getChildren().remove(item);
       if (!parent.getChildren().isEmpty()) return;
 
@@ -272,12 +287,14 @@ class ServiceModel implements Disposable, InvokerSupplier {
       parent = parent.getParent();
     }
     if (parent instanceof ContributorNode) {
+      item.markRemoved();
       parent.getChildren().remove(item);
       if (!parent.getChildren().isEmpty()) return;
 
       item = parent;
       parent = parent.getParent();
     }
+    item.markRemoved();
     if (parent == null) {
       myRoots.remove(item);
     }
@@ -506,6 +523,8 @@ class ServiceModel implements Disposable, InvokerSupplier {
     private ServiceViewDescriptor myViewDescriptor;
     private final List<ServiceViewItem> myChildren = new CopyOnWriteArrayList<>();
     private volatile boolean myPresentationUpdated;
+    private volatile boolean myRemoved;
+    private PresentationData myPresentation;
 
     protected ServiceViewItem(@NotNull Object value, @Nullable ServiceViewItem parent, @NotNull ServiceViewContributor<?> contributor,
                               @NotNull ServiceViewDescriptor viewDescriptor) {
@@ -567,6 +586,28 @@ class ServiceModel implements Disposable, InvokerSupplier {
     public Color getColor() {
       ServiceViewDescriptor descriptor = getViewDescriptor();
       return descriptor instanceof ColoredItem ? ((ColoredItem)descriptor).getColor() : null;
+    }
+
+    private void markRemoved() {
+      myRemoved = true;
+    }
+
+    boolean isRemoved() {
+      return myRemoved || myParent != null && myParent.isRemoved();
+    }
+
+    ItemPresentation getItemPresentation(@Nullable ServiceViewOptions viewOptions) {
+      if (isRemoved()) return myPresentation;
+
+      ItemPresentation presentation =
+        viewOptions == null ? getViewDescriptor().getPresentation() : getViewDescriptor().getCustomPresentation(viewOptions);
+      myPresentation = presentation instanceof PresentationData ?
+                       (PresentationData)presentation :
+                       new PresentationData(presentation.getPresentableText(),
+                                            presentation.getLocationString(),
+                                            presentation.getIcon(false),
+                                            null);
+      return myPresentation;
     }
 
     @Override
@@ -685,5 +726,9 @@ class ServiceModel implements Disposable, InvokerSupplier {
       result = 31 * result + (parent != null ? parent.hashCode() : 0);
       return result;
     }
+  }
+
+  interface ServiceModelEventListener {
+    void eventProcessed(ServiceEvent e);
   }
 }

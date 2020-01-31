@@ -49,7 +49,7 @@ public class InspectionDescriptionLinkHandler extends TooltipLinkHandler {
       return null;
     }
 
-    final InspectionProfile profile = InspectionProfileManager.getInstance().getCurrentProfile();
+    final InspectionProfile profile = InspectionProfileManager.getInstance(project).getCurrentProfile();
     final InspectionToolWrapper toolWrapper = profile.getInspectionTool(refSuffix, file);
     if (toolWrapper == null) return null;
 

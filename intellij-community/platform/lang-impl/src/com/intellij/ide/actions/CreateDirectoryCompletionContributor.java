@@ -2,6 +2,7 @@
 package com.intellij.ide.actions;
 
 import com.intellij.psi.PsiDirectory;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
@@ -18,6 +19,7 @@ public interface CreateDirectoryCompletionContributor {
    * E.g 'Gradle Source Sets', 'Maven Source Directories'
    */
   @NotNull
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   String getDescription();
 
   /**

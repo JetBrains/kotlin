@@ -21,4 +21,10 @@ class GradleProjectOpenProcessor : ProjectOpenProcessor() {
   override fun doOpenProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     return openGradleProject(projectFile, projectToClose, forceOpenInNewFrame)
   }
+
+  override fun canImportProjectAfterwards(): Boolean = true
+
+  override fun importProjectAfterwards(project: Project, file: VirtualFile) {
+    linkAndRefreshGradleProject(file.path, project)
+  }
 }

@@ -2,6 +2,7 @@
 package com.intellij.util.indexing;
 
 import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Sets;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import com.intellij.openapi.util.SystemInfo;
@@ -10,17 +11,16 @@ import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.hash.ContentHashEnumerator;
-import com.intellij.util.io.DigestUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
+import java.util.*;
 
-public class IndexInfrastructureVersion {
+public final class IndexInfrastructureVersion {
+  private static final String SHARED_INDEXES_VERSIONS_FORMAT_VERSION = "0";
+
   // base versions: it is required to have 100% match on that indexes in order to load it to an IDE.
   private final SortedMap<String, String> myBaseIndexes;
 
@@ -30,12 +30,21 @@ public class IndexInfrastructureVersion {
   // stub indexes versions: it is on if some indexes does not match
   private final SortedMap<String, String> myStubIndexVersions;
 
-  private IndexInfrastructureVersion(@NotNull SortedMap<String, String> baseIndexes,
-                                     @NotNull SortedMap<String, String> fileBasedIndexVersions,
-                                     @NotNull SortedMap<String, String> stubIndexVersions) {
+  public IndexInfrastructureVersion(@NotNull Map<String, String> baseIndexes,
+                                    @NotNull Map<String, String> fileBasedIndexVersions,
+                                    @NotNull Map<String, String> stubIndexVersions) {
     myBaseIndexes = ImmutableSortedMap.copyOf(baseIndexes);
     myFileBasedIndexVersions = ImmutableSortedMap.copyOf(fileBasedIndexVersions);
     myStubIndexVersions = ImmutableSortedMap.copyOf(stubIndexVersions);
+  }
+
+  @Override
+  public String toString() {
+    return "IndexInfrastructureVersion{" +
+           "myBaseIndexes=" + myBaseIndexes +
+           ", myFileBasedIndexVersions=" + myFileBasedIndexVersions +
+           ", myStubIndexVersions=" + myStubIndexVersions +
+           '}';
   }
 
   @NotNull
@@ -48,7 +57,7 @@ public class IndexInfrastructureVersion {
   @NotNull
   private static SortedMap<String, String> globalIndexesVersion() {
     ImmutableSortedMap.Builder<String, String> builder = ImmutableSortedMap.naturalOrder();
-    builder.put("shared_indexes_format", "0");
+    builder.put("shared_indexes_format", SHARED_INDEXES_VERSIONS_FORMAT_VERSION);
     builder.put("os", getOs().getOsName()); //do we really need the OS here?
     builder.put("vfs_version", String.valueOf(FSRecords.getVersion()));
     builder.put("persistent_enumerator_version", String.valueOf(PersistentEnumeratorDelegate.getVersion()));
@@ -115,18 +124,100 @@ public class IndexInfrastructureVersion {
   }
 
   @NotNull
-  public SortedMap<String, String> getBaseIndexes() {
+  public Map<String, String> getBaseIndexes() {
     return myBaseIndexes;
   }
 
   @NotNull
-  public SortedMap<String, String> getFileBasedIndexVersions() {
+  public Map<String, String> getFileBasedIndexVersions() {
     return myFileBasedIndexVersions;
   }
 
   @NotNull
-  public SortedMap<String, String> getStubIndexVersions() {
+  public Map<String, String> getStubIndexVersions() {
     return myStubIndexVersions;
+  }
+
+
+  /**
+   * Selects the versions from the given list {@oaram versions}'s that has the best similar versions
+   * for shared indexes to apply. We try to pick the version with would allow us to make the minimal
+   * extra work to get to the fully indexed state.
+   *
+   * @return It returns the best matching element from {@oaram versions} or {@code null} if none are
+   * good enough or suitable
+   */
+  @Nullable
+  public IndexInfrastructureVersion pickBestSuitableVersion(@NotNull Collection<IndexInfrastructureVersion> versions) {
+    Integer bestScore = null;
+    IndexInfrastructureVersion bestVersion = null;
+
+    for (IndexInfrastructureVersion version : versions) {
+      //we make sure the base index versions are exactly the same
+      //it is required to be able to read indexes files on the IDE
+      if (!version.getBaseIndexes().equals(getBaseIndexes())) continue;
+
+      // stub indexes has to be grouped by file types
+      // because they can only be rebuild if a stub tree for
+      // a given file is openned or re-built
+      // right now we simply ignore that fact
+      int commonStubIndexesCount = Sets.intersection(
+        version.getStubIndexVersions().entrySet(),
+        getStubIndexVersions().entrySet()
+      ).size();
+
+      //a magic number - we skip loading if there are too few indexes matched
+      //should we check for the StubUpdatingIndex here as well?
+      if (commonStubIndexesCount < 3) continue;
+
+      //how may of included in the remote index versions are different?
+      int stubIndexesDiff = Sets.difference(
+        version.getStubIndexVersions().entrySet(),
+        getStubIndexVersions().entrySet()
+      ).size();
+
+
+      //how many common indexes are there?
+      int commonFileIndexesCount = Sets.intersection(
+        version.getFileBasedIndexVersions().entrySet(),
+        getFileBasedIndexVersions().entrySet()
+      ).size();
+
+      //a magic number - we skip loading if there are too few indexes matched
+      //should we check for the StubUpdatingIndex here as well?
+      if (commonFileIndexesCount < 3) continue;
+
+      // how many of included in the downloadable index versions are different?
+      int fileBasedDiff = Sets.difference(
+        version.getFileBasedIndexVersions().entrySet(),
+        getFileBasedIndexVersions().entrySet()
+      ).size();
+
+      int negativeScope = fileBasedDiff + stubIndexesDiff;
+
+      //computing min of the score
+      if (bestScore == null || bestScore > negativeScope) {
+        bestScore = negativeScope;
+        bestVersion = version;
+      }
+    }
+
+    return bestVersion;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    IndexInfrastructureVersion version = (IndexInfrastructureVersion)o;
+    return myBaseIndexes.equals(version.myBaseIndexes) &&
+           myFileBasedIndexVersions.equals(version.myFileBasedIndexVersions) &&
+           myStubIndexVersions.equals(version.myStubIndexVersions);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myBaseIndexes, myFileBasedIndexVersions, myStubIndexVersions);
   }
 
   public enum Os {

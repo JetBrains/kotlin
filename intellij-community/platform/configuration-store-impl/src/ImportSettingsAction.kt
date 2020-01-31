@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.ide.IdeBundle
@@ -110,7 +110,7 @@ open class ImportSettingsAction : AnAction(), DumbAware {
 
   private fun getRelativeNamesToExtract(chosenComponents: Set<ExportableItem>): Set<String> {
     val result = THashSet<String>()
-    val root = Paths.get(PathManager.getConfigPath())
+    val root = PathManager.getConfigDir()
     for (item in chosenComponents) {
       result.add(root.relativize(item.file).systemIndependentPath)
     }

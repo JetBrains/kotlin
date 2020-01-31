@@ -362,7 +362,7 @@ public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
         String message = String.format("File '%s' already exists in directory '%s'", name, targetDirectory.getVirtualFile().getPath());
         String[] options = choice == null ? new String[]{"Overwrite", "Skip"}
                                           : new String[]{"Overwrite", "Skip", "Overwrite for all", "Skip for all"};
-        selection = Messages.showDialog(message, title, options, 0, Messages.getQuestionIcon());
+        selection = Messages.showDialog(targetDirectory.getProject(), message, title, options, 0, Messages.getQuestionIcon());
       }
       else {
         selection = choice[0];

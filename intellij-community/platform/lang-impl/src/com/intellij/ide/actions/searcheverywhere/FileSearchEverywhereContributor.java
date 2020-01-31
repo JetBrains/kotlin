@@ -44,7 +44,7 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
   @NotNull
   @Override
   public String getGroupName() {
-    return "Files";
+    return IdeBundle.message("search.everywhere.group.name.files");
   }
 
   public String includeNonProjectItemsText() {

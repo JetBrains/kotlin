@@ -1,16 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.hash.building;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
 import com.intellij.concurrency.JobLauncher;
-import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
@@ -30,10 +26,8 @@ import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -120,85 +114,8 @@ public class IndexesExporter {
 
     IndexInfrastructureVersion indexInfrastructureVersion = IndexInfrastructureVersion.fromExtensions(exportableFileBasedIndexExtensions,
                                                                                                       exportableStubIndexExtensions);
-    Path metadataFile = chunkRoot.resolve("metadata.json");
-    writeIndexVersionsMetadata(metadataFile, chunk, indexInfrastructureVersion);
     printStatistics(chunk, fileBasedGenerators, stubGenerator);
-    //printMetadata(metadataFile);
     return indexInfrastructureVersion;
-  }
-
-  private static void writeIndexVersionsMetadata(@NotNull Path metadataFile,
-                                                 @NotNull IndexChunk indexChunk,
-                                                 @NotNull IndexInfrastructureVersion infrastructureVersion) {
-
-    StringWriter sw = new StringWriter();
-    try(JsonWriter writer = new Gson().newBuilder().setPrettyPrinting().create().newJsonWriter(sw)) {
-      writer.beginObject();
-
-      writeNamedValue(writer, "metadata_version", "1");
-
-      writer.name("chunk");
-      writer.beginObject();
-      writeNamedValue(writer, "os", IndexInfrastructureVersion.getOs().getOsName());
-      writeNamedValue(writer, "kind", indexChunk.getKind());
-      writeNamedValue(writer, "name", indexChunk.getName());
-      writer.endObject();
-
-      writer.name("sources");
-      writer.beginObject();
-      writeNamedValue(writer, "hash", indexChunk.getContentsHash());
-      writeNamedValue(writer, "os", IndexInfrastructureVersion.getOs().getOsName());
-      writer.endObject();
-
-      writer.name("build");
-      writer.beginObject();
-      writeNamedValue(writer, "os", IndexInfrastructureVersion.getOs().getOsName());
-      writeNamedValue(writer, "os_name", SystemInfo.getOsNameAndVersion());
-      writeNamedValue(writer, "intellij_version", ApplicationInfo.getInstance().getFullVersion());
-      writeNamedValue(writer, "intellij_build", ApplicationInfo.getInstance().getBuild().toString());
-      writeNamedValue(writer, "intellij_product_code",ApplicationInfo.getInstance().getBuild().getProductCode());
-      writer.endObject();
-
-      writer.name("indexes");
-      writer.beginObject();
-      writeNamedValue(writer, "weak_hash", infrastructureVersion.getWeakVersionHash());
-      writer.name("versions");
-      writer.beginObject();
-      writeNamedMap(writer, "base_versions", infrastructureVersion.getBaseIndexes());
-      writeNamedMap(writer, "file_index_versions", infrastructureVersion.getFileBasedIndexVersions());
-      writeNamedMap(writer, "stub_index_versions", infrastructureVersion.getStubIndexVersions());
-      writer.endObject();
-      writer.endObject();
-
-      writer.endObject();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to generate versions JSON. " + e.getMessage(), e);
-    }
-
-    try {
-      PathKt.write(metadataFile, sw.toString());
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to write versions JSON to " + metadataFile + ". " + e.getMessage(), e);
-    }
-  }
-
-  private static void writeNamedValue(@NotNull JsonWriter writer,
-                                      @NotNull String name,
-                                      @Nullable String value) throws IOException {
-    writer.name(name);
-    writer.value(value);
-  }
-
-  private static void writeNamedMap(@NotNull JsonWriter writer,
-                                    @NotNull String name,
-                                    @NotNull Map<String, String> map) throws IOException {
-    writer.name(name);
-    writer.beginObject();
-    for (Map.Entry<String, String> e : map.entrySet()) {
-      writer.name(e.getKey());
-      writer.value(e.getValue());
-    }
-    writer.endObject();
   }
 
   @NotNull
@@ -324,15 +241,6 @@ public class IndexesExporter {
     }
     catch (Exception e) {
       throw new RuntimeException("Can't index " + file.getPath(), e);
-    }
-  }
-
-  private static void printMetadata(@NotNull Path metadataFile) {
-    try {
-      String text = PathKt.readText(metadataFile);
-      LOG.warn(metadataFile.getFileName().toString() + ":\n" + text + "\n\n");
-    } catch (IOException e){
-      throw new RuntimeException("Failed to read " + metadataFile + ". " + e.getMessage(), e);
     }
   }
 

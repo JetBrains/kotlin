@@ -39,5 +39,9 @@
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
     <orderEntry type="module" module-name="intellij.platform.workspaceModel.ide" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="library" name="jackson-module-kotlin" level="project" />
+    <orderEntry type="library" name="xz" level="project" />
   </component>
 </module>

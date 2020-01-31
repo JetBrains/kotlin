@@ -1027,7 +1027,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         throw new AssertionError(value);
       }
       setFont(UIUtil.getLabelFont().deriveFont(UIUtil.getFontSize(UIUtil.FontSize.SMALL)));
-      append("... more", SMALL_LABEL_ATTRS);
+      append(IdeBundle.message("search.everywhere.points.more"), SMALL_LABEL_ATTRS);
       setIpad(JBInsets.create(1, 7));
       setMyBorder(null);
     }
