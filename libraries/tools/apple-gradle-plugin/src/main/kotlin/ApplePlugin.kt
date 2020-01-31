@@ -46,7 +46,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
     private val target: AppleTarget,
     private val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
-    var baseDir: File = project.buildDir.resolve("apple/${target.name}")
+    var baseDir: File = System.getProperty("xcodeProjBaseDir")?.let(::File) ?: project.buildDir.resolve("tmp/apple/${target.name}")
         @OutputDirectory get
 
     var configName: String = "Debug"

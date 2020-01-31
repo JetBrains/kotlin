@@ -18,14 +18,12 @@ import com.intellij.util.concurrency.FutureResult
 import com.jetbrains.cidr.xcode.XcodeProjectFileProvider
 import com.jetbrains.mobile.MobileBundle
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
+import java.io.File
 
 class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
     override val isImmediate: Boolean = false
 
     override fun findXcodeProjFile(project: Project, file: VirtualFile): VirtualFile? {
-        val success = generateXcodeProject(project)
-        if (!success) return null
-
         val targets = GradleAppleWorkspace.getInstance(project).targets
         val ioFile = VfsUtil.virtualToIoFile(file)
         val target = targets.find { targetModel ->
@@ -33,27 +31,31 @@ class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
             // TODO find more efficient way, maybe with ModuleFileIndex
         } ?: return null
 
-        val xcodeProjFile = target.buildDir.resolve("${target.name}.xcodeproj")
+        val xcodeProjFile = generateXcodeProject(project, target) ?: return null
         return VfsUtil.findFileByIoFile(xcodeProjFile, true)
     }
 
     companion object {
         @Synchronized
-        private fun generateXcodeProject(project: Project): Boolean {
+        private fun generateXcodeProject(project: Project, target: AppleTargetModel): File? {
+            val xcodeProjBaseDir = target.buildDir
+            val xcodeProjFile = xcodeProjBaseDir.resolve("${target.name}.xcodeproj")
+
             val settings = ExternalSystemTaskExecutionSettings()
             settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
             settings.externalProjectPath = project.basePath
             settings.executionName = MobileBundle.message("generate.xcodeproj")
             settings.taskNames = listOf("generateXcodeproj")
+            settings.vmOptions = "-DxcodeProjBaseDir='${xcodeProjBaseDir.path}'"
 
-            val success = FutureResult<Boolean>()
+            val success = FutureResult<File?>()
             val callback = object : TaskCallback {
                 override fun onSuccess() {
-                    success.set(true)
+                    success.set(xcodeProjFile)
                 }
 
                 override fun onFailure() {
-                    success.set(false)
+                    success.set(null)
                 }
             }
 
