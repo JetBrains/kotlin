@@ -1,9 +1,7 @@
 fun foo(f: () -> String) {}
 
 fun test() {
-    foo(
-            fun(): String {
-                return ""
-            }
-    )
+    foo(fun(): String {
+        return ""
+    })
 }

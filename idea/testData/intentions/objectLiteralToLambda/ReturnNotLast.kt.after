@@ -5,10 +5,8 @@ import java.io.FilenameFilter
 fun foo(filter: FilenameFilter) {}
 
 fun bar() {
-    foo(
-            FilenameFilter { file, name ->
-                if (file.isDirectory) return@FilenameFilter true
-                name == "x"
-            }
-    )
+    foo(FilenameFilter { file, name ->
+        if (file.isDirectory) return@FilenameFilter true
+        name == "x"
+    })
 }

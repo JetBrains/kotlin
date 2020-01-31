@@ -1,7 +1,5 @@
 fun test() {
-    Foo.Bar().bar(
-            {
-                true
-            }
-    )
+    Foo.Bar().bar({
+        true
+    })
 }

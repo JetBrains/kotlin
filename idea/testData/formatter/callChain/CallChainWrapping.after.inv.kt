@@ -41,12 +41,10 @@ val x8 = foo!!!!!!!!
 val x9 = ((b!!)!!!!)!!
         .f
 
-val y = xyzzy(
-        foo
-                .bar()
-                .baz()
-                .quux(),
-)
+val y = xyzzy(foo
+        .bar()
+        .baz()
+        .quux())
 
 fun foo() {
     foo
@@ -92,3 +90,4 @@ fun foo() {
 
 // SET_INT: METHOD_CALL_CHAIN_WRAP = 2
 // SET_FALSE: WRAP_FIRST_METHOD_IN_CALL_CHAIN
+// SET_TRUE: ALLOW_TRAILING_COMMA

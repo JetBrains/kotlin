@@ -2,12 +2,10 @@
 fun foo(f: (Int) -> String) {}
 
 fun test() {
-    foo(
-            fun(it: Int): String {
-                listOf(1).map {
-                    return@map 2
-                }
-                return "$it"
-            }
-    )
+    foo(fun(it: Int): String {
+        listOf(1).map {
+            return@map 2
+        }
+        return "$it"
+    })
 }

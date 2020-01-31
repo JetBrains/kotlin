@@ -58,3 +58,4 @@ fun some(x: Any) {
         }
     }
 }
+// SET_TRUE: ALLOW_TRAILING_COMMA

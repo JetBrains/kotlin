@@ -1,5 +1,6 @@
 internal class C(
-        private val p1: Int, /* parameter p1 */ // field p1
+        private val p1: Int /* parameter p1 */ // field p1
+        ,
         /**
          * Field myP2
          */

@@ -1,9 +1,7 @@
 fun main() {
-    J().foo(
-            object : J.Sam {
-                override fun bar() {
+    J().foo(object : J.Sam {
+        override fun bar() {
 
-                }
-            }
-    )
+        }
+    })
 }

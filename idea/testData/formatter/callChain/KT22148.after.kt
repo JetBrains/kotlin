@@ -6,11 +6,9 @@ fun foo() {
         finish()
     }
 
-    FirebaseAuth.getInstance().addAuthStateListener(
-            object : FirebaseAuth.AuthStateListener {
-                override fun onAuthStateChanged(auth: FirebaseAuth) {
-                    // ...
-                }
-            },
-    )
+    FirebaseAuth.getInstance().addAuthStateListener(object : FirebaseAuth.AuthStateListener {
+        override fun onAuthStateChanged(auth: FirebaseAuth) {
+            // ...
+        }
+    })
 }
