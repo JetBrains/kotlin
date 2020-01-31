@@ -787,32 +787,41 @@ public class FunctionCodegen {
             shift++;
         }
 
+        boolean isEnumName = true;
         KotlinTypeMapper typeMapper = state.getTypeMapper();
         for (int i = 0; i < params.size(); i++) {
             JvmMethodParameterSignature param = params.get(i);
             JvmMethodParameterKind kind = param.getKind();
             String parameterName;
 
-            if (kind == JvmMethodParameterKind.VALUE) {
-                ValueParameterDescriptor parameter = valueParameterIterator.next();
-                String nameForDestructuredParameter = VariableAsmNameManglingUtils.getNameForDestructuredParameterOrNull(parameter);
+            switch (kind) {
+                case VALUE:
+                    ValueParameterDescriptor parameter = valueParameterIterator.next();
+                    String nameForDestructuredParameter = VariableAsmNameManglingUtils.getNameForDestructuredParameterOrNull(parameter);
 
-                parameterName =
-                        nameForDestructuredParameter == null
-                        ? computeParameterName(i, parameter)
-                        : nameForDestructuredParameter;
-            }
-            else if (kind == JvmMethodParameterKind.RECEIVER) {
-                parameterName = AsmUtil.getNameForReceiverParameter(
-                        functionDescriptor, typeMapper.getBindingContext(), state.getLanguageVersionSettings());
-            } else if (kind == JvmMethodParameterKind.OUTER) {
-                parameterName = CAPTURED_THIS_FIELD; //should be 'this$X' depending on inner class nesting
-            }
-            else {
-                String lowercaseKind = kind.name().toLowerCase();
-                parameterName = needIndexForVar(kind)
-                                ? "$" + lowercaseKind + "$" + i
-                                : "$" + lowercaseKind;
+                    parameterName =
+                            nameForDestructuredParameter == null
+                            ? computeParameterName(i, parameter)
+                            : nameForDestructuredParameter;
+                    break;
+                case RECEIVER:
+                    parameterName = AsmUtil.getNameForReceiverParameter(
+                            functionDescriptor, typeMapper.getBindingContext(), state.getLanguageVersionSettings());
+                    break;
+                case OUTER:
+                    parameterName = CAPTURED_THIS_FIELD; //should be 'this$X' depending on inner class nesting
+
+                    break;
+                case ENUM_NAME_OR_ORDINAL:
+                    parameterName = isEnumName ? "$enum$name" : "$enum$ordinal";
+                    isEnumName = !isEnumName;
+                    break;
+                default:
+                    String lowercaseKind = kind.name().toLowerCase();
+                    parameterName = needIndexForVar(kind)
+                                    ? "$" + lowercaseKind + "$" + i
+                                    : "$" + lowercaseKind;
+                    break;
             }
 
             Type type = param.getAsmType();

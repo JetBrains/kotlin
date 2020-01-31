@@ -1,5 +1,5 @@
 final class foo/Kotlin$A : foo/Kotlin {
-    void <init>(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1)
+    void <init>(java.lang.String $enum$name, int $enum$ordinal)
 
     public final void foo()
 }
@@ -11,10 +11,10 @@ public class foo/Kotlin : java/lang/Enum {
 
     static void <clinit>()
 
-    private void <init>(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1, java.lang.String s)
+    private void <init>(java.lang.String $enum$name, int $enum$ordinal, java.lang.String s)
       @Lfoo/TypeAnn;([]) : METHOD_FORMAL_PARAMETER 0, null
 
-    public void <init>(java.lang.String $enum_name_or_ordinal$0, int $enum_name_or_ordinal$1, java.lang.String s, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+    public void <init>(java.lang.String $enum$name, int $enum$ordinal, java.lang.String s, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
     public static foo.Kotlin valueOf(java.lang.String p0)
 
