@@ -192,8 +192,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             overriddenSymbols += superMethod.symbol
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             superMethod.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
-            body = context.createIrBuilder(symbol).run {
-                irExprBody(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
+            body = context.createIrBuilder(symbol).irBlockBody {
+                +irReturn(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
                     dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
                     valueParameters.forEachIndexed { i, parameter -> putValueArgument(i, irGet(parameter)) }
                 })
