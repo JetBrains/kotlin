@@ -128,7 +128,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
                 if (PrebuiltIndexProviderBase.DEBUG_PREBUILT_INDICES) {
                   Stub stub = StubTreeBuilder.buildStubTree(inputData);
                   if (serializedStubTree != null && stub != null) {
-                    check(serializedStubTree.getStub(false), stub);
+                    check(serializedStubTree.getStub(), stub);
                     checkStubIndexes(serializedStubTree, stub);
                   }
                 }
@@ -140,7 +140,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
               if (rootStub != null) {
                 serializedStubTree = SerializedStubTree.serializeStub(rootStub, SerializationManagerEx.getInstanceEx(), SerializedStubTree.IDE_USED_EXTERNALIZER);
                 if (DebugAssertions.DEBUG) {
-                  Stub deserialized = serializedStubTree.retrieveStubFromBytes(SerializationManagerEx.getInstanceEx());
+                  Stub deserialized = serializedStubTree.getStub(SerializationManagerEx.getInstanceEx());
                   check(deserialized, rootStub);
                 }
               }

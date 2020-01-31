@@ -114,7 +114,7 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
 
       Stub stub;
       try {
-        stub = stubTree.getStub(false);
+        stub = stubTree.getStub();
       }
       catch (SerializerNotFoundException e) {
         return processError(vFile, "No stub serializer: " + vFile.getPresentableUrl() + ": " + e.getMessage(), e);
