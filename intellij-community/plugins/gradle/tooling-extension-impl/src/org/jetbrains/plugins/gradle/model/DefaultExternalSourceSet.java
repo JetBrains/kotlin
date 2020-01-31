@@ -21,6 +21,7 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
   private Collection<File> artifacts;
   private String sourceCompatibility;
   private String targetCompatibility;
+  private boolean isPreview;
 
   public DefaultExternalSourceSet() {
     sources = new HashMap<ExternalSystemSourceType, DefaultExternalSourceDirectorySet>(0);
@@ -32,6 +33,7 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
     name = sourceSet.getName();
     sourceCompatibility = sourceSet.getSourceCompatibility();
     targetCompatibility = sourceSet.getTargetCompatibility();
+    isPreview = sourceSet.isPreview();
 
     Set<? extends Map.Entry<? extends IExternalSystemSourceType, ? extends ExternalSourceDirectorySet>> entrySet = sourceSet.getSources().entrySet();
     sources = new HashMap<ExternalSystemSourceType, DefaultExternalSourceDirectorySet>(entrySet.size());
@@ -65,6 +67,15 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
   @Override
   public String getSourceCompatibility() {
     return sourceCompatibility;
+  }
+
+  @Override
+  public boolean isPreview() {
+    return isPreview;
+  }
+
+  public void setPreview(boolean preview) {
+    isPreview = preview;
   }
 
   public void setSourceCompatibility(@Nullable String sourceCompatibility) {

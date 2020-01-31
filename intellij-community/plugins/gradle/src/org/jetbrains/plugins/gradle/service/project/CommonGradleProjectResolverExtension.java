@@ -130,6 +130,7 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
         sourceSetData.setIdeModuleGroup(moduleGroup);
 
         sourceSetData.setSourceCompatibility(sourceSet.getSourceCompatibility());
+        sourceSetData.setPreview(sourceSet.isPreview());
         sourceSetData.setTargetCompatibility(sourceSet.getTargetCompatibility());
         sourceSetData.setSdkName(jdkName);
 

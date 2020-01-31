@@ -229,6 +229,7 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
       def javaCompileTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
       if (javaCompileTask instanceof JavaCompile) {
         externalSourceSet.sourceCompatibility = javaCompileTask.sourceCompatibility ?: projectSourceCompatibility
+        externalSourceSet.preview = javaCompileTask.options.compilerArgs.contains("--enable-preview")
         externalSourceSet.targetCompatibility = javaCompileTask.targetCompatibility ?: projectTargetCompatibility
       }
       else {

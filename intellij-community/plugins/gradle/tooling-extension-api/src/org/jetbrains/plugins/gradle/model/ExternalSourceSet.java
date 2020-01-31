@@ -22,6 +22,8 @@ public interface ExternalSourceSet extends Serializable {
   @Nullable
   String getSourceCompatibility();
 
+  boolean isPreview();
+
   @Nullable
   String getTargetCompatibility();
 

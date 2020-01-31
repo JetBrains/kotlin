@@ -123,6 +123,7 @@ public class ExternalProjectSerializationService implements SerializationService
     writeString(writer, "name", sourceSet.getName());
     writeString(writer, "sourceCompatibility", sourceSet.getSourceCompatibility());
     writeString(writer, "targetCompatibility", sourceSet.getTargetCompatibility());
+    writeBoolean(writer,"isPreview", sourceSet.isPreview());
     writeFiles(writer, "artifacts", sourceSet.getArtifacts());
     writeDependencies(writer, context, sourceSet.getDependencies());
     writeSourceDirectorySets(writer, sourceSet.getSources());
@@ -480,6 +481,7 @@ public class ExternalProjectSerializationService implements SerializationService
     sourceSet.setName(readString(reader, "name"));
     sourceSet.setSourceCompatibility(readString(reader, "sourceCompatibility"));
     sourceSet.setTargetCompatibility(readString(reader, "targetCompatibility"));
+    sourceSet.setPreview(readBoolean(reader,"isPreview"));
     sourceSet.setArtifacts(readFiles(reader));
     sourceSet.getDependencies().addAll(readDependencies(reader, context));
     sourceSet.setSources(readSourceDirectorySets(reader));

@@ -99,6 +99,23 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
   }
 
   @Test
+  public void testPreviewLanguageLevel() throws Exception {
+    importProject(
+      "apply plugin: 'java'\n" +
+      "sourceCompatibility = 13\n" +
+      "apply plugin: 'java'\n" +
+      "compileTestJava {\n" +
+      "  sourceCompatibility = 13\n" +
+      "  options.compilerArgs << '--enable-preview'" + 
+      "}\n"
+    );
+
+    assertModules("project", "project.main", "project.test");
+    assertEquals(LanguageLevel.JDK_13, getLanguageLevelForModule("project.main"));
+    assertEquals(LanguageLevel.JDK_13_PREVIEW, getLanguageLevelForModule("project.test"));
+  }
+
+  @Test
   public void testTargetLevel() throws Exception {
     importProject(
       "apply plugin: 'java'\n" +
