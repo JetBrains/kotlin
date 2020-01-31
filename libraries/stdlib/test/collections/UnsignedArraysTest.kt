@@ -724,6 +724,47 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun associateWithPrimitives() {
+        assertEquals(
+            mapOf(1u to "1", 2u to "2", 3u to "3"),
+            uintArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUByte() to "1", 2.toUByte() to "2", 3.toUByte() to "3"),
+            ubyteArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUShort() to "1", 2.toUShort() to "2", 3.toUShort() to "3"),
+            ushortArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1UL to "1", 2UL to "2", 3UL to "3"),
+            ulongArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+    }
+
+    @Test
+    fun associateWithToPrimitives() {
+        val expected = mapOf(1u to "one", 2u to "two", 3u to "three")
+        assertEquals(
+            mapOf(1u to "one", 2u to "2", 3u to "3"),
+            uintArrayOf(2, 3).associateWithTo(expected.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUByte() to "one", 2.toUByte() to "2", 3.toUByte() to "3"),
+            ubyteArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toUByte() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toUShort() to "one", 2.toUShort() to "2", 3.toUShort() to "3"),
+            ushortArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toUShort() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1UL to "one", 2UL to "2", 3UL to "3"),
+            ulongArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toULong() }.toMutableMap()) { it.toString() }
+        )
+    }
+
+    @Test
     fun elementAt() {
         expect(0u) { ubyteArrayOf(0, 1, 2).elementAt(0) }
         expect(1u) { ushortArrayOf(0, 1, 2).elementAt(1) }

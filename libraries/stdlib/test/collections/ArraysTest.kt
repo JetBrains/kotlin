@@ -1247,6 +1247,93 @@ class ArraysTest {
         }
     }
 
+    @Test fun associateWith() {
+        val items = arrayOf("Alice", "Bob", "Carol")
+        val itemsWithTheirLength = items.associateWith { it.length }
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 3, "Carol" to 5), itemsWithTheirLength)
+
+        val updatedLength = items.copyOfRange(1, 3)
+            .associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.toLowerCase().count { it in "aeuio" } }
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 1, "Carol" to 2), updatedLength)
+    }
+
+    @Test fun associateWithPrimitives() {
+        assertEquals(
+            mapOf(1 to "1", 2 to "2", 3 to "3"),
+            intArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toByte() to "1", 2.toByte() to "2", 3.toByte() to "3"),
+            byteArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toShort() to "1", 2.toShort() to "2", 3.toShort() to "3"),
+            shortArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1L to "1", 2L to "2", 3L to "3"),
+            longArrayOf(1, 2, 3).associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(1f to "1", 2f to "2", 3f to "3"),
+            floatArrayOf(1f, 2f, 3f).associateWith { if (it == 1f) "1" else if (it == 2f) "2" else "3" }
+        )
+        assertEquals(
+            mapOf(1.0 to "1", 2.0 to "2", 3.0 to "3"),
+            doubleArrayOf(1.0, 2.0, 3.0).associateWith { if (it == 1.0) "1" else if (it == 2.0) "2" else "3" }
+        )
+        assertEquals(
+            mapOf('1' to "1", '2' to "2", '3' to "3"),
+            charArrayOf('1', '2', '3').associateWith { it.toString() }
+        )
+        assertEquals(
+            mapOf(false to "false", true to "true"),
+            booleanArrayOf(false, true).associateWith { it.toString() }
+        )
+    }
+
+    @Test fun associateWithToPrimitives() {
+        val expected = mapOf(1 to "one", 2 to "two", 3 to "three")
+        assertEquals(
+            mapOf(1 to "one", 2 to "2", 3 to "3"),
+            intArrayOf(2, 3).associateWithTo(expected.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toByte() to "one", 2.toByte() to "2", 3.toByte() to "3"),
+            byteArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toByte() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1.toShort() to "one", 2.toShort() to "2", 3.toShort() to "3"),
+            shortArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toShort() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1L to "one", 2L to "2", 3L to "3"),
+            longArrayOf(2, 3).associateWithTo(expected.mapKeys { it.key.toLong() }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(1f to "one", 2f to "2", 3f to "3"),
+            floatArrayOf(2f, 3f).associateWithTo(expected.mapKeys { it.key.toFloat() }.toMutableMap()) {
+                if (it == 1f) "1" else if (it == 2f) "2" else "3"
+            }
+        )
+        assertEquals(
+            mapOf(1.0 to "one", 2.0 to "2", 3.0 to "3"),
+            doubleArrayOf(2.0, 3.0).associateWithTo(expected.mapKeys { it.key.toDouble() }.toMutableMap()) {
+                if (it == 1.0) "1" else if (it == 2.0) "2" else "3"
+            }
+        )
+        assertEquals(
+            mapOf('1' to "one", '2' to "2", '3' to "3"),
+            charArrayOf('2', '3').associateWithTo(expected.mapKeys { '0' + it.key }.toMutableMap()) { it.toString() }
+        )
+        assertEquals(
+            mapOf(false to "three", true to "true"),
+            booleanArrayOf(true, true).associateWithTo(expected.mapKeys { it.key % 2 == 0 }.toMutableMap()) { it.toString() }
+        )
+    }
+
     @Test fun reverseInPlace() {
 
         fun <TArray, T> doTest(build: Iterable<Int>.() -> TArray, reverse: TArray.() -> Unit, snapshot: TArray.() -> List<T>) {

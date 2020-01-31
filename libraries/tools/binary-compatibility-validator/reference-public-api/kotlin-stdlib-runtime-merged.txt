@@ -805,6 +805,8 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun associateTo ([Ljava/lang/Object;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo ([SLjava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo ([ZLjava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWith ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWithTo ([Ljava/lang/Object;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun average ([B)D
 	public static final fun average ([D)D
 	public static final fun average ([F)D
