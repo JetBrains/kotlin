@@ -40,7 +40,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.UnloadedModuleDescription;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider;
 import com.intellij.openapi.ui.Messages;
@@ -111,17 +110,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private final ProjectViewState myCurrentState;
   // + options
   private final Option myAbbreviatePackageNames = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.abbreviate.qualified.package.names");
-    }
-
-    @Override
-    public String getDescription() {
-      return getName();
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return myFlattenPackages.isSelected() && myFlattenPackages.isEnabled(pane) && pane.supportsAbbreviatePackageNames();
@@ -143,17 +131,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myAutoscrollFromSource = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return "Always Select Opened File";
-    }
-
-    @Override
-    public String getDescription() {
-      return "When an editor tab is selected, select the corresponding file in Project view";
-    }
-
     @Override
     public boolean isSelected() {
       return myCurrentState.getAutoscrollFromSource();
@@ -171,17 +148,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myAutoscrollToSource = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return "Open Files with Single Click";
-    }
-
-    @Override
-    public String getDescription() {
-      return "When a file is selected, open it for editing";
-    }
-
     @Override
     public boolean isSelected() {
       return myCurrentState.getAutoscrollToSource();
@@ -196,17 +162,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myCompactDirectories = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.compact.directories.text");
-    }
-
-    @Override
-    public String getDescription() {
-      return IdeBundle.message("action.compact.directories.description");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsCompactDirectories();
@@ -228,17 +183,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myFlattenModules = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return ProjectBundle.message("project.roots.flatten.modules.action.text");
-    }
-
-    @Override
-    public String getDescription() {
-      return ProjectBundle.message("project.roots.flatten.modules.action.description");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsFlattenModules();
@@ -260,17 +204,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myFlattenPackages = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.flatten.packages");
-    }
-
-    @Override
-    public String getDescription() {
-      return getName();
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return ProjectViewDirectoryHelper.getInstance(myProject).supportsFlattenPackages();
@@ -292,12 +225,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myFoldersAlwaysOnTop = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return "Folders Always on Top";
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsFoldersAlwaysOnTop();
@@ -385,17 +312,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myShowExcludedFiles = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.show.excluded.files");
-    }
-
-    @Override
-    public String getDescription() {
-      return IdeBundle.message("action.show.hide.excluded.files");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsShowExcludedFiles();
@@ -417,17 +333,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myShowLibraryContents = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.show.libraries.contents");
-    }
-
-    @Override
-    public String getDescription() {
-      return IdeBundle.message("action.show.hide.library.contents");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsShowLibraryContents();
@@ -449,17 +354,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myShowMembers = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.show.members");
-    }
-
-    @Override
-    public String getDescription() {
-      return IdeBundle.message("action.show.hide.members");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return isShowMembersOptionSupported();
@@ -481,17 +375,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myShowModules = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.show.modules");
-    }
-
-    @Override
-    public String getDescription() {
-      return IdeBundle.message("action.description.show.modules");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsShowModules();
@@ -513,17 +396,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option myShowVisibilityIcons = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.show.visibility.icons.text");
-    }
-
-    @Override
-    public String getDescription() {
-      return IdeBundle.message("action.show.visibility.icons.description");
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return OptionsApplicabilityFilter.isApplicable(PROJECT_VIEW_SHOW_VISIBILITY_ICONS);
@@ -545,17 +417,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   };
   private final Option mySortByType = new Option() {
-    @NotNull
-    @Override
-    public String getName() {
-      return IdeBundle.message("action.sort.by.type");
-    }
-
-    @Override
-    public String getDescription() {
-      return getName();
-    }
-
     @Override
     public boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
       return pane.supportsSortByType();
@@ -1015,30 +876,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     if (myActionGroup == null) return;
     myActionGroup.removeAll();
 
-    myActionGroup.addAction(Action.SHOW_MODULES).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_MEMBERS).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_EXCLUDED_FILES).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_VISIBILITY_ICONS).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_LIBRARY_CONTENTS).setAsSecondary(true);
-    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
-
-    myActionGroup.addAction(Action.FLATTEN_MODULES).setAsSecondary(true);
-    myActionGroup.addAction(Action.FLATTEN_PACKAGES).setAsSecondary(true);
-    myActionGroup.addAction(Action.HIDE_EMPTY_MIDDLE_PACKAGES).setAsSecondary(true);
-    myActionGroup.addAction(Action.ABBREVIATE_PACKAGE_NAMES).setAsSecondary(true);
-    myActionGroup.addAction(Action.COMPACT_DIRECTORIES).setAsSecondary(true);
-    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
-
-    myActionGroup.addAction(Action.AUTOSCROLL_TO_SOURCE).setAsSecondary(true);
-    myActionGroup.addAction(Action.AUTOSCROLL_FROM_SOURCE).setAsSecondary(true);
-    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
-
-    myActionGroup.addAction(Action.MANUAL_ORDER).setAsSecondary(true);
-    myActionGroup.addAction(Action.SORT_BY_TYPE).setAsSecondary(true);
-    myActionGroup.addAction(Action.FOLDERS_ALWAYS_ON_TOP).setAsSecondary(true);
-
-    AnAction editScopesAction = ActionManager.getInstance().getAction("ScopeView.EditScopes");
-    if (editScopesAction != null) myActionGroup.addAction(editScopesAction).setAsSecondary(true);
+    DefaultActionGroup group = (DefaultActionGroup)ActionManager.getInstance().getAction("ProjectView.ToolWindow.SecondaryActions");
+    for (AnAction action : group.getChildActionsOrStubs()) myActionGroup.addAction(action).setAsSecondary(true);
 
     pane.addToolbarActions(myActionGroup);
 
@@ -2207,29 +2046,102 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   static class Action extends ToggleOptionAction implements DumbAware {
-    static final Action ABBREVIATE_PACKAGE_NAMES =
-      new Action(view -> view.myAbbreviatePackageNames, AllIcons.ObjectBrowser.AbbreviatePackageNames);
-    static final Action AUTOSCROLL_FROM_SOURCE = new Action(view -> view.myAutoscrollFromSource, AllIcons.General.AutoscrollFromSource);
-    static final Action AUTOSCROLL_TO_SOURCE = new Action(view -> view.myAutoscrollToSource, AllIcons.General.AutoscrollToSource);
-    static final Action COMPACT_DIRECTORIES = new Action(view -> view.myCompactDirectories, null);
-    static final Action FLATTEN_MODULES = new Action(view -> view.myFlattenModules, AllIcons.ObjectBrowser.FlattenModules);
-    static final Action FLATTEN_PACKAGES = new Action(view -> view.myFlattenPackages, AllIcons.ObjectBrowser.FlattenPackages);
-    static final Action FOLDERS_ALWAYS_ON_TOP = new Action(view -> view.myFoldersAlwaysOnTop, null);
-    static final Action HIDE_EMPTY_MIDDLE_PACKAGES = new Action(view -> view.myHideEmptyMiddlePackages, null);
-    static final Action MANUAL_ORDER = new Action(view -> view.myManualOrder, AllIcons.ObjectBrowser.Sorted);
-    static final Action SHOW_EXCLUDED_FILES = new Action(view -> view.myShowExcludedFiles, null);
-    static final Action SHOW_LIBRARY_CONTENTS = new Action(view -> view.myShowLibraryContents, AllIcons.ObjectBrowser.ShowLibraryContents);
-    static final Action SHOW_MEMBERS = new Action(view -> view.myShowMembers, AllIcons.ObjectBrowser.ShowMembers);
-    static final Action SHOW_MODULES = new Action(view -> view.myShowModules, AllIcons.Actions.GroupByModule);
-    static final Action SHOW_VISIBILITY_ICONS = new Action(view -> view.myShowVisibilityIcons, null);
-    static final Action SORT_BY_TYPE = new Action(view -> view.mySortByType, AllIcons.ObjectBrowser.SortByType);
-
-    private Action(@NotNull Function<ProjectViewImpl, Option> optionSupplier, @Nullable Icon icon) {
+    private Action(@NotNull Function<ProjectViewImpl, Option> optionSupplier) {
       super(event -> {
         Project project = event.getProject();
         ProjectView view = project == null || project.isDisposed() ? null : getInstance(project);
         return view instanceof ProjectViewImpl ? optionSupplier.apply((ProjectViewImpl)view) : null;
-      }, icon);
+      });
+    }
+
+    static final class AbbreviatePackageNames extends Action {
+      AbbreviatePackageNames() {
+        super(view -> view.myAbbreviatePackageNames);
+      }
+    }
+
+    static final class AutoscrollFromSource extends Action {
+      AutoscrollFromSource() {
+        super(view -> view.myAutoscrollFromSource);
+      }
+    }
+
+    static final class AutoscrollToSource extends Action {
+      AutoscrollToSource() {
+        super(view -> view.myAutoscrollToSource);
+      }
+    }
+
+    static final class CompactDirectories extends Action {
+      CompactDirectories() {
+        super(view -> view.myCompactDirectories);
+      }
+    }
+
+    static final class FlattenModules extends Action {
+      FlattenModules() {
+        super(view -> view.myFlattenModules);
+      }
+    }
+
+    static final class FlattenPackages extends Action {
+      FlattenPackages() {
+        super(view -> view.myFlattenPackages);
+      }
+    }
+
+    static final class FoldersAlwaysOnTop extends Action {
+      FoldersAlwaysOnTop() {
+        super(view -> view.myFoldersAlwaysOnTop);
+      }
+    }
+
+    static final class HideEmptyMiddlePackages extends Action {
+      HideEmptyMiddlePackages() {
+        super(view -> view.myHideEmptyMiddlePackages);
+      }
+    }
+
+    static final class ManualOrder extends Action {
+      ManualOrder() {
+        super(view -> view.myManualOrder);
+      }
+    }
+
+    static final class ShowExcludedFiles extends Action {
+      ShowExcludedFiles() {
+        super(view -> view.myShowExcludedFiles);
+      }
+    }
+
+    static final class ShowLibraryContents extends Action {
+      ShowLibraryContents() {
+        super(view -> view.myShowLibraryContents);
+      }
+    }
+
+    static final class ShowMembers extends Action {
+      ShowMembers() {
+        super(view -> view.myShowMembers);
+      }
+    }
+
+    static final class ShowModules extends Action {
+      ShowModules() {
+        super(view -> view.myShowModules);
+      }
+    }
+
+    static final class ShowVisibilityIcons extends Action {
+      ShowVisibilityIcons() {
+        super(view -> view.myShowVisibilityIcons);
+      }
+    }
+
+    static final class SortByType extends Action {
+      SortByType() {
+        super(view -> view.mySortByType);
+      }
     }
   }
 }
