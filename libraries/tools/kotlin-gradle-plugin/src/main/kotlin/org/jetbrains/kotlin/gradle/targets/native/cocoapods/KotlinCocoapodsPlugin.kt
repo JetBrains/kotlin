@@ -130,10 +130,12 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun createSyncTask(
         project: Project,
-        kotlinExtension: KotlinMultiplatformExtension
+        kotlinExtension: KotlinMultiplatformExtension,
+        cocoapodsExtension: CocoapodsExtension
     ) = project.whenEvaluated {
-        val requestedTargetName = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
-        val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
+        //TODO remove hardcode
+        val requestedTargetName = "ios_x64"
+        val requestedBuildType = "Release"
 
         // We create a fat framework only for device platforms which have several
         // device architectures: iosArm64, iosArm32, watchosArm32 and watchosArm64.
@@ -173,6 +175,20 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun createPodInstallTask(
+        project: Project,
+        cocoapodsExtension: CocoapodsExtension
+    ) {
+        val podspecTask = project.tasks.getByPath("podspec")
+        project.tasks.register("podInstall", PodInstallTask::class.java) {
+            it.group = podspecTask.group
+            it.description = "Invokes pod install within the directory contains the Podfile file"
+            it.podfileProvider = project.provider { project.projectDir.resolve(cocoapodsExtension.podfile) }
+            it.xcodeprojProvider = project.provider { project.projectDir.resolve(cocoapodsExtension.xcodeproj) }
+            it.dependsOn(podspecTask)
+        }
+    }
+
     private fun createInterops(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
@@ -195,23 +211,26 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 // to avoid showing it in the `tasks` output.
             }
 
+            val podInstallTask = project.tasks.getByPath("podInstall") as PodInstallTask
+
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.create(pod.moduleName) { interop ->
 
                     val interopTask = project.tasks.getByPath(interop.interopProcessingTaskName)
                     interopTask.dependsOn(defTask)
+                    interopTask.dependsOn(podInstallTask)
                     interop.defFile = defTask.outputFile
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
-                    project.findProperty(CFLAGS_PROPERTY)?.toString()?.let { args ->
+                    podInstallTask.buildParametersMap[CFLAGS_PROPERTY]?.toString()?.let { args ->
                         // Xcode quotes around paths with spaces.
                         // Here and below we need to split such paths taking this into account.
                         interop.compilerOpts.addAll(args.splitQuotedArgs())
                     }
-                    project.findProperty(HEADER_PATHS_PROPERTY)?.toString()?.let { args ->
+                    podInstallTask.buildParametersMap[HEADER_PATHS_PROPERTY]?.toString()?.let { args ->
                         interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
                     }
-                    project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
+                    podInstallTask.buildParametersMap[FRAMEWORK_PATHS_PROPERTY]?.toString()?.let { args ->
                         interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
                     }
 
@@ -247,8 +266,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             kotlinExtension.addExtension(EXTENSION_NAME, cocoapodsExtension)
             createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
-            createSyncTask(project, kotlinExtension)
+            createSyncTask(project, kotlinExtension, cocoapodsExtension)
             createPodspecGenerationTask(project, cocoapodsExtension)
+            createPodInstallTask(project, cocoapodsExtension)
             createInterops(project, kotlinExtension, cocoapodsExtension)
         }
     }

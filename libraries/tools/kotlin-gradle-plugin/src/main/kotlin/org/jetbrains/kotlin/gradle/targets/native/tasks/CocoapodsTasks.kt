@@ -7,18 +7,23 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.wrapper.Wrapper
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_IOS_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_WATCHOS_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.plugin.getConvention
+import org.jetbrains.kotlin.gradle.utils.newProperty
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 /**
  * The task generates a podspec file which allows a user to
@@ -89,25 +94,26 @@ open class PodspecTask : DefaultTask() {
             |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
             |    }
             |
-            |    spec.script_phases = [
-            |        {
-            |            :name => 'Build $specName',
-            |            :execution_position => :before_compile,
-            |            :shell_path => '/bin/sh',
-            |            :script => <<-SCRIPT
-            |                set -ev
-            |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/../"
-            |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
-            |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
-            |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
-            |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
-            |                    -P${KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY}="${'$'}HEADER_SEARCH_PATHS" \
-            |                    -P${KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY}="${'$'}FRAMEWORK_SEARCH_PATHS"
-            |            SCRIPT
-            |        }
-            |    ]
             |end
         """.trimMargin()
+            //            |    spec.script_phases = [
+//            |        {
+//            |            :name => 'Build $specName',
+//            |            :execution_position => :before_compile,
+//            |            :shell_path => '/bin/sh',
+//            |            :script => <<-SCRIPT
+//            |                set -ev
+//            |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/../"
+//            |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
+//            |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
+//            |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
+//            |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
+//            |                    -P${KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY}="${'$'}HEADER_SEARCH_PATHS" \
+//            |                    -P${KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY}="${'$'}FRAMEWORK_SEARCH_PATHS"
+//            |            SCRIPT
+//            |        }
+//            |    ]
+
         )
 
         logger.quiet(
@@ -118,6 +124,69 @@ open class PodspecTask : DefaultTask() {
                 pod '$specName', :path => '${outputFile.parentFile.absolutePath}'
 
             """.trimIndent()
+        )
+    }
+}
+
+/**
+ * The task takes path to the Podfile and call the `pod install`
+ * to obtain sources or artifacts for the declared dependencies.
+ */
+open class PodInstallTask : DefaultTask() {
+    @InputFile
+    lateinit var podfileProvider: Provider<File>
+
+    @InputDirectory
+    lateinit var xcodeprojProvider: Provider<File>
+
+    @Internal
+    val buildParametersMap = mutableMapOf<String, String>()
+
+    @TaskAction
+    fun invoke() {
+        val podfileDir = project.projectDir.resolve(podfileProvider.get()).parentFile
+        val xcodeprojDir = project.projectDir.resolve(xcodeprojProvider.get()).parentFile
+        val podInstallProcess = ProcessBuilder("pod", "install").apply { directory(podfileDir) }.start()
+        val podInstallRetCode = podInstallProcess.waitFor()
+        if (podInstallRetCode != 0) throw GradleException("Unable to run 'pod install', return code $podInstallRetCode")
+        val xcworkspaceDirectory = xcodeprojDir.resolve("${xcodeprojDir.nameWithoutExtension}.xcworkspace")
+        with(xcworkspaceDirectory) {
+            if (!exists() || !isDirectory || listFiles().orEmpty().isEmpty()) {
+                throw GradleException("Failed to create $name")
+            }
+
+            val buildSettingsProcess = ProcessBuilder(
+                "xcodebuild", "-showBuildSettings",
+                "-workspace", name,
+                "-scheme", nameWithoutExtension
+            ).apply {
+                directory(podfileDir)
+            }.start()
+            val buildSettingsRetCode = buildSettingsProcess.waitFor()
+            if (buildSettingsRetCode != 0) throw GradleException(
+                "Unable to run 'xcodebuild -showBuildSettings " +
+                        "-workspace $name " +
+                        "-scheme $nameWithoutExtension', " +
+                        "return code $buildSettingsRetCode"
+            )
+
+            val stdOut = buildSettingsProcess.inputStream.bufferedReader().use { it.readText() }
+//            stdOut.lines()
+//                .map {
+//                    val (k, v) = it.split(" = ")
+//                    k to v
+//                }.filter { it.first in buildSettingsMap.keys }
+//                .map { buildSettingsMap.getValue(it.first) to it.second }
+//                .forEach { buildParametersMap[it.first] = it.second }
+        }
+    }
+
+    companion object {
+        private val buildSettingsMap = mapOf(
+            "CONFIGURATION" to KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY,
+            "OTHER_CFLAGS" to KotlinCocoapodsPlugin.CFLAGS_PROPERTY,
+            "HEADER_SEARCH_PATHS" to KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY,
+            "FRAMEWORK_SEARCH_PATHS" to KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY
         )
     }
 }

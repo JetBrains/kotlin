@@ -13,11 +13,24 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
+import kotlin.annotations.jvm.Mutable
 
 open class CocoapodsExtension(private val project: Project) {
     @get:Input
     val version: String
         get() = project.version.toString()
+
+    /**
+     * Configure relative path to the Podfile.
+     */
+    @Input
+    lateinit var podfile: String
+
+    /**
+     * Configure relative path to the .xcodeproj file.
+     */
+    @Input
+    lateinit var xcodeproj: String
 
     /**
      * Configure authors of the pod built from this project.
@@ -52,6 +65,9 @@ open class CocoapodsExtension(private val project: Project) {
      */
     @Input
     var frameworkName: String = project.name.asValidFrameworkName()
+
+//    @Nested
+//    val buildSettings: MutableMap<String, String> = mutableMapOf()
 
     private val _pods = project.container(CocoapodsDependency::class.java)
 
