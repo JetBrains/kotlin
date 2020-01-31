@@ -51,13 +51,14 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   public static final ID<Integer, SerializedStubTree> INDEX_ID = ID.create("Stubs");
 
   private static final FileBasedIndex.InputFilter INPUT_FILTER = file -> canHaveStub(file);
+  @NotNull
   private final StubForwardIndexExternalizer<?> myStubIndexesExternalizer;
 
   public StubUpdatingIndex() {
     myStubIndexesExternalizer = SerializedStubTree.IDE_USED_EXTERNALIZER;
   }
 
-  public StubUpdatingIndex(StubForwardIndexExternalizer<?> stubIndexesExternalizer) {
+  public StubUpdatingIndex(@NotNull StubForwardIndexExternalizer<?> stubIndexesExternalizer) {
     myStubIndexesExternalizer = stubIndexesExternalizer;
   }
 
