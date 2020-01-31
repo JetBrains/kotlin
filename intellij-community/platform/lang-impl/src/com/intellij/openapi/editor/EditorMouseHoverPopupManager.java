@@ -42,6 +42,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.ui.popup.util.PopupUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
@@ -54,7 +55,6 @@ import com.intellij.reference.SoftReference;
 import com.intellij.ui.*;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupFactoryImpl;
-import com.intellij.ui.popup.PopupPositionManager;
 import com.intellij.util.Alarm;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.JBUI;
@@ -250,11 +250,25 @@ public final class EditorMouseHoverPopupManager implements Disposable {
   }
 
   private static boolean isPopupDisabled(Editor editor) {
-    return isAnotherAppInFocus() || EditorMouseHoverPopupControl.arePopupsDisabled(editor) || LookupManager.getActiveLookup(editor) != null;
+    return isAnotherAppInFocus() ||
+           EditorMouseHoverPopupControl.arePopupsDisabled(editor) ||
+           LookupManager.getActiveLookup(editor) != null ||
+           isAnotherPopupFocused() ||
+           isContextMenuShown();
   }
 
   private static boolean isAnotherAppInFocus() {
     return KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow() == null;
+  }
+
+  // e.g. if documentation popup (opened via keyboard shortcut) is already shown
+  private static boolean isAnotherPopupFocused() {
+    JBPopup popup = PopupUtil.getPopupContainerFor(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner());
+    return popup != null && !popup.isDisposed();
+  }
+
+  private static boolean isContextMenuShown() {
+    return MenuSelectionManager.defaultManager().getSelectedPath().length > 0;
   }
 
   private Rectangle getCurrentHintBounds(Editor editor) {
@@ -274,7 +288,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     myKeepPopupOnMouseMove = false;
     editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, context.getPopupPosition(editor));
     try {
-      PopupPositionManager.positionPopupInBestPosition(hint, editor, null);
+      hint.showInBestPositionFor(editor);
     }
     finally {
       editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null);
