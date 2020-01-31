@@ -865,7 +865,13 @@ class DeclarationsConverter(
                 FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
                 annotations += modifiers.annotations
-                this.generateAccessorsByDelegate(this@DeclarationsConverter.session, member = false, stubMode, receiver)
+                this.generateAccessorsByDelegate(
+                    this@DeclarationsConverter.session,
+                    member = false,
+                    extension = false,
+                    stubMode,
+                    receiver
+                )
             }
         } else {
             val status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
@@ -902,7 +908,11 @@ class DeclarationsConverter(
                 this.getter = getter ?: FirDefaultPropertyGetter(null, session, returnType, modifiers.getVisibility())
                 this.setter = if (isVar) setter ?: FirDefaultPropertySetter(null, session, returnType, modifiers.getVisibility()) else null
                 generateAccessorsByDelegate(
-                    this@DeclarationsConverter.session, member = parentNode?.tokenType != KT_FILE, stubMode, receiver
+                    this@DeclarationsConverter.session,
+                    member = parentNode?.tokenType != KT_FILE,
+                    extension = receiverType != null,
+                    stubMode,
+                    receiver
                 )
             }
         }

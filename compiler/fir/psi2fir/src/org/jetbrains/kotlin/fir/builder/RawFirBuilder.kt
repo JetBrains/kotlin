@@ -863,7 +863,7 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     true,
                     FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
                 ).apply {
-                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = false, stubMode, receiver)
+                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = false, extension = false, stubMode, receiver)
                 }
             } else {
                 val status = FirDeclarationStatusImpl(property.visibility, property.modality).apply {
@@ -895,7 +895,13 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     property.extractTypeParametersTo(this)
                     getter = property.getter.toFirPropertyAccessor(property, propertyType, isGetter = true)
                     setter = if (isVar) property.setter.toFirPropertyAccessor(property, propertyType, isGetter = false) else null
-                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = !property.isTopLevel, stubMode, receiver)
+                    generateAccessorsByDelegate(
+                        this@RawFirBuilder.session,
+                        member = !property.isTopLevel,
+                        extension = property.receiverTypeReference != null,
+                        stubMode,
+                        receiver
+                    )
                 }
             }
             property.extractAnnotationsTo(firProperty)

@@ -7,3 +7,11 @@ fun foo() {
     val y by lazy { "Bye" }
     y.length
 }
+
+class Some {
+    val z by lazy { "Some" }
+
+    fun foo() {
+        z.length
+    }
+}

@@ -14,3 +14,21 @@ FILE: simpleLazy.kt
         )
         R|<local>/y|.R|kotlin/String.length|
     }
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val z: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
+            String(Some)
+        }
+        )
+            public get(): R|kotlin/String| {
+                ^ D|/Some.z|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/Some|, ::R|/Some.z|)
+            }
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Some|.R|/Some.z|.R|kotlin/String.length|
+        }
+
+    }
