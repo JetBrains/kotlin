@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
+import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -208,13 +209,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             }
         }
 
-        if (function.isSuspend && function.origin != JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW &&
-            function.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW &&
-            (function.parent as? IrClass)?.origin != JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-        ) {
-            return mapSignature(function.suspendFunctionView(context, false), skipGenericSignature)
-        }
-
         val sw = if (skipGenericSignature) JvmSignatureWriter() else BothSignatureWriter(BothSignatureWriter.Mode.METHOD)
 
         typeMapper.writeFormalTypeParameters(function.typeParameters, sw)
@@ -300,7 +294,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
     fun mapToCallableMethod(caller: IrFunction, expression: IrFunctionAccessExpression): IrCallableMethod {
-        val callee = expression.symbol.owner.getOrCreateSuspendFunctionViewIfNeeded(context)
+        val callee = expression.symbol.owner
         val calleeParent = callee.parentAsClass
         val owner = typeMapper.mapClass(calleeParent)
 

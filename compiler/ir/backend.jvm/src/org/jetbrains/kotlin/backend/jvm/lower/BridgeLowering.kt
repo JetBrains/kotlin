@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,10 +37,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
@@ -424,7 +427,11 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             IrValueParameterSymbolImpl(descriptor),
             name,
             index,
-            type.eraseTypeParameters(),
+            // SuspendFunction{N} is Function{N+1} at runtime, thus, when we generate a bridge for suspend callable reference,
+            // we need to replace type of its continuation parameter with Any?
+            if (target.isSuspend && type.eraseTypeParameters().getClass()
+                    ?.fqNameWhenAvailable == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+            ) context.irBuiltIns.anyNType else type.eraseTypeParameters(),
             varargElementType?.eraseTypeParameters(),
             isCrossinline,
             isNoinline

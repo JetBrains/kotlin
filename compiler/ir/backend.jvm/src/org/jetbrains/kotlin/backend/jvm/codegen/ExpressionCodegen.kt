@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -166,7 +168,7 @@ class ExpressionCodegen(
 
     // TODO remove
     fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
-        if (expression === context.fakeContinuation) {
+        if (expression.attributeOwnerId === context.fakeContinuation) {
             addFakeContinuationMarker(mv)
         } else {
             expression.accept(this, data).coerce(type, irType).materialize()
@@ -219,10 +221,11 @@ class ExpressionCodegen(
     }
 
     private fun generateFakeContinuationConstructorIfNeeded() {
-        if (irFunction.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW) return
+        if (irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE) return
         val continuationClass = classCodegen.irClass.functions.find {
-            it.name.asString() == irFunction.name.asString().removeSuffix(FOR_INLINE_SUFFIX)
-        }?.body?.statements?.get(0) ?: error("could not find continuation for ${irFunction.render()}")
+            it.attributeOwnerId == (irFunction as? IrSimpleFunction)?.attributeOwnerId &&
+                    it.name.asString() == irFunction.name.asString().removeSuffix(FOR_INLINE_SUFFIX)
+        }?.body?.statements?.firstIsInstance<IrClass>() ?: error("could not find continuation for ${irFunction.render()}")
         generateFakeContinuationConstructorCall(
             mv,
             classCodegen.visitor,
@@ -254,12 +257,10 @@ class ExpressionCodegen(
         if (notCallableFromJava)
             return
 
-        // Do not generate non-null checks for suspend function views. When resumed the arguments
+        // Do not generate non-null checks for suspend functions. When resumed the arguments
         // will be null and the actual values are taken from the continuation.
-        val isSuspendFunctionView = irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE_VIEW
 
-        if (isSuspendFunctionView)
+        if (irFunction.isSuspend)
             return
 
         irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
@@ -361,10 +362,6 @@ class ExpressionCodegen(
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
         visitStatementContainer(expression, data).coerce(expression.type)
 
-    override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction, inlinedInto != null), data)
-    }
-
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it }
@@ -445,7 +442,7 @@ class ExpressionCodegen(
             // Check return type of non-lowered suspend call, in order to replace the result of the call with Unit,
             // otherwise, it would seem like the call returns non-unit upon resume.
             // See box/coroutines/tailCallOptimization/unit tests.
-            if (context.suspendFunctionViewToOriginal[expression.symbol.owner]?.returnType?.isUnit() == true) {
+            if (((expression.symbol.owner as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.returnType?.isUnit() == true) {
                 addReturnsUnitMarker(mv)
             }
 
@@ -486,11 +483,11 @@ class ExpressionCodegen(
             // Inside $$forInline functions crossinline calls are (usually) not suspension points, otherwise, flow will be pessimized
             (dispatchReceiver as? IrGetField)?.symbol?.owner?.origin ==
                     LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE ->
-                irFunction.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+                irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
             // The same goes for inline lambdas
             (dispatchReceiver as? IrGetValue)?.let {
                 it.origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (it.symbol.owner as? IrValueParameter)?.isNoinline != true
-            } == true -> irFunction.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+            } == true -> irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE
             // Otherwise, this is normal inline call, ergo not a suspension point
             else -> false
         }
@@ -636,10 +633,21 @@ class ExpressionCodegen(
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
         val returnTarget = expression.returnTargetSymbol.owner
-        val owner =
-            (returnTarget as? IrFunction
+        var owner =
+            returnTarget as? IrFunction
                 ?: (returnTarget as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
-                ?: error("Unsupported IrReturnTarget: $returnTarget")).getOrCreateSuspendFunctionViewIfNeeded(context)
+                ?: error("Unsupported IrReturnTarget: $returnTarget")
+        // $$forInline and $suspendImpl functions share the same attributes as originals, but the name is different
+        // fix the return target. TODO: attributes seem to be overloaded. We rely on their uniqueness across transformations to find views
+        // TODO: but in this case, they are not unique enough.
+        if ((irFunction.origin == FOR_INLINE_STATE_MACHINE_TEMPLATE ||
+                    irFunction.origin == SUSPEND_IMPL_STATIC_FUNCTION ||
+                    irFunction.origin == FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE) &&
+            owner.isSuspend && irFunction is IrSimpleFunction && owner is IrSimpleFunction &&
+            irFunction.attributeOwnerId == owner.attributeOwnerId
+        ) {
+            owner = irFunction
+        }
         //TODO: should be owner != irFunction
         val isNonLocalReturn =
             methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
