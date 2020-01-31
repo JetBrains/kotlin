@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
-import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
@@ -75,13 +76,18 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return false
         if (operation(calleeExpression) == null) return false
 
-        val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = element.callExpression?.getResolvedCall(context) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
         if (resolvedCall.call.typeArgumentList != null) return false
         val argument = resolvedCall.call.valueArguments.singleOrNull() ?: return false
         if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.index != 0) return false
 
-        return element.isReceiverExpressionWithValue()
+        if (!element.isReceiverExpressionWithValue()) return false
+
+        val (expressionToBeReplaced, newExpression) = getReplacementExpression(element) ?: return false
+        val newContext = newExpression.analyzeAsReplacement(expressionToBeReplaced, context)
+        return newContext.diagnostics.noSuppression().forElement(newExpression).isEmpty()
     }
 
     override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
@@ -120,26 +126,32 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
-        val callExpression = element.callExpression ?: return
-        val operation = operation(callExpression.calleeExpression as? KtSimpleNameExpression ?: return) ?: return
-        val argument = callExpression.valueArguments.single().getArgumentExpression() ?: return
+        val (expressionToBeReplaced, newExpression) = getReplacementExpression(element) ?: return
+        expressionToBeReplaced.replace(newExpression)
+    }
+
+    private fun getReplacementExpression(element: KtDotQualifiedExpression): Pair<KtExpression, KtExpression>? {
+        val callExpression = element.callExpression ?: return null
+        val calleeExpression = callExpression.calleeExpression as? KtSimpleNameExpression ?: return null
+        val operation = operation(calleeExpression) ?: return null
+        val argument = callExpression.valueArguments.single().getArgumentExpression() ?: return null
         val receiver = element.receiverExpression
 
         val factory = KtPsiFactory(element)
-        when (operation) {
+        return when (operation) {
             KtTokens.EXCLEQ -> {
-                val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return
+                val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return null
                 val newExpression = factory.createExpressionByPattern("$0 != $1", receiver, argument)
-                prefixExpression.replace(newExpression)
+                prefixExpression to newExpression
             }
             in OperatorConventions.COMPARISON_OPERATIONS -> {
-                val binaryParent = element.parent as? KtBinaryExpression ?: return
+                val binaryParent = element.parent as? KtBinaryExpression ?: return null
                 val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
-                binaryParent.replace(newExpression)
+                binaryParent to newExpression
             }
             else -> {
                 val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
-                element.replace(newExpression)
+                element to newExpression
             }
         }
     }
