@@ -29,6 +29,7 @@ fun ThrowClassCastException(instance: Any, typeInfo: NativePtr): Nothing {
     throw ClassCastException("${instance::class.qualifiedName} cannot be cast to ${clazz.qualifiedName}")
 }
 
+@ExportForCppRuntime
 fun ThrowTypeCastException(): Nothing {
     throw TypeCastException()
 }
