@@ -137,7 +137,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
             if (serializedStubTree == null) {
               Stub rootStub = StubTreeBuilder.buildStubTree(inputData, type);
               if (rootStub != null) {
-                serializedStubTree = new SerializedStubTree(rootStub, SerializationManagerEx.getInstanceEx(), SerializedStubTree.IDE_USED_EXTERNALIZER);
+                serializedStubTree = SerializedStubTree.serializeStub(rootStub, SerializationManagerEx.getInstanceEx(), SerializedStubTree.IDE_USED_EXTERNALIZER);
                 if (DebugAssertions.DEBUG) {
                   Stub deserialized = serializedStubTree.retrieveStubFromBytes(SerializationManagerEx.getInstanceEx());
                   check(deserialized, rootStub);
