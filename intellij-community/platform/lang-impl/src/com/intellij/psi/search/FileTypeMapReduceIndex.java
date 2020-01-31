@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Map;
 
-class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void, FileContent> {
+class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void> {
   private static final Logger LOG = Logger.getInstance(FileTypeIndexImpl.class);
 
   FileTypeMapReduceIndex(@NotNull FileBasedIndexExtension<FileType, Void> extension, @NotNull IndexStorage<FileType, Void> storage) throws IOException {

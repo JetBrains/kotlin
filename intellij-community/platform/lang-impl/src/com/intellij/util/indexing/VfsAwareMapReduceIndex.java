@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 /**
  * @author Eugene Zhuravlev
  */
-public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Key, Value, Input> implements UpdatableIndex<Key, Value, Input>{
+public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Value, FileContent> implements UpdatableIndex<Key, Value, FileContent>{
   private static final Logger LOG = Logger.getInstance(VfsAwareMapReduceIndex.class);
 
   @ApiStatus.Internal
@@ -54,11 +54,11 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @SuppressWarnings("rawtypes")
   private final PersistentSubIndexerRetriever mySubIndexerRetriever;
-  private final SnapshotInputMappingIndex<Key, Value, Input> mySnapshotInputMappings;
+  private final SnapshotInputMappingIndex<Key, Value, FileContent> mySnapshotInputMappings;
   private final boolean myUpdateMappings;
   private final boolean mySingleEntryIndex;
 
-  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
+  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, FileContent> extension,
                                 @NotNull IndexStorage<Key, Value> storage) throws IOException {
     this(extension,
          storage,
@@ -68,9 +68,9 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     }
   }
 
-  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
+  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, FileContent> extension,
                                 @NotNull IndexStorage<Key, Value> storage,
-                                @Nullable SnapshotInputMappings<Key, Value, Input> snapshotInputMappings) throws IOException {
+                                @Nullable SnapshotInputMappings<Key, Value> snapshotInputMappings) throws IOException {
     this(extension,
          storage,
          snapshotInputMappings != null ? new SharedIntMapForwardIndex(extension, snapshotInputMappings.getInputIndexStorageFile(), true)
@@ -79,11 +79,11 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
          snapshotInputMappings, null);
   }
 
-  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
+  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, FileContent> extension,
                                 @NotNull IndexStorage<Key, Value> storage,
                                 @Nullable ForwardIndex forwardIndexMap,
                                 @Nullable ForwardIndexAccessor<Key, Value> forwardIndexAccessor,
-                                @Nullable SnapshotInputMappings<Key, Value, Input> snapshotInputMappings,
+                                @Nullable SnapshotInputMappings<Key, Value> snapshotInputMappings,
                                 @Nullable ReadWriteLock lock) {
     super(extension, storage, forwardIndexMap, forwardIndexAccessor, lock);
     if (myIndexId instanceof ID) {
@@ -93,7 +93,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
       VfsAwareIndexStorage<Key, Value> backendStorage = ((MemoryIndexStorage<Key, Value>)storage).getBackendStorage();
       if (backendStorage instanceof SnapshotSingleValueIndexStorage) {
         LOG.assertTrue(forwardIndexMap instanceof IntForwardIndex);
-        ((SnapshotSingleValueIndexStorage<Key, Value, Input>)backendStorage).init(snapshotInputMappings, ((IntForwardIndex)forwardIndexMap));
+        ((SnapshotSingleValueIndexStorage<Key, Value>)backendStorage).init(snapshotInputMappings, ((IntForwardIndex)forwardIndexMap));
       }
     }
     //TODO make it works with snapshot mappings enabled
@@ -124,7 +124,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @NotNull
   @Override
-  protected InputData<Key, Value> mapInput(int inputId, @Nullable Input content) {
+  protected InputData<Key, Value> mapInput(int inputId, @Nullable FileContent content) {
     InputData<Key, Value> data;
     boolean containsSnapshotData = true;
     if (mySnapshotInputMappings != null && content != null) {
@@ -143,7 +143,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     data = super.mapInput(inputId, content);
     if (!containsSnapshotData && !UpdatableSnapshotInputMappingIndex.ignoreMappingIndexUpdate(content)) {
       try {
-        return ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).putData(content, data);
+        return ((UpdatableSnapshotInputMappingIndex<Key, Value, FileContent>)mySnapshotInputMappings).putData(content, data);
       }
       catch (IOException e) {
         throw new RuntimeException(e);
@@ -367,7 +367,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     super.doClear();
     if (mySnapshotInputMappings != null && myUpdateMappings) {
       try {
-        ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).clear();
+        ((UpdatableSnapshotInputMappingIndex<Key, Value, FileContent>)mySnapshotInputMappings).clear();
       }
       catch (IOException e) {
         LOG.error(e);
@@ -387,7 +387,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   protected void doFlush() throws IOException, StorageException {
     super.doFlush();
     if (mySnapshotInputMappings != null && myUpdateMappings) {
-      ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).flush();
+      ((UpdatableSnapshotInputMappingIndex<Key, Value, FileContent>)mySnapshotInputMappings).flush();
     }
     if (mySubIndexerRetriever != null) {
       mySubIndexerRetriever.flush();

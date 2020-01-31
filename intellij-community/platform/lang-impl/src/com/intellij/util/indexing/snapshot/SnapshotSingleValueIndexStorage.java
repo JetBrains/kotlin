@@ -17,18 +17,18 @@ import java.util.Map;
 /**
  * {@link VfsAwareIndexStorage} implementation for {@link SingleEntryFileBasedIndexExtension} indexes.
  */
-public class SnapshotSingleValueIndexStorage<Key, Value, Input> implements VfsAwareIndexStorage<Key, Value> {
+public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key, Value> {
   private static final Logger LOG = Logger.getInstance(SnapshotSingleValueIndexStorage.class);
 
   // shareable snapshots
-  private volatile SnapshotInputMappings<Key, Value, Input> mySnapshotInputMappings;
+  private volatile SnapshotInputMappings<Key, Value> mySnapshotInputMappings;
 
   // input -> hash (client instance dependent)
   private volatile IntForwardIndex myForwardIndex;
 
   private volatile boolean myInitialized;
 
-  public void init(@NotNull SnapshotInputMappings<Key, Value, Input> snapshotInputMappings, @NotNull IntForwardIndex forwardIndex) {
+  public void init(@NotNull SnapshotInputMappings<Key, Value> snapshotInputMappings, @NotNull IntForwardIndex forwardIndex) {
     assert !myInitialized;
     myForwardIndex = forwardIndex;
     mySnapshotInputMappings = snapshotInputMappings;

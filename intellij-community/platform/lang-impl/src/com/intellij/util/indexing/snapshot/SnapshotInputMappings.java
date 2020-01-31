@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInputMappingIndex<Key, Value, Input> {
+public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInputMappingIndex<Key, Value, FileContent> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
 
   private static final boolean USE_MANUAL_COMPRESSION = SystemProperties.getBooleanProperty("snapshots.use.manual.compression", false);
@@ -32,15 +32,15 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
   private final ID<Key, Value> myIndexId;
   private final DataExternalizer<Map<Key, Value>> myMapExternalizer;
   private final DataExternalizer<Value> myValueExternalizer;
-  private final DataIndexer<Key, Value, Input> myIndexer;
+  private final DataIndexer<Key, Value, FileContent> myIndexer;
   private final PersistentMapBasedForwardIndex myContents;
   private volatile PersistentHashMap<Integer, String> myIndexingTrace;
 
-  private final HashIdForwardIndexAccessor<Key, Value, Input> myHashIdForwardIndexAccessor;
+  private final HashIdForwardIndexAccessor<Key, Value, FileContent> myHashIdForwardIndexAccessor;
 
   private final boolean myIsPsiBackedIndex;
 
-  public SnapshotInputMappings(IndexExtension<Key, Value, Input> indexExtension) throws IOException {
+  public SnapshotInputMappings(IndexExtension<Key, Value, FileContent> indexExtension) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
     myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
 
@@ -54,7 +54,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
     myIndexingTrace = DebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
   }
 
-  public HashIdForwardIndexAccessor<Key, Value, Input> getForwardIndexAccessor() {
+  public HashIdForwardIndexAccessor<Key, Value, FileContent> getForwardIndexAccessor() {
     return myHashIdForwardIndexAccessor;
   }
 
@@ -70,7 +70,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
 
   @Nullable
   @Override
-  public InputData<Key, Value> readData(@NotNull Input content) throws IOException {
+  public InputData<Key, Value> readData(@NotNull FileContent content) throws IOException {
     int hashId = getHashId(content);
 
     Map<Key, Value> data = doReadData(hashId);
@@ -126,7 +126,7 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
   }
 
   @Override
-  public InputData<Key, Value> putData(@Nullable Input content, @NotNull InputData<Key, Value> data) throws IOException {
+  public InputData<Key, Value> putData(@Nullable FileContent content, @NotNull InputData<Key, Value> data) throws IOException {
     int hashId;
     InputData<Key, Value> result;
     if (data instanceof HashedInputData) {
@@ -151,12 +151,12 @@ public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapsh
   }
 
   @NotNull
-  private String getContentDebugData(Input input) {
+  private static String getContentDebugData(FileContent input) {
     FileContentImpl content = (FileContentImpl) input;
     return "[" + content.getFile().getPath() + ";" + content.getFileType().getName() + ";" + content.getCharset() + "]";
   }
 
-  private int getHashId(@Nullable Input content) throws IOException {
+  private int getHashId(@Nullable FileContent content) throws IOException {
     return content == null ? 0 : getHashOfContent((FileContentImpl)content);
   }
 

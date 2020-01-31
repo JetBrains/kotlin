@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
 
-class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Value, FileContent> {
+class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Value> {
   @NotNull
   private final ProvidedIndexExtension<Key, Value> myProvidedExtension;
 

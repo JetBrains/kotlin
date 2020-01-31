@@ -280,7 +280,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     return new MyIndex(extension, storage);
   }
 
-  private static class MyIndex extends VfsAwareMapReduceIndex<Integer, SerializedStubTree, FileContent> {
+  private static class MyIndex extends VfsAwareMapReduceIndex<Integer, SerializedStubTree> {
     private StubIndexImpl myStubIndex;
     @Nullable
     private final StubVersionMap myStubVersionMap =

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Map;
 
-public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void, FileContent> {
+public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void> {
   public FileContentHashIndex(@NotNull FileContentHashIndexExtension extension, IndexStorage<Long, Void> storage) throws IOException {
     super(extension,
           storage,

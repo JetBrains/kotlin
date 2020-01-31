@@ -363,7 +363,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
         boolean createSnapshotStorage = VfsAwareMapReduceIndex.hasSnapshotMapping(extension) && extension instanceof SingleEntryFileBasedIndexExtension;
         if (createSnapshotStorage) {
-          storage = new SnapshotSingleValueIndexStorage<K, V, FileContent>();
+          storage = new SnapshotSingleValueIndexStorage<>();
         }
         else {
           storage = new VfsAwareMapIndexStorage<>(
