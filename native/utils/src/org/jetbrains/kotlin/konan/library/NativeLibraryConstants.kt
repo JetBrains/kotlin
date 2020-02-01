@@ -12,6 +12,7 @@ const val KONAN_STDLIB_NAME = "stdlib"
 const val KONAN_DISTRIBUTION_KLIB_DIR = "klib"
 const val KONAN_DISTRIBUTION_COMMON_LIBS_DIR = "common"
 const val KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR = "platform"
+const val KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR = "commonized"
 
 const val KONAN_DISTRIBUTION_SOURCES_DIR = "sources"
 
