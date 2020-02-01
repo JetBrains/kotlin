@@ -12,7 +12,7 @@ val mavenCompileScope by configurations.creating {
         .addMapping(0, this, COMPILE)
 }
 
-description = "Kotlin/Native library commonizer"
+description = "Kotlin KLIB Library Commonizer"
 
 dependencies {
     compileOnly(project(":compiler:cli-common"))
