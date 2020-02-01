@@ -12048,6 +12048,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/unnecessaryVariable/copyOfVal.kt");
         }
 
+        @TestMetadata("copyOfValInLambda.kt")
+        public void testCopyOfValInLambda() throws Exception {
+            runTest("testData/inspectionsLocal/unnecessaryVariable/copyOfValInLambda.kt");
+        }
+
+        @TestMetadata("copyOfValInLambda2.kt")
+        public void testCopyOfValInLambda2() throws Exception {
+            runTest("testData/inspectionsLocal/unnecessaryVariable/copyOfValInLambda2.kt");
+        }
+
+        @TestMetadata("copyOfValInLambda3.kt")
+        public void testCopyOfValInLambda3() throws Exception {
+            runTest("testData/inspectionsLocal/unnecessaryVariable/copyOfValInLambda3.kt");
+        }
+
         @TestMetadata("copyOfValUnused.kt")
         public void testCopyOfValUnused() throws Exception {
             runTest("testData/inspectionsLocal/unnecessaryVariable/copyOfValUnused.kt");
