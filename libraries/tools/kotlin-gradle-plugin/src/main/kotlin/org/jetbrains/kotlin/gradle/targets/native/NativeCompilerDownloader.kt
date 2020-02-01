@@ -134,7 +134,7 @@ class NativeCompilerDownloader(
     }
 
     fun downloadIfNeeded() {
-        if (KotlinNativeCompilerRunner(project).classpath.isEmpty) {
+        if (KotlinNativeCompilerRunner(project).classpath.isEmpty()) {
             downloadAndExtract()
         }
     }

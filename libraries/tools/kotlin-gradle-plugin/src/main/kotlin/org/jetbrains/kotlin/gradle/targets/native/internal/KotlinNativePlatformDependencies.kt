@@ -88,6 +88,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
 
         val commonizedLibsDirs: Map<CommonizedCommon, File> =
             runCommonizerInBulk(
+                project = project,
                 distributionDir = distributionDir,
                 baseDestinationDir = distributionDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR).resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR),
                 targetGroups = targetGroups.map { it.second },

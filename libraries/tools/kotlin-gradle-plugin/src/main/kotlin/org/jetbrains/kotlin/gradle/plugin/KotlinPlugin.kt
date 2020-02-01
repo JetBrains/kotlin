@@ -48,6 +48,8 @@ import java.util.jar.Manifest
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
 internal const val COMPILER_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerClasspath"
+internal const val KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME = "kotlinKlibCommonizerClasspath"
+
 val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"

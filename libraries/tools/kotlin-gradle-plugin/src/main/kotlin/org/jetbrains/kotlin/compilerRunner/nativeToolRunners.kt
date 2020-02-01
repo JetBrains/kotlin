@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -15,10 +14,7 @@ import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import java.io.File
-import java.net.URLClassLoader
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 private val Project.jvmArgs
     get() = PropertiesProvider(this).nativeJvmArgs?.split("\\s+".toRegex()).orEmpty()
@@ -65,10 +61,12 @@ internal abstract class KotlinNativeToolRunner(
     }
     final override val systemPropertiesBlacklist = setOf("java.endorsed.dirs")
 
-    final override val classpath: FileCollection = project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }
+    final override val classpath by lazy {
+        project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }.toSet()
+    }
 
     final override fun checkClasspath() =
-        check(!classpath.isEmpty) {
+        check(classpath.isNotEmpty()) {
             """
                 Classpath of the tool is empty: $toolName
                 Probably the '${PropertiesProvider.KOTLIN_NATIVE_HOME}' project property contains an incorrect path.
@@ -76,19 +74,11 @@ internal abstract class KotlinNativeToolRunner(
             """.trimIndent()
         }
 
-    final override fun getIsolatedClassLoader() =
-        isolatedClassLoadersMap.computeIfAbsent(project.konanHome) {
-            val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-            URLClassLoader(arrayOfURLs, null)
-        }
+    final override val isolatedClassLoaderCacheKey get() = project.konanHome
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
     final override fun getCustomJvmArgs() = project.jvmArgs
-
-    companion object {
-        private val isolatedClassLoadersMap = ConcurrentHashMap<String, ClassLoader>()
-    }
 }
 
 /** Kotlin/Native C-interop tool runner */

@@ -6,18 +6,29 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import java.io.File
 
-// TODO: implement this runner
 internal class KotlinNativeKlibCommonizerToolRunner(project: Project) : KotlinToolRunner(project) {
     override val displayName get() = "Kotlin/Native KLIB commonizer"
 
-    override val mainClass: String get() = TODO("not implemented")
-    override val classpath: FileCollection get() = TODO("not implemented")
+    override val mainClass: String get() = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
 
-    override fun getIsolatedClassLoader(): ClassLoader {
-        TODO("not implemented")
+    override val classpath by lazy {
+        try {
+            project.configurations.getByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).resolve() as Set<File>
+        } catch (e: Exception) {
+            project.logger.error(
+                "Could not resolve KLIB commonizer classpath. Check if Kotlin Gradle plugin repository is configured in $project."
+            )
+            throw e
+        }
     }
 
-    override val mustRunViaExec get() = false
+    override val isolatedClassLoaderCacheKey get() = project.getKotlinPluginVersion()!!
+
+    override val defaultMaxHeapSize: String get() = "4G"
+
+    override val mustRunViaExec get() = true // because it's not enough the standard Gradle wrapper's heap size
 }

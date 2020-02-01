@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.konan.target.HostManager
+import java.io.File
 import java.lang.reflect.InvocationTargetException
+import java.net.URLClassLoader
+import java.util.concurrent.ConcurrentHashMap
 
 internal abstract class KotlinToolRunner(
     val project: Project
@@ -25,9 +27,14 @@ internal abstract class KotlinToolRunner(
     open val systemProperties: Map<String, String> = emptyMap()
     open val systemPropertiesBlacklist: Set<String> = emptySet()
 
-    abstract val classpath: FileCollection
-    open fun checkClasspath(): Unit = check(!classpath.isEmpty) { "Classpath of the tool is empty: $displayName" }
-    abstract fun getIsolatedClassLoader(): ClassLoader
+    abstract val classpath: Set<File>
+    open fun checkClasspath(): Unit = check(classpath.isNotEmpty()) { "Classpath of the tool is empty: $displayName" }
+
+    abstract val isolatedClassLoaderCacheKey: Any
+    private fun getIsolatedClassLoader(): ClassLoader = isolatedClassLoadersMap.computeIfAbsent(isolatedClassLoaderCacheKey) {
+        val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
+        URLClassLoader(arrayOfURLs, null)
+    }
 
     open val defaultMaxHeapSize: String get() = "3G"
     open val enableAssertions: Boolean get() = true
@@ -67,7 +74,7 @@ internal abstract class KotlinToolRunner(
     private fun runViaExec(args: List<String>) {
         project.javaexec { spec ->
             spec.main = mainClass
-            spec.classpath = classpath
+            spec.classpath = project.files(classpath)
             spec.jvmArgs(jvmArgs)
             spec.systemProperties(
                 System.getProperties().asSequence()
@@ -87,9 +94,7 @@ internal abstract class KotlinToolRunner(
         val oldProperties = setUpSystemProperties()
 
         try {
-            val classLoader = getIsolatedClassLoader()
-
-            val mainClass = classLoader.loadClass(mainClass)
+            val mainClass = getIsolatedClassLoader().loadClass(mainClass)
             val entryPoint = mainClass.methods.single { it.name == daemonEntryPoint }
 
             entryPoint.invoke(null, transformArgs(args).toTypedArray())
@@ -129,5 +134,7 @@ internal abstract class KotlinToolRunner(
 
         private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
             if (HostManager.hostIsMingw) map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() } else this
+
+        private val isolatedClassLoadersMap = ConcurrentHashMap<Any, ClassLoader>()
     }
 }

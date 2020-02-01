@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.gradle.api.Project
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeKlibCommonizerToolRunner
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -16,12 +18,13 @@ import java.nio.file.StandardCopyOption
 import java.util.*
 
 internal fun runCommonizerInBulk(
+    project: Project,
     distributionDir: File,
     baseDestinationDir: File,
     targetGroups: List<Set<KonanTarget>>,
     kotlinVersion: String
 ): List<File> {
-    val commandLineParameters = mutableListOf<String>()
+    val commandLineArguments = mutableListOf<String>()
     val postActions = mutableListOf<() -> Unit>()
 
     val result = targetGroups.map { targets ->
@@ -54,13 +57,13 @@ internal fun runCommonizerInBulk(
                     directory = parentDir
                 )
 
-                commandLineParameters += "native-dist-commonize"
-                commandLineParameters += "-distribution-path"
-                commandLineParameters += distributionDir.toString()
-                commandLineParameters += "-output-path"
-                commandLineParameters += destinationTmpDir.toString()
-                commandLineParameters += "-targets"
-                commandLineParameters += orderedTargets.joinToString(separator = ",")
+                commandLineArguments += "native-dist-commonize"
+                commandLineArguments += "-distribution-path"
+                commandLineArguments += distributionDir.toString()
+                commandLineArguments += "-output-path"
+                commandLineArguments += destinationTmpDir.toString()
+                commandLineArguments += "-targets"
+                commandLineArguments += orderedTargets.joinToString(separator = ",")
 
                 postActions.add { renameDirectory(destinationTmpDir, destinationDir) }
             }
@@ -69,17 +72,17 @@ internal fun runCommonizerInBulk(
         }
     }
 
-    callCommonizerCLI(commandLineParameters)
+    callCommonizerCLI(project, commandLineArguments)
 
     postActions.forEach { it() }
 
     return result
 }
 
-private fun callCommonizerCLI(commandLineParameters: List<String>) {
-    if (commandLineParameters.isEmpty()) return
+private fun callCommonizerCLI(project: Project, commandLineArguments: List<String>) {
+    if (commandLineArguments.isEmpty()) return
 
-    // TODO: implement
+    KotlinNativeKlibCommonizerToolRunner(project).run(commandLineArguments)
 }
 
 private fun renameDirectory(source: File, destination: File) {
