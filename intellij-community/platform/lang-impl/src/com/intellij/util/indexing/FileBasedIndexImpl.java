@@ -8,10 +8,7 @@ import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.startup.ServiceNotReadyException;
 import com.intellij.index.SharedIndexExtensions;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.EditorHighlighterCache;
@@ -1055,7 +1052,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       }
       else {
         // we do invoke later since we can have read lock acquired
-        app.invokeLater(rebuildRunnable, app.getDisposed());
+        AppUIExecutor.onWriteThread().later().expireWith(app).submit(rebuildRunnable);
       }
     }
   }

@@ -5,6 +5,7 @@ import com.intellij.configurationStore.schemeManager.SchemeChangeApplicator
 import com.intellij.configurationStore.schemeManager.SchemeChangeEvent
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.ModalityState
@@ -347,22 +348,22 @@ private fun <T : Any> Key<T>.getAndClear(holder: UserDataHolderEx): T? {
 private fun doReloadProject(project: Project) {
   val projectRef = Ref.create(project)
   ProjectReloadState.getInstance(project).onBeforeAutomaticProjectReload()
-  ApplicationManager.getApplication().invokeLater({
+  AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).submit {
     LOG.debug("Reloading project.")
     val project1 = projectRef.get()
     // Let it go
     projectRef.set(null)
 
     if (project1.isDisposed) {
-      return@invokeLater
+      return@submit
     }
 
     // must compute here, before project dispose
     val presentableUrl = project1.presentableUrl
     if (!ProjectManagerEx.getInstanceEx().closeAndDispose(project1)) {
-      return@invokeLater
+      return@submit
     }
 
     ProjectUtil.openProject(Objects.requireNonNull<String>(presentableUrl), null, true)
-  }, ModalityState.NON_MODAL)
+  }
 }

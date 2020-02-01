@@ -5,6 +5,7 @@
  */
 package com.intellij.psi.stubs;
 
+import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.index.SharedIndexExtensions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -780,7 +781,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       if (updated.length() > 0) {
         final Throwable e = new Throwable(updated.toString());
         // avoid direct forceRebuild as it produces dependency cycle (IDEA-105485)
-        ApplicationManager.getApplication().invokeLater(() -> forceRebuild(e), ModalityState.NON_MODAL);
+        AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).submit(() -> forceRebuild(e));
       }
 
       myInitialized = true;
