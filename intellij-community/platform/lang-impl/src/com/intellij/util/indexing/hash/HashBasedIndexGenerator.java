@@ -57,7 +57,7 @@ public class HashBasedIndexGenerator<K, V> {
                                  @NotNull Path outRoot) {
     myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
     mySharedIndexName = originalExtension.getName().getName();
-    myStorageFile = outRoot.resolve(StringUtil.toLowerCase(mySharedIndexName)).resolve(mySharedIndexName);
+    myStorageFile = outRoot.resolve(mySharedIndexName).resolve(mySharedIndexName);
 
     FileBasedIndex.InputFilter filter = originalExtension.getInputFilter();
 
