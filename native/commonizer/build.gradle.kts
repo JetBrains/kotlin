@@ -16,48 +16,22 @@ description = "Kotlin KLIB Library Commonizer"
 
 dependencies {
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:ir.serialization.common"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":native:frontend.native"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
     mavenCompileScope(project(":kotlin-compiler"))
 
     compile(kotlinStdlib())
-
-    compile(project(":kotlin-util-klib-metadata"))
-    compile(project(":native:kotlin-native-utils")) { isTransitive = false }
-    compile(project(":native:frontend.native")) { isTransitive = false }
+    compile(project(":native:kotlin-native-utils"))
 
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(project(":native:frontend.native"))
 
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) {
-        includeJars(
-            "openapi",
-            "jps-model",
-            "extensions",
-            "util",
-            "platform-api",
-            "platform-impl",
-            "idea",
-            "idea_rt",
-            "guava",
-            "trove4j",
-            "picocontainer",
-            "asm-all",
-            "log4j",
-            "jdom",
-            "streamex",
-            "bootstrap",
-            rootProject = rootProject
-        )
-        isTransitive = false
-    }
-
-    Platform[192].orHigher {
-        testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
-    }
 }
 
 val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
