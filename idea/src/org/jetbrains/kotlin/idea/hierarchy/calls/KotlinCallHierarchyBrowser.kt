@@ -34,8 +34,9 @@ import javax.swing.JTree
 class KotlinCallHierarchyBrowser(element: PsiElement) :
     CallHierarchyBrowserBase(element.project, element) {
     override fun createTrees(type2TreeMap: MutableMap<String, JTree>) {
-        val group =
-            ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP) as ActionGroup
+        val group = ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP) as ActionGroup
+        val baseOnThisMethodAction = BaseOnThisMethodAction()
+
         val tree1 = createTree(false)
         PopupHandler.installPopupHandler(
             tree1,
@@ -43,13 +44,12 @@ class KotlinCallHierarchyBrowser(element: PsiElement) :
             ActionPlaces.CALL_HIERARCHY_VIEW_POPUP,
             ActionManager.getInstance()
         )
-        val baseOnThisMethodAction =
-            BaseOnThisMethodAction()
         baseOnThisMethodAction.registerCustomShortcutSet(
             ActionManager.getInstance().getAction(IdeActions.ACTION_CALL_HIERARCHY).shortcutSet,
             tree1
         )
         type2TreeMap[CALLEE_TYPE] = tree1
+
         val tree2 = createTree(false)
         PopupHandler.installPopupHandler(
             tree2,
@@ -77,12 +77,11 @@ class KotlinCallHierarchyBrowser(element: PsiElement) :
         psiElement: PsiElement
     ): HierarchyTreeStructure? {
         if (psiElement !is KtElement) return null
-        if (typeName == CALLER_TYPE) {
-            return KotlinCallerTreeStructure(psiElement, currentScopeType)
+        return when (typeName) {
+            CALLER_TYPE -> KotlinCallerTreeStructure(psiElement, currentScopeType)
+            CALLEE_TYPE -> KotlinCalleeTreeStructure(psiElement, currentScopeType)
+            else -> null
         }
-        return if (typeName == CALLEE_TYPE) {
-            KotlinCalleeTreeStructure(psiElement, currentScopeType)
-        } else null
     }
 
     override fun getComparator(): Comparator<NodeDescriptor<*>> {
