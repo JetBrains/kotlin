@@ -12895,6 +12895,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfVal.kt");
         }
 
+        @TestMetadata("copyOfValInAnonymousObject.kt")
+        public void testCopyOfValInAnonymousObject() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInAnonymousObject.kt");
+        }
+
+        @TestMetadata("copyOfValInAnonymousObject2.kt")
+        public void testCopyOfValInAnonymousObject2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInAnonymousObject2.kt");
+        }
+
         @TestMetadata("copyOfValUnused.kt")
         public void testCopyOfValUnused() throws Exception {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValUnused.kt");

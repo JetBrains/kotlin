@@ -88,6 +88,11 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
                             )
                         )
                         if (!validator(copyName)) return false
+                        if ((containingDeclaration as? KtObjectDeclaration)?.isObjectLiteral() == true) {
+                            val enclosingBlock = enclosingElement as? KtBlockExpression
+                            val initializerDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(initializerDescriptor)
+                            if (enclosingBlock?.statements?.none { it == initializerDeclaration } == true) return false
+                        }
                     }
                     return true
                 }
