@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -43,9 +44,9 @@ class KotlinCallHierarchyNodeDescriptor(
 ) : HierarchyNodeDescriptor(element.project, parentDescriptor, element, isBase),
     Navigatable {
     private var usageCount = 1
-    private val references: MutableSet<PsiReference> =
-        HashSet()
+    private val references: MutableSet<PsiReference> = HashSet()
     private val javaDelegate: CallHierarchyNodeDescriptor
+
     fun incrementUsageCount() {
         usageCount++
         javaDelegate.incrementUsageCount()
@@ -64,53 +65,60 @@ class KotlinCallHierarchyNodeDescriptor(
     override fun update(): Boolean {
         val oldText = myHighlightedText
         val oldIcon = icon
-        var flags = Iconable.ICON_FLAG_VISIBILITY
-        if (isMarkReadOnly) {
-            flags = flags or Iconable.ICON_FLAG_READ_STATUS
+
+        val flags: Int = if (isMarkReadOnly) {
+            Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS
+        } else {
+            Iconable.ICON_FLAG_VISIBILITY
         }
+
         var changes = super.update()
-        val targetElement = psiElement
-        val elementText = renderElement(targetElement)
+
+        val elementText = renderElement(psiElement)
         if (elementText == null) {
             val invalidPrefix = IdeBundle.message("node.hierarchy.invalid")
             if (!myHighlightedText.text.startsWith(invalidPrefix)) {
-                myHighlightedText.beginning
-                    .addText(invalidPrefix, getInvalidPrefixAttributes())
+                myHighlightedText.beginning.addText(invalidPrefix, getInvalidPrefixAttributes())
             }
             return true
         }
-        var newIcon = targetElement!!.getIcon(flags)
-        if (changes && myIsBase) {
-            val icon = LayeredIcon(2)
-            icon.setIcon(newIcon, 0)
-            icon.setIcon(AllIcons.General.Modified, 1, -AllIcons.General.Modified.iconWidth / 2, 0)
-            newIcon = icon
+
+        val targetElement = psiElement
+        val elementIcon = targetElement!!.getIcon(flags)
+
+        icon = if (changes && myIsBase) {
+            LayeredIcon(2).apply {
+                setIcon(elementIcon, 0)
+                setIcon(AllIcons.General.Modified, 1, -AllIcons.General.Modified.iconWidth / 2, 0)
+            }
+        } else {
+            elementIcon
         }
-        icon = newIcon
+
+        val mainTextAttributes: TextAttributes? = if (myColor != null) {
+            TextAttributes(myColor, null, null, null, Font.PLAIN)
+        } else {
+            null
+        }
+
         myHighlightedText = CompositeAppearance()
-        var mainTextAttributes: TextAttributes? = null
-        if (myColor != null) {
-            mainTextAttributes = TextAttributes(myColor, null, null, null, Font.PLAIN)
-        }
-        var packageName =
-            KtPsiUtil.getPackageName((targetElement as KtElement?)!!)
         myHighlightedText.ending.addText(elementText, mainTextAttributes)
         if (usageCount > 1) {
             myHighlightedText.ending.addText(
                 IdeBundle.message("node.call.hierarchy.N.usages", usageCount),
-                getUsageCountPrefixAttributes()
+                getUsageCountPrefixAttributes(),
             )
         }
-        if (packageName == null) {
-            packageName = ""
-        }
-        myHighlightedText.ending
-            .addText("  ($packageName)", getPackageNameAttributes())
+
+        val packageName = KtPsiUtil.getPackageName(targetElement as KtElement) ?: ""
+
+        myHighlightedText.ending.addText("  ($packageName)", getPackageNameAttributes())
         myName = myHighlightedText.text
-        if (!(Comparing.equal(myHighlightedText, oldText) && Comparing.equal(icon, oldIcon))
-        ) {
+
+        if (!(Comparing.equal(myHighlightedText, oldText) && Comparing.equal(icon, oldIcon))) {
             changes = true
         }
+
         return changes
     }
 
@@ -128,51 +136,64 @@ class KotlinCallHierarchyNodeDescriptor(
 
     companion object {
         private fun renderElement(element: PsiElement?): String? {
-            if (element is KtFile) {
-                return element.name
-            }
-            if (element !is KtNamedDeclaration) {
-                return null
-            }
-            var descriptor: DeclarationDescriptor? =
-                element as KtNamedDeclaration?. resolveToDescriptorIfAny BodyResolveMode.PARTIAL
-                    ?: return null
-            val elementText: String?
-            if (element is KtClassOrObject) {
-                if (element is KtObjectDeclaration && element.isCompanion()) {
-                    descriptor = descriptor.containingDeclaration
-                    if (descriptor !is ClassDescriptor) return null
-                    elementText = renderClassOrObject(descriptor)
-                } else if (element is KtEnumEntry) {
-                    elementText = element.name
-                } else {
-                    elementText = if (element.name != null) {
-                        renderClassOrObject(descriptor as ClassDescriptor)
-                    } else {
-                        "[anonymous]"
+            when (element) {
+                is KtFile -> {
+                    return element.name
+                }
+                !is KtNamedDeclaration -> {
+                    return null
+                }
+                else -> {
+                    var descriptor: DeclarationDescriptor = element.resolveToDescriptorIfAny(BodyResolveMode.PARTIAL) ?: return null
+                    val elementText: String?
+                    when (element) {
+                        is KtClassOrObject -> {
+                            when {
+                                element is KtObjectDeclaration && element.isCompanion() -> {
+                                    val containingDescriptor = descriptor.containingDeclaration
+                                    if (containingDescriptor !is ClassDescriptor) return null
+                                    descriptor = containingDescriptor
+                                    elementText = renderClassOrObject(descriptor)
+                                }
+                                element is KtEnumEntry -> {
+                                    elementText = element.name
+                                }
+                                else -> {
+                                    elementText = if (element.name != null) {
+                                        renderClassOrObject(descriptor as ClassDescriptor)
+                                    } else {
+                                        "[anonymous]"
+                                    }
+                                }
+                            }
+                        }
+                        is KtNamedFunction, is KtConstructor<*> -> {
+                            if (descriptor !is FunctionDescriptor) return null
+                            elementText = renderNamedFunction(descriptor)
+                        }
+                        is KtProperty -> {
+                            elementText = element.name
+                        }
+                        else -> return null
                     }
+
+                    if (elementText == null) return null
+                    var containerText: String? = null
+                    var containerDescriptor = descriptor.containingDeclaration
+                    while (containerDescriptor != null) {
+                        if (containerDescriptor is PackageFragmentDescriptor || containerDescriptor is ModuleDescriptor) {
+                            break
+                        }
+                        val name = containerDescriptor.name
+                        if (!name.isSpecial) {
+                            val identifier = name.identifier
+                            containerText = if (containerText != null) "$identifier.$containerText" else identifier
+                        }
+                        containerDescriptor = containerDescriptor.containingDeclaration
+                    }
+                    return if (containerText != null) "$containerText.$elementText" else elementText
                 }
-            } else if (element is KtNamedFunction || element is KtConstructor<*>) {
-                if (descriptor !is FunctionDescriptor) return null
-                elementText = renderNamedFunction(descriptor)
-            } else if (element is KtProperty) {
-                elementText = element.name
-            } else return null
-            if (elementText == null) return null
-            var containerText: String? = null
-            var containerDescriptor = descriptor.containingDeclaration
-            while (containerDescriptor != null) {
-                if (containerDescriptor is PackageFragmentDescriptor || containerDescriptor is ModuleDescriptor) {
-                    break
-                }
-                val name = containerDescriptor.name
-                if (!name.isSpecial) {
-                    val identifier = name.identifier
-                    containerText = if (containerText != null) "$identifier.$containerText" else identifier
-                }
-                containerDescriptor = containerDescriptor.containingDeclaration
             }
-            return if (containerText != null) "$containerText.$elementText" else elementText
         }
 
         fun renderNamedFunction(descriptor: FunctionDescriptor): String {
