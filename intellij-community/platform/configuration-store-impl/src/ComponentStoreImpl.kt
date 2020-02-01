@@ -4,6 +4,7 @@ package com.intellij.configurationStore
 import com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEvents
 import com.intellij.diagnostic.PluginException
 import com.intellij.notification.NotificationsManager
+import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.DecodeDefaultsUtil
 import com.intellij.openapi.components.*
@@ -23,7 +24,6 @@ import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import com.intellij.ui.AppUIUtil
 import com.intellij.util.ArrayUtilRt
 import com.intellij.util.SmartList
 import com.intellij.util.SystemProperties
@@ -606,7 +606,7 @@ private fun notifyUnknownMacros(store: IComponentStore, project: Project, compon
   }
 
   val macros = LinkedHashSet(immutableMacros)
-  AppUIUtil.invokeOnEdt(Runnable {
+  AppUIExecutor.onUiThread().expireWith(project).submit {
     var notified: MutableList<String>? = null
     val manager = NotificationsManager.getNotificationsManager()
     for (notification in manager.getNotificationsOfType(UnknownMacroNotification::class.java, project)) {
@@ -620,12 +620,12 @@ private fun notifyUnknownMacros(store: IComponentStore, project: Project, compon
     }
 
     if (macros.isEmpty()) {
-      return@Runnable
+      return@submit
     }
 
     LOG.debug("Reporting unknown path macros $macros in component $componentName")
     doNotify(macros, project, Collections.singletonMap(substitutor, store))
-  }, project.disposed)
+  }
 }
 
 // to make sure that ApplicationStore or ProjectStore will not call incomplete doSave implementation

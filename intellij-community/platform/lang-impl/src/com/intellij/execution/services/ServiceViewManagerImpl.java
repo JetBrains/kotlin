@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -136,7 +137,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private void registerToolWindow(String toolWindowId, boolean active) {
-    AppUIUtil.invokeOnEdt(() -> {
+    AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
       if (myProject.isDisposed() || myProject.isDefault()) return;
 
       ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
@@ -169,11 +170,11 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           myRegisteringToolWindowAvailable = false;
         }
       });
-    }, myProject.getDisposed());
+    });
   }
 
   private void updateToolWindow(@NotNull String toolWindowId, boolean active, boolean show) {
-    AppUIUtil.invokeOnEdt(() -> {
+    AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
       if (myProject.isDisposed() || myProject.isDefault()) return;
 
       ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
@@ -195,7 +196,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           hideToolWindow(toolWindowId, toolWindow);
         }
       });
-    }, myProject.getDisposed());
+    });
   }
 
   private void hideToolWindow(String toolWindowId, ToolWindow toolWindow) {
@@ -245,7 +246,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     contentManager.addContent(mainContent);
     mainView.getModel().addModelListener(() -> {
       boolean isEmpty = mainView.getModel().getRoots().isEmpty();
-      AppUIUtil.invokeOnEdt(() -> {
+      AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
         if (contentManager.isDisposed()) return;
 
         if (isEmpty) {
@@ -263,7 +264,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
             contentManager.addContent(mainContent, 0);
           }
         }
-      }, myProject.getDisposed());
+      });
     });
   }
 
@@ -304,12 +305,12 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
       if (!loadedModels.isEmpty()) {
         ServiceViewModel modelToSelect = toSelect;
-        AppUIUtil.invokeOnEdt(() -> {
+        AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
           for (Pair<ServiceViewModel, ServiceViewState> pair : loadedModels) {
             extract(contentManager, pair.first, pair.second, false);
           }
           selectContentByModel(contentManager, modelToSelect);
-        }, myProject.getDisposed());
+        });
       }
     });
   }
@@ -387,14 +388,14 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private static void selectContent(Content content, boolean focus, Project project) {
-    AppUIUtil.invokeOnEdt(() -> {
+    AppUIExecutor.onUiThread().expireWith(project).submit(() -> {
       ContentManager contentManager = content.getManager();
       if (contentManager == null) return;
 
       if (contentManager.getSelectedContent() != content && contentManager.getIndexOfContent(content) >= 0) {
         contentManager.setSelectedContent(content, focus);
       }
-    }, project.getDisposed());
+    });
   }
 
   @NotNull
@@ -472,7 +473,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     viewModel.addModelListener(() -> {
       ServiceViewItem item = viewModel.getService();
       if (item != null && !viewModel.getChildren(item).isEmpty() && contentManager != null) {
-        AppUIUtil.invokeOnEdt(() -> {
+        AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
           int index = contentManager.getIndexOfContent(content);
           if (index < 0) return;
 
@@ -482,7 +483,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           ServiceView listView = ServiceView.createView(myProject, listModel, prepareViewState(new ServiceViewState()));
           Content listContent = addServiceContent(contentManager, listView, item.getViewDescriptor().getContentPresentation(), true, index);
           extractList(listModel, listContent);
-        }, myProject.getDisposed());
+        });
       }
       else {
         updateContentTab(item, content);
@@ -838,7 +839,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
         serviceView.getModel().addModelListener(() -> {
           if (serviceView.getModel().getRoots().isEmpty()) {
-            AppUIUtil.invokeOnEdt(() -> myContentManager.removeContent(content, true), o -> myContentManager.isDisposed());
+            AppUIExecutor.onUiThread().expireWith(myContentManager).submit(() -> myContentManager.removeContent(content, true));
           }
         });
       }
@@ -928,7 +929,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       myModel.handle(e).onProcessed(o -> {
         eventHandled(e);
 
-        AppUIUtil.invokeOnEdt(() -> {
+        AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
           for (Map.Entry<String, Collection<ServiceViewContributor<?>>> entry : myGroups.entrySet()) {
             if (entry.getValue().remove(extension)) {
               if (entry.getValue().isEmpty()) {
@@ -939,7 +940,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           }
 
           unregisterActivateByContributorActions(extension);
-        }, myProject.getDisposed());
+        });
       });
     }
 
