@@ -58,6 +58,6 @@ public class UncompressedZipEntryFileAttributes implements BasicFileAttributes {
 
   @Override
   public Object fileKey() {
-    throw new UnsupportedOperationException();
+    return null;
   }
 }
