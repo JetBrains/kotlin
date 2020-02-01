@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.file
+import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.util.Logger
+import java.io.IOException
 
 /**
  * Resolves KLIB library by making sure that the library has 1.4+ layout with exactly one component.
@@ -23,32 +26,61 @@ import org.jetbrains.kotlin.util.Logger
  * Typical usage scenario: IDE.
  */
 object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
-    override fun resolve(libraryFile: File, logger: Logger): KotlinLibrary {
-        if (checkComponent(libraryFile)) {
-            // old style library
-            return fakeLibrary(libraryFile)
-        }
+    override fun resolve(libraryFile: File, logger: Logger): KotlinLibrary =
+        withSafeAccess(libraryFile) { localRoot ->
+            if (localRoot.looksLikeKlibComponent) {
+                // old style library
+                null
+            } else {
+                val components = localRoot.listFiles.filter { it.looksLikeKlibComponent }
+                when (components.size) {
+                    0 -> null
+                    1 -> {
+                        // single component library
+                        createKotlinLibrary(libraryFile, components.single().name)
+                    }
+                    else -> { // TODO: choose the best fit among all available candidates
+                        // mimic as old style library and warn
+                        logger.warning("Library $libraryFile can not be read. Multiple components found: ${components.map {
+                            it.path.substringAfter(localRoot.path)
+                        }}")
 
-        val componentFiles = libraryFile.listFiles.filter(::checkComponent)
-        componentFiles.singleOrNull()?.let { componentFile ->
-            // single component library
-            return createKotlinLibrary(libraryFile, componentFile.name)
-        }
-
-        // otherwise mimic as old style library and warn
-        if (componentFiles.isNotEmpty()) {
-            // TODO: choose the best fit among all available candidates
-
-            logger.warning("Library $libraryFile can not be read. Multiple components found: ${componentFiles.map {
-                it.path.substringAfter(libraryFile.path)
-            }}")
-        }
-
-        return fakeLibrary(libraryFile)
-    }
+                        null
+                    }
+                }
+            }
+        } ?: fakeLibrary(libraryFile)
 
     private const val NONEXISTENT_COMPONENT_NAME = "__nonexistent_component_name__"
 
-    private fun checkComponent(componentFile: File) = componentFile.child(KLIB_MANIFEST_FILE_NAME).isFile
-    private fun fakeLibrary(libraryFile: File) = createKotlinLibrary(libraryFile, NONEXISTENT_COMPONENT_NAME)
+    private fun fakeLibrary(libraryFile: File): KotlinLibrary = createKotlinLibrary(libraryFile, NONEXISTENT_COMPONENT_NAME)
+
+    private fun <T : Any> withSafeAccess(libraryFile: File, action: (localRoot: File) -> T?): T? {
+        val extension = libraryFile.extension
+
+        val wrappedAction: () -> T? = when {
+            extension == KLIB_FILE_EXTENSION -> {
+                if (!libraryFile.isFile) return null
+
+                { libraryFile.withZipFileSystem { fs -> action(fs.file("/")) } }
+            }
+
+            extension.isNotEmpty() -> return null
+
+            else -> {
+                if (!libraryFile.isDirectory) return null
+
+                { action(libraryFile) }
+            }
+        }
+
+        return try {
+            wrappedAction()
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    private val File.looksLikeKlibComponent: Boolean
+        get() = child(KLIB_MANIFEST_FILE_NAME).isFile
 }
