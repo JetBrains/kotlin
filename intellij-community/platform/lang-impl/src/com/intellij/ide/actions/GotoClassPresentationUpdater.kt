@@ -9,23 +9,38 @@ import com.intellij.openapi.util.text.StringUtil
 
 object GotoClassPresentationUpdater {
   @JvmStatic
-  fun getTabTitle(pluralize: Boolean): String {
+  fun getTabTitle(): String {
     val split = getActionTitle().split("/".toRegex()).take(2).toTypedArray()
-    return if (pluralize) StringUtil.pluralize(split[0]) else split[0] + if (split.size > 1) " +" else ""
+    return split[0] + if (split.size > 1) " +" else ""
   }
 
   @JvmStatic
-  fun getActionTitle(): String {
-    val primaryIdeLanguages = IdeLanguageCustomization.getInstance().primaryIdeLanguages
-    val mainContributor = ChooseByNameRegistry.getInstance().classModelContributors
-      .filterIsInstance(GotoClassContributor::class.java)
-      .firstOrNull { it.elementLanguage in primaryIdeLanguages }
-    val text = mainContributor?.elementKind ?: IdeBundle.message("go.to.class.kind.text")
-    return StringUtil.capitalizeWords(text, " /", true, true)
-  }
+  fun getTabTitlePluralized(): String = getActionTitlePluralized()[0]
+
+  @JvmStatic
+  fun getActionTitle(): String =
+    StringUtil.capitalizeWords(getGotoClassContributor()?.elementKind ?: IdeBundle.message("go.to.class.kind.text"), " /", true, true)
+
+  @JvmStatic
+  fun getActionTitlePluralized(): List<String> =
+    (getGotoClassContributor()?.elementKindsPluralized ?:
+     listOf(IdeBundle.message("go.to.class.kind.text.pluralized"))).map { StringUtil.capitalize(it) }
 
   @JvmStatic
   fun getElementKinds(): Set<String> {
+    return getElementKinds { it.elementKind.split("/") }
+  }
+
+  @JvmStatic
+  fun getElementKindsPluralized(): Set<String> {
+    return getElementKinds { it.elementKindsPluralized }
+  }
+
+  private fun getGotoClassContributor(): GotoClassContributor? = ChooseByNameRegistry.getInstance().classModelContributors
+    .filterIsInstance(GotoClassContributor::class.java)
+    .firstOrNull { it.elementLanguage in IdeLanguageCustomization.getInstance().primaryIdeLanguages }
+
+  private fun getElementKinds(transform: (GotoClassContributor) -> Iterable<String>): LinkedHashSet<String> {
     val primaryIdeLanguages = IdeLanguageCustomization.getInstance().primaryIdeLanguages
     return ChooseByNameRegistry.getInstance().classModelContributors
       .filterIsInstance(GotoClassContributor::class.java)
@@ -33,6 +48,6 @@ object GotoClassPresentationUpdater {
         val index = primaryIdeLanguages.indexOf(it.elementLanguage)
         if (index == -1) primaryIdeLanguages.size else index
       }
-      .flatMapTo(LinkedHashSet()) { it.elementKind.split("/") }
+      .flatMapTo(LinkedHashSet(), transform)
   }
 }

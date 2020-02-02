@@ -25,7 +25,6 @@ import com.intellij.ui.IdeUICustomization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,16 +48,13 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
   @NotNull
   @Override
   public String getGroupName() {
-    return GotoClassPresentationUpdater.getTabTitle(true);
+    return GotoClassPresentationUpdater.getTabTitlePluralized();
   }
 
   @NotNull
   @Override
   public String getFullGroupName() {
-    String[] split = GotoClassPresentationUpdater.getActionTitle().split("/");
-    return Arrays.stream(split)
-      .map(StringUtil::pluralize)
-      .collect(Collectors.joining("/"));
+    return String.join("/", GotoClassPresentationUpdater.getActionTitlePluralized());
   }
 
   @NotNull
