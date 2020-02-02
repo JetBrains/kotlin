@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(args: Array<String>) {
     try {
     } finally {

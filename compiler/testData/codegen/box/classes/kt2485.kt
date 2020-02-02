@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun f1(a : Any?) {}
 fun f2(a : Boolean?) {}
 fun f3(a : Any) {}

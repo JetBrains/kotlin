@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Shape(var result: String) {
 
 }

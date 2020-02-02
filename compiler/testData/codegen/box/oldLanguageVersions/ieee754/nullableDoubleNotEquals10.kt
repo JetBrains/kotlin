@@ -1,4 +1,5 @@
 // !API_VERSION: 1.0
+// IGNORE_BACKEND: WASM
 
 fun myNotEquals(a: Double?, b: Double?) = a != b
 

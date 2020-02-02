@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var result = "fail 1"
 
 fun withSideEffect() : Int {

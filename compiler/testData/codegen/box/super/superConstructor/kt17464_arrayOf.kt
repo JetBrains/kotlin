@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A(val array: Array<Any>)
 
 class B : A(arrayOf("OK"))

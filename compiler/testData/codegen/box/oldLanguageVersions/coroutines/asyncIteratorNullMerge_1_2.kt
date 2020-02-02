@@ -1,4 +1,5 @@
 // !LANGUAGE: -ReleaseCoroutines -ExperimentalBuilderInference
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS
 // WITH_RUNTIME

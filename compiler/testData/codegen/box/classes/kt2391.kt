@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KJS_WITH_FULL_RUNTIME
 public interface LoggerAware {
     public val logger: StringBuilder

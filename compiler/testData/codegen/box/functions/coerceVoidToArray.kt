@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun a(): IntArray? = null
 
 fun b(): Nothing = throw Exception()

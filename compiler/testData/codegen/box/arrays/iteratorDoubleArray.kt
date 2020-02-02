@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val a = DoubleArray(5)
     val x = a.iterator()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun identity(x: Int): Int {
     return when {
         x < 0 -> identity(x + 1) - 1

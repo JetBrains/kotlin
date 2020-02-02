@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A() {
     var xi = 0
     var xin : Int? = 0

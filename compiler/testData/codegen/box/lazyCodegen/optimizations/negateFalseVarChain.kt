@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val p = 2 < 1;
     if (!!!!!p) {

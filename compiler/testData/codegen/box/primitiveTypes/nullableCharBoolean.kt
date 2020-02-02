@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val c: Char? = 'a'
     if (c!! - 'a' != 0) return "Fail c"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val a1: Byte? = -1
     val a2: Short? = -1

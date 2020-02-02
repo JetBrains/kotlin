@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() : String {
   return if(true.and(true)) "OK" else "fail"
 }

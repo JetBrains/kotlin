@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C {
     fun calc() : String {
         return "OK"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var result = "Fail"
 
 fun foo() {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 fun foo(i : Int?, a : Any?) {
     i?.plus(1)

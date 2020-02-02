@@ -1,4 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS_IR, JS
 
 class A

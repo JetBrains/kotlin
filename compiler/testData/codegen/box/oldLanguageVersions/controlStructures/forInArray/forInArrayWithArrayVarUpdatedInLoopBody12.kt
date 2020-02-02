@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR

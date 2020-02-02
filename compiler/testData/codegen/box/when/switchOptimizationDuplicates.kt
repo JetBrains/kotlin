@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(x: Int): Int {
     return when (x) {
         1, 1, 2 -> 1001

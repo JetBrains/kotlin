@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(i: Int, j: Int?): String =
     when (i) {
         j -> "OK"

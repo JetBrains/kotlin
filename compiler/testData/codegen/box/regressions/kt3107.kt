@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(): String {
     val s = try {
         "OK"

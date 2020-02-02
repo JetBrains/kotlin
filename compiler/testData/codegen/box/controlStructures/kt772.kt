@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package demo2
 
 fun print(o : Any?) {}

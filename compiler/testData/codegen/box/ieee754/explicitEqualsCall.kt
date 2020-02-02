@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun equals1(a: Double, b: Double) = a.equals(b)
 
 fun equals2(a: Double?, b: Double?) = a!!.equals(b!!)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String =
         "" +
         try { "O" } catch (e: Exception) { "1" } +

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var holder = ""
 
 var mainShape: Shape? = null

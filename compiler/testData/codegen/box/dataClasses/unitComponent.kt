@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 data class A(val x: Unit)
 
 fun box(): String {

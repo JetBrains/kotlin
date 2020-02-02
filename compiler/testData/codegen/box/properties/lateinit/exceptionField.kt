@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A {
     private lateinit var str: String
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A {
     fun f(): String =
             when (this) {

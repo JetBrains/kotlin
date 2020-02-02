@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec infix fun Int.test(x : Int) : Int {

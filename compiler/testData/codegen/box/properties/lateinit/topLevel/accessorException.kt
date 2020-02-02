@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // Note: does not pass on FIR because of non-prohibited Kotlin synthetic properties,
 // fun getS() = s is considered to be recursive here :(

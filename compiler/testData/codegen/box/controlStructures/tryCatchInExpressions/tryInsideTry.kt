@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyException(message: String): Exception(message)
 
 fun box(): String =

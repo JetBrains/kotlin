@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun catchAll(x: String, block: () -> Unit): String {
     try {
         block()

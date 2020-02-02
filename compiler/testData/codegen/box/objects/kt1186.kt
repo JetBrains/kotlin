@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 enum class Color(val rgb : Int) {
     RED(0xFF0000),

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-3927 Inner class cannot be instantiated with child instance of outer class
 

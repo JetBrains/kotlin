@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public class CalculatorConstants(
         val id: Long = 0,
         val detour: Double = 0.0,

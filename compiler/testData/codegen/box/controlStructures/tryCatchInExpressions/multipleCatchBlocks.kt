@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Exception1(msg: String): Exception(msg)
 class Exception2(msg: String): Exception(msg)
 class Exception3(msg: String): Exception(msg)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 // See https://youtrack.jetbrains.com/issue/KT-21354

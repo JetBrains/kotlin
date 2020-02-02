@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-1572 Frontend doesn't mark all vars included in closure as refs.
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun <T> id(x: T) = x
 
 fun box(): String {

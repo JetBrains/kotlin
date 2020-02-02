@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 var xs = intArrayOf(1, 2, 3)

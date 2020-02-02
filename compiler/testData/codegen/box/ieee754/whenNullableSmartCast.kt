@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val nullValue: Any? = null
     val nullDouble: Double? = null

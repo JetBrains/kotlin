@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 
 fun eq1(a: Int?, b: Int) = a == b
 

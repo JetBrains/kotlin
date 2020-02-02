@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND_FIR: JVM_IR
 // MODULE: lib

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun myNotEquals(a: Float?, b: Float?) = a != b
 
 fun myNotEquals1(a: Float?, b: Float) = a != b

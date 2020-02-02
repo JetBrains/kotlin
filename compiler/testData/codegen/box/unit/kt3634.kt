@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val c = Unit
 val d = c
 

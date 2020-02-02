@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 
 fun box(): String {

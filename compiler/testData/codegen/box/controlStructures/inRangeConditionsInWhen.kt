@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun Int.contains(i : Int) = true
 
 fun box(): String {

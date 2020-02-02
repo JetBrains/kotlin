@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-3297 Calling the wrong function inside an extension method to the Function0 class
 

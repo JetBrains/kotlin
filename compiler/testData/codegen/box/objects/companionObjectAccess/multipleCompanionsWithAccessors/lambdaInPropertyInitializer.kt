@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: lambdaInPropertyInitializer.kt
 import c.C

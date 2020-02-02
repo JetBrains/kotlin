@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // See also KT-7801
 class A
 

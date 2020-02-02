@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun f(s: String?, t: String): String {
     return s.plus(t)
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun a(): String? = null
 
 fun b(): Nothing = throw Exception()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val i: Any = 12
 
 fun box(): String {

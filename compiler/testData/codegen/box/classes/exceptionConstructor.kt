@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class GameError(msg: String): Exception(msg) {
 }
 

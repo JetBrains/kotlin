@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() : String {
     val i: Int? = 7
     val j: Int? = null

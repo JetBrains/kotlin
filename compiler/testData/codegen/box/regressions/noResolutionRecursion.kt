@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun <T> T.at(element: Int) = this.at()
 
 fun <T> T.at(): T = this

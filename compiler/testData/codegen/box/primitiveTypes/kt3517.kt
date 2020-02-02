@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KT-3517 Can't call .equals() on a boolean
 
 fun box(): String {
