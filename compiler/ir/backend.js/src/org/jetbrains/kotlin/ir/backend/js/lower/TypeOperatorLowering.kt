@@ -60,6 +60,18 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
         irFile.transformChildren(object : BaseTypeOperatorTransformer(context) {
             override val calculator: ArithBuilder = jsCalculator
 
+            private fun needBoxingOrUnboxing(fromType: IrType, toType: IrType): Boolean {
+                return ((fromType.getInlinedClass() != null) xor (toType.getInlinedClass() != null)) || (fromType.isUnit() && !toType.isUnit())
+            }
+
+            private fun IrTypeOperatorCall.wrapWithUnsafeCast(arg: IrExpression): IrExpression {
+                // TODO: there is possible some situation which could be visible for AutoboxingLowering
+                // They are: 1. Inline classes, 2. Unit materialization. Using unsafe cast makes lowering work wrong.
+                return if (!needBoxingOrUnboxing(arg.type, typeOperand)) {
+                    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, typeOperand, arg)
+                } else arg
+            }
+
             override fun lowerCast(
                 expression: IrTypeOperatorCall,
                 declaration: IrDeclarationParent,
@@ -85,19 +97,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 }
             }
 
-            private fun lowerImplicitCast(expression: IrTypeOperatorCall) = expression.run {
-                assert(operator == IrTypeOperator.IMPLICIT_CAST)
-                argument
-            }
-
-            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall) = expression.run {
-                // TODO check argument
-                assert(operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
-                argument
-            }
-
             // Note: native `instanceOf` is not used which is important because of null-behaviour
-            private fun advancedCheckRequired(type: IrType) = type.isInterface() ||
+            override fun advancedCheckRequired(type: IrType) = type.isInterface() ||
                     type.isTypeParameter() && type.superTypes().any { it.isInterface() } ||
                     type.isArray() ||
                     type.isPrimitiveArray() ||
@@ -112,49 +113,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                         type.isBoolean() ||
                         type.isFunctionOrKFunction() ||
                         type.isString()
-
-            fun lowerInstanceOf(
-                expression: IrTypeOperatorCall,
-                declaration: IrDeclarationParent,
-                inverted: Boolean
-            ): IrExpression {
-                assert(expression.operator == IrTypeOperator.INSTANCEOF || expression.operator == IrTypeOperator.NOT_INSTANCEOF)
-                assert((expression.operator == IrTypeOperator.NOT_INSTANCEOF) == inverted)
-
-                val toType = expression.typeOperand
-                val newStatements = mutableListOf<IrStatement>()
-
-                val argument = cacheValue(expression.argument, newStatements, declaration)
-                val check = generateTypeCheck(argument, toType)
-                val result = if (inverted) calculator.not(check) else check
-                newStatements += result
-                return IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    context.irBuiltIns.booleanType,
-                    null,
-                    newStatements
-                )
-            }
-
-            private fun nullCheck(value: IrExpression) = JsIrBuilder.buildCall(eqeq).apply {
-                putValueArgument(0, value)
-                putValueArgument(1, litNull)
-            }
-
-            private fun cacheValue(
-                value: IrExpression,
-                newStatements: MutableList<IrStatement>,
-                declaration: IrDeclarationParent
-            ): () -> IrExpressionWithCopy {
-                return if (value.isPure(true)) {
-                    { value.deepCopyWithSymbols() as IrExpressionWithCopy }
-                } else {
-                    val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
-                    newStatements += varDeclaration
-                    { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
-                }
-            }
 
             override fun generateTypeCheckNonNull(argument: IrExpressionWithCopy, toType: IrType): IrExpression {
                 assert(!toType.isMarkedNullable())

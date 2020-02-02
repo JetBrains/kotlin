@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.ArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -56,6 +57,7 @@ abstract class BaseTypeOperatorTransformer(val context: CommonBackendContext) : 
             IrTypeOperator.CAST -> lowerCast(expression, data, false)
             IrTypeOperator.SAFE_CAST -> lowerCast(expression, data, true)
             IrTypeOperator.SAM_CONVERSION -> TODO("SAM conversion: ${expression.render()}")
+            IrTypeOperator.REINTERPRET_CAST -> expression
         }
     }
 
@@ -127,10 +129,15 @@ abstract class BaseTypeOperatorTransformer(val context: CommonBackendContext) : 
         newStatements: MutableList<IrStatement>,
         declaration: IrDeclarationParent
     ): () -> IrExpressionWithCopy {
-        val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
-        newStatements += varDeclaration
-        return { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
+        return if (value.isPure(true)) {
+            { value.deepCopyWithSymbols() as IrExpressionWithCopy }
+        } else {
+            val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
+            newStatements += varDeclaration
+            { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
+        }
     }
+
 
     fun generateTypeCheck(argument: () -> IrExpressionWithCopy, toType: IrType): IrExpression {
         val toNotNullable = toType.makeNotNull()
