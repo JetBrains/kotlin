@@ -10,6 +10,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
@@ -165,14 +166,15 @@ public class UnknownSdkEditorNotification implements Disposable {
     public final EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file,
                                                                  @NotNull FileEditor fileEditor,
                                                                  @NotNull Project project) {
-      String sdkTypeName = mySdkType != null ? mySdkType.getPresentableName() : "SDK";
+      String sdkTypeName = mySdkType != null ? mySdkType.getPresentableName() : ProjectBundle.message("config.unknown.sdk.text");
       String quotedSdkName = "\"" + mySdkName + "\"";
-      String notificationText = sdkTypeName + " " + quotedSdkName + " is missing";
-      String configureText = "Configure...";
+      String notificationText = ProjectBundle.message("config.unknown.sdk.notification.text", sdkTypeName, quotedSdkName);
+      String configureText = ProjectBundle.message("config.unknown.sdk.configure");
 
       boolean hasDownload = myFix != null && mySdk != null;
-      String downloadText = hasDownload ? "Download " + myFix.getDownloadDescription() : "";
-      String intentionActionText = hasDownload ? downloadText : "Configure missing " + sdkTypeName + " " + quotedSdkName;
+      String downloadText = hasDownload ? ProjectBundle.message("config.unknown.sdk.download", myFix.getDownloadDescription()) : "";
+      String intentionActionText =
+        hasDownload ? downloadText : ProjectBundle.message("config.unknown.sdk.configure.missing", sdkTypeName, quotedSdkName);
 
       EditorNotificationPanel notification = new EditorNotificationPanel() {
         @Override
@@ -189,7 +191,7 @@ public class UnknownSdkEditorNotification implements Disposable {
         @NotNull
         @Override
         protected String getIntentionActionFamilyName() {
-          return "SDK configuration";
+          return ProjectBundle.message("config.unknown.sdk.configuration");
         }
       };
 
