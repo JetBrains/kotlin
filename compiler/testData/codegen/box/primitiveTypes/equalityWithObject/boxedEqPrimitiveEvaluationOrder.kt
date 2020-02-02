@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 var order: String = ""
 
 fun a(i: Int): Int? {

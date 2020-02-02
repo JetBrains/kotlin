@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -13,7 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.impl.FirReturnExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -27,10 +31,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -406,10 +407,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return when (data) {
             ResolutionMode.ContextDependent -> {
                 dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
-                anonymousFunction.compose()
+                anonymousFunction.addReturn().compose()
             }
             is ResolutionMode.LambdaResolution -> {
-                transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).compose()
+                transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn().compose()
             }
             is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
                 val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: FirImplicitTypeRefImpl(null)
@@ -484,12 +485,42 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af).mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
                 af.replaceReturnTypeRef(af.returnTypeRef.resolvedTypeFromPrototype(inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()))
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
-                af.compose()
+                af.addReturn().compose()
             }
             is ResolutionMode.WithStatus -> {
                 throw AssertionError("Should not be here in WithStatus mode")
             }
         }
+    }
+
+    private fun FirAnonymousFunction.addReturn(): FirAnonymousFunction {
+        val lastStatement = body?.statements?.lastOrNull()
+        val returnType = (body?.typeRef as? FirResolvedTypeRef) ?: return this
+        val returnNothing = returnType.isNothing || returnType.isUnit
+        if (lastStatement is FirExpression && !returnNothing) {
+            body?.transformChildren(
+                object : FirDefaultTransformer<FirExpression>() {
+                    override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
+                        if (element == lastStatement) {
+                            val returnExpression = FirReturnExpressionImpl(element.source, lastStatement)
+                            returnExpression.target = FirFunctionTarget(null)
+                            (returnExpression.target as FirFunctionTarget).bind(this@addReturn)
+                            return (returnExpression as E).compose()
+                        }
+                        return element.compose()
+                    }
+
+                    override fun transformReturnExpression(
+                        returnExpression: FirReturnExpression,
+                        data: FirExpression
+                    ): CompositeTransformResult<FirStatement> {
+                        return returnExpression.compose()
+                    }
+                },
+                FirUnitExpression(null)
+            )
+        }
+        return this
     }
 
     private inline fun <T> withLabelAndReceiverType(
