@@ -120,7 +120,7 @@ class AutoboxingTransformer(
         resultType: IrType,
         call: (IrExpression) -> IrExpression
     ): IrExpression {
-        if (!actualType.isNullable())
+        if (!actualType.isNullable() || !resultType.isNullable())
             return call(arg)
         return JsIrBuilder.run {
             // TODO: Set parent of local variables

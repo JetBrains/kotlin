@@ -206,14 +206,6 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
             symbols.structNarrow -> {
                 val fromType = call.getTypeArgument(0)!!
                 val toType = call.getTypeArgument(1)!!
-                if (toType.isInlined()) {
-                    val boxedValue = wasmArguments.single()
-                    val narrowed = WasmStructNarrow(context.transformType(fromType), context.transformBoxedType(toType), boxedValue)
-                    val klass: IrClass = toType.getInlinedClass()!!
-                    val field = getInlineClassBackingField(klass)
-                    val wasmGetField = getInstanceField(field, narrowed, context)
-                    return wasmGetField
-                }
                 return WasmStructNarrow(context.transformType(fromType), context.transformType(toType), wasmArguments[0])
             }
 

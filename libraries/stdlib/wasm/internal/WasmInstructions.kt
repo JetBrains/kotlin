@@ -10,5 +10,5 @@ package kotlin.wasm.internal
 
 external fun wasm_unreachable(): Nothing
 
-fun <From, To> wasm_struct_narrow(a: From): To =
+fun <From: Any, To: Any> wasm_struct_narrow(a: From): To =
     implementedAsIntrinsic

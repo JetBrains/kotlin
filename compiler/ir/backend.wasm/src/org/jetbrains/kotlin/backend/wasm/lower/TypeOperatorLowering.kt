@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 
@@ -80,10 +81,14 @@ class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPa
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
 
-                val narrowArg = JsIrBuilder.buildCall(symbols.structNarrow).apply {
-                    putTypeArgument(0, fromType)
-                    putTypeArgument(1, toType)
-                    putValueArgument(0, argument())
+                val narrowArg = if (toType.isInlined()) {
+                    argument()
+                } else {
+                    JsIrBuilder.buildCall(symbols.structNarrow, type = toType).apply {
+                        putTypeArgument(0, fromType)
+                        putTypeArgument(1, toType)
+                        putValueArgument(0, argument())
+                    }
                 }
 
                 newStatements += JsIrBuilder.buildIfElse(expression.type, check, narrowArg, failResult)
