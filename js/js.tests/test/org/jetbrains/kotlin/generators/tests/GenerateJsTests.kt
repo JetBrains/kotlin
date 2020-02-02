@@ -79,7 +79,7 @@ fun main(args: Array<String>) {
                     "boxingOptimization", "bridges", "casts",
 
                     // TODO: Support arrays
-                    "toArray", "vararg",
+                    "toArray", "vararg", "arrays",
 
                     // TODO: Support reflection
                     "classLiteral", "reflection",
