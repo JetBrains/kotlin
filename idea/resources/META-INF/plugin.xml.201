@@ -13,7 +13,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="193.4099.13" until-build="193.*"/>
+  <idea-version since-build="201.4515.1" until-build="201.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -68,26 +68,25 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
   </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-      <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
-      <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
-      <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
-      <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.action.refactoring" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.ide.new.wizard" version="1"/>
-      <statistics.counterUsagesCollector groupId="kotlin.gradle.performance" version="1"/>
-      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.IDESettingsFUSCollector"/>
-      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
-      <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.action.refactoring" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.new.wizard" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.performance" version="1"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.IDESettingsFUSCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
 
-      <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
+    <fileTypeUsageSchemaDescriptor schema="Gradle Script" implementationClass="org.jetbrains.kotlin.idea.core.script.KotlinGradleScriptFileTypeSchemaDetector"/>
 
-      <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
-      <completion.ml.contextFeatures language="kotlin" implementationClass="org.jetbrains.kotlin.idea.completion.ml.KotlinContextFeatureProvider"/>
-    </extensions>
+    <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
+  </extensions>
 </idea-plugin>
