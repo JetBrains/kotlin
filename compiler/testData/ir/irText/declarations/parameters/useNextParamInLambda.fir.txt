@@ -5,16 +5,18 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
         FUN_EXPR type=kotlin.Function0<IrErrorType> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
             BLOCK_BODY
-              ERROR_CALL 'Unresolved reference: <Unresolved name: f2>#' type=IrErrorType
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): IrErrorType declared in <root>.f'
+                ERROR_CALL 'Unresolved reference: <Unresolved name: f2>#' type=IrErrorType
     VALUE_PARAMETER name:f2 index:1 type:kotlin.Function0<kotlin.String>
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
             BLOCK_BODY
-              CONST String type=kotlin.String value="FAIL"
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.f'
+                CONST String type=kotlin.String value="FAIL"
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (): kotlin.String [operator] declared in kotlin.Function0' type=kotlin.String origin=null
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
           $this: GET_VAR 'f1: kotlin.Function0<kotlin.String> declared in <root>.f' type=kotlin.Function0<kotlin.String> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
@@ -33,9 +35,11 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
             f1: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
                 BLOCK_BODY
-                  CONST String type=kotlin.String value="O"
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
+                    CONST String type=kotlin.String value="O"
           other: CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
             f1: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
                 BLOCK_BODY
-                  CONST String type=kotlin.String value="K"
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
+                    CONST String type=kotlin.String value="K"

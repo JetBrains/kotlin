@@ -8,7 +8,8 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
               VALUE_PARAMETER name:x index:0 type:kotlin.String
               BLOCK_BODY
-                GET_VAR 'x: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.test1'
+                  GET_VAR 'x: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:<root>.J<kotlin.String?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.J<kotlin.String?> declared in <root>'
@@ -18,7 +19,8 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
               VALUE_PARAMETER name:x index:0 type:kotlin.String
               BLOCK_BODY
-                GET_VAR 'x: kotlin.String declared in <root>.test2.<anonymous>' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.test2'
+                  GET_VAR 'x: kotlin.String declared in <root>.test2.<anonymous>' type=kotlin.String origin=null
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Unit declared in <root>'
@@ -28,7 +30,8 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
               VALUE_PARAMETER name:x index:0 type:kotlin.String
               BLOCK_BODY
-                GET_VAR 'x: kotlin.String declared in <root>.test3.<anonymous>' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.test3'
+                  GET_VAR 'x: kotlin.String declared in <root>.test3.<anonymous>' type=kotlin.String origin=null
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY

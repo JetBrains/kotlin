@@ -26,29 +26,29 @@ FILE: integerLiteralTypes.kt
     }
     public final fun test_3(): R|kotlin/Unit| {
         R|/takeInt|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         ))
         R|/takeByte|(R|kotlin/run|<R|kotlin/Byte|>(<L> = run@fun <anonymous>(): R|kotlin/Byte| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         ))
         R|/takeLong|(R|kotlin/run|<R|kotlin/Long|>(<L> = run@fun <anonymous>(): R|kotlin/Long| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         ))
     }
     public final fun test_4(): R|kotlin/Unit| {
         R|/takeAny|(Int(1))
         R|/takeAny|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         ))
     }
     public final fun test_5(): R|kotlin/Unit| {
         <Inapplicable(INAPPLICABLE): [/takeString]>#(Int(1))
         <Inapplicable(INAPPLICABLE): [/takeString]>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         ))
     }

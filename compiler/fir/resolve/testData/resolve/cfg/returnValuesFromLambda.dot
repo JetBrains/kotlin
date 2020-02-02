@@ -59,7 +59,7 @@ digraph returnValuesFromLambda_kt {
         }
     }
 
-    R|/C.C|()
+    ^ R|/C.C|()
 }
 )"];
         24 [label="Variable declaration: lval x: R|A|"];

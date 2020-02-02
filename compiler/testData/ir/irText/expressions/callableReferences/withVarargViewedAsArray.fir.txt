@@ -36,10 +36,11 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int
                     VALUE_PARAMETER name:it index:0 type:kotlin.Int
                     BLOCK_BODY
-                      CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
-                        $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Number [operator] declared in kotlin.Array' type=kotlin.Number origin=null
-                          $this: GET_VAR 'args: kotlin.Array<kotlin.Number> [vararg] declared in <root>.nsum' type=kotlin.Array<kotlin.Number> origin=null
-                          index: GET_VAR 'it: kotlin.Int declared in <root>.nsum.<anonymous>' type=kotlin.Int origin=null
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.nsum'
+                        CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
+                          $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Number [operator] declared in kotlin.Array' type=kotlin.Number origin=null
+                            $this: GET_VAR 'args: kotlin.Array<kotlin.Number> [vararg] declared in <root>.nsum' type=kotlin.Array<kotlin.Number> origin=null
+                            index: GET_VAR 'it: kotlin.Int declared in <root>.nsum.<anonymous>' type=kotlin.Int origin=null
   FUN name:zap visibility:public modality:FINAL <> (b:kotlin.Array<kotlin.String>, k:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:kotlin.Array<kotlin.String> varargElementType:kotlin.String [vararg]
     VALUE_PARAMETER name:k index:1 type:kotlin.Int

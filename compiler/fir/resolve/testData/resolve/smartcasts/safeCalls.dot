@@ -116,7 +116,7 @@ digraph safeCalls_kt {
         46 [label="Postponed enter to lambda"];
         47 [label="Postponed exit from lambda"];
         48 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())?.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
-    R|<local>/x|.R|/A.bool|()
+    ^ R|<local>/x|.R|/A.bool|()
 }
 )"];
         49 [label="Exit safe call"];

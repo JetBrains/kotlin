@@ -20,8 +20,9 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:T of <root>.testArray
               VALUE_PARAMETER name:it index:0 type:kotlin.Int
               BLOCK_BODY
-                CALL 'public abstract fun invoke (): T of <root>.testArray [operator] declared in kotlin.Function0' type=T of <root>.testArray origin=null
-                  $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> [crossinline] declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): T of <root>.testArray declared in <root>.testArray'
+                  CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.testArray origin=INVOKE
+                    $this: GET_VAR 'block: kotlin.Function0<T of <root>.testArray> [crossinline] declared in <root>.testArray' type=kotlin.Function0<T of <root>.testArray> origin=null
   CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]

@@ -47,6 +47,6 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host>
     BLOCK_BODY
       CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit [operator] declared in <root>.Host' type=kotlin.Unit origin=null
-        $this: CALL 'public abstract fun invoke (): <root>.Host [operator] declared in kotlin.Function0' type=<root>.Host origin=null
+        $this: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=<root>.Host origin=INVOKE
           $this: GET_VAR 'a: kotlin.Function0<<root>.Host> declared in <root>.test4' type=kotlin.Function0<<root>.Host> origin=null
         x: CONST Int type=kotlin.Int value=1

@@ -3,15 +3,15 @@ FILE: main.kt
     }
     public final fun main(): R|kotlin/Unit| {
         Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <anonymous>(x: R|ERROR CLASS: No type for parameter|): R|kotlin/Boolean| {
-            >(R|<local>/x|, Int(1))
+            ^ >(R|<local>/x|, Int(1))
         }
         )
         Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(foo@fun <anonymous>(): R|kotlin/Boolean| {
-            >(<Unresolved name: it>#, Int(1))
+            ^ >(<Unresolved name: it>#, Int(1))
         }
         )
         lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
-            >(R|<local>/x|, Int(1))
+            ^ >(R|<local>/x|, Int(1))
         }
 
         Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(R|<local>/x|)
