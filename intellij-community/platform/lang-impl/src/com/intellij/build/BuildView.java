@@ -299,8 +299,8 @@ public class BuildView extends CompositeView<ExecutionConsole>
     AnAction stopAction = null;
     StartBuildEvent startBuildEvent = myStartBuildEventRef.get();
     if (startBuildEvent != null && startBuildEvent.getProcessHandler() != null) {
-      stopAction = new StopProcessAction(() -> IdeBundle.message("action.DumbAware.BuildView.text.stop"),
-                                         () -> IdeBundle.message("action.DumbAware.CopyrightProfilesPanel.description.stop"),
+      stopAction = new StopProcessAction(IdeBundle.lazyMessage("action.DumbAware.BuildView.text.stop"),
+                                         IdeBundle.lazyMessage("action.DumbAware.CopyrightProfilesPanel.description.stop"),
         startBuildEvent.getProcessHandler());
       ActionUtil.copyFrom(stopAction, IdeActions.ACTION_STOP_PROGRAM);
       stopAction.registerCustomShortcutSet(stopAction.getShortcutSet(), this);

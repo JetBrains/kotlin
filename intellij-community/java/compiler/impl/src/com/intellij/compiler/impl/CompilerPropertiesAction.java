@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 */
 class CompilerPropertiesAction extends AnAction {
   CompilerPropertiesAction() {
-    super(() -> CompilerBundle.message("action.compiler.properties.text"), AllIcons.General.Settings);
+    super(CompilerBundle.lazyMessage("action.compiler.properties.text"), AllIcons.General.Settings);
   }
 
   @Override

@@ -625,8 +625,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                                  @NotNull Runnable findUsagesRunnable) {
     Icon icon = ToolWindowManagerEx.getInstanceEx(project).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     AnAction pinAction =
-      new AnAction(() -> IdeBundle.message("show.in.find.window.button.name"),
-                   () -> IdeBundle.message("show.in.find.window.button.pin.description"), icon) {
+      new AnAction(IdeBundle.lazyMessage("show.in.find.window.button.name"),
+                   IdeBundle.lazyMessage("show.in.find.window.button.pin.description"), icon) {
         {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
           setShortcutSet(action.getShortcutSet());

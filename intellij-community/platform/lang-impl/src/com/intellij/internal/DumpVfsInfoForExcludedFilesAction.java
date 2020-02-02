@@ -35,7 +35,7 @@ import java.util.*;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class DumpVfsInfoForExcludedFilesAction extends DumbAwareAction {
   public DumpVfsInfoForExcludedFilesAction() {
-    super(() -> ActionsBundle.message("action.DumpVfsInfoForExcludedFilesAction.text"));
+    super(ActionsBundle.lazyMessage("action.DumpVfsInfoForExcludedFilesAction.text"));
   }
 
   @Override

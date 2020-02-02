@@ -125,7 +125,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
     public static class GroupByActionGroup extends DefaultActionGroup {
     {
       getTemplatePresentation().setIcon(AllIcons.Actions.GroupBy);
-      getTemplatePresentation().setText(() -> IdeBundle.message("group.group.by"));
+      getTemplatePresentation().setText(IdeBundle.lazyMessage("group.group.by"));
       setPopup(true);
     }
 
@@ -652,7 +652,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
 
   public static final class MyShowPackagesAction extends ToggleAction {
     public MyShowPackagesAction() {
-      super(() -> IdeBundle.message("action.group.by.packages"), PlatformIcons.GROUP_BY_PACKAGES);
+      super(IdeBundle.lazyMessage("action.group.by.packages"), PlatformIcons.GROUP_BY_PACKAGES);
     }
 
     @Override
@@ -679,7 +679,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
 
   public static final class MyShowModulesAction extends ToggleAction {
     public MyShowModulesAction() {
-      super(() -> IdeBundle.message("action.group.by.modules"), AllIcons.Actions.GroupByModule);
+      super(IdeBundle.lazyMessage("action.group.by.modules"), AllIcons.Actions.GroupByModule);
     }
 
     @Override
@@ -707,7 +707,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
 
   public static final class MyFlattenPackagesAction extends ToggleAction {
     public MyFlattenPackagesAction() {
-      super(() -> IdeBundle.message("action.flatten.view"), PlatformIcons.FLATTEN_PACKAGES_ICON);
+      super(IdeBundle.lazyMessage("action.flatten.view"), PlatformIcons.FLATTEN_PACKAGES_ICON);
     }
 
     @Override
@@ -747,7 +747,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
   private final class MyPreviewAction extends ToggleAction {
 
     MyPreviewAction() {
-      super(() -> VcsBundle.message("action.ToggleAction.text.preview.source"), Presentation.NULL_STRING, AllIcons.Actions.PreviewDetails);
+      super(VcsBundle.lazyMessage("action.ToggleAction.text.preview.source"), Presentation.NULL_STRING, AllIcons.Actions.PreviewDetails);
     }
 
     @Override

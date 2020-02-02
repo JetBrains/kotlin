@@ -43,11 +43,11 @@ public class GotoTestOrCodeAction extends BaseCodeInsightAction {
 
     presentation.setEnabledAndVisible(true);
     if (TestFinderHelper.isTest(element)) {
-      presentation.setText(() -> ActionsBundle.message("action.GotoTestSubject.text"));
-      presentation.setDescription(() -> ActionsBundle.message("action.GotoTestSubject.description"));
+      presentation.setText(ActionsBundle.lazyMessage("action.GotoTestSubject.text"));
+      presentation.setDescription(ActionsBundle.lazyMessage("action.GotoTestSubject.description"));
     } else {
-      presentation.setText(() -> ActionsBundle.message("action.GotoTest.text"));
-      presentation.setDescription(() -> ActionsBundle.message("action.GotoTest.description"));
+      presentation.setText(ActionsBundle.lazyMessage("action.GotoTest.text"));
+      presentation.setDescription(ActionsBundle.lazyMessage("action.GotoTest.description"));
     }
   }
 }

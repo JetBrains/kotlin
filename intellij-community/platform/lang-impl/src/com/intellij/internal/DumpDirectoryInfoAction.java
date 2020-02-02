@@ -32,7 +32,7 @@ public class DumpDirectoryInfoAction extends AnAction {
   public static final Logger LOG = Logger.getInstance(DumpDirectoryInfoAction.class);
 
   public DumpDirectoryInfoAction() {
-    super(() -> ActionsBundle.message("action.DumpDirectoryInfoAction.text"));
+    super(ActionsBundle.lazyMessage("action.DumpDirectoryInfoAction.text"));
   }
 
   @Override

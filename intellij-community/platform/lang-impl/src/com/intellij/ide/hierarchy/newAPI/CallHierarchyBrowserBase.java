@@ -27,10 +27,10 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   public static final String CALLER_TYPE = "Callers of {0}";
 
   @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType CALLEE =
-    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.callees.of"));
+    new HierarchyScopeType(IdeBundle.lazyMessage("title.hierarchy.callees.of"));
 
   @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType CALLER =
-    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.callers.of"));
+    new HierarchyScopeType(IdeBundle.lazyMessage("title.hierarchy.callers.of"));
 
   private static final String CALL_HIERARCHY_BROWSER_DATA_KEY = "com.intellij.ide.hierarchy.newAPI.CallHierarchyBrowserBase";
 

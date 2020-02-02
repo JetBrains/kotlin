@@ -149,7 +149,7 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
 
   @NotNull
   protected AnAction createRestorePopupAction() {
-    return new DumbAwareAction(() -> CodeInsightBundle.message("action.AnActionButton.text.open.as.popup"), () -> getRestorePopupDescription(), null) {
+    return new DumbAwareAction(CodeInsightBundle.lazyMessage("action.AnActionButton.text.open.as.popup"), () -> getRestorePopupDescription(), null) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         restorePopupBehavior();

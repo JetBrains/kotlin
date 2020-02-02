@@ -24,7 +24,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
   public static final String METHOD_TYPE = "Method {0}";
 
   @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType METHOD =
-    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.method"));
+    new HierarchyScopeType(IdeBundle.lazyMessage("title.hierarchy.method"));
 
   public static final DataKey<MethodHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase");
 
@@ -93,7 +93,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
 
   private final class ShowImplementationsOnlyAction extends ToggleAction {
     private ShowImplementationsOnlyAction() {
-      super(() -> IdeBundle.message("action.hide.non.implementations"), AllIcons.General.Filter);
+      super(IdeBundle.lazyMessage("action.hide.non.implementations"), AllIcons.General.Filter);
     }
 
     @Override

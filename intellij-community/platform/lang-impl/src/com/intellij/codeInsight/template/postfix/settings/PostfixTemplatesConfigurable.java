@@ -114,7 +114,7 @@ public class PostfixTemplatesConfigurable implements SearchableConfigurable, Edi
   }
 
   private AnActionButton duplicateAction() {
-    AnActionButton button = new AnActionButton(() -> CodeInsightBundle.message("action.AnActionButton.text.duplicate"), PlatformIcons.COPY_ICON) {
+    AnActionButton button = new AnActionButton(CodeInsightBundle.lazyMessage("action.AnActionButton.text.duplicate"), PlatformIcons.COPY_ICON) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         if (myCheckboxTree != null) {

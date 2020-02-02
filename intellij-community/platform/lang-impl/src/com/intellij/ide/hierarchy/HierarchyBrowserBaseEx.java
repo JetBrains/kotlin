@@ -604,7 +604,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   protected class AlphaSortAction extends ToggleAction {
     public AlphaSortAction() {
-      super(() -> IdeBundle.message("action.sort.alphabetically"), () -> IdeBundle.message("action.sort.alphabetically"),
+      super(IdeBundle.lazyMessage("action.sort.alphabetically"), IdeBundle.lazyMessage("action.sort.alphabetically"),
             AllIcons.ObjectBrowser.Sorted);
     }
 
@@ -684,7 +684,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
       else {
         String typeName = ElementDescriptionUtil.getElementDescription(selectedElement, UsageViewTypeLocation.INSTANCE);
         if (StringUtil.isNotEmpty(typeName)) {
-          presentation.setText(() -> IdeBundle.message("action.base.on.this.0", StringUtil.capitalize(typeName)));
+          presentation.setText(IdeBundle.lazyMessage("action.base.on.this.0", StringUtil.capitalize(typeName)));
         }
         presentation.setEnabled(isEnabled(browser, selectedElement));
       }
@@ -794,7 +794,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
     private final class ConfigureScopesAction extends AnAction {
       private ConfigureScopesAction() {
-        super(() -> ActionsBundle.message("action.ConfigureScopesAction.text"));
+        super(ActionsBundle.lazyMessage("action.ConfigureScopesAction.text"));
       }
 
       @Override

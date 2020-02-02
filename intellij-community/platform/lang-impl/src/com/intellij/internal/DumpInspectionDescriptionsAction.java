@@ -34,7 +34,7 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
   private static final Logger LOG = Logger.getInstance(DumpInspectionDescriptionsAction.class);
 
   public DumpInspectionDescriptionsAction() {
-    super(() -> ActionsBundle.message("action.DumpInspectionDescriptionsAction.text"));
+    super(ActionsBundle.lazyMessage("action.DumpInspectionDescriptionsAction.text"));
   }
 
   @Override

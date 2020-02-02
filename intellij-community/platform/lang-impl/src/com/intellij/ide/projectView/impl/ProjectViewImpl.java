@@ -1959,8 +1959,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   private class ScrollFromSourceAction extends AnAction implements DumbAware {
   ScrollFromSourceAction() {
-    super(() -> IdeBundle.message("action.AnAction.text.select.opened.file"),
-          () -> IdeBundle.message("action.AnAction.description.select.opened.file"), AllIcons.General.Locate);
+    super(IdeBundle.lazyMessage("action.AnAction.text.select.opened.file"),
+          IdeBundle.lazyMessage("action.AnAction.description.select.opened.file"), AllIcons.General.Locate);
   }
 
     @Override

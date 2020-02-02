@@ -17,8 +17,8 @@ import javax.swing.table.DefaultTableModel;
 public class MoveArrangementGroupingRuleDownAction extends AnAction implements DumbAware {
 
   public MoveArrangementGroupingRuleDownAction() {
-    getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.rule.move.down.text"));
-    getTemplatePresentation().setDescription(() -> ApplicationBundle.message("arrangement.action.rule.move.down.description"));
+    getTemplatePresentation().setText(ApplicationBundle.lazyMessage("arrangement.action.rule.move.down.text"));
+    getTemplatePresentation().setDescription(ApplicationBundle.lazyMessage("arrangement.action.rule.move.down.description"));
     getTemplatePresentation().setIcon(IconUtil.getMoveDownIcon());
   }
 

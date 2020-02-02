@@ -32,8 +32,8 @@ public class ActionTracer implements UiDebuggerExtension, AnActionListener {
     if (myComponent == null) {
       myText = new JTextArea();
       final JBScrollPane log = new JBScrollPane(myText);
-      final AnAction clear = new AnAction(() -> IdeBundle.message("action.ActionTracer.Anonymous.text.Clear"),
-                                          () -> IdeBundle.message("action.ActionTracer.Anonymous.description.clear.log"),
+      final AnAction clear = new AnAction(IdeBundle.lazyMessage("action.ActionTracer.Anonymous.text.Clear"),
+                                          IdeBundle.lazyMessage("action.ActionTracer.Anonymous.description.clear.log"),
                                           AllIcons.General.Reset) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {

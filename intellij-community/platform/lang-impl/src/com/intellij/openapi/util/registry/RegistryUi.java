@@ -162,7 +162,7 @@ public class RegistryUi implements Disposable {
     @Override
     public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(!myTable.isEditing() && myTable.getSelectedRow() >= 0);
-      e.getPresentation().setText(() -> IdeBundle.message("action.presentation.RegistryUi.text"));
+      e.getPresentation().setText(IdeBundle.lazyMessage("action.presentation.RegistryUi.text"));
       e.getPresentation().setIcon(AllIcons.General.Reset);
 
       if (e.getPresentation().isEnabled()) {
@@ -190,7 +190,7 @@ public class RegistryUi implements Disposable {
     @Override
     public void update(@NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(!myTable.isEditing() && myTable.getSelectedRow() >= 0);
-      e.getPresentation().setText(() -> IdeBundle.message("action.presentation.RegistryUi.text.edit"));
+      e.getPresentation().setText(IdeBundle.lazyMessage("action.presentation.RegistryUi.text.edit"));
       e.getPresentation().setIcon(AllIcons.Actions.EditSource);
     }
 

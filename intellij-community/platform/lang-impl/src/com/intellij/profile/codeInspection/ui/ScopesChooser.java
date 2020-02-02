@@ -46,7 +46,7 @@ public abstract class ScopesChooser extends ComboBoxAction implements DumbAware 
     myProject = project;
     myExcludedScopeNames = excludedScopeNames == null ? Collections.emptySet() : ContainerUtil.newHashSet(excludedScopeNames);
     setPopupTitle(TITLE);
-    getTemplatePresentation().setText(() -> InspectionsBundle.message("action.presentation.ScopesChooser.text"));
+    getTemplatePresentation().setText(InspectionsBundle.lazyMessage("action.presentation.ScopesChooser.text"));
   }
 
   @NotNull
@@ -73,7 +73,7 @@ public abstract class ScopesChooser extends ComboBoxAction implements DumbAware 
     fillActionGroup(group, customScopes, myDefaultDescriptors, myInspectionProfile, myExcludedScopeNames);
 
     group.addSeparator();
-    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.edit.scopes.order")) {
+    group.add(new DumbAwareAction(IdeBundle.lazyMessage("action.Anonymous.text.edit.scopes.order")) {
       @Override
       public void actionPerformed(@NotNull final AnActionEvent e) {
         final ScopesOrderDialog dlg = new ScopesOrderDialog(component, myInspectionProfile, myProject);

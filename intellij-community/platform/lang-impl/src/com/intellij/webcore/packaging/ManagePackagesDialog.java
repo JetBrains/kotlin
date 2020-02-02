@@ -87,7 +87,7 @@ public class ManagePackagesDialog extends DialogWrapper {
     myNotificationsAreaPlaceholder.add(myNotificationArea.getComponent(), BorderLayout.CENTER);
 
     final AnActionButton reloadButton =
-      new AnActionButton(() -> IdeBundle.message("action.AnActionButton.text.reload.list.of.packages"), AllIcons.Actions.Refresh) {
+      new AnActionButton(IdeBundle.lazyMessage("action.AnActionButton.text.reload.list.of.packages"), AllIcons.Actions.Refresh) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         myPackages.setPaintBusy(true);

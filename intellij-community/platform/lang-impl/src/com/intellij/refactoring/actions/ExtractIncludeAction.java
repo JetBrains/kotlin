@@ -39,7 +39,7 @@ public class ExtractIncludeAction extends BasePlatformRefactoringAction {
       e.getPresentation().setText(((TitledHandler) handler).getActionTitle());
     }
     else {
-      e.getPresentation().setText(() -> IdeBundle.message("action.presentation.ExtractIncludeAction.text"));
+      e.getPresentation().setText(IdeBundle.lazyMessage("action.presentation.ExtractIncludeAction.text"));
     }
   }
 

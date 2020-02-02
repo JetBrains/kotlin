@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class DumpIntentionsAction extends AnAction implements DumbAware {
   public DumpIntentionsAction() {
-    super(() -> ActionsBundle.message("action.DumpIntentionsAction.text"));
+    super(ActionsBundle.lazyMessage("action.DumpIntentionsAction.text"));
   }
 
   @Override

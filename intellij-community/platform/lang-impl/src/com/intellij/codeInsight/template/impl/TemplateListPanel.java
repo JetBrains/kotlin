@@ -588,7 +588,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
       })
       .disableDownAction()
       .disableUpAction()
-      .addExtraAction(new AnActionButton(() -> CodeInsightBundle.message("action.AnActionButton.Template.list.text.duplicate"), AllIcons.Actions.Copy) {
+      .addExtraAction(new AnActionButton(CodeInsightBundle.lazyMessage("action.AnActionButton.Template.list.text.duplicate"), AllIcons.Actions.Copy) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           copyRow();
@@ -598,7 +598,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
         public void updateButton(@NotNull AnActionEvent e) {
           e.getPresentation().setEnabled(getTemplate(getSingleSelectedIndex()) != null);
         }
-      }).addExtraAction(new AnActionButton(() -> CodeInsightBundle.message("action.AnActionButton.text.restore.deleted.defaults"), AllIcons.Actions.Rollback) {
+      }).addExtraAction(new AnActionButton(CodeInsightBundle.lazyMessage("action.AnActionButton.text.restore.deleted.defaults"), AllIcons.Actions.Rollback) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           TemplateSettings.getInstance().reset();
@@ -615,13 +615,13 @@ public class TemplateListPanel extends JPanel implements Disposable {
 
   private void addTemplateOrGroup(AnActionButton button) {
     DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.live.template")) {
+    group.add(new DumbAwareAction(IdeBundle.lazyMessage("action.Anonymous.text.live.template")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         addTemplate();
       }
     });
-    group.add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.template.group")) {
+    group.add(new DumbAwareAction(IdeBundle.lazyMessage("action.Anonymous.text.template.group")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         String newName = Messages
@@ -645,7 +645,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   }
 
   private void installPopup() {
-    final DumbAwareAction rename = new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.rename")) {
+    final DumbAwareAction rename = new DumbAwareAction(IdeBundle.lazyMessage("action.Anonymous.text.rename")) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {
@@ -685,7 +685,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
             }
           }
           addSeparator();
-          add(new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.new.group")) {
+          add(new DumbAwareAction(IdeBundle.lazyMessage("action.Anonymous.text.new.group")) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
               String newName = Messages.showInputDialog(myTree, "Enter the new group name:", "Move to a New Group", null, "", new TemplateGroupInputValidator(null));
@@ -698,7 +698,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
       }
     };
 
-    final DumbAwareAction changeContext = new DumbAwareAction(() -> IdeBundle.message("action.Anonymous.text.change.context")) {
+    final DumbAwareAction changeContext = new DumbAwareAction(IdeBundle.lazyMessage("action.Anonymous.text.change.context")) {
 
       @Override
       public void update(@NotNull AnActionEvent e) {
@@ -727,8 +727,8 @@ public class TemplateListPanel extends JPanel implements Disposable {
       }
     };
     final DumbAwareAction revert =
-      new DumbAwareAction(() -> CodeInsightBundle.message("action.DumbAware.TemplateListPanel.text.restore.defaults"),
-                          () -> CodeInsightBundle.message("action.DumbAware.TemplateListPanel.description.restore.default.setting"),
+      new DumbAwareAction(CodeInsightBundle.lazyMessage("action.DumbAware.TemplateListPanel.text.restore.defaults"),
+                          CodeInsightBundle.lazyMessage("action.DumbAware.TemplateListPanel.description.restore.default.setting"),
                           null) {
 
       @Override

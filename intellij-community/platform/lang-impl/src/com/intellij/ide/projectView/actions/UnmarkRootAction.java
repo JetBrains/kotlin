@@ -27,7 +27,7 @@ public class UnmarkRootAction extends MarkRootActionBase {
     if (!Registry.is("ide.hide.excluded.files") && !selection.mySelectedExcludeRoots.isEmpty()
         && selection.mySelectedDirectories.isEmpty() && selection.mySelectedRoots.isEmpty()) {
       e.getPresentation().setEnabledAndVisible(true);
-      e.getPresentation().setText(() -> LangBundle.message("mark.as.unmark.excluded"));
+      e.getPresentation().setText(LangBundle.lazyMessage("mark.as.unmark.excluded"));
       return;
     }
 

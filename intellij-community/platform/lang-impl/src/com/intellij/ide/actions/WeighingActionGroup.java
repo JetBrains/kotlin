@@ -87,7 +87,7 @@ abstract class WeighingActionGroup extends ActionGroup {
 
     ActionGroup other = new ExcludingActionGroup(delegate, heaviest);
     other.setPopup(true);
-    other.getTemplatePresentation().setText(() -> IdeBundle.message("action.presentation.WeighingActionGroup.text"));
+    other.getTemplatePresentation().setText(IdeBundle.lazyMessage("action.presentation.WeighingActionGroup.text"));
     return new AnAction[]{chosen, new Separator(), other};
   }
 

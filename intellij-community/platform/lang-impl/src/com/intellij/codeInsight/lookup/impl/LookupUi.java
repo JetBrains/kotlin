@@ -313,7 +313,7 @@ class LookupUi {
       AnAction showIntentionAction = ActionManager.getInstance().getAction(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
       if (showIntentionAction != null) {
         copyShortcutFrom(showIntentionAction);
-        getTemplatePresentation().setText(() -> CodeInsightBundle.message("action.presentation.LookupUi.text"));
+        getTemplatePresentation().setText(CodeInsightBundle.lazyMessage("action.presentation.LookupUi.text"));
       }
     }
 
@@ -332,7 +332,7 @@ class LookupUi {
   private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
     private boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
     private ChangeSortingAction() {
-      super(() -> ActionsBundle.message("action.ChangeSortingAction.text"));
+      super(ActionsBundle.lazyMessage("action.ChangeSortingAction.text"));
     }
 
     @Override

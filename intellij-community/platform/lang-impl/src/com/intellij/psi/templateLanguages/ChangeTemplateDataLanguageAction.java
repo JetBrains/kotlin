@@ -35,7 +35,7 @@ public class ChangeTemplateDataLanguageAction extends AnAction {
     if (provider instanceof ConfigurableTemplateLanguageFileViewProvider) {
       final TemplateLanguageFileViewProvider viewProvider = (TemplateLanguageFileViewProvider)provider;
 
-      e.getPresentation().setText(() -> LangBundle.message("quickfix.change.template.data.language.text", viewProvider.getTemplateDataLanguage().getDisplayName()));
+      e.getPresentation().setText(LangBundle.lazyMessage("quickfix.change.template.data.language.text", viewProvider.getTemplateDataLanguage().getDisplayName()));
       e.getPresentation().setEnabledAndVisible(true);
     }
 

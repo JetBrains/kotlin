@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, Toggleable {
   public ToggleBookmarkAction() {
-    getTemplatePresentation().setText(() -> IdeBundle.message("action.bookmark.toggle"));
+    getTemplatePresentation().setText(IdeBundle.lazyMessage("action.bookmark.toggle"));
   }
 
   @Override
@@ -32,7 +32,7 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
       event.getPresentation().setText(selected ? "Clear Bookmark" : "Set Bookmark");
     }
     else {
-      event.getPresentation().setText(() -> IdeBundle.message("action.bookmark.toggle"));
+      event.getPresentation().setText(IdeBundle.lazyMessage("action.bookmark.toggle"));
       Toggleable.setSelected(event.getPresentation(), selected);
     }
   }

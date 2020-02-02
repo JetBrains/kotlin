@@ -26,7 +26,7 @@ public class AnalyzeDependenciesOnSpecifiedTargetAction extends AnAction {
   public static final DataKey<GlobalSearchScope> TARGET_SCOPE_KEY = DataKey.create("MODULE_DEPENDENCIES_TARGET_SCOPE");
 
   public AnalyzeDependenciesOnSpecifiedTargetAction() {
-    super(() -> ActionsBundle.message("action.AnalyzeDependenciesOnSpecifiedTargetAction.text"));
+    super(ActionsBundle.lazyMessage("action.AnalyzeDependenciesOnSpecifiedTargetAction.text"));
   }
 
   @Override

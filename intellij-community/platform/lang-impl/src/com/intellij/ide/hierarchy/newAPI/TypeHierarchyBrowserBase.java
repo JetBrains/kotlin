@@ -37,11 +37,11 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   public static final String SUPERTYPES_HIERARCHY_TYPE = "Supertypes of {0}";
 
   @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType TYPE =
-    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.class"));
+    new HierarchyScopeType(IdeBundle.lazyMessage("title.hierarchy.class"));
   @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType SUBTYPES =
-    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.subtypes"));
+    new HierarchyScopeType(IdeBundle.lazyMessage("title.hierarchy.subtypes"));
   @SuppressWarnings("UnresolvedPropertyKey") private static final HierarchyScopeType SUPERTYPES =
-    new HierarchyScopeType(() -> IdeBundle.message("title.hierarchy.supertypes"));
+    new HierarchyScopeType(IdeBundle.lazyMessage("title.hierarchy.supertypes"));
 
   private boolean myIsInterface;
 

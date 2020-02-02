@@ -521,7 +521,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     DefaultActionGroup tabOptionsGroup = new DefaultActionGroup() {{
       Presentation presentation = getTemplatePresentation();
-      presentation.setText(() -> FindBundle.message("find.popup.show.tab.options"));
+      presentation.setText(FindBundle.lazyMessage("find.popup.show.tab.options"));
       presentation.setIcon(AllIcons.General.GearPlain);
       setPopup(true);
       setShortcutSet(CustomShortcutSet.fromString("alt ctrl DOWN"));
@@ -1757,8 +1757,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private class MyPinAction extends ToggleAction {
-    private MyPinAction() {super(() -> IdeBundle.message("action.ToggleAction.text.pin.window"),
-                                 () -> IdeBundle.message("action.ToggleAction.description.pin.window"), AllIcons.General.Pin_tab);}
+    private MyPinAction() {super(IdeBundle.lazyMessage("action.ToggleAction.text.pin.window"),
+                                 IdeBundle.lazyMessage("action.ToggleAction.description.pin.window"), AllIcons.General.Pin_tab);}
 
     @Override
     public boolean isDumbAware() {

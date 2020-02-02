@@ -50,7 +50,7 @@ public class ShowNavBarAction extends AnAction implements DumbAware, PopupAction
 
     // see RIDER-15982
     if (!ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
-      e.getPresentation().setText(() -> ActionsBundle.message("action.ShowNavBar.ShortText"));
+      e.getPresentation().setText(ActionsBundle.lazyMessage("action.ShowNavBar.ShortText"));
     }
   }
 }

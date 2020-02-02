@@ -29,8 +29,8 @@ import java.util.List;
 public class MoveArrangementMatchingRuleUpAction extends AbstractMoveArrangementRuleAction {
 
   public MoveArrangementMatchingRuleUpAction() {
-    getTemplatePresentation().setText(() -> ApplicationBundle.message("arrangement.action.rule.move.up.text"));
-    getTemplatePresentation().setDescription(() -> ApplicationBundle.message("arrangement.action.rule.move.up.description"));
+    getTemplatePresentation().setText(ApplicationBundle.lazyMessage("arrangement.action.rule.move.up.text"));
+    getTemplatePresentation().setDescription(ApplicationBundle.lazyMessage("arrangement.action.rule.move.up.description"));
     getTemplatePresentation().setIcon(IconUtil.getMoveUpIcon());
     setEnabledInModalContext(true);
   }

@@ -27,7 +27,7 @@ public class ShowUiDebuggerAction extends DumbAwareAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setText(() -> IdeBundle.message("action.presentation.ShowUiDebuggerAction.text"));
+    e.getPresentation().setText(IdeBundle.lazyMessage("action.presentation.ShowUiDebuggerAction.text"));
   }
 
   @Override

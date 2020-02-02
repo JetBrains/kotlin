@@ -193,8 +193,8 @@ public abstract class ChooseByNameFilter<T> {
 
   private class FilterAction extends ToggleAction implements DumbAware {
     FilterAction() {
-      super(() -> IdeBundle.message("action.ToggleAction.text.filter"),
-            () -> IdeBundle.message("action.ToggleAction.text.filter.files.by.type"), AllIcons.General.Filter);
+      super(IdeBundle.lazyMessage("action.ToggleAction.text.filter"),
+            IdeBundle.lazyMessage("action.ToggleAction.text.filter.files.by.type"), AllIcons.General.Filter);
     }
 
     @Override

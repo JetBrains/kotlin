@@ -38,14 +38,14 @@ public final class PowerSaveModeNotifier implements StartupActivity.DumbAware {
     Notification notification = POWER_SAVE_MODE
       .createNotification("Power save mode is on", "Code insight and background tasks are disabled.", NotificationType.WARNING, null);
 
-    notification.addAction(new NotificationAction(() -> IdeBundle.message("action.Anonymous.text.do.not.show.again")) {
+    notification.addAction(new NotificationAction(IdeBundle.lazyMessage("action.Anonymous.text.do.not.show.again")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
         PropertiesComponent.getInstance().setValue(IGNORE_POWER_SAVE_MODE, true);
         notification.expire();
       }
     });
-    notification.addAction(new NotificationAction(() -> IdeBundle.message("action.Anonymous.text.disable.power.save.mode")) {
+    notification.addAction(new NotificationAction(IdeBundle.lazyMessage("action.Anonymous.text.disable.power.save.mode")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
         PowerSaveMode.setEnabled(false);

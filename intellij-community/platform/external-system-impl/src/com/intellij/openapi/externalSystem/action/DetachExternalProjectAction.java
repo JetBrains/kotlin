@@ -29,8 +29,8 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
 
   public DetachExternalProjectAction() {
     super(ProjectData.class);
-    getTemplatePresentation().setText(() -> ExternalSystemBundle.message("action.detach.external.project.text", "External"));
-    getTemplatePresentation().setDescription(() -> ExternalSystemBundle.message("action.detach.external.project.description"));
+    getTemplatePresentation().setText(ExternalSystemBundle.lazyMessage("action.detach.external.project.text", "External"));
+    getTemplatePresentation().setDescription(ExternalSystemBundle.lazyMessage("action.detach.external.project.description"));
     getTemplatePresentation().setIcon(AllIcons.General.Remove);
   }
 
@@ -42,7 +42,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
     ProjectSystemId systemId = getSystemId(e);
     final String systemIdName = systemId != null ? systemId.getReadableName() : "External";
     Presentation presentation = e.getPresentation();
-    presentation.setText(() -> ExternalSystemBundle.message("action.detach.external.project.text", systemIdName));
+    presentation.setText(ExternalSystemBundle.lazyMessage("action.detach.external.project.text", systemIdName));
   }
 
   @Override
@@ -58,7 +58,7 @@ public class DetachExternalProjectAction extends ExternalSystemNodeAction<Projec
                       @NotNull AnActionEvent e) {
 
     e.getPresentation().setText(
-      () -> ExternalSystemBundle.message("action.detach.external.project.text", projectSystemId.getReadableName())
+      ExternalSystemBundle.lazyMessage("action.detach.external.project.text", projectSystemId.getReadableName())
     );
 
     final ProjectNode projectNode = e.getData(ExternalSystemDataKeys.SELECTED_PROJECT_NODE);

@@ -84,14 +84,14 @@ public class InstalledPackagesPanel extends JPanel {
     myPackagesTable.getTableHeader().setReorderingAllowed(false);
     new TableSpeedSearch(myPackagesTable);
 
-    myUpgradeButton = new DumbAwareActionButton(() -> IdeBundle.message("action.AnActionButton.text.upgrade"), IconUtil.getMoveUpIcon()) {
+    myUpgradeButton = new DumbAwareActionButton(IdeBundle.lazyMessage("action.AnActionButton.text.upgrade"), IconUtil.getMoveUpIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         PackageManagementUsageCollector.triggerUpgradePerformed(myProject, myPackageManagementService);
         upgradeAction();
       }
     };
-    myInstallButton = new DumbAwareActionButton(() -> IdeBundle.message("action.AnActionButton.text.install"), IconUtil.getAddIcon()) {
+    myInstallButton = new DumbAwareActionButton(IdeBundle.lazyMessage("action.AnActionButton.text.install"), IconUtil.getAddIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         PackageManagementUsageCollector.triggerBrowseAvailablePackagesPerformed(myProject, myPackageManagementService);
@@ -102,7 +102,7 @@ public class InstalledPackagesPanel extends JPanel {
       }
     };
     myInstallButton.setShortcut(CommonShortcuts.getNew());
-    myUninstallButton = new DumbAwareActionButton(() -> IdeBundle.message("action.AnActionButton.text.uninstall"), IconUtil.getRemoveIcon()) {
+    myUninstallButton = new DumbAwareActionButton(IdeBundle.lazyMessage("action.AnActionButton.text.uninstall"), IconUtil.getRemoveIcon()) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         PackageManagementUsageCollector.triggerUninstallPerformed(myProject, myPackageManagementService);

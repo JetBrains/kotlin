@@ -531,7 +531,7 @@ public class DirectoryChooser extends DialogWrapper {
 
   private class FilterExistentAction extends ToggleAction {
     FilterExistentAction() {
-      super(() -> RefactoringBundle.message("directory.chooser.hide.non.existent.checkBox.text"),
+      super(RefactoringBundle.lazyMessage("directory.chooser.hide.non.existent.checkBox.text"),
             () -> UIUtil.removeMnemonic(RefactoringBundle.message("directory.chooser.hide.non.existent.checkBox.text")),
             AllIcons.General.Filter);
     }

@@ -1240,7 +1240,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class BackAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     BackAction() {
-      super(() -> CodeInsightBundle.message("javadoc.action.back"), AllIcons.Actions.Back);
+      super(CodeInsightBundle.lazyMessage("javadoc.action.back"), AllIcons.Actions.Back);
     }
 
     @Override
@@ -1260,7 +1260,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class ForwardAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     ForwardAction() {
-      super(() -> CodeInsightBundle.message("javadoc.action.forward"), AllIcons.Actions.Forward);
+      super(CodeInsightBundle.lazyMessage("javadoc.action.forward"), AllIcons.Actions.Forward);
     }
 
     @Override
@@ -1283,7 +1283,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     private EditDocumentationSourceAction() {
       super(true);
       getTemplatePresentation().setIcon(AllIcons.Actions.EditSource);
-      getTemplatePresentation().setText(() -> CodeInsightBundle.message("action.presentation.DocumentationComponent.text"));
+      getTemplatePresentation().setText(CodeInsightBundle.lazyMessage("action.presentation.DocumentationComponent.text"));
     }
 
     @Override

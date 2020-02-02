@@ -24,7 +24,7 @@ public class ToggleBookmarkWithMnemonicAction extends ToggleBookmarkAction {
   private boolean myPopupShown;
 
   public ToggleBookmarkWithMnemonicAction() {
-    getTemplatePresentation().setText(() -> IdeBundle.message("action.bookmark.toggle.mnemonic"));
+    getTemplatePresentation().setText(IdeBundle.lazyMessage("action.bookmark.toggle.mnemonic"));
   }
 
   @Override
@@ -38,11 +38,11 @@ public class ToggleBookmarkWithMnemonicAction extends ToggleBookmarkAction {
         e.getPresentation().setVisible(false);
       }
       else {
-        e.getPresentation().setText(() -> IdeBundle.message("action.presentation.ToggleBookmarkWithMnemonicAction.text"));
+        e.getPresentation().setText(IdeBundle.lazyMessage("action.presentation.ToggleBookmarkWithMnemonicAction.text"));
       }
     }
     else {
-      e.getPresentation().setText(() -> IdeBundle.message("action.bookmark.toggle.mnemonic"));
+      e.getPresentation().setText(IdeBundle.lazyMessage("action.bookmark.toggle.mnemonic"));
     }
   }
 

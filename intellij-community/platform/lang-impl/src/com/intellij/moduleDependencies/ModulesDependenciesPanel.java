@@ -238,7 +238,7 @@ public class ModulesDependenciesPanel extends JPanel implements Disposable {
   private JComponent createNorthPanel() {
     DefaultActionGroup group = new DefaultActionGroup();
 
-    group.add(new AnAction(() -> CommonBundle.message("action.close"), AllIcons.Actions.Cancel) {
+    group.add(new AnAction(CommonBundle.lazyMessage("action.close"), AllIcons.Actions.Cancel) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         DependenciesAnalyzeManager.getInstance(myProject).closeContent(myContent);

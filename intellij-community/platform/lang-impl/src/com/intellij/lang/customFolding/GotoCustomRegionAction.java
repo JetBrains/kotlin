@@ -61,7 +61,7 @@ public class GotoCustomRegionAction extends AnAction implements DumbAware, Popup
   @Override
   public void update(@NotNull AnActionEvent e) {
     Presentation presentation = e.getPresentation();
-    presentation.setText(() -> IdeBundle.message("goto.custom.region.menu.item"));
+    presentation.setText(IdeBundle.lazyMessage("goto.custom.region.menu.item"));
     final Editor editor = e.getData(CommonDataKeys.EDITOR);
     final Project project = e.getProject();
     boolean isAvailable = editor != null && project != null;

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DumpConfigurationTypesAction extends AnAction implements DumbAware {
   public DumpConfigurationTypesAction() {
-    super(() -> ActionsBundle.message("action.DumpConfigurationTypesAction.text"));
+    super(ActionsBundle.lazyMessage("action.DumpConfigurationTypesAction.text"));
   }
 
   @Override
