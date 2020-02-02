@@ -41,7 +41,7 @@ digraph lambdas_kt {
                 }
                 17 [label="Postponed exit from lambda"];
                 18 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    R|<local>/x|.R|kotlin/Int.inc|()
+    ^ R|<local>/x|.R|kotlin/Int.inc|()
 }
 )"];
                 19 [label="Exit block"];

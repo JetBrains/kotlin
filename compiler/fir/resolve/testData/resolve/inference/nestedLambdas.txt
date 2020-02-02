@@ -18,8 +18,8 @@ FILE: nestedLambdas.kt
         ^associateBy1 R|kotlin/TODO|()
     }
     public final val x: R|MyMap<kotlin/Int, kotlin/String>| = R|/myRun|<R|MyMap<kotlin/Int, kotlin/String>|>(<L> = myRun@fun <anonymous>(): R|MyMap<kotlin/Int, kotlin/String>| {
-        R|/w|.R|/associateBy1|<R|kotlin/String|, R|kotlin/Int|>(<L> = associateBy1@fun <anonymous>(f: R|kotlin/String|): R|kotlin/Int| {
-            R|<local>/f|.R|kotlin/String.length|
+        ^ R|/w|.R|/associateBy1|<R|kotlin/String|, R|kotlin/Int|>(<L> = associateBy1@fun <anonymous>(f: R|kotlin/String|): R|kotlin/Int| {
+            ^ R|<local>/f|.R|kotlin/String.length|
         }
         )
     }

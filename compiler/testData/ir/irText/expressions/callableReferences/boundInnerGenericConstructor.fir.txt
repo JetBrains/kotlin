@@ -71,7 +71,7 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
     VALUE_PARAMETER name:x index:2 type:kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<A of test.foo, B of test.foo>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <A, B> (a: A of test.foo, b: B of test.foo, x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<A of test.foo, B of test.foo>>): test.Foo.Inner<A of test.foo, B of test.foo> [inline] declared in test'
-        CALL 'public abstract fun invoke (p1: A of test.foo, p2: B of test.foo): test.Foo.Inner<A of test.foo, B of test.foo> [operator] declared in kotlin.Function2' type=test.Foo.Inner<A of test.foo, B of test.foo> origin=null
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2' type=test.Foo.Inner<A of test.foo, B of test.foo> origin=INVOKE
           $this: GET_VAR 'x: kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<A of test.foo, B of test.foo>> declared in test.foo' type=kotlin.Function2<A of test.foo, B of test.foo, test.Foo.Inner<A of test.foo, B of test.foo>> origin=null
           p1: GET_VAR 'a: A of test.foo declared in test.foo' type=A of test.foo origin=null
           p2: GET_VAR 'b: B of test.foo declared in test.foo' type=B of test.foo origin=null

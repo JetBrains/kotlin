@@ -3,13 +3,13 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>'
-        CALL 'public abstract fun invoke (): kotlin.Any [operator] declared in kotlin.Function0' type=kotlin.Any origin=null
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any> declared in <root>.checkAny' type=kotlin.Function0<kotlin.Any> origin=null
   FUN name:checkAnyN visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Any?>) returnType:kotlin.Any?
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Any?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun checkAnyN (fn: kotlin.Function0<kotlin.Any?>): kotlin.Any? declared in <root>'
-        CALL 'public abstract fun invoke (): kotlin.Any? [operator] declared in kotlin.Function0' type=kotlin.Any? origin=null
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<kotlin.Any?> declared in <root>.checkAnyN' type=kotlin.Function0<kotlin.Any?> origin=null
   FUN name:id visibility:public modality:FINAL <T> (x:T of <root>.id) returnType:T of <root>.id
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -24,14 +24,16 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
           fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
               BLOCK_BODY
-                CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.test1'
+                  CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
             BLOCK_BODY
-              CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test2'
+                CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -44,7 +46,8 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
           FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
               BLOCK_BODY
-                CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test3'
+                  CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -58,7 +61,8 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
           x: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
               BLOCK_BODY
-                CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test4'
+                  CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -71,7 +75,8 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
           fn: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
               BLOCK_BODY
-                CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.test5'
+                  CALL 'public open fun foo (): kotlin.String? [operator] declared in <root>.J' type=kotlin.String? origin=null
   FUN name:test6 visibility:public modality:FINAL <> () returnType:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test6 (): kotlin.Any? declared in <root>'
@@ -79,4 +84,5 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
           fn: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
               BLOCK_BODY
-                CALL 'public open fun nnFoo (): kotlin.String [operator] declared in <root>.J' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.test6'
+                  CALL 'public open fun nnFoo (): kotlin.String [operator] declared in <root>.J' type=kotlin.String origin=null

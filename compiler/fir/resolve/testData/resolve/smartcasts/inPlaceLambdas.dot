@@ -103,7 +103,7 @@ digraph inPlaceLambdas_kt {
         }
         33 [label="Postponed exit from lambda"];
         34 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    (R|<local>/x| as R|B|)
+    ^ (R|<local>/x| as R|B|)
 }
 )"];
         35 [label="Access variable R|<local>/x|"];
@@ -155,7 +155,7 @@ digraph inPlaceLambdas_kt {
                 54 [label="Postponed exit from lambda"];
                 55 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     R|<local>/x|.R|/A.foo|()
-    (R|<local>/x| as R|B|)
+    ^ (R|<local>/x| as R|B|)
 }
 )"];
                 56 [label="Access variable R|<local>/x|"];

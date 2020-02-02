@@ -3,7 +3,7 @@ FILE: postponedLambdas.kt
     }
     public final fun test(a: R|kotlin/Any|, b: R|kotlin/Any|, c: R|kotlin/Any|): R|kotlin/Unit| {
         R|/foo|(vararg(R|<local>/a|, foo@fun <anonymous>(): R|kotlin/String| <kind=UNKNOWN>  {
-            String()
+            ^ String()
         }
         , R|<local>/b|))
     }

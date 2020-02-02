@@ -52,24 +52,24 @@ FILE: operatorsOverLiterals.kt
     }
     public final fun test_6(): R|kotlin/Unit| {
         <Inapplicable(INAPPLICABLE): [/takeByte]>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(127).R|kotlin/Int.plus|(Int(1))
+            ^ Int(127).R|kotlin/Int.plus|(Int(1))
         }
         ))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(1).<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(1)
+        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(1).R|<local>/plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+            ^ Int(1)
         }
         )))
         R|/takeByte|(R|kotlin/run|<R|kotlin/Byte|>(<L> = run@fun <anonymous>(): R|kotlin/Byte| <kind=EXACTLY_ONCE>  {
-            Int(1).R|kotlin/Int.plus|(Int(1))
+            ^ Int(1).R|kotlin/Int.plus|(Int(1))
         }
         ))
         Int(1).R|kotlin/Int.plus|(Int(1))
         R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         )
         Int(1).R|<local>/plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            Int(1)
+            ^ Int(1)
         }
         ))
     }

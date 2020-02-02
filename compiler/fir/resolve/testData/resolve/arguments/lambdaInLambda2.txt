@@ -8,7 +8,7 @@ FILE: main.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval processor: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/AdapterProcessor.AdapterProcessor]> = <Inapplicable(INAPPLICABLE): [/AdapterProcessor.AdapterProcessor]>#<R|PsiMethod|, R|PsiClass|>(R|/Function|<R|PsiMethod?|, R|PsiClass?|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| {
-            R|<local>/method|?.R|/PsiMethod.containingClass|
+            ^ R|<local>/method|?.R|/PsiMethod.containingClass|
         }
         ))
     }

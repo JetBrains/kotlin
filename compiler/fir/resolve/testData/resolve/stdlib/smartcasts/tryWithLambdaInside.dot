@@ -48,7 +48,7 @@ digraph tryWithLambdaInside_kt {
                     }
                     16 [label="Postponed exit from lambda"];
                     17 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
-    R|<local>/it|
+    ^ R|<local>/it|
 }
 )"];
                     18 [label="Exit block"];
@@ -69,7 +69,7 @@ digraph tryWithLambdaInside_kt {
         }
         25 [label="Jump: ^testInPlace try {
     R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
-        R|<local>/it|
+        ^ R|<local>/it|
     }
     )
 }
@@ -120,7 +120,7 @@ finally {
                     33 [label="Postponed enter to lambda"];
                     34 [label="Postponed exit from lambda"];
                     35 [label="Function call: R|<local>/list|.R|/notInPlaceFilter|(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| {
-    R|<local>/it|
+    ^ R|<local>/it|
 }
 )"];
                     36 [label="Exit block"];
@@ -141,7 +141,7 @@ finally {
         }
         43 [label="Jump: ^testNotInPlace try {
     R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| {
-        R|<local>/it|
+        ^ R|<local>/it|
     }
     )
 }

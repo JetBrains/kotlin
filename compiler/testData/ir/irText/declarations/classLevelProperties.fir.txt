@@ -91,7 +91,8 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
                 $this: VALUE_PARAMETER name:<this> type:<root>.C
                 BLOCK_BODY
-                  CONST Int type=kotlin.Int value=42
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.C.test7$delegate'
+                    CONST Int type=kotlin.Int value=42
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
         $this: VALUE_PARAMETER name:<this> type:<root>.C

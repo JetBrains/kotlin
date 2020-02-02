@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -438,3 +439,8 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAc
     }
     return FirExpressionWithSmartcastImpl(qualifiedAccessExpression, intersectedTypeRef, typesFromSmartCast)
 }
+
+fun CallableId.isInvoke() =
+    packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+            && className?.asString()?.startsWith("Function") == true
+            && callableName.asString() == "invoke"

@@ -6,7 +6,8 @@ FILE fqName:<root> fileName:/lambdas.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
             VALUE_PARAMETER name:it index:0 type:kotlin.String
             BLOCK_BODY
-              GET_VAR 'it: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.String declared in <root>.test1'
+                GET_VAR 'it: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.String, kotlin.String>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -20,8 +21,9 @@ FILE fqName:<root> fileName:/lambdas.kt
             $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
             VALUE_PARAMETER name:it index:0 type:kotlin.Any
             BLOCK_BODY
-              CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                $this: GET_VAR 'it: kotlin.Any declared in <root>.test2.<anonymous>' type=kotlin.Any origin=null
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Any): kotlin.Int declared in <root>.test2'
+                CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                  $this: GET_VAR 'it: kotlin.Any declared in <root>.test2.<anonymous>' type=kotlin.Any origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
