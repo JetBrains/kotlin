@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
+import org.jetbrains.kotlin.backend.wasm.utils.hasExcludedFromCodegenAnnotation
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 
@@ -35,8 +38,18 @@ class WasmCompiledModuleFragment {
 
     open class ReferencableElements<Ir, Wasm : Any> {
         val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
-        fun reference(ir: Ir): WasmSymbol<Wasm> =
-            unbound.getOrPut(ir) { WasmSymbol.unbound() }
+        fun reference(ir: Ir): WasmSymbol<Wasm> {
+            if (ir is IrSymbol) {
+                val owner = ir.owner
+                if (owner is IrAnnotationContainer && owner.hasExcludedFromCodegenAnnotation()) {
+                    if (owner is IrDeclarationWithName) {
+                        error("Referencing declaration ${owner.fqNameWhenAvailable} excluded from codegen")
+                    }
+                    error("Referencing declaration $owner excluded from codegen")
+                }
+            }
+            return unbound.getOrPut(ir) { WasmSymbol.unbound() }
+        }
     }
 
     class ReferencableAndDefinable<Ir, Wasm: Any> : ReferencableElements<Ir, Wasm>() {

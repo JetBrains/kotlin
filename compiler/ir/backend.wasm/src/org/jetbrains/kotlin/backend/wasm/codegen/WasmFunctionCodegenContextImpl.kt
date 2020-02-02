@@ -35,7 +35,7 @@ class WasmFunctionCodegenContextImpl(
         val wasmLocal = WasmLocal(
             localIds++,
             owner.name.asString(),
-            transformType(owner.type),
+            if (owner is IrValueParameter) transformValueParameterType(owner) else transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )
 

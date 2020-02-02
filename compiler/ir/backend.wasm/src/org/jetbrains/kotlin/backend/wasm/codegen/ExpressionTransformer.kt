@@ -51,22 +51,31 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
     }
 
     override fun visitGetField(expression: IrGetField, data: WasmFunctionCodegenContext): WasmInstruction {
-        val field = expression.symbol.owner
-        val receiver = expression.receiver
+        val field: IrField = expression.symbol.owner
+        val receiver: IrExpression? = expression.receiver
         return when {
             receiver != null -> {
-                val fieldClass = field.parentAsClass
-                WasmStructGet(
-                    data.referenceStructType(fieldClass.symbol), data.getStructFieldRef(field),
-                    expressionToWasmInstruction(receiver, data),
-                    data.transformType(field.type)
-                )
+                if (field.parentAsClass.isInline) return expressionToWasmInstruction(receiver, data)
+                getInstanceField(field, expressionToWasmInstruction(receiver, data), data)
             }
             else -> {
                 val fieldName = data.referenceGlobal(field.symbol)
                 WasmGetGlobal(fieldName, data.transformType(field.type))
             }
         }
+    }
+
+    fun getInstanceField(
+        field: IrField,
+        receiver: WasmInstruction,
+        context: WasmFunctionCodegenContext
+    ): WasmStructGet {
+        val fieldClass = field.parentAsClass
+        return WasmStructGet(
+            context.referenceStructType(fieldClass.symbol), context.getStructFieldRef(field),
+            receiver,
+            context.transformType(field.type)
+        )
     }
 
     override fun visitGetValue(expression: IrGetValue, data: WasmFunctionCodegenContext): WasmInstruction =
@@ -101,6 +110,11 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: WasmFunctionCodegenContext): WasmInstruction {
         val klass = expression.symbol.owner.parentAsClass
+
+        if (klass.isInline) {
+            return expressionToWasmInstruction(expression.getValueArgument(0)!!, data)
+        }
+
         val structTypeName = data.referenceStructType(klass.symbol)
         val klassId = data.referenceClassId(klass.symbol)
 
@@ -192,11 +206,34 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
             symbols.structNarrow -> {
                 val fromType = call.getTypeArgument(0)!!
                 val toType = call.getTypeArgument(1)!!
+                if (toType.isInlined()) {
+                    val boxedValue = wasmArguments.single()
+                    val narrowed = WasmStructNarrow(context.transformType(fromType), context.transformBoxedType(toType), boxedValue)
+                    val klass: IrClass = toType.getInlinedClass()!!
+                    val field = getInlineClassBackingField(klass)
+                    val wasmGetField = getInstanceField(field, narrowed, context)
+                    return wasmGetField
+                }
                 return WasmStructNarrow(context.transformType(fromType), context.transformType(toType), wasmArguments[0])
             }
 
             symbols.unreachable -> {
                 return WasmUnreachable
+            }
+
+            symbols.boxIntrinsic -> {
+                TODO()
+            }
+
+            symbols.unboxIntrinsic -> {
+                val boxedValue = wasmArguments.single()
+                val fromType = call.getTypeArgument(0)!!
+                val toType = call.getTypeArgument(1)!!
+                val narrowed = WasmStructNarrow(context.transformType(fromType), context.transformBoxedType(toType), boxedValue)
+                val klass: IrClass = toType.getInlinedClass()!!
+                val field = getInlineClassBackingField(klass)
+                val wasmGetField = getInstanceField(field, narrowed, context)
+                return wasmGetField
             }
         }
 

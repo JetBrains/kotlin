@@ -120,6 +120,9 @@ class WasmSymbols(
 
     val structNarrow = getInternalFunction("wasm_struct_narrow")
 
+    val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
+    val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
+
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 

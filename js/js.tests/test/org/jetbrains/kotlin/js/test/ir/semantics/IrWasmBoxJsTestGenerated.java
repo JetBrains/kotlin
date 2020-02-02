@@ -34,6 +34,11 @@ public class IrWasmBoxJsTestGenerated extends AbstractIrWasmBoxJsTest {
         runTest("js/js.translator/testData/wasmBox/basicTypes.kt");
     }
 
+    @TestMetadata("inlineClass.kt")
+    public void testInlineClass() throws Exception {
+        runTest("js/js.translator/testData/wasmBox/inlineClass.kt");
+    }
+
     @TestMetadata("interfaceMethodCalls.kt")
     public void testInterfaceMethodCalls() throws Exception {
         runTest("js/js.translator/testData/wasmBox/interfaceMethodCalls.kt");

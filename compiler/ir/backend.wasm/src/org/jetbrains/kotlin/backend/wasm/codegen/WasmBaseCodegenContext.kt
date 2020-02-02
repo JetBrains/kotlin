@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -32,6 +33,8 @@ interface WasmBaseCodegenContext {
     fun referenceStringLiteral(string: String): WasmSymbol<Int>
 
     fun transformType(irType: IrType): WasmValueType
+    fun transformBoxedType(irType: IrType): WasmValueType
+    fun transformValueParameterType(irValueParameter: IrValueParameter): WasmValueType
     fun transformResultType(irType: IrType): WasmValueType?
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int>

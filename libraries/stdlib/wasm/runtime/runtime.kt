@@ -23,3 +23,11 @@ internal fun nullableEquals(lhs: Any?, rhs: Any?): Boolean {
         return wasm_ref_is_null(rhs).reinterpretAsBoolean()
     return unsafeNotNull(lhs).equals(rhs)
 }
+
+@ExcludedFromCodegen
+internal fun <T, R> boxIntrinsic(x: T): R =
+    implementedAsIntrinsic
+
+@ExcludedFromCodegen
+internal fun <T, R> unboxIntrinsic(x: T): R =
+    implementedAsIntrinsic

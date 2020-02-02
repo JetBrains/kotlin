@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.util.isInterface
 
 class WasmTypeTransformer(
@@ -26,6 +28,9 @@ class WasmTypeTransformer(
             else ->
                 toWasmValueType()
         }
+
+    fun IrType.toBoxedInlineClassType(): WasmValueType =
+        WasmStructRef(context.referenceStructType(erasedUpperBound?.symbol ?: builtIns.anyClass))
 
     fun IrType.toWasmValueType(): WasmValueType =
         when (this) {
@@ -49,8 +54,14 @@ class WasmTypeTransformer(
             builtIns.stringType.makeNullable() ->
                 WasmAnyRef
 
-            else ->
-                WasmStructRef(context.referenceStructType(erasedUpperBound?.symbol ?: builtIns.anyClass))
+            else -> {
+                val ic = this.getInlinedClass()
+                if (ic != null) {
+                    getInlineClassUnderlyingType(ic).toWasmValueType()
+                } else {
+                    WasmStructRef(context.referenceStructType(erasedUpperBound?.symbol ?: builtIns.anyClass))
+                }
+            }
         }
 }
 

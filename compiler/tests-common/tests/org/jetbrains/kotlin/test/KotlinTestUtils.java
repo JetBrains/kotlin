@@ -83,7 +83,7 @@ public class KotlinTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
-    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR = // true ||
+    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR = true ||
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
     private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =

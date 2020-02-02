@@ -35,13 +35,17 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         if (declaration.hasExcludedFromCodegenAnnotation())
             return
 
+        if (declaration is IrConstructor)
+            if (declaration.parentAsClass.isInline)
+                return
+
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
         val functionType =
             WasmFunctionType(
                 watName,
-                parameterTypes = irParameters.map { context.transformType(it.type) },
+                parameterTypes = irParameters.map { context.transformValueParameterType(it) },
                 resultType = context.transformResultType(declaration.returnType)
             )
         context.defineFunctionType(declaration.symbol, functionType)

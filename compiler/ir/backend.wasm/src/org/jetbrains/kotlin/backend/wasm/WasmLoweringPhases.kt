@@ -247,11 +247,17 @@ private val inlineClassLoweringPhase = makeCustomWasmModulePhase(
     description = "Handle inline classes"
 )
 
-//private val autoboxingTransformerPhase = makeJsModulePhase(
-//    ::AutoboxingTransformer,
-//    name = "AutoboxingTransformer",
-//    description = "Insert box/unbox intrinsics"
-//)
+private val autoboxingTransformerPhase = makeWasmModulePhase(
+    { context ->
+        AutoboxingTransformer(
+            context,
+            boxIntrinsic = context.wasmSymbols.boxIntrinsic,
+            unboxIntrinsic = context.wasmSymbols.unboxIntrinsic
+        )
+    },
+    name = "AutoboxingTransformer",
+    description = "Insert box/unbox intrinsics"
+)
 
 private val blockDecomposerLoweringPhase = makeCustomWasmModulePhase(
     { context, module ->
@@ -412,7 +418,6 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             inlineClassLoweringPhase then
 
 //            TODO: Commonize box/unbox intrinsics
-//            autoboxingTransformerPhase then
 
             blockDecomposerLoweringPhase then
 
@@ -424,6 +429,8 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             staticMembersLoweringPhase then
             fieldInitializersLoweringPhase then
             typeOperatorLoweringPhase then
+            autoboxingTransformerPhase then
+
             builtInsLoweringPhase then
 
             virtualDispatchReceiverExtractionPhase then

@@ -339,7 +339,13 @@ private val inlineClassLoweringPhase = makeCustomJsModulePhase(
 )
 
 private val autoboxingTransformerPhase = makeJsModulePhase(
-    ::AutoboxingTransformer,
+    { context ->
+        AutoboxingTransformer(
+            context,
+            boxIntrinsic = context.intrinsics.jsBoxIntrinsic,
+            unboxIntrinsic = context.intrinsics.jsUnboxIntrinsic
+        )
+    },
     name = "AutoboxingTransformer",
     description = "Insert box/unbox intrinsics"
 )

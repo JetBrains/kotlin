@@ -5,20 +5,25 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 
 // Copied and adapted from Kotlin/Native
 
-class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), FileLoweringPass {
+class AutoboxingTransformer(
+    val context: CommonBackendContext,
+    val boxIntrinsic: IrSimpleFunctionSymbol,
+    val unboxIntrinsic: IrSimpleFunctionSymbol
+) : AbstractValueUsageTransformer(context.irBuiltIns), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()
 
@@ -48,14 +53,17 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             is IrGetField -> this.symbol.owner.type
 
             is IrTypeOperatorCall -> {
-                assert(operator == IrTypeOperator.REINTERPRET_CAST) { "Only REINTERPRET_CAST expected at this point" }
+                // if (operator)
+                assert(operator == IrTypeOperator.REINTERPRET_CAST) {
+                    "Only REINTERPRET_CAST expected at this point, got $operator"
+                }
                 this.typeOperand
             }
 
             is IrGetValue -> {
                 val value = this.symbol.owner
                 if (value is IrValueParameter && value.isDispatchReceiver) {
-                    irBuiltIns.anyNType
+                    irBuiltIns.anyType
                 } else {
                     this.type
                 }
@@ -90,8 +98,8 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
         val function = when {
             actualInlinedClass == null && expectedInlinedClass == null -> return this
-            actualInlinedClass != null && expectedInlinedClass == null -> context.intrinsics.jsBoxIntrinsic
-            actualInlinedClass == null && expectedInlinedClass != null -> context.intrinsics.jsUnboxIntrinsic
+            actualInlinedClass != null && expectedInlinedClass == null -> boxIntrinsic
+            actualInlinedClass == null && expectedInlinedClass != null -> unboxIntrinsic
             else -> return this
         }
 
@@ -174,16 +182,16 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
                 expression.varargElementType
         )
     }
-
-    private val IrValueParameter.isDispatchReceiver: Boolean
-        get() {
-            val parent = this.parent
-            if (parent is IrClass)
-                return true
-            if (parent is IrFunction && parent.dispatchReceiverParameter == this)
-                return true
-            return false
-        }
-
 }
+
+val IrValueDeclaration.isDispatchReceiver: Boolean
+    get() {
+        val parent = this.parent
+        if (parent is IrClass)
+            return true
+        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
+            return true
+        return false
+    }
+
 

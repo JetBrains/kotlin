@@ -139,7 +139,9 @@ class ExpressionValidator(val function: WasmFunction?) : WasmExpressionVisitor<U
 
     override fun visitStructGet(x: WasmStructGet, data: Nothing?) {
         val structRefType = x.structRef.type
-        check(structRefType is WasmStructRef)
+        check(structRefType is WasmStructRef) {
+            "ZZ"
+        }
         check(structRefType.structType.owner == x.structName.owner)
     }
 

@@ -49,7 +49,7 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
-    private val runIgnoredWasmTests = false ||
+    private val runIgnoredWasmTests = true ||
         getBoolean("kotlin.wasm.run.ignored.tests")
 
     fun doTest(filePath: String) {
@@ -85,6 +85,8 @@ abstract class BasicWasmBoxTest(
             )
 
             spiderMonkey.runFile(outputJsFile)
+
+            // File("/home/skuzmich/tmp/passedWasm").appendText(filePath + "\n")
         }
     }
 

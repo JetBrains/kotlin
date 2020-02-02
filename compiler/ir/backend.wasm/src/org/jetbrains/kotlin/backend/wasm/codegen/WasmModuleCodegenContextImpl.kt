@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.lower.isDispatchReceiver
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
 
@@ -24,6 +26,20 @@ class WasmModuleCodegenContextImpl(
 
     override fun transformType(irType: IrType): WasmValueType {
         return with(typeTransformer) { irType.toWasmValueType() }
+    }
+
+    override fun transformBoxedType(irType: IrType): WasmValueType {
+        return with(typeTransformer) { irType.toBoxedInlineClassType() }
+    }
+
+    override fun transformValueParameterType(irValueParameter: IrValueParameter): WasmValueType {
+        return with(typeTransformer) {
+            if (irValueParameter.isDispatchReceiver && irValueParameter.type.isInlined()) {
+                irValueParameter.type.toBoxedInlineClassType()
+            } else {
+                irValueParameter.type.toWasmValueType()
+            }
+        }
     }
 
     override fun transformResultType(irType: IrType): WasmValueType? {
