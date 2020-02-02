@@ -351,7 +351,7 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
 
   @Override
   public void dispose() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ApplicationManager.getApplication().assertIsWriteThread();
     assert !myDisposed : "Already disposed!";
     myDisposed = true;
 

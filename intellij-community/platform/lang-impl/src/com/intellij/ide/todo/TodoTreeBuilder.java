@@ -290,7 +290,7 @@ public abstract class TodoTreeBuilder implements Disposable {
    *         It means that file is in "dirty" file set or in "current" file set.
    */
   private boolean canContainTodoItems(PsiFile psiFile) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ApplicationManager.getApplication().assertIsWriteThread();
     VirtualFile vFile = psiFile.getVirtualFile();
     return myFileTree.contains(vFile) || myDirtyFileSet.contains(vFile);
   }
@@ -302,7 +302,7 @@ public abstract class TodoTreeBuilder implements Disposable {
    * have happened.
    */
   private void markFileAsDirty(@NotNull PsiFile psiFile) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ApplicationManager.getApplication().assertIsWriteThread();
     VirtualFile vFile = psiFile.getVirtualFile();
     if (vFile != null && !(vFile instanceof LightVirtualFile)) { // If PSI file isn't valid then its VirtualFile can be null
       myDirtyFileSet.add(vFile);
@@ -329,7 +329,7 @@ public abstract class TodoTreeBuilder implements Disposable {
   }
 
   void rebuildCache(@NotNull Set<? extends VirtualFile> files) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ApplicationManager.getApplication().assertIsWriteThread();
     myFileTree.clear();
     myDirtyFileSet.clear();
     myFile2Highlighter.clear();

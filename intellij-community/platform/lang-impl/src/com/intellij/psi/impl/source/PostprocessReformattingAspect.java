@@ -123,7 +123,7 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
 
   public <T> T postponeFormattingInside(@NotNull Computable<T> computable) {
     Application application = ApplicationManager.getApplication();
-    application.assertIsDispatchThread();
+    application.assertIsWriteThread();
     try {
       incrementPostponedCounter();
       return computable.compute();
@@ -139,7 +139,7 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
 
   private void decrementPostponedCounter() {
     Application application = ApplicationManager.getApplication();
-    application.assertIsDispatchThread();
+    application.assertIsWriteThread();
     if (--getContext().myPostponedCounter == 0) {
       if (application.isWriteAccessAllowed()) {
         doPostponedFormatting();

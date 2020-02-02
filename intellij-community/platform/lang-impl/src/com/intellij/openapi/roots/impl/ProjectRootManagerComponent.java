@@ -135,7 +135,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   @CalledInAwt
   private void addRootsToWatch() {
     if (myProject.isDefault()) return;
-    ApplicationManager.getApplication().assertIsDispatchThread();
+    ApplicationManager.getApplication().assertIsWriteThread();
     Disposable oldDisposable = myRootPointersDisposable;
     Disposable newDisposable = Disposer.newDisposable();
 

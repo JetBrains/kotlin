@@ -574,7 +574,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
       runnable = () -> NonProjectFileWritingAccessProvider.disableChecksDuring(this::doRun);
     }
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      ApplicationManager.getApplication().assertIsDispatchThread();
+      ApplicationManager.getApplication().assertIsWriteThread();
       runnable.run();
       return;
     }

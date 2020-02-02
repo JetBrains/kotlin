@@ -26,7 +26,7 @@ public final class FileEditorPsiTreeChangeListener extends PsiTreeChangeAdapter 
   @Override
   public void propertyChanged(@NotNull final PsiTreeChangeEvent e) {
     if (PsiTreeChangeEvent.PROP_ROOTS.equals(e.getPropertyName())) {
-      ApplicationManager.getApplication().assertIsDispatchThread();
+      ApplicationManager.getApplication().assertIsWriteThread();
       final VirtualFile[] openFiles = myFileEditorManager.getOpenFiles();
       for (int i = openFiles.length - 1; i >= 0; i--) {
         final VirtualFile file = openFiles[i];
