@@ -36,7 +36,7 @@ dependencies {
 
 val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
     classpath(sourceSets.main.get().runtimeClasspath)
-    main = "org.jetbrains.kotlin.descriptors.commonizer.cli.NativeDistributionCommonizerKt"
+    main = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
 }
 
 sourceSets {

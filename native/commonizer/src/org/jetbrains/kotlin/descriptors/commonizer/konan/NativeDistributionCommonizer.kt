@@ -47,20 +47,18 @@ class NativeDistributionCommonizer(
         with(ResettableClockMark()) {
             // 1. load modules
             val modulesByTargets = loadModules()
-            logger.log("Loaded lazy (uninitialized) libraries in ${elapsedSinceLast()}")
+            logger.log("* Loaded lazy (uninitialized) libraries in ${elapsedSinceLast()}")
 
             // 2. run commonization
             val result = commonize(modulesByTargets)
-            logger.log("Commonization performed in ${elapsedSinceLast()}")
+            logger.log("* Commonization performed in ${elapsedSinceLast()}")
 
             // 3. write new libraries
             saveModules(modulesByTargets, result)
-            logger.log("Written libraries in ${elapsedSinceLast()}")
+            logger.log("* Written libraries in ${elapsedSinceLast()}")
 
             logger.log("TOTAL: ${elapsedSinceStart()}")
         }
-
-        logger.log("Done.\n")
     }
 
     private fun checkPreconditions() {
