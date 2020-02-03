@@ -281,7 +281,7 @@ public class GradleExecutionHelper {
       throw e;
     }
     catch (Throwable e) {
-      LOG.debug("Gradle execution error", e);
+      LOG.warn("Gradle execution error", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
       ExternalSystemException externalSystemException = new ExternalSystemException(ExceptionUtil.getMessage(rootCause), e);
       externalSystemException.initCause(e);
@@ -296,7 +296,7 @@ public class GradleExecutionHelper {
         connection.close();
       }
       catch (Throwable e) {
-        LOG.debug("Gradle connection close error", e);
+        LOG.warn("Gradle connection close error", e);
       }
     }
   }
