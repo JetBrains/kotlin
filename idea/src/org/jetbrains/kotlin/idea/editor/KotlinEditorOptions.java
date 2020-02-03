@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
         name = "JetEditorOptions",
         storages = {
                 @Storage(
-                        file = "$APP_CONFIG$/editor.xml"
+                        value = "$APP_CONFIG$/editor.xml"
                 )}
 )
 public class KotlinEditorOptions implements PersistentStateComponent<KotlinEditorOptions> {
