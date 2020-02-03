@@ -126,12 +126,8 @@ class MemoizedInlineClassReplacements {
     }
 
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
-        buildReplacement(function) {
+        buildReplacement(function, function.origin) {
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
-            overriddenSymbols = function.overriddenSymbols.map {
-                getReplacementFunction(it.owner)?.symbol ?: it
-            }
-
             val newValueParameters = ArrayList<IrValueParameter>()
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
@@ -151,7 +147,7 @@ class MemoizedInlineClassReplacements {
         }
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
-        buildReplacement(function) {
+        buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
             val newValueParameters = ArrayList<IrValueParameter>()
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 val name = when (parameter) {
@@ -172,11 +168,13 @@ class MemoizedInlineClassReplacements {
             valueParameters = newValueParameters
         }
 
-    private fun buildReplacement(function: IrFunction, body: IrFunctionImpl.() -> Unit) =
+    private fun buildReplacement(function: IrFunction, replacementOrigin: IrDeclarationOrigin, body: IrFunctionImpl.() -> Unit) =
         buildFunWithDescriptorForInlining(function.descriptor) {
             updateFrom(function)
-            if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
-                origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
+            origin = if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
+                JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
+            } else {
+                replacementOrigin
             }
             name = mangledNameFor(function)
             returnType = function.returnType
@@ -184,9 +182,16 @@ class MemoizedInlineClassReplacements {
             parent = function.parent
             annotations += function.annotations
             copyTypeParameters(function.allTypeParameters)
-            correspondingPropertySymbol = function.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol
             metadata = function.metadata
             function.safeAs<IrFunctionBase<*>>()?.metadata = null
+
+            if (function is IrSimpleFunction) {
+                correspondingPropertySymbol = function.correspondingPropertySymbol
+                overriddenSymbols = function.overriddenSymbols.map {
+                    getReplacementFunction(it.owner)?.symbol ?: it
+                }
+            }
+
             body()
         }
 }
