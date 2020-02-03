@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 class Dummy {
   override fun equals(other: Any?) = true
 }

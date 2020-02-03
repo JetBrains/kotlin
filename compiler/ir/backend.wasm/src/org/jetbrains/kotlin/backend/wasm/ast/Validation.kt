@@ -31,7 +31,9 @@ fun assertSubType(subtype: WasmValueType?, type: WasmValueType?) {
         return
     }
     if (type is WasmAnyRef) {
-        check(isSubtypeOfAnyRef(subtype))
+        check(isSubtypeOfAnyRef(subtype)) {
+            "Type $subtype is not a subtype of anyref"
+        }
         return
     }
     if (type != subtype)
