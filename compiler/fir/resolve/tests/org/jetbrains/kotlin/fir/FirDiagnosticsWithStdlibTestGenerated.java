@@ -627,6 +627,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/cloneArray.kt");
         }
 
+        @TestMetadata("complexSmartCasts.kt")
+        public void testComplexSmartCasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/complexSmartCasts.kt");
+        }
+
         @TestMetadata("delegateTypeMismatch.kt")
         public void testDelegateTypeMismatch() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/delegateTypeMismatch.kt");
