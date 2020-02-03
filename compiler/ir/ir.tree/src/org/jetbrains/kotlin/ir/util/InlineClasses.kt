@@ -59,6 +59,10 @@ private tailrec fun erase(type: IrType): IrClass? {
 }
 
 fun getInlineClassUnderlyingType(irClass: IrClass): IrType {
+    when (irClass.fqNameWhenAvailable.toString()) {
+        "kotlin.Boolean" -> return irClass.defaultType
+    }
+
     for (declaration in irClass.declarations) {
         if (declaration is IrConstructor && declaration.isPrimary) {
             return declaration.valueParameters[0].type

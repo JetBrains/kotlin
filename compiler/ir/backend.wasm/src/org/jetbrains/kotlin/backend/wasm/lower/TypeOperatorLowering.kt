@@ -67,9 +67,9 @@ class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPa
                 val toType = expression.typeOperand
                 val fromType = expression.argument.type
 
-                // TODO: Support boxing/unboxing of primitive types
-                if (toType.isPrimitiveType())
-                    return JsIrBuilder.buildCall(throwCCE)
+                // // TODO: Support boxing/unboxing of primitive types
+                // if (toType.isPrimitiveType())
+                //     return JsIrBuilder.buildCall(throwCCE)
 
                 if (fromType.isSubtypeOf(toType, context.irBuiltIns))
                     return expression.argument

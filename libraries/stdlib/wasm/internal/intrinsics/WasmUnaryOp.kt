@@ -59,8 +59,9 @@ internal annotation class WasmUnaryOp(val name: String) {
     }
 }
 
+@Suppress("INLINE_CLASS_IN_EXTERNAL_DECLARATION")
 @WasmUnaryOp(WasmUnaryOp.I32_EQZ)
-external fun wasm_i32_eqz(a: Int): Int
+external fun wasm_i32_eqz(a: Boolean): Boolean
 
 @WasmUnaryOp(WasmUnaryOp.I64_EQZ)
 external fun wasm_i64_eqz(a: Int): Long

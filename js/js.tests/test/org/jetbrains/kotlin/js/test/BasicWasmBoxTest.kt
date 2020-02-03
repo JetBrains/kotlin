@@ -86,7 +86,7 @@ abstract class BasicWasmBoxTest(
 
             spiderMonkey.runFile(outputJsFile)
 
-            // File("/home/skuzmich/tmp/passedWasm").appendText(filePath + "\n")
+            File("/home/skuzmich/tmp/passedWasm").appendText(filePath + "\n")
         }
     }
 

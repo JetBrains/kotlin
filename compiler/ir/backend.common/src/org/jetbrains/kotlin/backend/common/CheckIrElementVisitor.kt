@@ -98,6 +98,8 @@ class CheckIrElementVisitor(
         var type = expression.type
         while (true) {
             val inlinedClass = type.getInlinedClass() ?: break
+            if (getInlineClassUnderlyingType(inlinedClass) == type)
+                break
             type = getInlineClassUnderlyingType(inlinedClass)
         }
         expression.ensureTypesEqual(type, naturalType)

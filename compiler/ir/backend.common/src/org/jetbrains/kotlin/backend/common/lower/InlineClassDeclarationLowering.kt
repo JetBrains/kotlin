@@ -111,14 +111,14 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
         private fun transformMethodFlat(function: IrSimpleFunction): List<IrDeclaration> {
             // TODO: Support fake-overridden methods without boxing
-            if (function.isStaticMethodOfClass || !function.isReal)
+            if (function.isStaticMethodOfClass || !function.isReal || function.origin == IrDeclarationOrigin.BRIDGE)
                 return listOf(function)
 
             val staticMethod = createStaticBodilessMethod(function)
             transformedFunction[function.symbol] = staticMethod.symbol
 
             // Move function body to static method, transforming value parameters and nested declarations
-            function.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {
+            function.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
                     declaration.transformChildrenVoid(this)
                     if (declaration.parent == function)

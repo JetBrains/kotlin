@@ -23,8 +23,8 @@ import kotlin.wasm.internal.WasmReinterpret
  * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
  * represented as values of the primitive type `boolean`.
  */
-@SkipRTTI
-public class Boolean @ExcludedFromCodegen private constructor() : Comparable<Boolean> {
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+public inline class Boolean @ExcludedFromCodegen private constructor(val value: Boolean) : Comparable<Boolean> {
     /**
      * Returns the inverse of this boolean.
      */
@@ -56,6 +56,10 @@ public class Boolean @ExcludedFromCodegen private constructor() : Comparable<Boo
 
     override fun toString(): String =
         if (this) "true" else "false"
+
+    @Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
+    override fun equals(other: Any?): Boolean =
+        (this as Any) == other
 
     @WasmReinterpret
     internal fun asInt(): Int
