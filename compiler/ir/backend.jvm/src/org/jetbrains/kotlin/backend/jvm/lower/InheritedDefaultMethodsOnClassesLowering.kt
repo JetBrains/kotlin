@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -198,7 +200,19 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
         if (resolved?.isMethodOfAny() != true)
             return super.visitCall(expression)
         val newSuperQualifierSymbol = context.irBuiltIns.anyClass.takeIf { expression.superQualifierSymbol != null }
-        return super.visitCall(irCall(expression, resolved, newSuperQualifierSymbol = newSuperQualifierSymbol))
+        return super.visitCall(irCall(expression, resolved, newSuperQualifierSymbol = newSuperQualifierSymbol).apply {
+            dispatchReceiver?.let { receiver ->
+                val receiverType = resolved.parentAsClass.defaultType
+                dispatchReceiver = IrTypeOperatorCallImpl(
+                    receiver.startOffset,
+                    receiver.endOffset,
+                    receiverType,
+                    IrTypeOperator.IMPLICIT_CAST,
+                    receiverType,
+                    receiver
+                )
+            }
+        })
     }
 }
 
