@@ -134,7 +134,7 @@ class FirIntegerOperator(
     val kind: Kind,
     status: FirDeclarationStatus,
     symbol: FirFunctionSymbol<FirSimpleFunction>
-) : FirSimpleFunctionImpl(source, session, returnTypeRef, receiverTypeRef, kind.operatorName, status, symbol) {
+) : FirSimpleFunctionImpl(source, session, returnTypeRef, receiverTypeRef, status, kind.operatorName, symbol) {
     enum class Kind(val unary: Boolean, val operatorName: Name) {
         PLUS(false, OperatorNameConventions.PLUS),
         MINUS(false, OperatorNameConventions.MINUS),

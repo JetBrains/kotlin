@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirClassImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
-    override val name: Name,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val scopeProvider: FirScopeProvider,
+    override val name: Name,
     override val symbol: FirRegularClassSymbol
 ) : FirPureAbstractElement(), FirRegularClass, FirModifiableRegularClass, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR

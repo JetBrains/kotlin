@@ -171,8 +171,8 @@ class FirSamResolverImpl(
             firSession,
             FirResolvedTypeRefImpl(null, substitutedReturnType),
             null,
-            classId.shortClassName,
             status,
+            classId.shortClassName,
             symbol
         ).apply {
             valueParameters += listOf(
@@ -230,8 +230,14 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
     val samCandidateNames = mutableSetOf<Name>()
     for (clazz in classes) {
         for (declaration in clazz.declarations) {
-            if (declaration !is FirMemberDeclaration || declaration.modality != Modality.ABSTRACT) continue
-            samCandidateNames.add(declaration.name)
+            when (declaration) {
+                is FirProperty -> if (declaration.modality == Modality.ABSTRACT) {
+                    samCandidateNames.add(declaration.name)
+                }
+                is FirSimpleFunction -> if (declaration.modality == Modality.ABSTRACT) {
+                    samCandidateNames.add(declaration.name)
+                }
+            }
         }
     }
 

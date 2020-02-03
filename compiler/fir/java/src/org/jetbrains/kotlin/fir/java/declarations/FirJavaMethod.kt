@@ -30,7 +30,6 @@ class FirJavaMethod(
     session,
     returnTypeRef,
     null,
-    name,
     FirDeclarationStatusImpl(visibility, modality).apply {
         this.isStatic = isStatic
         isExpect = false
@@ -43,6 +42,7 @@ class FirJavaMethod(
         isExternal = false
         isSuspend = false
     },
+    name,
     symbol
 ) {
     init {

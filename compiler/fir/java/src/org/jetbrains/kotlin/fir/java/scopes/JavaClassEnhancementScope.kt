@@ -222,8 +222,8 @@ class JavaClassEnhancementScope(
                 this@JavaClassEnhancementScope.session,
                 newReturnTypeRef,
                 newReceiverTypeRef,
-                name,
                 firMethod.status,
+                name,
                 if (!isAccessor) FirNamedFunctionSymbol(methodId)
                 else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId)
             ).apply {
@@ -303,7 +303,7 @@ class JavaClassEnhancementScope(
 
     private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
 
-    private fun FirCallableMemberDeclaration<*>.overriddenMembers(): List<FirCallableMemberDeclaration<*>> {
+    private fun FirSimpleFunction.overriddenMembers(): List<FirCallableMemberDeclaration<*>> {
         val backMap = overrideBindCache.getOrPut(this.name) {
             useSiteMemberScope.bindOverrides(this.name)
             useSiteMemberScope

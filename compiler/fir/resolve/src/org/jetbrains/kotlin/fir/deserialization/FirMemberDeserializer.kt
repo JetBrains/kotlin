@@ -138,8 +138,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return FirTypeAliasImpl(
             null,
             c.session,
-            name,
             status,
+            name,
             FirTypeAliasSymbol(ClassId(c.packageFqName, name)),
             FirResolvedTypeRefImpl(
                 null,
@@ -230,8 +230,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             c.session,
             proto.returnType(local.typeTable).toTypeRef(local),
             proto.receiverType(local.typeTable)?.toTypeRef(local),
-            callableName,
             status,
+            callableName,
             symbol
         ).apply {
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES

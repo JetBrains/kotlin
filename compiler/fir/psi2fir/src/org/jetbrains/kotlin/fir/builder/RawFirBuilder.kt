@@ -562,20 +562,20 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     FirSealedClassImpl(
                         classOrObject.toFirSourceElement(),
                         session,
-                        classOrObject.nameAsSafeName,
                         status,
                         classKind,
                         scopeProvider,
+                        classOrObject.nameAsSafeName,
                         FirRegularClassSymbol(context.currentClassId)
                     )
                 } else {
                     FirClassImpl(
                         classOrObject.toFirSourceElement(),
                         session,
-                        classOrObject.nameAsSafeName,
                         status,
                         classKind,
                         scopeProvider,
+                        classOrObject.nameAsSafeName,
                         FirRegularClassSymbol(context.currentClassId)
                     )
                 }
@@ -653,8 +653,8 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                 val firTypeAlias = FirTypeAliasImpl(
                     typeAlias.toFirSourceElement(),
                     session,
-                    typeAlias.nameAsSafeName,
                     status,
+                    typeAlias.nameAsSafeName,
                     FirTypeAliasSymbol(context.currentClassId),
                     typeAlias.getTypeReference().toFirOrErrorType()
                 )
@@ -696,8 +696,8 @@ class RawFirBuilder(session: FirSession, val scopeProvider: FirScopeProvider, va
                     session,
                     returnType,
                     receiverType,
-                    function.nameAsSafeName,
                     status,
+                    function.nameAsSafeName,
                     FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName, function.isLocal))
                 )
             }

@@ -35,8 +35,8 @@ open class FirSimpleFunctionImpl(
     override val session: FirSession,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
-    override val name: Name,
     override var status: FirDeclarationStatus,
+    override val name: Name,
     override val symbol: FirFunctionSymbol<FirSimpleFunction>
 ) : FirSimpleFunction(), FirModifiableFunction<FirSimpleFunction>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR

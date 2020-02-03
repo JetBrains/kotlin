@@ -99,7 +99,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         memberDeclaration.configure {
-            +name
             +typeParameters
             +status.withTransform()
         }
@@ -219,6 +218,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         regularClass.configure {
             parentArg(klass, "F", regularClass)
+            +name
             +symbol("FirRegularClassSymbol")
             +field("companionObject", regularClass, nullable = true)
             +superTypeRefs(withReplace = true)
@@ -235,6 +235,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeAlias.configure {
             parentArg(classLikeDeclaration, "F", typeAlias)
+            +name
             +symbol("FirTypeAliasSymbol")
             +field("expandedTypeRef", typeRef, withReplace = true)
             +annotations
@@ -262,6 +263,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         simpleFunction.configure {
             parentArg(function, "F", simpleFunction)
+            +name
             +symbol("FirFunctionSymbol<FirSimpleFunction>")
             +annotations
             parentArg(callableMemberDeclaration, "F", simpleFunction)

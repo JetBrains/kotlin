@@ -160,10 +160,10 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                     FirClassImpl(
                         null,
                         session,
-                        relativeClassName.shortName(),
                         status,
                         ClassKind.INTERFACE,
                         kotlinScopeProvider,
+                        relativeClassName.shortName(),
                         this
                     ).apply klass@{
                         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -218,8 +218,8 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                                 this@FirBuiltinSymbolProvider.session,
                                 typeArguments.last(),
                                 null,
-                                name,
                                 functionStatus,
+                                name,
                                 FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name))
                             ).apply {
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -308,7 +308,13 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
     }
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).filterIsInstance<FirMemberDeclaration>().mapTo(mutableSetOf()) { it.name }
+        return getClassDeclarations(classId).mapNotNullTo(mutableSetOf()) {
+            when (it) {
+                is FirSimpleFunction -> it.name
+                is FirVariable<*> -> it.name
+                else -> null
+            }
+        }
     }
 
     private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {
@@ -317,7 +323,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
 
 
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
-        getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
+        getClassLikeSymbolByFqName(classId)?.fir
 
     override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
         return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }

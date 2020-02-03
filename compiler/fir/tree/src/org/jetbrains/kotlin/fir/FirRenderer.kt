@@ -136,7 +136,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             print(".")
         }
         when (callableDeclaration) {
-            is FirMemberDeclaration -> print(callableDeclaration.name)
+            is FirSimpleFunction -> print(callableDeclaration.name)
             is FirVariable<*> -> print(callableDeclaration.name)
         }
 
@@ -241,7 +241,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
         visitDeclaration(memberDeclaration)
         if (memberDeclaration !is FirCallableDeclaration<*>) { // Handled by visitCallableDeclaration
-            print(" " + memberDeclaration.name)
+            if (memberDeclaration is FirRegularClass) {
+                print(" " + memberDeclaration.name)
+            }
+            if (memberDeclaration is FirTypeAlias) {
+                print(" " + memberDeclaration.name)
+            }
             if (memberDeclaration is FirTypeParametersOwner) {
                 memberDeclaration.typeParameters.renderTypeParameters()
             }

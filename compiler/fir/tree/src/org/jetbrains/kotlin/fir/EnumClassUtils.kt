@@ -48,7 +48,7 @@ fun FirModifiableClass<out FirRegularClass>.generateValuesFunction(
                     isNullable = false
                 )
             ),
-            null, ENUM_VALUES, status, symbol
+            null, status, ENUM_VALUES, symbol
         ).apply {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             body = FirEmptyExpressionBlock()
@@ -72,7 +72,7 @@ fun FirModifiableClass<out FirRegularClass>.generateValueOfFunction(
                     isNullable = false
                 )
             ),
-            null, ENUM_VALUE_OF, status, symbol
+            null, status, ENUM_VALUE_OF, symbol
         ).apply {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             valueParameters += FirValueParameterImpl(

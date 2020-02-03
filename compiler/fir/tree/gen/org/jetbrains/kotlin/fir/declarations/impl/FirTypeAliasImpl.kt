@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirTypeAliasImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
-    override val name: Name,
     override var status: FirDeclarationStatus,
+    override val name: Name,
     override val symbol: FirTypeAliasSymbol,
     override var expandedTypeRef: FirTypeRef
 ) : FirTypeAlias(), FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {

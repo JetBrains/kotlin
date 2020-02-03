@@ -35,7 +35,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             parents += modifiableConstructor
             defaultNull("delegatedConstructor")
             defaultNull("body")
-            default("name", "Name.special(\"<init>\")")
 
             default("isPrimary") {
                 value = "false"

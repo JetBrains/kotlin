@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -41,7 +40,6 @@ open class FirConstructorImpl(
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override val name: Name = Name.special("<init>")
     override var containerSource: DeserializedContainerSource? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var delegatedConstructor: FirDelegatedConstructorCall? = null

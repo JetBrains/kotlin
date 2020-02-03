@@ -33,10 +33,10 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
-    abstract override val name: Name
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val contractDescription: FirContractDescription
+    abstract val name: Name
     abstract override val symbol: FirFunctionSymbol<FirSimpleFunction>
     abstract override val annotations: List<FirAnnotationCall>
 

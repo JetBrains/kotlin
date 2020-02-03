@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -36,7 +33,9 @@ class FirClassDeclaredMemberScope(
                 is FirCallableMemberDeclaration<*> -> {
                     val name = when (declaration) {
                         is FirConstructor -> if (klass is FirRegularClass) klass.name else continue@loop
-                        else -> declaration.name
+                        is FirVariable<*> -> declaration.name
+                        is FirSimpleFunction -> declaration.name
+                        else -> continue@loop
                     }
                     result.getOrPut(name) { mutableListOf() } += declaration.symbol
                 }

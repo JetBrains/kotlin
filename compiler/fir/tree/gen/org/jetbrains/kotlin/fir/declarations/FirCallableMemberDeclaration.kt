@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -27,7 +26,6 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
     override val symbol: FirCallableSymbol<F>
-    override val name: Name
     override val typeParameters: List<FirTypeParameter>
     override val status: FirDeclarationStatus
     val containerSource: DeserializedContainerSource?

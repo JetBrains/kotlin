@@ -127,11 +127,6 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
-        val header = kotlinClass.classHeader
-        return (header.data ?: header.incompatibleData)?.takeIf { header.kind in expectedKinds }
-    }
-
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {
             // TODO: skipMetadataVersionCheck
@@ -202,9 +197,6 @@ class KotlinDeserializedJvmSymbolsProvider(
 
             private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
                 return FirFunctionCallImpl(null).apply {
-                    val entryClassId = createNestedClassId(name)
-                    val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
-                    val entryClassSymbol = entryLookupTag.toSymbol(this@KotlinDeserializedJvmSymbolsProvider.session)
                     val entryCallableSymbol =
                         this@KotlinDeserializedJvmSymbolsProvider.session.firSymbolProvider.getClassDeclaredCallableSymbols(
                             this@toEnumEntryReferenceExpression, name
@@ -219,7 +211,9 @@ class KotlinDeserializedJvmSymbolsProvider(
                         else -> {
                             FirErrorNamedReferenceImpl(
                                 null,
-                                FirSimpleDiagnostic("Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name", DiagnosticKind.Java)
+                                FirSimpleDiagnostic(
+                                    "Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name", DiagnosticKind.Java
+                                )
                             )
                         }
                     }
@@ -416,20 +410,17 @@ class KotlinDeserializedJvmSymbolsProvider(
         getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> =
-        getClassDeclarations(classId)
-            .filterIsInstance<FirMemberDeclaration>()
-            .mapTo(mutableSetOf(), FirMemberDeclaration::name)
+        getClassDeclarations(classId).mapNotNullTo(mutableSetOf()) {
+            when (it) {
+                is FirSimpleFunction -> it.name
+                is FirVariable<*> -> it.name
+                else -> null
+            }
+        }
 
     override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
         return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }
     }
 
     override fun getPackage(fqName: FqName): FqName? = null
-
-    companion object {
-        private val KOTLIN_CLASS = setOf(KotlinClassHeader.Kind.CLASS)
-
-        private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
-            setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
-    }
 }

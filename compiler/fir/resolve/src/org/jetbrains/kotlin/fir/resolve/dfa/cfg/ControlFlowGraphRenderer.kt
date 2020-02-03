@@ -217,7 +217,7 @@ private fun CFGNode<*>.render(): String =
 private fun FirFunction<*>.name(): String = when (this) {
     is FirSimpleFunction -> name.asString()
     is FirAnonymousFunction -> "anonymousFunction"
-    is FirConstructor -> name.asString()
+    is FirConstructor -> "<init>"
     is FirPropertyAccessor -> if (isGetter) "getter" else "setter"
     is FirErrorFunction -> "errorFunction"
     else -> TODO(toString())

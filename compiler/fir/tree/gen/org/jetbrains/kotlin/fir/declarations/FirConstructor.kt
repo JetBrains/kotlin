@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -31,7 +30,6 @@ interface FirConstructor : FirFunction<FirConstructor>, FirCallableMemberDeclara
     override val controlFlowGraphReference: FirControlFlowGraphReference
     override val typeParameters: List<FirTypeParameter>
     override val valueParameters: List<FirValueParameter>
-    override val name: Name
     override val status: FirDeclarationStatus
     override val containerSource: DeserializedContainerSource?
     override val annotations: List<FirAnnotationCall>

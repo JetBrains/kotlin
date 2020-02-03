@@ -183,8 +183,9 @@ class Fir2IrVisitor(
                     is FirClassSymbol -> {
                         val superClass = superSymbol.fir as FirClass<*>
                         for (declaration in superClass.declarations) {
-                            if (declaration is FirMemberDeclaration && (declaration is FirSimpleFunction || declaration is FirProperty)) {
-                                result += declaration.name
+                            when (declaration) {
+                                is FirSimpleFunction -> result += declaration.name
+                                is FirVariable<*> -> result += declaration.name
                             }
                         }
                         superClass.collectCallableNamesFromSupertypes(result)
@@ -288,8 +289,9 @@ class Fir2IrVisitor(
                 if (it !is FirConstructor || !it.isPrimary) {
                     val irDeclaration = it.toIrDeclaration() ?: return@forEach
                     declarations += irDeclaration
-                    if (it is FirMemberDeclaration && (it is FirSimpleFunction || it is FirProperty)) {
-                        processedCallableNames += it.name
+                    when (it) {
+                        is FirSimpleFunction -> processedCallableNames += it.name
+                        is FirProperty -> processedCallableNames += it.name
                     }
                 }
             }
@@ -439,7 +441,8 @@ class Fir2IrVisitor(
             classId.shortClassName
         ) {
             when {
-                it !is FirConstructorSymbol -> {}
+                it !is FirConstructorSymbol -> {
+                }
                 arguments.size <= it.fir.valueParameters.size && constructorSymbol == null -> {
                     constructorSymbol = it
                 }

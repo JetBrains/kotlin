@@ -44,7 +44,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
         firClass.addDeclaration(
             FirSimpleFunctionImpl(
                 parameterSource, session, FirImplicitTypeRefImpl(parameterSource),
-                null, name, status, symbol
+                null, status, name, symbol
             ).apply {
                 val componentFunction = this
                 body = FirSingleExpressionBlock(
@@ -84,8 +84,8 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
             session,
             firPrimaryConstructor.returnTypeRef,
             null,
-            copyName,
             status,
+            copyName,
             symbol
         ).apply {
             for ((ktParameter, firProperty) in this@generateCopyFunction) {

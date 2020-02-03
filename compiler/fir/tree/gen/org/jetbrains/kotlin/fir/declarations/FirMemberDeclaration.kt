@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -22,7 +21,6 @@ interface FirMemberDeclaration : FirDeclaration, FirAnnotationContainer {
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val annotations: List<FirAnnotationCall>
-    val name: Name
     val typeParameters: List<FirTypeParameter>
     val status: FirDeclarationStatus
 

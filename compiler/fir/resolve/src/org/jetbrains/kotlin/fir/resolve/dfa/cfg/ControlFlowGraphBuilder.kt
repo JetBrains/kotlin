@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
 
@@ -73,7 +72,7 @@ class ControlFlowGraphBuilder {
             is FirSimpleFunction -> function.name.asString()
             is FirPropertyAccessor -> if (function.isGetter) "<getter>" else "<setter>"
             is FirAnonymousFunction -> "<anonymous>" // TODO: add check to lambda or fun
-            is FirConstructor -> function.name.asString()
+            is FirConstructor -> "<init>"
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
         val invocationKind = function.invocationKind

@@ -61,20 +61,20 @@ fun deserializeClassToSymbol(
         FirSealedClassImpl(
             null,
             session,
-            classId.shortClassName,
             status,
             ProtoEnumFlags.classKind(kind),
             scopeProvider,
+            classId.shortClassName,
             symbol
         )
     } else {
         FirClassImpl(
             null,
             session,
-            classId.shortClassName,
             status,
             ProtoEnumFlags.classKind(kind),
             scopeProvider,
+            classId.shortClassName,
             symbol
         )
     }

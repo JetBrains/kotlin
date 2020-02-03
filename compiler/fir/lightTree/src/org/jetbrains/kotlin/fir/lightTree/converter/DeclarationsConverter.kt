@@ -371,20 +371,20 @@ class DeclarationsConverter(
                 FirSealedClassImpl(
                     null,
                     session,
-                    className,
                     status,
                     classKind,
                     scopeProvider,
+                    className,
                     FirRegularClassSymbol(context.currentClassId)
                 )
             } else {
                 FirClassImpl(
                     null,
                     session,
-                    className,
                     status,
                     classKind,
                     scopeProvider,
+                    className,
                     FirRegularClassSymbol(context.currentClassId)
                 )
             }
@@ -795,8 +795,8 @@ class DeclarationsConverter(
             return@withChildClassName FirTypeAliasImpl(
                 null,
                 session,
-                typeAliasName,
                 status,
+                typeAliasName,
                 FirTypeAliasSymbol(context.currentClassId),
                 firType
             ).apply {
@@ -1112,8 +1112,8 @@ class DeclarationsConverter(
                 session,
                 returnType!!,
                 receiverType,
-                functionName,
                 status,
+                functionName,
                 FirNamedFunctionSymbol(callableIdForName(functionName, isLocal))
             )
         }

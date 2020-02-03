@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -39,7 +38,6 @@ abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstruct
     abstract override var controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val typeParameters: MutableList<FirTypeParameter>
     abstract override val valueParameters: MutableList<FirValueParameter>
-    abstract override val name: Name
     abstract override var status: FirDeclarationStatus
     abstract override var containerSource: DeserializedContainerSource?
     abstract override val annotations: MutableList<FirAnnotationCall>

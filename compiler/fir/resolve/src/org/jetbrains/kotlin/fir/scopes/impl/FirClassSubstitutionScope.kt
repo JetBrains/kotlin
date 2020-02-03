@@ -225,8 +225,8 @@ class FirClassSubstitutionScope(
                     session,
                     baseFunction.returnTypeRef.withReplacedReturnType(newReturnType),
                     baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
-                    name,
                     baseFunction.status,
+                    name,
                     fakeOverrideSymbol
                 ).apply {
                     annotations += baseFunction.annotations

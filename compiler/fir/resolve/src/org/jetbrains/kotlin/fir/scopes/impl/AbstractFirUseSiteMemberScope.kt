@@ -97,8 +97,8 @@ abstract class AbstractFirUseSiteMemberScope(
             firSimpleFunction.session,
             firSimpleFunction.returnTypeRef,
             firSimpleFunction.receiverTypeRef,
-            firSimpleFunction.name,
             firSimpleFunction.status,
+            firSimpleFunction.name,
             newSymbol
         )
 
