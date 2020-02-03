@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.importing
 
 import com.intellij.ide.highlighter.ProjectFileType
@@ -19,7 +19,6 @@ import java.nio.file.Paths
 
 @ApiStatus.Experimental
 abstract class AbstractOpenProjectProvider : OpenProjectProvider {
-
   protected abstract fun isProjectFile(file: VirtualFile): Boolean
 
   protected abstract fun linkAndRefreshProject(projectDirectory: String, project: Project)
@@ -54,9 +53,15 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   }
 
   private fun canOpenPlatformProject(projectDirectory: VirtualFile): Boolean {
-    if (!PlatformProjectOpenProcessor.getInstance().canOpenProject(projectDirectory)) return false
-    if (isChildExistUsingIo(projectDirectory, Project.DIRECTORY_STORE_FOLDER)) return true
-    if (isChildExistUsingIo(projectDirectory, projectDirectory.name + ProjectFileType.DOT_DEFAULT_EXTENSION)) return true
+    if (!PlatformProjectOpenProcessor.getInstance().canOpenProject(projectDirectory)) {
+      return false
+    }
+    if (isChildExistUsingIo(projectDirectory, Project.DIRECTORY_STORE_FOLDER)) {
+      return true
+    }
+    if (isChildExistUsingIo(projectDirectory, projectDirectory.name + ProjectFileType.DOT_DEFAULT_EXTENSION)) {
+      return true
+    }
     return false
   }
 

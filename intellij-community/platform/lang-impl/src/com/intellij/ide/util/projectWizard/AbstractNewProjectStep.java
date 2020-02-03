@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.projectWizard;
 
 import com.intellij.ide.RecentProjectsManager;
@@ -195,7 +195,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       ((TemplateProjectDirectoryGenerator<?>)generator).generateProject(baseDir.getName(), locationString);
     }
     else if (generator != null) {
-      options.callback = (p, module) -> generator.generateProject(p, baseDir, settings, module);
+      options.setCallback((p, module) -> generator.generateProject(p, baseDir, settings, module));
     }
     return PlatformProjectOpenProcessor.openExistingProject(location, location, options);
   }
