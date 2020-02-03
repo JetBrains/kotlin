@@ -34,7 +34,7 @@
               <gridbag weightx="0.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <text value="File status color:"/>
+              <text resource-bundle="messages/ApplicationBundle" key="title.file.status.color"/>
             </properties>
           </component>
           <component id="8ef3e" class="com.intellij.ui.ColorPanel" binding="myColorPanel">
@@ -57,7 +57,7 @@
                 <properties>
                   <horizontalAlignment value="0"/>
                   <horizontalTextPosition value="0"/>
-                  <text value="Restore Default"/>
+                  <text resource-bundle="messages/ApplicationBundle" key="title.file.status.color.restore.default"/>
                 </properties>
               </component>
               <hspacer id="ca7dd">
