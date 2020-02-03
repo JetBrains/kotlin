@@ -112,14 +112,15 @@ object JvmBackendFacade {
                         if (loweredClass !is IrClass) {
                             throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
                         }
-
-                        ClassCodegen.generate(loweredClass, context)
+                        ClassCodegen.getOrCreate(loweredClass, context).generate()
                     }
-                    state.afterIndependentPart()
                 } catch (e: Throwable) {
                     CodegenUtil.reportBackendException(e, "code generation", irFile.fileEntry.name)
                 }
             }
         }
+        // TODO: split classes into groups connected by inline calls; call this after every group
+        //       and clear `JvmBackendContext.classCodegens`
+        state.afterIndependentPart()
     }
 }

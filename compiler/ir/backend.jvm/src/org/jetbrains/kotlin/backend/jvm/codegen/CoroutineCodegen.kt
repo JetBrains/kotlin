@@ -55,11 +55,11 @@ internal fun MethodNode.acceptWithStateMachine(
         sourceFile = classCodegen.irClass.file.name,
         languageVersionSettings = languageVersionSettings,
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-        containingClassInternalName = classCodegen.visitor.thisName,
+        containingClassInternalName = classCodegen.type.internalName,
         isForNamedFunction = irFunction.isSuspend, // SuspendLambda.invokeSuspend is not suspend
         needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
-        internalNameForDispatchReceiver = classCodegen.visitor.thisName,
+        internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()

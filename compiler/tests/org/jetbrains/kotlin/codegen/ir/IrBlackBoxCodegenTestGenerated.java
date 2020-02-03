@@ -10712,6 +10712,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/finally/notChainCatch.kt");
         }
 
+        @TestMetadata("objectInFinally.kt")
+        public void testObjectInFinally() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/objectInFinally.kt");
+        }
+
         @TestMetadata("tryFinally.kt")
         public void testTryFinally() throws Exception {
             runTest("compiler/testData/codegen/box/finally/tryFinally.kt");
