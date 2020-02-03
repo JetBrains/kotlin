@@ -24294,6 +24294,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/typeOf/multipleLayers.kt");
             }
 
+            @TestMetadata("typeOfCapturedStar.kt")
+            public void testTypeOfCapturedStar() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/typeOfCapturedStar.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

@@ -19702,11 +19702,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
-            @TestMetadata("classes.kt")
-            public void testClasses() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/typeOf/classes.kt");
-            }
-
             @TestMetadata("inlineClasses.kt")
             public void testInlineClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");
@@ -19720,6 +19715,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("multipleLayers.kt")
             public void testMultipleLayers() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/multipleLayers.kt");
+            }
+
+            @TestMetadata("typeOfCapturedStar.kt")
+            public void testTypeOfCapturedStar() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/typeOfCapturedStar.kt");
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
@@ -19762,6 +19762,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 @TestMetadata("multipleModules.kt")
                 public void testMultipleModules() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/js/multipleModules.kt");
+                }
+
+                @TestMetadata("typeOfCapturedStar.kt")
+                public void testTypeOfCapturedStar() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/typeOfCapturedStar.kt");
                 }
 
                 @TestMetadata("typeOfReifiedUnit.kt")

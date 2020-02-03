@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -2764,10 +2765,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Pair<TypeParameterMarker, ReificationArgument> typeParameterAndReificationArgument =
                     extractReificationArgument(typeSystem, type);
             if (typeParameterAndReificationArgument == null) {
-                KotlinType approximatedType = CapturedTypeApproximationKt.approximateCapturedTypes(entry.getValue()).getUpper();
-                // type is not generic
+                KotlinType approximatedType = approximateCapturedType(type);
                 JvmSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-                Type asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter);
+                Type asmType = typeMapper.mapTypeArgument(approximatedType, signatureWriter);
 
                 mappings.addParameterMappingToType(
                         key.getName().getIdentifier(), approximatedType, asmType, signatureWriter.toString(), isReified
@@ -2781,6 +2781,22 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return getOrCreateCallGenerator(descriptor, resolvedCall.getCall().getCallElement(), mappings, false);
+    }
+
+    @NotNull
+    private KotlinType approximateCapturedType(@NotNull KotlinType type) {
+        if (state.getLanguageVersionSettings().supportsFeature(LanguageFeature.NewInference)) {
+            TypeApproximator approximator = new TypeApproximator(state.getModule().getBuiltIns());
+
+            KotlinType approximatedType =
+                    CapturedTypeConstructorKt.isCaptured(type) ?
+                    (KotlinType) approximator.approximateToSuperType(
+                            type, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation.INSTANCE
+                    ) : null;
+            return approximatedType != null ? approximatedType : type;
+        } else {
+            return CapturedTypeApproximationKt.approximateCapturedTypes(type).getUpper();
+        }
     }
 
     @NotNull

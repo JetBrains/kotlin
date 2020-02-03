@@ -215,7 +215,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         return mapType(type, signatureVisitor, TypeMappingMode.SUPER_TYPE)
     }
 
-    fun mapTypeParameter(type: KotlinType, signatureVisitor: JvmSignatureWriter?): Type {
+    fun mapTypeArgument(type: KotlinType, signatureVisitor: JvmSignatureWriter?): Type {
         return mapType(type, signatureVisitor, TypeMappingMode.GENERIC_ARGUMENT)
     }
 
