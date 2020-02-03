@@ -26,7 +26,7 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "assert", "builtinStubMethods", "boxingOptimization", "bridges", "casts", "toArray", "vararg", "arrays", "classLiteral", "reflection", "closures", "destructuringDeclInLambdaParam", "callableReference", "contracts", "platformTypes", "specialBuiltins", "coroutines", "finally", "deadCodeElimination", "defaultArguments", "delegatedProperty", "enum", "inlineClasses", "unsignedTypes", "ranges");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "assert", "builtinStubMethods", "boxingOptimization", "bridges", "casts", "toArray", "vararg", "arrays", "classLiteral", "reflection", "closures", "destructuringDeclInLambdaParam", "callableReference", "contracts", "platformTypes", "specialBuiltins", "coroutines", "finally", "deadCodeElimination", "defaultArguments", "delegatedProperty", "enum", "unsignedTypes", "ranges");
     }
 
     @TestMetadata("compiler/testData/codegen/box/annotations")
@@ -4204,6 +4204,1225 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("lastExpressionOfLambdaWithNothingConstraint.kt")
         public void testLastExpressionOfLambdaWithNothingConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("annotatedMemberExtensionProperty.kt")
+        public void testAnnotatedMemberExtensionProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt");
+        }
+
+        @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
+        public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        }
+
+        @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
+        public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
+        }
+
+        @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
+        public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
+        }
+
+        @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
+        public void testBoxResultInlineClassOfConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+        }
+
+        @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
+        public void testBoxUnboxInlineClassesWithOperatorsGetSet() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt");
+        }
+
+        @TestMetadata("boxUnboxOfInlineClassForCapturedVars.kt")
+        public void testBoxUnboxOfInlineClassForCapturedVars() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVars.kt");
+        }
+
+        @TestMetadata("bridgeForFunctionReturningInlineClass.kt")
+        public void testBridgeForFunctionReturningInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClass.kt");
+        }
+
+        @TestMetadata("bridgeGenerationWithInlineClassOverAny.kt")
+        public void testBridgeGenerationWithInlineClassOverAny() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAny.kt");
+        }
+
+        @TestMetadata("bridgesWhenInlineClassImplementsGenericInterface.kt")
+        public void testBridgesWhenInlineClassImplementsGenericInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterface.kt");
+        }
+
+        @TestMetadata("callComputablePropertyInsideInlineClass.kt")
+        public void testCallComputablePropertyInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callComputablePropertyInsideInlineClass.kt");
+        }
+
+        @TestMetadata("callableReferencesWithInlineClasses.kt")
+        public void testCallableReferencesWithInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClasses.kt");
+        }
+
+        @TestMetadata("castInsideWhenExpression.kt")
+        public void testCastInsideWhenExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpression.kt");
+        }
+
+        @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctions.kt")
+        public void testCheckBoxUnboxOfArgumentsOnInlinedFunctions() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctions.kt");
+        }
+
+        @TestMetadata("checkBoxingAfterAssertionOperator.kt")
+        public void testCheckBoxingAfterAssertionOperator() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt");
+        }
+
+        @TestMetadata("checkBoxingForComplexClassHierarchy.kt")
+        public void testCheckBoxingForComplexClassHierarchy() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchy.kt");
+        }
+
+        @TestMetadata("checkBoxingForNonLocalAndLabeledReturns.kt")
+        public void testCheckBoxingForNonLocalAndLabeledReturns() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt");
+        }
+
+        @TestMetadata("checkBoxingFromReturnTypeForInlineClasses.kt")
+        public void testCheckBoxingFromReturnTypeForInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt");
+        }
+
+        @TestMetadata("checkBoxingOnFunctionCalls.kt")
+        public void testCheckBoxingOnFunctionCalls() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt");
+        }
+
+        @TestMetadata("checkBoxingOnLocalVariableAssignments.kt")
+        public void testCheckBoxingOnLocalVariableAssignments() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignments.kt");
+        }
+
+        @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt")
+        public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctions() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt");
+        }
+
+        @TestMetadata("checkCallingMembersInsideInlineClass.kt")
+        public void testCheckCallingMembersInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClass.kt");
+        }
+
+        @TestMetadata("checkCastToInlineClass.kt")
+        public void testCheckCastToInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt");
+        }
+
+        @TestMetadata("checkForInstanceOfInlineClass.kt")
+        public void testCheckForInstanceOfInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClass.kt");
+        }
+
+        @TestMetadata("checkLambdaWithInlineClassesInFunctionalType.kt")
+        public void testCheckLambdaWithInlineClassesInFunctionalType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt");
+        }
+
+        @TestMetadata("checkUnboxingResultFromTypeVariable.kt")
+        public void testCheckUnboxingResultFromTypeVariable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariable.kt");
+        }
+
+        @TestMetadata("computablePropertyInsideInlineClass.kt")
+        public void testComputablePropertyInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt");
+        }
+
+        @TestMetadata("conformToComparableAndCallInterfaceMethod.kt")
+        public void testConformToComparableAndCallInterfaceMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt");
+        }
+
+        @TestMetadata("correctBoxingForBranchExpressions.kt")
+        public void testCorrectBoxingForBranchExpressions() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt");
+        }
+
+        @TestMetadata("createInlineClassInArgumentPosition.kt")
+        public void testCreateInlineClassInArgumentPosition() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
+        }
+
+        @TestMetadata("crossinlineWithInlineClassInParameter.kt")
+        public void testCrossinlineWithInlineClassInParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt");
+        }
+
+        @TestMetadata("defaultFunctionsFromAnyForInlineClass.kt")
+        public void testDefaultFunctionsFromAnyForInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
+        }
+
+        @TestMetadata("defaultWithInlineClassArgument.kt")
+        public void testDefaultWithInlineClassArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt");
+        }
+
+        @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
+        public void testElvisWithInlineClassAndNullConstant() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
+        }
+
+        @TestMetadata("emptyConstructorForInlineClass.kt")
+        public void testEmptyConstructorForInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
+        }
+
+        @TestMetadata("equalityChecksInlineClassNonNull.kt")
+        public void testEqualityChecksInlineClassNonNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNull.kt");
+        }
+
+        @TestMetadata("equalityChecksMixedNullability.kt")
+        public void testEqualityChecksMixedNullability() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullability.kt");
+        }
+
+        @TestMetadata("equalityChecksNegatedInlineClassNonNull.kt")
+        public void testEqualityChecksNegatedInlineClassNonNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNull.kt");
+        }
+
+        @TestMetadata("equalityChecksNegatedNonNull.kt")
+        public void testEqualityChecksNegatedNonNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNull.kt");
+        }
+
+        @TestMetadata("equalityChecksNegatedNullable.kt")
+        public void testEqualityChecksNegatedNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullable.kt");
+        }
+
+        @TestMetadata("equalityChecksNegatedPrimitive.kt")
+        public void testEqualityChecksNegatedPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitive.kt");
+        }
+
+        @TestMetadata("equalityChecksNonNull.kt")
+        public void testEqualityChecksNonNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNull.kt");
+        }
+
+        @TestMetadata("equalityChecksNullable.kt")
+        public void testEqualityChecksNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullable.kt");
+        }
+
+        @TestMetadata("equalityChecksPrimitive.kt")
+        public void testEqualityChecksPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt");
+        }
+
+        @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClass.kt")
+        public void testEqualityForBoxesOfNullableValuesOfInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt");
+        }
+
+        @TestMetadata("equalsCallsLeftArgument.kt")
+        public void testEqualsCallsLeftArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt");
+        }
+
+        @TestMetadata("equalsEvaluationOrderInlineClass.kt")
+        public void testEqualsEvaluationOrderInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClass.kt");
+        }
+
+        @TestMetadata("equalsEvaluationOrderNonNull.kt")
+        public void testEqualsEvaluationOrderNonNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNull.kt");
+        }
+
+        @TestMetadata("equalsEvaluationOrderNullable.kt")
+        public void testEqualsEvaluationOrderNullable() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullable.kt");
+        }
+
+        @TestMetadata("equalsEvaluationOrderPrimitive.kt")
+        public void testEqualsEvaluationOrderPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitive.kt");
+        }
+
+        @TestMetadata("equalsOperatorWithGenericCall.kt")
+        public void testEqualsOperatorWithGenericCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCall.kt");
+        }
+
+        @TestMetadata("extLambdaInInlineClassFun.kt")
+        public void testExtLambdaInInlineClassFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun.kt");
+        }
+
+        @TestMetadata("extLambdaInInlineClassFun2.kt")
+        public void testExtLambdaInInlineClassFun2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt");
+        }
+
+        @TestMetadata("fieldNameClash.kt")
+        public void testFieldNameClash() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
+        }
+
+        @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
+        public void testInlineClassAsLastExpressionInInLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
+        }
+
+        @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt")
+        public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointData() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt");
+        }
+
+        @TestMetadata("inlineClassFunctionInvoke.kt")
+        public void testInlineClassFunctionInvoke() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvoke.kt");
+        }
+
+        @TestMetadata("inlineClassInStringTemplate.kt")
+        public void testInlineClassInStringTemplate() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplate.kt");
+        }
+
+        @TestMetadata("inlineClassPropertyReferenceGetAndSet.kt")
+        public void testInlineClassPropertyReferenceGetAndSet() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSet.kt");
+        }
+
+        @TestMetadata("inlineClassValueCapturedInInlineLambda.kt")
+        public void testInlineClassValueCapturedInInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambda.kt");
+        }
+
+        @TestMetadata("inlineClassValueCapturedInNonInlineLambda.kt")
+        public void testInlineClassValueCapturedInNonInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambda.kt");
+        }
+
+        @TestMetadata("inlineClassValuesInsideStrings.kt")
+        public void testInlineClassValuesInsideStrings() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStrings.kt");
+        }
+
+        @TestMetadata("inlineClassWithCustomEquals.kt")
+        public void testInlineClassWithCustomEquals() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
+        }
+
+        @TestMetadata("inlineClassWithDefaultFunctionsFromAny.kt")
+        public void testInlineClassWithDefaultFunctionsFromAny() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAny.kt");
+        }
+
+        @TestMetadata("inlineClassesAsInlineFunParameters.kt")
+        public void testInlineClassesAsInlineFunParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt");
+        }
+
+        @TestMetadata("inlineClassesCheckCast.kt")
+        public void testInlineClassesCheckCast() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt");
+        }
+
+        @TestMetadata("inlineClassesInInlineLambdaParameters.kt")
+        public void testInlineClassesInInlineLambdaParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt");
+        }
+
+        @TestMetadata("inlineClassesRefTypesInInlineLambdaParameters.kt")
+        public void testInlineClassesRefTypesInInlineLambdaParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt");
+        }
+
+        @TestMetadata("inlineExtLambdaInInlineClassFun.kt")
+        public void testInlineExtLambdaInInlineClassFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun.kt");
+        }
+
+        @TestMetadata("inlineExtLambdaInInlineClassFun2.kt")
+        public void testInlineExtLambdaInInlineClassFun2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2.kt");
+        }
+
+        @TestMetadata("inlineFunctionInsideInlineClass.kt")
+        public void testInlineFunctionInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt");
+        }
+
+        @TestMetadata("interfaceImplementationByDelegation.kt")
+        public void testInterfaceImplementationByDelegation() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/interfaceImplementationByDelegation.kt");
+        }
+
+        @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
+        public void testIterateOverArrayOfInlineClassValues() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt");
+        }
+
+        @TestMetadata("iterateOverListOfInlineClassValues.kt")
+        public void testIterateOverListOfInlineClassValues() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt");
+        }
+
+        @TestMetadata("kt25246.kt")
+        public void testKt25246() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt25246.kt");
+        }
+
+        @TestMetadata("kt25750.kt")
+        public void testKt25750() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt25750.kt");
+        }
+
+        @TestMetadata("kt25771.kt")
+        public void testKt25771() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt25771.kt");
+        }
+
+        @TestMetadata("kt26103.kt")
+        public void testKt26103() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt26103.kt");
+        }
+
+        @TestMetadata("kt26103_contravariantUnderlyingType.kt")
+        public void testKt26103_contravariantUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt26103_contravariantUnderlyingType.kt");
+        }
+
+        @TestMetadata("kt26103_covariantUnderlyingType.kt")
+        public void testKt26103_covariantUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt26103_covariantUnderlyingType.kt");
+        }
+
+        @TestMetadata("kt26103_original.kt")
+        public void testKt26103_original() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt26103_original.kt");
+        }
+
+        @TestMetadata("kt27096.kt")
+        public void testKt27096() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096.kt");
+        }
+
+        @TestMetadata("kt27096_enum.kt")
+        public void testKt27096_enum() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enum.kt");
+        }
+
+        @TestMetadata("kt27096_functional.kt")
+        public void testKt27096_functional() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functional.kt");
+        }
+
+        @TestMetadata("kt27096_innerClass.kt")
+        public void testKt27096_innerClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_innerClass.kt");
+        }
+
+        @TestMetadata("kt27096_nullablePrimitive.kt")
+        public void testKt27096_nullablePrimitive() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitive.kt");
+        }
+
+        @TestMetadata("kt27096_nullableReference.kt")
+        public void testKt27096_nullableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReference.kt");
+        }
+
+        @TestMetadata("kt27096_primitive.kt")
+        public void testKt27096_primitive() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitive.kt");
+        }
+
+        @TestMetadata("kt27096_reference.kt")
+        public void testKt27096_reference() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_reference.kt");
+        }
+
+        @TestMetadata("kt27113.kt")
+        public void testKt27113() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27113.kt");
+        }
+
+        @TestMetadata("kt27113a.kt")
+        public void testKt27113a() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27113a.kt");
+        }
+
+        @TestMetadata("kt27132.kt")
+        public void testKt27132() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27132.kt");
+        }
+
+        @TestMetadata("kt27140.kt")
+        public void testKt27140() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27140.kt");
+        }
+
+        @TestMetadata("kt27705.kt")
+        public void testKt27705() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27705.kt");
+        }
+
+        @TestMetadata("kt27706.kt")
+        public void testKt27706() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27706.kt");
+        }
+
+        @TestMetadata("kt28405.kt")
+        public void testKt28405() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt28405.kt");
+        }
+
+        @TestMetadata("kt28585.kt")
+        public void testKt28585() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt28585.kt");
+        }
+
+        @TestMetadata("kt34268.kt")
+        public void testKt34268() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt34268.kt");
+        }
+
+        @TestMetadata("mangledDefaultParameterFunction.kt")
+        public void testMangledDefaultParameterFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");
+        }
+
+        @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
+        public void testNoAssertionsOnInlineClassBasedOnNullableType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt");
+        }
+
+        @TestMetadata("nullableEqeqNonNull.kt")
+        public void testNullableEqeqNonNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt");
+        }
+
+        @TestMetadata("nullableWrapperEquality.kt")
+        public void testNullableWrapperEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt");
+        }
+
+        @TestMetadata("overridingFunCallingPrivateFun.kt")
+        public void testOverridingFunCallingPrivateFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt");
+        }
+
+        @TestMetadata("passInlineClassAsVararg.kt")
+        public void testPassInlineClassAsVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt");
+        }
+
+        @TestMetadata("passInlineClassWithSpreadOperatorToVarargs.kt")
+        public void testPassInlineClassWithSpreadOperatorToVarargs() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargs.kt");
+        }
+
+        @TestMetadata("referToPropertyInCompanionObjectOfInlineClass.kt")
+        public void testReferToPropertyInCompanionObjectOfInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt");
+        }
+
+        @TestMetadata("referToUnderlyingPropertyInsideInlineClass.kt")
+        public void testReferToUnderlyingPropertyInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClass.kt");
+        }
+
+        @TestMetadata("referToUnderlyingPropertyOfInlineClass.kt")
+        public void testReferToUnderlyingPropertyOfInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt");
+        }
+
+        @TestMetadata("resultInlining.kt")
+        public void testResultInlining() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/resultInlining.kt");
+        }
+
+        @TestMetadata("resultRunCatchingOrElse.kt")
+        public void testResultRunCatchingOrElse() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/resultRunCatchingOrElse.kt");
+        }
+
+        @TestMetadata("secondaryConstructorWithVararg.kt")
+        public void testSecondaryConstructorWithVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt");
+        }
+
+        @TestMetadata("secondaryConstructorsInsideInlineClass.kt")
+        public void testSecondaryConstructorsInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt");
+        }
+
+        @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt")
+        public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt");
+        }
+
+        @TestMetadata("simpleSecondaryConstructor.kt")
+        public void testSimpleSecondaryConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt");
+        }
+
+        @TestMetadata("smartCastOnThisOfInlineClassType.kt")
+        public void testSmartCastOnThisOfInlineClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt");
+        }
+
+        @TestMetadata("toStringCallingPrivateFun.kt")
+        public void testToStringCallingPrivateFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
+        }
+
+        @TestMetadata("typeChecksForInlineClasses.kt")
+        public void testTypeChecksForInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClasses.kt");
+        }
+
+        @TestMetadata("UIntArraySortExample.kt")
+        public void testUIntArraySortExample() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt");
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
+        public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
+        public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
+        }
+
+        @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvoke.kt")
+        public void testUnboxParameterOfSuspendLambdaBeforeInvoke() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvoke.kt");
+        }
+
+        @TestMetadata("unboxReceiverOnCallingMethodFromInlineClass.kt")
+        public void testUnboxReceiverOnCallingMethodFromInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt");
+        }
+
+        @TestMetadata("unboxValueFromPlatformType.kt")
+        public void testUnboxValueFromPlatformType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformType.kt");
+        }
+
+        @TestMetadata("unboxValueOfAnyBeforeMethodInvocation.kt")
+        public void testUnboxValueOfAnyBeforeMethodInvocation() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocation.kt");
+        }
+
+        @TestMetadata("useInlineClassesInsideElvisOperator.kt")
+        public void testUseInlineClassesInsideElvisOperator() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperator.kt");
+        }
+
+        @TestMetadata("useInlineFunctionInsideInlineClass.kt")
+        public void testUseInlineFunctionInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt");
+        }
+
+        @TestMetadata("useThisInsideInlineClass.kt")
+        public void testUseThisInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClass.kt");
+        }
+
+        @TestMetadata("whenWithSubject.kt")
+        public void testWhenWithSubject() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallableReferences extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCallableReferences() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("boundInlineClassExtensionFun.kt")
+            public void testBoundInlineClassExtensionFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt");
+            }
+
+            @TestMetadata("boundInlineClassExtensionVal.kt")
+            public void testBoundInlineClassExtensionVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionVal.kt");
+            }
+
+            @TestMetadata("boundInlineClassMemberFun.kt")
+            public void testBoundInlineClassMemberFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFun.kt");
+            }
+
+            @TestMetadata("boundInlineClassMemberVal.kt")
+            public void testBoundInlineClassMemberVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberVal.kt");
+            }
+
+            @TestMetadata("boundInlineClassPrimaryVal.kt")
+            public void testBoundInlineClassPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryVal.kt");
+            }
+
+            @TestMetadata("constructorWithInlineClassParameters.kt")
+            public void testConstructorWithInlineClassParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParameters.kt");
+            }
+
+            @TestMetadata("funWithInlineClassParameters.kt")
+            public void testFunWithInlineClassParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParameters.kt");
+            }
+
+            @TestMetadata("inlineClassExtensionFun.kt")
+            public void testInlineClassExtensionFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFun.kt");
+            }
+
+            @TestMetadata("inlineClassExtensionVal.kt")
+            public void testInlineClassExtensionVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionVal.kt");
+            }
+
+            @TestMetadata("inlineClassInternalPrimaryVal.kt")
+            public void testInlineClassInternalPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryVal.kt");
+            }
+
+            @TestMetadata("inlineClassMemberFun.kt")
+            public void testInlineClassMemberFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFun.kt");
+            }
+
+            @TestMetadata("inlineClassMemberVal.kt")
+            public void testInlineClassMemberVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberVal.kt");
+            }
+
+            @TestMetadata("inlineClassPrimaryConstructor.kt")
+            public void testInlineClassPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("inlineClassPrimaryVal.kt")
+            public void testInlineClassPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryVal.kt");
+            }
+
+            @TestMetadata("inlineClassPrivatePrimaryVal.kt")
+            public void testInlineClassPrivatePrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryVal.kt");
+            }
+
+            @TestMetadata("inlineClassTypeBoundMemberVar.kt")
+            public void testInlineClassTypeBoundMemberVar() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVar.kt");
+            }
+
+            @TestMetadata("inlineClassTypeMemberVar.kt")
+            public void testInlineClassTypeMemberVar() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVar.kt");
+            }
+
+            @TestMetadata("inlineClassTypeTopLevelVar.kt")
+            public void testInlineClassTypeTopLevelVar() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVar.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ContextsAndAccessors extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            @TestMetadata("accessPrivateInlineClassCompanionMethod.kt")
+            public void testAccessPrivateInlineClassCompanionMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassCompanionMethod2.kt")
+            public void testAccessPrivateInlineClassCompanionMethod2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassConstructorFromCompanion.kt")
+            public void testAccessPrivateInlineClassConstructorFromCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanion.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassConstructorFromLambda.kt")
+            public void testAccessPrivateInlineClassConstructorFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambda.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassMethodFromCompanion.kt")
+            public void testAccessPrivateInlineClassMethodFromCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassMethodFromCompanion2.kt")
+            public void testAccessPrivateInlineClassMethodFromCompanion2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassMethodFromInlineLambda.kt")
+            public void testAccessPrivateInlineClassMethodFromInlineLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassMethodFromInlineLambda2.kt")
+            public void testAccessPrivateInlineClassMethodFromInlineLambda2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassMethodFromLambda.kt")
+            public void testAccessPrivateInlineClassMethodFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassMethodFromLambda2.kt")
+            public void testAccessPrivateInlineClassMethodFromLambda2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2.kt");
+            }
+
+            public void testAllFilesPresentInContextsAndAccessors() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("captureInlineClassInstanceInLambda.kt")
+            public void testCaptureInlineClassInstanceInLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda.kt");
+            }
+
+            @TestMetadata("captureInlineClassInstanceInLambda2.kt")
+            public void testCaptureInlineClassInstanceInLambda2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2.kt");
+            }
+
+            @TestMetadata("captureInlineClassInstanceInObject.kt")
+            public void testCaptureInlineClassInstanceInObject() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObject.kt");
+            }
+
+            @TestMetadata("inlineLambdaInInlineClassFun.kt")
+            public void testInlineLambdaInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFun.kt");
+            }
+
+            @TestMetadata("kt26858.kt")
+            public void testKt26858() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858.kt");
+            }
+
+            @TestMetadata("kt27513.kt")
+            public void testKt27513() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513.kt");
+            }
+
+            @TestMetadata("kt30780.kt")
+            public void testKt30780() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780.kt");
+            }
+
+            @TestMetadata("lambdaInInlineClassFun.kt")
+            public void testLambdaInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFun.kt");
+            }
+
+            @TestMetadata("objectInInlineClassFun.kt")
+            public void testObjectInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFun.kt");
+            }
+
+            @TestMetadata("toPrivateCompanionFun.kt")
+            public void testToPrivateCompanionFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFun.kt");
+            }
+
+            @TestMetadata("toPrivateCompanionVal.kt")
+            public void testToPrivateCompanionVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionVal.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultParameterValues extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDefaultParameterValues() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("defaultConstructorParameterValuesOfInlineClassType.kt")
+            public void testDefaultConstructorParameterValuesOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt");
+            }
+
+            @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
+            public void testDefaultInterfaceFunParameterValuesOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt");
+            }
+
+            @TestMetadata("defaultParameterValuesOfInlineClassType.kt")
+            public void testDefaultParameterValuesOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassType.kt");
+            }
+
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxing.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeBoxing() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt");
+            }
+
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFun.kt");
+            }
+
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt");
+            }
+
+            @TestMetadata("inlineClassFun.kt")
+            public void testInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt");
+            }
+
+            @TestMetadata("inlineClassPrimaryConstructor.kt")
+            public void testInlineClassPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("inlineClassSecondaryConstructor.kt")
+            public void testInlineClassSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt");
+            }
+
+            @TestMetadata("kt26554.kt")
+            public void testKt26554() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt26554.kt");
+            }
+
+            @TestMetadata("kt27416.kt")
+            public void testKt27416() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FunctionNameMangling extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInFunctionNameMangling() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/functionNameMangling"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("anonymousObjectInFunctionWithMangledName.kt")
+            public void testAnonymousObjectInFunctionWithMangledName() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt");
+            }
+
+            @TestMetadata("extensionFunctionsDoNotClash.kt")
+            public void testExtensionFunctionsDoNotClash() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClash.kt");
+            }
+
+            @TestMetadata("functionsWithDifferentNullabilityDoNotClash.kt")
+            public void testFunctionsWithDifferentNullabilityDoNotClash() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClash.kt");
+            }
+
+            @TestMetadata("genericFunctionsDoNotClash.kt")
+            public void testGenericFunctionsDoNotClash() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt");
+            }
+
+            @TestMetadata("localClassInFunctionWithMangledName.kt")
+            public void testLocalClassInFunctionWithMangledName() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledName.kt");
+            }
+
+            @TestMetadata("mangledFunctionsCanBeOverridden.kt")
+            public void testMangledFunctionsCanBeOverridden() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverridden.kt");
+            }
+
+            @TestMetadata("mangledFunctionsDoNotClash.kt")
+            public void testMangledFunctionsDoNotClash() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClash.kt");
+            }
+
+            @TestMetadata("mangledFunctionsPresentInStackTrace.kt")
+            public void testMangledFunctionsPresentInStackTrace() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt");
+            }
+
+            @TestMetadata("mixedSignatureFunctionsDoNotClash.kt")
+            public void testMixedSignatureFunctionsDoNotClash() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt");
+            }
+
+            @TestMetadata("overridingMethodInGenericClass.kt")
+            public void testOverridingMethodInGenericClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass.kt");
+            }
+
+            @TestMetadata("overridingMethodInGenericClass2.kt")
+            public void testOverridingMethodInGenericClass2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2.kt");
+            }
+
+            @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
+            public void testPropertySetterWithInlineClassTypeArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgument.kt");
+            }
+
+            @TestMetadata("reflectionForFunctionWithMangledName.kt")
+            public void testReflectionForFunctionWithMangledName() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledName.kt");
+            }
+
+            @TestMetadata("reflectionForPropertyOfInlineClassType.kt")
+            public void testReflectionForPropertyOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassType.kt");
+            }
+
+            @TestMetadata("syntheticAccessorForFunctionWithMangledName.kt")
+            public void testSyntheticAccessorForFunctionWithMangledName() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledName.kt");
+            }
+
+            @TestMetadata("syntheticAccessorsForPropertyOfInlineClassType.kt")
+            public void testSyntheticAccessorsForPropertyOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class HiddenConstructor extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInHiddenConstructor() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("constructorReferencedFromOtherFile1.kt")
+            public void testConstructorReferencedFromOtherFile1() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt");
+            }
+
+            @TestMetadata("constructorReferencedFromOtherFile2.kt")
+            public void testConstructorReferencedFromOtherFile2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt");
+            }
+
+            @TestMetadata("constructorWithDefaultParameters.kt")
+            public void testConstructorWithDefaultParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt");
+            }
+
+            @TestMetadata("delegatingSuperConstructorCall.kt")
+            public void testDelegatingSuperConstructorCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCall.kt");
+            }
+
+            @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructor.kt")
+            public void testDelegatingSuperConstructorCallInSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructor.kt");
+            }
+
+            @TestMetadata("delegatingThisConstructorCall.kt")
+            public void testDelegatingThisConstructorCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt");
+            }
+
+            @TestMetadata("enumClassConstructor.kt")
+            public void testEnumClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructor.kt");
+            }
+
+            @TestMetadata("innerClassConstructor.kt")
+            public void testInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt");
+            }
+
+            @TestMetadata("kt28855.kt")
+            public void testKt28855() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/kt28855.kt");
+            }
+
+            @TestMetadata("primaryConstructor.kt")
+            public void testPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructor.kt");
+            }
+
+            @TestMetadata("privateConstructor.kt")
+            public void testPrivateConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt");
+            }
+
+            @TestMetadata("sealedClassConstructor.kt")
+            public void testSealedClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructor.kt");
+            }
+
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InterfaceMethodCalls extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInterfaceMethodCalls() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("defaultInterfaceExtensionFunCall.kt")
+            public void testDefaultInterfaceExtensionFunCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt");
+            }
+
+            @TestMetadata("defaultInterfaceMethodCall.kt")
+            public void testDefaultInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt");
+            }
+
+            @TestMetadata("genericDefaultInterfaceExtensionFunCall.kt")
+            public void testGenericDefaultInterfaceExtensionFunCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt");
+            }
+
+            @TestMetadata("genericDefaultInterfaceMethodCall.kt")
+            public void testGenericDefaultInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt");
+            }
+
+            @TestMetadata("genericInterfaceMethodCall.kt")
+            public void testGenericInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt");
+            }
+
+            @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
+            public void testOverriddenDefaultInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PropertyDelegation extends AbstractIrCodegenBoxWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPropertyDelegation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("captureLocalVarDelegatedToInlineClass.kt")
+            public void testCaptureLocalVarDelegatedToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateClassVarToInlineClass.kt")
+            public void testDelegateClassVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateClassVarToInlineClassWithProvideDelegate.kt")
+            public void testDelegateClassVarToInlineClassWithProvideDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegate.kt");
+            }
+
+            @TestMetadata("delegateCompanionVarToInlineClass.kt")
+            public void testDelegateCompanionVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateLocalVarToInlineClass.kt")
+            public void testDelegateLocalVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateObjectVarToInlineClass.kt")
+            public void testDelegateObjectVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegatePrivateCompanionVarToInlineClass.kt")
+            public void testDelegatePrivateCompanionVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateTopLevelVarToInlineClass.kt")
+            public void testDelegateTopLevelVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegatedPropertyOfInlineClassType.kt")
+            public void testDelegatedPropertyOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassType.kt");
+            }
+
+            @TestMetadata("kt27070.kt")
+            public void testKt27070() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt");
+            }
         }
     }
 

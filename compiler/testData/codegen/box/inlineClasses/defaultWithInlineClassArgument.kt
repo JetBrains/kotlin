@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: a.kt
 fun box() = A(0).f()

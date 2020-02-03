@@ -106,7 +106,7 @@ fun main(args: Array<String>) {
                     "enum",
 
                     // TODO: Support inline classes
-                    "inlineClasses", "unsignedTypes",
+                    /*"inlineClasses",*/ "unsignedTypes",
 
                     // TODO: Support ranges
                     "ranges"
