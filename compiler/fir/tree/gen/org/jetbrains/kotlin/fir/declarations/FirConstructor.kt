@@ -27,8 +27,8 @@ interface FirConstructor : FirFunction<FirConstructor>, FirCallableMemberDeclara
     override val resolvePhase: FirResolvePhase
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
-    override val controlFlowGraphReference: FirControlFlowGraphReference
     override val typeParameters: List<FirTypeParameter>
+    override val controlFlowGraphReference: FirControlFlowGraphReference
     override val valueParameters: List<FirValueParameter>
     override val status: FirDeclarationStatus
     override val containerSource: DeserializedContainerSource?

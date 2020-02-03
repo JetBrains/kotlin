@@ -32,8 +32,8 @@ interface FirModifiableFunction<F : FirFunction<F>>  : FirFunction<F>, FirAbstra
     override val annotations: MutableList<FirAnnotationCall>
     override var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef?
-    override var controlFlowGraphReference: FirControlFlowGraphReference
     override val typeParameters: MutableList<FirTypeParameter>
+    override var controlFlowGraphReference: FirControlFlowGraphReference
     override val symbol: FirFunctionSymbol<F>
     override val valueParameters: MutableList<FirValueParameter>
     override var body: FirBlock?

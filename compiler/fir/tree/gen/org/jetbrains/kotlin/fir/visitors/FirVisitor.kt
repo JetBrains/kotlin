@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
@@ -142,8 +141,6 @@ abstract class FirVisitor<out R, in D> {
     open fun <E> visitSymbolOwner(symbolOwner: FirSymbolOwner<E>, data: D): R where E : FirSymbolOwner<E>, E : FirDeclaration  = visitElement(symbolOwner, data)
 
     open fun visitResolvable(resolvable: FirResolvable, data: D): R  = visitElement(resolvable, data)
-
-    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): R  = visitElement(controlFlowGraphOwner, data)
 
     open fun visitTargetElement(targetElement: FirTargetElement, data: D): R  = visitElement(targetElement, data)
 

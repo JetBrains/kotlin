@@ -35,8 +35,8 @@ abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstruct
     abstract override var resolvePhase: FirResolvePhase
     abstract override var returnTypeRef: FirTypeRef
     abstract override var receiverTypeRef: FirTypeRef?
-    abstract override var controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val typeParameters: MutableList<FirTypeParameter>
+    abstract override var controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val valueParameters: MutableList<FirValueParameter>
     abstract override var status: FirDeclarationStatus
     abstract override var containerSource: DeserializedContainerSource?

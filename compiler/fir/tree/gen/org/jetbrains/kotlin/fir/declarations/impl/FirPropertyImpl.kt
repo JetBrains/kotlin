@@ -49,8 +49,8 @@ class FirPropertyImpl(
     override var getter: FirPropertyAccessor? = null
     override var setter: FirPropertyAccessor? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override var containerSource: DeserializedContainerSource? = null
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 

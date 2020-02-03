@@ -38,8 +38,8 @@ class FirAnonymousFunctionImpl(
 ) : FirAnonymousFunction(), FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
@@ -54,8 +54,8 @@ class FirAnonymousFunctionImpl(
         annotations.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         typeRef.accept(visitor, data)
@@ -66,8 +66,8 @@ class FirAnonymousFunctionImpl(
         annotations.transformInplace(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         typeParameters.transformInplace(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
@@ -159,10 +158,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformResolvable(resolvable: FirResolvable, data: D): CompositeTransformResult<FirResolvable> {
         return transformElement(resolvable, data)
-    }
-
-    open fun transformControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): CompositeTransformResult<FirControlFlowGraphOwner> {
-        return transformElement(controlFlowGraphOwner, data)
     }
 
     open fun transformTargetElement(targetElement: FirTargetElement, data: D): CompositeTransformResult<FirTargetElement> {
@@ -611,10 +606,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitResolvable(resolvable: FirResolvable, data: D): CompositeTransformResult<FirResolvable> {
         return transformResolvable(resolvable, data)
-    }
-
-    final override fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): CompositeTransformResult<FirControlFlowGraphOwner> {
-        return transformControlFlowGraphOwner(controlFlowGraphOwner, data)
     }
 
     final override fun visitTargetElement(targetElement: FirTargetElement, data: D): CompositeTransformResult<FirTargetElement> {

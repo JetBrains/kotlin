@@ -30,8 +30,8 @@ abstract class FirAnonymousFunction : FirPureAbstractElement(), FirFunction<FirA
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
     abstract override val typeRef: FirTypeRef

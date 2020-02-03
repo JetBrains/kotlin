@@ -18,7 +18,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val symbolOwner = element("SymbolOwner", Other)
     val resolvable = element("Resolvable", Expression)
 
-    val controlFlowGraphOwner = element("ControlFlowGraphOwner", Other)
     val targetElement = element("TargetElement", Other)
 
     val declarationStatus = element("DeclarationStatus", Declaration)
@@ -37,7 +36,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val variable = element("Variable", Declaration, callableDeclaration, declaration, statement)
     val valueParameter = element("ValueParameter", Declaration, variable)
-    val property = element("Property", Declaration, variable, controlFlowGraphOwner, typeParametersOwner, callableMemberDeclaration)
+    val property = element("Property", Declaration, variable, typeParametersOwner, callableMemberDeclaration)
     val field = element("Field", Declaration, variable, callableMemberDeclaration)
     val enumEntry = element("EnumEntry", Declaration, variable, callableMemberDeclaration)
 
@@ -47,7 +46,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val sealedClass = element("SealedClass", Declaration, regularClass)
     val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)
 
-    val function = element("Function", Declaration, callableDeclaration, controlFlowGraphOwner, targetElement, annotationContainer, typeParametersOwner, statement)
+    val function = element("Function", Declaration, callableDeclaration, targetElement, annotationContainer, typeParametersOwner, statement)
 
     val contractDescriptionOwner = element("ContractDescriptionOwner", Declaration)
     val simpleFunction = element("SimpleFunction", Declaration, function, callableMemberDeclaration, contractDescriptionOwner)

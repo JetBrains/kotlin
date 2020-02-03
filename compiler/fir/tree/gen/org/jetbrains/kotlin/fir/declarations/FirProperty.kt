@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirProperty : FirPureAbstractElement(), FirVariable<FirProperty>, FirControlFlowGraphOwner, FirTypeParametersOwner, FirCallableMemberDeclaration<FirProperty> {
+abstract class FirProperty : FirPureAbstractElement(), FirVariable<FirProperty>, FirTypeParametersOwner, FirCallableMemberDeclaration<FirProperty> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
@@ -40,8 +39,8 @@ abstract class FirProperty : FirPureAbstractElement(), FirVariable<FirProperty>,
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val containerSource: DeserializedContainerSource?
+    abstract val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val symbol: FirPropertySymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol
     abstract val isLocal: Boolean
@@ -60,7 +59,7 @@ abstract class FirProperty : FirPureAbstractElement(), FirVariable<FirProperty>,
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirProperty
 
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
 

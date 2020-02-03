@@ -37,8 +37,8 @@ class FirErrorFunctionImpl(
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override val body: FirBlock? get() = null
 
@@ -49,16 +49,16 @@ class FirErrorFunctionImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         annotations.transformInplace(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         typeParameters.transformInplace(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         return this
     }

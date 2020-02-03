@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
@@ -157,10 +156,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitResolvable(resolvable: FirResolvable) {
         visitElement(resolvable)
-    }
-
-    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner) {
-        visitElement(controlFlowGraphOwner)
     }
 
     open fun visitTargetElement(targetElement: FirTargetElement) {
@@ -609,10 +604,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitResolvable(resolvable: FirResolvable, data: Nothing?) {
         visitResolvable(resolvable)
-    }
-
-    final override fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: Nothing?) {
-        visitControlFlowGraphOwner(controlFlowGraphOwner)
     }
 
     final override fun visitTargetElement(targetElement: FirTargetElement, data: Nothing?) {

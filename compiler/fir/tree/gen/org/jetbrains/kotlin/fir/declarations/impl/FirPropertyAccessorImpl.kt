@@ -39,8 +39,8 @@ open class FirPropertyAccessorImpl(
 ) : FirPropertyAccessor(), FirModifiableFunction<FirPropertyAccessor>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override var receiverTypeRef: FirTypeRef? = null
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     override var contractDescription: FirContractDescription = FirEmptyContractDescription
@@ -54,8 +54,8 @@ open class FirPropertyAccessorImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         contractDescription.accept(visitor, data)
@@ -66,8 +66,8 @@ open class FirPropertyAccessorImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         typeParameters.transformInplace(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
         transformContractDescription(transformer, data)

@@ -40,8 +40,8 @@ open class FirSimpleFunctionImpl(
     override val symbol: FirFunctionSymbol<FirSimpleFunction>
 ) : FirSimpleFunction(), FirModifiableFunction<FirSimpleFunction>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     override var containerSource: DeserializedContainerSource? = null
@@ -55,8 +55,8 @@ open class FirSimpleFunctionImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         status.accept(visitor, data)
@@ -67,8 +67,8 @@ open class FirSimpleFunctionImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         typeParameters.transformInplace(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
         transformStatus(transformer, data)

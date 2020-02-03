@@ -47,10 +47,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbolWithPackage("fir.symbols", "AbstractFirBasedSymbol", "E")
         }
 
-        controlFlowGraphOwner.configure {
-            +controlFlowGraphReferenceField.withTransform()
-        }
-
         typeParametersOwner.configure {
             +typeParameters
         }
@@ -88,6 +84,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         function.configure {
             withArg("F", "FirFunction<F>")
             parentArg(callableDeclaration, "F", "F")
+            +controlFlowGraphReferenceField.withTransform()
             +symbol("FirFunctionSymbol", "F")
             +valueParameters.withTransform()
             +body(nullable = true)
@@ -276,6 +273,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         property.configure {
             parentArg(variable, "F", property)
             parentArg(callableMemberDeclaration, "F", property)
+            +controlFlowGraphReferenceField.withTransform()
             +symbol("FirPropertySymbol")
             +field("backingFieldSymbol", backingFieldSymbolType)
             +booleanField("isLocal")
