@@ -122,8 +122,11 @@ abstract class KotlinJsIrSubTarget(
 
             testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
 
-            testJs.onlyIf {
-                compileTask.outputFile.exists()
+            testJs.onlyIf { task ->
+                (task as KotlinJsTest).inputFileProperty
+                    .asFile
+                    .map { it.exists() }
+                    .get()
             }
 
             testJs.compilation = compilation
