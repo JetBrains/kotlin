@@ -105,7 +105,8 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
 
       int lbraceOffset = controller.myLbraceMarker.getStartOffset();
       if (lbraceOffset == offset) {
-        if (controller.myKeepOnHintHidden || controller.myHint.isVisible()) return controller;
+        if (controller.myKeepOnHintHidden || controller.myHint.isVisible()
+          || ApplicationManager.getApplication().isHeadlessEnvironment()) return controller;
         Disposer.dispose(controller);
         //noinspection AssignmentToForLoopParameter
         --i;
@@ -461,7 +462,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
                 return null;
               })
               .withDocumentsCommitted(myProject)
-              .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() ||
+              .expireWhen(() -> !myKeepOnHintHidden && !myHint.isVisible() && !ApplicationManager.getApplication().isHeadlessEnvironment() ||
                                 getCurrentOffset() != context.getOffset() ||
                                 !elementForUpdating.isValid())
               .expireWith(this),
