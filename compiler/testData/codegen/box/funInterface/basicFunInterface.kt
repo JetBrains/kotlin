@@ -1,5 +1,4 @@
 // !LANGUAGE: +FunctionalInterfaceConversion
-// TARGET_BACKEND: JVM
 
 fun interface Foo {
     fun invoke(): String

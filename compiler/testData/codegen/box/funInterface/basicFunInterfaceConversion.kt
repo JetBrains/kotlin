@@ -1,6 +1,6 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND: JS, JS_IR
 
 fun interface Foo {
     fun invoke(): String
