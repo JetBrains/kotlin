@@ -191,7 +191,12 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
     if (!indicesToDrop.isEmpty()) {
       LOG.info("Dropping indices:" + StringUtil.join(indicesToDrop, ","));
       for (String s : indicesToDrop) {
-        FileUtil.deleteWithRenaming(IndexInfrastructure.getIndexRootDir(ID.create(s)));
+        ID<Object, Object> fakeId = ID.create(s);
+        try {
+          FileUtil.deleteWithRenaming(IndexInfrastructure.getIndexRootDir(fakeId));
+        } finally {
+          ID.unloadId(fakeId);
+        }
       }
     }
 
