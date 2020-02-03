@@ -36,10 +36,6 @@
 
   <application-components>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.PluginStartupComponent</implementation-class>
-    </component>
-
-    <component>
       <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
     </component>
   </application-components>
@@ -233,6 +229,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
 

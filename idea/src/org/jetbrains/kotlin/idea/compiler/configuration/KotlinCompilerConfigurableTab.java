@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.PluginStartupComponent;
+import org.jetbrains.kotlin.idea.PluginStartupService;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent;
@@ -557,7 +557,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
             compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
             if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
-                PluginStartupComponent.getInstance().resetAliveFlag();
+                PluginStartupService.getInstance().resetAliveFlag();
             }
         }
 
