@@ -24,6 +24,8 @@ internal fun nullableEquals(lhs: Any?, rhs: Any?): Boolean {
     return unsafeNotNull(lhs).equals(rhs)
 }
 
+fun <T:Any> ensureNotNull(v: T?): T = if (v == null) THROW_NPE() else v
+
 @ExcludedFromCodegen
 internal fun <T, R> boxIntrinsic(x: T): R =
     implementedAsIntrinsic

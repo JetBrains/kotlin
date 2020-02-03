@@ -117,6 +117,7 @@ class WasmSymbols(
     val getInterfaceMethodId = getInternalFunction("getInterfaceMethodId")
 
     val nullableEquals = getInternalFunction("nullableEquals")
+    val ensureNotNull = getInternalFunction("ensureNotNull")
 
     val structNarrow = getInternalFunction("wasm_struct_narrow")
 

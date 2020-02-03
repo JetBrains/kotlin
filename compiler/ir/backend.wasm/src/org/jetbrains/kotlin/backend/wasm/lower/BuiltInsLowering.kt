@@ -46,6 +46,12 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
                 return irCall(call, newSymbol)
             }
+
+            irBuiltins.checkNotNullSymbol -> {
+                return irCall(call, symbols.ensureNotNull).also {
+                    it.putTypeArgument(0, call.type)
+                }
+            }
             in symbols.irBuiltInsToWasmIntrinsics.keys -> {
                 val newSymbol = symbols.irBuiltInsToWasmIntrinsics[symbol]!!
                 return irCall(call, newSymbol)

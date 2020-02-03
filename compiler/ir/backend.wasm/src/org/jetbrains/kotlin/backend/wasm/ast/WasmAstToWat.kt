@@ -113,21 +113,25 @@ class WatGenerator : SExpressionBuilder() {
             override fun visitNop(x: WasmNop, data: Nothing?) {
             }
 
+            fun generateBlockResultType(t: WasmValueType?) = when (t) {
+                null, WasmUnreachableType -> {}
+                else -> list("result") { t.generate() }
+            }
+
             override fun visitBlock(x: WasmBlock, data: Nothing?) {
                 x.generateArgument()
-                x.type?.let { list("result") { x.type.generate() } }
+                generateBlockResultType(x.type)
                 x.instructions.forEach { generate(it) }
             }
 
             override fun visitLoop(x: WasmLoop, data: Nothing?) {
                 x.generateArgument()
-                x.type?.let { list("result") { x.type.generate() } }
-
+                generateBlockResultType(x.type)
                 x.instructions.forEach { generate(it) }
             }
 
             override fun visitIf(x: WasmIf, data: Nothing?) {
-                x.type?.let { list("result") { x.type.generate() } }
+                generateBlockResultType(x.type)
                 generate(x.condition)
                 newLineList("then") {
                     x.thenBlock.forEach { generate(it) }

@@ -26,6 +26,8 @@ fun IrType.getInlinedClass(): IrClass? {
         val erased = erase(this) ?: return null
         if (erased.isInline) {
             if (this.isMarkedNullable()) {
+                // FIXME: Specialize this for JS IR and WASM
+                return null
                 var fieldType: IrType
                 var fieldInlinedClass = erased
                 while (true) {

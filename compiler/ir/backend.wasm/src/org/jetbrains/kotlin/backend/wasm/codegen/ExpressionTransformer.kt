@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 
 class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodegenContext> {
@@ -304,10 +305,16 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
         val resultType = data.transformResultType(expression.type)
         return expression.branches.foldRight(null) { br: IrBranch, inst: WasmInstruction? ->
             val body = expressionToWasmInstruction(br.result, data)
+
+            val fullBody = if (br.result.type.isNothing())
+                listOf(body, WasmUnreachable)
+            else
+                listOf(body)
+
             if (isElseBranch(br)) body
             else {
                 val condition = expressionToWasmInstruction(br.condition, data)
-                WasmIf(resultType, condition, listOf(body), listOfNotNull(inst))
+                WasmIf(resultType, condition, fullBody, listOfNotNull(inst))
             }
         }!!
     }
