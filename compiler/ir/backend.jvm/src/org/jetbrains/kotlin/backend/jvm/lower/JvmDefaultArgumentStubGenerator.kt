@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 
 class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) : DefaultArgumentStubGenerator(context, false, false) {
     override fun IrBlockBodyBuilder.selectArgumentOrDefault(
@@ -47,4 +47,28 @@ class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) :
     }
 
     override fun defaultArgumentStubVisibility(function: IrFunction) = function.getJvmVisibilityOfDefaultArgumentStub()
+
+    override fun IrBlockBodyBuilder.generateSuperCallHandlerCheckIfNeeded(
+        irFunction: IrFunction,
+        newIrFunction: IrFunction
+    ) {
+        if (irFunction !is IrSimpleFunction
+            || !this@JvmDefaultArgumentStubGenerator.context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()
+            || irFunction.isTopLevelDeclaration
+            || (irFunction.parent as? IrClass)?.isFinalClass == true
+        )
+            return
+
+        val handlerDeclaration = newIrFunction.valueParameters.last()
+        +irIfThen(
+            context.irBuiltIns.unitType,
+            irNot(irEqualsNull(irGet(handlerDeclaration))),
+            irThrow(irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.ThrowUnsupportOperationExceptionClass).apply {
+                putValueArgument(
+                    0,
+                    irString("Super calls with default arguments not supported in this target, function: ${irFunction.name.asString()}")
+                )
+            })
+        )
+    }
 }

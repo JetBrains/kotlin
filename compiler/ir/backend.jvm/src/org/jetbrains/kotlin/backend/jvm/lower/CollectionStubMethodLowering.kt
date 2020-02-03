@@ -87,9 +87,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
             body = context.createIrBuilder(function.symbol).irBlockBody {
                 +irThrow(
                     irCall(
-                        this@CollectionStubMethodLowering.context.ir.symbols.unsupportedOperationExceptionClass.owner.constructors.single {
-                            it.valueParameters.size == 1 && it.valueParameters.single().type.isNullableString()
-                        }
+                        this@CollectionStubMethodLowering.context.ir.symbols.ThrowUnsupportOperationExceptionClass
                     ).apply {
                         putValueArgument(0, irString("Operation is not supported for read-only collection"))
                     }
