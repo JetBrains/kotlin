@@ -348,6 +348,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrFunction.copyAsComposableDecoy(): IrSimpleFunction {
+        if (origin == IrDeclarationOrigin.FAKE_OVERRIDE) return this as IrSimpleFunction
         return copy().also { fn ->
             fn.origin = COMPOSABLE_DECOY_IMPL
             (fn as IrFunctionImpl).metadata = metadata
@@ -355,6 +356,9 @@ class ComposerParamTransformer(
             val errorCtor = errorClass.owner.constructors.single {
                 it.valueParameters.size == 1 &&
                         it.valueParameters.single().type.isString()
+            }
+            if (this is IrOverridableDeclaration<*>) {
+                overriddenSymbols.mapTo(fn.overriddenSymbols) { it as IrSimpleFunctionSymbol }
             }
             // the decoy cannot have default expressions in its parameters, since they might be
             // composable and if they are, it wouldn't have a composer param to use
