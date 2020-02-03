@@ -497,6 +497,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         )
 
         checkCoroutines(languageVersionSettings, collector)
+        checkIrSupport(languageVersionSettings, collector)
 
         return languageVersionSettings
     }
@@ -575,6 +576,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 )
             }
         }
+    }
+
+    protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
+        // backend-specific
     }
 
     private enum class VersionKind(val text: String) {
