@@ -152,11 +152,6 @@ class IrSourceCompilerForInline(
 
     override fun getContextLabels(): Set<String> {
         val name = codegen.irFunction.name.asString()
-        if (name == INVOKE_SUSPEND_METHOD_NAME) {
-            codegen.context.suspendLambdaToOriginalFunctionMap[codegen.irFunction.parentAsClass.attributeOwnerId]?.let {
-                return setOf(it.name.asString())
-            }
-        }
         return setOf(name)
     }
 

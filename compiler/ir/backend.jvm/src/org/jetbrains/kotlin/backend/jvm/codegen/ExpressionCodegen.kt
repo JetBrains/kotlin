@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.CallGenerator
@@ -442,7 +443,7 @@ class ExpressionCodegen(
             // Check return type of non-lowered suspend call, in order to replace the result of the call with Unit,
             // otherwise, it would seem like the call returns non-unit upon resume.
             // See box/coroutines/tailCallOptimization/unit tests.
-            if (((expression.symbol.owner as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.returnType?.isUnit() == true) {
+            if (expression.symbol.owner.suspendFunctionOriginal().returnType.isUnit()) {
                 addReturnsUnitMarker(mv)
             }
 
@@ -633,21 +634,10 @@ class ExpressionCodegen(
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
         val returnTarget = expression.returnTargetSymbol.owner
-        var owner =
+        val owner =
             returnTarget as? IrFunction
                 ?: (returnTarget as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
                 ?: error("Unsupported IrReturnTarget: $returnTarget")
-        // $$forInline and $suspendImpl functions share the same attributes as originals, but the name is different
-        // fix the return target. TODO: attributes seem to be overloaded. We rely on their uniqueness across transformations to find views
-        // TODO: but in this case, they are not unique enough.
-        if ((irFunction.origin == FOR_INLINE_STATE_MACHINE_TEMPLATE ||
-                    irFunction.origin == SUSPEND_IMPL_STATIC_FUNCTION ||
-                    irFunction.origin == FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE) &&
-            owner.isSuspend && irFunction is IrSimpleFunction && owner is IrSimpleFunction &&
-            irFunction.attributeOwnerId == owner.attributeOwnerId
-        ) {
-            owner = irFunction
-        }
         //TODO: should be owner != irFunction
         val isNonLocalReturn =
             methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)

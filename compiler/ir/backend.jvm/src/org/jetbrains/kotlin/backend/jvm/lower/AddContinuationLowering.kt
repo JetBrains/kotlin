@@ -56,10 +56,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         val suspendLambdas = findSuspendAndInlineLambdas(irFile)
         addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile)
         transformSuspendLambdasIntoContinuations(irFile, suspendLambdas)
-        addContinuationParameterToSuspendCallsAndUpdateNonLocalReturns(irFile)
+        addContinuationParameterToSuspendCallsAndUpdateNonLocalReturns(irFile, suspendLambdas)
     }
 
-    private fun addContinuationParameterToSuspendCallsAndUpdateNonLocalReturns(irFile: IrFile) {
+    private fun addContinuationParameterToSuspendCallsAndUpdateNonLocalReturns(irFile: IrFile, suspendLambdas: List<SuspendLambdaInfo>) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             val functionStack = mutableListOf<IrFunction>()
 
@@ -79,8 +79,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             override fun visitReturn(expression: IrReturn): IrExpression {
                 val ret = super.visitReturn(expression) as IrReturn
                 val irFunction = expression.returnTargetSymbol.owner as? IrFunction ?: return ret
-                val targetViewOrStub = irFunction.suspendFunctionViewOrStub(context)
-                return IrReturnImpl(ret.startOffset, ret.endOffset, ret.type, targetViewOrStub.symbol, ret.value)
+                val target = suspendLambdas.find { it.function == irFunction }?.invokeSuspend ?: irFunction
+                return IrReturnImpl(ret.startOffset, ret.endOffset, ret.type, target.symbol, ret.value)
             }
         })
     }
@@ -171,6 +171,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             if (info.capturesCrossinline) {
                 addInvokeSuspendForInlineForLambda(invokeSuspend, info.function, parametersFields, receiverField)
             }
+            info.invokeSuspend = invokeSuspend
             info.function.parentAsClass.declarations.remove(info.function)
             if (info.arity <= 1) {
                 val singleParameterField = receiverField ?: parametersWithoutArguments.singleOrNull()
@@ -726,6 +727,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         val capturesCrossinline: Boolean
     ) {
         lateinit var constructor: IrConstructor
+        lateinit var invokeSuspend: IrFunction
     }
 }
 
