@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.editor
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
@@ -10,7 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.extensions.BaseExtensionPointName
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.options.BoundCompositeConfigurable
+import com.intellij.openapi.options.BoundCompositeSearchableConfigurable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.UnnamedConfigurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
@@ -37,9 +37,10 @@ private val myCbShowIntentionBulbCheckBox             get() = CheckboxDescriptor
 private val myCodeLensCheckBox                        get() = CheckboxDescriptor(IdeBundle.message("checkbox.show.editor.preview.popup"), uiSettings::showEditorToolTip)
 // @formatter:on
 
-class EditorAppearanceConfigurable : BoundCompositeConfigurable<UnnamedConfigurable>(
+class EditorAppearanceConfigurable : BoundCompositeSearchableConfigurable<UnnamedConfigurable>(
   ApplicationBundle.message("tab.editor.settings.appearance"),
-  "reference.settingsdialog.IDE.editor.appearance"
+  "reference.settingsdialog.IDE.editor.appearance",
+  "editor.preferences.appearance"
 ), Configurable.WithEpDependencies {
   override fun createPanel(): DialogPanel {
     val model = EditorSettingsExternalizable.getInstance()

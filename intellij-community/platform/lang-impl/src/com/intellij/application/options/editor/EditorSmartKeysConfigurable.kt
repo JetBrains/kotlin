@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.editor
 
 import com.intellij.codeInsight.CodeInsightSettings.*
@@ -71,10 +71,11 @@ const val ID = "editor.preferences.smartKeys"
  *
  * @author yole
  */
-class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompositeConfigurable<UnnamedConfigurable>(
+class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompositeSearchableConfigurable<UnnamedConfigurable>(
   ApplicationBundle.message("group.smart.keys"),
-  "reference.settingsdialog.IDE.editor.smartkey"
-), SearchableConfigurable, SearchableConfigurable.Parent {
+  "reference.settingsdialog.IDE.editor.smartkey",
+  ID
+), SearchableConfigurable.Parent {
   override fun createPanel(): DialogPanel {
     return panel {
       row {
@@ -176,7 +177,6 @@ class EditorSmartKeysConfigurable : Configurable.WithEpDependencies, BoundCompos
 
   override fun hasOwnContent() = true
 
-  override fun getId() = ID
   override fun getDependencies() = listOf(EP_NAME)
   
   companion object {
