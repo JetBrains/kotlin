@@ -403,7 +403,6 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            TODO: Investigate exception proposal
 //            multipleCatchesLoweringPhase then
 
-            bridgesConstructionPhase then
 
 //            TODO: Reimplement
 //            typeOperatorLoweringPhase then
@@ -414,6 +413,9 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 
 //            TODO: Reimplement
 //            classReferenceLoweringPhase then
+
+
+            bridgesConstructionPhase then
 
             inlineClassLoweringPhase then
 

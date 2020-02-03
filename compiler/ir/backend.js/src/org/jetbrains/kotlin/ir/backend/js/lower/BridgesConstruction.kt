@@ -142,7 +142,7 @@ abstract class BridgesConstruction<FunctionSignature>(val context: CommonBackend
             }
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
-            annotations += bridge.annotations
+            // annotations += bridge.annotations
             overriddenSymbols.addAll(delegateTo.overriddenSymbols)
             overriddenSymbols.add(bridge.symbol)
         }
