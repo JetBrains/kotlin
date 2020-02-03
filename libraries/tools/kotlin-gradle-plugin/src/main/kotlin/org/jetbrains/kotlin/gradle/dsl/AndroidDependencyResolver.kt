@@ -51,7 +51,8 @@ object AndroidDependencyResolver {
         } ?: return null
         val sdkHandler = AndroidSdkHandler.getInstance(sdkLocation)
         val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
-        val androidTarget = sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger)
+        val androidTarget =
+            sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger) ?: return null
         return AndroidDependency(
             androidTarget.fullName,
             File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR)),
