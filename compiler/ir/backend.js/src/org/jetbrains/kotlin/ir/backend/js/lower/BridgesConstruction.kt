@@ -67,8 +67,8 @@ abstract class BridgesConstruction<FunctionSignature>(val context: CommonBackend
         if (shouldSkipFunction(function))
             return
         // equals(Any?), hashCode(), toString() never need bridges
-        if (function.isMethodOfAny())
-            return
+        // if (function.isMethodOfAny())
+        //     return
 
         val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
             specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
