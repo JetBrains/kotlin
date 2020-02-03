@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 fun check1() {
     val result = if (true) {
         if (true) 1 else 2

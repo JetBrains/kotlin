@@ -27,7 +27,7 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.DoubleArray",
     "kotlin.BooleanArray",
     "kotlin.Function",
-    "kotlin.Throwable",
+    // "kotlin.Throwable",
     "kotlin.Suppress",
     "kotlin.SinceKotlin",
     "kotlin.Deprecated",

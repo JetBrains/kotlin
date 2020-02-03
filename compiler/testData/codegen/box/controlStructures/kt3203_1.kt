@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 fun testIf() {
     val condition = true
     val result = if (condition) {
