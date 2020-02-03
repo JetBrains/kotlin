@@ -188,7 +188,7 @@ private class TypeAliasConstructorsSubstitutingScope(
 private typealias ConstructorCopyFactory<F> =
         F.(newReturnType: ConeKotlinType?, newValueParameterTypes: List<ConeKotlinType?>, newTypeParameters: List<FirTypeParameter>) -> F
 
-private class TypeAliasConstructorsSubstitutor<F : FirMemberFunction<F>>(
+private class TypeAliasConstructorsSubstitutor<F : FirFunction<F>>(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val substitutor: ConeSubstitutor,
     private val copyFactory: ConstructorCopyFactory<F>
@@ -258,7 +258,7 @@ private fun prepareSubstitutingScopeForTypeAliasConstructors(
     )
 }
 
-private fun <F : FirMemberFunction<F>> prepareSubstitutorForTypeAliasConstructors(
+private fun <F : FirFunction<F>> prepareSubstitutorForTypeAliasConstructors(
     typeAliasSymbol: FirTypeAliasSymbol,
     expandedType: ConeClassLikeType,
     session: FirSession,

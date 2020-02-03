@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
-import org.jetbrains.kotlin.fir.declarations.FirMemberFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -262,10 +261,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner) {
         visitElement(contractDescriptionOwner)
-    }
-
-    open fun <F : FirMemberFunction<F>> visitMemberFunction(memberFunction: FirMemberFunction<F>) {
-        visitElement(memberFunction)
     }
 
     open fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
@@ -718,10 +713,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: Nothing?) {
         visitContractDescriptionOwner(contractDescriptionOwner)
-    }
-
-    final override fun <F : FirMemberFunction<F>> visitMemberFunction(memberFunction: FirMemberFunction<F>, data: Nothing?) {
-        visitMemberFunction(memberFunction)
     }
 
     final override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {

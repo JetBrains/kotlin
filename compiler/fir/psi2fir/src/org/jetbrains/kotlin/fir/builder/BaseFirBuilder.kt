@@ -9,10 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirMemberFunction
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunctionImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
@@ -124,7 +121,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                                 return@apply
                             }
                         }
-                        is FirMemberFunction<*> -> {
+                        is FirSimpleFunction -> {
                             if (firFunction.name.asString() == labelName) {
                                 target.bind(firFunction)
                                 return@apply

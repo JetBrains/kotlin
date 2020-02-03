@@ -260,16 +260,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +annotations
         }
 
-        memberFunction.configure {
-            withArg("F", memberFunction)
-            parentArg(function, "F", "F")
-            parentArg(callableMemberDeclaration, "F", "F")
-            +symbol("FirFunctionSymbol", "F")
-            +annotations
-        }
-
         simpleFunction.configure {
-            parentArg(memberFunction, "F", simpleFunction)
+            parentArg(function, "F", simpleFunction)
+            +symbol("FirFunctionSymbol<FirSimpleFunction>")
+            +annotations
+            parentArg(callableMemberDeclaration, "F", simpleFunction)
         }
 
         contractDescriptionOwner.configure {
@@ -310,7 +305,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         constructor.configure {
-            parentArg(memberFunction, "F", constructor)
+            parentArg(function, "F", constructor)
+            parentArg(callableMemberDeclaration, "F", constructor)
+            +annotations
             +symbol("FirConstructorSymbol")
             +field("delegatedConstructor", delegatedConstructorCall, nullable = true)
             +body(nullable = true)

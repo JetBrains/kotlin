@@ -125,12 +125,11 @@ class JavaClassEnhancementScope(
         if (firMethod !is FirJavaMethod && firMethod !is FirJavaConstructor) {
             return original
         }
-        if (firMethod !is FirMemberFunction<*>) throw AssertionError()
         return enhanceMethod(firMethod, original.callableId, name)
     }
 
     private fun enhanceMethod(
-        firMethod: FirMemberFunction<*>,
+        firMethod: FirFunction<*>,
         methodId: CallableId,
         name: Name,
         isAccessor: Boolean = false,
@@ -149,13 +148,13 @@ class JavaClassEnhancementScope(
             }
         }
 
-        val overriddenMembers = firMethod.overriddenMembers()
+        val overriddenMembers = (firMethod as? FirSimpleFunction)?.overriddenMembers().orEmpty()
         val hasReceiver = overriddenMembers.any { it.receiverTypeRef != null }
 
         val newReceiverTypeRef = if (firMethod is FirJavaMethod && hasReceiver) {
             enhanceReceiverType(firMethod, overriddenMembers, memberContext)
         } else null
-        val newReturnTypeRef = if (firMethod is FirJavaConstructor) {
+        val newReturnTypeRef = if (firMethod !is FirJavaMethod) {
             firMethod.returnTypeRef
         } else {
             enhanceReturnType(firMethod, overriddenMembers, memberContext, predefinedEnhancementInfo)
@@ -218,7 +217,7 @@ class JavaClassEnhancementScope(
                     this.typeParameters += firMethod.typeParameters
                 }
             }
-            else -> FirSimpleFunctionImpl(
+            is FirJavaMethod -> FirSimpleFunctionImpl(
                 firMethod.source,
                 this@JavaClassEnhancementScope.session,
                 newReturnTypeRef,
@@ -232,6 +231,7 @@ class JavaClassEnhancementScope(
                 this.valueParameters += newValueParameters
                 this.typeParameters += firMethod.typeParameters
             }
+            else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")
         }
         function.annotations += firMethod.annotations
         return function.symbol
@@ -258,7 +258,7 @@ class JavaClassEnhancementScope(
     private data class EnhanceValueParameterResult(val typeRef: FirResolvedTypeRef, val defaultValue: FirExpression?)
 
     private fun enhanceValueParameter(
-        ownerFunction: FirCallableMemberDeclaration<*>,
+        ownerFunction: FirFunction<*>,
         overriddenMembers: List<FirCallableMemberDeclaration<*>>,
         hasReceiver: Boolean,
         memberContext: FirJavaEnhancementContext,
@@ -338,14 +338,14 @@ class JavaClassEnhancementScope(
         }
     }
 
-    private fun FirCallableMemberDeclaration<*>.partsForValueParameter(
+    private fun FirFunction<*>.partsForValueParameter(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
         overriddenMembers: List<FirCallableMemberDeclaration<*>>,
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
         parameterContainer: FirAnnotationContainer?,
         methodContext: FirJavaEnhancementContext,
         typeInSignature: TypeInSignature
-    ) = parts(
+    ): EnhancementSignatureParts = (this as FirCallableMemberDeclaration<*>).parts(
         typeQualifierResolver,
         overriddenMembers,
         parameterContainer, false,

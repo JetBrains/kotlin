@@ -45,8 +45,8 @@ open class FirSimpleFunctionImpl(
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     override var containerSource: DeserializedContainerSource? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var contractDescription: FirContractDescription = FirEmptyContractDescription
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     init {
         symbol.bind(this)
@@ -60,8 +60,8 @@ open class FirSimpleFunctionImpl(
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         status.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
         contractDescription.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
@@ -72,8 +72,8 @@ open class FirSimpleFunctionImpl(
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
         transformStatus(transformer, data)
-        annotations.transformInplace(transformer, data)
         transformContractDescription(transformer, data)
+        annotations.transformInplace(transformer, data)
         return this
     }
 

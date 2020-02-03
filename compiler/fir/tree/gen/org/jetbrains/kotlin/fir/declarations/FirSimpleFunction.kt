@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirSimpleFunction : FirPureAbstractElement(), FirMemberFunction<FirSimpleFunction>, FirContractDescriptionOwner {
+abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimpleFunction>, FirCallableMemberDeclaration<FirSimpleFunction>, FirContractDescriptionOwner {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
@@ -36,9 +36,9 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirMemberFunction<F
     abstract override val name: Name
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
+    abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirFunctionSymbol<FirSimpleFunction>
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val contractDescription: FirContractDescription
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSimpleFunction(this, data)
 
