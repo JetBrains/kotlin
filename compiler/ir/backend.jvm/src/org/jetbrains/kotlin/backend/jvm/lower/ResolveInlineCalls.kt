@@ -15,8 +15,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -36,18 +40,28 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
         val maybeFakeOverrideOfMultiFileBridge = expression.symbol.owner as? IrSimpleFunction
             ?: return super.visitCall(expression)
         val resolved =
-            maybeFakeOverrideOfMultiFileBridge?.resolveMultiFileFacades() ?: maybeFakeOverrideOfMultiFileBridge.resolveFakeOverride()
+            maybeFakeOverrideOfMultiFileBridge.resolveMultiFileFacades() ?: maybeFakeOverrideOfMultiFileBridge.resolveFakeOverride()
             ?: return super.visitCall(expression)
         return super.visitCall(with(expression) {
             IrCallImpl(startOffset, endOffset, type, resolved.symbol, expression.typeArgumentsCount, null, superQualifierSymbol).apply {
                 copyTypeAndValueArgumentsFrom(expression)
+                dispatchReceiver?.let { receiver ->
+                    val receiverType = resolved.parentAsClass.defaultType
+                    dispatchReceiver = IrTypeOperatorCallImpl(
+                        receiver.startOffset,
+                        receiver.endOffset,
+                        receiverType,
+                        IrTypeOperator.IMPLICIT_CAST,
+                        receiverType,
+                        receiver
+                    )
+                }
             }
         })
     }
 
-    private fun IrFunction.resolveMultiFileFacades(): IrFunction? {
-        return if (origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
+    private fun IrFunction.resolveMultiFileFacades(): IrFunction? =
+        if (origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
             context.multifileFacadeMemberToPartMember[this]
         } else null
-    }
 }
