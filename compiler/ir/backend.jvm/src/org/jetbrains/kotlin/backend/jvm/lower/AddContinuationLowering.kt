@@ -269,7 +269,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         createCall.putValueArgument(0, irGet(function.valueParameters[0]))
                     }
                     createCall.putValueArgument(if (receiverField != null) 1 else 0, irGet(function.valueParameters.last()))
-                }, "create")
+                }, "create", irType = defaultType)
                 // Start coroutine
                 +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
                     invokeSuspendCall.dispatchReceiver = irGet(newlyCreatedObject)
@@ -306,7 +306,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         constructorCall.putValueArgument(index, irGetField(irGet(function.dispatchReceiverParameter!!), field))
                     }
                     constructorCall.putValueArgument(parametersWithArguments.size, irGet(function.valueParameters.last()))
-                }, "constructor")
+                }, "constructor", irType = defaultType)
                 // Move parameters into fields (instead of `create`)
                 if (parametersWithoutArguments.isNotEmpty()) {
                     for ((index, param) in function.valueParameters.dropLast(1).withIndex()) {
