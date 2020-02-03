@@ -70,7 +70,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
     private val jvm8Target: JCheckBox
     private val ir: JCheckBox
 
-    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>() {
+    private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>(this) {
         override fun prepareRequestInfo(): Location? {
             if (!toolWindow.isVisible) {
                 return null

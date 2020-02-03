@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.idea.util;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationAdapter;
+import com.intellij.openapi.application.ApplicationListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,11 +37,14 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         FINISHED_WITH_ACTUAL_DATA
     }
 
+    private final Disposable parentDisposable;
     private ProgressIndicator progressIndicator = null;
     private RequestInfo requestInfo = null;
     private State currentState = State.NOT_INITIALIZED;
 
-    protected LongRunningReadTask() {}
+    protected LongRunningReadTask(Disposable disposable) {
+        parentDisposable = disposable;
+    }
 
     /** Should be executed in GUI thread */
     public boolean shouldStart(@Nullable LongRunningReadTask<RequestInfo, ResultData> previousTask) {
@@ -102,7 +107,7 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
             @Override
             public void run() {
-                runWithWriteActionPriority(progressIndicator, new Runnable() {
+                runWithWriteActionPriority(progressIndicator, parentDisposable, new Runnable() {
                     @Override
                     public void run() {
                         ResultData resultData = null;
@@ -208,10 +213,17 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
      * {@link ProgressIndicatorUtils#runWithWriteActionPriority(Runnable)}
      *
      * @param indicator
+     * @param parentDisposable
      * @param action
      */
-    public static void runWithWriteActionPriority(@NotNull final ProgressIndicator indicator, @NotNull final Runnable action) {
-        ApplicationAdapter listener = new ApplicationAdapter() {
+    public static void runWithWriteActionPriority(
+            @NotNull final ProgressIndicator indicator,
+            @NotNull Disposable parentDisposable,
+            @NotNull final Runnable action
+    ) {
+        Disposable disposable = Disposer.newDisposable();
+        Disposer.register(parentDisposable, disposable);
+        ApplicationListener listener = new ApplicationListener() {
             @Override
             public void beforeWriteActionStart(Object action) {
                 indicator.cancel();
@@ -219,16 +231,11 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         };
         final Application application = ApplicationManager.getApplication();
         try {
-            application.addApplicationListener(listener);
-            ProgressManager.getInstance().runProcess(new Runnable() {
-                @Override
-                public void run() {
-                    application.runReadAction(action);
-                }
-            }, indicator);
+            application.addApplicationListener(listener, disposable);
+            ProgressManager.getInstance().runProcess(() -> application.runReadAction(action), indicator);
         }
         finally {
-            application.removeApplicationListener(listener);
+            Disposer.dispose(disposable);
         }
     }
 }
