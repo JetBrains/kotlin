@@ -8,8 +8,8 @@ fun bar(): String? = null
 
 fun fooHashSet() {
     var x = HashSet<String>()
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(null)
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(bar())
+    x.add(null)
+    x.add(bar())
     x.add("")
 
     val b1: MutableSet<String?> = x
@@ -22,8 +22,8 @@ fun fooHashSet() {
 
 fun fooTreeSet() {
     var x = TreeSet<String>()
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(null)
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(bar())
+    x.add(null)
+    x.add(bar())
     x.add("")
 
     val b1: MutableSet<String?> = x
@@ -36,8 +36,8 @@ fun fooTreeSet() {
 
 fun fooLinkedHashSet() {
     var x = LinkedHashSet<String>()
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(null)
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(bar())
+    x.add(null)
+    x.add(bar())
     x.add("")
 
     val b1: MutableSet<String?> = x

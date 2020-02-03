@@ -9,13 +9,13 @@ val nullableInt: Int? = null
 
 fun hashMapTest() {
     var x: HashMap<String, Int?> = HashMap<String, Int?>()
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>(null, null)
+    x.put(null, null)
     x.put("", null)
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>(bar(), 1)
+    x.put(bar(), 1)
     x.put("", 1)
 
-    <!INAPPLICABLE_CANDIDATE!>x[null] = 1<!>
-    <!INAPPLICABLE_CANDIDATE!>x[bar()] = 1<!>
+    x[null] = 1
+    x[bar()] = 1
     x[""] = nullableInt
     x[""] = 1
 
@@ -33,13 +33,13 @@ fun hashMapTest() {
 
 fun treeMapTest() {
     var x: TreeMap<String, Int?> = TreeMap<String, Int?>()
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>(null, null)
+    x.put(null, null)
     x.put("", null)
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>(bar(), 1)
+    x.put(bar(), 1)
     x.put("", 1)
 
-    <!INAPPLICABLE_CANDIDATE!>x[null] = 1<!>
-    <!INAPPLICABLE_CANDIDATE!>x[bar()] = 1<!>
+    x[null] = 1
+    x[bar()] = 1
     x[""] = nullableInt
     x[""] = 1
 

@@ -24,12 +24,12 @@ fun bar(): String? = null
 
 fun foo() {
     var x = A<String>()
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(null)
-    x.<!INAPPLICABLE_CANDIDATE!>add<!>(bar())
+    x.add(null)
+    x.add(bar())
     x.add("")
 
-    <!INAPPLICABLE_CANDIDATE!>x[0] = null<!>
-    <!INAPPLICABLE_CANDIDATE!>x[0] = bar()<!>
+    x[0] = null
+    x[0] = bar()
     x[0] = ""
 
     val b1: MutableList<String?> = x

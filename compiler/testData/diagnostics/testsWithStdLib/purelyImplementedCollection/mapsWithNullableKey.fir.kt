@@ -9,14 +9,14 @@ val nullableInt: Int? = null
 
 fun hashMapTest() {
     var x: HashMap<String?, Int> = HashMap<String?, Int>()
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>(null, null)
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>("", null)
+    x.put(null, null)
+    x.put("", null)
     x.put(bar(), 1)
     x.put("", 1)
 
     x[null] = 1
     x[bar()] = 1
-    <!INAPPLICABLE_CANDIDATE!>x[""] = nullableInt<!>
+    x[""] = nullableInt
     x[""] = 1
 
     val b1: MutableMap<String?, Int?> = x
@@ -34,14 +34,14 @@ fun hashMapTest() {
 
 fun treeMapTest() {
     var x: TreeMap<String?, Int> = TreeMap<String?, Int>()
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>(null, null)
-    x.<!INAPPLICABLE_CANDIDATE!>put<!>("", null)
+    x.put(null, null)
+    x.put("", null)
     x.put(bar(), 1)
     x.put("", 1)
 
     x[null] = 1
     x[bar()] = 1
-    <!INAPPLICABLE_CANDIDATE!>x[""] = nullableInt<!>
+    x[""] = nullableInt
     x[""] = 1
 
     val b1: MutableMap<String?, Int?> = x
