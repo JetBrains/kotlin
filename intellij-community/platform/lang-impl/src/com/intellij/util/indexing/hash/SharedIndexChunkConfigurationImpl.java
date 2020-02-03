@@ -168,15 +168,17 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   }
 
   public void loadSharedIndex(@NotNull Project project,
-                              @NotNull InputStream stream,
-                              @NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor) {
+                              @NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor,
+                              @NotNull ProgressIndicator indicator) {
     if (project.isDisposed()) return;
 
     Path targetFile;
     try {
       ensureSharedIndexConfigurationRootExist();
-      targetFile = getSharedIndexConfigurationRoot().resolve(descriptor.getHash());
-      Files.copy(stream, targetFile, StandardCopyOption.REPLACE_EXISTING);
+      targetFile = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkRootName());
+      descriptor.download(in -> {
+        Files.copy(in, targetFile, StandardCopyOption.REPLACE_EXISTING);
+      }, indicator);
     } catch (IOException e) {
       LOG.error(e);
       return;
@@ -220,21 +222,14 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   @Override
   public void locateIndexes(@NotNull Project project,
-                            @NotNull Set<OrderEntry> entry,
+                            @NotNull Set<OrderEntry> entries,
                             @NotNull ProgressIndicator indicator) {
     Runnable runnable = () -> {
       for (SharedIndexChunkLocator locator : SharedIndexChunkLocator.EP_NAME.getExtensionList()) {
-        locator.locateIndex(project, entry, indicator, new SharedIndexChunkLocator.SharedIndexHandler() {
-          @Override
-          public boolean onIndexAvailable(SharedIndexChunkLocator.@NotNull ChunkDescriptor descriptor) {
-            return true;
-          }
-
-          @Override
-          public void onIndexReceived(SharedIndexChunkLocator.@NotNull ChunkDescriptor descriptor, @NotNull InputStream inputStream) {
-            loadSharedIndex(project, inputStream, descriptor);
-          }
-        });
+        locator.locateIndex(project, entries, descriptor -> {
+          loadSharedIndex(project, descriptor, indicator);
+          return true; // TODO sometimes we don't need more
+        }, indicator);
       }
     };
     if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -246,12 +241,13 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   @NotNull
   private List<SharedIndexChunk> registerChunk(SharedIndexChunkLocator.@NotNull ChunkDescriptor descriptor) throws IOException {
-    int chunkId = myChunkDescriptorEnumerator.enumerate(descriptor.getHash());
+    String chunkRootName = descriptor.getChunkRootName();
+    int chunkId = myChunkDescriptorEnumerator.enumerate(chunkRootName);
     if (chunkId == 0) {
-      throw new RuntimeException("chunk " + descriptor.getHash() + " is not present");
+      throw new RuntimeException("chunk " + chunkRootName + " is not present");
     }
     ContentHashEnumerator enumerator;
-    Path chunkRoot = myReadSystem.getPath(descriptor.getHash());
+    Path chunkRoot = myReadSystem.getPath(chunkRootName);
     synchronized (myChunkEnumerators) {
       enumerator = myChunkEnumerators.get(chunkId);
       if (enumerator == null) {

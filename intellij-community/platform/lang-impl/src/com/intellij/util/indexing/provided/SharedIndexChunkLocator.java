@@ -5,9 +5,15 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.util.Consumer;
+import com.intellij.util.Processor;
+import com.intellij.util.ThrowableConsumer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.Promise;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Set;
 
 public interface SharedIndexChunkLocator {
@@ -15,24 +21,16 @@ public interface SharedIndexChunkLocator {
 
   void locateIndex(@NotNull Project project,
                    @NotNull Set<OrderEntry> entries,
-                   @NotNull ProgressIndicator indicator,
-                   @NotNull SharedIndexHandler handler);
+                   @NotNull Processor<ChunkDescriptor> descriptorProcessor,
+                   @NotNull ProgressIndicator indicator);
 
-  interface SharedIndexHandler {
-    boolean onIndexAvailable(@NotNull ChunkDescriptor descriptor);
-
-    void onIndexReceived(@NotNull ChunkDescriptor descriptor, @NotNull InputStream inputStream);
-  }
-
-  class ChunkDescriptor {
+  interface ChunkDescriptor {
     @NotNull
-    private final String myHash;
-
-    public ChunkDescriptor(@NotNull String hash) {myHash = hash;}
+    String getChunkRootName();
 
     @NotNull
-    public String getHash() {
-      return myHash;
-    }
+    Set<OrderEntry> getTargetOrderEntries();
+
+    void download(@NotNull ThrowableConsumer<? super InputStream, ? extends IOException> callback, @NotNull ProgressIndicator indicator) throws IOException;
   }
 }
