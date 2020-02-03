@@ -141,7 +141,7 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             public HierarchyTreeStructure compute() {
                 return new CallerMethodsTreeStructure(
                         getProject(),
-                        (PsiMethod) getElementAtCaret(LanguageCallHierarchy.INSTANCE),
+                        (PsiMember) getElementAtCaret(LanguageCallHierarchy.INSTANCE),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT
                 );
             }
