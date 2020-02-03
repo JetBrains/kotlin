@@ -5,6 +5,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTarget;
 import com.intellij.ide.StandardTargetWeights;
+import com.intellij.ide.lightEdit.LightEditUtil;
 import com.intellij.ide.structureView.StructureViewFactoryEx;
 import com.intellij.ide.structureView.StructureViewWrapper;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
@@ -34,7 +35,7 @@ public class StructureViewSelectInTarget implements SelectInTarget {
 
   @Override
   public boolean canSelect(SelectInContext context) {
-    return context.getFileEditorProvider() != null;
+    return context.getFileEditorProvider() != null && !LightEditUtil.isLightEditProject(context.getProject());
   }
 
   @Override
