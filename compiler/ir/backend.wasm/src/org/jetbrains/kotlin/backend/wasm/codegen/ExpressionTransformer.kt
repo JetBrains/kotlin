@@ -214,7 +214,22 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
             }
 
             symbols.boxIntrinsic -> {
-                TODO()
+                // val fromType = call.getTypeArgument(0)!!
+                val toType = call.getTypeArgument(0)!!
+                val klass = toType.getClass()!!
+                val structTypeName = context.referenceStructType(klass.symbol)
+                val klassId = context.referenceClassId(klass.symbol)
+                val fields = klass.allFields(context.backendContext.irBuiltIns)
+
+                val initialValues = fields.mapIndexed { index, field ->
+                    when (index) {
+                        0 -> WasmConstant.I32Symbol(klassId)
+                        1 -> wasmArguments.single()
+                        else -> error("Invlid index of IC constructor call")
+                    }
+                }
+
+                return WasmStructNew(structTypeName, initialValues)
             }
 
             symbols.unboxIntrinsic -> {
@@ -268,7 +283,7 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmFunctionCodeg
     }
 
     override fun visitThrow(expression: IrThrow, data: WasmFunctionCodegenContext): WasmInstruction {
-        TODO("IrThrow")
+        return WasmUnreachable
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: WasmFunctionCodegenContext): WasmInstruction {
