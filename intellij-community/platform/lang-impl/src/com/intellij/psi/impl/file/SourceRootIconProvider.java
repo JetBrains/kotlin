@@ -66,10 +66,9 @@ public class SourceRootIconProvider {
         }
       }
       else {
-        ProjectFileIndexImpl indexImpl = ObjectUtils.tryCast(index, ProjectFileIndexImpl.class);
-        SourceFolder sourceFolder = indexImpl != null ? indexImpl.getSourceFolder(vFile) : null;
+        SourceFolder sourceFolder = index.getSourceFolder(vFile);
         if (sourceFolder != null && vFile.equals(sourceFolder.getFile())) {
-          SourceFolder parentSourceFolder = parent == null ? null : indexImpl.getSourceFolder(parent);
+          SourceFolder parentSourceFolder = parent == null ? null : index.getSourceFolder(parent);
 
           // do not mark files under folder of the same root type (e.g. test root file under test root dir)
           // but mark file if they are under different root type (e.g. test root file under source root dir)

@@ -22,9 +22,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
-import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
 import com.intellij.openapi.roots.ui.configuration.ModuleSourceRootEditHandler;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -284,7 +283,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
 
     if (!toMarkAsRoots.isEmpty()) {
       Project project = toMarkAsRoots.get(0).first.getProject();
-      ProjectFileIndexImpl index = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
+      ProjectFileIndex index = ProjectFileIndex.getInstance(project);
 
       WriteAction.run(() -> ProjectRootManagerEx.getInstanceEx(project).mergeRootsChangesDuring(() -> {
         for (Pair<PsiFileSystemItem, JpsModuleSourceRootType<?>> each : toMarkAsRoots) {

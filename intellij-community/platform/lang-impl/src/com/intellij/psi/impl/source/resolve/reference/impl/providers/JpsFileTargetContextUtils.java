@@ -3,9 +3,7 @@ package com.intellij.psi.impl.source.resolve.reference.impl.providers;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.SourceFolder;
-import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.containers.ContainerUtil;
@@ -118,7 +116,7 @@ public final class JpsFileTargetContextUtils {
 
   @Nullable
   private static SourceFolder getSourceFolder(@NotNull Project project, @NotNull VirtualFile directory) {
-    ProjectFileIndexImpl projectFileIndex = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
+    ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
     return projectFileIndex.getSourceFolder(directory);
   }
 

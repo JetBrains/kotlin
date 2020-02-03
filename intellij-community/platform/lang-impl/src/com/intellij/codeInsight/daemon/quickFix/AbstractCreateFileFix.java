@@ -9,9 +9,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.SourceFolder;
-import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
@@ -228,7 +227,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     VirtualFile file = directory.getVirtualFile();
 
     Project project = directory.getProject();
-    ProjectFileIndexImpl projectFileIndex = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
+    ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
     SourceFolder sourceFolder = projectFileIndex.getSourceFolder(file);
     if (sourceFolder != null && sourceFolder.getFile() != null) {
       return IconUtil.getIcon(sourceFolder.getFile(), 0, project);
