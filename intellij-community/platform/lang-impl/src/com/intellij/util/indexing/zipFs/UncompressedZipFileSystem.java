@@ -10,7 +10,6 @@ import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import sun.nio.ch.FileChannelImpl;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -24,7 +23,6 @@ public class UncompressedZipFileSystem extends FileSystem {
   private static final Logger LOG = Logger.getInstance(UncompressedZipFileSystem.class);
 
   private volatile JBZipFile myUncompressedZip;
-  private volatile FileChannel myChannel;
   private volatile ZipTreeNode myRoot;
 
   @NotNull
@@ -32,8 +30,8 @@ public class UncompressedZipFileSystem extends FileSystem {
   @NotNull
   private final UncompressedZipFileSystemProvider myProvider;
 
-  // probably should be eliminated
-  private final Set<FileChannel> myOpenFiles = Collections.newSetFromMap(new ConcurrentHashMap<>());
+  private final ConcurrentHashMap<FileChannel, Set<FileBlockReadOnlyFileChannel>> myOpenFiles = new ConcurrentHashMap<>();
+  private volatile FileChannel myCurrentZipChannel;
 
   public UncompressedZipFileSystem(@NotNull Path uncompressedZip, @NotNull UncompressedZipFileSystemProvider provider) throws IOException {
     myUncompressedZipPath = uncompressedZip;
@@ -44,25 +42,24 @@ public class UncompressedZipFileSystem extends FileSystem {
 
   @NotNull
   FileChannel openChannel(@NotNull JBZipEntry entry) throws IOException {
-    FileBlockReadOnlyFileChannel channel = new FileBlockReadOnlyFileChannel(myChannel, entry.calcDataOffset(), entry.getSize()) {
+    final FileChannel zipChannel = myCurrentZipChannel;
+    FileBlockReadOnlyFileChannel channel = new FileBlockReadOnlyFileChannel(zipChannel, entry.calcDataOffset(), entry.getSize()) {
       @Override
-      protected void implCloseChannel() {
-        myOpenFiles.remove(this);
+      protected void implCloseChannel() throws IOException {
+        Set<FileBlockReadOnlyFileChannel> channels = myOpenFiles.get(zipChannel);
+        channels.remove(this);
+        if (channels.isEmpty() && zipChannel != myCurrentZipChannel) {
+          myOpenFiles.remove(zipChannel);
+          zipChannel.close();
+        }
       }
     };
-    myOpenFiles.add(channel);
+    myOpenFiles.computeIfAbsent(zipChannel, __ -> ContainerUtil.newConcurrentSet()).add(channel);
     return channel;
   }
 
   public void sync() throws IOException {
     try {
-      if (myChannel != null) {
-        try {
-          myChannel.close();
-        } catch (IOException e) {
-          LOG.error(e);
-        }
-      }
       if (myUncompressedZip != null) {
         try {
           myUncompressedZip.close();
@@ -73,7 +70,15 @@ public class UncompressedZipFileSystem extends FileSystem {
       }
     } finally {
       myUncompressedZip = new JBZipFile(myUncompressedZipPath.toFile());
-      myChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
+      FileChannel previousZipChannel = myCurrentZipChannel;
+      myCurrentZipChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
+      if (previousZipChannel != null && ContainerUtil.isEmpty(myOpenFiles.get(previousZipChannel))) {
+        try {
+          previousZipChannel.close();
+        } catch (IOException e) {
+          LOG.error(e);
+        }
+      }
       buildTree();
     }
   }
@@ -102,7 +107,13 @@ public class UncompressedZipFileSystem extends FileSystem {
   @Override
   public void close() throws IOException {
     try {
-      myChannel.close();
+      for (Map.Entry<FileChannel, Set<FileBlockReadOnlyFileChannel>> entry : myOpenFiles.entrySet()) {
+        for (FileBlockReadOnlyFileChannel channel : entry.getValue()) {
+          channel.close();
+        }
+        entry.getKey().close();
+      }
+      myCurrentZipChannel.close();
     } finally {
       myUncompressedZip.close();
     }
@@ -114,13 +125,13 @@ public class UncompressedZipFileSystem extends FileSystem {
   }
 
   @NotNull
-  FileChannel getChannel() {
-    return myChannel;
+  FileChannel getCurrentChannel() {
+    return myCurrentZipChannel;
   }
 
   @Override
   public boolean isOpen() {
-    return myChannel.isOpen();
+    return myCurrentZipChannel.isOpen();
   }
 
   @Override

@@ -33,12 +33,12 @@ class UncompressedZipFileStore extends FileStore {
 
   @Override
   public long getTotalSpace() throws IOException {
-    return mySystem.getChannel().size();
+    return mySystem.getCurrentChannel().size();
   }
 
   @Override
   public long getUsableSpace() throws IOException {
-    return mySystem.getChannel().size();
+    return mySystem.getCurrentChannel().size();
   }
 
   @Override

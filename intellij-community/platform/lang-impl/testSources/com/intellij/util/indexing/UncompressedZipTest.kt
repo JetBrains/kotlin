@@ -4,11 +4,15 @@ package com.intellij.util.indexing
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystemProvider
+import com.intellij.util.io.toByteArray
 import com.intellij.util.io.zip.JBZipFile
 import junit.framework.TestCase
 
 import java.io.File
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 import java.nio.file.Files
+import java.nio.file.StandardOpenOption
 
 class UncompressedZipTest : TestCase() {
 
@@ -87,6 +91,42 @@ class UncompressedZipTest : TestCase() {
     assertTrue(Files.exists(fs.getPath("a", "b.txt")))
     assertTrue(Files.exists(fs.getPath("a", "c.txt")))
     assertTrue(Files.exists(fs.getPath("a", "d.txt")))
+
+    fs.close()
+  }
+
+  fun testChannelAfterSync() {
+    val dir = FileUtil.createTempDirectory("zip0-fs-structure-dir", null)
+
+    val file = File(dir, "archive.zip")
+    val helloBytes = "Hello".toByteArray(Charsets.UTF_8)
+    JBZipFile(file).use {
+      it.getOrCreateEntry("a.txt").data = helloBytes
+    }
+
+    val fs = UncompressedZipFileSystem(file.toPath(), UncompressedZipFileSystemProvider())
+
+    val aPath = fs.getPath("a.txt")
+    val aFile = FileChannel.open(aPath, StandardOpenOption.READ)
+    assertTrue(Files.exists(aPath))
+
+    JBZipFile(file).use {
+      it.getOrCreateEntry("b.txt").data = helloBytes
+    }
+
+    fs.sync()
+
+    val bPath = fs.getPath("b.txt")
+    val bFile = FileChannel.open(bPath, StandardOpenOption.READ)
+    assertTrue(Files.exists(bPath))
+
+    val aByteBuffer = ByteBuffer.allocate(helloBytes.size)
+    aFile.read(aByteBuffer)
+    val bByteBuffer = ByteBuffer.allocate(helloBytes.size)
+    bFile.read(bByteBuffer)
+
+    assertTrue(helloBytes.contentEquals(aByteBuffer.toByteArray()))
+    assertTrue(helloBytes.contentEquals(bByteBuffer.toByteArray()))
 
     fs.close()
   }

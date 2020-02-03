@@ -128,7 +128,7 @@ public class FileBlockReadOnlyFileChannel extends FileChannel {
   }
 
   @Override
-  protected void implCloseChannel() {
+  protected void implCloseChannel() throws IOException {
     // do nothing
   }
 }
