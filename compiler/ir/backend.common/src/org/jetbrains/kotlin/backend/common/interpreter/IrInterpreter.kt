@@ -52,11 +52,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return when (val code = expression.interpret(data)) {
             Code.NEXT -> data.popReturnValue().toIrExpression(expression)
             Code.EXCEPTION -> {
-                val message = when (val exception = data.popReturnValue()) {
-                    is Common -> (exception.fields.first { it.descriptor.name.asString() == "message" }.state as Primitive<*>).value.toString()
-                    is Wrapper -> (exception.value as Throwable).message.toString()
-                    else -> TODO("not supported")
-                }
+                val message = (data.popReturnValue() as ExceptionState).getMessage().value
                 IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, message)
             }
             else -> TODO("$code not supported as result of interpretation")
@@ -118,14 +114,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
         } catch (e: Exception) { // TODO catch Throwable
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName
-            val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName }
+            val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
 
-            if (irExceptionClass == null && exceptionName == "KotlinNullPointerException") {
+            if (irExceptionClass == irBuiltIns.throwableClass.owner && exceptionName == "KotlinNullPointerException") {
                 // this block is used to replace jvm null pointer exception with common one
                 // TODO figure something better
-                data.pushReturnValue(Wrapper(e, irExceptions.first { it.name.asString() == "NullPointerException" }))
+                data.pushReturnValue(ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }))
             } else {
-                irExceptionClass?.let { data.pushReturnValue(Wrapper(e, it)) } ?: throw AssertionError("Cannot handle exception $e")
+                irExceptionClass.let { data.pushReturnValue(ExceptionState(e, it)) }
             }
 
             return Code.EXCEPTION
@@ -164,9 +160,17 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
+        fun IrFunctionImpl.getLastPossibleOverridden(): IrFunctionImpl {
+            // main usage: get throwable properties getter signature from exception classes
+            // then use that signatures to get right method from ir builtins map
+            var overridden = this
+            while (overridden.overriddenSymbols.isNotEmpty()) overridden = overridden.overriddenSymbols.first().owner as IrFunctionImpl
+            return overridden
+        }
+
         val variableDescriptor = owner.symbol.getReceiver()!!
         val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superType
-            ?: return calculateBuiltIns(owner.overriddenSymbols.first().owner, data)
+            ?: return calculateBuiltIns(owner.getLastPossibleOverridden(), data)
         val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
 
         val newStates = InterpreterFrame(mutableListOf(Variable(overridden.getReceiver()!!, superQualifier)))
@@ -478,7 +482,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     val convertibleClassName = data.popReturnValue().irClass.fqNameForIrSerialization
                     val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
                     val message = "$convertibleClassName cannot be cast to $castClassName"
-                    data.pushReturnValue(Wrapper(ClassCastException(message), classCastException))
+                    data.pushReturnValue(ExceptionState(ClassCastException(message), classCastException))
                     Code.EXCEPTION
                 } else {
                     code
@@ -522,14 +526,15 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private fun interpretTry(expression: IrTry, data: Frame): Code {
         var code = expression.tryResult.interpret(data)
         if (code == Code.EXCEPTION) {
-            val exception = data.peekReturnValue()
+            val exception = data.peekReturnValue() as ExceptionState
             for (catchBlock in expression.catches) {
-                if (exception.irClass.defaultType.isSubtypeOf(catchBlock.catchParameter.type, irBuiltIns)) {
+                if (exception.isSubtypeOf(catchBlock.catchParameter.type.classOrNull!!.owner)) {
                     code = catchBlock.interpret(data)
                     break
                 }
             }
         }
+        // TODO check flow correctness; should I return finally result code if in catch there was an exception?
         return expression.finallyExpression?.interpret(data) ?: code
     }
 
@@ -540,7 +545,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private fun interpretThrow(expression: IrThrow, data: Frame): Code {
-        expression.value.interpret(data)
+        expression.value.interpret(data).also { if (it != Code.NEXT) return it }
+        when (val exception = data.popReturnValue()) {
+            is Common -> data.pushReturnValue(ExceptionState(exception))
+            is Wrapper -> data.pushReturnValue(ExceptionState(exception))
+            is ExceptionState -> data.pushReturnValue(exception)
+            else -> throw AssertionError("${exception::class} cannot be used as exception state")
+        }
         return Code.EXCEPTION
     }
 

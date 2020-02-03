@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isTypeParameter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
@@ -53,12 +51,14 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     override val irClass: IrClass = type.classOrNull!!.owner
 
     init {
-        val properties = irClass.declarations.filterIsInstance<IrProperty>()
-        for (property in properties) {
-            val propertySignature = CompileTimeFunction(property.name.asString(), listOf(irClass.descriptor.defaultType.toString()))
-            val propertyValue = unaryFunctions[propertySignature]?.invoke(value)
-                ?: throw NoSuchMethodException("For given property $propertySignature there is no entry in unary map")
-            fields.add(Variable(property.descriptor, Primitive(propertyValue, property.backingField!!.type)))
+        if (value != null) {
+            val properties = irClass.declarations.filterIsInstance<IrProperty>()
+            for (property in properties) {
+                val propertySignature = CompileTimeFunction(property.name.asString(), listOf(irClass.descriptor.defaultType.toString()))
+                val propertyValue = unaryFunctions[propertySignature]?.invoke(value)
+                    ?: throw NoSuchMethodException("For given property $propertySignature there is no entry in unary map")
+                fields.add(Variable(property.descriptor, Primitive(propertyValue, property.backingField!!.type)))
+            }
         }
     }
 
@@ -104,7 +104,7 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     }
 }
 
-abstract class Complex(override var irClass: IrClass, override val fields: MutableList<Variable>) : State {
+abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superType: Complex? = null
     var instance: Complex? = null
 
@@ -117,14 +117,6 @@ abstract class Complex(override var irClass: IrClass, override val fields: Mutab
         return irClass.thisReceiver!!.descriptor
     }
 
-    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
-        return irClass.declarations.filterIsInstance<IrFunction>()
-            .filter { it.descriptor.name == descriptor.name }
-            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
-    }
-}
-
-class Common(override var irClass: IrClass, override val fields: MutableList<Variable>) : Complex(irClass, fields) {
     override fun setState(newVar: Variable) {
         when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
             null -> fields.add(newVar)                          // newVar isn't present in value list
@@ -132,6 +124,14 @@ class Common(override var irClass: IrClass, override val fields: MutableList<Var
         }
     }
 
+    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+        return irClass.declarations.filterIsInstance<IrFunction>()
+            .filter { it.descriptor.name == descriptor.name }
+            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
+    }
+}
+
+class Common(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex(irClass, fields) {
     fun getToStringFunction(): IrFunctionImpl {
         return irClass.declarations.filterIsInstance<IrFunction>()
             .filter { it.descriptor.name.asString() == "toString" }
@@ -150,7 +150,7 @@ class Common(override var irClass: IrClass, override val fields: MutableList<Var
     }
 }
 
-class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, mutableListOf()) {
+class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
     private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
     private val receiverClass = irClass.defaultType.getClass(true)
 
@@ -264,7 +264,7 @@ class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, 
     }
 }
 
-class Lambda(val irFunction: IrFunction, override var irClass: IrClass) : Complex(irClass, mutableListOf()) {
+class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
     // irFunction is anonymous declaration, but irCall will contain descriptor of invoke method from Function interface
     private val invokeDescriptor = irClass.declarations.first().descriptor
 
@@ -282,5 +282,59 @@ class Lambda(val irFunction: IrFunction, override var irClass: IrClass) : Comple
 
     override fun toString(): String {
         return "Lambda(${irClass.fqNameForIrSerialization})"
+    }
+}
+
+class ExceptionState private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex(irClass, fields) {
+    private val exceptionHierarchy = mutableListOf<String>()
+    private val messageProperty = irClass.getPropertyByName("message")
+    private val causeProperty = irClass.getPropertyByName("cause")
+
+    init {
+        instance = this
+    }
+
+    constructor(common: Common) : this(common.irClass, common.fields)
+    constructor(wrapper: Wrapper) : this(wrapper.value as Throwable, wrapper.irClass)
+
+    constructor(exception: Throwable, irClass: IrClass) : this(irClass, evaluateFields(exception, irClass)) {
+        if (irClass.name.asString() == "Throwable" && exception::class.java.name != "Throwable") {
+            // ir class wasn't found in classpath, a stub was passed => need to save java class hierarchy
+            exceptionHierarchy += exception::class.java.name
+            generateSequence(exception::class.java.superclass) { it.superclass }.forEach { exceptionHierarchy += it.name }
+            exceptionHierarchy.removeAt(exceptionHierarchy.lastIndex)
+        }
+    }
+
+    fun isSubtypeOf(ancestor: IrClass): Boolean {
+        if (exceptionHierarchy.isNotEmpty()) {
+            return exceptionHierarchy.any { it.contains(ancestor.name.asString()) }
+        }
+        return irClass.isSubclassOf(ancestor)
+    }
+
+    fun getMessage(): Primitive<String> = getState(messageProperty.descriptor) as Primitive<String>
+
+    fun getCause(): ExceptionState = getState(causeProperty.descriptor) as ExceptionState
+
+    override fun copy(): State {
+        return ExceptionState(irClass, fields).apply { this@apply.instance = this@ExceptionState.instance }
+    }
+
+    companion object {
+        private fun IrClass.getPropertyByName(name: String): IrProperty {
+            val getPropertyFun = this.declarations.firstOrNull { it.nameForIrSerialization.asString().contains("get-$name") }
+            return (getPropertyFun as? IrFunctionImpl)?.correspondingPropertySymbol?.owner
+                ?: this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
+        }
+
+        private fun evaluateFields(exception: Throwable, irClass: IrClass): MutableList<Variable> {
+            val messageProperty = irClass.getPropertyByName("message")
+            val causeProperty = irClass.getPropertyByName("cause")
+
+            val messageVar = Variable(messageProperty.descriptor, exception.message.toState(messageProperty.getter!!.returnType))
+            val causeVar = exception.cause?.let { Variable(causeProperty.descriptor, ExceptionState(it, irClass)) }
+            return listOfNotNull(messageVar, causeVar).toMutableList()
+        }
     }
 }
