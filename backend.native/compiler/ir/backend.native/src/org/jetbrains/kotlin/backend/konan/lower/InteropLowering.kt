@@ -875,7 +875,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         val function = expression.symbol.owner
         val inlinedClass = function.returnType.getInlinedClassNative()
         if (inlinedClass?.descriptor == interop.cPointer || inlinedClass?.descriptor == interop.nativePointed) {
-            throw Error("Native interop types constructors must not be called directly")
+            context.reportCompilationError("Native interop types constructors must not be called directly",
+                irFile, expression)
         }
         return expression
     }
@@ -993,7 +994,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                                     irFile, expression)
                         }
 
-                        else -> throw Error()
+                        else -> context.reportCompilationError("unexpected intrinsic $intrinsicType",
+                                irFile, expression)
                     }
 
                     val receiverClass = symbols.integerClasses.single {
