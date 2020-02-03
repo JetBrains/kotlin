@@ -4,15 +4,15 @@ UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
             UParameter (name = list) [@org.jetbrains.annotations.NotNull var list: java.util.List<? extends java.lang.Object>]
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UBlockExpression [{...}] : PsiType:<ErrorType>
-                UQualifiedReferenceExpression [list.filterIsInstance().<ERROR FUNCTION>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
+                UQualifiedReferenceExpression [list.filterIsInstance().<anonymous class>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
                     UQualifiedReferenceExpression [list.filterIsInstance()]
                         USimpleNameReferenceExpression (identifier = list) [list] : PsiType:List<? extends Object>
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [filterIsInstance()]
                             UIdentifier (Identifier (filterIsInstance)) [UIdentifier (Identifier (filterIsInstance))]
                             USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null) [filterIsInstance]
-                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [<ERROR FUNCTION>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [<anonymous class>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
                         UIdentifier (Identifier (mapTo)) [UIdentifier (Identifier (mapTo))]
-                        USimpleNameReferenceExpression (identifier = <ERROR FUNCTION>, resolvesTo = null) [<ERROR FUNCTION>] : PsiType:<ErrorType>
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] : PsiType:<ErrorType>
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [mutableSetOf()] : PsiType:Set<NonExistentClass>
                             UIdentifier (Identifier (mutableSetOf)) [UIdentifier (Identifier (mutableSetOf))]
                             USimpleNameReferenceExpression (identifier = mutableSetOf, resolvesTo = null) [mutableSetOf] : PsiType:Set<NonExistentClass>

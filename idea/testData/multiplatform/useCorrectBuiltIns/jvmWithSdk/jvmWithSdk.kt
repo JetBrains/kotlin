@@ -12,5 +12,5 @@ fun nativeSpecific() {
 }
 
 fun jsSpecific() {
-    val windowClosed = <!UNRESOLVED_REFERENCE("window")!>window<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>closed<!>
+    val windowClosed = <!UNRESOLVED_REFERENCE("window")!>window<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>closed<!>
 }

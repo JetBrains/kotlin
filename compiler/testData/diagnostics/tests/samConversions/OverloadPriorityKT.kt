@@ -26,5 +26,5 @@ fun test(k: K) {
     k.bas { it checkType { _<Any?>() }; "" } checkType { _<Int>() }
 
     // NI: TODO
-    k.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!> { <!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any>() }; "" } <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    k.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!> { <!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any>() }; "" } <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
 }
