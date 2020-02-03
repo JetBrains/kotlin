@@ -34,7 +34,10 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
     fun transformCall(call: IrCall): IrExpression {
         when (val symbol = call.symbol) {
-            irBuiltins.eqeqSymbol, irBuiltins.eqeqeqSymbol, in irBuiltins.ieee754equalsFunByOperandType.values -> {
+            irBuiltins.eqeqeqSymbol -> {
+                return irCall(call, symbols.refEq)
+            }
+            irBuiltins.eqeqSymbol, in irBuiltins.ieee754equalsFunByOperandType.values -> {
                 val type = call.getValueArgument(0)!!.type
                 val newSymbol = symbols.equalityFunctions[type]
                 if (newSymbol == null) {

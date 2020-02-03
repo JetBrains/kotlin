@@ -109,6 +109,7 @@ class WasmSymbols(
     val booleanNot = getInternalFunction("wasm_i32_eqz")
     val booleanAnd = getInternalFunction("wasm_i32_and")
     val booleanOr = getInternalFunction("wasm_i32_or")
+    val refEq = getInternalFunction("wasm_ref_eq")
 
     val wasmClassId = getInternalFunction("wasmClassId")
     val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
