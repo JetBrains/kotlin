@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule
 import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
+import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeThrowsChecker
 
 object NativePlatformConfigurator : PlatformConfiguratorBase(
-    additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker())
+    additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker()),
+    additionalDeclarationCheckers = listOf(NativeThrowsChecker)
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)

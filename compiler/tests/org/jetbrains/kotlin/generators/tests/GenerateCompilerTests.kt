@@ -106,6 +106,10 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithJsStdLibAndBackendCompilation")
         }
 
+        testClass<AbstractDiagnosticsNativeTest> {
+            model("diagnostics/nativeTests")
+        }
+
         testClass<AbstractDiagnosticsWithModifiedMockJdkTest> {
             model("diagnostics/testWithModifiedMockJdk")
         }
