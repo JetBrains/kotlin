@@ -81,7 +81,7 @@ public class PersistentSubIndexerRetriever<SubIndexerType, SubIndexerVersion> {
     return false;
   }
 
-  private int getFileIndexerId(@NotNull IndexedFile file) throws IOException {
+  public int getFileIndexerId(@NotNull IndexedFile file) throws IOException {
     SubIndexerType type = myIndexer.calculateSubIndexer(file);
     if (type == null) return -1;
     SubIndexerVersion version = myIndexer.getSubIndexerVersion(type);

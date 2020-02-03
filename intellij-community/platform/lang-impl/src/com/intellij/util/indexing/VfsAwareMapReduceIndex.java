@@ -40,7 +40,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
   private static final Logger LOG = Logger.getInstance(VfsAwareMapReduceIndex.class);
 
   @ApiStatus.Internal
-  public static int VERSION = 0;
+  public static final int VERSION = 0;
 
   static {
     if (!DebugAssertions.DEBUG) {
@@ -96,13 +96,15 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
         ((SnapshotSingleValueIndexStorage<Key, Value>)backendStorage).init(snapshotInputMappings, ((IntForwardIndex)forwardIndexMap));
       }
     }
-    //TODO make it works with snapshot mappings enabled
-    if (myIndexer instanceof CompositeDataIndexer && InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED && snapshotInputMappings == null) {
+    if (isCompositeIndexer(myIndexer)) {
       try {
         //noinspection unchecked,rawtypes,ConstantConditions
         mySubIndexerRetriever = new PersistentSubIndexerRetriever((ID)myIndexId,
                                                                   extension.getVersion(),
                                                                   (CompositeDataIndexer) myIndexer);
+        if (snapshotInputMappings != null) {
+          snapshotInputMappings.setSubIndexerRetriever(mySubIndexerRetriever);
+        }
       }
       catch (IOException e) {
         throw new RuntimeException(e);
@@ -114,6 +116,10 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     myUpdateMappings = mySnapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
     mySingleEntryIndex = extension instanceof SingleEntryFileBasedIndexExtension;
     installMemoryModeListener();
+  }
+
+  public static boolean isCompositeIndexer(@NotNull DataIndexer<?, ?, ?> indexer) {
+    return indexer instanceof CompositeDataIndexer && InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED;
   }
 
   static <Key, Value> boolean hasSnapshotMapping(@NotNull IndexExtension<Key, Value, ?> indexExtension) {

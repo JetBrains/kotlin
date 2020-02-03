@@ -58,6 +58,7 @@ import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
+import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
 import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -320,8 +321,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
    */
   static <K, V> void registerIndexer(@NotNull final FileBasedIndexExtension<K, V> extension, @NotNull IndexConfiguration state,
                                      @NotNull IndicesRegistrationResult registrationStatusSink) throws IOException {
-    final ID<K, V> name = extension.getName();
-    final int version = extension.getVersion();
+    ID<K, V> name = extension.getName();
+    int version = extension.getVersion();
+
+    if (VfsAwareMapReduceIndex.hasSnapshotMapping(extension)) {
+      version += SnapshotInputMappings.getVersion();
+    }
 
     final File versionFile = IndexInfrastructure.getVersionFile(name);
 

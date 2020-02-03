@@ -96,7 +96,7 @@ public class TrigramIndex extends ScalarIndexExtension<Integer> implements Custo
 
   @Override
   public int getVersion() {
-    return 3 + (FileBasedIndex.ourSnapshotMappingsEnabled ? 0xFF : 0);
+    return 3;
   }
 
   @Override

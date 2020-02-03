@@ -13,6 +13,7 @@ import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
+import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetriever;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,13 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
   private static final boolean USE_MANUAL_COMPRESSION = SystemProperties.getBooleanProperty("snapshots.use.manual.compression", false);
 
+  public static int getVersion() {
+    assert FileBasedIndex.ourSnapshotMappingsEnabled;
+    return 0xFFF + // base index version modifier
+           1 + // snapshot input mappings version
+           0xFF * (USE_MANUAL_COMPRESSION ? 1 : 0);
+  }
+
   private final ID<Key, Value> myIndexId;
   private final DataExternalizer<Map<Key, Value>> myMapExternalizer;
   private final DataExternalizer<Value> myValueExternalizer;
@@ -38,7 +46,10 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
   private final HashIdForwardIndexAccessor<Key, Value, FileContent> myHashIdForwardIndexAccessor;
 
+  private final CompositeHashIdEnumerator myCompositeHashIdEnumerator;
+
   private final boolean myIsPsiBackedIndex;
+  private PersistentSubIndexerRetriever<?, ?> mySubIndexerRetriever;
 
   public SnapshotInputMappings(IndexExtension<Key, Value, FileContent> indexExtension) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
@@ -52,6 +63,12 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     myContents = createContentsIndex();
     myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this);
     myIndexingTrace = DebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
+
+    if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {
+      myCompositeHashIdEnumerator = new CompositeHashIdEnumerator(myIndexId);
+    } else {
+      myCompositeHashIdEnumerator = null;
+    }
   }
 
   public HashIdForwardIndexAccessor<Key, Value, FileContent> getForwardIndexAccessor() {
@@ -157,18 +174,35 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   }
 
   private int getHashId(@Nullable FileContent content) throws IOException {
-    return content == null ? 0 : getHashOfContent((FileContentImpl)content);
+    if (content == null) {
+      return 0;
+    }
+    int hash = getHashOfContent((FileContentImpl)content);
+    if (myCompositeHashIdEnumerator != null) {
+      int subIndexerTypeId = mySubIndexerRetriever.getFileIndexerId((FileContentImpl)content);
+      return myCompositeHashIdEnumerator.enumerate(hash, subIndexerTypeId);
+    }
+    return hash;
   }
 
   @Override
   public void flush() {
     if (myContents != null) myContents.force();
     if (myIndexingTrace != null) myIndexingTrace.force();
+    if (myCompositeHashIdEnumerator != null) myCompositeHashIdEnumerator.force();
   }
 
   @Override
   public void clear() throws IOException {
     try {
+      if (myCompositeHashIdEnumerator != null) {
+        try {
+          myCompositeHashIdEnumerator.clear();
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
       if (myIndexingTrace != null) {
         File baseFile = myIndexingTrace.getBaseFile().toFile();
         try {
@@ -194,7 +228,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
   @Override
   public void close() {
-    Stream.of(myContents, myIndexingTrace).filter(Objects::nonNull).forEach(index -> {
+    Stream.of(myContents, myIndexingTrace, myCompositeHashIdEnumerator).filter(Objects::nonNull).forEach(index -> {
       try {
         index.close();
       }
@@ -272,6 +306,12 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       return doGetContentHash(content, true);
     }
     return doGetContentHash(content, false);
+  }
+
+  // TODO replace it with constructor parameter
+  public void setSubIndexerRetriever(@NotNull PersistentSubIndexerRetriever<?, ?> retriever) {
+    assert myCompositeHashIdEnumerator != null;
+    mySubIndexerRetriever = retriever;
   }
 
   @NotNull
