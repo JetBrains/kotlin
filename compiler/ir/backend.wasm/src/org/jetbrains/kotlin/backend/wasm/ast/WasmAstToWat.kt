@@ -22,6 +22,13 @@ open class SExpressionBuilder {
         repeat(indent * 2) { builder.append(" ") }
     }
 
+    protected fun newComment(message: String) {
+        newLine()
+        builder.append("(;")
+        builder.append(message)
+        builder.append(";) ")
+    }
+
     protected inline fun newLineList(name: String, body: () -> Unit) {
         newLine()
         builder.append("($name")
@@ -64,8 +71,8 @@ class WatGenerator : SExpressionBuilder() {
             try {
                 wasmInstruction.accept(validator, null)
             } catch (e: Throwable) {
-                println("__VALIDATION_FAIL: $e")
-                throw e
+                println("VALIDATION_FAIL: $e")
+                newComment("VALIDATION_FAIL: ${e.message}")
             }
 
             val mnemonic = wasmInstruction.operator.mnemonic
