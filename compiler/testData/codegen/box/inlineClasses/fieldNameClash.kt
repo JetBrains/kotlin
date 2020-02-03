@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM, JVM_IR, JS, JS_IR, NATIVE
 // There is a bug in the type mapper which results in an incorrect asm type for Z
@@ -10,7 +9,7 @@ inline class Z(val s: String) {
 }
 
 fun box(): String {
-    if (Z("a").toString() == "Z(s=\"a\")")
+    if (Z("a").toString() == "Z(s=a)")
         return "OK"
     return "Fail"
 }
