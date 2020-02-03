@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 
 inline fun on(body: () -> Any) = body().toString()

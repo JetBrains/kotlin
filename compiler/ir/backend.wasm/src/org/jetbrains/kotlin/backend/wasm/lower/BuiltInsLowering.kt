@@ -28,7 +28,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         val klass = getClass() ?: irBuiltins.anyClass.owner
         return klass.declarations
             .filterIsInstance<IrSimpleFunction>()
-            .single { it.isEqualsInheritedFromAny() }
+            // TODO: don't generate bridges for equals method and use (.single { })
+            .first { it.isEqualsInheritedFromAny() }
     }
 
     fun transformCall(call: IrCall): IrExpression {
