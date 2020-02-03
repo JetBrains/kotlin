@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 var flag = true
 
 fun exit(): Nothing = null!!
