@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.boilerplate;
 
 import com.google.common.collect.Sets;
 import com.intellij.BundleBase;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
@@ -83,7 +84,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
         box.setRenderer(SimpleListCellRenderer.create((label, tag, index) -> {
           final String text;
           if (tag == null) {
-            text = isBackgroundJobRunning() ? "Loading..." : "Unavailable";
+            text = isBackgroundJobRunning() ? IdeBundle.message("common.text.loading") : "Unavailable";
           }
           else {
             text = tag.getName();
