@@ -168,9 +168,9 @@ open class KotlinJsPluginWrapper @Inject constructor(
         val propertiesProvider = PropertiesProvider(project)
 
         return when (propertiesProvider.jsCompiler) {
-            JsCompilerType.KLIB -> KotlinJsIrPlugin(kotlinPluginVersion)
-            JsCompilerType.LEGACY -> KotlinJsPlugin(kotlinPluginVersion, false)
-            JsCompilerType.BOTH -> KotlinJsPlugin(kotlinPluginVersion, true)
+            JsCompilerType.klib -> KotlinJsIrPlugin(kotlinPluginVersion)
+            JsCompilerType.legacy -> KotlinJsPlugin(kotlinPluginVersion, false)
+            JsCompilerType.both -> KotlinJsPlugin(kotlinPluginVersion, true)
         }
     }
 
@@ -180,8 +180,8 @@ open class KotlinJsPluginWrapper @Inject constructor(
         val propertiesProvider = PropertiesProvider(project)
 
         projectExtensionClass = when (propertiesProvider.jsCompiler) {
-            JsCompilerType.KLIB -> KotlinJsIrProjectExtension::class
-            JsCompilerType.LEGACY, JsCompilerType.BOTH -> KotlinJsProjectExtension::class
+            JsCompilerType.klib -> KotlinJsIrProjectExtension::class
+            JsCompilerType.legacy, JsCompilerType.both -> KotlinJsProjectExtension::class
         }
     }
 

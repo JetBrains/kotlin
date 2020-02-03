@@ -159,9 +159,9 @@ class KotlinMultiplatformPlugin(
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
             when (propertiesProvider.jsCompiler) {
-                JsCompilerType.LEGACY -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
-                JsCompilerType.KLIB -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
-                JsCompilerType.BOTH -> add(
+                JsCompilerType.legacy -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
+                JsCompilerType.klib -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
+                JsCompilerType.both -> add(
                     KotlinJsTargetPreset(
                         project,
                         kotlinPluginVersion,

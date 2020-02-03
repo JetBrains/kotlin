@@ -510,7 +510,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
         if (!irBackend) {
-            gradleProperties().appendText(jsMode(JsCompilerType.LEGACY))
+            gradleProperties().appendText(jsMode(JsCompilerType.legacy))
         }
 
         build("build") {

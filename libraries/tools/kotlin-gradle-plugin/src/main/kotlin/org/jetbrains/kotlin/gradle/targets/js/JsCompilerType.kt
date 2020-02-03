@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.Named
 import java.io.Serializable
 
+// For Gradle attributes
+@Suppress("EnumEntryName")
 enum class JsCompilerType : Named, Serializable {
-    LEGACY,
-    KLIB,
-    BOTH;
+    legacy,
+    klib,
+    both;
 
     override fun getName(): String =
         name.toLowerCase()
