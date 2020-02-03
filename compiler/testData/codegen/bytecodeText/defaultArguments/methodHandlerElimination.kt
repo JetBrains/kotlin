@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36771 Missing special code for super calls to inline functions support in JVM_IR
-
 //open modality to method handle check generation
 open class A {
     inline fun test(p: String = "OK"): String {

@@ -72,11 +72,15 @@ class JvmSymbols(
     override val ThrowTypeCastException: IrFunctionSymbol =
         typeCastExceptionClass.constructors.single()
 
-    val unsupportedOperationExceptionClass: IrClassSymbol = createClass(FqName("java.lang.UnsupportedOperationException")) { klass ->
+    private val unsupportedOperationExceptionClass: IrClassSymbol = createClass(FqName("java.lang.UnsupportedOperationException")) { klass ->
         klass.addConstructor().apply {
             addValueParameter("message", irBuiltIns.stringType.makeNullable())
         }
     }
+
+    val ThrowUnsupportOperationExceptionClass: IrFunctionSymbol =
+        unsupportedOperationExceptionClass.constructors.single()
+
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(context.state.module, fqName)))

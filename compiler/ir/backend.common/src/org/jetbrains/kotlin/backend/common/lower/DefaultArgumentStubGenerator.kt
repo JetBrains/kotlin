@@ -54,8 +54,9 @@ open class DefaultArgumentStubGenerator(
 
     private fun lower(irFunction: IrFunction): List<IrFunction>? {
         val visibility = defaultArgumentStubVisibility(irFunction)
-        val newIrFunction = irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods, forceSetOverrideSymbols, visibility)
-            ?: return null
+        val newIrFunction =
+            irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods, forceSetOverrideSymbols, visibility)
+                ?: return null
         if (newIrFunction.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
             return listOf(irFunction, newIrFunction)
         }
@@ -89,6 +90,8 @@ open class DefaultArgumentStubGenerator(
                 irFunction.valueParameters.associateWithTo(variables) {
                     newIrFunction.valueParameters[it.index]
                 }
+
+                generateSuperCallHandlerCheckIfNeeded(irFunction, newIrFunction)
 
                 var sourceParameterIndex = -1
                 for (valueParameter in irFunction.valueParameters) {
@@ -178,6 +181,12 @@ open class DefaultArgumentStubGenerator(
                 generateHandleCall(handlerDeclaration, irFunction, newIrFunction, params)
             )
         } else dispatchCall
+    }
+
+    protected open fun IrBlockBodyBuilder.generateSuperCallHandlerCheckIfNeeded(
+        irFunction: IrFunction,
+        newIrFunction: IrFunction) {
+        //NO-OP Stub
     }
 
     protected open fun needSpecialDispatch(irFunction: IrSimpleFunction) = false
@@ -506,7 +515,11 @@ private fun IrFunction.generateDefaultsFunctionImpl(
         val markerType = context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
         newFunction.addValueParameter("marker".synthesizedString, markerType, IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER)
     } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
-        newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
+        newFunction.addValueParameter(
+            "handler".synthesizedString,
+            context.irBuiltIns.anyNType,
+            IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
+        )
     }
 
     // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
