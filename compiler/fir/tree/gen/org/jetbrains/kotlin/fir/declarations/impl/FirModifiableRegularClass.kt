@@ -30,8 +30,8 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirReg
     override val source: FirSourceElement?
     override val session: FirSession
     override var resolvePhase: FirResolvePhase
-    override val name: Name
     override val annotations: MutableList<FirAnnotationCall>
+    override val name: Name
     override val typeParameters: MutableList<FirTypeParameter>
     override var status: FirDeclarationStatus
     override val classKind: ClassKind

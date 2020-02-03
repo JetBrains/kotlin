@@ -417,8 +417,8 @@ class KotlinDeserializedJvmSymbolsProvider(
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> =
         getClassDeclarations(classId)
-            .filterIsInstance<FirNamedDeclaration>()
-            .mapTo(mutableSetOf(), FirNamedDeclaration::name)
+            .filterIsInstance<FirMemberDeclaration>()
+            .mapTo(mutableSetOf(), FirMemberDeclaration::name)
 
     override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
         return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }

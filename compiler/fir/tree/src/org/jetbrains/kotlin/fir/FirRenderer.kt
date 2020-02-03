@@ -135,8 +135,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             receiverType.accept(this)
             print(".")
         }
-        if (callableDeclaration is FirNamedDeclaration) {
-            print(callableDeclaration.name)
+        when (callableDeclaration) {
+            is FirMemberDeclaration -> print(callableDeclaration.name)
+            is FirVariable<*> -> print(callableDeclaration.name)
         }
 
         if (callableDeclaration is FirFunction<*>) {
@@ -238,20 +239,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             }
         }
 
-        visitNamedDeclaration(memberDeclaration)
-    }
-
-    override fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration) {
-        visitDeclaration(namedDeclaration)
-        if (namedDeclaration !is FirCallableDeclaration<*>) { // Handled by visitCallableDeclaration
-            print(" " + namedDeclaration.name)
-            if (namedDeclaration is FirTypeParametersOwner) {
-                namedDeclaration.typeParameters.renderTypeParameters()
+        visitDeclaration(memberDeclaration)
+        if (memberDeclaration !is FirCallableDeclaration<*>) { // Handled by visitCallableDeclaration
+            print(" " + memberDeclaration.name)
+            if (memberDeclaration is FirTypeParametersOwner) {
+                memberDeclaration.typeParameters.renderTypeParameters()
             }
-        } else if (namedDeclaration is FirMemberDeclaration) {
-            if (namedDeclaration.typeParameters.isNotEmpty()) {
+        } else {
+            if (memberDeclaration.typeParameters.isNotEmpty()) {
                 print(" ")
-                namedDeclaration.typeParameters.renderTypeParameters()
+                memberDeclaration.typeParameters.renderTypeParameters()
             }
         }
     }
@@ -272,8 +269,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             }
         )
     }
-
-
 
     private fun List<FirDeclaration>.renderDeclarations() {
         renderInBraces {

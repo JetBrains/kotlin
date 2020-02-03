@@ -125,7 +125,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             storeVariableReturnType(variable)
         }
         variable.transformAccessors()
-        localScopes.lastOrNull()?.storeDeclaration(variable)
+        localScopes.lastOrNull()?.storeVariable(variable)
         variable.replaceResolvePhase(transformerPhase)
         dataFlowAnalyzer.exitVariableDeclaration(variable)
         return variable.compose()
@@ -223,7 +223,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        localScopes.lastOrNull()?.storeDeclaration(regularClass)
+        localScopes.lastOrNull()?.storeClass(regularClass)
         return withScopeCleanup(topLevelScopes) {
             prepareTypeParameterOwnerForBodyResolve(regularClass)
             if (regularClass.symbol.classId.isLocal) {
@@ -239,7 +239,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 val constructor = regularClass.declarations.firstOrNull() as? FirConstructor
                 if (constructor?.isPrimary == true) {
                     primaryConstructorParametersScope = FirLocalScope().apply {
-                        constructor.valueParameters.forEach { this.storeDeclaration(it) }
+                        constructor.valueParameters.forEach { this.storeVariable(it) }
                     }
                 }
                 transformDeclaration(regularClass, data)
@@ -327,7 +327,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         returnTypeRef: FirTypeRef
     ): CompositeTransformResult<F> {
         if (function is FirSimpleFunction) {
-            localScopes.lastOrNull()?.storeDeclaration(function)
+            localScopes.lastOrNull()?.storeFunction(function)
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -383,7 +383,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        localScopes.lastOrNull()?.storeDeclaration(valueParameter)
+        localScopes.lastOrNull()?.storeVariable(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
             valueParameter.replaceResolvePhase(transformerPhase)
             return valueParameter.compose() // TODO

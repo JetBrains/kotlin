@@ -85,10 +85,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
         }
 
-        namedDeclaration.configure {
-            +name
-        }
-
         function.configure {
             withArg("F", "FirFunction<F>")
             parentArg(callableDeclaration, "F", "F")
@@ -103,6 +99,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         memberDeclaration.configure {
+            +name
             +typeParameters
             +status.withTransform()
         }
@@ -255,6 +252,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeParameter.configure {
             parentArg(symbolOwner, "F", typeParameter)
+            +name
             +symbol("FirTypeParameterSymbol")
             +field(varianceType)
             +booleanField("isReified")
@@ -333,6 +331,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         variable.configure {
             withArg("F", variable)
             parentArg(callableDeclaration, "F", "F")
+            +name
             +symbol("FirVariableSymbol", "F")
             +initializer.withTransform()
             +field("delegate", expression, nullable = true)

@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirMemberDeclaration : FirNamedDeclaration, FirAnnotationContainer {
+interface FirMemberDeclaration : FirDeclaration, FirAnnotationContainer {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
-    override val name: Name
     override val annotations: List<FirAnnotationCall>
+    val name: Name
     val typeParameters: List<FirTypeParameter>
     val status: FirDeclarationStatus
 

@@ -26,8 +26,8 @@ abstract class FirSealedClass : FirPureAbstractElement(), FirRegularClass {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
-    abstract override val name: Name
     abstract override val annotations: List<FirAnnotationCall>
+    abstract override val name: Name
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val status: FirDeclarationStatus
     abstract override val classKind: ClassKind

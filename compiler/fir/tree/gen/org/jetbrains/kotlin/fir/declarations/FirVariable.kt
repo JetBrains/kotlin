@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirVariable<F : FirVariable<F>> : FirCallableDeclaration<F>, FirNamedDeclaration, FirStatement {
+interface FirVariable<F : FirVariable<F>> : FirCallableDeclaration<F>, FirDeclaration, FirStatement {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
-    override val name: Name
+    val name: Name
     override val symbol: FirVariableSymbol<F>
     val initializer: FirExpression?
     val delegate: FirExpression?
