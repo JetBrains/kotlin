@@ -797,7 +797,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
             if (valueArgument == null || newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) == null) continue;
 
-            valueParametersWithSAMConversion.add(valueParameter.getOriginal());
+            valueParametersWithSAMConversion.add(valueParameter);
         }
         writeSamValueForValueParameters(valueParametersWithSAMConversion, newResolvedCall.getValueArgumentsByIndex());
 
