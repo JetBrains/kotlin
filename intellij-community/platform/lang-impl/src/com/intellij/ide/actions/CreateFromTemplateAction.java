@@ -5,6 +5,7 @@ import com.intellij.CommonBundle;
 import com.intellij.ide.IdeView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteActionAware;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -48,7 +49,7 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
     final PsiDirectory dir = view.getOrChooseDirectory();
     if (dir == null || project == null) return;
 
-    final CreateFileFromTemplateDialog.Builder builder = CreateFileFromTemplateDialog.createDialog(project, dataContext);
+    final CreateFileFromTemplateDialog.Builder builder = createDialogBuilder(project, dataContext);
     buildDialog(project, dir, builder);
 
     final Ref<String> selectedTemplateName = Ref.create(null);
@@ -83,6 +84,17 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
                      postProcess(createdElement, selectedTemplateName.get(), builder.getCustomProperties());
                    }
                  });
+  }
+
+  @SuppressWarnings("TestOnlyProblems")
+  private static CreateFileFromTemplateDialog.Builder createDialogBuilder(Project project, DataContext dataContext) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      TestDialogBuilder.TestAnswers answers = dataContext.getData(TestDialogBuilder.TestAnswers.KEY);
+      if (answers != null) {
+        return new TestDialogBuilder(answers);
+      }
+    }
+    return CreateFileFromTemplateDialog.createDialog(project);
   }
 
   protected void postProcess(T createdElement, String templateName, Map<String,String> customProperties) {

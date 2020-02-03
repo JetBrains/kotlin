@@ -2,12 +2,10 @@
 
 package com.intellij.ide.actions;
 
-import com.google.common.base.Preconditions;
 import com.intellij.ide.actions.newclass.CreateWithTemplatesDialogPanel;
 import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.project.Project;
@@ -27,7 +25,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.util.*;
@@ -121,17 +118,6 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     myKindCombo.setVisible(flag);
     myKindLabel.setVisible(flag);
     myUpDownHint.setVisible(flag);
-  }
-
-  public static Builder createDialog(@NotNull final Project project, @NotNull final DataContext dataContext) {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      @SuppressWarnings("TestOnlyProblems")
-      TestAnswers answers = dataContext.getData(TestAnswers.KEY);
-      if (answers != null) {
-        return new TestDialogBuilder(answers);
-      }
-    }
-    return createDialog(project);
   }
 
   public static Builder createDialog(@NotNull final Project project) {
@@ -320,72 +306,6 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     private static PsiElement createElement(String newElementName, ElementCreator creator) {
       PsiElement[] elements = creator.tryCreate(newElementName);
       return elements.length > 0 ? elements[0] : null;
-    }
-  }
-
-  @SuppressWarnings("TestOnlyProblems")
-  private static class TestDialogBuilder implements Builder {
-    private final TestAnswers myAnswers;
-    private InputValidator myValidator;
-
-    TestDialogBuilder(@NotNull TestAnswers answers) {
-      myAnswers = answers;
-    }
-
-    @Override
-    public Builder setTitle(String title) {
-      return this;
-    }
-
-    @Override
-    public Builder setValidator(InputValidator validator) {
-      myValidator = validator;
-      return this;
-    }
-
-    @Override
-    public Builder addKind(@NotNull String kind, @Nullable Icon icon, @NotNull String templateName) {
-      return this;
-    }
-
-    @Override
-    public @Nullable Map<String, String> getCustomProperties() {
-      return null;
-    }
-
-    @Override
-    public <T extends PsiElement> @Nullable T show(@NotNull String errorTitle,
-                                                   @Nullable String selectedItem,
-                                                   @NotNull FileCreator<T> creator) {
-      if (myValidator != null) {
-        Preconditions.checkState(myValidator.checkInput(myAnswers.myName), "The answer '%s' is not valid.", myAnswers.myName);
-        Preconditions.checkState(myValidator.canClose(myAnswers.myName), "Can't close dialog with the answer '%s'.", myAnswers.myName);
-      }
-      if (myAnswers.myName != null && myAnswers.myTemplateName != null) {
-        return creator.createFile(myAnswers.myName, myAnswers.myTemplateName);
-      }
-      return null;
-    }
-
-    @Override
-    public <T extends PsiElement> void show(@NotNull String errorTitle,
-                                            @Nullable String selectedItem,
-                                            @NotNull FileCreator<T> creator,
-                                            Consumer<? super T> elementConsumer) {
-      elementConsumer.consume(show(errorTitle, selectedItem, creator));
-    }
-  }
-
-  @TestOnly
-  public static class TestAnswers {
-    public static final DataKey<TestAnswers> KEY = DataKey.create("CreateFileFromTemplateDialog.TestDataContext");
-
-    private final String myName;
-    private final String myTemplateName;
-
-    public TestAnswers(@Nullable String name, @Nullable String templateName) {
-      myName = name;
-      myTemplateName = templateName;
     }
   }
 
