@@ -126,6 +126,14 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithExplicitApi")
         }
 
+        testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
+            model("diagnostics/testsWithJvmBackend")
+        }
+
+        testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
+            model("diagnostics/testsWithJvmBackend")
+        }
+
         testClass<AbstractMultiPlatformIntegrationTest> {
             model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
         }
