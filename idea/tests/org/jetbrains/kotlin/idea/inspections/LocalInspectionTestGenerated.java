@@ -7909,6 +7909,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testOverride() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/override.kt");
         }
+
+        @TestMetadata("parenthesized.kt")
+        public void testParenthesized() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSuspend/parenthesized.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantUnitExpression")
