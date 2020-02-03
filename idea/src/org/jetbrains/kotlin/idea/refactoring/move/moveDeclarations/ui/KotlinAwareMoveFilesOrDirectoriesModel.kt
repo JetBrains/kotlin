@@ -20,19 +20,20 @@ import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-class KotlinAwareMoveFilesOrDirectoriesModel(
+internal class KotlinAwareMoveFilesOrDirectoriesModel(
     val project: Project,
     val elementsToMove: List<PsiFileSystemItem>,
     val targetDirectoryName: String,
     val updatePackageDirective: Boolean,
     val searchReferences: Boolean,
     val moveCallback: MoveCallback?
-) : Model<KotlinAwareMoveFilesOrDirectoriesProcessor> {
+) : Model {
 
     private fun checkedGetElementsToMove(selectedDirectory: PsiDirectory): List<PsiElement> {
 
@@ -94,20 +95,29 @@ class KotlinAwareMoveFilesOrDirectoriesModel(
     }
 
     @Throws(ConfigurationException::class)
-    override fun computeModelResult(throwOnConflicts: Boolean): KotlinAwareMoveFilesOrDirectoriesProcessor {
+    override fun computeModelResult(throwOnConflicts: Boolean): ModelResultWithFUSData {
 
         checkModel()
 
         val selectedDir = checkedGetTargetDirectory()
 
-        return KotlinAwareMoveFilesOrDirectoriesProcessor(
+        val elementsToMove = checkedGetElementsToMove(selectedDir)
+
+        val processor = KotlinAwareMoveFilesOrDirectoriesProcessor(
             project,
-            checkedGetElementsToMove(selectedDir),
+            elementsToMove,
             selectedDir,
             searchReferences = searchReferences,
             searchInComments = false,
             searchInNonJavaFiles = false,
             moveCallback = moveCallback
+        )
+
+        return ModelResultWithFUSData(
+            processor,
+            elementsToMove.size,
+            MoveRefactoringFUSCollector.MovedEntity.FILES,
+            MoveRefactoringFUSCollector.MoveRefactoringDestination.PACKAGE
         )
     }
 }

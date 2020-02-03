@@ -27,11 +27,15 @@ import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
 import org.jetbrains.kotlin.idea.util.collectAllExpectAndActualDeclaration
 import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.io.File
 import java.nio.file.InvalidPathException
@@ -53,7 +57,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     val isFullFileMove: Boolean,
     val applyMPPDeclarations: Boolean,
     val moveCallback: MoveCallback?
-) : Model<BaseRefactoringProcessor> {
+) : Model {
 
     private inline fun <T, K> Set<T>.mapToSingleOrNull(transform: (T) -> K?): K? =
         mapTo(mutableSetOf(), transform).singleOrNull()
@@ -217,15 +221,29 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     override fun computeModelResult() = computeModelResult(throwOnConflicts = false)
 
     @Throws(ConfigurationException::class)
-    override fun computeModelResult(throwOnConflicts: Boolean): BaseRefactoringProcessor {
+    override fun computeModelResult(throwOnConflicts: Boolean): ModelResultWithFUSData {
 
         verifyBeforeRun()
 
+        val classType = if (elementsToMoveHasMPP) MovedEntity.MPPCLASSES else MovedEntity.CLASSES
+        val functionType = if (elementsToMoveHasMPP) MovedEntity.MPPFUNCTIONS else MovedEntity.FUNCTIONS
+        val mixedType = if (elementsToMoveHasMPP) MovedEntity.MPPMIXED else MovedEntity.MIXED
+
+        val allClasses = elementsToMove.any { element -> element is KtClassOrObject }
+        val allFunctions = elementsToMove.any { element -> element is KtFunction }
+        val entity = if (allClasses && allFunctions) mixedType else
+            if (allClasses) classType else functionType
+
+        val destination = if (isMoveToPackage) MoveRefactoringDestination.PACKAGE else MoveRefactoringDestination.FILE
+
         if (isFullFileMove && isMoveToPackage) {
-            tryMoveFile(throwOnConflicts)?.let { return it }
+            tryMoveFile(throwOnConflicts)?.let {
+                return ModelResultWithFUSData(it, elementsToMove.size, entity, destination)
+            }
         }
 
-        return moveDeclaration(throwOnConflicts)
+        val processor = moveDeclaration(throwOnConflicts)
+        return ModelResultWithFUSData(processor, elementsToMove.size, entity, destination)
     }
 
     private fun tryMoveFile(throwOnConflicts: Boolean): BaseRefactoringProcessor? {

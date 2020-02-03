@@ -18,7 +18,10 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.TextComponentAccessor
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.psi.*
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
@@ -34,9 +37,10 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
+import org.jetbrains.kotlin.idea.refactoring.move.logFusForMoveRefactoring
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.*
 import javax.swing.JComponent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
@@ -69,6 +73,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     }
     private val openInEditorCb = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.open.moved.files.in.editor"))
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
+    private val initializedCheckBoxesState: BitSet
 
     override fun getHelpId() = HELP_ID
 
@@ -76,6 +81,14 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         title = RefactoringBundle.message("move.title")
         init()
         initializeData()
+
+        initializedCheckBoxesState = getCheckboxesState(applyDefaults = true)
+    }
+
+    private fun getCheckboxesState(applyDefaults: Boolean) = BitSet(3).apply {
+        set(0, applyDefaults || searchReferencesCb.isSelected) //searchReferencesCb is true by default
+        set(1, !applyDefaults && openInEditorCb.isSelected) //openInEditorCb is false by default
+        set(2, updatePackageDirectiveCb.isSelected)
     }
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)
@@ -163,7 +176,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             }
         }
 
-    private fun getModel(): Model<KotlinAwareMoveFilesOrDirectoriesProcessor> {
+    private fun getModel(): Model {
 
         val directory = LocalFileSystem.getInstance().findFileByPath(selectedDirectoryName)?.let {
             PsiManager.getInstance(project).findDirectory(it)
@@ -188,20 +201,28 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     override fun doOKAction() {
 
-        val processor: KotlinAwareMoveFilesOrDirectoriesProcessor
+        val modelResult: ModelResultWithFUSData
         try {
-            processor = getModel().computeModelResult()
+            modelResult = getModel().computeModelResult()
         } catch (e: ConfigurationException) {
             setErrorText(e.message)
             return
         }
 
         project.executeCommand(MoveHandler.REFACTORING_NAME) {
-            processor.run()
+            with(modelResult) {
+                logFusForMoveRefactoring(
+                    elementsCount,
+                    entityToMove,
+                    destination,
+                    getCheckboxesState(applyDefaults = false) == initializedCheckBoxesState,
+                    Runnable { processor.run() }
+                )
+            }
         }
 
-        setConfigurationValue(id = MOVE_FILES_OPEN_IN_EDITOR, value = openInEditorCb.isSelected, defaultValue = false)
         setConfigurationValue(id = MOVE_FILES_SEARCH_REFERENCES, value = searchReferencesCb.isSelected, defaultValue = true)
+        setConfigurationValue(id = MOVE_FILES_OPEN_IN_EDITOR, value = openInEditorCb.isSelected, defaultValue = false)
 
         RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
 
