@@ -24557,6 +24557,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/sam/receiverEvaluatedOnce.kt");
         }
 
+        @TestMetadata("recordSubstitutedTypeForCallableSamParameter.kt")
+        public void testRecordSubstitutedTypeForCallableSamParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/recordSubstitutedTypeForCallableSamParameter.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/sam/constructors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
