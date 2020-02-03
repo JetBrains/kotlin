@@ -8,6 +8,7 @@ plugins {
     id("jps-compatible")
 }
 
+val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
 val proguardLibraryJars by configurations.creating
@@ -31,9 +32,7 @@ dependencies {
     embedded(project(":kotlin-script-util")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
-                              firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
-                              toolsJarFile()))
+
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))
     proguardLibraryJars(project(":kotlin-compiler"))
@@ -67,20 +66,23 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val proguard by task<ProGuardTask> {
+val proguard by task<CacheableProguardTask> {
     dependsOn(relocatedJar)
     configuration("main-kts.pro")
 
     injars(mapOf("filter" to "!META-INF/versions/**"), relocatedJar.get().outputs.files)
 
-    val outputJar = fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar")
+    outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
 
-    outjars(outputJar)
-
-    inputs.files(relocatedJar.get().outputs.files.singleFile)
-    outputs.file(outputJar)
-
+    jdkHome = File(JDK_18)
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
+    libraryjars(
+        files(
+            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!),
+            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar", jdkHome = jdkHome!!),
+            toolsJarFile(jdkHome = jdkHome!!)
+        )
+    )
 }
 
 val resultJar by task<Jar> {
@@ -88,7 +90,7 @@ val resultJar by task<Jar> {
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.get().outputs.files.singleFile)
+        zipTree(pack.get().singleOutputFile())
     }
 }
 
