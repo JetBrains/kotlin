@@ -23,7 +23,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
 
     override fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration() {
         jvm {
-            baseClassLoader(null)
+            baseClassLoader(getPlatformClassLoader())
         }
     }
 
@@ -50,3 +50,9 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         arguments is K2JVMCompilerArguments && (arguments.script || arguments.expression != null)
 }
 
+private fun getPlatformClassLoader(): ClassLoader? =
+    try {
+        ClassLoader::class.java.getDeclaredMethod("getPlatformClassLoader")?.invoke(null)?.let { it as? ClassLoader }
+    } catch (_: Exception) {
+        null
+    }

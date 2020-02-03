@@ -27,6 +27,20 @@ fun runWithKotlinc(
     classpath: List<File> = emptyList(),
     additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
+    runWithKotlinc(
+        arrayOf("-script", scriptPath),
+        expectedOutPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars
+    )
+}
+
+fun runWithKotlinc(
+    compilerArgs: Array<String>,
+    expectedOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0,
+    workDirectory: File? = null,
+    classpath: List<File> = emptyList(),
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
+) {
     val executableName = "kotlinc"
     // TODO:
     val executableFileName =
@@ -39,8 +53,7 @@ fun runWithKotlinc(
             add("-cp")
             add(classpath.joinToString(File.pathSeparator))
         }
-        add("-script")
-        add(scriptPath)
+        addAll(compilerArgs)
     }
     val processBuilder = ProcessBuilder(args)
     if (workDirectory != null) {
