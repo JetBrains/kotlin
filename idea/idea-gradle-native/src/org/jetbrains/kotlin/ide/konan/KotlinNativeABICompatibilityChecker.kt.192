@@ -21,7 +21,8 @@ import com.intellij.util.PathUtilRt
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
-import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.isGradleLibraryName
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
@@ -206,11 +207,11 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     private fun parseIDELibraryName(libraryInfo: NativeLibraryInfo): Pair<String, LibraryGroup> {
         val ideLibraryName = libraryInfo.library.name?.takeIf(String::isNotEmpty)
         if (ideLibraryName != null) {
-            KotlinNativeLibraryNameUtil.parseIDELibraryName(ideLibraryName)?.let { (kotlinVersion, libraryName) ->
+            parseIDELibraryName(ideLibraryName)?.let { (kotlinVersion, libraryName) ->
                 return libraryName to LibraryGroup.FromDistribution(kotlinVersion)
             }
 
-            if (KotlinNativeLibraryNameUtil.isGradleLibraryName(ideLibraryName))
+            if (isGradleLibraryName(ideLibraryName))
                 return ideLibraryName to LibraryGroup.ThirdParty
         }
 

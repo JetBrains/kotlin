@@ -10,12 +10,25 @@ object KotlinNativeLibraryNameUtil {
     internal const val KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE = "$KOTLIN_NATIVE_LIBRARY_PREFIX "
     internal const val GRADLE_LIBRARY_PREFIX = "Gradle: "
 
-    private val IDE_LIBRARY_NAME_REGEX = Regex("^$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE([^\\s]+) - ([^\\s]+)( \\[([\\w]+)\\])?$")
+    private val IDE_LIBRARY_NAME_REGEX = Regex("^$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE([^\\s]+) - ([^\\s]+)( \\[([\\w ,()*]+)])?$")
 
     // Builds the name of Kotlin/Native library that is a part of Kotlin/Native distribution
     // as it will be displayed in IDE UI.
-    fun buildIDELibraryName(kotlinVersion: String, libraryName: String, platform: String?): String {
-        val platformNamePart = platform?.let { " [$it]" }.orEmpty()
+    fun buildIDELibraryName(
+        kotlinVersion: String,
+        libraryName: String,
+        platforms: Collection<String>,
+        starredPlatform: String? = null
+    ): String {
+        val platformNamePart = if (platforms.isNotEmpty())
+            buildString {
+                append(" [")
+                platforms.sorted().joinTo(this) { if (it == starredPlatform) "$it(*)" else it }
+                append("]")
+            }
+        else
+            ""
+
         return "$KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE$kotlinVersion - $libraryName$platformNamePart"
     }
 
@@ -25,9 +38,9 @@ object KotlinNativeLibraryNameUtil {
 
         val kotlinVersion = match.groups[1]!!.value
         val libraryName = match.groups[2]!!.value
-        val platform = match.groups[4]?.value
+        val platformPart = match.groups[4]?.value
 
-        return Triple(kotlinVersion, libraryName, platform)
+        return Triple(kotlinVersion, libraryName, platformPart)
     }
 
     fun isGradleLibraryName(ideLibraryName: String) = ideLibraryName.startsWith(GRADLE_LIBRARY_PREFIX)
