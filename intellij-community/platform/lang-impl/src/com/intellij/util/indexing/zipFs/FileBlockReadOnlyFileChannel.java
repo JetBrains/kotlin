@@ -46,17 +46,17 @@ public class FileBlockReadOnlyFileChannel extends FileChannel {
 
   @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
-    throw new UnsupportedOperationException("Implement it!");
+    throw new IOException("Not implemented");
   }
 
   @Override
   public int write(ByteBuffer src) throws IOException {
-    throw new UnsupportedOperationException();
+    throw new IOException("Write operation is not supported");
   }
 
   @Override
   public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
-    throw new UnsupportedOperationException();
+    throw new IOException("Write operation is not supported");
   }
 
   @Override

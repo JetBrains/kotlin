@@ -34,7 +34,7 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void> {
   }
 
   @NotNull
-  IntIntFunction toHashIdToFileIdFunction(int indexId) {
+  public IntIntFunction toHashIdToFileIdFunction(int indexId) {
     return hash -> {
       try {
         ValueContainer<Void> data = getData(FileContentHashIndexExtension.getHashId(hash, indexId));

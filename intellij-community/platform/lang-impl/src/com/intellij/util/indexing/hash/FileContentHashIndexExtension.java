@@ -1,13 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.hash;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.DataExternalizer;
@@ -15,42 +9,25 @@ import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.KeyDescriptor;
 import com.intellij.util.io.VoidDataExternalizer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 
-public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long, Void> implements CustomInputsIndexFileBasedIndexExtension<Long>, Disposable {
-  private static final Logger LOG = Logger.getInstance(FileContentHashIndexExtension.class);
+public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long, Void> implements CustomInputsIndexFileBasedIndexExtension<Long> {
   public static final ID<Long, Void> HASH_INDEX_ID = ID.create("file.content.hash.index");
 
-  private final ContentHashEnumerator @NotNull [] myEnumerators;
+  private final @NotNull SharedIndexChunkConfiguration myIndexChunkConfiguration;
 
-  @NotNull
-  public static FileContentHashIndexExtension create(Path @NotNull [] enumeratorDirs, @NotNull Disposable parent) throws IOException {
-    FileContentHashIndexExtension extension = new FileContentHashIndexExtension(enumeratorDirs);
-    Disposer.register(parent, extension);
-    return extension;
+  public FileContentHashIndexExtension() {
+    this(SharedIndexChunkConfiguration.getInstance());
   }
 
-  public FileContentHashIndexExtension(Path @NotNull [] enumeratorDirs) throws IOException {
-    IOException[] exception = {null};
-    myEnumerators = ContainerUtil.map2Array(enumeratorDirs, ContentHashEnumerator.class, d -> {
-      try {
-        return new ContentHashEnumerator(d.getParent().resolve("hashes"));
-      }
-      catch (IOException e) {
-        exception[0] = e;
-        return null;
-      }
-    });
-    if (exception[0] != null) {
-      throw exception[0];
-    }
-    ShutDownTracker.getInstance().registerShutdownTask(() -> closeEnumerator());
+  public FileContentHashIndexExtension(@NotNull SharedIndexChunkConfiguration configuration) {
+    myIndexChunkConfiguration = configuration;
   }
 
   @NotNull
@@ -78,7 +55,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
       if (hashId != NULL_HASH_ID) return Collections.singletonMap(hashId, null);
       byte[] hash = IndexedHashesSupport.getOrInitIndexedHash((FileContentImpl) fc, false);
       try {
-        hashId = tryEnumerate(hash);
+        hashId = myIndexChunkConfiguration.tryEnumerateContentHash(hash);
         setHashId(fc, hashId);
         return hashId == NULL_HASH_ID ? Collections.emptyMap() : Collections.singletonMap(hashId, null);
       }
@@ -86,20 +63,6 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
         throw new RuntimeException(e);
       }
     };
-  }
-
-  private Long tryEnumerate(byte[] hash) throws IOException {
-    for (int i = 0; i < myEnumerators.length; i++) {
-      ContentHashEnumerator enumerator = myEnumerators[i];
-      //noinspection SynchronizationOnLocalVariableOrMethodParameter
-      synchronized (enumerator) {
-        int id = Math.abs(enumerator.tryEnumerate(hash));
-        if (id != 0) {
-          return getHashId(id, i);
-        }
-      }
-    }
-    return NULL_HASH_ID;
   }
 
   @NotNull
@@ -139,11 +102,6 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
     return 0;
   }
 
-  @Override
-  public void dispose() {
-    closeEnumerator();
-  }
-
   @NotNull
   @Override
   public DataExternalizer<Collection<Long>> createExternalizer() {
@@ -162,29 +120,15 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
     };
   }
 
-  private void closeEnumerator() {
-    for (ContentHashEnumerator enumerator : myEnumerators) {
-      synchronized (enumerator) {
-        if (enumerator.isClosed()) return;
-        try {
-          enumerator.close();
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
-    }
-  }
-
-  static int getIndexId(long hashId) {
+  public static int getIndexId(long hashId) {
     return (int)(hashId >> 32);
   }
 
-  static int getInternalHashId(long hashId) {
+  public static int getInternalHashId(long hashId) {
     return (int)hashId;
   }
 
-  static long getHashId(int internalHashId, int indexId) {
+  public static long getHashId(int internalHashId, int indexId) {
     return (((long) indexId) << 32) | (internalHashId & 0xffffffffL);
   }
 

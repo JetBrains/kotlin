@@ -6,6 +6,7 @@ import com.intellij.AppTopics;
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.startup.ServiceNotReadyException;
+import com.intellij.index.SharedIndexExtensions;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -56,8 +57,6 @@ import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
-import com.intellij.util.indexing.provided.ProvidedIndexExtension;
-import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
 import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
@@ -76,7 +75,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -391,13 +389,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
         UpdatableIndex<K, V, FileContent> index = createIndex(extension, new MemoryIndexStorage<>(storage, name));
 
-        if (!(extension instanceof FileContentHashIndexExtension)) {
-          List<ProvidedIndexExtension<K, V>> providedExtensions = ProvidedIndexExtensionLocator.findProvidedIndexExtensionFor(extension);
-          if (!providedExtensions.isEmpty()) {
-            Path[] paths = ContainerUtil.map2Array(providedExtensions, Path.class, ex -> ex.getIndexPath());
-            FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex(paths);
-            index = MergedInvertedIndex.wrapWithProvidedIndex(providedExtensions, extension, index, contentHashIndex);
-          }
+        if (SharedIndexExtensions.areSharedIndexesEnabled()) {
+          FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex();
+          index = new MergedInvertedIndex<>(extension.getName(), contentHashIndex, index);
         }
 
         state.registerIndex(name,
@@ -1658,10 +1652,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return fileId -> !getChangedFilesCollector().containsFileId(fileId);
   }
 
-  private synchronized FileContentHashIndex getOrCreateFileContentHashIndex(Path @NotNull [] enumeratorPaths) {
+  public synchronized FileContentHashIndex getOrCreateFileContentHashIndex() {
     if (myFileContentHashIndex == null) {
       try {
-        FileContentHashIndexExtension extension = new FileContentHashIndexExtension(enumeratorPaths);
+        FileContentHashIndexExtension extension = new FileContentHashIndexExtension();
 
         VfsAwareMapIndexStorage<Long, Void> storage = new VfsAwareMapIndexStorage<>(
           IndexInfrastructure.getStorageFile(extension.getName()).toPath(),
@@ -1673,7 +1667,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         );
 
         myFileContentHashIndex = new FileContentHashIndex(extension, storage);
-        Disposer.register(ApplicationManager.getApplication(), extension);
       }
       catch (IOException e) {
         throw new RuntimeException(e);

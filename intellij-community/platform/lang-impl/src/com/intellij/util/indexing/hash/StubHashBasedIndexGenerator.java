@@ -38,7 +38,7 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
       outRoot
     );
 
-    myStubIndicesRoot = outRoot.resolve(StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName()));
+    myStubIndicesRoot = outRoot.resolve(StubUpdatingIndex.INDEX_ID.getName());
 
     for (StubIndexExtension<?, ?> stubIndexExtension : stubIndexExtensions) {
       FileBasedIndexExtension<?, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);

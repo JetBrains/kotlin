@@ -9,59 +9,43 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.indexing.impl.UpdatableValueContainer;
-import com.intellij.util.indexing.provided.ProvidedIndexExtension;
+import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.io.PersistentEnumeratorBase;
 import com.intellij.util.io.PersistentHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Value> {
-  @NotNull
-  private final ProvidedIndexExtension<Key, Value> myProvidedExtension;
-
-  @NotNull
-  static <Key, Value> HashBasedMapReduceIndex<Key, Value> create(@NotNull ProvidedIndexExtension<Key, Value> providedExtension,
-                                                                 @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
-                                                                 @NotNull FileContentHashIndex hashIndex,
-                                                                 int providedIndexId)
-    throws IOException {
-    Path file = providedExtension.getIndexPath();
-    return new HashBasedMapReduceIndex<>(file, originalExtension, providedExtension, hashIndex, providedIndexId);
-  }
-
-  private HashBasedMapReduceIndex(@NotNull Path baseFile,
-                                  @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
-                                  @NotNull ProvidedIndexExtension<Key, Value> providedExtension,
-                                  @NotNull FileContentHashIndex hashIndex,
-                                  int providedIndexId) throws IOException {
-    super(originalExtension, createStorage(baseFile, originalExtension, providedExtension, hashIndex.toHashIdToFileIdFunction(providedIndexId)), null, null, null, null);
-    myProvidedExtension = providedExtension;
-  }
-
-  @NotNull
-  public ProvidedIndexExtension<Key, Value> getProvidedExtension() {
-    return myProvidedExtension;
+@ApiStatus.Internal
+public class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Value> {
+  HashBasedMapReduceIndex(@NotNull SharedIndexChunk chunk,
+                          @NotNull SharedIndexExtension<Key, Value> sharedExtension,
+                          @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
+                          @NotNull FileContentHashIndex hashIndex) throws IOException {
+    super(originalExtension, createStorage(chunk.getPath(), originalExtension, sharedExtension, hashIndex.toHashIdToFileIdFunction(chunk.getChunkId())), null, null, null, null);
   }
 
   private static <Key, Value> IndexStorage<Key, Value> createStorage(@NotNull Path baseFile,
                                                                      @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
-                                                                     @NotNull ProvidedIndexExtension<Key, Value> providedExtension,
+                                                                     @NotNull SharedIndexExtension<Key, Value> providedExtension,
                                                                      @NotNull IntIntFunction hashToFileId) throws IOException {
-    return new MyMapIndexStorage<>(baseFile, originalExtension, providedExtension, hashToFileId);
+    return new MyMapIndexStorage<>(baseFile.resolve(originalExtension.getName().getName()), originalExtension, providedExtension, hashToFileId);
   }
 
   private static class MyMapIndexStorage<Key, Value>
     extends MapIndexStorage<Key, Value>
     implements VfsAwareIndexStorage<Key, Value> {
-    public MyMapIndexStorage(Path baseFile,
-                             FileBasedIndexExtension<Key, Value> originalExtension,
-                             ProvidedIndexExtension<Key, Value> providedExtension,
-                             IntIntFunction hashToFileId) throws IOException {
-      super(baseFile.resolve(originalExtension.getName().getName()), providedExtension.createKeyDescriptor(),
-            providedExtension.createValueExternalizer(), originalExtension.getCacheSize(), originalExtension.keyIsUniqueForIndexedFile(),
+    private MyMapIndexStorage(Path baseFile,
+                              FileBasedIndexExtension<Key, Value> originalExtension,
+                              SharedIndexExtension<Key, Value> providedExtension,
+                              IntIntFunction hashToFileId) throws IOException {
+      super(baseFile,
+            providedExtension.createKeyDescriptor(baseFile),
+            providedExtension.createValueExternalizer(baseFile),
+            originalExtension.getCacheSize(), originalExtension.keyIsUniqueForIndexedFile(),
             true, true, hashToFileId);
     }
 

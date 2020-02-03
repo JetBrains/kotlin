@@ -10,6 +10,7 @@ import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sun.nio.ch.FileChannelImpl;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -55,6 +56,13 @@ public class UncompressedZipFileSystem extends FileSystem {
 
   public void sync() throws IOException {
     try {
+      if (myChannel != null) {
+        try {
+          myChannel.close();
+        } catch (IOException e) {
+          LOG.error(e);
+        }
+      }
       if (myUncompressedZip != null) {
         try {
           myUncompressedZip.close();
@@ -65,11 +73,7 @@ public class UncompressedZipFileSystem extends FileSystem {
       }
     } finally {
       myUncompressedZip = new JBZipFile(myUncompressedZipPath.toFile());
-      if (myChannel == null) {
-        myChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
-      } else {
-        myChannel.force(true);
-      }
+      myChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
       buildTree();
     }
   }

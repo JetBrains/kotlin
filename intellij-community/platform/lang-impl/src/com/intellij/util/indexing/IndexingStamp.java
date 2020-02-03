@@ -16,6 +16,7 @@ import gnu.trove.TObjectLongHashMap;
 import gnu.trove.TObjectLongProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -354,6 +355,13 @@ public class IndexingStamp {
       return 0;
     } finally {
       readLock.unlock();
+    }
+  }
+
+  @TestOnly
+  public static void dropIndexingTimeStamps(int fileId) throws IOException {
+    try (DataOutputStream out =  FSRecords.writeAttribute(fileId, Timestamps.PERSISTENCE)) {
+      new Timestamps(null).writeToStream(out);
     }
   }
 

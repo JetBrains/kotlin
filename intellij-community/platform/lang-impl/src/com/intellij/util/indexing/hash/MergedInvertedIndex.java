@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.hash;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
@@ -9,53 +8,30 @@ import com.intellij.util.SmartList;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.MergedValueContainer;
-import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.stream.Stream;
 
 public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Value, FileContent> {
+  private final @NotNull SharedIndexChunkConfiguration mySharedIndexChunkConfiguration;
 
-  private static final Logger LOG = Logger.getInstance(MergedInvertedIndex.class);
-
-  private final HashBasedMapReduceIndex<Key,Value> @NotNull [] myProvidedIndexes;
   @NotNull
   private final FileContentHashIndex myHashIndex;
   @NotNull
   public final UpdatableIndex<Key, Value, FileContent> myBaseIndex;
+  private final ID<Key, Value> myId;
 
-  @NotNull
-  public static <K, V> UpdatableIndex<K, V, FileContent> wrapWithProvidedIndex(@NotNull List<ProvidedIndexExtension<K, V>> providedIndexExtensions,
-                                                                               @NotNull FileBasedIndexExtension<K, V> originalExtension,
-                                                                               @NotNull UpdatableIndex<K, V, FileContent> baseIndex,
-                                                                               @NotNull FileContentHashIndex contentHashIndex) {
-    try {
-      HashBasedMapReduceIndex[] providedIndexes = new HashBasedMapReduceIndex[providedIndexExtensions.size()];
-      for (int i = 0; i < providedIndexExtensions.size(); i++) {
-        ProvidedIndexExtension<K, V> extension = providedIndexExtensions.get(i);
-        providedIndexes[i] = extension != null && Files.exists(extension.getIndexPath()) ? HashBasedMapReduceIndex.create(extension, originalExtension, contentHashIndex, i) : null;
-      }
-      return new MergedInvertedIndex<>(providedIndexes, contentHashIndex, baseIndex);
-    }
-    catch (IOException e) {
-      LOG.error(e);
-      return baseIndex;
-    }
-  }
-
-  public MergedInvertedIndex(HashBasedMapReduceIndex<Key,Value> @NotNull [] indexes,
+  public MergedInvertedIndex(@NotNull ID<Key, Value> id,
                              @NotNull FileContentHashIndex hashIndex,
                              @NotNull UpdatableIndex<Key, Value, FileContent> baseIndex) {
-    myProvidedIndexes = indexes;
+    myId = id;
+    mySharedIndexChunkConfiguration = SharedIndexChunkConfiguration.getInstance();
     myHashIndex = hashIndex;
     myBaseIndex = baseIndex;
   }
@@ -67,16 +43,12 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   }
 
   @NotNull
-  public Stream<ProvidedIndexExtension<Key, Value>> getProvidedExtensions() {
-    return Stream.of(myProvidedIndexes).map(index -> index.getProvidedExtension());
-  }
-
-  @NotNull
   @Override
   public Computable<Boolean> update(int inputId, @Nullable FileContent content) {
     if (content != null) {
       long hashId = FileContentHashIndexExtension.getHashId(content);
-      if (hashId != FileContentHashIndexExtension.NULL_HASH_ID) {
+      if (hashId != FileContentHashIndexExtension.NULL_HASH_ID &&
+          mySharedIndexChunkConfiguration.getChunk(myId, FileContentHashIndexExtension.getIndexId(hashId)) != null) {
         return () -> Boolean.TRUE;
       }
       //TODO if content == null
@@ -117,10 +89,15 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   public ValueContainer<Value> getData(@NotNull Key key) throws StorageException {
     List<ValueContainer<Value>> data = new SmartList<>();
     data.add(myBaseIndex.getData(key));
-    for (HashBasedMapReduceIndex<Key, Value> index : myProvidedIndexes) {
-      if (index == null) continue;
-      data.add(index.getData(key));
-    }
+    mySharedIndexChunkConfiguration.processChunks(myId, index -> {
+      try {
+        data.add(index.getData(key));
+        return true;
+      }
+      catch (StorageException e) {
+        throw new RuntimeException(e);
+      }
+    });
     return new MergedValueContainer<>(data);
   }
 
@@ -130,12 +107,14 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
     if (!myBaseIndex.processAllKeys(processor, scope, idFilter)) {
       return false;
     }
-    for (HashBasedMapReduceIndex<Key, Value> index : myProvidedIndexes) {
-      if (index == null) continue;
-      if (!index.processAllKeys(processor, scope, idFilter)) {
-        return false;
+    mySharedIndexChunkConfiguration.processChunks(myId, index -> {
+      try {
+        return index.processAllKeys(processor, scope, idFilter);
       }
-    }
+      catch (StorageException e) {
+        throw new RuntimeException(e);
+      }
+    });
     return true;
   }
 
@@ -152,9 +131,9 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
     if (!data.isEmpty()) return data;
     long hashId = myHashIndex.getHashId(fileId);
     if (hashId == FileContentHashIndexExtension.NULL_HASH_ID) return Collections.emptyMap();
-    int indexId = FileContentHashIndexExtension.getIndexId(hashId);
+    int chunkId = FileContentHashIndexExtension.getIndexId(hashId);
     int internalHashId = FileContentHashIndexExtension.getInternalHashId(hashId);
-    return myProvidedIndexes[indexId].getIndexedFileData(internalHashId);
+    return mySharedIndexChunkConfiguration.getChunk(myId, chunkId).getIndexedFileData(internalHashId);
   }
 
   @Override

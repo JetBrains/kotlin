@@ -20,6 +20,8 @@ import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
+import com.intellij.util.indexing.hash.SharedIndexChunkConfigurationImpl;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.roots.*;
 import gnu.trove.THashSet;
@@ -346,7 +348,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
     if (LightEditUtil.isLightEditProject(project)) {
       return Collections.emptyList();
     }
-    @NotNull List<IndexableRootsProvider> providers = getIndexableRootsProvider(project);
+    @NotNull List<IndexableRootsProvider> providers = getIndexableRootsProvider(project, indicator);
     ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
     Set<VirtualFile> visitedRoots = ContainerUtil.newConcurrentSet();
     return ContainerUtil.map(providers, provider -> () -> {
@@ -360,12 +362,14 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   }
 
   @NotNull
-  private static List<IndexableRootsProvider> getIndexableRootsProvider(@NotNull Project project) {
+  private static List<IndexableRootsProvider> getIndexableRootsProvider(@NotNull Project project,
+                                                                        @NotNull ProgressIndicator indicator) {
     return ReadAction.compute(() -> {
       if (project.isDisposed()) {
         return Collections.emptyList();
       }
 
+      Set<OrderEntry> allEntries = new THashSet<>();
       List<IndexableRootsProvider> providers = new ArrayList<>();
       Module[] modules = ModuleManager.getInstance(project).getModules();
       for (Module module : modules) {
@@ -375,6 +379,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
         // iterate associated libraries
         OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         for (OrderEntry orderEntry : orderEntries) {
+          allEntries.add(orderEntry);
           if (!(orderEntry instanceof LibraryOrSdkOrderEntry) || !orderEntry.isValid()) {
             continue;
           }
@@ -394,6 +399,8 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
           providers.add(new SyntheticLibraryIndexableRootsProvider(library));
         }
       }
+
+      SharedIndexChunkConfiguration.getInstance().locateIndexes(project, allEntries, indicator);
 
       return providers;
     });

@@ -5,6 +5,7 @@
  */
 package com.intellij.psi.stubs;
 
+import com.intellij.index.SharedIndexExtensions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
@@ -25,7 +26,6 @@ import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.provided.StubProvidedIndexExtension;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.*;
@@ -36,7 +36,6 @@ import com.intellij.util.indexing.hash.MergedInvertedIndex;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
 import com.intellij.util.indexing.impl.RemovedKeyProcessor;
-import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import gnu.trove.*;
@@ -52,7 +51,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.IntPredicate;
-import java.util.stream.Collectors;
 
 @State(name = "FileBasedIndex", storages = {
   @Storage(value = StoragePathMacros.CACHE_FILE),
@@ -207,15 +205,8 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         final MemoryIndexStorage<K, Void> memStorage = new MemoryIndexStorage<>(storage, indexKey);
         UpdatableIndex<K, Void, FileContent> index = new VfsAwareMapReduceIndex<>(wrappedExtension, memStorage, null, null, null, lock);
 
-        if (stubUpdatingIndex instanceof MergedInvertedIndex) {
-          List<ProvidedIndexExtension<K, Void>> providedIndexExtensions = ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex)
-                  .getProvidedExtensions()
-                  .filter(ex -> ex instanceof StubProvidedIndexExtension)
-                  .map(ex -> ((StubProvidedIndexExtension)ex).findProvidedStubIndex(extension))
-                  .collect(Collectors.toList());
-          if (!providedIndexExtensions.isEmpty()) {
-            index = MergedInvertedIndex.wrapWithProvidedIndex(providedIndexExtensions, wrappedExtension, index, ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex).getHashIndex());
-          }
+        if (SharedIndexExtensions.areSharedIndexesEnabled()) {
+          index = new MergedInvertedIndex<>(wrappedExtension.getName(), ((MergedInvertedIndex<Integer, SerializedStubTree>)stubUpdatingIndex).getHashIndex(), index);
         }
 
         TObjectHashingStrategy<K> keyHashingStrategy = new TObjectHashingStrategy<K>() {

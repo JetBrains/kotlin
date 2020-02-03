@@ -47,7 +47,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
 
   static final class FileBasedIndexProjectHandlerStartupActivity implements StartupActivity {
     FileBasedIndexProjectHandlerStartupActivity() {
-      ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
+      ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC,  new ProjectManagerListener() {
         @Override
         public void projectClosing(@NotNull Project project) {
           FileBasedIndexProjectHandler handler = project.getServiceIfCreated(FileBasedIndexProjectHandler.class);

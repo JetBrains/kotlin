@@ -96,7 +96,7 @@ public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareInde
   }
 
   @SuppressWarnings("unchecked")
-  private static <Value> ValueContainer<Value> empty() {
+  public static <Value> ValueContainer<Value> empty() {
     return EmptyValueContainer.INSTANCE;
   }
 }
