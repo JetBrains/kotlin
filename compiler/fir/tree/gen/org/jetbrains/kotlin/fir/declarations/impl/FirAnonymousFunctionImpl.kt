@@ -107,7 +107,7 @@ class FirAnonymousFunctionImpl(
         typeRef = newTypeRef
     }
 
-    override fun replaceInvocationKind(newInvocationKind: InvocationKind) {
+    override fun replaceInvocationKind(newInvocationKind: InvocationKind?) {
         invocationKind = newInvocationKind
     }
 }

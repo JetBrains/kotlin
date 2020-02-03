@@ -42,7 +42,7 @@ abstract class FirAnonymousFunction : FirPureAbstractElement(), FirFunction<FirA
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 
-    abstract fun replaceInvocationKind(newInvocationKind: InvocationKind)
+    abstract fun replaceInvocationKind(newInvocationKind: InvocationKind?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 

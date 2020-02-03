@@ -27,7 +27,7 @@ class FirExplicitThisReference(
         return this
     }
 
-    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>) {
+    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?) {
         boundSymbol = newBoundSymbol
     }
 }

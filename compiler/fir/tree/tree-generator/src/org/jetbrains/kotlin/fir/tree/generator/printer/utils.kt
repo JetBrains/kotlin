@@ -67,7 +67,7 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
 
 fun Field.replaceFunctionDeclaration(): String {
     val capName = name.capitalize()
-    return "fun replace$capName(new$capName: $typeWithArgumentsWithoutNullablity)"
+    return "fun replace$capName(new$capName: $typeWithArguments)"
 }
 
 val Field.mutableType: String
@@ -106,8 +106,6 @@ val Importable.typeWithArguments: String
         is ImplementationWithArg -> type + generics
         else -> throw IllegalArgumentException()
     }
-
-val Importable.typeWithArgumentsWithoutNullablity: String get() = typeWithArguments.dropLastWhile { it == '?' }
 
 val ImplementationWithArg.generics: String
     get() = argument?.let { "<${it.type}>" } ?: ""
