@@ -78,6 +78,9 @@ class AutoboxingTransformer(
 
         val expectedType = type
 
+        if (expectedType.isNothing())
+            return this
+
         if (actualType.isUnit() && !expectedType.isUnit()) {
             // Don't materialize Unit if value is known to be proper Unit on runtime
             if (!this.isGetUnit()) {
