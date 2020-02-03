@@ -16,10 +16,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.compilerRunner.KonanCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.KonanInteropRunner
-import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
@@ -270,7 +266,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     open fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
-        KonanCompilerRunner(project).run(buildArgs())
+        KotlinNativeCompilerRunner(project).run(buildArgs())
     }
 }
 
@@ -781,7 +777,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
                     args += "-l"
                     args += it.libraryFile.absolutePath
                 }
-            KonanCompilerRunner(project).run(args)
+            KotlinNativeCompilerRunner(project).run(args)
         }
     }
 
@@ -808,7 +804,7 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
             args += "-g"
         args += "-Xadd-cache=${platformLib.absolutePath}"
         args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
-        KonanCompilerRunner(project).run(args)
+        KotlinNativeCompilerRunner(project).run(args)
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
@@ -937,6 +933,6 @@ open class CInteropProcess : DefaultTask() {
         }
 
         outputFile.parentFile.mkdirs()
-        KonanInteropRunner(project).run(args)
+        KotlinNativeCInteropRunner(project).run(args)
     }
 }
