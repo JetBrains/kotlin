@@ -1,4 +1,6 @@
 **/testData/** linguist-vendored
 *Generated.java linguist-generated=true
+* text=auto
+* eol=lf
 compiler/cli/bin/* eol=lf
 compiler/cli/bin/*.bat eol=crlf
