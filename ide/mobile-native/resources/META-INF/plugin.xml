@@ -39,7 +39,6 @@
 
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="com.jetbrains.mobile.PathManagerCustomization" overrides="true"/>
-    <applicationService serviceImplementation="com.jetbrains.mobile.execution.DeviceService"/>
     <executionTargetProvider implementation="com.jetbrains.mobile.execution.DeviceExecutionTargetProvider"/>
 
     <externalProjectDataService implementation="com.jetbrains.mobile.gradle.AndroidProjectDataService"/>

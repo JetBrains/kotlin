@@ -13,6 +13,6 @@ import com.intellij.openapi.project.Project
 class DeviceExecutionTargetProvider : ExecutionTargetProvider() {
     override fun getTargets(project: Project, configuration: RunConfiguration): List<ExecutionTarget> =
         if (configuration is MobileRunConfiguration)
-            DeviceService.instance.getAll()
+            DeviceService.getInstance(project).getAll()
         else emptyList()
 }

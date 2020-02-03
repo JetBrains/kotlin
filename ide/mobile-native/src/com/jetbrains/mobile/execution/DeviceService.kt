@@ -7,14 +7,17 @@ package com.jetbrains.mobile.execution
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.sdklib.AndroidVersion
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.AtomicClearableLazyValue
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorsRegistry
 import com.jetbrains.mobile.AndroidToolkit
 
-class DeviceService {
+@Service
+class DeviceService(val project: Project) {
     fun getAll(): List<Device> = getAppleDevices() + getAndroidDevices() + androidEmulators.value + getAppleSimulators()
 
     private fun getAppleDevices(): List<ApplePhysicalDevice> =
@@ -32,7 +35,7 @@ class DeviceService {
             ?: emptyList()
 
     private var androidEmulators = AtomicClearableLazyValue.create {
-        AndroidToolkit.avdData.listFiles { file -> file.extension == "ini" }
+        AndroidToolkit.getInstance(project).avdData.listFiles { file -> file.extension == "ini" }
             ?.map { file ->
                 val prefix = "target=android-"
                 val version = file.readLines()
@@ -52,9 +55,10 @@ class DeviceService {
             val disconnected = _adb?.isConnected != true
             if (disconnected) {
                 AndroidDebugBridge.initIfNeeded(true)
-                _adb = AndroidToolkit.adb?.let { adbBinary ->
+                val toolkit = AndroidToolkit.getInstance(project)
+                _adb = toolkit.adb?.let { adbBinary ->
                     val forceNew = _adb != null
-                    log.info("Creating ADB bridge for ${AndroidToolkit.adb}, forceNew = $forceNew")
+                    log.info("Creating ADB bridge for ${toolkit.adb}, forceNew = $forceNew")
                     AndroidDebugBridge.createBridge(adbBinary.path, forceNew)
                 }
             }
@@ -62,7 +66,7 @@ class DeviceService {
         }
 
     companion object {
-        val instance: DeviceService get() = service()
+        fun getInstance(project: Project): DeviceService = project.service()
         private val log = logger<DeviceService>()
     }
 }

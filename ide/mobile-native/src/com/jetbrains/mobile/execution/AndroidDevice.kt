@@ -53,7 +53,7 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
         val handler = AndroidProcessHandler()
         runBackgroundableTask(MobileBundle.message("run.waiting"), project, cancellable = false) { indicator ->
             try {
-                handler.raw = prepareDevice()
+                handler.raw = prepareDevice(project)
 
                 indicator.isIndeterminate = false
                 indicator.fraction = 0.1
@@ -79,7 +79,7 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
 
     fun installAndLaunch(apk: File, project: Project, waitForDebugger: Boolean = false): AndroidProcessHandler =
         execute(project, waitForDebugger) { handler, indicator ->
-            val (appId, activity) = getAppMetadata(apk)
+            val (appId, activity) = getAppMetadata(project, apk)
             handler.appId = appId
 
             indicator.fraction = 0.3
@@ -106,8 +106,8 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
         runTests: (RemoteAndroidTestRunner, AndroidProcessHandler) -> Unit
     ): AndroidProcessHandler =
         execute(project, waitForDebugger) { handler, indicator ->
-            val testAppId = getAppId(testApk)
-            handler.appId = getAppId(appApk)
+            val testAppId = getAppId(project, testApk)
+            handler.appId = getAppId(project, appApk)
 
             indicator.fraction = 0.3
             indicator.text = MobileBundle.message("run.installing")
@@ -135,7 +135,7 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
             }
         }
 
-    protected abstract fun prepareDevice(): IDevice
+    protected abstract fun prepareDevice(project: Project): IDevice
 }
 
 class AndroidPhysicalDevice(private val raw: IDevice) : AndroidDevice(
@@ -143,7 +143,7 @@ class AndroidPhysicalDevice(private val raw: IDevice) : AndroidDevice(
     raw.getProperty(IDevice.PROP_DEVICE_MODEL) ?: "Unknown Device",
     raw.version
 ) {
-    override fun prepareDevice(): IDevice = raw
+    override fun prepareDevice(project: Project): IDevice = raw
 }
 
 class AndroidEmulator(avdName: String, osVersion: AndroidVersion?) : AndroidDevice(
@@ -151,11 +151,11 @@ class AndroidEmulator(avdName: String, osVersion: AndroidVersion?) : AndroidDevi
     avdName.replace('_', ' '),
     osVersion
 ) {
-    override fun prepareDevice(): IDevice {
+    override fun prepareDevice(project: Project): IDevice {
         // If already running, return immediately
-        DeviceService.instance.adb?.devices?.find { it.avdName == id }?.let { return it }
+        DeviceService.getInstance(project).adb?.devices?.find { it.avdName == id }?.let { return it }
 
-        val commandLine = GeneralCommandLine(AndroidToolkit.emulator!!.path, "-avd", id)
+        val commandLine = GeneralCommandLine(AndroidToolkit.getInstance(project).emulator!!.path, "-avd", id)
         val avdHandler = OSProcessHandler(commandLine)
         avdHandler.addProcessListener(object : ProcessAdapter() {
             override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
@@ -192,8 +192,8 @@ class AndroidEmulator(avdName: String, osVersion: AndroidVersion?) : AndroidDevi
 private val log = logger<AndroidDevice>()
 
 // TODO use gradle project data for this
-private fun aapt(apk: File): List<String> {
-    val output = ExecUtil.execAndGetOutput(GeneralCommandLine(AndroidToolkit.aapt!!.path, "dump", "badging", apk.path))
+private fun aapt(project: Project, apk: File): List<String> {
+    val output = ExecUtil.execAndGetOutput(GeneralCommandLine(AndroidToolkit.getInstance(project).aapt!!.path, "dump", "badging", apk.path))
     val lines = output.stdoutLines
     if (lines.isEmpty()) throw ExecutionException("aapt returned empty data for '$apk'")
     return lines
@@ -204,10 +204,10 @@ private fun getAppId(aaptOutput: List<String>): String {
     return aaptOutput[0].removePrefix("package: name='").substringBefore('\'')
 }
 
-private fun getAppId(apk: File): String = getAppId(aapt(apk))
+private fun getAppId(project: Project, apk: File): String = getAppId(aapt(project, apk))
 
-private fun getAppMetadata(apk: File): Pair<String, String> {
-    val lines = aapt(apk)
+private fun getAppMetadata(project: Project, apk: File): Pair<String, String> {
+    val lines = aapt(project, apk)
     val appId = getAppId(lines)
     val activityLine = lines.find { it.startsWith("launchable-activity: name") }
         ?: throw ExecutionException("aapt returned no main activity name for '$apk'")
