@@ -87,7 +87,6 @@ public class GradleMiscImportingTest extends GradleImportingTestCase {
     importProject(
       "apply plugin: 'java'\n" +
       "sourceCompatibility = 1.5\n" +
-      "apply plugin: 'java'\n" +
       "compileTestJava {\n" +
       "  sourceCompatibility = 1.8\n" +
       "}\n"
