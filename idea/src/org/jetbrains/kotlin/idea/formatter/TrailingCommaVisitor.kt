@@ -7,53 +7,60 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.util.addTrailingCommaIsAllowedForThis
 import org.jetbrains.kotlin.psi.*
 
 abstract class TrailingCommaVisitor : KtTreeVisitorVoid() {
     override fun visitParameterList(list: KtParameterList) {
         super.visitParameterList(list)
-        process(list)
+        runProcessIfAllowed(list)
     }
 
     override fun visitValueArgumentList(list: KtValueArgumentList) {
         super.visitValueArgumentList(list)
-        process(list)
+        runProcessIfAllowed(list)
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
         super.visitArrayAccessExpression(expression)
-        process(expression.indicesNode)
+        runProcessIfAllowed(expression.indicesNode)
     }
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
         super.visitTypeParameterList(list)
-        process(list)
+        runProcessIfAllowed(list)
     }
 
     override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
         super.visitTypeArgumentList(typeArgumentList)
-        process(typeArgumentList)
+        runProcessIfAllowed(typeArgumentList)
     }
 
     override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression) {
         super.visitCollectionLiteralExpression(expression)
-        process(expression)
+        runProcessIfAllowed(expression)
     }
 
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
         super.visitWhenEntry(jetWhenEntry)
-        process(jetWhenEntry)
+        runProcessIfAllowed(jetWhenEntry)
     }
 
     override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
         super.visitDestructuringDeclaration(destructuringDeclaration)
-        process(destructuringDeclaration)
+        runProcessIfAllowed(destructuringDeclaration)
     }
 
     override fun visitElement(element: PsiElement) {
         ProgressIndicatorProvider.checkCanceled()
 
         if (recursively) super.visitElement(element)
+    }
+
+    private fun runProcessIfAllowed(element: KtElement) {
+        if (element.addTrailingCommaIsAllowedForThis()) {
+            process(element)
+        }
     }
 
     protected abstract fun process(commaOwner: KtElement)

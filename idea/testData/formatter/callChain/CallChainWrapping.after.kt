@@ -30,11 +30,9 @@ val x8 = foo!!!!!!!!.bar()
 
 val x9 = ((b!!)!!!!)!!.f
 
-val y = xyzzy(
-        foo.bar()
-                .baz()
-                .quux(),
-)
+val y = xyzzy(foo.bar()
+        .baz()
+        .quux())
 
 fun foo() {
     foo.bar()

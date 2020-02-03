@@ -19,10 +19,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
-import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
-import org.jetbrains.kotlin.idea.util.isMultiline
-import org.jetbrains.kotlin.idea.util.needTrailingComma
-import org.jetbrains.kotlin.idea.util.requireNode
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -588,7 +585,7 @@ abstract class KotlinCommonBlock(
         when {
             elementType === VALUE_ARGUMENT_LIST -> {
                 val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
-                if (!node.trailingCommaIsAllowed &&
+                if (!node.addTrailingComma &&
                     (wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
                     !needWrapArgumentList(nodePsi)
                 ) {
@@ -597,7 +594,7 @@ abstract class KotlinCommonBlock(
                 return getWrappingStrategyForItemList(
                     wrapSetting,
                     VALUE_ARGUMENT,
-                    node.trailingCommaIsAllowed,
+                    node.addTrailingComma,
                     additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR),
                 )
             }
@@ -607,7 +604,7 @@ abstract class KotlinCommonBlock(
                     FUN, PRIMARY_CONSTRUCTOR, SECONDARY_CONSTRUCTOR -> return getWrappingStrategyForItemList(
                         commonSettings.METHOD_PARAMETERS_WRAP,
                         VALUE_PARAMETER,
-                        node.trailingCommaIsAllowed,
+                        node.addTrailingComma,
                         additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR),
                     )
                     FUNCTION_TYPE -> return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
@@ -752,8 +749,8 @@ abstract class KotlinCommonBlock(
     private fun defaultTrailingCommaWrappingStrategy(leftAnchor: IElementType, rightAnchor: IElementType): WrappingStrategy =
         fun(childElement: ASTNode): Wrap? = trailingCommaWrappingStrategyWithMultiLineCheck(leftAnchor, rightAnchor)(childElement)
 
-    private val ASTNode.trailingCommaIsAllowed: Boolean
-        get() = (settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA ||
+    private val ASTNode.addTrailingComma: Boolean
+        get() = (settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(this) ||
                 lastChildNode?.let { getSiblingWithoutWhitespaceAndComments(it) }?.elementType === COMMA) &&
                 psi?.let(PsiElement::isMultiline) == true
 
@@ -821,7 +818,7 @@ abstract class KotlinCommonBlock(
         if (!filter(childElement)) return null
         val childElementType = childElement.elementType
         return createWrapAlwaysIf(
-            (!checkTrailingComma || childElement.treeParent.trailingCommaIsAllowed) && (
+            (!checkTrailingComma || childElement.treeParent.addTrailingComma) && (
                     rightAnchor != null && rightAnchor === childElementType ||
                             leftAnchor != null && leftAnchor === getSiblingWithoutWhitespaceAndComments(childElement)?.elementType ||
                             additionalCheck(childElement)

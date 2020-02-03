@@ -11,111 +11,89 @@ fun foo() {
             testsa,
             >()
 
+    testtest<foofoo, foofoo, foofoo,
+            foofoo, bar>()
+
     testtest<
-            foofoo, foofoo, foofoo,
-            foofoo, bar,
+            foofoo, foofoo, foofoo, foofoo, bar
+            >()
+
+    testtest<foofoo, foofoo, foofoo, foofoo, bar
+            >()
+
+    testtest<foofoo, foofoo, foofoo, foofoo,
+            bar
+            >()
+
+    testtest<foofoo
             >()
 
     testtest<
-            foofoo, foofoo, foofoo, foofoo, bar,
-            >()
+            foofoo>()
 
     testtest<
-            foofoo, foofoo, foofoo, foofoo, bar,
+            foofoo
             >()
 
-    testtest<
-            foofoo, foofoo, foofoo, foofoo,
-            bar,
-            >()
-
-    testtest<
-            foofoo,
-            >()
-
-    testtest<
-            foofoo,
-            >()
-
-    testtest<
-            foofoo,
-            >()
-
-    testtest<foofoo>()
+    testtest<foofoo, >()
 
     testtest<foofoo, testtest<testtest<foofoo>>>()
 
-    testtest<foofoo, fososos, testtest<testtest<foofoo>>>()
+    testtest<foofoo, fososos, testtest<testtest<foofoo>>, >()
 
     testtest<
             foofoo, fososos, testtest<testtest<foofoo>>,
             >()
 
-    testtest<foofoo, testtest<testtest<foofoo>>, testsa>()
+    testtest<foofoo, testtest<testtest<foofoo, >>, testsa>()
 
-    testtest<foofoo, *, testtest<testtest<foofoo>>, testsa>()
-
-    testtest<
-            foofoo, foofoo, foofoo, foofoo,
-            bar, /*
-    */ /* */
-            foo,
-            >()
-
-    testtest<
-/*
-    */
-            foofoo, foofoo, foofoo, /*
-
-    */
-            foofoo, bar,
-            >()
+    testtest<foofoo, *, testtest<testtest<foofoo, >>, testsa>()
 
     testtest<
             foofoo, foofoo, foofoo, foofoo,
-            bar,/*
-    */
+            bar /*
+    */, /* */ foo
             >()
 
-    testtest<
-            foofoo, foofoo, foofoo, foofoo, bar, // awdawda
-            >()
-
-    testtest<
-            foofoo, foofoo, foofoo, foofoo, /*
+    testtest</*
+    */foofoo, foofoo, foofoo, /*
 
     */
-            bar,
+            foofoo, bar>()
+
+    testtest<foofoo, foofoo, foofoo, foofoo, bar/*
+    */>()
+
+    testtest<foofoo, foofoo, foofoo, foofoo, bar // awdawda
             >()
 
-    testtest<
-            foofoo, // fd
+    testtest<foofoo, foofoo, foofoo, foofoo, /*
+
+    */
+            bar
             >()
 
-    testtest<
-            /**/
-            foofoo,
+    testtest<foofoo // fd
             >()
 
-    testtest<foofoo/**/>()
-
-    testtest<
-            foofoo, foofoo, foofoo,
-            foofoo,/*
-     */ /* */
-            bar,
+    testtest< /**/
+            foofoo
             >()
 
-    testtest<
-            foofoo, // fd
+    testtest<foofoo,/**/>()
+
+    testtest<foofoo, foofoo, foofoo, foofoo/*
+     */, /* */ bar
             >()
 
-    testtest<
-            /**/
-            foofoo,
+    testtest<foofoo // fd
             >()
 
-    testtest<foofoo/**/>()
+    testtest< /**/
+            foofoo
+            >()
+
+    testtest<foofoo,/**/>()
 
     testtest<
             foofoo,/*
@@ -132,22 +110,15 @@ fun foo() {
             testtest<testtest<foofoo>>,
             >()
 
-    testtest<foofoo, testtest<testtest<foofoo>>, /**/testsa>()
+    testtest<foofoo, testtest<testtest<foofoo, >>, /**/testsa>()
 
-    testtest<foofoo, testtest<testtest<foofoo>>/* */, /**/testsa>()
+    testtest<foofoo, testtest<testtest<foofoo, >>/* */, /**/testsa>()
 
-    testtest<
-            foofoo,
-            testtest<testtest<foofoo>>,/*
-    */
-            testsa,
-            >()
+    testtest<foofoo, testtest<testtest<foofoo, >>/*
+    */, testsa>()
 
-    testtest<foofoo, seee, testtest<testtest<foofoo>>, /**/testsa>()
+    testtest<foofoo, seee, testtest<testtest<foofoo, >>, /**/testsa>()
 
-    testtest<
-            foofoo, seee, testtest<testtest<foofoo>>, /*
-    */
-            testsa,
-            >()
+    testtest<foofoo, seee, testtest<testtest<foofoo, >>, /*
+    */testsa>()
 }

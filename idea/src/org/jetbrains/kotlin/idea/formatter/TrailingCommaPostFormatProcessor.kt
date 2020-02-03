@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Comp
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaAllowedInModule
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaOrLastElement
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.util.isLineBreak
-import org.jetbrains.kotlin.idea.util.isMultiline
-import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.idea.util.needTrailingComma
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -63,7 +60,8 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 
             else -> (checkExistingTrailingComma &&
                     trailingCommaOrLastElement(commaOwner)?.isComma == true ||
-                    settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA) && commaOwner.isMultiline()
+                    settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(commaOwner)) &&
+                    commaOwner.isMultiline()
         }
 
         fun trailingCommaOrLastElement(commaOwner: KtElement): PsiElement? {

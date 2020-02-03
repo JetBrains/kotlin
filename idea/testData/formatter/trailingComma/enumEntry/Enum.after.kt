@@ -24,14 +24,14 @@ enum class Enum5 {
 
 enum class Enum6(val a: Int) {
     A(
-            1,
+            1
     ),
     B,
 }
 
 enum class Enum7(val a: Int) {
     A(
-            1,
+            1
     ),
     B,
     ;
@@ -39,7 +39,7 @@ enum class Enum7(val a: Int) {
 
 enum class Enum8(val a: Int) {
     A(
-            1,
+            1
     ),
     B;
 }

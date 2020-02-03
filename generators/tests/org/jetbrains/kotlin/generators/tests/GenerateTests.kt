@@ -586,8 +586,16 @@ fun main(args: Array<String>) {
         testClass<AbstractFormatterTest> {
             model("formatter", pattern = """^([^\.]+)\.after\.kt.*$""")
             model(
+                "formatter/trailingComma", pattern = """^([^\.]+)\.call\.after\.kt.*$""",
+                testMethod = "doTestCallSite", testClassName = "FormatterCallSite"
+            )
+            model(
                 "formatter", pattern = """^([^\.]+)\.after\.inv\.kt.*$""",
                 testMethod = "doTestInverted", testClassName = "FormatterInverted"
+            )
+            model(
+                "formatter/trailingComma", pattern = """^([^\.]+)\.call\.after\.inv\.kt.*$""",
+                testMethod = "doTestInvertedCallSite", testClassName = "FormatterInvertedCallSite"
             )
         }
 

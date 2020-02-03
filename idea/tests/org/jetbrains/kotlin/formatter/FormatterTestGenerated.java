@@ -1386,6 +1386,184 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         }
     }
 
+    @TestMetadata("idea/testData/formatter/trailingComma")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FormatterCallSite extends AbstractFormatterTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFormatterCallSite() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/collectionLiteralExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CollectionLiteralExpression extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCollectionLiteralExpression() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/collectionLiteralExpression"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("CollectionLiteralInAnnotation.call.after.kt")
+            public void testCollectionLiteralInAnnotation() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/collectionLiteralExpression/CollectionLiteralInAnnotation.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DestructionDeclaration extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDestructionDeclaration() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/enumEntry")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumEntry extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEnumEntry() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/enumEntry"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/indices")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Indices extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIndices() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/indices"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("IndicesAccess.call.after.kt")
+            public void testIndicesAccess() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/indices/IndicesAccess.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/lambdaParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaParameters extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLambdaParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/lambdaParameters"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("LambdaParameterList.call.after.kt")
+            public void testLambdaParameterList() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/lambdaParameters/LambdaParameterList.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/typeArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeArguments extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeArguments() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/typeArguments"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("TypeArgumentList.call.after.kt")
+            public void testTypeArgumentList() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/typeArguments/TypeArgumentList.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/typeParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeParameters extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/typeParameters"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("TypeParameterList.call.after.kt")
+            public void testTypeParameterList() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/typeParameters/TypeParameterList.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/valueArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ValueArguments extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInValueArguments() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueArguments"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("ArgumentListWrapAsNeeded.call.after.kt")
+            public void testArgumentListWrapAsNeeded() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListWrapAsNeeded.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/valueParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ValueParameters extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInValueParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("ParameterListWrapAsNeeded.call.after.kt")
+            public void testParameterListWrapAsNeeded() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAsNeeded.call.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/whenEntry")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WhenEntry extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWhenEntry() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/whenEntry"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/formatter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1980,6 +2158,184 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 public void testWhenEntry() throws Exception {
                     runTest("idea/testData/formatter/trailingComma/whenEntry/WhenEntry.after.inv.kt");
                 }
+            }
+        }
+    }
+
+    @TestMetadata("idea/testData/formatter/trailingComma")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FormatterInvertedCallSite extends AbstractFormatterTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFormatterInvertedCallSite() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/collectionLiteralExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CollectionLiteralExpression extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCollectionLiteralExpression() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/collectionLiteralExpression"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("CollectionLiteralInAnnotation.call.after.inv.kt")
+            public void testCollectionLiteralInAnnotation() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/collectionLiteralExpression/CollectionLiteralInAnnotation.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DestructionDeclaration extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDestructionDeclaration() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/enumEntry")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumEntry extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEnumEntry() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/enumEntry"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/indices")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Indices extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIndices() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/indices"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("IndicesAccess.call.after.inv.kt")
+            public void testIndicesAccess() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/indices/IndicesAccess.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/lambdaParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaParameters extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLambdaParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/lambdaParameters"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("LambdaParameterList.call.after.inv.kt")
+            public void testLambdaParameterList() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/lambdaParameters/LambdaParameterList.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/typeArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeArguments extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeArguments() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/typeArguments"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("TypeArgumentList.call.after.inv.kt")
+            public void testTypeArgumentList() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/typeArguments/TypeArgumentList.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/typeParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeParameters extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/typeParameters"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("TypeParameterList.call.after.inv.kt")
+            public void testTypeParameterList() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/typeParameters/TypeParameterList.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/valueArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ValueArguments extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInValueArguments() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueArguments"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("ArgumentListWrapAsNeeded.call.after.inv.kt")
+            public void testArgumentListWrapAsNeeded() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/valueArguments/ArgumentListWrapAsNeeded.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/valueParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ValueParameters extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInValueParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/valueParameters"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("ParameterListWrapAsNeeded.call.after.inv.kt")
+            public void testParameterListWrapAsNeeded() throws Exception {
+                runTest("idea/testData/formatter/trailingComma/valueParameters/ParameterListWrapAsNeeded.call.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/trailingComma/whenEntry")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WhenEntry extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWhenEntry() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/whenEntry"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
             }
         }
     }

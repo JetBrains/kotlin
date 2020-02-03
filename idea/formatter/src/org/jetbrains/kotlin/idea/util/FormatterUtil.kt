@@ -6,11 +6,17 @@
 package org.jetbrains.kotlin.idea.util
 
 import com.intellij.formatting.ASTBlock
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -77,7 +83,9 @@ fun <T : PsiElement> T.needTrailingComma(
     globalStartOffset: T.() -> Int? = PsiElement::startOffset,
     globalEndOffset: T.() -> Int? = PsiElement::endOffset,
 ): Boolean {
-    if (trailingComma() == null && !settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA || !additionalCheck()) return false
+    if (trailingComma() == null && !settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(this)) return false
+    if (!additionalCheck()) return false
+
     val startOffset = globalStartOffset() ?: return false
     val endOffset = globalEndOffset() ?: return false
     return containsLineBreakInThis(startOffset, endOffset)
@@ -87,3 +95,34 @@ fun PsiElement.containsLineBreakInThis(globalStartOffset: Int, globalEndOffset: 
     val textRange = TextRange.create(globalStartOffset, globalEndOffset).shiftLeft(startOffset)
     return StringUtil.containsLineBreak(textRange.subSequence(text))
 }
+
+fun trailingCommaIsAllowedOnCallSite(): Boolean = Registry.`is`("kotlin.formatter.allowTrailingCommaOnCallSite")
+
+private val TYPES_WITH_TRAILING_COMMA = TokenSet.create(
+    KtNodeTypes.TYPE_PARAMETER_LIST,
+    KtNodeTypes.DESTRUCTURING_DECLARATION,
+    KtNodeTypes.WHEN_ENTRY,
+    KtNodeTypes.FUNCTION_LITERAL,
+    KtNodeTypes.VALUE_PARAMETER_LIST,
+)
+
+private val TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE = TokenSet.create(
+    KtNodeTypes.COLLECTION_LITERAL_EXPRESSION,
+    KtNodeTypes.TYPE_ARGUMENT_LIST,
+    KtNodeTypes.INDICES,
+    KtNodeTypes.VALUE_ARGUMENT_LIST,
+)
+
+fun UserDataHolder.addTrailingCommaIsAllowedForThis(): Boolean {
+    val type = when (this) {
+        is ASTNode -> PsiUtilCore.getElementType(this)
+        is PsiElement -> PsiUtilCore.getElementType(this)
+        else -> return false
+    }
+
+    return type in TYPES_WITH_TRAILING_COMMA || trailingCommaIsAllowedOnCallSite() && type in TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE
+}
+
+fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(element: UserDataHolder): Boolean =
+    ALLOW_TRAILING_COMMA && element.addTrailingCommaIsAllowedForThis()
+
