@@ -664,7 +664,9 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       needEmptyAction = false;
     }
     if (needEmptyAction && emptyActionRegistered.add(Pair.create(((ProblemDescriptorBase)descriptor).getTextRange(), key.toString()))) {
-      IntentionAction emptyIntentionAction = new EmptyIntentionAction(HighlightDisplayKey.getDisplayNameByKey(key));
+      String displayNameByKey = HighlightDisplayKey.getDisplayNameByKey(key);
+      LOG.assertTrue(displayNameByKey != null, key.toString());
+      IntentionAction emptyIntentionAction = new EmptyIntentionAction(displayNameByKey);
       result.add(emptyIntentionAction);
     }
     return result;
