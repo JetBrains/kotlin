@@ -1,4 +1,6 @@
+
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
@@ -110,8 +112,9 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
         val frameworkDirs = frameworks.mapTo(mutableSetOf()) { it.parentFile }.toList()
         val frameworkSearchPaths = frameworkDirs.map { it.toRelativeString(baseDir) }
 
+        val intellijProject = project.appleImpl.intellijProject!!
         val pbxProjectFile = PBXProjectFileManipulator.createNewProject(
-            project.appleImpl.intellijProject,
+            intellijProject,
             vBaseDir,
             vProjectFile,
             null,
@@ -312,12 +315,14 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
     val generateXcodeprojTask: AppleGenerateXcodeProjectTask by project.tasks.register("generateXcodeproj", AppleGenerateXcodeProjectTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
+            onlyIf { SystemInfoRt.isMac }
         }
     }
     override val buildTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
             dependsOn(generateXcodeprojTask)
+            onlyIf { SystemInfoRt.isMac }
         }
 
         project.tasks.named(BasePlugin.ASSEMBLE_TASK_NAME) {
@@ -328,6 +333,7 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
         it.configure {
             dependsOn(configuration.incoming.files)
             dependsOn(generateXcodeprojTask)
+            onlyIf { SystemInfoRt.isMac }
         }
     }
 
@@ -336,7 +342,7 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
     override var bridgingHeader: String? = null
 }
 
-private open class AppleProjectExtensionImpl(project: Project, val intellijProject: com.intellij.openapi.project.Project) : AppleProjectExtension {
+private open class AppleProjectExtensionImpl(project: Project, val intellijProject: com.intellij.openapi.project.Project?) : AppleProjectExtension {
     override val targets: NamedDomainObjectContainer<AppleTarget> =
             project.container(AppleTarget::class.java, project.objects.newInstance(AppleTargetFactory::class.java, project))
 
@@ -351,12 +357,17 @@ private open class AppleProjectExtensionImpl(project: Project, val intellijProje
 
 open class ApplePlugin @Inject constructor(private val execActionFactory: ExecActionFactory) : Plugin<Project>, Disposable {
     override fun apply(project: Project) {
-        val xcodePath = project.properties["xcode.base"]?.toString() ?: detectXcodeInstallation()
-        println("Using Xcode: $xcodePath")
+        val intellijProject = when {
+            SystemInfoRt.isMac -> {
+                val xcodePath = project.properties["xcode.base"]?.toString() ?: detectXcodeInstallation()
+                println("Using Xcode: $xcodePath")
 
-        val applicationEnvironment = CoreXcodeApplicationEnvironment(this, false)
-        XcodeBase.getInstance().setInstallation(XcodeInstallation(File(xcodePath)))
-        val intellijProject = CoreXcodeProjectEnvironment(this, applicationEnvironment).project
+                val applicationEnvironment = CoreXcodeApplicationEnvironment(this, false)
+                XcodeBase.getInstance().setInstallation(XcodeInstallation(File(xcodePath)))
+                CoreXcodeProjectEnvironment(this, applicationEnvironment).project
+            }
+            else -> null
+        }
 
         project.extensions.create(AppleProjectExtension::class.java, "apple", AppleProjectExtensionImpl::class.java, project, intellijProject)
     }
