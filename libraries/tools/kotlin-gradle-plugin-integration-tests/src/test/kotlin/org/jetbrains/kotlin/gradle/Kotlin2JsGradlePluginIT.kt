@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.JsMode
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
@@ -510,7 +510,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
         if (!irBackend) {
-            gradleProperties().appendText(jsMode(JsMode.LEGACY))
+            gradleProperties().appendText(jsMode(JsCompilerType.LEGACY))
         }
 
         build("build") {

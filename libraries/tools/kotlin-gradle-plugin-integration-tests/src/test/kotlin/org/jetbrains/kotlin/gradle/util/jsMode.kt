@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.jetbrains.kotlin.gradle.plugin.JsMode
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 
-fun jsMode(mode: JsMode) =
-    "\n${JsMode.jsModeProp}=$mode"
+fun jsMode(compilerType: JsCompilerType) =
+    "\n${JsCompilerType.jsCompilerProperty}=$compilerType"

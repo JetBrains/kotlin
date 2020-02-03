@@ -157,10 +157,10 @@ class KotlinMultiplatformPlugin(
 
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
-            when (propertiesProvider.jsMode) {
-                JsMode.LEGACY -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
-                JsMode.IR -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
-                JsMode.MIXED -> add(
+            when (propertiesProvider.jsCompiler) {
+                JsCompilerType.LEGACY -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
+                JsCompilerType.KLIB -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
+                JsCompilerType.BOTH -> add(
                     KotlinJsTargetPreset(
                         project,
                         kotlinPluginVersion,

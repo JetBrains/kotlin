@@ -166,10 +166,10 @@ open class KotlinJsPluginWrapper @Inject constructor(
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> {
         val propertiesProvider = PropertiesProvider(project)
 
-        return when (propertiesProvider.jsMode) {
-            JsMode.IR -> KotlinJsIrPlugin(kotlinPluginVersion)
-            JsMode.LEGACY -> KotlinJsPlugin(kotlinPluginVersion, false)
-            JsMode.MIXED -> KotlinJsPlugin(kotlinPluginVersion, true)
+        return when (propertiesProvider.jsCompiler) {
+            JsCompilerType.KLIB -> KotlinJsIrPlugin(kotlinPluginVersion)
+            JsCompilerType.LEGACY -> KotlinJsPlugin(kotlinPluginVersion, false)
+            JsCompilerType.BOTH -> KotlinJsPlugin(kotlinPluginVersion, true)
         }
     }
 
@@ -178,9 +178,9 @@ open class KotlinJsPluginWrapper @Inject constructor(
     override fun defineExtension(project: Project) {
         val propertiesProvider = PropertiesProvider(project)
 
-        projectExtensionClass = when (propertiesProvider.jsMode) {
-            JsMode.IR -> KotlinJsIrProjectExtension::class
-            JsMode.LEGACY, JsMode.MIXED -> KotlinJsProjectExtension::class
+        projectExtensionClass = when (propertiesProvider.jsCompiler) {
+            JsCompilerType.KLIB -> KotlinJsIrProjectExtension::class
+            JsCompilerType.LEGACY, JsCompilerType.BOTH -> KotlinJsProjectExtension::class
         }
     }
 

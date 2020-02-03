@@ -16,16 +16,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
-import org.jetbrains.kotlin.gradle.plugin.JsMode.Companion.jsModeProp
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import java.io.File
+import java.io.Serializable
 import java.util.*
 
 internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
@@ -172,8 +174,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Use Kotlin/JS backend mode
      */
-    val jsMode: JsMode
-        get() = property(jsModeProp)?.let { JsMode.byCompilerArgument(it) } ?: JsMode.IR
+    val jsCompiler: JsCompilerType
+        get() = property(jsCompilerProperty)?.let { JsCompilerType.byArgument(it) } ?: JsCompilerType.KLIB
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
@@ -209,15 +211,21 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 }
 
-enum class JsMode {
+enum class JsCompilerType : Named, Serializable {
     LEGACY,
-    IR,
-    MIXED;
+    KLIB,
+    BOTH;
+
+    override fun getName(): String =
+        name.toLowerCase()
+
+    override fun toString(): String =
+        getName()
 
     companion object {
-        const val jsModeProp = "kotlin.js.mode"
+        const val jsCompilerProperty = "kotlin.js.compiler"
 
-        fun byCompilerArgument(argument: String): JsMode? =
-            JsMode.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+        fun byArgument(argument: String): JsCompilerType? =
+            JsCompilerType.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }

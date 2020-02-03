@@ -11,7 +11,7 @@ import org.jdom.output.Format
 import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
-import org.jetbrains.kotlin.gradle.plugin.JsMode
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
@@ -212,7 +212,7 @@ abstract class BaseGradleIT {
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean? = null,
-        val jsMode: JsMode? = null
+        val jsCompilerType: JsCompilerType? = null
     )
 
     data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean, val incrementalKapt: Boolean = false, val includeCompileClasspath: Boolean = true)
@@ -764,8 +764,8 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.parallel.tasks.in.project=$it")
             }
 
-            options.jsMode?.let {
-                add("-Pkotlin.js.mode=$it")
+            options.jsCompilerType?.let {
+                add("-Pkotlin.js.compiler=$it")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

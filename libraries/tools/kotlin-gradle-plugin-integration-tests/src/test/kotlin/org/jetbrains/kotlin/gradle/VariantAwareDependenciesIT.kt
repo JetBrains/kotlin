@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.plugin.JsMode
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
-import kotlin.test.assertTrue
 
 class VariantAwareDependenciesIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.None
@@ -41,7 +40,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.klib")
             }
 
-            gradleProperties().appendText(jsMode(JsMode.LEGACY))
+            gradleProperties().appendText(jsMode(JsCompilerType.LEGACY))
 
             testResolveAllConfigurations(
                 subproject = innerProject.projectName,

@@ -185,8 +185,8 @@ constructor(
     }
 
     companion object {
-        val jsModeAttribute = Attribute.of(
-            "org.jetbrains.kotlin.js.mode",
+        val jsCompilerAttribute = Attribute.of(
+            "org.jetbrains.kotlin.js.compiler",
             String::class.java
         )
 
@@ -194,7 +194,7 @@ constructor(
         const val LEGACY = "legacy"
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
-            attributesSchema.attribute(jsModeAttribute)
+            attributesSchema.attribute(jsCompilerAttribute)
         }
     }
 }

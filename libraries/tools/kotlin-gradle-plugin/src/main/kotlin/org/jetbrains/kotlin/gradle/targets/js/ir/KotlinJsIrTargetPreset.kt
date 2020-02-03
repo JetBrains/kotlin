@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.JsMode
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset

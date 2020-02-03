@@ -4,10 +4,9 @@
  */
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
-import org.jetbrains.kotlin.gradle.plugin.JsMode
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -68,48 +67,48 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testLibAndApp() = doTestLibAndApp(
         "sample-lib",
         "sample-app",
-        JsMode.LEGACY
+        JsCompilerType.LEGACY
     )
 
     @Test
     fun testLibAndAppJsIr() = doTestLibAndApp(
         "sample-lib",
         "sample-app",
-        JsMode.IR
+        JsCompilerType.KLIB
     )
 
     @Test
     fun testLibAndAppJsMixed() = doTestLibAndApp(
         "sample-lib",
         "sample-app",
-        JsMode.MIXED
+        JsCompilerType.BOTH
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsMode.LEGACY
+        JsCompilerType.LEGACY
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsIr() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsMode.IR
+        JsCompilerType.KLIB
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsMixed() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsMode.MIXED
+        JsCompilerType.BOTH
     )
 
     private fun doTestLibAndApp(
         libProjectName: String,
         appProjectName: String,
-        jsMode: JsMode
+        jsCompilerType: JsCompilerType
     ) {
         val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
         val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
@@ -121,14 +120,14 @@ class NewMultiplatformIT : BaseGradleIT() {
         with(libProject) {
             build(
                 "publish",
-                options = defaultBuildOptions().copy(jsMode = jsMode)
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
                 assertSuccessful()
                 assertTasksExecuted(*compileTasksNames.toTypedArray(), ":jvm6Jar", ":nodeJsJar", ":metadataJar")
 
                 val groupDir = projectDir.resolve("repo/com/example")
                 val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0.jar"
-                val jsExtension = if (jsMode == JsMode.LEGACY) "jar" else "klib"
+                val jsExtension = if (jsCompilerType == JsCompilerType.LEGACY) "jar" else "klib"
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
                 val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
                 val wasmKlibName = "sample-lib-wasm32/1.0/sample-lib-wasm32-1.0.klib"
@@ -157,8 +156,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 Assert.assertTrue("com/example/lib/CommonKt.class" in jvmJarEntries)
                 Assert.assertTrue("com/example/lib/MainKt.class" in jvmJarEntries)
 
-                when (jsMode) {
-                    JsMode.LEGACY -> {
+                when (jsCompilerType) {
+                    JsCompilerType.LEGACY -> {
                         val jsJar = ZipFile(groupDir.resolve(jsJarName))
                         val compiledJs = jsJar.getInputStream(jsJar.getEntry("sample-lib.js")).reader().readText()
                         Assert.assertTrue("function id(" in compiledJs)
@@ -166,7 +165,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         Assert.assertTrue("function expectedFun(" in compiledJs)
                         Assert.assertTrue("function main(" in compiledJs)
                     }
-                    JsMode.IR -> {
+                    JsCompilerType.KLIB -> {
                         groupDir.resolve(jsJarName).exists()
                     }
                 }
@@ -214,7 +213,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
                 }
 
-                if (jsMode == JsMode.LEGACY) {
+                if (jsCompilerType == JsCompilerType.LEGACY) {
                     projectDir.resolve(targetClassesDir("nodeJs")).resolve("sample-app.js").readText().run {
                         Assert.assertTrue(contains("console.info"))
                         Assert.assertTrue(contains("function nodeJsMain("))
@@ -243,22 +242,22 @@ class NewMultiplatformIT : BaseGradleIT() {
             build(
                 "assemble",
                 "resolveRuntimeDependencies",
-                options = defaultBuildOptions().copy(jsMode = jsMode)
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
                 checkAppBuild()
                 assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
             }
 
-            if (jsMode == JsMode.MIXED) {
+            if (jsCompilerType == JsCompilerType.BOTH) {
                 listOf(
-                    JsMode.LEGACY,
-                    JsMode.IR
+                    JsCompilerType.LEGACY,
+                    JsCompilerType.KLIB
                 ).forEach {
                     build(
                         "assemble",
                         "resolveRuntimeDependencies",
                         "--rerun-tasks",
-                        options = defaultBuildOptions().copy(jsMode = it)
+                        options = defaultBuildOptions().copy(jsCompilerType = it)
                     ) {
                         checkAppBuild()
                         assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
@@ -279,13 +278,13 @@ class NewMultiplatformIT : BaseGradleIT() {
                 "clean",
                 "assemble",
                 "--rerun-tasks",
-                options = defaultBuildOptions().copy(jsMode = jsMode)
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
                 checkAppBuild()
             }
         }
 
-        if (jsMode != JsMode.LEGACY) return
+        if (jsCompilerType != JsCompilerType.LEGACY) return
 
         with(oldStyleAppProject) {
             setupWorkingDir()
@@ -899,7 +898,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
             build(
                 "publish",
-                options = defaultBuildOptions().copy(jsMode = JsMode.LEGACY)
+                options = defaultBuildOptions().copy(jsCompilerType = JsCompilerType.LEGACY)
             ) { assertSuccessful() }
             projectDir.resolve("repo")
         }
@@ -2311,7 +2310,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
             if (!jsIr) {
-                gradleProperties().appendText(jsMode(JsMode.LEGACY))
+                gradleProperties().appendText(jsMode(JsCompilerType.LEGACY))
             }
 
             val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
