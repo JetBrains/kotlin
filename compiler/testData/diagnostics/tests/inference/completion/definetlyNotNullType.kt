@@ -3,9 +3,9 @@
 
 fun <T : Derived?> test(derived: T) {
     <!DEBUG_INFO_EXPRESSION_TYPE("Out<Base>")!>id<Out<Base>>(
-        makeOut(
+        <!DEBUG_INFO_EXPRESSION_TYPE("Out<T!!>")!>makeOut(
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>makeDnn(derived)<!>
-        )
+        )<!>
     )<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>id<In<Base>>(
         <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>makeIn(
@@ -18,9 +18,9 @@ fun <T : Derived?> test(derived: T) {
         )<!>
     )<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("In<In<Base>>")!>id<In<In<Base>>>(
-        makeInIn(
+        <!DEBUG_INFO_EXPRESSION_TYPE("In<In<T!!>>")!>makeInIn(
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>makeDnn(derived)<!>
-        )
+        )<!>
     )<!>
 }
 
