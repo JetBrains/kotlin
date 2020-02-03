@@ -74,7 +74,12 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
                  },
                  createdElement -> {
                    if (createdElement != null) {
+                     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+                     Integer offset = getOffsetToPreserve(editor);
                      view.selectElement(createdElement);
+                     if (offset != null) {
+                       editor.getCaretModel().moveToOffset(offset);
+                     }
                      postProcess(createdElement, selectedTemplateName.get(), builder.getCustomProperties());
                    }
                  });
@@ -120,6 +125,13 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
   @NotNull
   protected String getErrorTitle() {
     return CommonBundle.getErrorTitle();
+  }
+
+  private static Integer getOffsetToPreserve(Editor editor) {
+    if (editor == null) return null;
+    int offset = editor.getCaretModel().getOffset();
+    if (offset == 0) return null;
+    return offset;
   }
 
   //todo append $END variable to templates?
