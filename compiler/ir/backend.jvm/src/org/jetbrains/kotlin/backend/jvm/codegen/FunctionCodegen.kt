@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
+import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
 import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -86,17 +87,19 @@ class FunctionCodegen(
             }
         }
 
+        // `$$forInline` versions of suspend functions have the same bodies as the originals, but with different
+        // name/flags/annotations and with no state machine.
+        val notForInline = irFunction.suspendForInlineToOriginal()
         if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
+        } else if (notForInline != null) {
+            classCodegen.generateMethodNode(notForInline).accept(MethodBodyVisitor(methodVisitor))
         } else {
-            // `$$forInline` versions of suspend functions have the same bodies are the originals, but with different
-            // name/flags/annotations and with no state machine.
-            val notForInline = irFunction.suspendForInlineToOriginal() ?: irFunction
-            val frameMap = notForInline.createFrameMapWithReceivers()
+            val frameMap = irFunction.createFrameMapWithReceivers()
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(notForInline, signature, frameMap, adapter, classCodegen, inlinedInto, smapOverride).generate()
+                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, smapOverride).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }

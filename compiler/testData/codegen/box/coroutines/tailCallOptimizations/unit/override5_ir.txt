@@ -22,8 +22,8 @@ final class Override5Kt$box$1 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
-@kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
 public final class Override5Kt$inlineMe$1$generic$1 {
     field L$0: java.lang.Object
     field label: int

@@ -46,12 +46,10 @@ class IrInlineCodegen(
     IrCallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        if (info.generateAssertField && (sourceCompiler as IrSourceCompilerForInline).isPrimaryCopy) {
-            codegen.classCodegen.generateAssertFieldIfNeeded()?.run {
-                // Generating <clinit> right now, so no longer can insert the initializer into it.
-                // Instead, ask ExpressionCodegen to generate the code for it directly.
-                accept(codegen, BlockInfo()).discard()
-            }
+        if (info.generateAssertField) {
+            // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
+            // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
+            codegen.classCodegen.generateAssertFieldIfNeeded()?.accept(codegen, BlockInfo())?.discard()
         }
     }
 
