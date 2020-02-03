@@ -11,7 +11,7 @@ import org.jdom.output.Format
 import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After

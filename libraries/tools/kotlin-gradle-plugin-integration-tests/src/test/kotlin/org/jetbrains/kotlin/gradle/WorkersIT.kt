@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.junit.Test
 
 class WorkersIT : BaseGradleIT() {

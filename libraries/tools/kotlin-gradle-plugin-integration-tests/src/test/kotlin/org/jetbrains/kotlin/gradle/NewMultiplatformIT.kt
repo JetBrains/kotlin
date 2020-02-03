@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin

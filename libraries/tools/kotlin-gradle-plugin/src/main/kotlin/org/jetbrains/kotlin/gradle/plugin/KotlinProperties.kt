@@ -16,18 +16,17 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Named
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.Companion.jsCompilerProperty
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import java.io.File
-import java.io.Serializable
 import java.util.*
 
 internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
@@ -208,24 +207,5 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 return get(CACHED_PROVIDER_EXT_NAME) as? PropertiesProvider
                     ?: PropertiesProvider(project) // Fallback if multiple class loaders are involved
             }
-    }
-}
-
-enum class JsCompilerType : Named, Serializable {
-    LEGACY,
-    KLIB,
-    BOTH;
-
-    override fun getName(): String =
-        name.toLowerCase()
-
-    override fun toString(): String =
-        getName()
-
-    companion object {
-        const val jsCompilerProperty = "kotlin.js.compiler"
-
-        fun byArgument(argument: String): JsCompilerType? =
-            JsCompilerType.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }

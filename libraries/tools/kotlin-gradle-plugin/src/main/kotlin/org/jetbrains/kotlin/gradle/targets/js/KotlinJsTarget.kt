@@ -12,11 +12,8 @@ import org.gradle.api.attributes.AttributesSchema
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
@@ -187,11 +184,8 @@ constructor(
     companion object {
         val jsCompilerAttribute = Attribute.of(
             "org.jetbrains.kotlin.js.compiler",
-            String::class.java
+            JsCompilerType::class.java
         )
-
-        const val IR = "ir"
-        const val LEGACY = "legacy"
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
             attributesSchema.attribute(jsCompilerAttribute)

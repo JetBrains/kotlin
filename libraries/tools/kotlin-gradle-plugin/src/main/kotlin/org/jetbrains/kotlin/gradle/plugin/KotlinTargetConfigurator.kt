@@ -28,9 +28,8 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget.Companion.IR
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget.Companion.LEGACY
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
@@ -450,11 +449,11 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
 
     if (target is KotlinJsTarget) {
-        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, LEGACY)
+        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, JsCompilerType.LEGACY)
     }
 
     if (target is KotlinJsIrTarget) {
-        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, IR)
+        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, JsCompilerType.KLIB)
     }
 
     // TODO: Provide an universal way to copy attributes from the target.
