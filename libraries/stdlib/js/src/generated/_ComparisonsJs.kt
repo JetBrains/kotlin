@@ -148,6 +148,76 @@ public actual inline fun maxOf(a: Double, b: Double, c: Double): Double {
 }
 
 /**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun <T : Comparable<T>> maxOf(a: T, vararg other: T): T {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun maxOf(a: Byte, vararg other: Byte): Byte {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun maxOf(a: Short, vararg other: Short): Short {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun maxOf(a: Int, vararg other: Int): Int {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun maxOf(a: Long, vararg other: Long): Long {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun maxOf(a: Float, vararg other: Float): Float {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun maxOf(a: Double, vararg other: Double): Double {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
  * Returns the smaller of two values.
  * If values are equal, returns the first one.
  */
@@ -280,5 +350,75 @@ public actual inline fun minOf(a: Float, b: Float, c: Float): Float {
 @Suppress("DEPRECATION_ERROR")
 public actual inline fun minOf(a: Double, b: Double, c: Double): Double {
     return Math.min(a, b, c)
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun <T : Comparable<T>> minOf(a: T, vararg other: T): T {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun minOf(a: Byte, vararg other: Byte): Byte {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun minOf(a: Short, vararg other: Short): Short {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun minOf(a: Int, vararg other: Int): Int {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun minOf(a: Long, vararg other: Long): Long {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun minOf(a: Float, vararg other: Float): Float {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+public actual fun minOf(a: Double, vararg other: Double): Double {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
 }
 

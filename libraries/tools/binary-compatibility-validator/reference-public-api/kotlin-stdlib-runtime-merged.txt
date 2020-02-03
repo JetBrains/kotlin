@@ -2605,14 +2605,30 @@ public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun compareBy ([Lkotlin/jvm/functions/Function1;)Ljava/util/Comparator;
 	public static final fun compareValues (Ljava/lang/Comparable;Ljava/lang/Comparable;)I
 	public static final fun compareValuesBy (Ljava/lang/Object;Ljava/lang/Object;[Lkotlin/jvm/functions/Function1;)I
+	public static final fun maxOf (B[B)B
+	public static final fun maxOf (D[D)D
+	public static final fun maxOf (F[F)F
+	public static final fun maxOf (I[I)I
+	public static final fun maxOf (J[J)J
 	public static final fun maxOf (Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun maxOf (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun maxOf (Ljava/lang/Comparable;[Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun maxOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun maxOf (Ljava/lang/Object;[Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun maxOf (S[S)S
+	public static final fun minOf (B[B)B
+	public static final fun minOf (D[D)D
+	public static final fun minOf (F[F)F
+	public static final fun minOf (I[I)I
+	public static final fun minOf (J[J)J
 	public static final fun minOf (Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun minOf (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun minOf (Ljava/lang/Comparable;[Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun minOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun minOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun minOf (Ljava/lang/Object;[Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun minOf (S[S)S
 	public static final fun naturalOrder ()Ljava/util/Comparator;
 	public static final fun nullsFirst (Ljava/util/Comparator;)Ljava/util/Comparator;
 	public static final fun nullsLast (Ljava/util/Comparator;)Ljava/util/Comparator;
@@ -2626,11 +2642,19 @@ public final class kotlin/comparisons/UComparisonsKt {
 	public static final fun maxOf-5PvTz6A (SS)S
 	public static final fun maxOf-J1ME1BU (II)I
 	public static final fun maxOf-Kr8caGY (BB)B
+	public static final fun maxOf-Md2H83M (I[I)I
+	public static final fun maxOf-R03FKyM (J[J)J
+	public static final fun maxOf-Wr6uiD8 (B[B)B
 	public static final fun maxOf-eb3DHEI (JJ)J
+	public static final fun maxOf-t1qELG4 (S[S)S
 	public static final fun minOf-5PvTz6A (SS)S
 	public static final fun minOf-J1ME1BU (II)I
 	public static final fun minOf-Kr8caGY (BB)B
+	public static final fun minOf-Md2H83M (I[I)I
+	public static final fun minOf-R03FKyM (J[J)J
+	public static final fun minOf-Wr6uiD8 (B[B)B
 	public static final fun minOf-eb3DHEI (JJ)J
+	public static final fun minOf-t1qELG4 (S[S)S
 }
 
 public final class kotlin/concurrent/ThreadsKt {

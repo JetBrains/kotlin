@@ -92,6 +92,50 @@ public inline fun maxOf(a: UShort, b: UShort, c: UShort): UShort {
 }
 
 /**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun maxOf(a: UInt, vararg other: UInt): UInt {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun maxOf(a: ULong, vararg other: ULong): ULong {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun maxOf(a: UByte, vararg other: UByte): UByte {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
+ * Returns the greater of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun maxOf(a: UShort, vararg other: UShort): UShort {
+    var max = a
+    for (e in other) max = maxOf(max, e)
+    return max
+}
+
+/**
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.3")
@@ -165,5 +209,49 @@ public inline fun minOf(a: UByte, b: UByte, c: UByte): UByte {
 @kotlin.internal.InlineOnly
 public inline fun minOf(a: UShort, b: UShort, c: UShort): UShort {
     return minOf(a, minOf(b, c))
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun minOf(a: UInt, vararg other: UInt): UInt {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun minOf(a: ULong, vararg other: ULong): ULong {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun minOf(a: UByte, vararg other: UByte): UByte {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
+}
+
+/**
+ * Returns the smaller of given values.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun minOf(a: UShort, vararg other: UShort): UShort {
+    var min = a
+    for (e in other) min = minOf(min, e)
+    return min
 }
 

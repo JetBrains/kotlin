@@ -27,6 +27,14 @@ class UComparisonsTest {
     }
 
     @Test
+    fun minOf_vararg() {
+        expect(1.toUByte()) { minOf(2.toUByte(), 1.toUByte(), 3.toUByte(), 2.toUByte(), 10.toUByte()) }
+        expect(55.toUShort()) { minOf(58.toUShort(), 32768.toUShort(), 55.toUShort(), 2423.toUShort()) }
+        expect(UInt.MIN_VALUE) { minOf(UInt.MIN_VALUE, UInt.MAX_VALUE, 0u, 1000u, (-1).toUInt(), Int.MAX_VALUE.toUInt()) }
+        expect(42312uL) { minOf(42312uL, 42312uL, 42312uL, 42312uL) }
+    }
+
+    @Test
     fun maxOf_2() {
         expect(2.toUByte()) { maxOf(2.toUByte(), 1.toUByte()) }
         expect(32768.toUShort()) { maxOf(58.toUShort(), 32768.toUShort()) }
@@ -40,5 +48,13 @@ class UComparisonsTest {
         expect(32768.toUShort()) { maxOf(58.toUShort(), 32768.toUShort(), 55.toUShort()) }
         expect(UInt.MAX_VALUE) { maxOf(UInt.MIN_VALUE, UInt.MAX_VALUE, 0u) }
         expect(42312uL) { maxOf(42312uL, 42312uL, 42312uL) }
+    }
+
+    @Test
+    fun maxOf_vararg() {
+        expect(10.toUByte()) { maxOf(2.toUByte(), 1.toUByte(), 3.toUByte(), 2.toUByte(), 10.toUByte()) }
+        expect(32768.toUShort()) { maxOf(58.toUShort(), 32768.toUShort(), 55.toUShort(), 2423.toUShort()) }
+        expect(UInt.MAX_VALUE) { maxOf(UInt.MIN_VALUE, UInt.MAX_VALUE, 0u, 1000u, (-1).toUInt(), Int.MAX_VALUE.toUInt()) }
+        expect(42312uL) { maxOf(42312uL, 42312uL, 42312uL, 42312uL) }
     }
 }
