@@ -240,20 +240,22 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
 
         visitDeclaration(memberDeclaration)
-        if (memberDeclaration !is FirCallableDeclaration<*>) { // Handled by visitCallableDeclaration
-            if (memberDeclaration is FirRegularClass) {
-                print(" " + memberDeclaration.name)
-            }
-            if (memberDeclaration is FirTypeAlias) {
-                print(" " + memberDeclaration.name)
-            }
-            if (memberDeclaration is FirTypeParametersOwner) {
+        when (memberDeclaration) {
+            is FirClassLikeDeclaration<*> -> {
+                if (memberDeclaration is FirRegularClass) {
+                    print(" " + memberDeclaration.name)
+                }
+                if (memberDeclaration is FirTypeAlias) {
+                    print(" " + memberDeclaration.name)
+                }
                 memberDeclaration.typeParameters.renderTypeParameters()
             }
-        } else {
-            if (memberDeclaration.typeParameters.isNotEmpty()) {
-                print(" ")
-                memberDeclaration.typeParameters.renderTypeParameters()
+            is FirCallableDeclaration<*> -> {
+                // Name is handled by visitCallableDeclaration
+                if (memberDeclaration.typeParameters.isNotEmpty()) {
+                    print(" ")
+                    memberDeclaration.typeParameters.renderTypeParameters()
+                }
             }
         }
     }
