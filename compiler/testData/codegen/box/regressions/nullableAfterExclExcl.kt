@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 interface Sample {
     val callMe: Int
 }
