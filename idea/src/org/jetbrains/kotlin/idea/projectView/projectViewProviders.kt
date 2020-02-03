@@ -28,8 +28,8 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
 
     // should be called after ClassesTreeStructureProvider
     override fun modify(
-        parent: AbstractTreeNode<Any>,
-        children: Collection<AbstractTreeNode<Any>>,
+        parent: AbstractTreeNodeAny,
+        children: Collection<AbstractTreeNodeAny>,
         settings: ViewSettings
     ): Collection<AbstractTreeNode<out Any>> {
         val result = ArrayList<AbstractTreeNode<out Any>>()
@@ -60,16 +60,16 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
         else -> null
     }
 
-    override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? = null
+    override fun getData(selected: Collection<AbstractTreeNodeAny>, dataName: String): Any? = null
 }
 
 
 class KotlinSelectInProjectViewProvider(private val project: Project) : SelectableTreeStructureProvider, DumbAware {
-    override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? = null
+    override fun getData(selected: Collection<AbstractTreeNodeAny>, dataName: String): Any? = null
 
     override fun modify(
-        parent: AbstractTreeNode<Any>,
-        children: Collection<AbstractTreeNode<Any>>,
+        parent: AbstractTreeNodeAny,
+        children: Collection<AbstractTreeNodeAny>,
         settings: ViewSettings
     ): Collection<AbstractTreeNode<out Any>> {
         return ArrayList(children)
