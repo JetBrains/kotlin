@@ -13,7 +13,7 @@ public abstract class AbstractBuildEvent implements BuildEvent {
   @NotNull
   private final Object myEventId;
   @Nullable
-  private final Object myParentId;
+  private Object myParentId;
   private final long myEventTime;
   @NotNull
   private final String myMessage;
@@ -39,6 +39,10 @@ public abstract class AbstractBuildEvent implements BuildEvent {
   @Override
   public Object getParentId() {
     return myParentId;
+  }
+
+  public void setParentId(@Nullable Object parentId) {
+    myParentId = parentId;
   }
 
   @Override
