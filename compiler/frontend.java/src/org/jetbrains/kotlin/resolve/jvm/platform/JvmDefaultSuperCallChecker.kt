@@ -23,7 +23,7 @@ class JvmDefaultSuperCallChecker : CallChecker {
         if (getSuperCallExpression(resolvedCall.call) == null) return
 
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
-        if (!resultingDescriptor.hasJvmDefaultAnnotation()) return
+        if (!resultingDescriptor.hasJvmDefaultAnnotation(jvmDefaultMode)) return
 
         if (DescriptorUtils.isInterface(resultingDescriptor.containingDeclaration)) {
             context.trace.report(ErrorsJvm.USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL.on(reportOn))

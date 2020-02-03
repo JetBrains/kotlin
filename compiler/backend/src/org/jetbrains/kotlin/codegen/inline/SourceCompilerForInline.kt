@@ -408,7 +408,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                         when {
                             DescriptorUtils.isInterface(descriptor) &&
                                     innerDescriptor !is ClassDescriptor &&
-                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() ->
+                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation(state.jvmDefaultMode) ->
                                 OwnerKind.DEFAULT_IMPLS
                             else ->
                                 OwnerKind.IMPLEMENTATION

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -40,9 +41,9 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
         if (descriptor is ClassDescriptor) {
             val hasDeclaredJvmDefaults =
                 descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().any {
-                    it.kind.isReal && it.hasJvmDefaultAnnotation()
+                    it.kind.isReal && it.hasJvmDefaultAnnotation(jvmDefaultMode)
                 }
-            if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, jvmDefaultMode.isEnabled)) {
+            if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, jvmDefaultMode)) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_THROUGH_INHERITANCE.on(declaration))
             }
         }
@@ -65,15 +66,15 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
         }
     }
 
-    private fun checkJvmDefaultsInHierarchy(descriptor: DeclarationDescriptor, enableJvmDefault: Boolean): Boolean {
-        if (enableJvmDefault) return true
+    private fun checkJvmDefaultsInHierarchy(descriptor: DeclarationDescriptor, jvmDefaultMode: JvmDefaultMode): Boolean {
+        if (jvmDefaultMode.isEnabled) return true
 
         if (descriptor !is ClassDescriptor) return true
 
         return descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
             .all { memberDescriptor ->
                 memberDescriptor.kind.isReal || OverridingUtil.filterOutOverridden(memberDescriptor.overriddenDescriptors.toSet()).all {
-                    !isInterface(it.containingDeclaration) || !it.hasJvmDefaultAnnotation() || it.modality == Modality.ABSTRACT
+                    !isInterface(it.containingDeclaration) || !it.hasJvmDefaultAnnotation(jvmDefaultMode) || it.modality == Modality.ABSTRACT
                 }
             }
     }

@@ -54,6 +54,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val isParamAssertionsDisabled = state.isParamAssertionsDisabled
     private val unifiedNullChecks = state.unifiedNullChecks
     override val metadataVersion = state.metadataVersion
+    private val jvmDefaultMode = state.jvmDefaultMode
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
@@ -98,7 +99,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         if (
             isInterface(classDescriptor) &&
             classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
-                it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
+                it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation(jvmDefaultMode) //TODO: new requirements for new option
             }
         ) {
             builder.addVersionRequirement(

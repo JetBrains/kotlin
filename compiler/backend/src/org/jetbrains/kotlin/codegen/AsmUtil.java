@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -308,9 +306,9 @@ public class AsmUtil {
         return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, JvmDefaultMode jvmDefaultMode) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
-                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)))
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor, jvmDefaultMode)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
@@ -325,10 +323,15 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        return getMethodAsmFlags(functionDescriptor, kind, state.getDeprecationProvider());
+        return getMethodAsmFlags(functionDescriptor, kind, state.getDeprecationProvider(), state.getJvmDefaultMode());
     }
 
-    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, DeprecationResolver deprecationResolver) {
+    public static int getMethodAsmFlags(
+            FunctionDescriptor functionDescriptor,
+            OwnerKind kind,
+            DeprecationResolver deprecationResolver,
+            JvmDefaultMode jvmDefaultMode
+    ) {
         int flags = getCommonCallableFlags(functionDescriptor, kind, deprecationResolver);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
@@ -356,7 +359,7 @@ public class AsmUtil {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind)) {
+        if (isAbstractMethod(functionDescriptor, kind, jvmDefaultMode)) {
             flags |= ACC_ABSTRACT;
         }
 

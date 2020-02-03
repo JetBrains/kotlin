@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -61,13 +62,14 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
         val realDescriptor = unwrapFakeOverride(descriptor)
         val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
 
-        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.hasJvmDefaultAnnotation())) {
+        val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.hasJvmDefaultAnnotation(jvmDefaultMode))) {
             val bindingContext = context.trace.bindingContext
             val thisForSuperCall = getSuperCallLabelTarget(bindingContext, superCallExpression)
 
             if (thisForSuperCall != null && DescriptorUtils.isInterface(thisForSuperCall)) {
                 val declarationWithCall = findInterfaceMember(thisForSuperCall, superCallExpression, bindingContext)
-                if (declarationWithCall?.hasJvmDefaultAnnotation() == false) {
+                if (declarationWithCall?.hasJvmDefaultAnnotation(jvmDefaultMode) == false) {
                     context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
                     return
                 }

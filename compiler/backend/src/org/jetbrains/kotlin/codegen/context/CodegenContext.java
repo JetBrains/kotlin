@@ -438,7 +438,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull D descriptor,
             @Nullable ClassDescriptor superCallTarget,
             @NotNull GenerationState state) {
-        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor)) {
+        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor, state.getJvmDefaultMode())) {
             CodegenContext afterInline = getFirstCrossInlineOrNonInlineContext();
             CodegenContext c = afterInline.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + descriptor;
@@ -593,8 +593,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         boolean isInliningContext = properContext.isInlineMethodContext();
-        boolean sameJvmDefault = hasJvmDefaultAnnotation(descriptor) ==
-                                 isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor) ||
+        boolean sameJvmDefault = hasJvmDefaultAnnotation(descriptor, getState().getJvmDefaultMode()) ==
+                                 isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor, getState().getJvmDefaultMode()) ||
                                  properContext.contextDescriptor instanceof AccessorForCallableDescriptor;
         if (!isInliningContext && (
                 !properContext.hasThisDescriptor() ||
@@ -651,7 +651,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             return descriptor;
         }
 
-        if (hasJvmDefaultAnnotation(descriptor) && descriptorContext instanceof DefaultImplsClassContext) {
+        if (hasJvmDefaultAnnotation(descriptor, getState().getJvmDefaultMode()) && descriptorContext instanceof DefaultImplsClassContext) {
             descriptorContext = ((DefaultImplsClassContext) descriptorContext).getInterfaceContext();
         }
 

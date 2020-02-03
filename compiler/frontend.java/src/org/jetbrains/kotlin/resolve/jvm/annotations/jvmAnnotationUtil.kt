@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -40,11 +41,11 @@ fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? =
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean =
     findJvmFieldAnnotation() != null
 
-fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation(): Boolean =
-    this is CallableMemberDescriptor && hasJvmDefaultAnnotation()
+fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation(jvmDefault: JvmDefaultMode): Boolean =
+    this is CallableMemberDescriptor && hasJvmDefaultAnnotation(jvmDefault)
 
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
-    DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+fun CallableMemberDescriptor.hasJvmDefaultAnnotation(jvmDefault: JvmDefaultMode): Boolean =
+    jvmDefault.forAllMehtodsWithBody || DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
 fun CallableMemberDescriptor.hasPlatformDependentAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)

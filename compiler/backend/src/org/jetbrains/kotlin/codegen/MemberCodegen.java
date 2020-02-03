@@ -402,7 +402,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
-                if (isInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)) {
+                if (isInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor, state.getJvmDefaultMode())) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -744,7 +744,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     protected final void generateSyntheticAccessors() {
         for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
-            boolean hasJvmDefaultAnnotation = hasJvmDefaultAnnotation(accessor.getCalleeDescriptor());
+            boolean hasJvmDefaultAnnotation = hasJvmDefaultAnnotation(accessor.getCalleeDescriptor(), state.getJvmDefaultMode());
             OwnerKind kind = context.getContextKind();
 
             if (!isInterface(context.getContextDescriptor()) ||
@@ -934,7 +934,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
         boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) &&
-                                      !isNonDefaultInterfaceMember(functionDescriptor) &&
+                                      !isNonDefaultInterfaceMember(functionDescriptor, state.getJvmDefaultMode()) &&
                                       !isJvmStaticInObjectOrClass &&
                                       !InlineClassesUtilsKt.isInlineClass(functionDescriptor.getContainingDeclaration());
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;

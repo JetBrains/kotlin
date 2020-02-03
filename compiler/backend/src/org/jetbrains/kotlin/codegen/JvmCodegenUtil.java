@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JvmAnalysisFlags;
+import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -67,7 +68,7 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor) {
+    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull JvmDefaultMode jvmDefaultMode) {
         if (!isJvmInterface(descriptor.getContainingDeclaration())) {
             return false;
         }
@@ -75,7 +76,7 @@ public class JvmCodegenUtil {
             return descriptor.getModality() == Modality.ABSTRACT;
         }
 
-        return !hasJvmDefaultAnnotation(descriptor);
+        return !hasJvmDefaultAnnotation(descriptor, jvmDefaultMode);
     }
 
     public static boolean isJvmInterface(@Nullable DeclarationDescriptor descriptor) {

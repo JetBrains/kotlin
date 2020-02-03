@@ -248,7 +248,12 @@ private fun KtUltraLightClass.lightMethod(
     val name = if (descriptor is ConstructorDescriptor) name else support.typeMapper.mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
 
     val accessFlags: Int by lazyPub {
-        val asmFlags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, support.deprecationResolver)
+        val asmFlags = AsmUtil.getMethodAsmFlags(
+            descriptor,
+            OwnerKind.IMPLEMENTATION,
+            support.deprecationResolver,
+            support.typeMapper.jvmDefaultMode,
+        )
         packMethodFlags(asmFlags, JvmCodegenUtil.isJvmInterface(kotlinOrigin.resolve() as? ClassDescriptor))
     }
 
