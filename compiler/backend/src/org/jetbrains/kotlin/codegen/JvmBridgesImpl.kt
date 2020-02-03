@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefaultIfNoAbstract
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasPlatformDependentAnnotation
 
 class DescriptorBasedFunctionHandleForJvm(
@@ -67,7 +67,7 @@ private val FunctionDescriptor.isJavaForKotlinOverrideProperty: Boolean
     get() = this is PropertyAccessorDescriptor && correspondingProperty is JavaForKotlinOverridePropertyDescriptor
 
 private fun CallableMemberDescriptor.isJvmDefaultOrPlatformDependent(jvmDefaultMode: JvmDefaultMode) =
-    hasJvmDefaultAnnotation(jvmDefaultMode) || hasPlatformDependentAnnotation()
+    isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode) || hasPlatformDependentAnnotation()
 
 private fun needToGenerateDelegationToDefaultImpls(descriptor: FunctionDescriptor, jvmDefaultMode: JvmDefaultMode): Boolean {
     if (findInterfaceImplementation(descriptor) == null) return false

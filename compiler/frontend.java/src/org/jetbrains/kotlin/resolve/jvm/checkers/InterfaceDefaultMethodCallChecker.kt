@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpressio
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefaultIfNoAbstract
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 
 class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {
@@ -63,13 +63,13 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
         val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
 
         val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
-        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.hasJvmDefaultAnnotation(jvmDefaultMode))) {
+        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode))) {
             val bindingContext = context.trace.bindingContext
             val thisForSuperCall = getSuperCallLabelTarget(bindingContext, superCallExpression)
 
             if (thisForSuperCall != null && DescriptorUtils.isInterface(thisForSuperCall)) {
                 val declarationWithCall = findInterfaceMember(thisForSuperCall, superCallExpression, bindingContext)
-                if (declarationWithCall?.hasJvmDefaultAnnotation(jvmDefaultMode) == false) {
+                if (declarationWithCall?.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode) == false) {
                     context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
                     return
                 }

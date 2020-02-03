@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -63,7 +64,6 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYN
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -402,7 +402,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
-                if (isInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor, state.getJvmDefaultMode())) {
+                if (isInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
+                        .isCompiledToJvmDefaultIfNoAbstract(functionDescriptor, state.getJvmDefaultMode())) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -744,12 +745,13 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     protected final void generateSyntheticAccessors() {
         for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
-            boolean hasJvmDefaultAnnotation = hasJvmDefaultAnnotation(accessor.getCalleeDescriptor(), state.getJvmDefaultMode());
+            boolean compiledToJvmDefault =
+                    JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(accessor.getCalleeDescriptor(), state.getJvmDefaultMode());
             OwnerKind kind = context.getContextKind();
 
             if (!isInterface(context.getContextDescriptor()) ||
-                (hasJvmDefaultAnnotation && kind == OwnerKind.IMPLEMENTATION) ||
-                (!hasJvmDefaultAnnotation && kind == OwnerKind.DEFAULT_IMPLS)) {
+                (compiledToJvmDefault && kind == OwnerKind.IMPLEMENTATION) ||
+                (!compiledToJvmDefault && kind == OwnerKind.DEFAULT_IMPLS)) {
                 generateSyntheticAccessor(accessor);
             }
         }

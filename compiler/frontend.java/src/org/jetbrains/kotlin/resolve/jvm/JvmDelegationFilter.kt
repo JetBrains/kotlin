@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -36,7 +35,7 @@ object JvmDelegationFilter : DelegationFilter {
         //We always have only one implementation otherwise it's an error in kotlin and java
         val realMember = DescriptorUtils.unwrapFakeOverride(interfaceMember)
         return !isJavaDefaultMethod(realMember) &&
-                !realMember.hasJvmDefaultAnnotation(languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)) &&
+                !realMember.hasJvmDefaultAnnotation() &&
                 !isBuiltInMemberMappedToJavaDefault(realMember)
     }
 

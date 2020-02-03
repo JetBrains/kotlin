@@ -41,11 +41,14 @@ fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? =
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean =
     findJvmFieldAnnotation() != null
 
-fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation(jvmDefault: JvmDefaultMode): Boolean =
-    this is CallableMemberDescriptor && hasJvmDefaultAnnotation(jvmDefault)
+fun DeclarationDescriptor.isCallableMemberCompiledToJvmDefaultIfNoAbstract(jvmDefault: JvmDefaultMode): Boolean =
+    this is CallableMemberDescriptor && isCompiledToJvmDefaultIfNoAbstract(jvmDefault)
 
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation(jvmDefault: JvmDefaultMode): Boolean =
+fun CallableMemberDescriptor.isCompiledToJvmDefaultIfNoAbstract(jvmDefault: JvmDefaultMode): Boolean =
     jvmDefault.forAllMehtodsWithBody || DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+
+fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
+    DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
 fun CallableMemberDescriptor.hasPlatformDependentAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)

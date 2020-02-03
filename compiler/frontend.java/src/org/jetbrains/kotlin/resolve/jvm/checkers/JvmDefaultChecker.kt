@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefaultIfNoAbstract
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
@@ -41,7 +41,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
         if (descriptor is ClassDescriptor) {
             val hasDeclaredJvmDefaults =
                 descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().any {
-                    it.kind.isReal && it.hasJvmDefaultAnnotation(jvmDefaultMode)
+                    it.kind.isReal && it.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode)
                 }
             if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, jvmDefaultMode)) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_THROUGH_INHERITANCE.on(declaration))
@@ -74,7 +74,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
         return descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
             .all { memberDescriptor ->
                 memberDescriptor.kind.isReal || OverridingUtil.filterOutOverridden(memberDescriptor.overriddenDescriptors.toSet()).all {
-                    !isInterface(it.containingDeclaration) || !it.hasJvmDefaultAnnotation(jvmDefaultMode) || it.modality == Modality.ABSTRACT
+                    !isInterface(it.containingDeclaration) || !it.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode) || it.modality == Modality.ABSTRACT
                 }
             }
     }

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineOnlyKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -83,7 +84,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -732,7 +732,7 @@ public class FunctionCodegen {
             @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
-               hasJvmDefaultAnnotation(functionDescriptor, jvmDefaultMode) &&
+               JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(functionDescriptor, jvmDefaultMode) &&
                jvmDefaultMode.isCompatibility();
     }
 
@@ -1460,7 +1460,7 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
-            if (hasJvmDefaultAnnotation(descriptor, state.getJvmDefaultMode())) {
+            if (JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, state.getJvmDefaultMode())) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
@@ -1650,7 +1650,7 @@ public class FunctionCodegen {
         assert isInterface(containingDeclaration) : "'processInterfaceMethod' method should be called only for interfaces, but: " +
                                                     containingDeclaration;
 
-        if (hasJvmDefaultAnnotation(memberDescriptor, mode)) {
+        if (JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(memberDescriptor, mode)) {
             return (kind != OwnerKind.DEFAULT_IMPLS && !isSynthetic) ||
                    (kind == OwnerKind.DEFAULT_IMPLS && (isSynthetic || mode.isCompatibility()));
         } else {

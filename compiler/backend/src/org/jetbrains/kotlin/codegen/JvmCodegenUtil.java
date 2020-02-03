@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
@@ -60,7 +61,6 @@ import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
@@ -76,7 +76,7 @@ public class JvmCodegenUtil {
             return descriptor.getModality() == Modality.ABSTRACT;
         }
 
-        return !hasJvmDefaultAnnotation(descriptor, jvmDefaultMode);
+        return !JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, jvmDefaultMode);
     }
 
     public static boolean isJvmInterface(@Nullable DeclarationDescriptor descriptor) {
