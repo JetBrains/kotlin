@@ -10,6 +10,9 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
@@ -101,4 +104,11 @@ open class DefaultCInteropSettings @Inject constructor(
     override fun extraOpts(values: List<Any>) {
         extraOpts.addAll(values.map { it.toString() })
     }
+
+    lateinit var otherCflags: Property<String>
+
+    lateinit var headerSearchPaths: Property<String>
+
+    lateinit var frameworkSearchPaths: Property<String>
+
 }

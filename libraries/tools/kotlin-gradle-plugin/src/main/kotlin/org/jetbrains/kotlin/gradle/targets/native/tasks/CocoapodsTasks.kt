@@ -8,22 +8,16 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.wrapper.Wrapper
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_IOS_DEVICE
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_WATCHOS_DEVICE
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
-import org.jetbrains.kotlin.gradle.plugin.getConvention
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 /**
  * The task generates a podspec file which allows a user to
@@ -62,10 +56,6 @@ open class PodspecTask : DefaultTask() {
             """.trimIndent()
         }
 
-        val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
-        val syncTask = "${project.path}:$SYNC_TASK_NAME"
-
-
         outputFile.writeText(
             """
             |Pod::Spec.new do |spec|
@@ -84,19 +74,19 @@ open class PodspecTask : DefaultTask() {
             |
             $dependencies
             |
-            |    spec.pod_target_xcconfig = {
-            |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
-            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
-            |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
-            |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
-            |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
-            |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
-            |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
-            |    }
-            |
             |end
         """.trimMargin()
-            //            |    spec.script_phases = [
+//           v |    spec.pod_target_xcconfig = {
+//            |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
+//            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
+//            |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+//            |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
+//            |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
+//            |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
+//            |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
+//            |    }
+//            |
+//            |    spec.script_phases = [
 //            |        {
 //            |            :name => 'Build $specName',
 //            |            :execution_position => :before_compile,
@@ -140,7 +130,19 @@ open class PodInstallTask : DefaultTask() {
     lateinit var xcodeprojProvider: Provider<File>
 
     @Internal
-    val buildParametersMap = mutableMapOf<String, String>()
+    val koltinTarget: Property<String> = project.newProperty { "" }
+
+    @Internal
+    val configuration: Property<String> = project.newProperty { "" }
+
+    @Internal
+    val otherCflags: Property<String> = project.newProperty { "" }
+
+    @Internal
+    val headerSearchPaths: Property<String> = project.newProperty { "" }
+
+    @Internal
+    val frameworkSearchPaths: Property<String> = project.newProperty { "" }
 
     @TaskAction
     fun invoke() {
@@ -171,23 +173,34 @@ open class PodInstallTask : DefaultTask() {
             )
 
             val stdOut = buildSettingsProcess.inputStream.bufferedReader().use { it.readText() }
-//            stdOut.lines()
-//                .map {
-//                    val (k, v) = it.split(" = ")
-//                    k to v
-//                }.filter { it.first in buildSettingsMap.keys }
-//                .map { buildSettingsMap.getValue(it.first) to it.second }
-//                .forEach { buildParametersMap[it.first] = it.second }
+
+            val buildParameters = stdOut.lines()
+                .asSequence()
+                .filter { it.matches("\\w*(.+) = (.+)".toRegex()) }
+                .map { val (k, v) = it.trim().split(" = "); k to v }
+                .toMap()
+
+            val platform = buildParameters["CORRESPONDING_SIMULATOR_PLATFORM_NAME"] ?: ""
+            val entry = KOTLIN_TARGET.entries.find { platform.startsWith(it.key) }
+            koltinTarget.set(entry?.value)
+            configuration.set(buildParameters["CONFIGURATION"])
+            otherCflags.set(buildParameters["OTHER_CFLAGS"])
+            headerSearchPaths.set(buildParameters["HEADER_SEARCH_PATHS"])
+            frameworkSearchPaths.set(buildParameters["FRAMEWORK_SEARCH_PATHS"])
         }
     }
 
     companion object {
-        private val buildSettingsMap = mapOf(
-            "CONFIGURATION" to KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY,
-            "OTHER_CFLAGS" to KotlinCocoapodsPlugin.CFLAGS_PROPERTY,
-            "HEADER_SEARCH_PATHS" to KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY,
-            "FRAMEWORK_SEARCH_PATHS" to KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY
+        val KOTLIN_TARGET: Map<String, String> = mapOf(
+            "iphonesimulator" to "ios_x64",
+            "iphoneos" to KotlinCocoapodsPlugin.KOTLIN_TARGET_FOR_IOS_DEVICE,
+            "watchsimulator" to "watchos_x86",
+            "watchos" to KotlinCocoapodsPlugin.KOTLIN_TARGET_FOR_WATCHOS_DEVICE,
+            "appletvsimulator" to "tvos_x64",
+            "appletvos" to "tvos_arm64",
+            "macosx" to "macos_x64"
         )
+
     }
 }
 
