@@ -197,8 +197,6 @@ public class GradleExecutionHelper {
     GradleProgressListener gradleProgressListener = new GradleProgressListener(listener, id, buildRootDir);
     operation.addProgressListener((ProgressListener)gradleProgressListener);
     operation.addProgressListener(gradleProgressListener,
-                                  OperationType.GENERIC,
-                                  OperationType.PROJECT_CONFIGURATION,
                                   OperationType.TASK,
                                   OperationType.TEST);
     operation.setStandardOutput(standardOutput);

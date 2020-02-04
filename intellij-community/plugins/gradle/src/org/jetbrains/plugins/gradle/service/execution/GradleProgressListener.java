@@ -25,6 +25,7 @@ import org.gradle.tooling.ProgressListener;
 import org.gradle.tooling.events.FinishEvent;
 import org.gradle.tooling.events.OperationResult;
 import org.gradle.tooling.events.StatusEvent;
+import org.gradle.tooling.events.configuration.ProjectConfigurationProgressEvent;
 import org.gradle.tooling.events.task.TaskProgressEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,12 +40,13 @@ import static com.intellij.openapi.util.text.StringUtil.formatFileSize;
  * @author Vladislav.Soroka
  */
 public class GradleProgressListener implements ProgressListener, org.gradle.tooling.events.ProgressListener {
-  private final Map<Object, BuildPhase> myEventIds = new HashMap<>();
   private final ExternalSystemTaskNotificationListener myListener;
   private final ExternalSystemTaskId myTaskId;
   private final Map<Object, Long> myStatusEventIds = new HashMap<>();
   private final int myOperationId;
+  private final String myOperationIdUnderscore;
   private static final String STARTING_GRADLE_DAEMON_EVENT = "Starting Gradle Daemon";
+  private ExternalSystemTaskNotificationEvent myLastStatusChange = null;
 
   public GradleProgressListener(@NotNull ExternalSystemTaskNotificationListener listener,
                                 @NotNull ExternalSystemTaskId taskId) {
@@ -57,45 +59,43 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
     myListener = listener;
     myTaskId = taskId;
     myOperationId = taskId.hashCode() + FileUtil.pathHashCode(buildRootDir == null ? UUID.randomUUID().toString() : buildRootDir);
+    myOperationIdUnderscore = myOperationId + "_";
   }
 
   @Override
   public void statusChanged(org.gradle.tooling.events.ProgressEvent event) {
-    String operationId = myOperationId + "_";
-    GradleProgressEventConverter.EventId eventId = GradleProgressEventConverter.getEventId(event, operationId);
+    GradleProgressEventConverter.EventId eventId = GradleProgressEventConverter.getEventId(event, myOperationIdUnderscore);
 
-    if (eventId.parentId == null) {
-      ExternalSystemTaskNotificationEvent progressBuildEvent = GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event);
-      myListener.onStatusChange(progressBuildEvent);
+    if (event instanceof ProjectConfigurationProgressEvent) {
       sendProgressToOutput(event);
     }
-    else {
-      BuildPhase buildPhase = myEventIds.get(eventId.parentId);
-      if (buildPhase == null) {
-        String operationName = event.getDescriptor().getName();
-        buildPhase = BuildPhase.find(operationName);
-        if (buildPhase != null) {
-          myListener.onStatusChange(GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event));
-        }
-      }
-      if (event instanceof TaskProgressEvent) {
-        ExternalSystemTaskNotificationEvent notificationEvent = GradleProgressEventConverter.convert(
-          myTaskId, event, new GradleProgressEventConverter.EventId(eventId.id, myTaskId));
-        myListener.onStatusChange(notificationEvent);
-        buildPhase = BuildPhase.RUN_TASKS;
-      }
-
-      if (buildPhase != null) {
-        myEventIds.put(eventId.id, buildPhase);
-      }
+    ExternalSystemTaskNotificationEvent progressBuildEvent =
+      GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event);
+    maybeUpdateTaskStatus(progressBuildEvent);
+    if (event instanceof TaskProgressEvent) {
+      ExternalSystemTaskNotificationEvent notificationEvent = GradleProgressEventConverter.convert(
+        myTaskId, event, new GradleProgressEventConverter.EventId(eventId.id, myTaskId));
+      myListener.onStatusChange(notificationEvent);
     }
   }
 
   @Override
   public void statusChanged(ProgressEvent event) {
     String eventDescription = event.getDescription();
+    ExternalSystemTaskNotificationEvent progressBuildEvent =
+      GradleProgressEventConverter.legacyCreateProgressBuildEvent(myTaskId, myTaskId, eventDescription);
+    maybeUpdateTaskStatus(progressBuildEvent);
     myListener.onStatusChange(new ExternalSystemTaskNotificationEvent(myTaskId, eventDescription));
     reportGradleDaemonStartingEvent(eventDescription);
+  }
+
+  private void maybeUpdateTaskStatus(@Nullable ExternalSystemTaskNotificationEvent progressBuildEvent) {
+    if (progressBuildEvent != null) {
+      if (!progressBuildEvent.equals(myLastStatusChange)) {
+        myListener.onStatusChange(progressBuildEvent);
+        myLastStatusChange = progressBuildEvent;
+      }
+    }
   }
 
   private void sendProgressToOutput(org.gradle.tooling.events.ProgressEvent progressEvent) {

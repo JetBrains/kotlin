@@ -24,8 +24,10 @@ import org.gradle.tooling.events.*;
 import org.gradle.tooling.events.internal.DefaultOperationDescriptor;
 import org.gradle.tooling.events.task.TaskProgressEvent;
 import org.gradle.tooling.events.task.TaskSuccessResult;
+import org.gradle.tooling.events.test.TestProgressEvent;
 import org.gradle.tooling.internal.protocol.events.InternalOperationDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Vladislav.Soroka
@@ -101,6 +103,7 @@ public class GradleProgressEventConverter {
     }
   }
 
+  @Nullable
   static ExternalSystemTaskNotificationEvent createProgressBuildEvent(@NotNull ExternalSystemTaskId taskId,
                                                                       @NotNull Object id,
                                                                       @NotNull ProgressEvent event) {
@@ -112,13 +115,56 @@ public class GradleProgressEventConverter {
       String path = operationName.substring("Download ".length());
       operationName = "Download " + getFileName(path);
     }
-    if(event instanceof StatusEvent) {
+    else if (event instanceof TaskProgressEvent) {
+      operationName = "Run tasks";
+    }
+    else if (event instanceof TestProgressEvent) {
+      operationName = "Run tests";
+    }
+    else if (event.getDisplayName().startsWith("Configure project ") || event.getDisplayName().startsWith("Cross-configure project ")) {
+      operationName = "Configure projects";
+    }
+    else {
+      return null;
+    }
+    if (event instanceof StatusEvent) {
       total = ((StatusEvent)event).getTotal();
       progress = ((StatusEvent)event).getProgress();
       unit = ((StatusEvent)event).getUnit();
     }
     return new ExternalSystemBuildEvent(
       taskId, new ProgressBuildEventImpl(id, null, event.getEventTime(), operationName + "...", total, progress, unit));
+  }
+
+  @Nullable
+  static ExternalSystemTaskNotificationEvent legacyCreateProgressBuildEvent(@NotNull ExternalSystemTaskId taskId,
+                                                                            @NotNull Object id,
+                                                                            @NotNull String event) {
+    long total = -1;
+    long progress = -1;
+    String unit = "";
+    String operationName = event;
+    if (operationName.startsWith("Download ")) {
+      String path = operationName.substring("Download ".length());
+      operationName = "Download " + getFileName(path);
+    }
+    else if (operationName.startsWith("Task: ")) {
+      operationName = "Run tasks";
+    }
+    else if (operationName.equals("Build")) {
+      operationName = "Build";
+    }
+    else if (operationName.startsWith("Build model ") || operationName.startsWith("Build parameterized model")) {
+      operationName = "Build model";
+    }
+    else if (operationName.startsWith("Configure project ") || operationName.startsWith("Cross-configure project ")) {
+      operationName = "Configure projects";
+    }
+    else {
+      return null;
+    }
+    return new ExternalSystemBuildEvent(
+      taskId, new ProgressBuildEventImpl(id, null, 0, operationName + "...", total, progress, unit));
   }
 
   @NotNull
