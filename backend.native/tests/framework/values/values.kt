@@ -255,13 +255,13 @@ fun multiply(int: Int, long: Long) = int * long
 class MyException : Exception()
 
 open class BridgeBase {
-    @Throws
+    @Throws(MyException::class)
     open fun foo1(): Any = Any()
-    @Throws
+    @Throws(MyException::class)
     open fun foo2(): Int = 42
-    @Throws
+    @Throws(MyException::class)
     open fun foo3(): Unit = Unit
-    @Throws
+    @Throws(MyException::class)
     open fun foo4(): Nothing? = throw IllegalStateException()
 }
 
