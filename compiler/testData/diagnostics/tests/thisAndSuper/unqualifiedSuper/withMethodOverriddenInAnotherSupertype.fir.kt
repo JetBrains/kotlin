@@ -15,7 +15,7 @@ class Test1 : C(), A {
         // Abstract 'foo' defined in 'C' wins against non-abstract 'foo' defined in 'A',
         // because 'C' is a subclass of 'A' (and 'C::foo' overrides 'A::foo'),
         // even though 'A' is explicitly listed in supertypes list for 'D'.
-        super.<!AMBIGUITY!>foo<!>()
+        super.foo()
     }
 }
 

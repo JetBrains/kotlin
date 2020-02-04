@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedReifiedParameterRefe
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
@@ -139,7 +140,10 @@ class FirCallResolver(
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+            val onSuperReference = (functionCall.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            conflictResolver.chooseMaximallySpecificCandidates(
+                bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
+            )
         }
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
@@ -176,7 +180,10 @@ class FirCallResolver(
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+            val onSuperReference = (qualifiedAccess.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            conflictResolver.chooseMaximallySpecificCandidates(
+                bestCandidates, discriminateGenerics = false, discriminateAbstracts = onSuperReference
+            )
         }
         val nameReference = createResolvedNamedReference(
             callee,

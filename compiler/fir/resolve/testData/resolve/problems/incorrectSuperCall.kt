@@ -17,7 +17,7 @@ class C : A, B() {
 
         super.<!AMBIGUITY!>bar<!>() // should be ambiguity (NB: really we should have overridden bar in C)
 
-        super.<!AMBIGUITY!>baz<!>() // Ok
+        super.baz() // Ok
         baz()       // Ok
     }
 }

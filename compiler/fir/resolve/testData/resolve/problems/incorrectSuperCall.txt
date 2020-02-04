@@ -29,7 +29,7 @@ FILE: incorrectSuperCall.kt
         public final override fun foo(): R|kotlin/Unit| {
             super<R|A|R|B|>.R|/B.foo|()
             super<R|A|R|B|>.<Ambiguity: bar, [/A.bar, /B.bar]>#()
-            super<R|A|R|B|>.<Ambiguity: baz, [/A.baz, /B.baz]>#()
+            super<R|A|R|B|>.R|/B.baz|()
             this@R|/C|.R|/A.baz|()
         }
 

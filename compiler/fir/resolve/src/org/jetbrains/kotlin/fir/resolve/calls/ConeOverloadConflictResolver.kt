@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -27,14 +30,18 @@ class ConeOverloadConflictResolver(
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean
     ): Set<Candidate> {
-        return chooseMaximallySpecificCandidates(candidates, discriminateGenerics, discriminateSAMs = true)
+        return chooseMaximallySpecificCandidates(
+            candidates, discriminateGenerics, discriminateAbstracts, discriminateSAMs = true
+        )
     }
 
     private fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean,
         discriminateSAMs: Boolean
     ): Set<Candidate> {
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
@@ -49,7 +56,21 @@ class ConeOverloadConflictResolver(
                 1 -> return filtered
                 0, candidates.size -> {
                 }
-                else -> return chooseMaximallySpecificCandidates(filtered, discriminateGenerics, discriminateSAMs = false)
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered, discriminateGenerics, discriminateAbstracts, discriminateSAMs = false
+                )
+            }
+        }
+
+        if (discriminateAbstracts) {
+            val filtered = candidates.filterTo(mutableSetOf()) { (it.symbol.fir as? FirMemberDeclaration)?.modality != Modality.ABSTRACT }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered, discriminateGenerics, discriminateAbstracts = false, discriminateSAMs = false
+                )
             }
         }
 

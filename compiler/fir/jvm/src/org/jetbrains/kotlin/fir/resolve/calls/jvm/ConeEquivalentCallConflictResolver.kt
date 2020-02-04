@@ -22,7 +22,8 @@ class ConeEquivalentCallConflictResolver(
 ) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean
     ): Set<Candidate> {
         return filterOutEquivalentCalls(candidates)
     }

@@ -13,16 +13,19 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 abstract class ConeCallConflictResolver {
     fun chooseMaximallySpecificCandidates(
         candidates: Collection<Candidate>,
-        discriminateGenerics: Boolean
-    ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates.toSet(), discriminateGenerics)
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean = false
+    ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates.toSet(), discriminateGenerics, discriminateAbstracts)
 
     abstract fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean
     ): Set<Candidate>
 }
 
 abstract class ConeCallConflictResolverFactory : FirSessionComponent {
     abstract fun create(typeSpecificityComparator: TypeSpecificityComparator, components: InferenceComponents): ConeCallConflictResolver
 }
+
 val FirSession.callConflictResolverFactory by componentArrayAccessor<ConeCallConflictResolverFactory>()
