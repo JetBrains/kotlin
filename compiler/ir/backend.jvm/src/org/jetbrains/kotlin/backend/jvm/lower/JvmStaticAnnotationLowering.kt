@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -17,21 +20,21 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 internal val jvmStaticAnnotationPhase = makeIrFilePhase(
     ::JvmStaticAnnotationLowering,
@@ -60,70 +63,59 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
 
         companion?.declarations?.filter(::isJvmStaticFunction)?.forEach { declaration ->
             val jvmStaticFunction = declaration as IrSimpleFunction
-            val proxy = createProxy(jvmStaticFunction, irClass, companion)
-            irClass.addMember(proxy)
+            if (jvmStaticFunction.isExternal) {
+                // We move external functions to the enclosing class and potentially add accessors there.
+                // The JVM backend also adds accessors in the companion object, but these are superfluous.
+                val staticExternal = irClass.addFunction {
+                    updateFrom(jvmStaticFunction)
+                    name = jvmStaticFunction.name
+                    returnType = jvmStaticFunction.returnType
+                }.apply {
+                    copyTypeParametersFrom(jvmStaticFunction)
+                    extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
+                    valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+                    annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
+                }
+                companion.declarations.remove(jvmStaticFunction)
+                companion.addProxy(staticExternal, companion, isStatic = false)
+            } else {
+                irClass.addProxy(jvmStaticFunction, companion)
+            }
         }
-
     }
 
-    private fun createProxy(target: IrSimpleFunction, irClass: IrClass, companion: IrClass): IrSimpleFunction {
-        return buildFun {
-            updateFrom(target)
+    private fun IrClass.addProxy(target: IrSimpleFunction, companion: IrClass, isStatic: Boolean = true) =
+        addFunction {
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
             name = target.name
-            modality = if (irClass.isInterface) Modality.OPEN else target.modality
-            isInline = false
-            isExternal = false
-            isTailrec = false
-            isExpect = false
+            modality = if (isInterface) Modality.OPEN else target.modality
+            visibility = target.visibility
+            isSuspend = target.isSuspend
         }.apply {
-            parent = irClass
             copyTypeParametersFrom(target)
-            target.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
+            if (!isStatic) {
+                dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
+            }
+            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
             valueParameters = target.valueParameters.map { it.copyTo(this) }
-
             annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
-            body = createProxyBody(target, this, companion)
+            val proxy = this
+            val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(irCall(target).apply {
+                    passTypeArgumentsFrom(proxy)
+                    if (target.dispatchReceiverParameter != null) {
+                        dispatchReceiver = irGetField(null, companionInstanceField)
+                    }
+                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
+                    for ((i, valueParameter) in valueParameters.withIndex()) {
+                        putValueArgument(i, irGet(valueParameter))
+                    }
+                })
+            }
         }
-    }
-
-    private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
-        val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
-        val companionInstanceFieldSymbol = companionInstanceField.symbol
-        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
-
-        call.passTypeArgumentsFrom(proxy)
-
-        target.dispatchReceiverParameter?.let { _ ->
-            call.dispatchReceiver = IrGetFieldImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                companionInstanceFieldSymbol,
-                companion.defaultType
-            )
-        }
-        proxy.extensionReceiverParameter?.let { extensionReceiver ->
-            call.extensionReceiver = IrGetValueImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                extensionReceiver.symbol
-            )
-        }
-        proxy.valueParameters.mapIndexed { i, valueParameter ->
-            call.putValueArgument(
-                i,
-                IrGetValueImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    valueParameter.symbol
-                )
-            )
-        }
-
-        return IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, call)
-    }
 }
 
 private class SingletonObjectJvmStaticLowering(
