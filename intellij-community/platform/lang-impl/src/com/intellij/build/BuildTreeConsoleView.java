@@ -18,6 +18,8 @@ import com.intellij.ide.OccurenceNavigator;
 import com.intellij.ide.OccurenceNavigatorSupport;
 import com.intellij.ide.actions.EditSourceAction;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.ide.util.treeView.AbstractTreeStructure;
+import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.Disposable;
@@ -47,8 +49,6 @@ import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.tree.ui.DefaultTreeUI;
-import com.intellij.ui.treeStructure.SimpleNode;
-import com.intellij.ui.treeStructure.SimpleTreeStructure;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
@@ -98,7 +98,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final AtomicBoolean myDisposed = new AtomicBoolean();
   private final AtomicBoolean myShownFirstError = new AtomicBoolean();
   private final boolean myFocusFirstError;
-  private final StructureTreeModel<SimpleTreeStructure> myTreeModel;
+  private final StructureTreeModel<AbstractTreeStructure> myTreeModel;
   private final Tree myTree;
   private final ExecutionNode myRootNode;
   private final ExecutionNode myBuildProgressRootNode;
@@ -120,7 +120,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     myBuildProgressRootNode = new ExecutionNode(myProject, myRootNode, true);
     myRootNode.add(myBuildProgressRootNode);
 
-    SimpleTreeStructure treeStructure = new SimpleTreeStructure.Impl(myRootNode);
+    AbstractTreeStructure treeStructure = new MyTreeStructure();
     myTreeModel = new StructureTreeModel<>(treeStructure, this);
     AsyncTreeModel asyncTreeModel = new AsyncTreeModel(myTreeModel, this);
     asyncTreeModel.addTreeModelListener(new ExecutionNodeAutoExpandingListener());
@@ -391,22 +391,21 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private void reportMessageKind(@NotNull MessageEvent messageEvent, @NotNull ExecutionNode parentNode) {
     final MessageEvent.Kind eventKind = messageEvent.getKind();
     if (eventKind == MessageEvent.Kind.ERROR || eventKind == MessageEvent.Kind.WARNING || eventKind == MessageEvent.Kind.INFO) {
-      SimpleNode p = parentNode;
+      ExecutionNode executionNode = parentNode;
       Ref<ExecutionNode> child = new Ref<>();
       do {
-        ExecutionNode executionNode = (ExecutionNode)p;
         executionNode.reportChildMessageKind(eventKind);
 
         boolean isUpdateNeeded =
           (eventKind == MessageEvent.Kind.WARNING && !executionNode.hasWarnings()) ||
           (eventKind == MessageEvent.Kind.INFO && !executionNode.hasInfos()) ||
-          (!child.isNull() && Arrays.stream(executionNode.getChildren()).noneMatch(node -> child.get() == node));
+          (!child.isNull() && executionNode.getChildList().stream().noneMatch(node -> child.get() == node));
         if (isUpdateNeeded) {
           scheduleUpdate(executionNode);
         }
         child.set(executionNode);
       }
-      while ((p = p.getParent()) instanceof ExecutionNode);
+      while ((executionNode = executionNode.getParent()) != null);
       scheduleUpdate(getRootElement());
     }
   }
@@ -501,8 +500,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   private void finishChildren(@NotNull ExecutionNode node, @NotNull EventResult result) {
+    if (node.hasEmptyChildren()) return;
     invokeLater(() -> {
-      for (SimpleNode child : node.getChildren()) {
+      for (ExecutionNode child : node.getChildList()) {
         if (child instanceof ExecutionNode) {
           ExecutionNode executionChild = (ExecutionNode)child;
           if (!executionChild.isRunning()) {
@@ -603,7 +603,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   void scheduleUpdate(ExecutionNode executionNode) {
-    SimpleNode node = executionNode.getParent() == null ? executionNode : executionNode.getParent();
+    ExecutionNode node = executionNode.getParent() == null ? executionNode : (ExecutionNode)(executionNode.getParent());
     myTreeModel.invalidate(node, true);
   }
 
@@ -917,7 +917,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         return null;
       }
       final ExecutionNode executionNode = (ExecutionNode)userObject;
-      if (executionNode.getChildCount() > 0 || !executionNode.hasWarnings() && !executionNode.isFailed()) {
+      if (!executionNode.getChildList().isEmpty() || !executionNode.hasWarnings() && !executionNode.isFailed()) {
         return null;
       }
       List<Navigatable> navigatables = executionNode.getNavigatables();
@@ -1034,6 +1034,42 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       super.paintComponent(g);
       // restore clip area if needed
       if (clip != null) g.setClip(clip);
+    }
+  }
+
+  private class MyTreeStructure extends AbstractTreeStructure {
+    @NotNull
+    @Override
+    public Object getRootElement() {
+      return myRootNode;
+    }
+
+    @NotNull
+    @Override
+    public Object[] getChildElements(@NotNull Object element) {
+      // This .toArray() is still slow but it is called less frequently because of batching in AsyncTreeModel and process less data if
+      // filters are applied.
+      return ((ExecutionNode)element).getChildList().toArray();
+    }
+
+    @Nullable
+    @Override
+    public Object getParentElement(@NotNull Object element) {
+      return ((ExecutionNode)element).getParent();
+    }
+
+    @NotNull
+    @Override
+    public NodeDescriptor createDescriptor(@NotNull Object element, @Nullable NodeDescriptor parentDescriptor) {
+      return ((NodeDescriptor)element);
+    }
+
+    @Override
+    public void commit() { }
+
+    @Override
+    public boolean hasSomethingToCommit() {
+      return false;
     }
   }
 

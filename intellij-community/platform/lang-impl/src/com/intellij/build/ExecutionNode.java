@@ -18,36 +18,36 @@ package com.intellij.build;
 import com.intellij.build.events.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
+import com.intellij.ide.util.treeView.PresentableNodeDescriptor;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.AnimatedIcon;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.treeStructure.CachingSimpleNode;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static com.intellij.util.ui.EmptyIcon.ICON_16;
 
 /**
  * @author Vladislav.Soroka
  */
-public class ExecutionNode extends CachingSimpleNode {
+public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   private static final Icon NODE_ICON_OK = AllIcons.RunConfigurations.TestPassed;
   private static final Icon NODE_ICON_ERROR = AllIcons.RunConfigurations.TestError;
   private static final Icon NODE_ICON_WARNING = AllIcons.General.Warning;
@@ -58,10 +58,12 @@ public class ExecutionNode extends CachingSimpleNode {
   private static final Icon NODE_ICON_DEFAULT = ICON_16;
   private static final Icon NODE_ICON_RUNNING = new AnimatedIcon.FS();
 
-  private final Collection<ExecutionNode> myChildrenList = new ConcurrentLinkedDeque<>();
+  private final List<ExecutionNode> myChildrenList = Collections.synchronizedList(new ArrayList<>());
+  private volatile List<ExecutionNode> myVisibleChildrenList = null;
   private final AtomicInteger myErrors = new AtomicInteger();
   private final AtomicInteger myWarnings = new AtomicInteger();
   private final AtomicInteger myInfos = new AtomicInteger();
+  private final ExecutionNode myParentNode;
   private long startTime;
   private long endTime;
   @Nullable
@@ -79,21 +81,16 @@ public class ExecutionNode extends CachingSimpleNode {
   private NullableLazyValue<Icon> myPreferredIconValue;
   @Nullable
   private Predicate<ExecutionNode> myFilter;
-  private volatile boolean myVisible = true;
 
   public ExecutionNode(Project aProject, ExecutionNode parentNode, boolean isAutoExpandNode) {
     super(aProject, parentNode);
+    myName = "";
+    myParentNode = parentNode;
     myAutoExpandNode = isAutoExpandNode;
   }
 
-  @Override
-  protected SimpleNode[] buildChildren() {
-    Stream<ExecutionNode> stream = myChildrenList.stream();
-    stream = stream.filter(node -> node.myVisible);
-    if (myFilter != null) {
-      stream = stream.filter(myFilter);
-    }
-    return stream.toArray(SimpleNode[]::new);
+  private boolean nodeIsVisible(ExecutionNode node) {
+    return myFilter == null || myFilter.test(node);
   }
 
   @Override
@@ -160,16 +157,22 @@ public class ExecutionNode extends CachingSimpleNode {
   public void add(ExecutionNode node) {
     myChildrenList.add(node);
     node.setFilter(myFilter);
-    cleanUpCache();
+    if (myVisibleChildrenList != null) {
+      if (nodeIsVisible(node)) {
+        myVisibleChildrenList.add(node);
+      }
+    }
   }
 
   void removeChildren() {
     myChildrenList.clear();
+    if (myVisibleChildrenList != null) {
+      myVisibleChildrenList.clear();
+    }
     myErrors.set(0);
     myWarnings.set(0);
     myInfos.set(0);
     myResult = null;
-    cleanUpCache();
   }
 
   @Nullable
@@ -205,6 +208,27 @@ public class ExecutionNode extends CachingSimpleNode {
     this.endTime = endTime;
   }
 
+  @NotNull
+  public List<ExecutionNode> getChildList() {
+    List<ExecutionNode> visibleList = myVisibleChildrenList;
+    if (visibleList != null) {
+      return visibleList;
+    }
+    else {
+      return myChildrenList;
+    }
+  }
+
+  @Nullable
+  public ExecutionNode getParent() {
+    return myParentNode;
+  }
+
+  @Override
+  public ExecutionNode getElement() {
+    return this;
+  }
+
   @Nullable
   public Predicate<ExecutionNode> getFilter() {
     return myFilter;
@@ -215,16 +239,21 @@ public class ExecutionNode extends CachingSimpleNode {
     for (ExecutionNode node : myChildrenList) {
       node.setFilter(myFilter);
     }
-    cleanUpCache();
+    if (filter == null) {
+      myVisibleChildrenList = null;
+    }
+    else {
+      if (myVisibleChildrenList == null) {
+        myVisibleChildrenList = Collections.synchronizedList(new ArrayList<>());
+      }
+      maybeReapplyFilter();
+    }
   }
 
-  public void setVisible(boolean visible) {
-    if (myVisible != visible) {
-      myVisible = visible;
-      SimpleNode parent = getParent();
-      if (parent instanceof CachingSimpleNode) {
-        ((CachingSimpleNode)parent).cleanUpCache();
-      }
+  private void maybeReapplyFilter() {
+    if (myVisibleChildrenList != null) {
+      myVisibleChildrenList.clear();
+      myChildrenList.stream().filter(it -> nodeIsVisible(it)).forEachOrdered(myVisibleChildrenList::add);
     }
   }
 
@@ -255,12 +284,9 @@ public class ExecutionNode extends CachingSimpleNode {
 
   public void setResult(@Nullable EventResult result) {
     myResult = result;
-    if (myFilter != null) {
-      cleanUpCache();
-    }
+    maybeReapplyFilter();
   }
 
-  @Override
   public boolean isAutoExpandNode() {
     return myAutoExpandNode;
   }
@@ -322,7 +348,7 @@ public class ExecutionNode extends CachingSimpleNode {
       if (hint == null) {
         hint = "";
       }
-      SimpleNode parent = getParent();
+      ExecutionNode parent = getParent();
       hint += parent == null || parent.getParent() == null ? (isRunning() ? "  " : " with ") : " ";
       if (errors > 0) {
         hint += (errors + " " + StringUtil.pluralize("error", errors));
@@ -389,5 +415,9 @@ public class ExecutionNode extends CachingSimpleNode {
         return NODE_ICON_SIMPLE;
     }
     return NODE_ICON_DEFAULT;
+  }
+
+  public boolean hasEmptyChildren() {
+    return myChildrenList.isEmpty();
   }
 }
