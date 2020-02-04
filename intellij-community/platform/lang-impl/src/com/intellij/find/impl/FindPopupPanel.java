@@ -1774,6 +1774,10 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
       myIsPinned.set(state);
       UISettings.getInstance().setPinFindInPath(state);
+      FUCounterUsageLogger.getInstance().logEvent(
+        "find", "pin.toggled", new FeatureUsageData().
+          addData("option_value", state)
+      );
     }
   }
 
