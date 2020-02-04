@@ -35,6 +35,7 @@ import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.TIntLongHashMap;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TIntObjectIterator;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+@ApiStatus.Internal
 public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfiguration {
   private static final Logger LOG = Logger.getInstance(SharedIndexChunkConfigurationImpl.class);
 
@@ -68,7 +70,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   private final ReadWriteLock myZipUpdateLock = new ReentrantReadWriteLock();
 
   @Override
-  public void closeEnumerator(ContentHashEnumerator enumerator, int chunkId) {
+  public void disposeIndexChunkData(@NotNull ID<?, ?> indexId, int chunkId) {
 
   }
 

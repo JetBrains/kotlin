@@ -50,7 +50,7 @@ public class SharedIndexChunk {
 
   void close() {
     myIndex.dispose();
-    SharedIndexChunkConfiguration.getInstance().closeEnumerator(myEnumerator, myChunkId);
+    SharedIndexChunkConfiguration.getInstance().disposeIndexChunkData(myIndexName, myChunkId);
   }
 
   public @NotNull ID<?, ?> getIndexName() {
