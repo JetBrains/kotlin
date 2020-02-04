@@ -75,23 +75,24 @@ final class PassExecutorService implements Disposable {
     for (Job<Void> submittedPass : mySubmittedPasses.values()) {
       submittedPass.cancel();
     }
-    if (waitForTermination) {
-      try {
+    try {
+      if (waitForTermination) {
         while (!waitFor(50)) {
           int i = 0;
         }
       }
-      catch (ProcessCanceledException ignored) {
-
-      }
-      catch (Error | RuntimeException e) {
-        throw e;
-      }
-      catch (Throwable throwable) {
-        LOG.error(throwable);
-      }
     }
-    mySubmittedPasses.clear();
+    catch (ProcessCanceledException ignored) {
+    }
+    catch (Error | RuntimeException e) {
+      throw e;
+    }
+    catch (Throwable throwable) {
+      LOG.error(throwable);
+    }
+    finally {
+      mySubmittedPasses.clear();
+    }
   }
 
   void submitPasses(@NotNull Map<FileEditor, HighlightingPass[]> passesMap, @NotNull DaemonProgressIndicator updateProgress) {
