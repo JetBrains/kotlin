@@ -155,9 +155,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
-        val distributionTask = project.registerTask<Copy>(
+        val distributeResourcesTask = project.registerTask<Copy>(
             disambiguateCamelCased(
-                DISTRIBUTION_TASK_NAME
+                DISTRIBUTE_RESOURCES_TASK_NAME
             )
         ) {
             it.dependsOn(processResourcesTask)
@@ -167,7 +167,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
 
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(distributionTask)
+        assembleTask.dependsOn(distributeResourcesTask)
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
@@ -181,7 +181,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 it.dependsOn(
                     nodeJs.npmInstallTask,
                     processResourcesTask,
-                    distributionTask
+                    distributeResourcesTask
                 )
 
                 it.configureOptimization(kind)
@@ -212,8 +212,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             if (kind == BuildVariantKind.PRODUCTION) {
                 assembleTask.dependsOn(webpackTask)
-                project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                val webpackCommonTask = project.registerTask<Task>(
+                    disambiguateCamelCased(WEBPACK_TASK_NAME)
+                ) {
                     it.dependsOn(webpackTask)
+                }
+                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                    it.dependsOn(webpackCommonTask)
+                    it.dependsOn(distributeResourcesTask)
                 }
             }
         }
@@ -291,6 +297,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         const val DEVELOPMENT = "development"
 
         private const val WEBPACK_TASK_NAME = "webpack"
+        private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         private const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }
