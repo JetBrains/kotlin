@@ -128,6 +128,18 @@ class Fir2IrVisitor(
         return this
     }
 
+    private fun lastDispatchReceiverParameter(): IrValueParameter? {
+        val dispatchReceiver = functionStack.lastOrNull()?.dispatchReceiverParameter
+        return if (dispatchReceiver != null) {
+            // Use the dispatch receiver of the containing function
+            dispatchReceiver
+        } else {
+            val lastClassSymbol = classStack.lastOrNull()?.symbol
+            // Use the dispatch receiver of the containing class
+            lastClassSymbol?.owner?.thisReceiver
+        }
+    }
+
     private val subjectVariableStack = mutableListOf<IrVariable>()
 
     private fun <T> IrVariable?.withSubject(f: () -> T): T {
@@ -708,9 +720,8 @@ class Fir2IrVisitor(
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             if (calleeReference is FirSuperReference) {
                 if (typeRef !is FirComposedSuperTypeRef) {
-                    val dispatchReceiver = functionStack.lastOrNull()?.dispatchReceiverParameter
+                    val dispatchReceiver = lastDispatchReceiverParameter()
                     if (dispatchReceiver != null) {
-                        // Use the dispatch receiver of the containing function
                         return@convertWithOffsets IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                     }
                 }
@@ -912,9 +923,8 @@ class Fir2IrVisitor(
                 }
             }
 
-            val dispatchReceiver = this.functionStack.lastOrNull()?.dispatchReceiverParameter
+            val dispatchReceiver = lastDispatchReceiverParameter()
             if (dispatchReceiver != null) {
-                // Use the dispatch receiver of the containing function
                 return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                     IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                 }
