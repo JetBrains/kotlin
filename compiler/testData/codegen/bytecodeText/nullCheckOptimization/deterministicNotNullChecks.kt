@@ -1,7 +1,9 @@
 // FILE: test/CallableDescriptor.java
 
-// IGNORE_BACKEND: JVM_IR
-// See KT-35656, here JMV_IR correctly generates a nullability assertion for an argument of 'Iterable<T>.contains(T)'.
+// JVM_IR:
+// Here in 'original in emptySet<D>()' T = '@EnhancedNullability CallableDescriptor' is inferred for 'Iterable<T>.contains(T)'.
+// Using value of '@EnhancedNullability CallableDescriptor' type where '@EnhancedNullability CallableDescriptor' is expected
+// doesn't cause a null check.
 
 package test;
 

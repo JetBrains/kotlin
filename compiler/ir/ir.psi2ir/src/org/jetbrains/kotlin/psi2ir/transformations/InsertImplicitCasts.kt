@@ -326,10 +326,10 @@ internal class InsertImplicitCasts(
                 else
                     implicitCast(expectedType, IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
 
-            (valueType.isNullabilityFlexible() && valueType.containsNull()) && !expectedType.containsNull() ->
+            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.acceptsNullValues() ->
                 implicitNonNull(valueType, expectedType)
 
-            (valueType.hasEnhancedNullability() && !isLambdaReturnValue) && !expectedType.containsNull() ->
+            (valueType.hasEnhancedNullability() && !isLambdaReturnValue) && !expectedType.acceptsNullValues() ->
                 implicitNonNull(valueType, expectedType)
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
@@ -358,6 +358,9 @@ internal class InsertImplicitCasts(
             expectedFunctionExpressionReturnType[function.descriptor] = returnTypeFromExpected.toIrType()
         }
     }
+
+    private fun KotlinType.acceptsNullValues() =
+        containsNull() || hasEnhancedNullability()
 
     private fun KotlinType.hasEnhancedNullability() =
         generatorExtensions.enhancedNullability.hasEnhancedNullability(this)
