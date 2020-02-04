@@ -107,7 +107,7 @@ public class ExecutionNodeProgressAnimator implements Runnable, Disposable {
 
     for (Iterator<ExecutionNode> iterator = myNodes.iterator(); iterator.hasNext(); ) {
       ExecutionNode node = iterator.next();
-      myTreeView.scheduleUpdate(node);
+      myTreeView.scheduleUpdate(node, false);
       if (!node.isRunning()) {
         iterator.remove();
       }

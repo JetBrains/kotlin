@@ -58,35 +58,35 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   private static final Icon NODE_ICON_DEFAULT = ICON_16;
   private static final Icon NODE_ICON_RUNNING = new AnimatedIcon.FS();
 
-  private final List<ExecutionNode> myChildrenList = Collections.synchronizedList(new ArrayList<>());
-  private volatile List<ExecutionNode> myVisibleChildrenList = null;
+  private final List<ExecutionNode> myChildrenList = new ArrayList<>(); // Accessed from the async model thread only.
+  private List<ExecutionNode> myVisibleChildrenList = null;  // Accessed from the async model thread only.
   private final AtomicInteger myErrors = new AtomicInteger();
   private final AtomicInteger myWarnings = new AtomicInteger();
   private final AtomicInteger myInfos = new AtomicInteger();
   private final ExecutionNode myParentNode;
-  private long startTime;
-  private long endTime;
+  private volatile long startTime;
+  private volatile long endTime;
   @Nullable
   private String myTitle;
   @Nullable
-  private String myTooltip;
-  @Nullable
   private String myHint;
   @Nullable
-  private EventResult myResult;
-  private boolean myAutoExpandNode;
+  private volatile EventResult myResult;
+  private final boolean myAutoExpandNode;
+  private final Supplier<Boolean> myIsCorrectThread;
   @Nullable
-  private Navigatable myNavigatable;
+  private volatile Navigatable myNavigatable;
   @Nullable
-  private NullableLazyValue<Icon> myPreferredIconValue;
+  private volatile NullableLazyValue<Icon> myPreferredIconValue;
   @Nullable
   private Predicate<ExecutionNode> myFilter;
 
-  public ExecutionNode(Project aProject, ExecutionNode parentNode, boolean isAutoExpandNode) {
+  public ExecutionNode(Project aProject, ExecutionNode parentNode, boolean isAutoExpandNode, @NotNull Supplier<Boolean> isCorrectThread) {
     super(aProject, parentNode);
     myName = "";
     myParentNode = parentNode;
     myAutoExpandNode = isAutoExpandNode;
+    myIsCorrectThread = isCorrectThread;
   }
 
   private boolean nodeIsVisible(ExecutionNode node) {
@@ -95,6 +95,7 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
 
   @Override
   protected void update(@NotNull PresentationData presentation) {
+    assert myIsCorrectThread.get();
     setIcon(getCurrentIcon());
     presentation.setPresentableText(myName);
     presentation.setIcon(getIcon());
@@ -113,9 +114,6 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
       }
       presentation.addText(hint, SimpleTextAttributes.GRAY_ATTRIBUTES);
     }
-    if (myTooltip != null) {
-      presentation.setTooltip(myTooltip);
-    }
   }
 
   @Override
@@ -124,37 +122,28 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   }
 
   public void setName(String name) {
+    assert myIsCorrectThread.get();
     myName = name;
   }
 
   @Nullable
   public String getTitle() {
+    assert myIsCorrectThread.get();
     return myTitle;
   }
 
   public void setTitle(@Nullable String title) {
+    assert myIsCorrectThread.get();
     myTitle = title;
   }
 
-  @Nullable
-  public String getTooltip() {
-    return myTooltip;
-  }
-
-  public void setTooltip(@Nullable String tooltip) {
-    myTooltip = tooltip;
-  }
-
-  @Nullable
-  public String getHint() {
-    return myHint;
-  }
-
   public void setHint(@Nullable String hint) {
+    assert myIsCorrectThread.get();
     myHint = hint;
   }
 
-  public void add(ExecutionNode node) {
+  public void add(@NotNull ExecutionNode node) {
+    assert myIsCorrectThread.get();
     myChildrenList.add(node);
     node.setFilter(myFilter);
     if (myVisibleChildrenList != null) {
@@ -165,6 +154,7 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   }
 
   void removeChildren() {
+    assert myIsCorrectThread.get();
     myChildrenList.clear();
     if (myVisibleChildrenList != null) {
       myVisibleChildrenList.clear();
@@ -175,6 +165,7 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
     myResult = null;
   }
 
+  // Note: invoked from the EDT.
   @Nullable
   public String getDuration() {
     if (startTime == endTime) return null;
@@ -193,23 +184,54 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   }
 
   public long getStartTime() {
+    assert myIsCorrectThread.get();
     return startTime;
   }
 
   public void setStartTime(long startTime) {
+    assert myIsCorrectThread.get();
     this.startTime = startTime;
   }
 
   public long getEndTime() {
+    assert myIsCorrectThread.get();
     return endTime;
   }
 
-  public void setEndTime(long endTime) {
+  public ExecutionNode setEndTime(long endTime) {
+    assert myIsCorrectThread.get();
     this.endTime = endTime;
+    return reapplyParentFilterIfRequired(null);
+  }
+
+  private ExecutionNode reapplyParentFilterIfRequired(@Nullable ExecutionNode result) {
+    assert myIsCorrectThread.get();
+    if (myParentNode != null) {
+      List<ExecutionNode> parentVisibleChildrenList = myParentNode.myVisibleChildrenList;
+      if (parentVisibleChildrenList != null) {
+        Predicate<ExecutionNode> filter = myParentNode.myFilter;
+        if (filter != null) {
+          boolean wasPresent = parentVisibleChildrenList.contains(this);
+          boolean shouldBePresent = filter.test(this);
+          if (shouldBePresent != wasPresent) {
+            if (shouldBePresent) {
+              myParentNode.maybeReapplyFilter();
+            }
+            else {
+              parentVisibleChildrenList.remove(this);
+            }
+            result = myParentNode;
+          }
+        }
+      }
+      return myParentNode.reapplyParentFilterIfRequired(result);
+    }
+    return result;
   }
 
   @NotNull
   public List<ExecutionNode> getChildList() {
+    assert myIsCorrectThread.get();
     List<ExecutionNode> visibleList = myVisibleChildrenList;
     if (visibleList != null) {
       return visibleList;
@@ -231,10 +253,12 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
 
   @Nullable
   public Predicate<ExecutionNode> getFilter() {
+    assert myIsCorrectThread.get();
     return myFilter;
   }
 
   public void setFilter(@Nullable Predicate<ExecutionNode> filter) {
+    assert myIsCorrectThread.get();
     myFilter = filter;
     for (ExecutionNode node : myChildrenList) {
       node.setFilter(myFilter);
@@ -251,6 +275,7 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   }
 
   private void maybeReapplyFilter() {
+    assert myIsCorrectThread.get();
     if (myVisibleChildrenList != null) {
       myVisibleChildrenList.clear();
       myChildrenList.stream().filter(it -> nodeIsVisible(it)).forEachOrdered(myVisibleChildrenList::add);
@@ -282,9 +307,10 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
     return myResult;
   }
 
-  public void setResult(@Nullable EventResult result) {
+  public ExecutionNode setResult(@Nullable EventResult result) {
+    assert myIsCorrectThread.get();
     myResult = result;
-    maybeReapplyFilter();
+    return reapplyParentFilterIfRequired(null);
   }
 
   public boolean isAutoExpandNode() {
@@ -292,6 +318,7 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   }
 
   public void setNavigatable(@Nullable Navigatable navigatable) {
+    assert myIsCorrectThread.get();
     myNavigatable = navigatable;
   }
 
@@ -322,7 +349,12 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
     };
   }
 
-  public void reportChildMessageKind(MessageEvent.Kind kind) {
+  /**
+   * @return the top most node whose parent structure has changed. Returns null if only node itself needs to be updated.
+   */
+  @Nullable
+  public ExecutionNode reportChildMessageKind(MessageEvent.Kind kind) {
+    assert myIsCorrectThread.get();
     if (kind == MessageEvent.Kind.ERROR) {
       myErrors.incrementAndGet();
     }
@@ -332,15 +364,18 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
     else if (kind == MessageEvent.Kind.INFO) {
       myInfos.incrementAndGet();
     }
+    return reapplyParentFilterIfRequired(null);
   }
 
   @Nullable
   @ApiStatus.Experimental
   ExecutionNode findFirstChild(@NotNull Predicate<? super ExecutionNode> filter) {
+    assert myIsCorrectThread.get();
     return myChildrenList.stream().filter(filter).findFirst().orElse(null);
   }
 
   private String getCurrentHint() {
+    assert myIsCorrectThread.get();
     String hint = myHint;
     int warnings = myWarnings.get();
     int errors = myErrors.get();
@@ -415,9 +450,5 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
         return NODE_ICON_SIMPLE;
     }
     return NODE_ICON_DEFAULT;
-  }
-
-  public boolean hasEmptyChildren() {
-    return myChildrenList.isEmpty();
   }
 }
