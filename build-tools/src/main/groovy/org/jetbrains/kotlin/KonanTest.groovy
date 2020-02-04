@@ -542,6 +542,11 @@ fun runTest() {
             return false
         }
 
+        def apiVersion = findLinesWithPrefixesRemoved(text, '// !API_VERSION: ')
+        if (apiVersion.size() != 0 && !apiVersion.contains("1.4")) {
+            return false
+        }
+
         def targetBackend = findLinesWithPrefixesRemoved(text, "// TARGET_BACKEND")
         if (targetBackend.size() != 0) {
             // There is some target backend. Check if it is NATIVE or not.
