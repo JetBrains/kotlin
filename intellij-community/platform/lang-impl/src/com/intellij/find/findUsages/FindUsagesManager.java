@@ -252,7 +252,7 @@ public final class FindUsagesManager {
     }
   }
 
-  public static void showSettingsAndFindUsages(@NotNull NavigationItem[] targets) {
+  public static void showSettingsAndFindUsages(NavigationItem @NotNull [] targets) {
     if (targets.length == 0) return;
     NavigationItem target = targets[0];
     if (!(target instanceof ConfigurableUsageTarget)) return;
@@ -345,11 +345,11 @@ public final class FindUsagesManager {
    * @throws PsiInvalidElementAccessException when the searcher can't be created (i.e. because element was invalidated)
    */
   @NotNull
-  public static UsageSearcher createUsageSearcher(@NotNull PsiElement2UsageTargetAdapter[] primaryTargets,
-                                                   @NotNull PsiElement2UsageTargetAdapter[] secondaryTargets,
-                                                   @NotNull FindUsagesHandler handler,
-                                                   @NotNull FindUsagesOptions options,
-                                                   PsiFile scopeFile) throws PsiInvalidElementAccessException {
+  public static UsageSearcher createUsageSearcher(PsiElement2UsageTargetAdapter @NotNull [] primaryTargets,
+                                                  PsiElement2UsageTargetAdapter @NotNull [] secondaryTargets,
+                                                  @NotNull FindUsagesHandler handler,
+                                                  @NotNull FindUsagesOptions options,
+                                                  PsiFile scopeFile) throws PsiInvalidElementAccessException {
     ReadAction.run(() -> {
       PsiElement[] primaryElements = PsiElement2UsageTargetAdapter.convertToPsiElements(primaryTargets);
       PsiElement[] secondaryElements = PsiElement2UsageTargetAdapter.convertToPsiElements(secondaryTargets);
@@ -423,9 +423,8 @@ public final class FindUsagesManager {
     };
   }
 
-  @NotNull
-  private static PsiElement2UsageTargetAdapter[] convertToUsageTargets(@NotNull Iterable<? extends PsiElement> elementsToSearch,
-                                                                       @NotNull FindUsagesOptions findUsagesOptions) {
+  private static PsiElement2UsageTargetAdapter @NotNull [] convertToUsageTargets(@NotNull Iterable<? extends PsiElement> elementsToSearch,
+                                                                                 @NotNull FindUsagesOptions findUsagesOptions) {
     List<PsiElement2UsageTargetAdapter> targets = ContainerUtil.map(elementsToSearch,
                                                                           element -> convertToUsageTarget(element, findUsagesOptions));
     return targets.toArray(new PsiElement2UsageTargetAdapter[0]);
