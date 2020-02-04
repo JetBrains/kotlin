@@ -1965,6 +1965,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/genericFunOnJavaType.before.Main.kt");
                 }
 
+                @TestMetadata("javaNullabilityAnnotation.before.Main.kt")
+                public void testJavaNullabilityAnnotation() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/javaNullabilityAnnotation.before.Main.kt");
+                }
+
                 @TestMetadata("staticExtensionFunOnJavaClass.before.Main.kt")
                 public void testStaticExtensionFunOnJavaClass() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/staticExtensionFunOnJavaClass.before.Main.kt");
