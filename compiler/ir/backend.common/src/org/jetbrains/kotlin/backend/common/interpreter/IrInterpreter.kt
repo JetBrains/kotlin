@@ -36,7 +36,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
     private val classCastException = irExceptions.first { it.name.asString() == ClassCastException::class.java.simpleName }
 
-    private var stackSize = 0
+    private val stackTrace = mutableListOf<String>()
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -60,8 +60,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return@runBlocking when (val code = withContext(this.coroutineContext) { expression.interpret(data) }) {
                 Code.NEXT -> data.popReturnValue().toIrExpression(expression)
                 Code.EXCEPTION -> {
-                    val message = (data.popReturnValue() as ExceptionState).getMessage().value
-                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, message)
+                    val message = (data.popReturnValue() as ExceptionState).getFullDescription()
+                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
                 }
                 else -> TODO("$code not supported as result of interpretation")
             }
@@ -125,29 +125,37 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
 
-            if (irExceptionClass == irBuiltIns.throwableClass.owner && exceptionName == "KotlinNullPointerException") {
+            val exceptionState = when {
                 // this block is used to replace jvm null pointer exception with common one
                 // TODO figure something better
-                data.pushReturnValue(ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }))
-            } else {
-                irExceptionClass.let { data.pushReturnValue(ExceptionState(e, it)) }
+                irExceptionClass == irBuiltIns.throwableClass.owner && exceptionName == "KotlinNullPointerException" ->
+                    ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }, stackTrace)
+                else -> ExceptionState(e, irExceptionClass, stackTrace)
             }
 
+            data.pushReturnValue(exceptionState)
             return Code.EXCEPTION
         }
     }
 
     // this method is used to get stack trace after exception
     private suspend fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): Code {
-        try {
+        return try {
             yield()
-            stackSize++
-            if (stackSize == MAX_STACK_SIZE) {
-                throw StackOverflowError("Error!!!")
+
+            if (irFunction.fileOrNull != null) {
+                val fileName = irFunction.file.name
+                val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
+                stackTrace += "at ${fileName.replace(".kt", "Kt")}.${irFunction.fqNameForIrSerialization}($fileName:$lineNum)"
             }
-            return irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+
+            if (stackTrace.size == MAX_STACK_SIZE) {
+                throw StackOverflowError("")
+            }
+
+            irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
         } finally {
-            stackSize--
+            if (irFunction.fileOrNull != null) stackTrace.removeAt(stackTrace.lastIndex)
         }
     }
 
@@ -498,7 +506,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     val convertibleClassName = data.popReturnValue().irClass.fqNameForIrSerialization
                     val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
                     val message = "$convertibleClassName cannot be cast to $castClassName"
-                    data.pushReturnValue(ExceptionState(ClassCastException(message), classCastException))
+                    data.pushReturnValue(ExceptionState(ClassCastException(message), classCastException, stackTrace))
                     Code.EXCEPTION
                 } else {
                     code
@@ -563,8 +571,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretThrow(expression: IrThrow, data: Frame): Code {
         expression.value.interpret(data).also { if (it != Code.NEXT) return it }
         when (val exception = data.popReturnValue()) {
-            is Common -> data.pushReturnValue(ExceptionState(exception))
-            is Wrapper -> data.pushReturnValue(ExceptionState(exception))
+            is Common -> data.pushReturnValue(ExceptionState(exception, stackTrace))
+            is Wrapper -> data.pushReturnValue(ExceptionState(exception, stackTrace))
             is ExceptionState -> data.pushReturnValue(exception)
             else -> throw AssertionError("${exception::class} cannot be used as exception state")
         }

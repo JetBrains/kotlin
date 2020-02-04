@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
+import kotlin.math.min
 
 interface State {
     val fields: MutableList<Variable>
@@ -285,24 +286,35 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : Comple
     }
 }
 
-class ExceptionState private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex(irClass, fields) {
+class ExceptionState private constructor(
+    override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>
+) : Complex(irClass, fields) {
+    private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()
     private val messageProperty = irClass.getPropertyByName("message")
     private val causeProperty = irClass.getPropertyByName("cause")
 
+    private val stackTrace: List<String>
+
     init {
         instance = this
+        this.stackTrace = stackTrace.reversed()
+        if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClass.fqNameForIrSerialization.asString()
     }
 
-    constructor(common: Common) : this(common.irClass, common.fields)
-    constructor(wrapper: Wrapper) : this(wrapper.value as Throwable, wrapper.irClass)
+    constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace)
+    constructor(wrapper: Wrapper, stackTrace: List<String>) : this(wrapper.value as Throwable, wrapper.irClass, stackTrace)
 
-    constructor(exception: Throwable, irClass: IrClass) : this(irClass, evaluateFields(exception, irClass)) {
+    constructor(
+        exception: Throwable, irClass: IrClass, stackTrace: List<String>
+    ) : this(irClass, evaluateFields(exception, irClass), stackTrace) {
         if (irClass.name.asString() == "Throwable" && exception::class.java.name != "Throwable") {
             // ir class wasn't found in classpath, a stub was passed => need to save java class hierarchy
             exceptionHierarchy += exception::class.java.name
             generateSequence(exception::class.java.superclass) { it.superclass }.forEach { exceptionHierarchy += it.name }
-            exceptionHierarchy.removeAt(exceptionHierarchy.lastIndex)
+            exceptionHierarchy.removeAt(exceptionHierarchy.lastIndex) // remove unnecessary java.lang.Object
+
+            this.exceptionFqName = exception::class.java.name
         }
     }
 
@@ -317,8 +329,16 @@ class ExceptionState private constructor(override val irClass: IrClass, override
 
     fun getCause(): ExceptionState = getState(causeProperty.descriptor) as ExceptionState
 
+    fun getFullDescription(): String {
+        val message = getMessage().value.let { if (it.isNotEmpty()) ": $it" else ""}
+        val prefix = if (stackTrace.isNotEmpty()) "\n\t" else ""
+        val postfix = if (stackTrace.size > 10) "\n\t..." else ""
+        return "Exception $exceptionFqName$message" +
+                stackTrace.subList(0, min(stackTrace.size, 10)).joinToString(separator = "\n\t", prefix = prefix, postfix = postfix)
+    }
+
     override fun copy(): State {
-        return ExceptionState(irClass, fields).apply { this@apply.instance = this@ExceptionState.instance }
+        return ExceptionState(irClass, fields, stackTrace).apply { this@apply.instance = this@ExceptionState.instance }
     }
 
     companion object {
@@ -333,7 +353,8 @@ class ExceptionState private constructor(override val irClass: IrClass, override
             val causeProperty = irClass.getPropertyByName("cause")
 
             val messageVar = Variable(messageProperty.descriptor, exception.message.toState(messageProperty.getter!!.returnType))
-            val causeVar = exception.cause?.let { Variable(causeProperty.descriptor, ExceptionState(it, irClass)) }
+            // TODO load stack trace from cause
+            val causeVar = exception.cause?.let { Variable(causeProperty.descriptor, ExceptionState(it, irClass, listOf())) }
             return listOfNotNull(messageVar, causeVar).toMutableList()
         }
     }
