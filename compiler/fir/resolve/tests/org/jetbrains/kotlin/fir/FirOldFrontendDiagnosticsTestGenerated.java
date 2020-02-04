@@ -7934,6 +7934,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceSyntheticConstructors.kt");
         }
 
+        @TestMetadata("funIsNotInheritedFromBaseInterface.kt")
+        public void testFunIsNotInheritedFromBaseInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/funIsNotInheritedFromBaseInterface.kt");
+        }
+
         @TestMetadata("genericSubstitutionForFunInterface.kt")
         public void testGenericSubstitutionForFunInterface() throws Exception {
             runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
