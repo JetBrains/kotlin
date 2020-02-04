@@ -144,7 +144,11 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
         // TODO: have psi2ir cast the argument to the correct function type. Also see the TODO
         //       about type parameters in `visitTypeOperator`.
-        val wrappedFunctionClass = context.ir.symbols.functionN(superMethod.valueParameters.size).owner
+        val wrappedFunctionClass =
+            if (superMethod.isSuspend)
+                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size).owner
+            else
+                context.ir.symbols.functionN(superMethod.valueParameters.size).owner
         val wrappedFunctionType = wrappedFunctionClass.defaultType
 
         val wrapperVisibility = if (generatePublicWrapper) Visibilities.PUBLIC else privateGeneratedWrapperVisibility
@@ -188,6 +192,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             returnType = superMethod.returnType
             visibility = superMethod.visibility
             origin = subclass.origin
+            isSuspend = superMethod.isSuspend
         }.apply {
             overriddenSymbols += superMethod.symbol
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
