@@ -2729,12 +2729,6 @@ standaloneTest("memory_only_gc") {
     source = "runtime/memory/only_gc.kt"
 }
 
-standaloneTest("leak_detector") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
-    flags = ['-g']
-    source = "runtime/memory/leak_detector.kt"
-}
-
 standaloneTest("cycle_collector") {
     disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     flags = ['-g']

@@ -115,12 +115,7 @@ volatile int allocCount = 0;
 volatile int aliveMemoryStatesCount = 0;
 
 KBoolean g_checkLeaks = KonanNeedDebugInfo;
-
-// Only used by the leak detector.
-KRef g_leakCheckerGlobalList = nullptr;
-KInt g_leakCheckerGlobalLock = 0;
-
-bool g_hasCyclicCollector = true;
+KBoolean g_hasCyclicCollector = true;
 
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
@@ -940,24 +935,6 @@ void runDeallocationHooks(ContainerHeader* container) {
     }
 #endif  // USE_CYCLIC_GC
     if (obj->has_meta_object()) {
-      if (KonanNeedDebugInfo && (obj->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0 && g_checkLeaks) {
-        // Remove the object from the double-linked list of potentially cyclic objects.
-        auto* meta = obj->meta_object();
-        lock(&g_leakCheckerGlobalLock);
-        // Get previous.
-        auto* previous = meta->LeakDetector.previous_;
-        auto* previousMeta = (previous != nullptr) ? previous->meta_object() : nullptr;
-        auto* next = meta->LeakDetector.next_;
-        auto* nextMeta = (next != nullptr) ? next->meta_object() : nullptr;
-        // Remove current.
-        if (previous != nullptr)
-          previous->meta_object()->LeakDetector.next_ = next;
-        if (next != nullptr)
-          next->meta_object()->LeakDetector.previous_ = previous;
-        if (obj == g_leakCheckerGlobalList)
-          g_leakCheckerGlobalList = next;
-        unlock(&g_leakCheckerGlobalLock);
-      }
       ObjHeader::destroyMetaObject(&obj->typeInfoOrMeta_);
     }
     obj = reinterpret_cast<ObjHeader*>(reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
@@ -1954,17 +1931,6 @@ OBJ_GETTER(allocInstance, const TypeInfo* type_info) {
 #endif  // USE_GC
   auto container = ObjectContainer(state, type_info);
   ObjHeader* obj = container.GetPlace();
-  if (KonanNeedDebugInfo && g_checkLeaks && (type_info->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
-    // Add newly allocated object to the double-linked list of potentially cyclic objects.
-    MetaObjHeader* meta = obj->meta_object();
-    lock(&g_leakCheckerGlobalLock);
-    KRef old = g_leakCheckerGlobalList;
-    g_leakCheckerGlobalList = obj;
-    meta->LeakDetector.next_ = old;
-    if (old != nullptr)
-      old->meta_object()->LeakDetector.previous_ = obj;
-    unlock(&g_leakCheckerGlobalLock);
-  }
 #if USE_CYCLIC_GC
   if ((obj->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
     cyclicAddAtomicRoot(obj);
@@ -2629,100 +2595,6 @@ void shareAny(ObjHeader* obj) {
   container->makeShared();
 }
 
-OBJ_GETTER0(detectCyclicReferences) {
-  // Collect rootset, hold references to simplify remaining code.
-  KRefList rootset;
-  lock(&g_leakCheckerGlobalLock);
-  auto* candidate = g_leakCheckerGlobalList;
-  while (candidate != nullptr) {
-    addHeapRef(candidate);
-    rootset.push_back(candidate);
-    candidate = candidate->meta_object()->LeakDetector.next_;
-  }
-  unlock(&g_leakCheckerGlobalLock);
-  KRefSet cyclic;
-  KRefSet seen;
-  KRefDeque toVisit;
-  for (auto* root: rootset) {
-    seen.clear();
-    toVisit.clear();
-    traverseReferredObjects(root, [&toVisit](ObjHeader* obj) { toVisit.push_front(obj); });
-    bool seenToRoot = false;
-    while (!toVisit.empty() && !seenToRoot) {
-      KRef current = toVisit.front();
-      toVisit.pop_front();
-      if (cyclic.count(current) != 0) continue;
-      if (current == root) seenToRoot = true;
-      // TODO: racy against concurrent mutators.
-      if (seen.count(current) == 0) {
-        traverseReferredObjects(current, [&toVisit](ObjHeader* obj) {
-           toVisit.push_front(obj);
-        });
-        seen.insert(current);
-      }
-    }
-    if (seenToRoot) {
-      cyclic.insert(root);
-    }
-  }
-  int numElements = cyclic.size();
-  ArrayHeader* result = AllocArrayInstance(theArrayTypeInfo, numElements, OBJ_RESULT)->array();
-  KRef* place = ArrayAddressOfElementAt(result, 0);
-  for (auto* it: cyclic) {
-    UpdateHeapRef(place++, it);
-  }
-  for (auto* root: rootset) {
-    ReleaseHeapRef(root);
-  }
-  RETURN_OBJ(result->obj());
-}
-
-OBJ_GETTER(findCycle, KRef root) {
-  KRefSet seen;
-  KRefListDeque queue;
-  KRefDeque toVisit;
-  KRefList path;
-  traverseReferredObjects(root, [&toVisit](ObjHeader* obj) { toVisit.push_front(obj); });
-  bool isFound = false;
-  while (!toVisit.empty() && !isFound) {
-    KRef current = toVisit.front();
-    toVisit.pop_front();
-    // Do DFS path search.
-    KRefList first;
-    first.push_back(current);
-    queue.emplace_back(first);
-    seen.clear();
-    while (!queue.empty()) {
-      KRefList currentPath = queue.back();
-      queue.pop_back();
-      KRef node = currentPath[currentPath.size() - 1];
-      if (node == root) {
-         isFound = true;
-         path = currentPath;
-         break;
-      }
-      if (seen.count(node) == 0) {
-        // TODO: racy against concurrent mutators.
-        traverseReferredObjects(node, [&queue, &currentPath](ObjHeader* obj) {
-           KRefList newPath(currentPath);
-           newPath.push_back(obj);
-           queue.emplace_back(newPath);
-        });
-        seen.insert(node);
-      }
-    }
-  }
-  ArrayHeader* result = nullptr;
-  if (isFound) {
-    result = AllocArrayInstance(theArrayTypeInfo, path.size(), OBJ_RESULT)->array();
-    KRef* place = ArrayAddressOfElementAt(result, 0);
-    for (auto* it: path) {
-        UpdateHeapRef(place++, it);
-    }
-  }
-  RETURN_OBJ(result->obj());
-}
-
 }  // namespace
 
 MetaObjHeader* ObjHeader::createMetaObject(TypeInfo** location) {
@@ -3130,15 +3002,6 @@ KBoolean Kotlin_native_internal_GC_getTuneThreshold(KRef) {
 #else
   return false;
 #endif
-}
-
-OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, KRef) {
-  if (!KonanNeedDebugInfo || !g_checkLeaks) RETURN_OBJ(nullptr);
-  RETURN_RESULT_OF0(detectCyclicReferences);
-}
-
-OBJ_GETTER(Kotlin_native_internal_GC_findCycle, KRef, KRef root) {
-  RETURN_RESULT_OF(findCycle, root);
 }
 
 KNativePtr CreateStablePointer(KRef any) {
