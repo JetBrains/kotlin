@@ -97,9 +97,9 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
 
     override fun visitClass(declaration: IrClass) {
         super.visitClass(declaration)
-
-        generator.generate(declaration)
-
+        if (declaration.requiresRtti()) {
+            generator.generate(declaration)
+        }
         if (declaration.isKotlinObjCClass()) {
             kotlinObjCClassInfoGenerator.generate(declaration)
         }
@@ -772,7 +772,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     override fun visitClass(declaration: IrClass) {
         context.log{"visitClass                     : ${ir2string(declaration)}"}
-        if (declaration.isNonGeneratedAnnotation()) {
+
+        if (declaration.isNonGeneratedAnnotation() || !declaration.requiresCodeGeneration()) {
             // For non-generated annotation classes generate only nested classes.
             declaration.declarations
                     .filterIsInstance<IrClass>()

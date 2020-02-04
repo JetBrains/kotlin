@@ -157,8 +157,9 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     }
 
     override fun visitClass(declaration: IrClass) {
-        this.classes[declaration] = createClassDeclarations(declaration)
-
+        if (declaration.requiresRtti()) {
+            this.classes[declaration] = createClassDeclarations(declaration)
+        }
         super.visitClass(declaration)
     }
 
@@ -308,6 +309,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null) {
+            if (!containingClass.requiresRtti()) return
             val classDeclarations = this.classes[containingClass] ?:
                 error(containingClass.descriptor.toString())
             val allFields = context.getLayoutBuilder(containingClass).fields

@@ -185,6 +185,20 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return LLVMStoreSizeOfType(llvmTargetData, classType).toInt()
     }
 
+    private fun getClassId(irClass: IrClass): Int {
+        if (irClass.isKotlinObjCClass()) return 0
+        val hierarchyInfo = if (context.ghaEnabled()) {
+            context.getLayoutBuilder(irClass).hierarchyInfo
+        } else {
+            ClassGlobalHierarchyInfo.DUMMY
+        }
+        return if (irClass.isInterface) {
+            hierarchyInfo.interfaceId
+        } else {
+            hierarchyInfo.classIdLo
+        }
+    }
+
     fun generate(irClass: IrClass) {
 
         val className = irClass.fqNameForIrSerialization
@@ -195,11 +209,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val instanceSize = getInstanceSize(bodyType, className)
 
-        val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
-        val superType = if (irClass.isAny()) NullPointer(runtime.typeInfoType)
-                else superTypeOrAny.typeInfoPtr
+        val superType = when {
+            irClass.isAny() -> NullPointer(runtime.typeInfoType)
+            irClass.isKotlinObjCClass() -> context.ir.symbols.any.owner.typeInfoPtr
+            else -> {
+                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+                superTypeOrAny.typeInfoPtr
+            }
+        }
 
-        val implementedInterfaces = irClass.implementedInterfaces
+        val implementedInterfaces = irClass.implementedInterfaces.filter { it.requiresRtti() }
 
         val interfaces = implementedInterfaces.map { it.typeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
@@ -235,10 +254,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val reflectionInfo = getReflectionInfo(irClass)
         val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
-        val hierarchyInfo =
-                if (context.ghaEnabled())
-                    context.getLayoutBuilder(irClass).hierarchyInfo
-                else ClassGlobalHierarchyInfo.DUMMY
         val typeInfo = TypeInfo(
                 irClass.typeInfoPtr,
                 makeExtendedInfo(irClass),
@@ -251,9 +266,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass),
-                if (irClass.isInterface)
-                    hierarchyInfo.interfaceId
-                else hierarchyInfo.classIdLo,
+                getClassId(irClass),
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
                 associatedObjects = genAssociatedObjects(irClass)
         )
