@@ -21,8 +21,6 @@ import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.FileContentImpl;
 import com.intellij.util.indexing.IndexInfrastructureVersion;
-import com.intellij.util.indexing.hash.HashBasedIndexGenerator;
-import com.intellij.util.indexing.hash.StubHashBasedIndexGenerator;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.zip.JBZipEntry;
