@@ -19,6 +19,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -268,6 +269,22 @@ fun configureCompilerOptions(fileText: String, project: Project, module: Module)
     }
 
     return false
+}
+
+fun <T> configureRegistryAndRun(fileText: String, body: () -> T) {
+    val registers = InTextDirectivesUtils.findListWithPrefixes(fileText, "// REGISTRY:")
+        .map { it.split(' ') }
+        .map { Registry.get(it.first()) to it.last() }
+    try {
+        for ((register, value) in registers) {
+            register.setValue(value)
+        }
+        body()
+    } finally {
+        for ((register, _) in registers) {
+            register.resetToDefault()
+        }
+    }
 }
 
 fun rollbackCompilerOptions(project: Project, module: Module) {

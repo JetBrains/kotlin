@@ -388,6 +388,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/trailingCommaOnWithCodeStyle/inspectionData/inspections.test");
         }
 
+        @TestMetadata("trailingCommaOnWithCodeStyleAndCallSite/inspectionData/inspections.test")
+        public void testTrailingCommaOnWithCodeStyleAndCallSite_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOnWithCodeStyleAndCallSite/inspectionData/inspections.test");
+        }
+
         @TestMetadata("trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test")
         public void testTrailingCommaOnWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test");

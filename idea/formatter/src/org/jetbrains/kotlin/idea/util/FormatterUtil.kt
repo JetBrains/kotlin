@@ -53,7 +53,7 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiline() = getLineCount() > 1
 
-fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean =
+fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
     needTrailingComma(
         settings = settings,
         trailingComma = { if (checkExistingTrailingComma) valueParameterList?.trailingComma else null },
@@ -61,14 +61,14 @@ fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings, checkExisti
         globalEndOffset = { arrow?.endOffset },
     )
 
-fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean = needTrailingComma(
+fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean = needTrailingComma(
     settings = settings,
     trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
     additionalCheck = { !isElse },
     globalEndOffset = { arrow?.endOffset },
 )
 
-fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, checkExistingTrailingComma: Boolean = true): Boolean =
+fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
     needTrailingComma(
         settings = settings,
         trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
@@ -77,13 +77,13 @@ fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings, ch
     )
 
 fun <T : PsiElement> T.needTrailingComma(
-    settings: CodeStyleSettings,
+    settings: CodeStyleSettings?,
     trailingComma: T.() -> PsiElement?,
     additionalCheck: () -> Boolean = { true },
     globalStartOffset: T.() -> Int? = PsiElement::startOffset,
     globalEndOffset: T.() -> Int? = PsiElement::endOffset,
 ): Boolean {
-    if (trailingComma() == null && !settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(this)) return false
+    if (trailingComma() == null && settings?.kotlinCustomSettings?.addTrailingCommaIsAllowedFor(this) == false) return false
     if (!additionalCheck()) return false
 
     val startOffset = globalStartOffset() ?: return false

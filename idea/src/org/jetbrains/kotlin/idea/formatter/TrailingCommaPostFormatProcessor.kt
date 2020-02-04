@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.registry.Registry
@@ -46,7 +45,7 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 
         fun needComma(
             commaOwner: KtElement,
-            settings: CodeStyleSettings = CodeStyle.getSettings(commaOwner.project),
+            settings: CodeStyleSettings?,
             checkExistingTrailingComma: Boolean = true,
         ): Boolean = when {
             commaOwner is KtWhenEntry ->
@@ -60,7 +59,7 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 
             else -> (checkExistingTrailingComma &&
                     trailingCommaOrLastElement(commaOwner)?.isComma == true ||
-                    settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(commaOwner)) &&
+                    settings?.kotlinCustomSettings?.addTrailingCommaIsAllowedFor(commaOwner) != false) &&
                     commaOwner.isMultiline()
         }
 

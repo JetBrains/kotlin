@@ -18,10 +18,7 @@ import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.inspections.runInspection
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.TestFixtureExtension
-import org.jetbrains.kotlin.idea.test.configureCompilerOptions
-import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -96,7 +93,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                         if (forceUsePackageFolder) {
                             val packageName = fileText.substring(
                                 "package".length,
-                                fileText.indexOfAny(charArrayOf(';', '\n'))
+                                fileText.indexOfAny(charArrayOf(';', '\n')),
                             ).trim()
                             val projectFileName = packageName.replace('.', '/') + "/" + file.name
                             addFileToProject(projectFileName, fileText)
@@ -117,39 +114,45 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             }.toList()
 
             val codeStyleSettings = CodeStyle.getSettings(project)
-            try {
-                FormatSettingsUtil.createConfigurator(options, codeStyleSettings).configureSettings()
-                fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
+            configureRegistryAndRun(options) {
+                try {
+                    FormatSettingsUtil.createConfigurator(options, codeStyleSettings).configureSettings()
+                    fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
 
-                configExtra(psiFiles, options)
+                    configExtra(psiFiles, options)
 
-                val presentation = runInspection(
-                    inspectionClass, project,
-                    settings = settingsElement,
-                    files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
-                )
+                    val presentation = runInspection(
+                        inspectionClass, project,
+                        settings = settingsElement,
+                        files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path,
+                    )
 
-                if (afterFiles.isNotEmpty()) {
-                    presentation.problemDescriptors.forEach { problem ->
-                        problem.fixes?.forEach {
-                            CommandProcessor.getInstance().executeCommand(project, {
-                                runWriteAction { it.applyFix(project, problem) }
-                            }, it.name, it.familyName)
+                    if (afterFiles.isNotEmpty()) {
+                        presentation.problemDescriptors.forEach { problem ->
+                            problem.fixes?.forEach {
+                                CommandProcessor.getInstance().executeCommand(
+                                    project,
+                                    {
+                                        runWriteAction { it.applyFix(project, problem) }
+                                    },
+                                    it.name, it.familyName,
+                                )
+                            }
+                        }
+
+                        for (filePath in afterFiles) {
+                            val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
+                            KotlinTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
                         }
                     }
 
-                    for (filePath in afterFiles) {
-                        val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
-                        KotlinTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
+                } finally {
+                    codeStyleSettings.clearCodeStyleSettings()
+                    if (configured) {
+                        rollbackCompilerOptions(project, module)
                     }
+                    fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
                 }
-
-            } finally {
-                codeStyleSettings.clearCodeStyleSettings()
-                if (configured) {
-                    rollbackCompilerOptions(project, module)
-                }
-                fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
             }
         }
     }
