@@ -1102,6 +1102,7 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)isFrozenObj:(id)obj __attribute__((swift_name("isFrozen(obj:)")));
 + (id)kotlinLambdaBlock:(id (^)(id))block __attribute__((swift_name("kotlinLambda(block:)")));
 + (int64_t)multiplyInt:(int32_t)int_ long:(int64_t)long_ __attribute__((swift_name("multiply(int:long:)")));
++ (id _Nullable)callFoo1Bridge:(ValuesBridgeBase *)bridge error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callFoo1(bridge:)")));
 + (id)same:(id)receiver __attribute__((swift_name("same(_:)")));
 + (ValuesInt * _Nullable)callBase1:(id<ValuesBase1>)base1 value:(ValuesInt * _Nullable)value __attribute__((swift_name("call(base1:value:)")));
 + (ValuesInt * _Nullable)callExtendedBase1:(id<ValuesExtendedBase1>)extendedBase1 value:(ValuesInt * _Nullable)value __attribute__((swift_name("call(extendedBase1:value:)")));

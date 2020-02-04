@@ -275,6 +275,13 @@ func testFunctions() throws {
     try assertEquals(actual: ValuesKt.multiply(int: 3, long: 2), expected: 6)
 }
 
+class BridgeSwift : BridgeBase {
+    class Err : Error {}
+
+    override func foo1() throws -> Any {
+        throw Err()
+    }
+}
 
 func testExceptions() throws {
     let bridge = Bridge()
@@ -299,6 +306,13 @@ func testExceptions() throws {
         try bridge.foo4(result: &result)
     } catch let error as NSError {
         try assertTrue(error.kotlinException is MyException)
+    }
+    do {
+        try ValuesKt.callFoo1(bridge: BridgeSwift())
+    } catch let error as BridgeSwift.Err {
+        // Ok
+    } catch {
+        try assertTrue(false)
     }
 }
 

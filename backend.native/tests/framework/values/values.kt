@@ -272,6 +272,9 @@ class Bridge : BridgeBase() {
     override fun foo4() = throw MyException()
 }
 
+@Throws(NullPointerException::class)
+fun callFoo1(bridge: BridgeBase) = bridge.foo1()
+
 fun Any.same() = this
 
 // https://github.com/JetBrains/kotlin-native/issues/2571
