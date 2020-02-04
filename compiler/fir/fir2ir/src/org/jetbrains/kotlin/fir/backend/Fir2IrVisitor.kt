@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
@@ -705,6 +706,15 @@ class Fir2IrVisitor(
         val type = typeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         val symbol = calleeReference.toSymbol(declarationStorage)
         return typeRef.convertWithOffsets { startOffset, endOffset ->
+            if (calleeReference is FirSuperReference) {
+                if (typeRef !is FirComposedSuperTypeRef) {
+                    val dispatchReceiver = functionStack.lastOrNull()?.dispatchReceiverParameter
+                    if (dispatchReceiver != null) {
+                        // Use the dispatch receiver of the containing function
+                        return@convertWithOffsets IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                    }
+                }
+            }
             when {
                 symbol is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                 symbol is IrSimpleFunctionSymbol -> IrCallImpl(
