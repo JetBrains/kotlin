@@ -39,6 +39,7 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.uast.test.env.assertEqualsToFile
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
@@ -495,11 +496,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 additionalOptions = options,
                 extraClassPath = listOf(ForTestCompileRuntime.coroutinesCompatForTests()),
                 checkKotlinOutput = { actual ->
-                    // TODO KT-36240
-                    assertEquals(
-                        "warning: language version 1.2 is deprecated and its support will be removed in a future version of Kotlin\nOK\n",
-                        actual
-                    )
+                    KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "library.output.txt"), actual)
                 }
             ),
             { _, bytes ->
