@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.ChangeHierarchyViewActionBase} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ChangeHierarchyViewActionBase} instead
  */
 @Deprecated
 public abstract class ChangeHierarchyViewActionBase extends ToggleAction {
