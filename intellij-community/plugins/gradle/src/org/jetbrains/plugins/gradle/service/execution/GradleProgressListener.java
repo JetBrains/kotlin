@@ -42,8 +42,7 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
   private final ExternalSystemTaskNotificationListener myListener;
   private final ExternalSystemTaskId myTaskId;
   private final Map<Object, Long> myStatusEventIds = new HashMap<>();
-  private final int myOperationId;
-  private final String myOperationIdUnderscore;
+  private final String myOperationId;
   private static final String STARTING_GRADLE_DAEMON_EVENT = "Starting Gradle Daemon";
   private ExternalSystemTaskNotificationEvent myLastStatusChange = null;
 
@@ -57,13 +56,12 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
                                 @Nullable String buildRootDir) {
     myListener = listener;
     myTaskId = taskId;
-    myOperationId = taskId.hashCode() + FileUtil.pathHashCode(buildRootDir == null ? UUID.randomUUID().toString() : buildRootDir);
-    myOperationIdUnderscore = myOperationId + "_";
+    myOperationId = (taskId.hashCode() + FileUtil.pathHashCode(buildRootDir == null ? UUID.randomUUID().toString() : buildRootDir)) + "_";
   }
 
   @Override
   public void statusChanged(org.gradle.tooling.events.ProgressEvent event) {
-    GradleProgressEventConverter.EventId eventId = GradleProgressEventConverter.getEventId(event, myOperationIdUnderscore);
+    GradleProgressEventConverter.EventId eventId = GradleProgressEventConverter.getEventId(event, myOperationId);
     ExternalSystemTaskNotificationEvent progressBuildEvent =
       GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event);
     sendProgressToOutputIfNeeded(event);
@@ -159,24 +157,6 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
         String duration = StringUtil.formatDuration(eventTime - startTime);
         myListener.onTaskOutput(myTaskId, "\rGradle Daemon started in " + duration + "\n", true);
       }
-    }
-  }
-
-  private enum BuildPhase {
-    LOAD("Load build"), CONFIGURE("Configure build"), RUN_TASKS("Run tasks");
-
-    private final String myOperationName;
-
-    BuildPhase(String operationName) {
-      myOperationName = operationName;
-    }
-
-    @Nullable
-    public static BuildPhase find(@NotNull String operationName) {
-      for (BuildPhase phase : BuildPhase.values()) {
-        if (phase.myOperationName.equals(operationName)) return phase;
-      }
-      return null;
     }
   }
 }
