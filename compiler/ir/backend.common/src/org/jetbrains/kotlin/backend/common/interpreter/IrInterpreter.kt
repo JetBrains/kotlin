@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -25,11 +28,15 @@ enum class Code(var info: String = "") {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
 }
 
+private const val MAX_STACK_SIZE = 10_000
+
 class IrInterpreter(irModule: IrModuleFragment) {
     private val irBuiltIns = irModule.irBuiltins
     private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
     private val classCastException = irExceptions.first { it.name.asString() == ClassCastException::class.java.simpleName }
+
+    private var stackSize = 0
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -49,17 +56,19 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     fun interpret(expression: IrExpression): IrExpression {
         val data = InterpreterFrame()
-        return when (val code = expression.interpret(data)) {
-            Code.NEXT -> data.popReturnValue().toIrExpression(expression)
-            Code.EXCEPTION -> {
-                val message = (data.popReturnValue() as ExceptionState).getMessage().value
-                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, message)
+        return runBlocking {
+            return@runBlocking when (val code = withContext(this.coroutineContext) { expression.interpret(data) }) {
+                Code.NEXT -> data.popReturnValue().toIrExpression(expression)
+                Code.EXCEPTION -> {
+                    val message = (data.popReturnValue() as ExceptionState).getMessage().value
+                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, message)
+                }
+                else -> TODO("$code not supported as result of interpretation")
             }
-            else -> TODO("$code not supported as result of interpretation")
         }
     }
 
-    private fun IrElement.interpret(data: Frame): Code {
+    private suspend fun IrElement.interpret(data: Frame): Code {
         try {
             val code = when (this) {
                 is IrFunctionImpl -> interpretFunction(this, data)
@@ -111,7 +120,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 Code.EXCEPTION -> Code.EXCEPTION
                 Code.NEXT -> Code.NEXT
             }
-        } catch (e: Exception) { // TODO catch Throwable
+        } catch (e: Throwable) {
             // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
@@ -129,13 +138,20 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     // this method is used to get stack trace after exception
-    // OR
-    // TODO maybe use suspend
-    private fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): Code {
-        return irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+    private suspend fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): Code {
+        try {
+            yield()
+            stackSize++
+            if (stackSize == MAX_STACK_SIZE) {
+                throw StackOverflowError("Error!!!")
+            }
+            return irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+        } finally {
+            stackSize--
+        }
     }
 
-    private fun MethodHandle.invokeMethod(irFunction: IrFunction, data: Frame): Code {
+    private suspend fun MethodHandle.invokeMethod(irFunction: IrFunction, data: Frame): Code {
         // TODO try catch
         val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data))
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
@@ -143,7 +159,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun calculateAbstract(irFunction: IrFunction, data: Frame): Code {
+    private suspend fun calculateAbstract(irFunction: IrFunction, data: Frame): Code {
         if (irFunction.body == null) {
             val receiver = data.getVariableState(irFunction.symbol.getReceiver()!!) as Complex
             val instance = receiver.instance!!
@@ -159,7 +175,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return irFunction.body!!.interpret(data)
     }
 
-    private fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
+    private suspend fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
         fun IrFunctionImpl.getLastPossibleOverridden(): IrFunctionImpl {
             // main usage: get throwable properties getter signature from exception classes
             // then use that signatures to get right method from ir builtins map
@@ -186,7 +202,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }.apply { data.pushReturnValue(newStates) }
     }
 
-    private fun calculateBuiltIns(irFunction: IrFunction, data: Frame): Code {
+    private suspend fun calculateBuiltIns(irFunction: IrFunction, data: Frame): Code {
         val descriptor = irFunction.descriptor
         val methodName = descriptor.name.asString()
         val args = data.getAll().map { it.state }
@@ -222,7 +238,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun calculateRangeTo(type: IrType, data: Frame): Code {
+    private suspend fun calculateRangeTo(type: IrType, data: Frame): Code {
         val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
 
@@ -239,7 +255,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): Code {
+    private suspend fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): Code {
         for (i in (parametersContainer.valueArgumentsCount - 1) downTo 0) {
             val code = parametersContainer.getValueArgument(i)?.interpret(data) ?: Code.NEXT
             if (code != Code.NEXT) return code
@@ -247,7 +263,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun interpretCall(expression: IrCall, data: Frame): Code {
+    private suspend fun interpretCall(expression: IrCall, data: Frame): Code {
         val newFrame = InterpreterFrame()
 
         // dispatch receiver processing
@@ -288,7 +304,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): Code {
+    private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): Code {
         interpretValueParameters(constructorCall, data).also { if (it != Code.NEXT) return it }
         val valueParameters = constructorCall.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }.toMutableList()
         val newFrame = InterpreterFrame(valueParameters)
@@ -307,14 +323,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): Code {
+    private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): Code {
         return interpretConstructor(constructorCall, data).apply {
             val instance = data.peekReturnValue() as Complex
             instance.setInstanceRecursive(instance)
         }
     }
 
-    private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): Code {
+    private suspend fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): Code {
         if (delegatingConstructorCall.symbol.descriptor.containingDeclaration.defaultType == DefaultBuiltIns.Instance.anyType) {
             val anyAsStateObject = Common(irBuiltIns.anyClass.owner, mutableListOf())
             data.pushReturnValue(anyAsStateObject)
@@ -324,12 +340,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return interpretConstructor(delegatingConstructorCall, data)
     }
 
-    private fun interpretConst(expression: IrConst<*>, data: Frame): Code {
+    private suspend fun interpretConst(expression: IrConst<*>, data: Frame): Code {
         data.pushReturnValue(expression.toPrimitive())
         return Code.NEXT
     }
 
-    private fun interpretStatements(statements: List<IrStatement>, data: Frame): Code {
+    private suspend fun interpretStatements(statements: List<IrStatement>, data: Frame): Code {
         val newFrame = data.copy()
 
         var code = Code.NEXT
@@ -341,7 +357,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretBlock(block: IrBlock, data: Frame): Code {
+    private suspend fun interpretBlock(block: IrBlock, data: Frame): Code {
         if (block.isLambdaFunction()) {
             val irLambdaFunction = block.statements.filterIsInstance<IrFunctionReference>().first()
             data.pushReturnValue(Lambda(irLambdaFunction.symbol.owner, irLambdaFunction.type.classOrNull!!.owner))
@@ -364,16 +380,16 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return interpretStatements(block.statements, data)
     }
 
-    private fun interpretBody(body: IrBody, data: Frame): Code {
+    private suspend fun interpretBody(body: IrBody, data: Frame): Code {
         return interpretStatements(body.statements, data)
     }
 
-    private fun interpretReturn(expression: IrReturn, data: Frame): Code {
+    private suspend fun interpretReturn(expression: IrReturn, data: Frame): Code {
         val code = expression.value.interpret(data)
         return if (code == Code.NEXT) Code.RETURN else code
     }
 
-    private fun interpretWhile(expression: IrWhileLoop, data: Frame): Code {
+    private suspend fun interpretWhile(expression: IrWhileLoop, data: Frame): Code {
         var code = Code.NEXT
         while (code == Code.NEXT) {
             code = expression.condition.interpret(data)
@@ -386,7 +402,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretWhen(expression: IrWhen, data: Frame): Code {
+    private suspend fun interpretWhen(expression: IrWhen, data: Frame): Code {
         var code = Code.NEXT
         val iterator = expression.branches.asSequence().iterator()
         while (code == Code.NEXT && iterator.hasNext()) {
@@ -395,7 +411,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretBranch(expression: IrBranch, data: Frame): Code {
+    private suspend fun interpretBranch(expression: IrBranch, data: Frame): Code {
         var code = expression.condition.interpret(data)
         if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.value as? Boolean == true) {
             code = expression.result.interpret(data)
@@ -404,15 +420,15 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return code
     }
 
-    private fun interpretBreak(breakStatement: IrBreak, data: Frame): Code {
+    private suspend fun interpretBreak(breakStatement: IrBreak, data: Frame): Code {
         return Code.BREAK_LOOP.apply { info = breakStatement.label ?: "" }
     }
 
-    private fun interpretContinue(continueStatement: IrContinue, data: Frame): Code {
+    private suspend fun interpretContinue(continueStatement: IrContinue, data: Frame): Code {
         return Code.CONTINUE.apply { info = continueStatement.label ?: "" }
     }
 
-    private fun interpretSetField(expression: IrSetField, data: Frame): Code {
+    private suspend fun interpretSetField(expression: IrSetField, data: Frame): Code {
         val code = expression.value.interpret(data)
         if (code != Code.NEXT) return code
 
@@ -421,7 +437,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun interpretGetField(expression: IrGetField, data: Frame): Code {
+    private suspend fun interpretGetField(expression: IrGetField, data: Frame): Code {
         val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor // receiver is null, for example, for top level fields
         val result = receiver?.let { data.getVariableState(receiver).getState(expression.symbol.descriptor)?.copy() }
         if (result == null) {
@@ -431,19 +447,19 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun interpretGetValue(expression: IrGetValue, data: Frame): Code {
+    private suspend fun interpretGetValue(expression: IrGetValue, data: Frame): Code {
         data.pushReturnValue(data.getVariableState(expression.symbol.descriptor).copy())
         return Code.NEXT
     }
 
-    private fun interpretVariable(expression: IrVariable, data: Frame): Code {
+    private suspend fun interpretVariable(expression: IrVariable, data: Frame): Code {
         val code = expression.initializer?.interpret(data)
         if (code != Code.NEXT) return code ?: Code.NEXT
         data.addVar(Variable(expression.descriptor, data.popReturnValue()))
         return Code.NEXT
     }
 
-    private fun interpretSetVariable(expression: IrSetVariable, data: Frame): Code {
+    private suspend fun interpretSetVariable(expression: IrSetVariable, data: Frame): Code {
         val code = expression.value.interpret(data)
         if (code != Code.NEXT) return code
 
@@ -456,7 +472,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): Code {
+    private suspend fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): Code {
         val objectState = Common(expression.symbol.owner, mutableListOf())
         val newFrame = data.copy().apply { addVar(Variable(expression.symbol.descriptor.thisAsReceiverParameter, objectState)) }
 
@@ -470,7 +486,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
+    private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 // coercion to unit means that return value isn't used
@@ -501,7 +517,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun interpretVararg(expression: IrVararg, data: Frame): Code {
+    private suspend fun interpretVararg(expression: IrVararg, data: Frame): Code {
         val args = expression.elements.map {
             it.interpret(data).apply { if (this != Code.NEXT) return this }
             data.popReturnValue()
@@ -523,7 +539,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.NEXT
     }
 
-    private fun interpretTry(expression: IrTry, data: Frame): Code {
+    private suspend fun interpretTry(expression: IrTry, data: Frame): Code {
         var code = expression.tryResult.interpret(data)
         if (code == Code.EXCEPTION) {
             val exception = data.peekReturnValue() as ExceptionState
@@ -538,13 +554,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return expression.finallyExpression?.interpret(data) ?: code
     }
 
-    private fun interpretCatch(expression: IrCatch, data: Frame): Code {
+    private suspend fun interpretCatch(expression: IrCatch, data: Frame): Code {
         val newFrame = InterpreterFrame(data.getAll().toMutableList())
         newFrame.addVar(Variable(expression.parameter, data.popReturnValue()))
         return expression.result.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
     }
 
-    private fun interpretThrow(expression: IrThrow, data: Frame): Code {
+    private suspend fun interpretThrow(expression: IrThrow, data: Frame): Code {
         expression.value.interpret(data).also { if (it != Code.NEXT) return it }
         when (val exception = data.popReturnValue()) {
             is Common -> data.pushReturnValue(ExceptionState(exception))
@@ -555,7 +571,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return Code.EXCEPTION
     }
 
-    private fun interpretStringConcatenation(expression: IrStringConcatenation, data: Frame): Code {
+    private suspend fun interpretStringConcatenation(expression: IrStringConcatenation, data: Frame): Code {
         val result = StringBuilder()
         expression.arguments.forEach {
             it.interpret(data).also { code -> if (code != Code.NEXT) return code }
