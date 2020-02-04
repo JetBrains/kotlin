@@ -36,11 +36,14 @@ public annotation class RetainForTarget(val target: String)
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a platform method.
  *
- * When compiling to Objective-C/Swift framework, methods having or inheriting this annotation are represented as
- * `NSError*`-producing methods in Objective-C and as `throws` methods in Swift.
- * When such a method called through framework API throws an exception, it is either propagated as
- * `NSError` or considered unhandled (if exception `is` [kotlin.Error] or [kotlin.RuntimeException]).
- * In any case exception is not checked to be instance of one of the [exceptionClasses].
+ * When compiling to Objective-C/Swift framework, functions having or inheriting
+ * this annotation are represented as `NSError*`-producing methods in Objective-C
+ * and as `throws` methods in Swift.
+ *
+ * When Kotlin function called from Swift/Objective-C code throws an exception
+ * which is an instance of one of the [exceptionClasses] or their subclasses,
+ * it is propagated as `NSError`. Other Kotlin exceptions reaching Swift/Objective-C
+ * are considered unhandled and cause program termination.
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */

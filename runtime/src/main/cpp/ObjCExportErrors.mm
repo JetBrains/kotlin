@@ -28,33 +28,44 @@
 
 extern "C" OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable);
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_getWrappedError, KRef throwable);
-extern "C" KBoolean Kotlin_ObjCExport_isUnchecked(KRef exception);
 
 static void printlnMessage(const char* message) {
   konan::consolePrintf("%s\n", message);
 }
 
-static const char* uncheckedExceptionMessage =
-    "Instances of kotlin.Error, kotlin.RuntimeException and subclasses "
-    "aren't propagated from Kotlin to Objective-C/Swift.";
-
 extern "C" RUNTIME_NORETURN void Kotlin_ObjCExport_trapOnUndeclaredException(KRef exception) {
-  if (Kotlin_ObjCExport_isUnchecked(exception)) {
-    printlnMessage(uncheckedExceptionMessage);
-    printlnMessage("Other exceptions can be propagated as NSError if method has or inherits @Throws annotation.");
-  } else {
-    printlnMessage("Exceptions are propagated from Kotlin to Objective-C/Swift as NSError "
-            "only if method has or inherits @Throws annotation");
-  }
+  printlnMessage("Function doesn't have or inherit @Throws annotation and thus exception isn't propagated "
+                 "from Kotlin to Objective-C/Swift as NSError.\n"
+                 "It is considered unexpected and unhandled instead. Program will be terminated.");
 
   TerminateWithUnhandledException(exception);
 }
 
 static char kotlinExceptionOriginChar;
 
-extern "C" void Kotlin_ObjCExport_RethrowExceptionAsNSError(KRef exception, id* outError) {
-  if (Kotlin_ObjCExport_isUnchecked(exception)) {
-    printlnMessage(uncheckedExceptionMessage);
+static bool isExceptionOfType(KRef exception, const TypeInfo** types) {
+  for (int i = 0; types[i] != nullptr; ++i) {
+    // TODO: use fast instance check when possible.
+    if (IsInstance(exception, types[i])) return true;
+  }
+
+  return false;
+}
+
+extern "C" void Kotlin_ObjCExport_RethrowExceptionAsNSError(KRef exception, id* outError, const TypeInfo** types) {
+  ObjHolder errorHolder;
+  KRef error = Kotlin_ObjCExport_getWrappedError(exception, errorHolder.slot());
+  if (error != nullptr) {
+    // Thrown originally by Swift/Objective-C.
+    // Not actually a Kotlin exception, so don't check if it matches [types].
+    if (outError != nullptr) *outError = Kotlin_ObjCExport_refToObjC(error);
+    return;
+  }
+
+  if (!isExceptionOfType(exception, types)) {
+    printlnMessage("Exception doesn't match @Throws-specified class list and thus isn't propagated "
+                   "from Kotlin to Objective-C/Swift as NSError.\n"
+                   "It is considered unexpected and unhandled instead. Program will be terminated.");
     TerminateWithUnhandledException(exception);
   }
 
@@ -62,18 +73,11 @@ extern "C" void Kotlin_ObjCExport_RethrowExceptionAsNSError(KRef exception, id* 
     return;
   }
 
-  ObjHolder errorHolder, messageHolder;
-
-  KRef error = Kotlin_ObjCExport_getWrappedError(exception, errorHolder.slot());
-  if (error != nullptr) {
-    *outError = Kotlin_ObjCExport_refToObjC(error);
-    return;
-  }
-
   NSMutableDictionary<NSErrorUserInfoKey, id>* userInfo = [[NSMutableDictionary new] autorelease];
   userInfo[@"KotlinException"] = Kotlin_ObjCExport_refToObjC(exception);
   userInfo[@"KotlinExceptionOrigin"] = @(&kotlinExceptionOriginChar); // Support for different Kotlin runtimes loaded.
 
+  ObjHolder messageHolder;
   KRef message = Kotlin_Throwable_getMessage(exception, messageHolder.slot());
   NSString* description = Kotlin_Interop_CreateNSStringFromKString(message);
   if (description != nullptr) {

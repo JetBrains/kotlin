@@ -280,10 +280,6 @@ class ObjCErrorException(
     override fun toString(): String = "NSError-based exception: $message"
 }
 
-@ExportForCppRuntime
-private fun Kotlin_ObjCExport_isUnchecked(exception: Throwable): Boolean =
-        exception is kotlin.Error || exception is kotlin.RuntimeException
-
 @PublishedApi
 @SymbolName("Kotlin_ObjCExport_trapOnUndeclaredException")
 @ExportForCppRuntime

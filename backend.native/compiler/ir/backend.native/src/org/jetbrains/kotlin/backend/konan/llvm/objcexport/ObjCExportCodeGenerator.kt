@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -375,6 +377,9 @@ internal class ObjCExportCodeGenerator(
 
     internal val directMethodAdapters = mutableMapOf<DirectAdapterRequest, ObjCToKotlinMethodAdapter>()
 
+    internal val exceptionTypeInfoArrays = mutableMapOf<IrFunction, ConstPointer>()
+    internal val typeInfoArrays = mutableMapOf<Set<IrClass>, ConstPointer>()
+
     inner class ObjCToKotlinMethodAdapter(
             selector: String,
             encoding: String,
@@ -702,12 +707,17 @@ private fun ObjCExportCodeGenerator.generateAbstractObjCImp(methodBridge: Method
 
 private fun ObjCExportCodeGenerator.generateObjCImp(
         target: IrFunction?,
+        baseMethod: IrFunction,
         methodBridge: MethodBridge,
         isVirtual: Boolean = false
 ) = if (target == null) {
     generateAbstractObjCImp(methodBridge)
 } else {
-    generateObjCImp(methodBridge, isDirect = !isVirtual) { args, resultLifetime, exceptionHandler ->
+    generateObjCImp(
+            methodBridge,
+            isDirect = !isVirtual,
+            baseMethod = baseMethod
+    ) { args, resultLifetime, exceptionHandler ->
         val llvmTarget = if (!isVirtual) {
             codegen.llvmFunction(target)
         } else {
@@ -721,6 +731,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 private fun ObjCExportCodeGenerator.generateObjCImp(
         methodBridge: MethodBridge,
         isDirect: Boolean,
+        baseMethod: IrFunction? = null,
         callKotlin: FunctionGenerationContext.(
                 args: List<LLVMValueRef>,
                 resultLifetime: Lifetime,
@@ -783,7 +794,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         kotlinExceptionHandler { exception ->
             callFromBridge(
                     context.llvm.Kotlin_ObjCExport_RethrowExceptionAsNSError,
-                    listOf(exception, errorOutPtr!!)
+                    listOf(exception, errorOutPtr!!, generateExceptionTypeInfoArray(baseMethod!!))
             )
 
             val returnValue = when (returnType) {
@@ -828,6 +839,38 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     }
 
     ret(genReturnValueOnSuccess(returnType))
+}
+
+private fun ObjCExportCodeGenerator.generateExceptionTypeInfoArray(baseMethod: IrFunction): LLVMValueRef =
+        exceptionTypeInfoArrays.getOrPut(baseMethod) {
+            val types = computesThrowsClasses(baseMethod)
+            generateTypeInfoArray(types.toSet())
+        }.llvm
+
+private fun ObjCExportCodeGenerator.generateTypeInfoArray(types: Set<IrClass>): ConstPointer =
+        typeInfoArrays.getOrPut(types) {
+            val typeInfos = types.map { with(codegen) { it.typeInfoPtr } } + NullPointer(codegen.kTypeInfo)
+            codegen.staticData.placeGlobalConstArray("", codegen.kTypeInfoPtr, typeInfos)
+        }
+
+private fun computesThrowsClasses(method: IrFunction): List<IrClass> {
+    // Note: frontend ensures that all topmost overridden methods have equal @Throws annotations.
+    // However due to linking different versions of libraries IR could end up not meeting this condition.
+    // Handling this gracefully below.
+
+    if (method is IrSimpleFunction && method.overriddenSymbols.isNotEmpty()) {
+        return computesThrowsClasses(method.overriddenSymbols.first().owner)
+    }
+
+    val throwsVararg = method.annotations.findAnnotation(KonanFqNames.throws)?.getValueArgument(0)
+            ?: return emptyList()
+
+    if (throwsVararg !is IrVararg) error(method.getContainingFile(), throwsVararg, "unexpected vararg")
+
+    return throwsVararg.elements.map {
+        (it as? IrClassReference)?.symbol?.owner as? IrClass
+                ?: error(method.getContainingFile(), it, "unexpected @Throws argument")
+    }
 }
 
 private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
@@ -1016,7 +1059,7 @@ private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
     val selector = namer.getSelector(baseMethod.descriptor)
 
     val methodBridge = mapper.bridgeMethod(baseMethod.descriptor)
-    val objCToKotlin = constPointer(generateObjCImp(baseMethod, methodBridge, isVirtual = true))
+    val objCToKotlin = constPointer(generateObjCImp(baseMethod, baseMethod, methodBridge, isVirtual = true))
 
     selectorsToDefine[selector] = methodBridge
 
@@ -1042,7 +1085,7 @@ private fun ObjCExportCodeGenerator.createMethodAdapter(
     val selectorName = namer.getSelector(request.base.descriptor)
     val methodBridge = mapper.bridgeMethod(request.base.descriptor)
     val objCEncoding = getEncoding(methodBridge)
-    val objCToKotlin = constPointer(generateObjCImp(request.implementation, methodBridge))
+    val objCToKotlin = constPointer(generateObjCImp(request.implementation, request.base, methodBridge))
 
     selectorsToDefine[selectorName] = methodBridge
 

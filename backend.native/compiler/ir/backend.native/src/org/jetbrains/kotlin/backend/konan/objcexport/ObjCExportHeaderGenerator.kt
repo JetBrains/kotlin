@@ -643,29 +643,13 @@ internal class ObjCExportTranslatorImpl(
         }
     }
 
-    private val uncheckedExceptionClasses =
-            listOf("kotlin.Error", "kotlin.RuntimeException").map { ClassId.topLevel(FqName(it)) }
-
     private fun exportThrown(method: FunctionDescriptor) {
         if (!method.kind.isReal) return
         val throwsAnnotation = method.annotations.findAnnotation(KonanFqNames.throws) ?: return
 
-        if (!mapper.doesThrow(method)) {
-            warningCollector.reportWarning(method,
-                    "@${KonanFqNames.throws.shortName()} annotation should also be added to a base method")
-        }
-
         val arguments = (throwsAnnotation.allValueArguments.values.single() as ArrayValue).value
         for (argument in arguments) {
             val classDescriptor = TypeUtils.getClassDescriptor((argument as KClassValue).getArgumentType(method.module)) ?: continue
-
-            classDescriptor.getAllSuperClassifiers().firstOrNull { it.classId in uncheckedExceptionClasses }?.let {
-                warningCollector.reportWarning(method,
-                        "Method is declared to throw ${classDescriptor.fqNameSafe}, " +
-                                "but instances of ${it.fqNameSafe} and its subclasses aren't propagated " +
-                                "from Kotlin to Objective-C/Swift")
-            }
-
             generator?.requireClassOrInterface(classDescriptor)
         }
     }

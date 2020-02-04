@@ -129,9 +129,16 @@ player.moveTo(UP, byInches = 42)
 Kotlin has no concept of checked exceptions, all Kotlin exceptions are unchecked.
 Swift has only checked errors. So if Swift or Objective-C code calls a Kotlin method
 which throws an exception to be handled, then the Kotlin method should be marked
-with a `@Throws` annotation. In this case all Kotlin exceptions
-(except for instances of `Error`, `RuntimeException` and subclasses) are translated into
-a Swift error/`NSError`.
+with a `@Throws` annotation specifying a list of "expected" exception classes.
+
+When compiling to Objective-C/Swift framework, functions having or inheriting
+`@Throws` annotation are represented as `NSError*`-producing methods in Objective-C
+and as `throws` methods in Swift.
+
+When Kotlin function called from Swift/Objective-C code throws an exception
+which is an instance of one of the `@Throws`-specified classes or their subclasses,
+it is propagated as `NSError`. Other Kotlin exceptions reaching Swift/Objective-C
+are considered unhandled and cause program termination.
 
 Note that the opposite reversed translation is not implemented yet:
 Swift/Objective-C error-throwing methods aren't imported to Kotlin as
