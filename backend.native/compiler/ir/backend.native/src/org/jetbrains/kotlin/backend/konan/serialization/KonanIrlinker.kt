@@ -66,8 +66,6 @@ class KonanIrLinker(
 
     private val ModuleDescriptor.userName get() = konanLibrary!!.libraryFile.absolutePath
 
-    override fun checkAccessibility(declarationDescriptor: DeclarationDescriptor) = true
-
     override fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState<*> {
         return globalDeserializationState
     }
