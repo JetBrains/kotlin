@@ -58,7 +58,7 @@ public interface FindPopupScopeUI {
     }
 
     /**
-     * Use {@link #ScopeType(String, Supplier, Icon)}
+     * @deprecated Use {@link #ScopeType(String, Supplier, Icon)}
      */
     @Deprecated
     public ScopeType(String name, String text, Icon icon) {
