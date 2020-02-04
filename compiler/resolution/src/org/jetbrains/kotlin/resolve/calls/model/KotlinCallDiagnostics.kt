@@ -141,7 +141,7 @@ class SmartCastDiagnostic(
 class UnstableSmartCast(
     val argument: ExpressionKotlinCallArgument,
     val targetType: UnwrappedType
-) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
+) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
@@ -213,7 +213,7 @@ class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : Kotl
 class NotEnoughInformationForLambdaParameter(
     val lambdaArgument: LambdaKotlinCallArgument,
     val parameterIndex: Int
-) : KotlinCallDiagnostic(RESOLVED) {
+) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(lambdaArgument, this)
     }

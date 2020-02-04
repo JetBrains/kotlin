@@ -74,6 +74,7 @@ fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) =
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
+    RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
     RESOLVED_LOW_PRIORITY,
     CONVENTION_ERROR, // missing infix, operator etc
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
@@ -108,7 +109,7 @@ class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType) : Resoluti
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED) // todo discuss and change to INAPPLICABLE
 object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 object DynamicDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
-object UnstableSmartCastDiagnostic : ResolutionDiagnostic(MAY_THROW_RUNTIME_ERROR)
+object UnstableSmartCastDiagnostic : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 object HiddenExtensionRelatedToDynamicTypes : ResolutionDiagnostic(HIDDEN)
 object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)
 

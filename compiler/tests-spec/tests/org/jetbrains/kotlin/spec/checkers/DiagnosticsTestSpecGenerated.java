@@ -4842,6 +4842,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/45.kt");
                 }
 
+                @TestMetadata("46.kt")
+                public void test46() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/46.kt");
+                }
+
                 @TestMetadata("5.kt")
                 public void test5() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/5.kt");

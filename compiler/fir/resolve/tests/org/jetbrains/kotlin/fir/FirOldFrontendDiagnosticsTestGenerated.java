@@ -18362,6 +18362,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/resolve/inferenceInLinkedLambdasDependentOnExpectedType.kt");
         }
 
+        @TestMetadata("kt36264.kt")
+        public void testKt36264() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/resolve/kt36264.kt");
+        }
+
         @TestMetadata("localObject.kt")
         public void testLocalObject() throws Exception {
             runTest("compiler/testData/diagnostics/tests/resolve/localObject.kt");

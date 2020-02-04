@@ -311,10 +311,15 @@ class TowerResolver {
         override fun getSuccessfulCandidates(): Collection<C>? {
             if (!isSuccessful) return null
             val firstGroupWithResolved = candidateGroups.firstOrNull {
-                it.any { it.resultingApplicability == ResolutionCandidateApplicability.RESOLVED }
+                it.any(::isSuccessfulCandidate)
             } ?: return null
 
-            return firstGroupWithResolved.filter { it.resultingApplicability == ResolutionCandidateApplicability.RESOLVED }
+            return firstGroupWithResolved.filter(::isSuccessfulCandidate)
+        }
+
+        private fun isSuccessfulCandidate(candidate: C): Boolean {
+            return candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED
+                    || candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_WITH_ERROR
         }
 
         override fun pushCandidates(candidates: Collection<C>) {
