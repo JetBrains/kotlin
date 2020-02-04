@@ -532,7 +532,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         build("clean", "browserDistribution") {
             assertTasksExecuted(
                 ":app:processResources",
-                ":app:browserDistribution"
+                ":app:browserDistributeResources"
             )
 
             assertFileExists("app/build/distributions/index.html")
