@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -51,17 +52,25 @@ class Distribution(
         preconfiguredPropertyFiles(genericName) + userPropertyFiles(genericName)
 
     val properties by lazy {
-        val loaded = File(mainPropertyFileName).loadProperties()
-        HostManager.knownTargetTemplates.forEach {
-            additionalPropertyFiles(it).forEach {
-                val additional = it.loadProperties()
-                loaded.putAll(additional)
+        val result = Properties()
+
+        fun loadPropertiesSafely(source: File) {
+            if (source.isFile) result.putAll(source.loadProperties())
+        }
+
+        loadPropertiesSafely(File(mainPropertyFileName))
+
+        HostManager.knownTargetTemplates.forEach { targetTemplate ->
+            additionalPropertyFiles(targetTemplate).forEach {
+                loadPropertiesSafely(it)
             }
         }
+
         if (onlyDefaultProfiles) {
-            loaded.keepOnlyDefaultProfiles()
+            result.keepOnlyDefaultProfiles()
         }
-        loaded
+
+        result
     }
 
     val compilerVersion by lazy { properties["compilerVersion"]?.toString() }
