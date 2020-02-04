@@ -14,7 +14,7 @@ import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.ExporterToTextFileHierarchy} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ExporterToTextFileHierarchy} instead
  */
 @Deprecated
 class ExporterToTextFileHierarchy implements ExporterToTextFile {
