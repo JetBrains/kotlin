@@ -8,7 +8,7 @@ interface MyMap<K, V> {
 
 val w: Inv<String> = TODO()
 
-public fun <X, K> Inv<X>.associateBy1(keySelector: (X) -> K): MyMap<K, String> = TODO()
+public fun <X, K> Inv<X>.associateBy1(keySelector: (X) -> K): MyMap<K, X> = TODO()
 
 val x = myRun {
     w.associateBy1 { f -> f.length }

@@ -14,7 +14,7 @@ FILE: nestedLambdas.kt
     }
     public final val w: R|Inv<kotlin/String>| = R|kotlin/TODO|()
         public get(): R|Inv<kotlin/String>|
-    public final fun <X, K> R|Inv<X>|.associateBy1(keySelector: R|(X) -> K|): R|MyMap<K, kotlin/String>| {
+    public final fun <X, K> R|Inv<X>|.associateBy1(keySelector: R|(X) -> K|): R|MyMap<K, X>| {
         ^associateBy1 R|kotlin/TODO|()
     }
     public final val x: R|MyMap<kotlin/Int, kotlin/String>| = R|/myRun|<R|MyMap<kotlin/Int, kotlin/String>|>(<L> = myRun@fun <anonymous>(): R|MyMap<kotlin/Int, kotlin/String>| {

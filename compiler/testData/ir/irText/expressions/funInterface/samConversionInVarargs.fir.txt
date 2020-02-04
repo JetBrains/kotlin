@@ -22,32 +22,32 @@ FILE fqName:<root> fileName:/samConversionInVarargs.kt
     BLOCK_BODY
   FUN name:testLambda visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Cannot bind 2 arguments to useVararg call with 1 parameters' type=kotlin.Unit
-        FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
-            VALUE_PARAMETER name:it index:0 type:kotlin.Int
-            BLOCK_BODY
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-        VARARG type=kotlin.Array<<root>.IFoo> varargElementType=<root>.IFoo
+      CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        foos: VARARG type=kotlin.Array<<root>.IFoo> varargElementType=<root>.IFoo
+          FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.Int
+              BLOCK_BODY
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:testSeveralLambdas visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Cannot bind 4 arguments to useVararg call with 1 parameters' type=kotlin.Unit
-        FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
-            VALUE_PARAMETER name:it index:0 type:kotlin.Int
-            BLOCK_BODY
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-        FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
-            VALUE_PARAMETER name:it index:0 type:kotlin.Int
-            BLOCK_BODY
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-        FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
-            VALUE_PARAMETER name:it index:0 type:kotlin.Int
-            BLOCK_BODY
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-        VARARG type=kotlin.Array<<root>.IFoo> varargElementType=<root>.IFoo
+      CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        foos: VARARG type=kotlin.Array<<root>.IFoo> varargElementType=<root>.IFoo
+          FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.Int
+              BLOCK_BODY
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.Int
+              BLOCK_BODY
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
+              VALUE_PARAMETER name:it index:0 type:kotlin.Int
+              BLOCK_BODY
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:withVarargOfInt visibility:public modality:FINAL <> (xs:kotlin.IntArray) returnType:kotlin.String
     VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY

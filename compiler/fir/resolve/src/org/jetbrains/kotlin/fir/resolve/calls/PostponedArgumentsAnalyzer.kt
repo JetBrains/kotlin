@@ -40,7 +40,6 @@ class PostponedArgumentsAnalyzer(
     private val lambdaAnalyzer: LambdaAnalyzer,
     private val components: InferenceComponents,
     private val candidate: Candidate,
-    private val replacements: MutableMap<FirExpression, FirExpression>,
     private val callResolver: FirCallResolver
 ) {
 
@@ -94,8 +93,6 @@ class PostponedArgumentsAnalyzer(
                 replaceTypeRef(FirResolvedTypeRefImpl(null, candidate.resultingTypeForCallableReference!!))
             }
         }
-
-        replacements[callableReferenceAccess] = transformedCalleeReference
     }
 
     private fun analyzeLambda(
