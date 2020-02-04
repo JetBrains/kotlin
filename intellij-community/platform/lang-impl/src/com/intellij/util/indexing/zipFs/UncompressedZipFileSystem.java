@@ -18,6 +18,9 @@ import java.nio.file.attribute.UserPrincipalLookupService;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class UncompressedZipFileSystem extends FileSystem {
   private static final Logger LOG = Logger.getInstance(UncompressedZipFileSystem.class);
@@ -30,7 +33,8 @@ public class UncompressedZipFileSystem extends FileSystem {
   @NotNull
   private final UncompressedZipFileSystemProvider myProvider;
 
-  private final ConcurrentHashMap<FileChannel, Set<FileBlockReadOnlyFileChannel>> myOpenFiles = new ConcurrentHashMap<>();
+  private final ReadWriteLock myOpenFilePoolLock = new ReentrantReadWriteLock();
+  private final Map<FileChannel, Set<FileBlockReadOnlyFileChannel>> myOpenFilePool = new ConcurrentHashMap<>();
   private volatile FileChannel myCurrentZipChannel;
 
   public UncompressedZipFileSystem(@NotNull Path uncompressedZip, @NotNull UncompressedZipFileSystemProvider provider) throws IOException {
@@ -42,20 +46,27 @@ public class UncompressedZipFileSystem extends FileSystem {
 
   @NotNull
   FileChannel openChannel(@NotNull JBZipEntry entry) throws IOException {
-    final FileChannel zipChannel = myCurrentZipChannel;
-    FileBlockReadOnlyFileChannel channel = new FileBlockReadOnlyFileChannel(zipChannel, entry.calcDataOffset(), entry.getSize()) {
-      @Override
-      protected void implCloseChannel() throws IOException {
-        Set<FileBlockReadOnlyFileChannel> channels = myOpenFiles.get(zipChannel);
-        channels.remove(this);
-        if (channels.isEmpty() && zipChannel != myCurrentZipChannel) {
-          myOpenFiles.remove(zipChannel);
-          zipChannel.close();
+    Lock lock = myOpenFilePoolLock.readLock();
+    lock.lock();
+    try {
+      final FileChannel zipChannel = myCurrentZipChannel;
+      FileBlockReadOnlyFileChannel channel = new FileBlockReadOnlyFileChannel(zipChannel, entry.calcDataOffset(), entry.getSize()) {
+        @Override
+        protected void implCloseChannel() throws IOException {
+          Set<FileBlockReadOnlyFileChannel> channels = myOpenFilePool.get(zipChannel);
+          channels.remove(this);
+          if (channels.isEmpty() && zipChannel != myCurrentZipChannel) {
+            myOpenFilePool.remove(zipChannel);
+            zipChannel.close();
+          }
         }
-      }
-    };
-    myOpenFiles.computeIfAbsent(zipChannel, __ -> ContainerUtil.newConcurrentSet()).add(channel);
-    return channel;
+      };
+      myOpenFilePool.computeIfAbsent(zipChannel, __ -> ContainerUtil.newConcurrentSet()).add(channel);
+      return channel;
+    }
+    finally {
+      lock.unlock();
+    }
   }
 
   public void sync() throws IOException {
@@ -70,32 +81,8 @@ public class UncompressedZipFileSystem extends FileSystem {
       }
     } finally {
       myUncompressedZip = new JBZipFile(myUncompressedZipPath.toFile());
-      FileChannel previousZipChannel = myCurrentZipChannel;
-      myCurrentZipChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
-      if (previousZipChannel != null && ContainerUtil.isEmpty(myOpenFiles.get(previousZipChannel))) {
-        try {
-          previousZipChannel.close();
-        } catch (IOException e) {
-          LOG.error(e);
-        }
-      }
+      reopenZipChannel();
       buildTree();
-    }
-  }
-
-  private void buildTree() {
-    myRoot = new ZipTreeNode();
-    for (JBZipEntry entry : myUncompressedZip.getEntries()) {
-      if (entry.isDirectory()) continue;
-      List<String> names = StringUtil.split(entry.getName(), getSeparator());
-      ZipTreeNode current = myRoot;
-      for (int i = 0; i < names.size(); i++) {
-        if (i == names.size() - 1) {
-          current.createEntryChild(names.get(i), entry);
-        } else {
-          current = current.createDirChild(names.get(i));
-        }
-      }
     }
   }
 
@@ -107,13 +94,7 @@ public class UncompressedZipFileSystem extends FileSystem {
   @Override
   public void close() throws IOException {
     try {
-      for (Map.Entry<FileChannel, Set<FileBlockReadOnlyFileChannel>> entry : myOpenFiles.entrySet()) {
-        for (FileBlockReadOnlyFileChannel channel : entry.getValue()) {
-          channel.close();
-        }
-        entry.getKey().close();
-      }
-      myCurrentZipChannel.close();
+      closeOpenFiles();
     } finally {
       myUncompressedZip.close();
     }
@@ -233,6 +214,58 @@ public class UncompressedZipFileSystem extends FileSystem {
       assert myChildren != null;
       ZipTreeNode previous = myChildren.put(childName, new ZipTreeNode(entry));
       assert previous == null;
+    }
+  }
+
+  private void reopenZipChannel() throws IOException {
+    Lock lock = myOpenFilePoolLock.writeLock();
+    lock.lock();
+    try {
+      FileChannel previousZipChannel = myCurrentZipChannel;
+      myCurrentZipChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
+      if (previousZipChannel != null && ContainerUtil.isEmpty(myOpenFilePool.get(previousZipChannel))) {
+        try {
+          myOpenFilePool.remove(previousZipChannel);
+          previousZipChannel.close();
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private void closeOpenFiles() throws IOException {
+    Lock lock = myOpenFilePoolLock.writeLock();
+    lock.lock();
+    try {
+      for (Map.Entry<FileChannel, Set<FileBlockReadOnlyFileChannel>> entry : myOpenFilePool.entrySet()) {
+        for (FileBlockReadOnlyFileChannel channel : entry.getValue()) {
+          channel.close();
+        }
+        entry.getKey().close();
+      }
+      myCurrentZipChannel.close();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private void buildTree() {
+    myRoot = new ZipTreeNode();
+    for (JBZipEntry entry : myUncompressedZip.getEntries()) {
+      if (entry.isDirectory()) continue;
+      List<String> names = StringUtil.split(entry.getName(), getSeparator());
+      ZipTreeNode current = myRoot;
+      for (int i = 0; i < names.size(); i++) {
+        if (i == names.size() - 1) {
+          current.createEntryChild(names.get(i), entry);
+        } else {
+          current = current.createDirChild(names.get(i));
+        }
+      }
     }
   }
 }
