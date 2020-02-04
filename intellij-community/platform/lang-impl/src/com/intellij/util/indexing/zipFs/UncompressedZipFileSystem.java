@@ -195,7 +195,7 @@ public class UncompressedZipFileSystem extends FileSystem {
 
     ZipTreeNode() {
       myEntry = null;
-      myChildren = new THashMap<>();
+      myChildren = new ConcurrentHashMap<>();
     }
 
     @Nullable
@@ -254,7 +254,7 @@ public class UncompressedZipFileSystem extends FileSystem {
   }
 
   private void buildTree() {
-    myRoot = new ZipTreeNode();
+    ZipTreeNode root = new ZipTreeNode();
     for (JBZipEntry entry : myUncompressedZip.getEntries()) {
       if (entry.isDirectory()) continue;
       List<String> names = StringUtil.split(entry.getName(), getSeparator());
@@ -267,5 +267,6 @@ public class UncompressedZipFileSystem extends FileSystem {
         }
       }
     }
+    myRoot = root;
   }
 }
