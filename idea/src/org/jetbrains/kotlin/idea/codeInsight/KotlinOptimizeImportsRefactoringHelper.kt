@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -76,7 +76,7 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
                 if (directive?.isValid == true) {
                     val presentableUrl = directive.containingFile.virtualFile.presentableUrl
                     indicator.text2 = presentableUrl
-                    invokeLater {
+                    ApplicationManager.getApplication().invokeAndWait {
                         project.executeWriteCommand("delete $presentableUrl") {
                             try {
                                 directive.delete()
