@@ -355,9 +355,9 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
 
   @NotNull
   private JComponent wrapWithDumbModeSpoiler(@NotNull TodoPanel panel) {
-    return DumbService.getInstance(myProject).wrapWithSpoiler(panel, () -> {
+    return DumbService.getInstance(myProject).wrapWithSpoiler(panel, () -> ApplicationManager.getApplication().invokeLater(() -> {
       panel.rebuildCache();
       panel.updateTree();
-    }, panel);
+    }), panel);
   }
 }
