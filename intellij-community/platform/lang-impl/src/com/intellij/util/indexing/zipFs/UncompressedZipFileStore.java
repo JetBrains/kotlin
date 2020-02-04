@@ -8,7 +8,7 @@ import java.nio.file.FileStore;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.attribute.FileStoreAttributeView;
 
-class UncompressedZipFileStore extends FileStore {
+final class UncompressedZipFileStore extends FileStore {
   @NotNull
   private final UncompressedZipFileSystem mySystem;
 

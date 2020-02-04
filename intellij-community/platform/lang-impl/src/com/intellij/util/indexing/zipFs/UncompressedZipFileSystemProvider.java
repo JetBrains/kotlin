@@ -14,12 +14,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class UncompressedZipFileSystemProvider extends FileSystemProvider {
+public final class UncompressedZipFileSystemProvider extends FileSystemProvider {
+
+  public static final UncompressedZipFileSystemProvider INSTANCE = new UncompressedZipFileSystemProvider();
+
+  private UncompressedZipFileSystemProvider() {
+  }
+
   @Override
   public String getScheme() {
     return "zip0";
@@ -27,12 +30,22 @@ public class UncompressedZipFileSystemProvider extends FileSystemProvider {
 
   @Override
   public FileSystem newFileSystem(URI uri, Map<String, ?> env) {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public FileSystem getFileSystem(URI uri) {
     throw new UnsupportedOperationException();
+  }
+
+  @NotNull
+  public UncompressedZipFileSystem newFileSystem(Path uncompressedZip) throws IOException {
+    return newFileSystem(uncompressedZip, Collections.emptyMap());
+  }
+
+  @Override
+  public UncompressedZipFileSystem newFileSystem(Path uncompressedZip, Map<String, ?> env) throws IOException {
+    return new UncompressedZipFileSystem(uncompressedZip, this);
   }
 
   @NotNull

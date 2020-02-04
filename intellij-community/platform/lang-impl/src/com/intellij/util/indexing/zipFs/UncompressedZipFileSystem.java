@@ -7,7 +7,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +21,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class UncompressedZipFileSystem extends FileSystem {
+public final class UncompressedZipFileSystem extends FileSystem {
   private static final Logger LOG = Logger.getInstance(UncompressedZipFileSystem.class);
 
   private volatile JBZipFile myUncompressedZip;
@@ -37,7 +36,7 @@ public class UncompressedZipFileSystem extends FileSystem {
   private final Map<FileChannel, Set<FileBlockReadOnlyFileChannel>> myOpenFilePool = new ConcurrentHashMap<>();
   private volatile FileChannel myCurrentZipChannel;
 
-  public UncompressedZipFileSystem(@NotNull Path uncompressedZip, @NotNull UncompressedZipFileSystemProvider provider) throws IOException {
+  UncompressedZipFileSystem(@NotNull Path uncompressedZip, @NotNull UncompressedZipFileSystemProvider provider) throws IOException {
     myUncompressedZipPath = uncompressedZip;
     myProvider = provider;
     assert uncompressedZip.getFileSystem() == FileSystems.getDefault();
@@ -45,7 +44,12 @@ public class UncompressedZipFileSystem extends FileSystem {
   }
 
   @NotNull
-  FileChannel openChannel(@NotNull JBZipEntry entry) throws IOException {
+  public static UncompressedZipFileSystem create(@NotNull Path uncompressedZip) throws IOException {
+    return UncompressedZipFileSystemProvider.INSTANCE.newFileSystem(uncompressedZip);
+  }
+
+  @NotNull
+  FileBlockReadOnlyFileChannel openChannel(@NotNull JBZipEntry entry) throws IOException {
     Lock lock = myOpenFilePoolLock.readLock();
     lock.lock();
     try {

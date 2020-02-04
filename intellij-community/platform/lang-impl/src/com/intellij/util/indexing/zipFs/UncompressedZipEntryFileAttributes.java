@@ -7,12 +7,10 @@ import java.io.IOException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 
-public class UncompressedZipEntryFileAttributes implements BasicFileAttributes {
-  private final UncompressedZipPath myPath;
+public final class UncompressedZipEntryFileAttributes implements BasicFileAttributes {
   private final UncompressedZipFileSystem.ZipTreeNode myNode;
 
   public UncompressedZipEntryFileAttributes(@NotNull UncompressedZipPath path) throws IOException {
-    myPath = path;
     myNode = UncompressedZipFileSystemProvider.find(path);
   }
 

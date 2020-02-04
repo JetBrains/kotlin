@@ -3,11 +3,9 @@ package com.intellij.util.indexing
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem
-import com.intellij.util.indexing.zipFs.UncompressedZipFileSystemProvider
 import com.intellij.util.io.toByteArray
 import com.intellij.util.io.zip.JBZipFile
 import junit.framework.TestCase
-
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
@@ -36,7 +34,7 @@ class UncompressedZipTest : TestCase() {
       it.getOrCreateEntry("a/c.txt").data = helloBytes
     }
 
-    val fs = UncompressedZipFileSystem(file.toPath(), UncompressedZipFileSystemProvider())
+    val fs = UncompressedZipFileSystem.create(file.toPath())
     val file1 = fs.getPath("b.txt")
     val file2 = fs.getPath("a", "b.txt")
     val file3 = fs.getPath("a", "c.txt")
@@ -74,7 +72,7 @@ class UncompressedZipTest : TestCase() {
       it.getOrCreateEntry("a/c.txt").data = helloBytes
     }
 
-    val fs = UncompressedZipFileSystem(file.toPath(), UncompressedZipFileSystemProvider())
+    val fs = UncompressedZipFileSystem.create(file.toPath())
 
     assertTrue(Files.exists(fs.getPath("b.txt")))
     assertTrue(Files.exists(fs.getPath("a", "b.txt")))
@@ -104,7 +102,7 @@ class UncompressedZipTest : TestCase() {
       it.getOrCreateEntry("a.txt").data = helloBytes
     }
 
-    val fs = UncompressedZipFileSystem(file.toPath(), UncompressedZipFileSystemProvider())
+    val fs = UncompressedZipFileSystem.create(file.toPath())
 
     val aPath = fs.getPath("a.txt")
     val aFile = FileChannel.open(aPath, StandardOpenOption.READ)

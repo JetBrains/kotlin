@@ -12,7 +12,7 @@ import java.nio.file.*;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-public class UncompressedZipPath implements Path {
+public final class UncompressedZipPath implements Path {
   @NotNull
   private final UncompressedZipFileSystem myFileSystem;
   private final String @NotNull [] myNameElements;

@@ -3,7 +3,6 @@ package com.intellij.util.indexing;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
-import com.intellij.util.indexing.zipFs.UncompressedZipFileSystemProvider;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.PersistentHashMap;
 import com.intellij.util.io.zip.JBZipEntry;
@@ -39,7 +38,7 @@ public class PersistentMapPacksTest extends TestCase {
       }
     }
 
-    try (UncompressedZipFileSystem fs = new UncompressedZipFileSystem(pack.toPath(), new UncompressedZipFileSystemProvider())) {
+    try (UncompressedZipFileSystem fs = UncompressedZipFileSystem.create(pack.toPath())) {
       try (PersistentHashMap<String, String> map1 = new PersistentHashMap<String, String>(fs.getPath("map1"), descriptor, descriptor) {
         @Override
         protected boolean isReadOnly() {

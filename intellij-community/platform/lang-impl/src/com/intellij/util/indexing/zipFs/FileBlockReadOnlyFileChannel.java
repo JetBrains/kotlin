@@ -11,7 +11,7 @@ import java.nio.channels.FileLock;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
-public class FileBlockReadOnlyFileChannel extends FileChannel {
+public abstract class FileBlockReadOnlyFileChannel extends FileChannel {
   @NotNull
   private final FileChannel myUnderlying;
   private final long myStartOffset;

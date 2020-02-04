@@ -26,7 +26,6 @@ import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
-import com.intellij.util.indexing.zipFs.UncompressedZipFileSystemProvider;
 import com.intellij.util.io.DataEnumeratorEx;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
@@ -93,7 +92,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                                                                      EnumeratorStringDescriptor.INSTANCE, 32);
 
     //myWriteSystem = FileSystems.newFileSystem(URI.create("jar:" + getSharedIndexStorage().toUri().toString()), Collections.singletonMap("create", "true"));
-    myReadSystem = new UncompressedZipFileSystem(getSharedIndexStorage(), new UncompressedZipFileSystemProvider());
+    myReadSystem = UncompressedZipFileSystem.create(getSharedIndexStorage());
     Disposer.register(ApplicationManager.getApplication(), () -> {
       try {
         myReadSystem.close();
