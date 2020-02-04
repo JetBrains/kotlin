@@ -71,7 +71,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
  * the execution was suspended and will not return any result immediately.
  */
 @SinceKotlin("1.1")
-public actual val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPENDED
+public val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPENDED
 
 // Using enum here ensures two important properties:
 //  1. It makes SafeContinuation serializable with all kinds of serialization frameworks (since all of them natively support enums)

@@ -72,6 +72,12 @@ open class CopyCommonSources : DefaultTask() {
             it.include("generated/**/*.kt")
             it.include("kotlin/**/*.kt")
             it.include("kotlin.test/*.kt")
+            it.exclude("kotlin/**/experimental/jvm/**/*.kt")
+            it.exclude("kotlin/**/coroutines/experimental/**/*Jvm.kt")
+            it.exclude("kotlin/**/coroutines/experimental/intrinsics/*.kt")
+            it.exclude("kotlin/**/coroutines/experimental/SafeContinuation.kt")
+            it.exclude("kotlin/**/coroutines/experimental/CoroutinesLibrary.kt")
+            it.exclude("kotlin/**/coroutines/experimental/SequenceBuilder.kt")
             it.into(destinationDir)
         }
     }

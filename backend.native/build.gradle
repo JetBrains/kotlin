@@ -132,6 +132,7 @@ configurations {
     kotlin_native_utils_jar
     trove4j_jar
     kotlinCommonSources
+    kotlin_coroutines_experimental_compat_jar
 
     cli_bcRuntime {
         extendsFrom compilerRuntime
@@ -150,8 +151,9 @@ dependencies {
     kotlin_reflect_jar "$kotlinReflectModule@jar"
     kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
     kotlin_native_utils_jar "$kotlinNativeUtilsModule@jar"
-
-    [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
+    kotlin_coroutines_experimental_compat_jar "$kotlinCoroutinesExperimentalCompatModule@jar"
+    [kotlinCommonStdlibModule, kotlinCoroutinesExperimentalCompatModule,
+     kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
         kotlinCommonSources(it) { transitive = false }
     }
 
