@@ -1341,6 +1341,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.TrailingCommaIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ToOrdinaryStringLiteralIntention</className>
       <category>Kotlin</category>
     </intentionAction>

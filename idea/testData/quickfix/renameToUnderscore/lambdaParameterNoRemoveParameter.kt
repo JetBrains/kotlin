@@ -1,4 +1,5 @@
 // "Remove parameter 'x'" "false"
+// ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Move lambda argument into parentheses
 // ACTION: Remove explicit lambda parameter types (may break code)
 // ACTION: Rename to _

@@ -1,0 +1,4 @@
+fun a(
+    i: Int,
+    b: Int
+) = Unit
