@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
+import com.intellij.debugger.PositionManager
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.MethodFilter
@@ -12,12 +13,14 @@ import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.psi.PsiElement
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.LocalVariable
 import com.sun.jdi.Location
 import com.sun.jdi.StackFrame
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
@@ -25,9 +28,12 @@ import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinSuspendCallStepOverFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.LocationToken
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.StepOverCallerInfo
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import kotlin.math.max
@@ -156,12 +162,16 @@ interface KotlinMethodFilter : MethodFilter {
     fun locationMatches(context: SuspendContextImpl, location: Location): Boolean
 }
 
-fun getStepOverAction(location: Location, sourcePosition: SourcePosition, frameProxy: StackFrameProxyImpl): KotlinStepAction {
+fun getStepOverAction(
+    location: Location, sourcePosition: SourcePosition,
+    suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl
+): KotlinStepAction {
     val stackFrame = frameProxy.safeStackFrame() ?: return KotlinStepAction.StepOver
     val method = location.safeMethod() ?: return KotlinStepAction.StepOver
     val token = LocationToken.from(stackFrame).takeIf { it.lineNumber > 0 } ?: return KotlinStepAction.StepOver
 
     val inlinedFunctionArgumentRanges = sourcePosition.collectInlineFunctionArgumentRanges()
+    val positionManager = suspendContext.debugProcess.positionManager
 
     val tokensToSkip = mutableSetOf(token)
 
@@ -174,6 +184,7 @@ fun getStepOverAction(location: Location, sourcePosition: SourcePosition, frameP
                 && candidateToken.lineNumber != token.lineNumber
                 && inlinedFunctionArgumentRanges.none { range -> range.contains(candidateKotlinLineNumber) }
                 && candidateToken.inlineVariables.none { it !in token.inlineVariables }
+                && !isInlineFunctionFromLibrary(positionManager, candidate, candidateToken)
 
         if (!isAcceptable) {
             tokensToSkip += candidateToken
@@ -181,6 +192,36 @@ fun getStepOverAction(location: Location, sourcePosition: SourcePosition, frameP
     }
 
     return KotlinStepAction.StepOverInlined(tokensToSkip, StepOverCallerInfo.from(location))
+}
+
+private fun isInlineFunctionFromLibrary(positionManager: PositionManager, location: Location, token: LocationToken): Boolean {
+    if (token.inlineVariables.isEmpty()) {
+        return false
+    }
+
+    val debuggerSettings = DebuggerSettings.getInstance()
+    if (!debuggerSettings.TRACING_FILTERS_ENABLED) {
+        return false
+    }
+
+    tailrec fun getDeclarationName(element: PsiElement?): FqName? {
+        val declaration = element?.getNonStrictParentOfType<KtDeclaration>() ?: return null
+        declaration.getKotlinFqName()?.let { return it }
+        return getDeclarationName(declaration.parent)
+    }
+
+    val fqn = runReadAction {
+        val element = positionManager.getSourcePosition(location)?.elementAt
+        getDeclarationName(element)?.takeIf { !it.isRoot }?.asString()
+    } ?: return false
+
+    for (filter in debuggerSettings.steppingFilters) {
+        if (filter.isEnabled && filter.matches(fqn)) {
+            return true
+        }
+    }
+
+    return false
 }
 
 private fun SourcePosition.collectInlineFunctionArgumentRanges(): List<IntRange> {

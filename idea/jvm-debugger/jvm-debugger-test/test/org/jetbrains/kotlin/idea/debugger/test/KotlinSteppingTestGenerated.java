@@ -467,6 +467,26 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt24343.kt");
         }
 
+        @TestMetadata("lambdaToInlineFold.kt")
+        public void testLambdaToInlineFold() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineFold.kt");
+        }
+
+        @TestMetadata("lambdaToInlineFoldFiltersDisabled.kt")
+        public void testLambdaToInlineFoldFiltersDisabled() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineFoldFiltersDisabled.kt");
+        }
+
+        @TestMetadata("lambdaToInlineMap.kt")
+        public void testLambdaToInlineMap() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineMap.kt");
+        }
+
+        @TestMetadata("lambdaToInlineMapFiltersDisabled.kt")
+        public void testLambdaToInlineMapFiltersDisabled() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineMapFiltersDisabled.kt");
+        }
+
         @TestMetadata("noParameterExtensionLambdaArgumentCallInInline.kt")
         public void testNoParameterExtensionLambdaArgumentCallInInline() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/noParameterExtensionLambdaArgumentCallInInline.kt");

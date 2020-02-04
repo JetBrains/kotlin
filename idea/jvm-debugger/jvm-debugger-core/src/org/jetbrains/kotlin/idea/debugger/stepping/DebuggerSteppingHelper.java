@@ -59,7 +59,8 @@ public class DebuggerSteppingHelper {
                     if (frameProxy != null) {
 
                         Location location = frameProxy.location();
-                        KotlinStepAction action = KotlinSteppingCommandProviderKt.getStepOverAction(location, sourcePosition, frameProxy);
+                        KotlinStepAction action = KotlinSteppingCommandProviderKt
+                                .getStepOverAction(location, sourcePosition, suspendContext, frameProxy);
 
                         createStepRequest(
                                 suspendContext, getContextThread(),
