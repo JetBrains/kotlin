@@ -258,7 +258,7 @@ public class UncompressedZipFileSystem extends FileSystem {
     for (JBZipEntry entry : myUncompressedZip.getEntries()) {
       if (entry.isDirectory()) continue;
       List<String> names = StringUtil.split(entry.getName(), getSeparator());
-      ZipTreeNode current = myRoot;
+      ZipTreeNode current = root;
       for (int i = 0; i < names.size(); i++) {
         if (i == names.size() - 1) {
           current.createEntryChild(names.get(i), entry);
