@@ -35,7 +35,7 @@ class Distribution(
 
     private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<File> {
         val directory = File(configDir, "platforms/$genericName")
-        return if (directory.exists && directory.isDirectory)
+        return if (directory.isDirectory)
             directory.listFiles
         else
             emptyList()
