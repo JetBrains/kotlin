@@ -25,7 +25,17 @@ import org.jetbrains.kotlin.util.kind
 
 class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<KtSecondaryConstructor>(
     ConvertSecondaryConstructorToPrimaryIntention::class,
-    { constructor -> constructor.containingClass()?.secondaryConstructors?.size == 1 }
+    fun(constructor: KtSecondaryConstructor): Boolean {
+        val containingClass = constructor.containingClass() ?: return false
+        if (containingClass.secondaryConstructors.size != 1) return false
+        val parameterToPropertyMap = mutableMapOf<ValueParameterDescriptor, PropertyDescriptor>()
+        with(ConvertSecondaryConstructorToPrimaryIntention) {
+            constructor.extractInitializer(parameterToPropertyMap, containingClass.analyzeWithContent(), KtPsiFactory(constructor))
+        }
+        return parameterToPropertyMap.none { (_, property) ->
+            (DescriptorToSourceUtils.descriptorToDeclaration(property) as? KtProperty)?.setter?.hasBody() == true
+        }
+    }
 ) {
     override fun inspectionTarget(element: KtSecondaryConstructor) = element.getConstructorKeyword()
 }
@@ -60,49 +70,6 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         }
 
         return TextRange(element.startOffset, element.valueParameterList?.endOffset ?: element.getConstructorKeyword().endOffset)
-    }
-
-    private fun KtExpression.tryConvertToPropertyByParameterInitialization(
-        constructorDescriptor: ConstructorDescriptor, context: BindingContext
-    ): Pair<ValueParameterDescriptor, PropertyDescriptor>? {
-        if (this !is KtBinaryExpression || operationToken != KtTokens.EQ) return null
-        val rightReference = right as? KtReferenceExpression ?: return null
-        val rightDescriptor = context[BindingContext.REFERENCE_TARGET, rightReference] as? ValueParameterDescriptor ?: return null
-        if (rightDescriptor.containingDeclaration != constructorDescriptor) return null
-        val leftReference = when (val left = left) {
-            is KtReferenceExpression ->
-                left
-            is KtDotQualifiedExpression ->
-                if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtReferenceExpression else null
-            else ->
-                null
-        }
-
-        val leftDescriptor = context[BindingContext.REFERENCE_TARGET, leftReference] as? PropertyDescriptor ?: return null
-        return rightDescriptor to leftDescriptor
-    }
-
-    private fun KtSecondaryConstructor.extractInitializer(
-        parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
-        context: BindingContext,
-        factory: KtPsiFactory
-    ): KtClassInitializer? {
-        val constructorDescriptor = context[BindingContext.CONSTRUCTOR, this] ?: return null
-        val initializer = factory.createAnonymousInitializer() as? KtClassInitializer
-        for (statement in bodyExpression?.statements ?: emptyList()) {
-            val (rightDescriptor, leftDescriptor) =
-                statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context) ?: with(initializer) {
-                    (initializer?.body as? KtBlockExpression)?.let {
-                        it.addBefore(statement.copy(), it.rBrace)
-                        it.addBefore(factory.createNewLine(), it.rBrace)
-                    }
-                    null to null
-                }
-
-            if (rightDescriptor == null || leftDescriptor == null) continue
-            parameterToPropertyMap[rightDescriptor] = leftDescriptor
-        }
-        return initializer
     }
 
     private fun KtSecondaryConstructor.moveParametersToPrimaryConstructorAndInitializers(
@@ -187,6 +154,49 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             }
         } else {
             element.delete()
+        }
+    }
+
+    companion object {
+        private fun KtExpression.tryConvertToPropertyByParameterInitialization(
+            constructorDescriptor: ConstructorDescriptor, context: BindingContext
+        ): Pair<ValueParameterDescriptor, PropertyDescriptor>? {
+            if (this !is KtBinaryExpression || operationToken != KtTokens.EQ) return null
+            val rightReference = right as? KtReferenceExpression ?: return null
+            val rightDescriptor = context[BindingContext.REFERENCE_TARGET, rightReference] as? ValueParameterDescriptor ?: return null
+            if (rightDescriptor.containingDeclaration != constructorDescriptor) return null
+            val leftReference = when (val left = left) {
+                is KtReferenceExpression ->
+                    left
+                is KtDotQualifiedExpression ->
+                    if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtReferenceExpression else null
+                else ->
+                    null
+            }
+            val leftDescriptor = context[BindingContext.REFERENCE_TARGET, leftReference] as? PropertyDescriptor ?: return null
+            return rightDescriptor to leftDescriptor
+        }
+
+        fun KtSecondaryConstructor.extractInitializer(
+            parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
+            context: BindingContext,
+            factory: KtPsiFactory
+        ): KtClassInitializer? {
+            val constructorDescriptor = context[BindingContext.CONSTRUCTOR, this] ?: return null
+            val initializer = factory.createAnonymousInitializer() as? KtClassInitializer
+            for (statement in bodyExpression?.statements ?: emptyList()) {
+                val (rightDescriptor, leftDescriptor) =
+                    statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context) ?: with(initializer) {
+                        (initializer?.body as? KtBlockExpression)?.let {
+                            it.addBefore(statement.copy(), it.rBrace)
+                            it.addBefore(factory.createNewLine(), it.rBrace)
+                        }
+                        null to null
+                    }
+                if (rightDescriptor == null || leftDescriptor == null) continue
+                parameterToPropertyMap[rightDescriptor] = leftDescriptor
+            }
+            return initializer
         }
     }
 }
