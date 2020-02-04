@@ -160,7 +160,7 @@ class KotlinMultiplatformPlugin(
             add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
             when (propertiesProvider.jsCompiler) {
                 JsCompilerType.legacy -> add(KotlinJsTargetPreset(project, kotlinPluginVersion, null))
-                JsCompilerType.klib -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
+                JsCompilerType.ir -> add(KotlinJsIrTargetPreset(project, kotlinPluginVersion, false))
                 JsCompilerType.both -> add(
                     KotlinJsTargetPreset(
                         project,

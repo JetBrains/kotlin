@@ -12,7 +12,7 @@ import java.io.Serializable
 @Suppress("EnumEntryName")
 enum class JsCompilerType : Named, Serializable {
     legacy,
-    klib,
+    ir,
     both;
 
     override fun getName(): String =

@@ -21,7 +21,7 @@ class WorkersIT : BaseGradleIT() {
     fun testParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = true,
-            jsCompilerType = JsCompilerType.klib
+            jsCompilerType = JsCompilerType.ir
         )
     }
 
@@ -37,7 +37,7 @@ class WorkersIT : BaseGradleIT() {
     fun testNoParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = false,
-            jsCompilerType = JsCompilerType.klib
+            jsCompilerType = JsCompilerType.ir
         )
     }
 
@@ -64,7 +64,7 @@ class WorkersIT : BaseGradleIT() {
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
                     kotlinClassesDir(sourceSet = "js/main") +
-                            if (jsCompilerType == JsCompilerType.klib) "default/manifest" else "new-mpp-parallel.js"
+                            if (jsCompilerType == JsCompilerType.ir) "default/manifest" else "new-mpp-parallel.js"
                 )
                 expectedKotlinOutputFiles.forEach { assertFileExists(it) }
                 assertSubstringCount("Loaded GradleKotlinCompilerWork", 1)

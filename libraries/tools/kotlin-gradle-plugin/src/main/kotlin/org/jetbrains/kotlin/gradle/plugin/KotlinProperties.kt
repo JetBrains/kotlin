@@ -174,7 +174,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Use Kotlin/JS backend mode
      */
     val jsCompiler: JsCompilerType
-        get() = property(jsCompilerProperty)?.let { JsCompilerType.byArgument(it) } ?: JsCompilerType.klib
+        get() = property(jsCompilerProperty)?.let { JsCompilerType.byArgument(it) } ?: JsCompilerType.ir
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)

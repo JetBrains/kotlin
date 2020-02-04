@@ -74,7 +74,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testLibAndAppJsIr() = doTestLibAndApp(
         "sample-lib",
         "sample-app",
-        JsCompilerType.klib
+        JsCompilerType.ir
     )
 
     @Test
@@ -95,7 +95,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testLibAndAppWithGradleKotlinDslJsIr() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsCompilerType.klib
+        JsCompilerType.ir
     )
 
     @Test
@@ -165,7 +165,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         Assert.assertTrue("function expectedFun(" in compiledJs)
                         Assert.assertTrue("function main(" in compiledJs)
                     }
-                    JsCompilerType.klib -> {
+                    JsCompilerType.ir -> {
                         groupDir.resolve(jsJarName).exists()
                     }
                 }
@@ -251,7 +251,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             if (jsCompilerType == JsCompilerType.both) {
                 listOf(
                     JsCompilerType.legacy,
-                    JsCompilerType.klib
+                    JsCompilerType.ir
                 ).forEach {
                     build(
                         "assemble",

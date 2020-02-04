@@ -453,7 +453,7 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     }
 
     if (target is KotlinJsIrTarget) {
-        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, JsCompilerType.klib)
+        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, JsCompilerType.ir)
     }
 
     // TODO: Provide an universal way to copy attributes from the target.
