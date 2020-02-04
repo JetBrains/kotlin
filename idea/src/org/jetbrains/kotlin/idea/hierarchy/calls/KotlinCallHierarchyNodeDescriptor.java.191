@@ -133,6 +133,14 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
         return changes;
     }
 
+    @NotNull
+    private Icon getBaseMarkerIcon(@Nullable Icon sourceIcon) {
+        LayeredIcon icon = new LayeredIcon(2);
+        icon.setIcon(sourceIcon, 0);
+        icon.setIcon(AllIcons.General.Modified, 1, -AllIcons.General.Modified.getIconWidth(), 0);
+        return icon;
+    }
+
     @Nullable
     private static String renderElement(@Nullable PsiElement element) {
         if (element instanceof KtFile) {
