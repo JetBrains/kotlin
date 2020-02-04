@@ -733,6 +733,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/renameKotlinClassWithFile/kotlinClass.test");
     }
 
+    @TestMetadata("renameKotlinConstructorParameterWithByNameUsages/renameKotlinConstructorParameterWithByNameUsages.test")
+    public void testRenameKotlinConstructorParameterWithByNameUsages_RenameKotlinConstructorParameterWithByNameUsages() throws Exception {
+        runTest("idea/testData/refactoring/rename/renameKotlinConstructorParameterWithByNameUsages/renameKotlinConstructorParameterWithByNameUsages.test");
+    }
+
     @TestMetadata("renameKotlinDataClassParameter/renameKotlinDataClassParameter.test")
     public void testRenameKotlinDataClassParameter_RenameKotlinDataClassParameter() throws Exception {
         runTest("idea/testData/refactoring/rename/renameKotlinDataClassParameter/renameKotlinDataClassParameter.test");
@@ -801,6 +806,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinFunctionInEnum/renameKotlinFunctionInEnumFromSubclass.test")
     public void testRenameKotlinFunctionInEnum_RenameKotlinFunctionInEnumFromSubclass() throws Exception {
         runTest("idea/testData/refactoring/rename/renameKotlinFunctionInEnum/renameKotlinFunctionInEnumFromSubclass.test");
+    }
+
+    @TestMetadata("renameKotlinFunctionParameterWithByNameUsages/renameKotlinFunctionParameterWithByNameUsages.test")
+    public void testRenameKotlinFunctionParameterWithByNameUsages_RenameKotlinFunctionParameterWithByNameUsages() throws Exception {
+        runTest("idea/testData/refactoring/rename/renameKotlinFunctionParameterWithByNameUsages/renameKotlinFunctionParameterWithByNameUsages.test");
     }
 
     @TestMetadata("renameKotlinFunWithJvmName/renameKotlinFunWithJvmName.test")

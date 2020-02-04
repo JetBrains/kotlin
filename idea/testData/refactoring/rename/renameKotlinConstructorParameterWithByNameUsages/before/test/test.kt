@@ -1,0 +1,1 @@
+class Foo(val /*rename*/first: Int = 1)
