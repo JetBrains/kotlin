@@ -6,19 +6,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.Processor;
-import com.intellij.util.ThrowableConsumer;
+import com.intellij.util.io.PathKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.concurrency.Promise;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import static org.jetbrains.jps.TimingLog.LOG;
 
@@ -27,8 +23,8 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
 
   @Override
   public void locateIndex(@NotNull Project project,
-                          @NotNull Set<OrderEntry> entries,
-                          @NotNull Processor<ChunkDescriptor> descriptorProcessor,
+                          @NotNull Collection<? extends OrderEntry> entries,
+                          @NotNull Consumer<? super ChunkDescriptor> descriptorProcessor,
                           @NotNull ProgressIndicator indicator) {
     String indexRoot = System.getProperty(ROOT_PROP);
     if (indexRoot == null) return;
@@ -42,21 +38,20 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
       }
       if (name == null) return;
 
-      descriptorProcessor.process(new ChunkDescriptor() {
+      descriptorProcessor.consume(new ChunkDescriptor() {
         @Override
-        public @NotNull String getChunkRootName() {
+        public @NotNull String getChunkUniqueId() {
           return name;
         }
 
         @Override
-        public @NotNull Set<OrderEntry> getTargetOrderEntries() {
+        public @NotNull Collection<? extends OrderEntry> getOrderEntries() {
           return entries;
         }
 
         @Override
-        public void download(@NotNull ThrowableConsumer<? super InputStream, ? extends IOException> callback,
-                             @NotNull ProgressIndicator indicator) throws IOException {
-          callback.consume(Files.newInputStream(indexZip.toPath()));
+        public void downloadChunk(@NotNull Path targetFile, @NotNull ProgressIndicator indicator) throws IOException {
+          PathKt.copy(indexZip.toPath(), targetFile);
         }
       });
     }

@@ -6,31 +6,53 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.util.Consumer;
-import com.intellij.util.Processor;
-import com.intellij.util.ThrowableConsumer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.concurrency.Promise;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * This extension point is used to supply prebuild indexes to the IDE
+ */
 public interface SharedIndexChunkLocator {
   ExtensionPointName<SharedIndexChunkLocator> EP_NAME = ExtensionPointName.create("com.intellij.sharedIndexChunkLocator");
 
+  /**
+   * Executed every time an indexing attempt is performed by an IDE.
+   * This method is blocking. Use {@param indicator} to report the progress and check
+   * for cancellation via {@link ProgressIndicator#checkCanceled()}.
+   * Use {@param descriptorProcessor} to submit detected matching indexes chunks.
+   * This method should work fast and it should only download/process indexes metadata.
+   * The actual download run with {@link ChunkDescriptor#downloadChunk(Path, ProgressIndicator)} method later.
+   */
   void locateIndex(@NotNull Project project,
-                   @NotNull Set<OrderEntry> entries,
-                   @NotNull Processor<ChunkDescriptor> descriptorProcessor,
+                   @NotNull Collection<? extends OrderEntry> entries,
+                   @NotNull Consumer<? super ChunkDescriptor> descriptorProcessor,
                    @NotNull ProgressIndicator indicator);
 
+  /**
+   * A handler for a possible indexes chunk that this extension is able to supply
+   */
   interface ChunkDescriptor {
+    /**
+     * An application wide unique identifier of that indexes portion.
+     * That key is used by the IDE to avoid re-downloading same indexes one more times
+     */
     @NotNull
-    String getChunkRootName();
+    String getChunkUniqueId();
 
+    /**
+     * Matching order entries from the {@link #locateIndex(Project, Set, Consumer, ProgressIndicator)} call
+     */
     @NotNull
-    Set<OrderEntry> getTargetOrderEntries();
+    Collection<? extends OrderEntry> getOrderEntries();
 
-    void download(@NotNull ThrowableConsumer<? super InputStream, ? extends IOException> callback, @NotNull ProgressIndicator indicator) throws IOException;
+    /**
+     * Materialize the index chunk
+     */
+    void downloadChunk(@NotNull Path targetFile,
+                       @NotNull ProgressIndicator indicator) throws IOException;
   }
 }

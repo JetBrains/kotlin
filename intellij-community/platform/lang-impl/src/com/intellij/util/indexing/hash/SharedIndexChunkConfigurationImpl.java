@@ -4,10 +4,10 @@ package com.intellij.util.indexing.hash;
 import com.google.common.base.Charsets;
 import com.intellij.execution.process.ProcessIOExecutorService;
 import com.intellij.index.SharedIndexExtensions;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -36,13 +37,10 @@ import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TIntObjectIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -172,15 +170,24 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                               @NotNull ProgressIndicator indicator) {
     if (project.isDisposed()) return;
 
-    Path targetFile;
+    Path targetFile = null;
     try {
       ensureSharedIndexConfigurationRootExist();
-      targetFile = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkRootName());
-      descriptor.download(in -> {
-        Files.copy(in, targetFile, StandardCopyOption.REPLACE_EXISTING);
-      }, indicator);
-    } catch (IOException e) {
-      LOG.error(e);
+      targetFile = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId());
+      descriptor.downloadChunk(targetFile, indicator);
+    } catch (Exception e) {
+
+      if (targetFile != null) {
+        try {
+          FileUtil.delete(targetFile);
+        } catch (IOException ee) {
+          //NOP
+        }
+      }
+
+      //noinspection InstanceofCatchParameter
+      if (e instanceof ProcessCanceledException) ExceptionUtil.rethrow(e);
+      LOG.error("Failed to download shared index " + descriptor + " " + e.getMessage(), e);
       return;
     }
 
@@ -228,7 +235,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       for (SharedIndexChunkLocator locator : SharedIndexChunkLocator.EP_NAME.getExtensionList()) {
         locator.locateIndex(project, entries, descriptor -> {
           loadSharedIndex(project, descriptor, indicator);
-          return true; // TODO sometimes we don't need more
         }, indicator);
       }
     };
@@ -241,7 +247,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   @NotNull
   private List<SharedIndexChunk> registerChunk(SharedIndexChunkLocator.@NotNull ChunkDescriptor descriptor) throws IOException {
-    String chunkRootName = descriptor.getChunkRootName();
+    String chunkRootName = descriptor.getChunkUniqueId();
     int chunkId = myChunkDescriptorEnumerator.enumerate(chunkRootName);
     if (chunkId == 0) {
       throw new RuntimeException("chunk " + chunkRootName + " is not present");
