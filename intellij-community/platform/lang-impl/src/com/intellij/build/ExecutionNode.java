@@ -81,8 +81,9 @@ public class ExecutionNode extends CachingSimpleNode {
   private Predicate<ExecutionNode> myFilter;
   private volatile boolean myVisible = true;
 
-  public ExecutionNode(Project aProject, ExecutionNode parentNode) {
+  public ExecutionNode(Project aProject, ExecutionNode parentNode, boolean isAutoExpandNode) {
     super(aProject, parentNode);
+    myAutoExpandNode = isAutoExpandNode;
   }
 
   @Override
@@ -261,11 +262,7 @@ public class ExecutionNode extends CachingSimpleNode {
 
   @Override
   public boolean isAutoExpandNode() {
-    return myAutoExpandNode || (myFilter != null && (isRunning() || isFailed()));
-  }
-
-  public void setAutoExpandNode(boolean autoExpandNode) {
-    myAutoExpandNode = autoExpandNode;
+    return myAutoExpandNode;
   }
 
   public void setNavigatable(@Nullable Navigatable navigatable) {

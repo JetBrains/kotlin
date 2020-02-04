@@ -59,6 +59,8 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.*;
 
 import javax.swing.*;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -114,15 +116,15 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     myFocusFirstError = !(buildDescriptor instanceof DefaultBuildDescriptor) ||
                         ((DefaultBuildDescriptor)buildDescriptor).isActivateToolWindowWhenFailed();
 
-    myRootNode = new ExecutionNode(myProject, null);
-    myRootNode.setAutoExpandNode(true);
-    myBuildProgressRootNode = new ExecutionNode(myProject, myRootNode);
-    myBuildProgressRootNode.setAutoExpandNode(true);
+    myRootNode = new ExecutionNode(myProject, null, true);
+    myBuildProgressRootNode = new ExecutionNode(myProject, myRootNode, true);
     myRootNode.add(myBuildProgressRootNode);
 
     SimpleTreeStructure treeStructure = new SimpleTreeStructure.Impl(myRootNode);
     myTreeModel = new StructureTreeModel<>(treeStructure, this);
-    myTree = initTree(new AsyncTreeModel(myTreeModel, this));
+    AsyncTreeModel asyncTreeModel = new AsyncTreeModel(myTreeModel, this);
+    asyncTreeModel.addTreeModelListener(new ExecutionNodeAutoExpandingListener());
+    myTree = initTree(asyncTreeModel);
 
     JPanel myContentPanel = new JPanel();
     myContentPanel.setLayout(new CardLayout());
@@ -239,6 +241,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     final Object eventId = event.getId();
     ExecutionNode currentNode = nodesMap.get(eventId);
     ExecutionNode buildProgressRootNode = getBuildProgressRootNode();
+    Runnable selectErrorNodeTask = null;
     if (event instanceof StartEvent || event instanceof MessageEvent) {
       if (currentNode == null) {
         if (event instanceof DuplicateMessageAware) {
@@ -258,10 +261,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
           installContextMenu((StartBuildEvent)event);
           String buildTitle = ((StartBuildEvent)event).getBuildTitle();
           currentNode.setTitle(buildTitle);
-          currentNode.setAutoExpandNode(true);
         }
         else {
-          currentNode = new ExecutionNode(myProject, parentNode);
+          currentNode = new ExecutionNode(myProject, parentNode, parentNode == buildProgressRootNode);
 
           if (event instanceof MessageEvent) {
             MessageEvent messageEvent = (MessageEvent)event;
@@ -274,11 +276,11 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
             if (messageEventResult instanceof FailureResult) {
               for (Failure failure : ((FailureResult)messageEventResult).getFailures()) {
-                showErrorIfFirst(currentNode, failure.getNavigatable());
+                selectErrorNodeTask = selectErrorNodeTask != null ? selectErrorNodeTask : showErrorIfFirst(currentNode, failure.getNavigatable());
               }
             }
             if (messageEvent.getKind() == MessageEvent.Kind.ERROR) {
-              showErrorIfFirst(currentNode, messageEventNavigatable);
+              selectErrorNodeTask = selectErrorNodeTask != null ? selectErrorNodeTask : showErrorIfFirst(currentNode, messageEventNavigatable);
             }
 
             if (parentNode != null) {
@@ -290,7 +292,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
             }
             myConsoleViewHandler.addOutput(currentNode, buildId, event);
           }
-          currentNode.setAutoExpandNode(currentNode == buildProgressRootNode || parentNode == buildProgressRootNode);
         }
         nodesMap.put(eventId, currentNode);
       }
@@ -307,7 +308,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       currentNode = nodesMap.get(eventId);
       if (currentNode == null) {
         if (event instanceof ProgressBuildEvent) {
-          currentNode = new ExecutionNode(myProject, parentNode);
+          currentNode = new ExecutionNode(myProject, parentNode, parentNode == buildProgressRootNode);
           nodesMap.put(eventId, currentNode);
           if (parentNode != null) {
             parentNode.add(currentNode);
@@ -340,7 +341,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       finishChildren(currentNode, skippedResult);
       if (result instanceof FailureResult) {
         for (Failure failure : ((FailureResult)result).getFailures()) {
-          addChildFailureNode(currentNode, failure, event.getMessage());
+          Runnable selectErrorTask2 = addChildFailureNode(currentNode, failure, event.getMessage());
+          if (selectErrorNodeTask == null) selectErrorNodeTask = selectErrorTask2;
         }
       }
     }
@@ -357,6 +359,10 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
     }
     scheduleUpdate(currentNode);
+    if (selectErrorNodeTask != null) {
+      Runnable finalSelectErrorTask = selectErrorNodeTask;
+      myTreeModel.invalidate(getRootElement(), false).onProcessed(p -> finalSelectErrorTask.run());
+    }
   }
 
   @ApiStatus.Internal
@@ -405,15 +411,18 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     }
   }
 
-  private void showErrorIfFirst(@NotNull ExecutionNode node, @Nullable Navigatable navigatable) {
+  @Nullable
+  private Runnable showErrorIfFirst(@NotNull ExecutionNode node, @Nullable Navigatable navigatable) {
     if (myShownFirstError.compareAndSet(false, true)) {
-      if (myFocusFirstError && navigatable != null && navigatable != NonNavigatable.INSTANCE) {
-        ApplicationManager.getApplication()
-          .invokeLater(() -> navigatable.navigate(true), ModalityState.defaultModalityState(), myProject.getDisposed());
-      }
-      SimpleNode parentOrNode = node.getParent() == null ? node : node.getParent();
-      myTreeModel.invalidate(parentOrNode, true).onProcessed(p -> TreeUtil.promiseSelect(myTree, visitor(node)));
+      return () -> {
+        TreeUtil.promiseSelect(myTree, visitor(node));
+        if (myFocusFirstError && navigatable != null && navigatable != NonNavigatable.INSTANCE) {
+          ApplicationManager.getApplication()
+            .invokeLater(() -> navigatable.navigate(true), ModalityState.defaultModalityState(), myProject.getDisposed());
+        }
+      };
     }
+    return null;
   }
 
   @Override
@@ -457,7 +466,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     };
   }
 
-  private void addChildFailureNode(@NotNull ExecutionNode parentNode, @NotNull Failure failure, @NotNull String defaultFailureMessage) {
+  @Nullable
+  private Runnable addChildFailureNode(@NotNull ExecutionNode parentNode, @NotNull Failure failure, @NotNull String defaultFailureMessage) {
     String text = chooseNotNull(failure.getDescription(), failure.getMessage());
     if (text == null && failure.getError() != null) {
       text = failure.getError().getMessage();
@@ -468,7 +478,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     String failureNodeName = getMessageTitle(text);
     ExecutionNode failureNode = parentNode.findFirstChild(executionNode -> failureNodeName.equals(executionNode.getName()));
     if (failureNode == null) {
-      failureNode = new ExecutionNode(myProject, parentNode);
+      failureNode = new ExecutionNode(myProject, parentNode, true);
       failureNode.setName(failureNodeName);
       parentNode.add(failureNode);
     }
@@ -487,7 +497,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     }
     failureNode.setResult(new FailureResultImpl(failures));
     myConsoleViewHandler.addOutput(failureNode, failure);
-    showErrorIfFirst(failureNode, failure.getNavigatable());
+    return showErrorIfFirst(failureNode, failure.getNavigatable());
   }
 
   private void finishChildren(@NotNull ExecutionNode node, @NotNull EventResult result) {
@@ -508,21 +518,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         }
       }
     });
-  }
-
-  protected void expand(Tree tree) {
-    TreeUtil.expand(tree,
-                    path -> {
-                      ExecutionNode node = TreeUtil.getLastUserObject(ExecutionNode.class, path);
-                      if (node != null && node.isAutoExpandNode() && node.getChildCount() > 0) {
-                        return TreeVisitor.Action.CONTINUE;
-                      }
-                      else {
-                        return TreeVisitor.Action.SKIP_CHILDREN;
-                      }
-                    },
-                    path -> {
-                    });
   }
 
   @Override
@@ -609,7 +604,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
   void scheduleUpdate(ExecutionNode executionNode) {
     SimpleNode node = executionNode.getParent() == null ? executionNode : executionNode.getParent();
-    myTreeModel.invalidate(node, true).onProcessed(p -> expand(myTree));
+    myTreeModel.invalidate(node, true);
   }
 
   private ExecutionNode createMessageParentNodes(MessageEvent messageEvent, ExecutionNode parentNode) {
@@ -705,9 +700,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                                        Project project) {
     ExecutionNode node = nodesMap.get(nodeId);
     if (node == null) {
-      node = new ExecutionNode(project, parentNode);
+      node = new ExecutionNode(project, parentNode, true);
       node.setName(nodeName);
-      node.setAutoExpandNode(true);
       node.setStartTime(messageEvent.getEventTime());
       node.setEndTime(messageEvent.getEventTime());
       if (iconProvider != null) {
@@ -1040,6 +1034,58 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       super.paintComponent(g);
       // restore clip area if needed
       if (clip != null) g.setClip(clip);
+    }
+  }
+
+  private class ExecutionNodeAutoExpandingListener implements TreeModelListener {
+    @Override
+    public void treeNodesInserted(TreeModelEvent e) {
+      maybeExpand(e.getTreePath());
+    }
+
+    @Override
+    public void treeNodesChanged(TreeModelEvent e) {
+      // ExecutionNode should never change its isAutoExpand state. Ignore calls and do nothing.
+    }
+
+    @Override
+    public void treeNodesRemoved(TreeModelEvent e) {
+      // A removed node is not a reason to expand it parent. Ignore calls and do nothing.
+    }
+
+    @Override
+    public void treeStructureChanged(TreeModelEvent e) {
+      // We do not expect this event to happen in cases other than clearing the tree (including changing the filter).
+      // Ignore calls and do nothing.
+    }
+
+    private boolean maybeExpand(TreePath path) {
+      if (path == null) return false;
+      Object last = path.getLastPathComponent();
+      if (last instanceof DefaultMutableTreeNode) {
+        DefaultMutableTreeNode mutableTreeNode = (DefaultMutableTreeNode)last;
+        boolean expanded = false;
+        Enumeration<?> children = mutableTreeNode.children();
+        if (children.hasMoreElements()) {
+          while (children.hasMoreElements()) {
+            Object next = children.nextElement();
+            if (next != null) {
+              expanded = maybeExpand(path.pathByAddingChild(next)) || expanded;
+            }
+          }
+          if (expanded) return true;
+          Object lastUserObject = mutableTreeNode.getUserObject();
+          if (lastUserObject instanceof ExecutionNode) {
+            if (((ExecutionNode)lastUserObject).isAutoExpandNode()) {
+              if (!myTree.isExpanded(path)) {
+                myTree.expandPath(path);
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
     }
   }
 }
