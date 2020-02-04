@@ -16,17 +16,27 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.impl.source.SourceTreeToPsiMap
+import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.stubs.PsiClassHolderFileStub
+import com.intellij.psi.util.PsiUtil
+import com.intellij.reference.SoftReference
+import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import java.lang.ref.Reference
 
 open class FakeFileForLightClass(
     val ktFile: KtFile,
@@ -49,6 +59,37 @@ open class FakeFileForLightClass(
     override fun accept(visitor: PsiElementVisitor) {
         // Prevent access to compiled PSI
         // TODO: More complex traversal logic may be implemented when necessary
+    }
+
+    @Volatile
+    private var myMirrorFileElement: Reference<TreeElement>? = null
+    private val myMirrorLock: Any = Any()
+
+    override fun getMirror(): PsiElement {
+        SoftReference.dereference(myMirrorFileElement)?.let { return it.psi }
+
+        val mirrorElement = synchronized(myMirrorLock) {
+            SoftReference.dereference(myMirrorFileElement)?.let { return@synchronized it }
+
+            val file = this.virtualFile
+            AstLoadingFilter.assertTreeLoadingAllowed(file)
+            val classes: Array<KtLightClass> = this.classes
+            val fileName = (if (classes.isNotEmpty()) classes[0].name else file.nameWithoutExtension) + ".java"
+            val document = FileDocumentManager.getInstance().getDocument(file) ?: error(file.url)
+
+            val factory = PsiFileFactory.getInstance(this.manager.project)
+            val mirror = factory.createFileFromText(fileName, JavaLanguage.INSTANCE, document.immutableCharSequence, false, false, true)
+            mirror.putUserData(PsiUtil.FILE_LANGUAGE_LEVEL_KEY, this.languageLevel)
+            val mirrorTreeElement = SourceTreeToPsiMap.psiToTreeNotNull(mirror)
+            if (mirror is PsiFileImpl) {
+                mirror.originalFile = this
+            }
+            mirrorTreeElement.also {
+                myMirrorFileElement = SoftReference(it)
+            }
+        }
+
+        return mirrorElement.psi
     }
 
     // this should be equal to current compiler target language level
