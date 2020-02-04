@@ -5650,6 +5650,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/interfaceMethodWithBody.kt");
             }
 
+            @TestMetadata("interfaceMethodWithBodyGeneric.kt")
+            public void testInterfaceMethodWithBodyGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/interfaceMethodWithBodyGeneric.kt");
+            }
+
             @TestMetadata("safeCallOnTwoReceiversLong.kt")
             public void testSafeCallOnTwoReceiversLong_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt", "kotlin.coroutines");
