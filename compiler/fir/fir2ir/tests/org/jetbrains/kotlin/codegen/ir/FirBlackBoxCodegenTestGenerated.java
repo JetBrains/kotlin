@@ -14901,6 +14901,89 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/jvm8/defaults/superCall.kt");
             }
 
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class AllCompatibility extends AbstractFirBlackBoxCodegenTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+                }
+
+                public void testAllFilesPresentInAllCompatibility() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("bridge.kt")
+                public void testBridge() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge.kt");
+                }
+
+                @TestMetadata("bridge2.kt")
+                public void testBridge2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge2.kt");
+                }
+
+                @TestMetadata("bridge3.kt")
+                public void testBridge3() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge3.kt");
+                }
+
+                @TestMetadata("bridgeWithProperties.kt")
+                public void testBridgeWithProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties.kt");
+                }
+
+                @TestMetadata("bridgeWithProperties2.kt")
+                public void testBridgeWithProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties2.kt");
+                }
+
+                @TestMetadata("bridgeWithProperties3.kt")
+                public void testBridgeWithProperties3() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties3.kt");
+                }
+
+                @TestMetadata("callStackTrace.kt")
+                public void testCallStackTrace() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/callStackTrace.kt");
+                }
+
+                @TestMetadata("defaultArgs.kt")
+                public void testDefaultArgs() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgs.kt");
+                }
+
+                @TestMetadata("defaultArgsViaAnonymousObject.kt")
+                public void testDefaultArgsViaAnonymousObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgsViaAnonymousObject.kt");
+                }
+
+                @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
+                public void testInheritedFunctionWithDefaultParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inheritedFunctionWithDefaultParameters.kt");
+                }
+
+                @TestMetadata("inheritedJvmDefault.kt")
+                public void testInheritedJvmDefault() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inheritedJvmDefault.kt");
+                }
+
+                @TestMetadata("interfaceExtension.kt")
+                public void testInterfaceExtension() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/interfaceExtension.kt");
+                }
+
+                @TestMetadata("propertyAnnotation.kt")
+                public void testPropertyAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/propertyAnnotation.kt");
+                }
+
+                @TestMetadata("simpleFunction.kt")
+                public void testSimpleFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/simpleFunction.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/compatibility")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -14999,6 +15082,84 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestMetadata("simpleProperty.kt")
                 public void testSimpleProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/delegationBy/simpleProperty.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NoDefaultImpls extends AbstractFirBlackBoxCodegenTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+                }
+
+                public void testAllFilesPresentInNoDefaultImpls() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("bridge.kt")
+                public void testBridge() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge.kt");
+                }
+
+                @TestMetadata("bridge2.kt")
+                public void testBridge2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge2.kt");
+                }
+
+                @TestMetadata("bridge3.kt")
+                public void testBridge3() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge3.kt");
+                }
+
+                @TestMetadata("bridgeWithProperties.kt")
+                public void testBridgeWithProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithProperties.kt");
+                }
+
+                @TestMetadata("bridgeWithProperties2.kt")
+                public void testBridgeWithProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithProperties2.kt");
+                }
+
+                @TestMetadata("bridgeWithProperties3.kt")
+                public void testBridgeWithProperties3() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithProperties3.kt");
+                }
+
+                @TestMetadata("defaultArgs.kt")
+                public void testDefaultArgs() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/defaultArgs.kt");
+                }
+
+                @TestMetadata("defaultArgsViaAnonymousObject.kt")
+                public void testDefaultArgsViaAnonymousObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/defaultArgsViaAnonymousObject.kt");
+                }
+
+                @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
+                public void testInheritedFunctionWithDefaultParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/inheritedFunctionWithDefaultParameters.kt");
+                }
+
+                @TestMetadata("inheritedJvmDefault.kt")
+                public void testInheritedJvmDefault() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/inheritedJvmDefault.kt");
+                }
+
+                @TestMetadata("interfaceExtension.kt")
+                public void testInterfaceExtension() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/interfaceExtension.kt");
+                }
+
+                @TestMetadata("propertyAnnotation.kt")
+                public void testPropertyAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/propertyAnnotation.kt");
+                }
+
+                @TestMetadata("simpleFunction.kt")
+                public void testSimpleFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/simpleFunction.kt");
                 }
             }
 

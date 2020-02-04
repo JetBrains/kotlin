@@ -3238,6 +3238,44 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class AllCompatibility extends AbstractIrBytecodeTextTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAllCompatibility() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("defaultArgs.kt")
+                public void testDefaultArgs() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility/defaultArgs.kt");
+                }
+
+                @TestMetadata("simpleDiamond.kt")
+                public void testSimpleDiamond() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility/simpleDiamond.kt");
+                }
+
+                @TestMetadata("simpleFunction.kt")
+                public void testSimpleFunction() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility/simpleFunction.kt");
+                }
+
+                @TestMetadata("simpleFunctionWithAbstractOverride.kt")
+                public void testSimpleFunctionWithAbstractOverride() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility/simpleFunctionWithAbstractOverride.kt");
+                }
+
+                @TestMetadata("simpleProperty.kt")
+                public void testSimpleProperty() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility/simpleProperty.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

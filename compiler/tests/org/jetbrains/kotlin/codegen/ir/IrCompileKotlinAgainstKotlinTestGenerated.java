@@ -406,6 +406,54 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
             public void testSuperPropAccessFromInterface2() throws Exception {
                 runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface2.kt");
             }
+
+            @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class AllCompatibility extends AbstractIrCompileKotlinAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAllCompatibility() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("callStackTrace.kt")
+                public void testCallStackTrace() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/callStackTrace.kt");
+                }
+
+                @TestMetadata("superCall.kt")
+                public void testSuperCall() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
+                }
+
+                @TestMetadata("superCallFromInterface.kt")
+                public void testSuperCallFromInterface() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
+                }
+
+                @TestMetadata("superCallFromInterface2.kt")
+                public void testSuperCallFromInterface2() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+                }
+
+                @TestMetadata("superPropAccess.kt")
+                public void testSuperPropAccess() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
+                }
+
+                @TestMetadata("superPropAccessFromInterface.kt")
+                public void testSuperPropAccessFromInterface() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
+                }
+
+                @TestMetadata("superPropAccessFromInterface2.kt")
+                public void testSuperPropAccessFromInterface2() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6")

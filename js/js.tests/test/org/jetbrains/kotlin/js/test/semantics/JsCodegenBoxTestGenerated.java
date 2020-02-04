@@ -12661,6 +12661,19 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class AllCompatibility extends AbstractJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAllCompatibility() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/compatibility")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -12684,6 +12697,19 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
                 public void testAllFilesPresentInDelegationBy() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NoDefaultImpls extends AbstractJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInNoDefaultImpls() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
             }
 
