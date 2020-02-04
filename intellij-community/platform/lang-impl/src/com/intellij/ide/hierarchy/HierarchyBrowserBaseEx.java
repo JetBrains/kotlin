@@ -58,20 +58,20 @@ import java.util.List;
 import java.util.*;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx} instead
  */
 @Deprecated
 public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implements OccurenceNavigator {
   private static final Logger LOG = Logger.getInstance(HierarchyBrowserBaseEx.class);
 
   /**
-   * Use {code {@link #getScopeProject()}} instead
+   * @deprecated Use {@link #getScopeProject()} instead
    */
   @Deprecated
   public static final String SCOPE_PROJECT = "Production";
 
   /**
-   * Use {code {@link #getScopeAll()}} instead
+   * @deprecated Use {@link #getScopeAll()} instead
    */
   @Deprecated
   public static final String SCOPE_ALL = "All";

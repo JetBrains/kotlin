@@ -24,7 +24,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.actions.BrowseMethodHierarchyAction} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.actions.BrowseMethodHierarchyAction} instead
  */
 @Deprecated
 public final class BrowseMethodHierarchyAction extends BrowseHierarchyActionBase {

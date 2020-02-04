@@ -22,7 +22,7 @@ import com.intellij.ide.IdeBundle;
 /**
  * @author cdr
  *
- * Use {@link com.intellij.ide.hierarchy.newAPI.ViewSupertypesHierarchyAction} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ViewSupertypesHierarchyAction} instead
  */
 @Deprecated
 public final class ViewSupertypesHierarchyAction extends ChangeViewTypeActionBase {

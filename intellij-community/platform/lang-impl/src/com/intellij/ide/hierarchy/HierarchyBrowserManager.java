@@ -13,7 +13,7 @@ import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserManager} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserManager} instead
  */
 @Deprecated
 @State(name = "HierarchyBrowserManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))

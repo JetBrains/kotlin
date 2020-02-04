@@ -31,7 +31,7 @@ import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure} instead
  */
 @Deprecated
 public abstract class HierarchyTreeStructure extends AbstractTreeStructure {

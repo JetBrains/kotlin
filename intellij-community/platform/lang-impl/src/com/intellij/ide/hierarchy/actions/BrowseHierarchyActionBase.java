@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author yole
  *
- * Use {@link com.intellij.ide.hierarchy.newAPI.actions.BrowseHierarchyActionBase} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.actions.BrowseHierarchyActionBase} instead
  */
 @Deprecated
 public abstract class BrowseHierarchyActionBase extends AnAction {

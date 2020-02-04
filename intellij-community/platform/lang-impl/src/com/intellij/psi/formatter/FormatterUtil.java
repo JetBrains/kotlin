@@ -26,7 +26,7 @@ import java.util.Collections;
 public class FormatterUtil {
 
   /**
-   * Use {code {@link #getReformatBeforeCommitCommandName()}} instead
+   * @deprecated Use {@link #getReformatBeforeCommitCommandName()} instead
    */
   @Deprecated
   public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = "Reformat Code Before Commit";

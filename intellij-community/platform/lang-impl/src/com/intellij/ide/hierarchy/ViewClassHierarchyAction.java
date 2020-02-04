@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author cdr
  *
- * Use {@link com.intellij.ide.hierarchy.newAPI.ViewClassHierarchyAction} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ViewClassHierarchyAction} instead
  */
 @Deprecated
 public final class ViewClassHierarchyAction extends ChangeViewTypeActionBase {

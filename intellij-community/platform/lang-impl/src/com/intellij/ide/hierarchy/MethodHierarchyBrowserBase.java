@@ -30,12 +30,12 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase} instead
  */
 @Deprecated
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getMethodType()}} instead
+   * @deprecated Use {@link #getMethodType()} instead
    */
   @Deprecated
   public static final String METHOD_TYPE = "Method {0}";

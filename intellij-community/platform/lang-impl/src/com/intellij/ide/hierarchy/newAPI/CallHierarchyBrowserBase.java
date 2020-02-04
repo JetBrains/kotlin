@@ -15,13 +15,13 @@ import javax.swing.*;
 
 public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getCalleeType()}} instead
+   * @deprecated Use {@link #getCalleeType()} instead
    */
   @Deprecated
   public static final String CALLEE_TYPE = "Callees of {0}";
 
   /**
-   * Use {code {@link #getCallerType()}} instead
+   * @deprecated Use {@link #getCallerType()} instead
    */
   @Deprecated
   public static final String CALLER_TYPE = "Callers of {0}";

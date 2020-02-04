@@ -26,7 +26,7 @@ import static com.intellij.codeInsight.actions.OptimizeImportsProcessor.Notifica
 
 public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   /**
-   * Use {code {@link #getCommandName()}} instead
+   * @deprecated Use {@link #getCommandName()} instead
    */
   @Deprecated
   public static final String COMMAND_NAME = "Optimize Imports";

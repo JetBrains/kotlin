@@ -17,24 +17,24 @@ import javax.swing.*;
 import java.util.Map;
 
 /**
- * Use {@link com.intellij.ide.hierarchy.newAPI.TypeHierarchyBrowserBase} instead
+ * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.TypeHierarchyBrowserBase} instead
  */
 @Deprecated
 public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getTypeHierarchyType()}} instead
+   * @deprecated Use {@link #getTypeHierarchyType()} instead
    */
   @Deprecated
   public static final String TYPE_HIERARCHY_TYPE = "Class {0}";
 
   /**
-   * Use {code {@link #getSubtypesHierarchyType()}} instead
+   * @deprecated Use {@link #getSubtypesHierarchyType()} instead
    */
   @Deprecated
   public static final String SUBTYPES_HIERARCHY_TYPE = "Subtypes of {0}";
 
   /**
-   * Use {code {@link #getSupertypesHierarchyType()}} instead
+   * @deprecated Use {@link #getSupertypesHierarchyType()} instead
    */
   @Deprecated
   public static final String SUPERTYPES_HIERARCHY_TYPE = "Supertypes of {0}";

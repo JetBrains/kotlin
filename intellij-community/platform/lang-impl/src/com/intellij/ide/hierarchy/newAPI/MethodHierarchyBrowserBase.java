@@ -18,7 +18,7 @@ import java.awt.*;
 
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
-   * Use {code {@link #getMethodType()}} instead
+   * @deprecated Use {@link #getMethodType()} instead
    */
   @Deprecated
   public static final String METHOD_TYPE = "Method {0}";

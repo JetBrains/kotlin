@@ -54,7 +54,7 @@ import java.util.Map;
 public class CommonContentEntriesEditor extends ModuleElementsEditor {
   private static final Logger LOG = Logger.getInstance(CommonContentEntriesEditor.class);
   /**
-   * Use {code {@link #getNAME()}} instead
+   * @deprecated Use {@link #getName()} instead
    */
   @Deprecated
   public static final String NAME = "Sources";
