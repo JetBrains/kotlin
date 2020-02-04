@@ -103,6 +103,15 @@ class FirAnonymousFunctionImpl(
         returnTypeRef = newReturnTypeRef
     }
 
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        valueParameters.clear()
+        valueParameters.addAll(newValueParameters)
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }

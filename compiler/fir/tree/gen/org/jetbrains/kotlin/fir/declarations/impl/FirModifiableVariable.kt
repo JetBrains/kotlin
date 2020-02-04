@@ -57,4 +57,6 @@ interface FirModifiableVariable<F : FirVariable<F>>  : FirVariable<F>, FirAbstra
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 }

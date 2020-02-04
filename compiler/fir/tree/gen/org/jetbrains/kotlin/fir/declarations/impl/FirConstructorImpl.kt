@@ -105,4 +105,13 @@ open class FirConstructorImpl(
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        valueParameters.clear()
+        valueParameters.addAll(newValueParameters)
+    }
 }

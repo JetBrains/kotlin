@@ -29,6 +29,8 @@ interface FirCallableDeclaration<F : FirCallableDeclaration<F>> : FirTypedDeclar
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableDeclaration(this, data)
 
+    fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration<F>
 
     fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration<F>

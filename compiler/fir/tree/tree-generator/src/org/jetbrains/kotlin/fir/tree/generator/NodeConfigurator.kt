@@ -71,7 +71,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         callableDeclaration.configure {
             withArg("F", "FirCallableDeclaration<F>")
             parentArg(symbolOwner, "E", "F")
-            +field("receiverTypeRef", typeRef, nullable = true).withTransform()
+            +field("receiverTypeRef", typeRef, nullable = true, withReplace = true).withTransform()
             +symbol("FirCallableSymbol", "F")
         }
 
@@ -86,7 +86,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(callableDeclaration, "F", "F")
             +controlFlowGraphReferenceField.withTransform()
             +symbol("FirFunctionSymbol", "F")
-            +valueParameters.withTransform()
+            +fieldList(valueParameter, withReplace = true).withTransform()
             +body(nullable = true)
         }
 

@@ -115,4 +115,6 @@ class FirJavaField(
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 }

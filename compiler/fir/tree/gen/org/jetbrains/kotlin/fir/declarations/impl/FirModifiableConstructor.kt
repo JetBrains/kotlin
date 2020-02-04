@@ -60,4 +60,8 @@ abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstruct
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 }

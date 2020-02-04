@@ -106,4 +106,6 @@ class FirFieldImpl(
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 }

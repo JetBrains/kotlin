@@ -89,4 +89,11 @@ class FirErrorFunctionImpl(
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        valueParameters.clear()
+        valueParameters.addAll(newValueParameters)
+    }
 }
