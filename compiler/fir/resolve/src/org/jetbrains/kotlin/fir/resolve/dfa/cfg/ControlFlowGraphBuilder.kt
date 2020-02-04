@@ -173,7 +173,9 @@ class ControlFlowGraphBuilder {
             is StubNode -> firstPreviousNode.extractArgument()
             else -> fir.extractArgument()
         }
-        return exitsOfAnonymousFunctions.getValue(function).previousNodes.mapNotNull {
+
+        val exitNode = function.controlFlowGraphReference.controlFlowGraph?.exitNode ?: exitsOfAnonymousFunctions.getValue(function)
+        return exitNode.previousNodes.mapNotNull {
             it.extractArgument() as FirStatement?
         }
     }
