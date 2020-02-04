@@ -46,8 +46,10 @@ abstract class KotlinJsIrSubTarget(
             listOf(
                 it.productionLinkTask,
                 it.developmentLinkTask
-            ).forEach { task ->
-                task.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            ).forEach { taskProvider ->
+                taskProvider.configure {
+                    it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+                }
             }
         }
     }
@@ -118,7 +120,7 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.inputFileProperty.set(compilation.developmentLinkTask.outputFileProperty)
+            testJs.inputFileProperty.set(compilation.developmentLinkTask.flatMap { it.outputFileProperty })
 
             testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
 

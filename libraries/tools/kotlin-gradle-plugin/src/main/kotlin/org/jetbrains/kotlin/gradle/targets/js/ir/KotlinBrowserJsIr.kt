@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -96,9 +97,9 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.compilation = compilation
                 it.entry = getByKind(
                     kind,
-                    compilation.productionLinkTask.outputFile,
-                    compilation.developmentLinkTask.outputFile
-                )
+                    compilation.productionLinkTask.map {it.outputFile},
+                    compilation.developmentLinkTask.map{it.outputFile}
+                ).get()
                 it.description = "start ${kind.name.toLowerCase()} webpack dev server"
 
                 it.devServer = KotlinWebpackConfig.DevServer(
@@ -172,9 +173,9 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.compilation = compilation
                 it.entry = getByKind(
                     kind,
-                    compilation.productionLinkTask.outputFile,
-                    compilation.developmentLinkTask.outputFile
-                )
+                    compilation.productionLinkTask.map { it.outputFile },
+                    compilation.developmentLinkTask.map { it.outputFile }
+                ).get()
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
                 it.destinationDirectory = distribution.directory
 
@@ -211,6 +212,15 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
+        BuildVariantKind.PRODUCTION -> releaseValue
+        BuildVariantKind.DEVELOPMENT -> debugValue
+    }
+
+    private fun <T> getByKind(
+        kind: BuildVariantKind,
+        releaseValue: Provider<T>,
+        debugValue: Provider<T>
+    ): Provider<T> = when (kind) {
         BuildVariantKind.PRODUCTION -> releaseValue
         BuildVariantKind.DEVELOPMENT -> debugValue
     }

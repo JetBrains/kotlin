@@ -71,9 +71,13 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                 )
             }
 
-            it.productionLinkTask.configure()
+            it.productionLinkTask.configure {
+                it.configure()
+            }
 
-            it.developmentLinkTask.configure()
+            it.developmentLinkTask.configure {
+                it.configure()
+            }
         }
     }
 

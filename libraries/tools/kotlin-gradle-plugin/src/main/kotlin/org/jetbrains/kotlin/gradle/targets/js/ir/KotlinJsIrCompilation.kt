@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -20,13 +22,13 @@ class KotlinJsIrCompilation(
 ) : KotlinJsCompilation(target, name) {
     val productionLinkTaskName: String = linkTaskName(PRODUCTION)
 
-    val productionLinkTask: KotlinJsIrLink
-        get() = (target.project.tasks.getByName(productionLinkTaskName) as KotlinJsIrLink)
+    val productionLinkTask: TaskProvider<KotlinJsIrLink>
+        get() = target.project.tasks.named(productionLinkTaskName) as TaskProvider<KotlinJsIrLink>
 
     val developmentLinkTaskName: String = linkTaskName(DEVELOPMENT)
 
-    val developmentLinkTask: KotlinJsIrLink
-        get() = (target.project.tasks.getByName(developmentLinkTaskName) as KotlinJsIrLink)
+    val developmentLinkTask: TaskProvider<KotlinJsIrLink>
+        get() = target.project.tasks.named(developmentLinkTaskName) as TaskProvider<KotlinJsIrLink>
 
     private fun linkTaskName(type: KotlinJsIrType): String =
         lowerCamelCaseName(
