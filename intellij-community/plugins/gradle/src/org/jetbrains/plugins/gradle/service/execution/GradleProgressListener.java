@@ -25,7 +25,6 @@ import org.gradle.tooling.ProgressListener;
 import org.gradle.tooling.events.FinishEvent;
 import org.gradle.tooling.events.OperationResult;
 import org.gradle.tooling.events.StatusEvent;
-import org.gradle.tooling.events.configuration.ProjectConfigurationProgressEvent;
 import org.gradle.tooling.events.task.TaskProgressEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,12 +64,14 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
   @Override
   public void statusChanged(org.gradle.tooling.events.ProgressEvent event) {
     GradleProgressEventConverter.EventId eventId = GradleProgressEventConverter.getEventId(event, myOperationIdUnderscore);
-
-    if (event instanceof ProjectConfigurationProgressEvent) {
-      sendProgressToOutput(event);
-    }
     ExternalSystemTaskNotificationEvent progressBuildEvent =
       GradleProgressEventConverter.createProgressBuildEvent(myTaskId, myTaskId, event);
+    sendProgressToOutputIfNeeded(event);
+    if (progressBuildEvent != null && event instanceof StatusEvent) {
+      // update IDE progress determinate indicator
+      myListener.onStatusChange(progressBuildEvent);
+    }
+
     maybeUpdateTaskStatus(progressBuildEvent);
     if (event instanceof TaskProgressEvent) {
       ExternalSystemTaskNotificationEvent notificationEvent = GradleProgressEventConverter.convert(
@@ -98,7 +99,7 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
     }
   }
 
-  private void sendProgressToOutput(org.gradle.tooling.events.ProgressEvent progressEvent) {
+  private void sendProgressToOutputIfNeeded(org.gradle.tooling.events.ProgressEvent progressEvent) {
     final String operationName = progressEvent.getDescriptor().getName();
     if (progressEvent instanceof StatusEvent) {
       StatusEvent statusEvent = ((StatusEvent)progressEvent);
