@@ -260,10 +260,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         simpleFunction.configure {
             parentArg(function, "F", simpleFunction)
+            parentArg(callableMemberDeclaration, "F", simpleFunction)
             +name
             +symbol("FirFunctionSymbol<FirSimpleFunction>")
             +annotations
-            parentArg(callableMemberDeclaration, "F", simpleFunction)
         }
 
         contractDescriptionOwner.configure {
