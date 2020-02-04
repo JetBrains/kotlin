@@ -34,7 +34,7 @@ fun foo(y: IntArray) {
     @Ann1 y[0]
 
     @Ann1 { x: Int -> x }
-    @Ann1 <!UNRESOLVED_REFERENCE!>{ x: Int -> x }(1)<!>
+    @Ann1 { x: Int -> x }(1)
     @Ann1 object { fun foo() = 1 }
     @Ann1 object { fun foo() = 1 }.foo()
 

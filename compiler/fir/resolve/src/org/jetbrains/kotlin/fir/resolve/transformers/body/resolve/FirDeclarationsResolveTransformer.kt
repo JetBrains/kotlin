@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -410,8 +411,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             is ResolutionMode.LambdaResolution -> {
                 transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).compose()
             }
-            is ResolutionMode.WithExpectedType -> {
-                val resolvedLambdaAtom = (data.expectedTypeRef as? FirResolvedTypeRef)?.let {
+            is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
+                val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: FirImplicitTypeRefImpl(null)
+                val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
                     extractLambdaInfoFromFunctionalType(
                         it.type, it, anonymousFunction
                     )
@@ -467,7 +469,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         ?: af.returnTypeRef
                 )
                 af = af.transformValueParameters(ImplicitToErrorTypeTransformer, null)
-                val bodyExpectedType = returnTypeRefFromResolvedAtom ?: data.expectedTypeRef
+                val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
                 af = transformFunction(af, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
                 // To separate function and separate commit
                 val writer = FirCallCompletionResultsWriterTransformer(
@@ -478,14 +480,11 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                     integerOperatorsTypeUpdater,
                     integerLiteralTypeApproximator
                 )
-                af.transformSingle(writer, data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
+                af.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af).mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
                 af.replaceReturnTypeRef(af.returnTypeRef.resolvedTypeFromPrototype(inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()))
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.compose()
-            }
-            ResolutionMode.ContextIndependent -> {
-                transformFunction(anonymousFunction, data)
             }
             is ResolutionMode.WithStatus -> {
                 throw AssertionError("Should not be here in WithStatus mode")

@@ -4,8 +4,8 @@
 @Retention(AnnotationRetention.SOURCE)
 annotation class My
 
-fun bar(): Int = @My <!UNRESOLVED_REFERENCE!>{
+fun bar(): Int = @My {
     var i: Int?
     i = 42
     i
-}()<!>
+}()

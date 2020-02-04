@@ -48,11 +48,11 @@ import api.*
 
 fun useAll() {
     @OptIn(ExperimentalAPI::class)
-    <!UNRESOLVED_REFERENCE!>{
+    {
         function()
         property
         val s: Typealias = ""
-    }()<!>
+    }()
 }
 
 @OptIn(ExperimentalAPI::class)

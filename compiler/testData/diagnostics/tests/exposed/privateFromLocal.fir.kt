@@ -5,8 +5,8 @@ class My {
     private val x = object : Your {}
 
     // private from local: ???
-    private fun foo() = <!UNRESOLVED_REFERENCE!>{
+    private fun foo() = {
         class Local
         Local()
-    }()<!>
+    }()
 }

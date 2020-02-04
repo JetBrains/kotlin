@@ -10,9 +10,9 @@ fun testAnnotatedLambdaLabel() = lambda@ @Ann {}
 
 fun testParenthesizedLambdaLabel() = lambda@ ( {} )
 
-fun testLabelBoundToInvokeOperatorExpression() = l@ <!UNRESOLVED_REFERENCE!>{ 42 }()<!>
+fun testLabelBoundToInvokeOperatorExpression() = l@ { 42 }()
 
-fun testLabelBoundToLambda() = <!UNRESOLVED_REFERENCE!>(l@ { 42 })()<!>
+fun testLabelBoundToLambda() = (l@ { 42 })()
 
 fun testWhileLoopLabel() {
     L@ while (true) {}
