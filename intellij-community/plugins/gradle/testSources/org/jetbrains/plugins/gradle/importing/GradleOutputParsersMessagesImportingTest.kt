@@ -344,10 +344,12 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
 
     assertSyncViewSelectedNode("finished", false) {
       val text = it!!.lineSequence()
-        .dropWhile { s -> s == "Starting Gradle Daemon..." || s.startsWith("Gradle Daemon started in") }
+        .dropWhile { s -> s == "Starting Gradle Daemon..."
+                          || s.startsWith("Gradle Daemon started in")
+                          || s.startsWith("Download ") }
         .joinToString(separator = "\n")
 
-      assertEquals(text, scriptOutputText + scriptOutputTextWOEol)
+      assertEquals( scriptOutputText + scriptOutputTextWOEol, text)
     }
   }
 }
