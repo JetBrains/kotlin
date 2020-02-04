@@ -40,6 +40,8 @@ open class KtClass : KtClassOrObject {
     fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))
 
     fun getClassKeyword(): PsiElement? = findChildByType(KtTokens.CLASS_KEYWORD)
+
+    fun getFunKeyword(): PsiElement? = modifierList?.getModifier(KtTokens.FUN_KEYWORD)
 }
 
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
