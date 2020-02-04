@@ -370,11 +370,12 @@ class RunExternalTestGroup extends OldKonanTest {
 
         def packagePattern = ~/(?m)^\s*package\s+(${fullQualified}*)/
         def boxPattern = ~/(?m)fun\s+box\s*\(\s*\)/
-        def classPattern = ~/.*(class|object|enum)\s+(${identifier}*).*/
+        def classPattern = ~/.*(class|object|enum|interface)\s+(${identifier}*).*/
 
         def sourceName = "_" + normalize(project.file(source).name)
         def packages = new LinkedHashSet<String>()
         def imports = []
+        def classes = []
 
         def result = super.buildCompileList()
         for (String filePath : result) {
@@ -416,8 +417,8 @@ class RunExternalTestGroup extends OldKonanTest {
                         int dotIdx = indexOf('.')
                         dotIdx > 0 ? substring(0, dotIdx) : it
                     }
-                    if (packages.contains(subImport)) {
-                        // add only to those who import packages from the test files
+                    if (packages.contains(subImport) || classes.contains(subImport)) {
+                        // add only to those who import packages or import classes from the test files
                         text = text.replaceFirst(~/${importRegex}${Pattern.quote(importStatement)}/,
                                 "import $sourceName.$importStatement")
                     } else if (text =~ classPattern) {
@@ -425,6 +426,7 @@ class RunExternalTestGroup extends OldKonanTest {
                         def clsMatcher = (text =~ classPattern)
                         for (int j = 0; j < clsMatcher.count; j++) {
                             def cl = (text =~ classPattern)[j][2]
+                            classes.add(cl)
                             if (subImport == cl) {
                                 text = text.replaceFirst(~/${importRegex}${Pattern.quote(importStatement)}/,
                                         "import $sourceName.$importStatement")
