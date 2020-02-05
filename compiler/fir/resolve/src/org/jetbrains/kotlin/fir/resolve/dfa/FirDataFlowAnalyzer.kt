@@ -211,10 +211,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
                     flow.addImplication((expressionVariable eq null) implies (operandVariable typeNotEq type))
-                } else {
-                    if (type.nullability == ConeNullability.NOT_NULL) {
-                        flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
-                    }
+                }
+                if (type.nullability == ConeNullability.NOT_NULL) {
+                    flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                 }
             }
 

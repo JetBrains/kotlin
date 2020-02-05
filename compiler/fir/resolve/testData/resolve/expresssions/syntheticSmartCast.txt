@@ -67,7 +67,7 @@ FILE: test.kt
             }
         }
 
-        R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/AnotherClass.foo]>#
+        R|<local>/x|.R|/AnotherClass.foo|
     }
     public final fun test6(x: R|SomeClass?|): R|kotlin/Unit| {
         lval bar: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = (R|<local>/x|?.R|/SomeClass.bar| as? R|kotlin/String|)) {
