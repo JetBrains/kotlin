@@ -17,7 +17,8 @@
 package com.bnorm.power
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
+import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -29,19 +30,29 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallOp
 import org.jetbrains.kotlin.ir.builders.irConcat
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.File
 
 fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
@@ -59,7 +70,7 @@ fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
 
 class PowerAssertCallTransformer(
   private val context: JvmBackendContext
-) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+) : IrElementTransformerVoid(), FileLoweringPass {
   private lateinit var file: IrFile
   private lateinit var fileSource: String
 
@@ -71,6 +82,12 @@ class PowerAssertCallTransformer(
 
     irFile.transformChildrenVoid()
   }
+
+  private data class IrTemporaryVariable(
+    val variable: IrVariable,
+    val indentation: Int,
+    val source: String
+  )
 
   override fun visitCall(expression: IrCall): IrExpression {
     val function = expression.symbol.owner
@@ -84,37 +101,129 @@ class PowerAssertCallTransformer(
       at(expression)
 
       return irBlock {
-        val assertCondition = expression.getValueArgument(0)!!
-//        val argumentSource = fileSource.substring(assertCondition.startOffset, assertCondition.endOffset)
-        val indent = file.info(assertCondition).startColumnNumber - callIndent
+        val stack = mutableListOf<IrTemporaryVariable>()
 
-//        println(buildString {
+        fun push(expression: IrExpression): IrGetValue {
+          val variable = irTemporary(expression)
+          val source = fileSource.substring(expression.startOffset, expression.endOffset)
+
+          var indentation = file.info(expression).startColumnNumber - callIndent
+          if (expression is IrMemberAccessExpression) {
+            // TODO Is this the best way to fix indentation of infix operators?
+            indentation += when (expression.origin) {
+              IrStatementOrigin.EQEQ, IrStatementOrigin.EQEQEQ -> source.indexOf("==")
+              IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> source.indexOf("!=")
+              IrStatementOrigin.LT -> source.indexOf("<") // TODO What about generics?
+              IrStatementOrigin.GT -> source.indexOf(">") // TODO What about generics?
+              IrStatementOrigin.LTEQ -> source.indexOf("<=")
+              IrStatementOrigin.GTEQ -> source.indexOf(">=")
+              else -> 0
+            }
+          }
+
+          stack.add(IrTemporaryVariable(variable, indentation, source))
+          return irGet(variable)
+        }
+
+        val assertCondition = expression.getValueArgument(0)!!.transform(object : IrElementTransformerVoid() {
+          override fun visitExpression(expression: IrExpression): IrExpression {
+            return when (val transformed = super.visitExpression(expression)) {
+              is IrGetValue -> push(transformed)
+              is IrCall -> push(transformed)
+              // TODO what else needs to get pushed in the stack?
+              else -> transformed
+            }
+          }
+        }, null)
+        require(assertCondition is IrGetValue)
+
+//        print(buildString {
 //          append(callSource).newline()
-//          indent(indent).append("|").newline()
-//          indent(indent).append(argumentSource)
+//          val sorted = stack.sortedBy { it.indentation }
+//
+//          val indentations = sorted.map { it.indentation }
+//          var last = -1
+//          for (i in indentations) {
+//            if (i > last) {
+//              indent(i - last - 1).append("|")
+//            }
+//            last = i
+//          }
+//          newline()
+//
+//          for (tmp in sorted.asReversed()) {
+//
+//            last = -1
+//            for (i in indentations) {
+//              if (i == tmp.indentation) break
+//              if (i > last) {
+//                indent(i - last - 1).append("|")
+//              }
+//              last = i
+//            }
+//
+//            indent(tmp.indentation - last - 1)
+//            append(tmp.source).newline()
+//          }
 //        })
 
-        // TODO transform tree of expressions and create irTemporary for each
-        val temp = irTemporary(assertCondition)
-        val throwError = irThrow(irCall(constructor).apply {
+        val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
+        val lambda = lambdaArgument?.asSimpleLambda()
+        val invokeVar = if (lambda == null && lambdaArgument != null) irTemporary(lambdaArgument) else null
 
-          val message = irConcat().apply {
+        // Build assertion message
+        val throwError = irThrow(irCall(constructor).apply {
+          putValueArgument(0, irConcat().apply {
+
+            addArgument(
+              when {
+                lambda != null -> lambda.inline()
+                lambdaArgument != null -> {
+                  val invoke = lambdaArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
+                  irCallOp(invoke.symbol, invoke.returnType, irGet(invokeVar!!))
+                }
+                else -> irString("Assertion failed")
+              }
+            )
+
+            val sorted = stack.sortedBy { it.indentation }
+            val indentations = sorted.map { it.indentation }
+
             addArgument(irString(buildString {
-              append("Assertion failed:").newline()
+              append(":").newline()
               append(callSource).newline()
-              indent(indent).append("|").newline()
-              indent(indent)
+              var last = -1
+              for (i in indentations) {
+                if (i > last) {
+                  indent(i - last - 1).append("|")
+                }
+                last = i
+              }
             }))
-            addArgument(irGet(temp))
-          }
-          putValueArgument(0, message)
+
+
+            for (tmp in sorted.asReversed()) {
+              addArgument(irString(buildString {
+                var last = -1
+                newline()
+                for (i in indentations) {
+                  if (i == tmp.indentation) break
+                  if (i > last) {
+                    indent(i - last - 1).append("|")
+                  }
+                  last = i
+                }
+                indent(tmp.indentation - last - 1)
+              }))
+              addArgument(irGet(tmp.variable))
+            }
+          })
         })
-        +irIfThen(irNot(irGet(temp)), throwError)
+
+        +irIfThen(irNot(assertCondition), throwError)
       }
     }
   }
-
-
 }
 
 val IrFunction.isAssert: Boolean

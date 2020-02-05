@@ -26,22 +26,61 @@ import kotlin.test.fail
 
 class CompilerTest {
   @Test
-  fun testMyCompilerPlugin() {
+  fun memberFunctions() {
     assertMessage(
       """
 fun main() {
-  val hello = "Brian"
-  assert(hello == "World")
+  val hello = "Hello"
+  assert(hello.length == "World".substring(1, 4).length)
 }""",
       """
 Assertion failed:
-assert(hello == "World")
-       |
-       false
+assert(hello.length == "World".substring(1, 4).length)
+       |     |      |          |               |
+       |     |      |          |               3
+       |     |      |          orl
+       |     |      false
+       |     5
+       Hello
 """.trimIndent()
     )
   }
 
+  @Test
+  fun transformations() {
+    assertMessage(
+      """
+fun main() {
+  val hello = listOf("Hello", "World")
+  assert(hello.reversed() == emptyList<String>())
+}""",
+      """
+Assertion failed:
+assert(hello.reversed() == emptyList<String>())
+       |     |          |  |
+       |     |          |  []
+       |     |          false
+       |     [World, Hello]
+       [Hello, World]
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun customMessage() {
+    assertMessage(
+      """
+fun main() {
+  assert(1 == 2) { "Not equal" }
+}""",
+      """
+Not equal:
+assert(1 == 2) { "Not equal" }
+         |
+         false
+""".trimIndent()
+    )
+  }
 }
 
 fun assertMessage(@Language("kotlin") source: String, message: String) {

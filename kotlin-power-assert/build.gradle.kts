@@ -13,6 +13,7 @@ dependencies {
   compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.60")
 
   testImplementation(kotlin("test-junit"))
+  testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.60")
   testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.2.5")
 }
 
