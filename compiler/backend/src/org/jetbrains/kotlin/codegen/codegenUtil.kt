@@ -433,22 +433,6 @@ inline fun FrameMap.evaluateOnce(
     }
 }
 
-// Handy debugging routine. Print all instructions from methodNode.
-@TestOnly
-@Suppress("unused")
-fun MethodNode.textifyMethodNode(): String {
-    val text = Textifier()
-    val tmv = TraceMethodVisitor(text)
-    accept(tmv)
-    val sw = StringWriter()
-    val pw = PrintWriter(sw)
-    pw.print(name)
-    pw.print(desc)
-    pw.print("\n")
-    text.print(pw)
-    return "$sw"
-}
-
 fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
     if (!isInlineClassType()) return false
 
