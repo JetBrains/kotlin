@@ -40,6 +40,8 @@ public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfigu
   @Override
   public void addExcludedFramework(@NotNull FrameworkType type) {
     convert();
+    if (!myDetectionEnabled) return;
+
     myExcludedFrameworks.add(type.getId());
     final VirtualFilePointerContainer container = myExcludedFiles.remove(type.getId());
     if (container != null) {
@@ -51,7 +53,7 @@ public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfigu
   public void addExcludedFile(@NotNull VirtualFile file, @Nullable FrameworkType type) {
     convert();
     final String typeId = type != null ? type.getId() : null;
-    if (typeId != null && myExcludedFrameworks.contains(typeId) || isFileExcluded(file, typeId)) {
+    if (!myDetectionEnabled || typeId != null && myExcludedFrameworks.contains(typeId) || isFileExcluded(file, typeId)) {
       return;
     }
 
@@ -77,7 +79,7 @@ public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfigu
 
     convert();
     final String typeId = type != null ? type.getId() : null;
-    if (typeId != null && myExcludedFrameworks.contains(typeId)) {
+    if (!myDetectionEnabled || typeId != null && myExcludedFrameworks.contains(typeId)) {
       return;
     }
     myExcludedFiles.get(typeId).add(url);
