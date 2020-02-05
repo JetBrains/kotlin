@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author max
@@ -115,7 +115,8 @@ public class PsiAwareTextEditorImpl extends TextEditorImpl {
     @Override
     public void dispose() {
       super.dispose();
-      CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(myProject);
+
+      CodeFoldingManager foldingManager = myProject.getServiceIfCreated(CodeFoldingManager.class);
       if (foldingManager != null) {
         foldingManager.releaseFoldings(getEditor());
       }
