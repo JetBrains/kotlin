@@ -28,6 +28,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -149,9 +150,24 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
   @NotNull
   @TestOnly
-  public static List<HighlightInfo> getHighlights(@NotNull Document document, @Nullable HighlightSeverity minSeverity, @NotNull Project project) {
+  public static List<HighlightInfo> getHighlights(@NotNull Document document,
+                                                  @Nullable HighlightSeverity minSeverity,
+                                                  @NotNull Project project) {
     List<HighlightInfo> infos = new ArrayList<>();
-    processHighlights(document, project, minSeverity, 0, document.getTextLength(), Processors.cancelableCollectProcessor(infos));
+    processHighlights(document, project, minSeverity, 0, document.getTextLength(),
+                      Processors.cancelableCollectProcessor(infos));
+    return infos;
+  }
+
+  @NotNull
+  @TestOnly
+  public static List<HighlightInfo> getHighlights(@NotNull Editor editor,
+                                                  @Nullable HighlightSeverity minSeverity,
+                                                  @NotNull Project project) {
+    List<HighlightInfo> infos = new ArrayList<>();
+    MarkupModelEx markupModel = (MarkupModelEx)editor.getMarkupModel();
+    processHighlights(markupModel, project, minSeverity, 0, editor.getDocument().getTextLength(),
+                      Processors.cancelableCollectProcessor(infos));
     return infos;
   }
 
