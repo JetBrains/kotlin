@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -555,35 +554,9 @@ fun IrFunctionAccessExpression.copyTypeAndValueArgumentsFrom(
     src: IrFunctionAccessExpression,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false
-) = copyTypeAndValueArgumentsFrom(
-    src,
-    src.symbol.owner,
-    symbol.owner,
-    receiversAsArguments,
-    argumentsAsReceivers
-)
-
-fun IrFunctionReference.copyTypeAndValueArgumentsFrom(
-    src: IrFunctionReference,
-    receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
-) = copyTypeAndValueArgumentsFrom(
-    src,
-    src.symbol.owner,
-    symbol.owner,
-    receiversAsArguments,
-    argumentsAsReceivers
-)
-
-private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
-    src: IrMemberAccessExpression,
-    srcFunction: IrFunction,
-    destFunction: IrFunction,
-    receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
 ) {
     copyTypeArgumentsFrom(src)
-    copyValueArgumentsFrom(src, srcFunction, destFunction, receiversAsArguments, argumentsAsReceivers)
+    copyValueArgumentsFrom(src, src.symbol.owner, symbol.owner, receiversAsArguments, argumentsAsReceivers)
 }
 
 fun IrMemberAccessExpression.copyValueArgumentsFrom(

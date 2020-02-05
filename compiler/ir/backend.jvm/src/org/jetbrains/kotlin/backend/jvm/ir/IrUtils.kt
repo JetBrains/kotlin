@@ -244,18 +244,22 @@ fun createDelegatingCallWithPlaceholderTypeArguments(existingCall: IrCall, redir
         valueArgumentsCount = redirectTarget.valueParameters.size,
         origin = existingCall.origin
     ).apply {
-        copyValueArgumentsFrom(
-            existingCall,
-            existingCall.symbol.owner,
-            this.symbol.owner,
-            receiversAsArguments = true,
-            argumentsAsReceivers = false
-        )
-        var offset = 0
-        existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
-            putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
-        }
-        for (i in 0 until (existingCall.typeArgumentsCount)) {
-            putTypeArgument(i + offset, existingCall.getTypeArgument(i))
-        }
+        copyFromWithPlaceholderTypeArguments(existingCall, irBuiltIns)
     }
+
+fun IrFunctionAccessExpression.copyFromWithPlaceholderTypeArguments(existingCall: IrFunctionAccessExpression, irBuiltIns: IrBuiltIns) {
+    copyValueArgumentsFrom(
+        existingCall,
+        existingCall.symbol.owner,
+        this.symbol.owner,
+        receiversAsArguments = true,
+        argumentsAsReceivers = false,
+    )
+    var offset = 0
+    existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
+        putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
+    }
+    for (i in 0 until existingCall.typeArgumentsCount) {
+        putTypeArgument(i + offset, existingCall.getTypeArgument(i))
+    }
+}

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.copyFromWithPlaceholderTypeArguments
 import org.jetbrains.kotlin.backend.jvm.ir.createDelegatingCallWithPlaceholderTypeArguments
 import org.jetbrains.kotlin.backend.jvm.ir.createPlaceholderAnyNType
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
@@ -264,15 +265,10 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             if (newFunction != null) {
                 with(expression) {
                     IrFunctionReferenceImpl(
-                        startOffset,
-                        endOffset,
-                        type,
-                        newFunction.symbol,
-                        typeArgumentsCount,
-                        expression.reflectionTarget,
-                        origin
+                        startOffset, endOffset, type, newFunction.symbol, newFunction.typeParameters.size, newFunction.valueParameters.size,
+                        expression.reflectionTarget, origin
                     ).apply {
-                        copyTypeAndValueArgumentsFrom(expression, receiversAsArguments = true)
+                        copyFromWithPlaceholderTypeArguments(expression, context.irBuiltIns)
                         copyAttributes(expression)
                     }
                 }
