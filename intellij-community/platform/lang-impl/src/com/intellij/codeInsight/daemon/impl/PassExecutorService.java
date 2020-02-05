@@ -520,12 +520,17 @@ final class PassExecutorService implements Disposable {
         HighlightingSessionImpl.waitForAllSessionsHighlightInfosApplied(updateProgress);
         log(updateProgress, pass, "Stopping ");
         updateProgress.stopIfRunning();
+        clearStaleEntries();
       }
       else {
         log(updateProgress, pass, "Finished but there are passes in the queue: " + threadsToStartCountdown.get());
       }
       callbackOnApplied.run();
     }, updateProgress.getModalityState());
+  }
+
+  private void clearStaleEntries() {
+    mySubmittedPasses.keySet().removeIf(pass -> pass.myUpdateProgress.isCanceled());
   }
 
   private void repaintErrorStripeAndIcon(@NotNull FileEditor fileEditor) {
