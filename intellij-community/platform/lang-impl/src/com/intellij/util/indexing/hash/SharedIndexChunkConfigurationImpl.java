@@ -48,8 +48,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -58,7 +56,7 @@ import java.util.zip.ZipFile;
 public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfiguration {
   private static final Logger LOG = Logger.getInstance(SharedIndexChunkConfigurationImpl.class);
 
-  private final DataEnumeratorEx<String> myChunkDescriptorEnumerator;
+  private final PersistentEnumeratorDelegate<String> myChunkDescriptorEnumerator;
 
   private final TIntObjectHashMap<ContentHashEnumerator> myChunkEnumerators = new TIntObjectHashMap<>();
   private final TIntLongHashMap myChunkTimestamps = new TIntLongHashMap();
@@ -66,7 +64,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   private final ConcurrentMap<ID<?, ?>, ConcurrentMap<Integer, SharedIndexChunk>> myChunkMap = new ConcurrentHashMap<>();
 
   private final UncompressedZipFileSystem myReadSystem;
-  private final ReadWriteLock myZipUpdateLock = new ReentrantReadWriteLock();
 
   @Override
   public void disposeIndexChunkData(@NotNull ID<?, ?> indexId, int chunkId) {
@@ -91,9 +88,14 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     myChunkDescriptorEnumerator = new PersistentEnumeratorDelegate<>(getSharedIndexConfigurationRoot().resolve("descriptors"),
                                                                      EnumeratorStringDescriptor.INSTANCE, 32);
 
-    //myWriteSystem = FileSystems.newFileSystem(URI.create("jar:" + getSharedIndexStorage().toUri().toString()), Collections.singletonMap("create", "true"));
     myReadSystem = UncompressedZipFileSystem.create(getSharedIndexStorage());
     Disposer.register(ApplicationManager.getApplication(), () -> {
+      try {
+        myChunkDescriptorEnumerator.close();
+      } catch (IOException e) {
+        LOG.error(e);
+      }
+
       try {
         myReadSystem.close();
       }
@@ -119,12 +121,12 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     });
   }
 
-  private JBZipFile getWriteFileSystem() throws IOException {
+  private static JBZipFile getStorageToAppend() throws IOException {
     ensureSharedIndexConfigurationRootExist();
     return new JBZipFile(getSharedIndexStorage().toFile());
   }
 
-  private void ensureSharedIndexConfigurationRootExist() throws IOException {
+  private static void ensureSharedIndexConfigurationRootExist() throws IOException {
     if (!Files.exists(getSharedIndexConfigurationRoot())) {
       Files.createDirectories(getSharedIndexConfigurationRoot());
     }
@@ -153,16 +155,10 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   private void attachChunk(@NotNull SharedIndexChunkLocator.ChunkDescriptor chunkDescriptor,
                            @NotNull Project project) throws IOException {
-    myZipUpdateLock.readLock().lock();
-    try {
-      for (SharedIndexChunk chunk : registerChunk(chunkDescriptor)) {
-        ConcurrentMap<Integer, SharedIndexChunk> chunks = myChunkMap.computeIfAbsent(chunk.getIndexName(), __ -> new ConcurrentHashMap<>());
-        chunk.addProject(project);
-        chunks.put(chunk.getChunkId(), chunk);
-      }
-
-    } finally {
-      myZipUpdateLock.readLock().unlock();
+    for (SharedIndexChunk chunk : registerChunk(chunkDescriptor)) {
+      ConcurrentMap<Integer, SharedIndexChunk> chunks = myChunkMap.computeIfAbsent(chunk.getIndexName(), __ -> new ConcurrentHashMap<>());
+      chunk.addProject(project);
+      chunks.put(chunk.getChunkId(), chunk);
     }
   }
 
@@ -171,57 +167,56 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                               @NotNull ProgressIndicator indicator) {
     if (project.isDisposed()) return;
 
-    Path targetFile = null;
+    Path sharedIndexChunk = null;
     try {
       ensureSharedIndexConfigurationRootExist();
-      targetFile = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId());
-      descriptor.downloadChunk(targetFile, indicator);
+      sharedIndexChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId());
+      descriptor.downloadChunk(sharedIndexChunk, indicator);
     } catch (Exception e) {
-
-      if (targetFile != null) {
+      if (sharedIndexChunk != null) {
         try {
-          FileUtil.delete(targetFile);
-        } catch (IOException ee) {
-          //NOP
-        }
+          FileUtil.delete(sharedIndexChunk);
+        } catch (IOException ignored) {}
       }
-
       //noinspection InstanceofCatchParameter
       if (e instanceof ProcessCanceledException) ExceptionUtil.rethrow(e);
       LOG.error("Failed to download shared index " + descriptor + " " + e.getMessage(), e);
       return;
     }
 
-    myZipUpdateLock.writeLock().lock();
-    try {
-      try (JBZipFile file = getWriteFileSystem(); ZipFile zipFile = new ZipFile(targetFile.toFile())) {
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-          ZipEntry entry = entries.nextElement();
+    appendToSharedIndexStorage(sharedIndexChunk);
 
-          byte @NotNull [] content = FileUtil.loadBytes(zipFile.getInputStream(entry));
-          String name = entry.getName();
-          JBZipEntry createdEntry = file.getOrCreateEntry(name);
-          createdEntry.setMethod(ZipEntry.STORED);
-          createdEntry.setData(content);
-        }
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-
-      try {
-        myReadSystem.sync();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    } finally {
-      myZipUpdateLock.writeLock().unlock();
-    }
+    syncSharedIndexStorage();
 
     try {
       attachChunk(descriptor, project);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+    }
+  }
+
+  private static void appendToSharedIndexStorage(@NotNull Path sharedIndexChunk) {
+    try (JBZipFile file = getStorageToAppend(); ZipFile zipFile = new ZipFile(sharedIndexChunk.toFile())) {
+      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = entries.nextElement();
+
+        byte @NotNull [] content = FileUtil.loadBytes(zipFile.getInputStream(entry));
+        String name = entry.getName();
+        JBZipEntry createdEntry = file.getOrCreateEntry(name);
+        createdEntry.setMethod(ZipEntry.STORED);
+        createdEntry.setData(content);
+      }
+    }
+    catch (IOException e) {
+      LOG.error(e);
+    }
+  }
+
+  private void syncSharedIndexStorage() {
+    try {
+      myReadSystem.sync();
     }
     catch (IOException e) {
       LOG.error(e);
@@ -315,5 +310,4 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   private static Path getSharedIndexConfigurationRoot() {
     return PathManager.getIndexRoot().toPath().resolve("shared_indexes");
   }
-
 }
