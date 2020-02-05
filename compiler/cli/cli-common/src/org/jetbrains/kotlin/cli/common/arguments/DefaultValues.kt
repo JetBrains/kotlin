@@ -32,7 +32,9 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
 
     object LanguageVersions : DefaultValues(
         "null",
-        LanguageVersion.values().map { "\"${it.description}\"" }
+        LanguageVersion.values()
+            .filterNot { it.isUnsupported }
+            .map { "\"${it.description}\"" }
     )
 
     object JvmTargetVersions : DefaultValues(
