@@ -45,7 +45,7 @@ fun test5(x: AnotherClass?) {
 
 fun test6(x: SomeClass?) {
     val bar = x?.bar as? String ?: return
-    x.<!INAPPLICABLE_CANDIDATE!>foo<!>
+    x.foo
 }
 
 fun test7(x: AnotherClass?) {
@@ -53,5 +53,13 @@ fun test7(x: AnotherClass?) {
     x.foo
 }
 
+fun test8(x: AnotherClass?) {
+    val bar = x?.bar ?: return
+    x.foo
+}
 
+fun test9(x: AnotherClass?) {
+    val baz = x?.baz() ?: return
+    x.foo
+}
 
