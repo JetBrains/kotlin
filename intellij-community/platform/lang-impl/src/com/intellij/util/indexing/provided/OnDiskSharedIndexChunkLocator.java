@@ -5,7 +5,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.util.Consumer;
+import com.intellij.util.indexing.FileBasedIndexExtension;
+import com.intellij.util.indexing.IndexInfrastructureVersion;
 import com.intellij.util.io.PathKt;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +45,12 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
         @Override
         public @NotNull String getChunkUniqueId() {
           return name;
+        }
+
+        @Override
+        public @NotNull IndexInfrastructureVersion getSupportedInfrastructureVersion() {
+          return IndexInfrastructureVersion.fromExtensions(FileBasedIndexExtension.EXTENSION_POINT_NAME.getExtensionList(),
+                                                           StubIndexExtension.EP_NAME.getExtensionList());
         }
 
         @Override

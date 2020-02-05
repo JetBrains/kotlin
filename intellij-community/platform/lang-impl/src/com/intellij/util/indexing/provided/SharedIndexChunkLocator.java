@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.util.Consumer;
+import com.intellij.util.indexing.IndexInfrastructureVersion;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -42,6 +43,15 @@ public interface SharedIndexChunkLocator {
      */
     @NotNull
     String getChunkUniqueId();
+
+    /**
+     * Version of index infrastructure for which shared index chunk was built.
+     * <p>
+     * It contains main infrastructure versions (e.g. versions of persistent data structures)
+     * as well as index extension versions.
+     */
+    @NotNull
+    IndexInfrastructureVersion getSupportedInfrastructureVersion();
 
     /**
      * Matching order entries from the {@link #locateIndex(Project, Set, Consumer, ProgressIndicator)} call

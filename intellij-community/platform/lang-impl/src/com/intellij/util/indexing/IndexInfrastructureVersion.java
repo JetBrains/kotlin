@@ -59,7 +59,7 @@ public final class IndexInfrastructureVersion {
   private static SortedMap<String, String> globalIndexesVersion() {
     ImmutableSortedMap.Builder<String, String> builder = ImmutableSortedMap.naturalOrder();
     builder.put("shared_indexes_format", SHARED_INDEXES_VERSIONS_FORMAT_VERSION);
-    builder.put("os", getOs().getOsName()); //do we really need the OS here?
+    builder.put("os", Os.getOs().getOsName()); //do we really need the OS here?
     builder.put("vfs_version", String.valueOf(FSRecords.getVersion()));
     builder.put("persistent_enumerator_version", String.valueOf(PersistentEnumeratorDelegate.getVersion()));
     builder.put("use_btree", String.valueOf(PersistentEnumeratorDelegate.useBtree()));
@@ -223,31 +223,19 @@ public final class IndexInfrastructureVersion {
   }
 
   public enum Os {
-    WINDOWS, MAC, LINUX;
+    windows, mac, linux;
 
     @NotNull
     public String getOsName() {
-      switch (this) {
-        case WINDOWS:
-          return "windows";
-        case MAC:
-          return "mac";
-        default:
-          return "linux";
-      }
+      return toString();
     }
 
-    @Override
-    public String toString() {
-      return getOsName();
+    @NotNull
+    public static IndexInfrastructureVersion.Os getOs() {
+      if (SystemInfo.isWindows) return windows;
+      if (SystemInfo.isMac) return mac;
+      if (SystemInfo.isLinux) return linux;
+      throw new Error("Unknown OS. " + SystemInfo.getOsNameAndVersion());
     }
-  }
-
-  @NotNull
-  public static IndexInfrastructureVersion.Os getOs() {
-    if (SystemInfo.isWindows) return Os.WINDOWS;
-    if (SystemInfo.isMac) return Os.MAC;
-    if (SystemInfo.isLinux) return Os.LINUX;
-    throw new Error("Unknown OS. " + SystemInfo.getOsNameAndVersion());
   }
 }
