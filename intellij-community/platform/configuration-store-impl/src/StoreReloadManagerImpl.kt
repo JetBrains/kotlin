@@ -348,7 +348,7 @@ private fun <T : Any> Key<T>.getAndClear(holder: UserDataHolderEx): T? {
 private fun doReloadProject(project: Project) {
   val projectRef = Ref.create(project)
   ProjectReloadState.getInstance(project).onBeforeAutomaticProjectReload()
-  AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).submit {
+  AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).later().submit {
     LOG.debug("Reloading project.")
     val project1 = projectRef.get()
     // Let it go

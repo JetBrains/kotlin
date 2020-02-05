@@ -70,7 +70,7 @@ public final class StubProcessingHelper extends StubProcessingHelperBase {
     set.add(file);
     // requestReindex() may want to acquire write lock (for indices not requiring content loading)
     // thus, because here we are under read lock, need to use invoke later
-    AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).submit(() -> FileBasedIndex.getInstance().requestReindex(file));
+    AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).later().submit(() -> FileBasedIndex.getInstance().requestReindex(file));
   }
 
   @Nullable

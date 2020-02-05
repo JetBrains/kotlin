@@ -210,7 +210,7 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
   private static ObjectStubTree<?> processError(final VirtualFile vFile, String message, @Nullable Exception e) {
     LOG.error(message, e);
 
-    AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).submit(() -> {
+    AppUIExecutor.onWriteThread(ModalityState.NON_MODAL).later().submit(() -> {
       final Document doc = FileDocumentManager.getInstance().getCachedDocument(vFile);
       if (doc != null) {
         FileDocumentManager.getInstance().saveDocument(doc);
