@@ -19,6 +19,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.UnknownLibraryKind;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
@@ -107,6 +108,9 @@ public abstract class LibraryType<P extends LibraryProperties> extends LibraryPr
       if (type.getKind() == kind) {
         return type;
       }
+    }
+    if (kind instanceof UnknownLibraryKind) {
+      return new UnknownLibraryType((UnknownLibraryKind)kind);
     }
     throw new IllegalArgumentException("Library with kind " + kind + " is not registered");
   }

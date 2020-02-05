@@ -2,6 +2,7 @@
 package com.intellij.openapi.roots.impl.libraries;
 
 import com.intellij.ide.ApplicationInitializedListener;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.module.Module;
@@ -13,6 +14,8 @@ import com.intellij.openapi.roots.impl.OrderEntryUtil;
 import com.intellij.openapi.roots.libraries.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 public class LibraryKindLoader implements ApplicationInitializedListener {
   @Override
   public void componentsInitialized() {
@@ -22,37 +25,55 @@ public class LibraryKindLoader implements ApplicationInitializedListener {
 
     LibraryType.EP_NAME.addExtensionPointListener(new ExtensionPointListener<LibraryType<?>>() {
       @Override
+      public void extensionAdded(@NotNull LibraryType<?> extension, @NotNull PluginDescriptor pluginDescriptor) {
+        WriteAction.run(() -> {
+          LibraryKind.registerKind(extension.getKind());
+          processAllLibraries(library -> rememberKind(extension.getKind(), library));
+        });
+      }
+
+      @Override
       public void extensionRemoved(@NotNull LibraryType<?> extension, @NotNull PluginDescriptor pluginDescriptor) {
-        clearKindInAllLibraries(extension.getKind());
+        LibraryKind.unregisterKind(extension.getKind());
+        processAllLibraries(library -> forgetKind(extension.getKind(), library));
       }
     }, null);
   }
 
-  private static void clearKindInAllLibraries(@NotNull PersistentLibraryKind<?> kind) {
-    clearKindInLibraries(kind, LibraryTablesRegistrar.getInstance().getLibraryTable());
+  private static void processAllLibraries(@NotNull Consumer<Library> processor) {
+    processLibraries(LibraryTablesRegistrar.getInstance().getLibraryTable(), processor);
     for (LibraryTable table : LibraryTablesRegistrar.getInstance().getCustomLibraryTables()) {
-      clearKindInLibraries(kind, table);
+      processLibraries(table, processor);
     }
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      clearKindInLibraries(kind, LibraryTablesRegistrar.getInstance().getLibraryTable(project));
+      processLibraries(LibraryTablesRegistrar.getInstance().getLibraryTable(project), processor);
       for (Module module : ModuleManager.getInstance(project).getModules()) {
         for (Library library : OrderEntryUtil.getModuleLibraries(ModuleRootManager.getInstance(module))) {
-          clearKind(kind, library);
+          processor.accept(library);
         }
       }
     }
   }
 
-  private static void clearKindInLibraries(@NotNull PersistentLibraryKind<?> kind, @NotNull LibraryTable table) {
+  private static void processLibraries(@NotNull LibraryTable table, Consumer<Library> processor) {
     for (Library library : table.getLibraries()) {
-      clearKind(kind, library);
+      processor.accept(library);
     }
   }
 
-  private static void clearKind(@NotNull PersistentLibraryKind<?> kind, @NotNull Library library) {
+  private static void forgetKind(@NotNull PersistentLibraryKind<?> kind, @NotNull Library library) {
     if (kind.equals(((LibraryEx)library).getKind())) {
       LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-      model.clearKind();
+      model.forgetKind();
+      model.commit();
+    }
+  }
+
+  private static void rememberKind(@NotNull PersistentLibraryKind<?> kind, @NotNull Library library) {
+    PersistentLibraryKind<?> libraryKind = ((LibraryEx)library).getKind();
+    if (libraryKind instanceof UnknownLibraryKind && libraryKind.getKindId().equals(kind.getKindId())) {
+      LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
+      model.restoreKind();
       model.commit();
     }
   }
