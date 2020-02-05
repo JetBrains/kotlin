@@ -10,9 +10,10 @@ plugins {
 
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
+  compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.60")
 
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.1.1")
-  testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.1")
+  testImplementation(kotlin("test-junit"))
+  testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.2.5")
 }
 
 tasks.withType<KotlinCompile> {
