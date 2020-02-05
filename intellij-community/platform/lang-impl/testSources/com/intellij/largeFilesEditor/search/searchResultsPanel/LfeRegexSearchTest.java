@@ -90,7 +90,7 @@ public class LfeRegexSearchTest extends LightPlatformTestCase {
 
     @Override
     public Page getPage_wait(long pageNumber) {
-      return new Page(PAGES[(int)pageNumber], pageNumber);
+      return new Page(PAGES[(int)pageNumber], pageNumber, pageNumber == getPagesAmount() - 1);
     }
 
     @Override

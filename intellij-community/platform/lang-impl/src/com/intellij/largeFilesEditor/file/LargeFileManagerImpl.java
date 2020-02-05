@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
@@ -72,10 +73,21 @@ public class LargeFileManagerImpl implements LargeFileManager {
   synchronized public Page getPage_wait(long pageNumber) throws IOException {
     String notUpdatedPageText;
 
+    long pagesAmount = fileAdapter.getPagesAmount();
+    boolean neededPageShouldBeLastInFile = (pageNumber == pagesAmount - 1);
+
     Page notUpdatedPage = null;
-    for (Page page : notUpdatedPagesCash) {
-      if (page.getPageNumber() == pageNumber) {
-        notUpdatedPage = page;
+    for (Iterator<Page> iterator = notUpdatedPagesCash.iterator(); iterator.hasNext(); ) {
+      Page pageFromCash = iterator.next();
+      if (pageFromCash.getPageNumber() == pageNumber) {
+        boolean isOutdated = pageFromCash.isLastInFile() != neededPageShouldBeLastInFile;
+        if (isOutdated) {
+          iterator.remove();
+        }
+        else {
+          notUpdatedPage = pageFromCash;
+          break;
+        }
       }
     }
 
@@ -84,14 +96,14 @@ public class LargeFileManagerImpl implements LargeFileManager {
     }
     else {
       notUpdatedPageText = fileAdapter.getPageText(pageNumber);
-      notUpdatedPage = new Page(notUpdatedPageText, pageNumber);
+      notUpdatedPage = new Page(notUpdatedPageText, pageNumber, neededPageShouldBeLastInFile);
       notUpdatedPagesCash.add(notUpdatedPage);
     }
 
     // TODO: 2019-05-14 Temporary solution for problem: soft-wrapping restricted for document, where isAcceptSlashR flag is TRUE. See SoftWrapModelImpl#areSoftWrapsEnabledInEditor()
     String notUpdatedPageTextWithoutSlashR = destroySlashRSeparators(notUpdatedPageText);
 
-    return new Page(notUpdatedPageTextWithoutSlashR, pageNumber);
+    return new Page(notUpdatedPageTextWithoutSlashR, pageNumber, neededPageShouldBeLastInFile);
   }
 
   private static String destroySlashRSeparators(String str) {

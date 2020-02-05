@@ -4,15 +4,12 @@ package com.intellij.largeFilesEditor.editor;
 public class Page {
   private final String text;
   private final long pageNumber;
+  private final boolean isLastInFile;
 
-
-  public Page(String text, long pageNumber) {
+  public Page(String text, long pageNumber, boolean isLastInFile) {
     this.text = text;
     this.pageNumber = pageNumber;
-  }
-
-  public Page(long pageNumber) {
-    this("", pageNumber);
+    this.isLastInFile = isLastInFile;
   }
 
   public String getText() {
@@ -21,5 +18,9 @@ public class Page {
 
   public long getPageNumber() {
     return pageNumber;
+  }
+
+  public boolean isLastInFile() {
+    return isLastInFile;
   }
 }

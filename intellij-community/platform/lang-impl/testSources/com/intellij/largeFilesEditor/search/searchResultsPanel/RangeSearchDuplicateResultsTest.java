@@ -134,7 +134,7 @@ public class RangeSearchDuplicateResultsTest extends LightPlatformTestCase {
         myStopRangeSearchAction.actionPerformed(ActionUtil.createEmptyEvent());
       }
       //sleep(100);
-      return new Page(EVERY_PAGE_TEXT, pageNumber);
+      return new Page(EVERY_PAGE_TEXT, pageNumber, pageNumber == getPagesAmount() - 1);
     }
 
     @Override

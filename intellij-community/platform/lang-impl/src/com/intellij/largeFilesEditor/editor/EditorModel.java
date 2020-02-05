@@ -309,6 +309,8 @@ public class EditorModel {
 
     normalizePagesInDocumentListEnding();
 
+    ensureDocumentLastPageIsValid(pagesAmountInFile);
+
     tryReflectTargetCaretPositionToReal();
 
     tryReflectTargetSelectionToReal();
@@ -352,6 +354,15 @@ public class EditorModel {
     }
 
     tryHighlightSearchResultsIfNeed();
+  }
+
+  // IDEA-232158
+  private void ensureDocumentLastPageIsValid(long pagesAmountInFile) {
+    Page lastPageInDocument = documentOfPagesModel.getLastPage();
+    if (lastPageInDocument.isLastInFile() != (lastPageInDocument.getPageNumber() == pagesAmountInFile - 1)) {
+      removeLastPageFromDocument();
+      pagesCash.removeIf(page -> lastPageInDocument.getPageNumber() == page.getPageNumber());
+    }
   }
 
   private boolean isNeedToTurnOnSoftWrapping() {
