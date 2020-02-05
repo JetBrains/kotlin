@@ -190,7 +190,7 @@ class PowerAssertCallTransformer(
             val indentations = sorted.map { it.indentation }
 
             addArgument(irString(buildString {
-              append(":").newline()
+              newline()
               append(callSource).newline()
               var last = -1
               for (i in indentations) {

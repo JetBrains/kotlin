@@ -34,7 +34,7 @@ fun main() {
   assert(hello.length == "World".substring(1, 4).length)
 }""",
       """
-Assertion failed:
+Assertion failed
 assert(hello.length == "World".substring(1, 4).length)
        |     |      |          |               |
        |     |      |          |               3
@@ -55,7 +55,7 @@ fun main() {
   assert(hello.reversed() == emptyList<String>())
 }""",
       """
-Assertion failed:
+Assertion failed
 assert(hello.reversed() == emptyList<String>())
        |     |          |  |
        |     |          |  []
@@ -74,7 +74,7 @@ fun main() {
   assert(1 == 2) { "Not equal" }
 }""",
       """
-Not equal:
+Not equal
 assert(1 == 2) { "Not equal" }
          |
          false
