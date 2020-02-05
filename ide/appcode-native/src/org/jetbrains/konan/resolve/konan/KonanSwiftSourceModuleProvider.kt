@@ -8,12 +8,12 @@ import com.jetbrains.swift.codeinsight.resolve.SwiftModule
 
 class KonanSwiftSourceModuleProvider : AppcodeSourceModuleProducer {
 
-    override fun create(parentConfiguration: OCResolveConfiguration,
-                        target: PBXTarget,
-                        configuration: OCResolveConfiguration?
+    override fun create(
+        configuration: OCResolveConfiguration,
+        target: PBXTarget
     ): SwiftModule? {
-        if (target.isKotlinTarget(parentConfiguration.project)) {
-            return AppCodeKonanSourceModule(configuration, target, parentConfiguration)
+        if (target.isKotlinTarget(configuration.project)) {
+            return AppCodeKonanSourceModule(configuration, target)
         }
 
         return null

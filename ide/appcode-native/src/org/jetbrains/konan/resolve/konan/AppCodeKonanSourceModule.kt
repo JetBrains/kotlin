@@ -6,20 +6,18 @@ import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.xcode.model.PBXTarget
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import com.jetbrains.swift.bridging.SwiftBridgingUtil
-import com.jetbrains.swift.codeinsight.resolve.SwiftModule
 import com.jetbrains.swift.lang.parser.SwiftFileType
 
 class AppCodeKonanSourceModule(
-    private val configuration: OCResolveConfiguration?,
-    private val target: PBXTarget,
-    private val parentConfiguration: OCResolveConfiguration
+    private val configuration: OCResolveConfiguration,
+    private val target: PBXTarget
 ) : KonanSwiftModule() {
 
-    override val project: Project get() = parentConfiguration.project
+    override val project: Project get() = configuration.project
 
     override fun getName(): String = SwiftBridgingUtil.getProductModuleName(configuration, target)
 
-    override fun getConfiguration(): OCResolveConfiguration = parentConfiguration
+    override fun getConfiguration(): OCResolveConfiguration = configuration
 
     override fun konanBridgeFile(): KonanBridgeVirtualFile? {
         val buildConfig = XcodeMetaData.getBuildConfigurationFor(configuration) ?: return null
