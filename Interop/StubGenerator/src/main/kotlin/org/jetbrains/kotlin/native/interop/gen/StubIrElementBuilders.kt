@@ -605,9 +605,20 @@ internal class GlobalStubBuilder(
         val kind: PropertyStub.Kind
         if (unwrappedType is ArrayType) {
             kotlinType = (mirror as TypeMirror.ByValue).valueType
-            val getter = PropertyAccessor.Getter.SimpleGetter()
-            val extra = BridgeGenerationInfo(global.name, mirror.info)
-            context.bridgeComponentsBuilder.arrayGetterBridgeInfo[getter] = extra
+            val getter = when (context.platform) {
+                KotlinPlatform.JVM -> {
+                    PropertyAccessor.Getter.SimpleGetter().also {
+                        val extra = BridgeGenerationInfo(global.name, mirror.info)
+                        context.bridgeComponentsBuilder.arrayGetterBridgeInfo[it] = extra
+                    }
+                }
+                KotlinPlatform.NATIVE -> {
+                    val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.name}_getter")
+                    PropertyAccessor.Getter.ExternalGetter(listOf(cCallAnnotation)).also {
+                        context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                    }
+                }
+            }
             kind = PropertyStub.Kind.Val(getter)
         } else {
             when (mirror) {
