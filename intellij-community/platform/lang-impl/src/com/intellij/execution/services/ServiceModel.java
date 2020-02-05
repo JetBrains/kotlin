@@ -10,6 +10,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ColoredItem;
 import com.intellij.openapi.util.Comparing;
@@ -89,6 +90,9 @@ class ServiceModel implements Disposable, InvokerSupplier {
         if (!root.getChildren().isEmpty()) {
           result.add(root);
         }
+      }
+      catch (ProcessCanceledException e) {
+        throw e;
       }
       catch (Exception e) {
         PluginException.logPluginError(LOG, "Failed to init service view contributor " + contributor.getClass(), e, contributor.getClass());
@@ -399,6 +403,9 @@ class ServiceModel implements Disposable, InvokerSupplier {
       for (T service : contributor.getServices(project)) {
         addService(service, children, project, parent, contributor);
       }
+    }
+    catch (ProcessCanceledException e) {
+      throw e;
     }
     catch (Exception e) {
       PluginException
