@@ -23,7 +23,7 @@ import java.io.File
 class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
     override val isImmediate: Boolean = false
 
-    override fun findXcodeProjFile(project: Project, file: VirtualFile): VirtualFile? {
+    override fun findXcodeProjFile(project: Project, file: VirtualFile): File? {
         val targets = GradleAppleWorkspace.getInstance(project).targets
         val ioFile = VfsUtil.virtualToIoFile(file)
         val target = targets.find { targetModel ->
@@ -31,8 +31,7 @@ class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
             // TODO find more efficient way, maybe with ModuleFileIndex
         } ?: return null
 
-        val xcodeProjFile = generateXcodeProject(project, target) ?: return null
-        return VfsUtil.findFileByIoFile(xcodeProjFile, true)
+        return generateXcodeProject(project, target)
     }
 
     companion object {
