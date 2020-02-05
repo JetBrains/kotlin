@@ -5389,6 +5389,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testTypeMismatchMutableList2_ni() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatchMutableList2_ni.kt");
             }
+
+            @TestMetadata("usedAsExpression.kt")
+            public void testUsedAsExpression() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/usedAsExpression.kt");
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/liftOut/ifToReturn")
@@ -5514,6 +5519,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("lambda.kt")
             public void testLambda() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/tryToAssignment/lambda.kt");
+            }
+
+            @TestMetadata("usedAsExpression.kt")
+            public void testUsedAsExpression() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/tryToAssignment/usedAsExpression.kt");
             }
 
             @TestMetadata("withUnmatchedAssignments.kt")
@@ -5645,6 +5655,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("simpleWhenWithoutTerminatingAssignment.kt")
             public void testSimpleWhenWithoutTerminatingAssignment() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/whenToAssignment/simpleWhenWithoutTerminatingAssignment.kt");
+            }
+
+            @TestMetadata("usedAsExpression.kt")
+            public void testUsedAsExpression() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/whenToAssignment/usedAsExpression.kt");
             }
 
             @TestMetadata("whenHasMissingCase.kt")
