@@ -96,7 +96,7 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.inputFileProperty.set(compilation.developmentLinkTask.flatMap { it.outputFileProperty })
+            testJs.inputFileProperty.set(compilation.developmentLinkTask.map { it.outputFileProperty.get() })
 
             testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
 
