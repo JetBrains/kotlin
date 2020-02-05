@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !WITH_NEW_INFERENCE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -99,13 +100,13 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number?) {
     value_1.case_2()
-    println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Any?) {
     value_1.case_3()
-    println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
 }
 
 // TESTCASE NUMBER: 4
@@ -118,16 +119,16 @@ fun case_4(value_1: Any?, value_2: Any?, value_3: Any?) {
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Number?, value_2: Number?, value_3: Number?) {
-    if (value_1.case_5_1()) println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
-    if (!value_2.case_5_2()) println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
-    if (value_3.case_5_3() != null) println(value_3.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
-    if (value_3.case_5_4() == null) println(value_3.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (value_1.case_5_1()) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (!value_2.case_5_2()) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (value_3.case_5_3() != null) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (value_3.case_5_4() == null) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Any?, value_2: Any?, value_3: Any?) {
-    if (value_1.case_6_1()) println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
-    if (!value_2.case_6_2()) println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
-    if (value_3.case_6_3() == null) println(value_3.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
-    if (value_3.case_6_4() != null) println(value_3.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (value_1.case_6_1()) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (!value_2.case_6_2()) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (value_3.case_6_3() == null) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    if (value_3.case_6_4() != null) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
 }

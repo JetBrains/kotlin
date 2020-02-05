@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !WITH_NEW_INFERENCE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -70,7 +71,7 @@ fun case_1(value_1: Any?) {
     println(value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
     if (funWithReturnsTrue(value_1 !is Number)) {
         println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
-        if (funWithReturnsNotNull(value_1 is Int) == null) println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+        if (funWithReturnsNotNull(value_1 is Int) == null) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
     }
 }
 
@@ -80,7 +81,7 @@ fun case_2(value_1: Any?) {
         println(value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
         funWithReturns(value_1 !is Number)
         println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
-        if (funWithReturnsNull(value_1 !is Int) == null) println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+        if (funWithReturnsNull(value_1 !is Int) == null) <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
     }
 }
 
@@ -99,11 +100,11 @@ fun case_3(value_1: Int?, value_2: Any?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     if (contracts.case_4(value_1, value_2) == true) {
-        value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
-        <!DEBUG_INFO_CONSTANT, UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
+        <!OI;DEBUG_INFO_CONSTANT, UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
     }
 }
 
@@ -112,11 +113,11 @@ fun case_5(value_1: Number?, value_2: String?) {
     when (value_2.case_5(value_1)) {
         true -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
-            println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte())
+            println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte())
         }
         false -> {
-            println(<!DEBUG_INFO_CONSTANT!>value_2<!><!UNSAFE_CALL!>.<!>length)
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+            println(<!OI;DEBUG_INFO_CONSTANT!>value_2<!><!UNSAFE_CALL!>.<!>length)
+            <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
         }
     }
 }
@@ -125,7 +126,7 @@ fun case_5(value_1: Number?, value_2: String?) {
 fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
     when (value_3.case_6(value_1, value_2)) {
         true -> {
-            println(<!DEBUG_INFO_CONSTANT!>value_3<!>.equals(""))
+            println(<!OI;DEBUG_INFO_CONSTANT!>value_3<!>.equals(""))
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         false -> {
@@ -133,7 +134,7 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         null -> {
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+            <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
         }
     }
 }
