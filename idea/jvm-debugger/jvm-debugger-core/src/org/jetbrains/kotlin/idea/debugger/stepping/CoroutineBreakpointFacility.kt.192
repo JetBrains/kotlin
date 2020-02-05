@@ -11,6 +11,7 @@ import com.intellij.debugger.ui.breakpoints.RunToCursorBreakpoint
 import com.sun.jdi.Location
 import com.sun.jdi.Method
 import com.sun.jdi.event.LocatableEvent
+import org.jetbrains.kotlin.idea.debugger.safeLocation
 
 object CoroutineBreakpointFacility : AbstractCoroutineBreakpointFacility() {
     override fun installCoroutineResumedBreakpoint(context: SuspendContextImpl, location: Location, method: Method): Boolean {
@@ -38,4 +39,8 @@ object CoroutineBreakpointFacility : AbstractCoroutineBreakpointFacility() {
 
         return true
     }
+}
+
+fun SuspendContextImpl.getLocationCompat(): Location? {
+    return this.frameProxy?.safeLocation()
 }

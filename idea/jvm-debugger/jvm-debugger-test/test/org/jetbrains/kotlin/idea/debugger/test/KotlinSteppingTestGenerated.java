@@ -1047,6 +1047,26 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             KotlinTestUtils.runTest(this::doCustomTest, this, testDataFilePath);
         }
 
+        @TestMetadata("afterDefaultParameterValues.kt")
+        public void testAfterDefaultParameterValues() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValues2.kt")
+        public void testAfterDefaultParameterValues2() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues2.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValues2Intf.kt")
+        public void testAfterDefaultParameterValues2Intf() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues2Intf.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValuesIntf.kt")
+        public void testAfterDefaultParameterValuesIntf() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValuesIntf.kt");
+        }
+
         public void testAllFilesPresentInCustom() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }

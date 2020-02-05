@@ -15,20 +15,19 @@ import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.psi.PsiElement
-import com.sun.jdi.AbsentInformationException
-import com.sun.jdi.LocalVariable
-import com.sun.jdi.Location
-import com.sun.jdi.StackFrame
+import com.intellij.util.Range
+import com.sun.jdi.*
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.*
+import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinStepOverParamDefaultImplsMethodFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.LocationToken
 import org.jetbrains.kotlin.idea.debugger.stepping.filter.StepOverCallerInfo
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -152,6 +151,12 @@ fun getStepOverAction(
     val method = location.safeMethod() ?: return KotlinStepAction.JvmStepOver
     val token = LocationToken.from(stackFrame).takeIf { it.lineNumber > 0 } ?: return KotlinStepAction.JvmStepOver
 
+    if (token.inlineVariables.isEmpty() && method.isSyntheticMethodForDefaultParameters()) {
+        val psiLineNumber = location.lineNumber() - 1
+        val lineNumbers = Range(psiLineNumber, psiLineNumber)
+        return KotlinStepAction.StepInto(KotlinStepOverParamDefaultImplsMethodFilter.create(location, lineNumbers))
+    }
+
     val inlinedFunctionArgumentRanges = sourcePosition.collectInlineFunctionArgumentRanges()
     val positionManager = suspendContext.debugProcess.positionManager
 
@@ -174,6 +179,10 @@ fun getStepOverAction(
     }
 
     return KotlinStepAction.KotlinStepOver(tokensToSkip, StepOverCallerInfo.from(location))
+}
+
+fun Method.isSyntheticMethodForDefaultParameters(): Boolean {
+    return isSynthetic && name().endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)
 }
 
 private fun isInlineFunctionFromLibrary(positionManager: PositionManager, location: Location, token: LocationToken): Boolean {

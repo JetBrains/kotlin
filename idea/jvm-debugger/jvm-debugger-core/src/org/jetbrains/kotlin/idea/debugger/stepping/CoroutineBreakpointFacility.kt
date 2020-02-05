@@ -35,3 +35,7 @@ object CoroutineBreakpointFacility : AbstractCoroutineBreakpointFacility() {
         return true
     }
 }
+
+fun SuspendContextImpl.getLocationCompat(): Location? {
+    return this.location
+}

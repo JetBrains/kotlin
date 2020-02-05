@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinMethodSmartStepTarget
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
@@ -49,7 +50,11 @@ class KotlinOrdinaryMethodFilter(target: KotlinMethodSmartStepTarget) : NamedMet
 
     override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
         val method = location.method()
-        if (targetMethodName != method.name()) return false
+        val actualMethodName = method.name()
+
+        if (!nameMatches(actualMethodName)) {
+            return false
+        }
 
         val positionManager = process.positionManager
 
@@ -60,7 +65,7 @@ class KotlinOrdinaryMethodFilter(target: KotlinMethodSmartStepTarget) : NamedMet
                 it !is KtProperty || !it.isLocal
             }
 
-            if (declaration is KtClass && method.name() == "<init>") {
+            if (declaration is KtClass && actualMethodName == "<init>") {
                 declaration.resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor to declaration
             } else {
                 declaration?.resolveToDescriptorIfAny() to declaration
@@ -92,6 +97,14 @@ class KotlinOrdinaryMethodFilter(target: KotlinMethodSmartStepTarget) : NamedMet
         return DescriptorUtils.getAllOverriddenDescriptors(currentDescriptor).any { baseOfCurrent ->
             val currentBaseDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(currentDeclaration.project, baseOfCurrent)
             psiManager.areElementsEquivalent(declaration, currentBaseDeclaration)
+        }
+    }
+
+    private fun nameMatches(actualName: String): Boolean {
+        return when (actualName) {
+            targetMethodName -> true
+            "$targetMethodName$DEFAULT_PARAMS_IMPL_SUFFIX" -> true
+            else -> false
         }
     }
 }
