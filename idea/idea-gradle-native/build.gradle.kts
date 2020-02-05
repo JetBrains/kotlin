@@ -40,6 +40,7 @@ dependencies {
         compileOnly(intellijPluginDep("java"))
     }
 
+    testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))

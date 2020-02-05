@@ -38,11 +38,12 @@ dependencies {
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
-    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
     testCompile(commonDep("com.android.tools:r8"))
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testCompileOnly(toolsJar())
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     Platform[193].orLower {
         testCompile(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }

@@ -35,6 +35,7 @@ dependencies {
 
     testCompileOnly(intellijDep())
 
+    testRuntimeOnly(toolsJar())
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))

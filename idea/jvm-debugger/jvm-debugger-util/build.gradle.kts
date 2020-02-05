@@ -11,8 +11,8 @@ dependencies {
     // TODO: get rid of this
     compile(project(":idea:jvm-debugger:eval4j"))
 
-    compile(toolsJar())
-    
+    compileOnly(toolsJar())
+
     Platform[192].orHigher {
         compileOnly(intellijPluginDep("java"))
     }
