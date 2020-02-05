@@ -25,6 +25,7 @@ import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
 import com.intellij.util.io.DataEnumeratorEx;
 import com.intellij.util.io.EnumeratorStringDescriptor;
+import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
@@ -86,20 +87,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                                                                      EnumeratorStringDescriptor.INSTANCE, 32);
 
     myReadSystem = UncompressedZipFileSystem.create(getSharedIndexStorage());
-    Disposer.register(ApplicationManager.getApplication(), () -> {
-      try {
-        myChunkDescriptorEnumerator.close();
-      } catch (IOException e) {
-        LOG.error(e);
-      }
-
-      try {
-        myReadSystem.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    });
+    Disposer.register(ApplicationManager.getApplication(), () -> IOUtil.closeSafe(LOG, myChunkDescriptorEnumerator, myReadSystem));
 
     ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
