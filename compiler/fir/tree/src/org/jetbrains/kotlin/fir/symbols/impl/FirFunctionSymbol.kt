@@ -36,7 +36,7 @@ class FirConstructorSymbol(
 class FirAccessorSymbol(
     callableId: CallableId,
     override val accessorId: CallableId
-) : FirFunctionSymbol<FirSimpleFunction>(callableId), AccessorSymbol
+) : FirPropertySymbol(callableId), AccessorSymbol
 
 // ------------------------ unnamed ------------------------
 

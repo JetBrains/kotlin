@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -67,7 +68,9 @@ class FirClassSubstitutionScope(
                     processor(field)
                 }
                 is FirAccessorSymbol -> {
-                    val accessor = fakeOverrideAccessors.getOrPut(original) { createFakeOverrideAccessor(original) }
+                    val accessor = fakeOverrideAccessors.getOrPut(original) {
+                        createFakeOverrideAccessor(original) as FirAccessorSymbol
+                    }
                     processor(accessor)
                 }
                 else -> {
@@ -194,13 +197,13 @@ class FirClassSubstitutionScope(
         return createFakeOverrideField(session, member, original, newReturnType)
     }
 
-    private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
-        val member = original.fir
+    private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirPropertySymbol {
+        val member = original.fir as FirSyntheticProperty
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
         val newReturnType = returnType.substitute()
 
-        val newParameterTypes = member.valueParameters.map {
+        val newParameterTypes = member.getter.valueParameters.map {
             it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute()
         }
 
@@ -323,14 +326,19 @@ class FirClassSubstitutionScope(
 
         fun createFakeOverrideAccessor(
             session: FirSession,
-            baseFunction: FirSimpleFunction,
+            baseProperty: FirSyntheticProperty,
             baseSymbol: FirAccessorSymbol,
             newReturnType: ConeKotlinType? = null,
             newParameterTypes: List<ConeKotlinType?>? = null
-        ): FirAccessorSymbol {
-            val symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
-            createFakeOverrideFunction(symbol, session, baseFunction, null, newReturnType, newParameterTypes)
-            return symbol
+        ): FirPropertySymbol {
+            val functionSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
+            val function = createFakeOverrideFunction(
+                functionSymbol, session, baseProperty.getter.delegate, null, newReturnType, newParameterTypes
+            )
+            val property = FirSyntheticProperty(
+                session, baseProperty.name, FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId), function
+            )
+            return property.symbol
         }
     }
 }

@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -104,11 +105,16 @@ class JavaClassEnhancementScope(
                 }
                 return symbol
             }
-            is FirJavaMethod -> {
+            is FirSyntheticProperty -> {
                 original as FirAccessorSymbol
-                return enhanceMethod(
-                    firElement, original.accessorId, original.accessorId.callableName, isAccessor = true, propertyId = original.callableId
-                ) as FirAccessorSymbol
+                val enhancedFunctionSymbol = enhanceMethod(
+                    firElement.getter.delegate, original.accessorId, original.accessorId.callableName
+                )
+                val enhancedProperty = FirSyntheticProperty(
+                    session, name, FirAccessorSymbol(original.callableId, original.accessorId),
+                    enhancedFunctionSymbol.fir as FirSimpleFunction
+                )
+                return enhancedProperty.symbol
             }
             else -> {
                 if (original is FirPropertySymbol || original is FirAccessorSymbol) return original
@@ -132,9 +138,7 @@ class JavaClassEnhancementScope(
     private fun enhanceMethod(
         firMethod: FirFunction<*>,
         methodId: CallableId,
-        name: Name,
-        isAccessor: Boolean = false,
-        propertyId: CallableId? = null
+        name: Name
     ): FirFunctionSymbol<*> {
         val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
@@ -225,8 +229,7 @@ class JavaClassEnhancementScope(
                     receiverTypeRef = newReceiverTypeRef
                     this.name = name
                     status = firMethod.status
-                    symbol = if (!isAccessor) FirNamedFunctionSymbol(methodId)
-                    else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId)
+                    symbol = FirNamedFunctionSymbol(methodId)
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     valueParameters += newValueParameters
                     typeParameters += firMethod.typeParameters

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirSyntheticPropertyAccessor(
-    private val delegate: FirSimpleFunction,
+    val delegate: FirSimpleFunction,
     override val isGetter: Boolean
 ) : FirPropertyAccessor() {
     override val source: FirSourceElement?
