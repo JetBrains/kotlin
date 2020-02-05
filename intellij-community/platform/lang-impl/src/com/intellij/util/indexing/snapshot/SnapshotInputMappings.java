@@ -228,14 +228,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
   @Override
   public void close() {
-    Stream.of(myContents, myIndexingTrace, myCompositeHashIdEnumerator).filter(Objects::nonNull).forEach(index -> {
-      try {
-        index.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    });
+    IOUtil.closeSafe(LOG, myContents, myIndexingTrace, myCompositeHashIdEnumerator);
   }
 
   private PersistentMapBasedForwardIndex createContentsIndex() throws IOException {

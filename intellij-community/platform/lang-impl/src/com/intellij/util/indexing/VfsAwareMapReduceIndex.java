@@ -16,6 +16,7 @@ import com.intellij.util.indexing.impl.*;
 import com.intellij.util.indexing.impl.forward.*;
 import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetriever;
 import com.intellij.util.indexing.snapshot.*;
+import com.intellij.util.io.IOUtil;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.ApiStatus;
@@ -402,23 +403,10 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
 
   @Override
   protected void doDispose() throws StorageException {
-    super.doDispose();
-
-    if (mySnapshotInputMappings != null) {
-      try {
-        mySnapshotInputMappings.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    }
-    if (mySubIndexerRetriever != null) {
-      try {
-        mySubIndexerRetriever.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+    try {
+      super.doDispose();
+    } finally {
+      IOUtil.closeSafe(LOG, mySnapshotInputMappings, mySubIndexerRetriever);
     }
   }
 
