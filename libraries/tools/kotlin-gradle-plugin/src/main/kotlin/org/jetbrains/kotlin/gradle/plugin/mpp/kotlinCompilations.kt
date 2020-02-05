@@ -16,6 +16,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.TaskState
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -198,12 +200,22 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
 
-    /** If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
+    /**
+     * If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
      * it should point to those friend artifact files via this property.
-     * This is a workaround for Android variants that are compiled against
-     * JARs of each other, which is not exposed in the API in any other way than in the consumer's classpath. */
+     */
     internal open val friendArtifacts: FileCollection
-        get() = target.project.files()
+        get() = with(target.project) {
+            if (associateWithTransitiveClosure.any { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }) {
+                // In case the main artifact is transitively added to the test classpath via a test dependency on another module
+                // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
+                files(
+                    provider {
+                        listOfNotNull(tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archiveFile)
+                    }
+                )
+            } else files()
+        }
 
     override val moduleName: String
         get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName ?: ownModuleName

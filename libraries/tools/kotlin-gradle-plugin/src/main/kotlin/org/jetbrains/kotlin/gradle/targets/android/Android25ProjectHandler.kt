@@ -12,6 +12,7 @@ import com.android.build.gradle.api.*
 import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -57,12 +58,23 @@ class Android25ProjectHandler(
             kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
         }
 
-        // Find the classpath entries that comes from the tested variant and register it as the friend path, lazily
-        compilation.testedVariantArtifacts.set(project.files(project.provider {
-            variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
-                .filter { it.id.componentIdentifier is TestedComponentIdentifier }
-                .map { it.file }
-        }))
+        // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
+        compilation.testedVariantArtifacts.set(
+            project.files(
+                project.provider {
+                    variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
+                        .filter {
+                            it.id.componentIdentifier is TestedComponentIdentifier ||
+                                    // If tests depend on the main classes transitively, through a test dependency on another module which
+                                    // depends on this module, then there's no artifact with a TestedComponentIdentifier, so consider the artifact of the
+                                    // current module a friend path, too:
+                                    getTestedVariantData(variantData) != null &&
+                                    (it.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == project.path
+                        }
+                        .map { it.file }
+                }
+            )
+        )
 
         kotlinTask.javaOutputDir = javaTask.destinationDir
 

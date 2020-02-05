@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJE
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -1001,6 +1002,28 @@ class KotlinGradleIT : BaseGradleIT() {
         // KT-31124
         build {
             assertNotContains(ScriptingGradleSubplugin.MISCONFIGURATION_MESSAGE_SUFFIX)
+        }
+    }
+
+    @Test
+    fun testKtKt35942InternalsFromMainInTestViaTransitiveDeps() = with(Project("kt-35942-jvm")) {
+        build(":lib1:compileTestKotlin") {
+            assertSuccessful()
+            assertTasksExecuted(":lib1:compileKotlin", ":lib2:jar")
+        }
+    }
+
+    @Test
+    fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(Project("kt-35942-android")) {
+        build(
+            ":lib1:compileDebugUnitTestKotlin",
+            options = defaultBuildOptions().copy(
+                androidGradlePluginVersion = AGPVersion.v3_2_0,
+                androidHome = KotlinTestUtils.findAndroidSdk(),
+            ),
+        ) {
+            assertSuccessful()
+            assertTasksExecuted(":lib1:compileDebugKotlin")
         }
     }
 }
