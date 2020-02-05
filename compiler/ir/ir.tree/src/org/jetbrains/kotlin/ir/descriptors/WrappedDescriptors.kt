@@ -595,7 +595,7 @@ open class WrappedClassDescriptor(
 
     override fun isInline() = owner.isInline
 
-    override fun isFun() = TODO("not implemented")
+    override fun isFun() = owner.isFun
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.descriptor as ReceiverParameterDescriptor
 
