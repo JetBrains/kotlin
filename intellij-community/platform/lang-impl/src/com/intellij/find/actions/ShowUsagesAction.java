@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.actions;
 
 import com.intellij.codeInsight.TargetElementUtil;
@@ -42,6 +42,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IntRef;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -200,7 +201,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     if (handler == null) return;
     //noinspection deprecation
     FindUsagesOptions options = handler.getFindUsagesOptions(DataManager.getInstance().getDataContext());
-    showElementUsages(editor, popupPosition, handler, maxUsages, options, 0);
+    showElementUsages(editor, popupPosition, handler, maxUsages, options, new IntRef(0));
   }
 
   private static void rulesChanged(@NotNull UsageViewImpl usageView, @NotNull PingEDT pingEDT, JBPopup popup) {
@@ -215,12 +216,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }));
   }
 
-  private void showElementUsages(Editor editor,
-                                 @NotNull RelativePoint popupPosition,
-                                 @NotNull FindUsagesHandler handler,
-                                 int maxUsages,
-                                 @NotNull FindUsagesOptions options,
-                                 int minWidth) {
+  private static void showElementUsages(Editor editor,
+                                        @NotNull RelativePoint popupPosition,
+                                        @NotNull FindUsagesHandler handler,
+                                        int maxUsages,
+                                        @NotNull FindUsagesOptions options,
+                                        @NotNull IntRef minWidth) {
     Project project = handler.getProject();
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
     // show super method warning dialogs before starting finding usages
@@ -252,7 +253,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         public void showDialogAndFindUsages(@Nullable Editor newEditor) {
           ShowUsagesAction.showDialogAndFindUsages(
             handler,
-            newOptions -> showElementUsages(newEditor, popupPosition, handler, maxUsages, newOptions, myWidth)
+            newOptions -> showElementUsages(newEditor, popupPosition, handler, maxUsages, newOptions, minWidth)
           );
         }
 
@@ -269,20 +270,20 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         public void showUsagesInScope(@NotNull SearchScope searchScope) {
           FindUsagesOptions newOptions = options.clone();
           newOptions.searchScope = searchScope;
-          showElementUsages(editor, popupPosition, handler, maxUsages, newOptions, myWidth);
+          showElementUsages(editor, popupPosition, handler, maxUsages, newOptions, minWidth);
         }
       }
     );
   }
 
-  private void showElementUsages(@NotNull Project project,
-                                 Editor editor,
-                                 @NotNull RelativePoint popupPosition,
-                                 int maxUsages,
-                                 int minWidth,
-                                 @NotNull UsageViewPresentation presentation,
-                                 @NotNull UsageSearcher usageSearcher,
-                                 @NotNull ShowUsagesActionHandler actionHandler) {
+  private static void showElementUsages(@NotNull Project project,
+                                        Editor editor,
+                                        @NotNull RelativePoint popupPosition,
+                                        int maxUsages,
+                                        @NotNull IntRef minWidth,
+                                        @NotNull UsageViewPresentation presentation,
+                                        @NotNull UsageSearcher usageSearcher,
+                                        @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     UsageViewSettings usageViewSettings = UsageViewSettings.getInstance();
     ShowUsagesSettings showUsagesSettings = ShowUsagesSettings.getInstance();
@@ -325,7 +326,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       isPreviewMode,
       () -> showElementUsages(
         project, editor, popupPosition,
-        maxUsages + getUsagesPageSize(), myWidth,
+        maxUsages + getUsagesPageSize(), minWidth,
         presentation, usageSearcher, actionHandler
       ),
       () -> showUsagesInMaximalScope(actionHandler)
@@ -364,7 +365,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       }
 
       rebuildTable(
-        usageView, copy, nodes, table, popup, presentation, popupPosition, !processIcon.isDisposed(),
+        usageView, copy, nodes, table, popup, presentation, popupPosition, minWidth, !processIcon.isDisposed(),
         outOfScopeUsages, searchScope
       );
     });
@@ -518,17 +519,17 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   }
 
   @NotNull
-  private JBPopup createUsagePopup(@NotNull Project project,
-                                   @NotNull List<? extends Usage> usages,
-                                   @NotNull Set<? extends UsageNode> visibleNodes,
-                                   @NotNull UsageViewImpl usageView,
-                                   @NotNull JTable table,
-                                   @NotNull Runnable itemChoseCallback,
-                                   @NotNull UsageViewPresentation presentation,
-                                   @NotNull AsyncProcessIcon processIcon,
-                                   int minWidth,
-                                   @NotNull Runnable showDialogAndFindUsagesRunnable,
-                                   @NotNull ShowUsagesActionHandler actionHandler) {
+  private static JBPopup createUsagePopup(@NotNull Project project,
+                                          @NotNull List<? extends Usage> usages,
+                                          @NotNull Set<? extends UsageNode> visibleNodes,
+                                          @NotNull UsageViewImpl usageView,
+                                          @NotNull JTable table,
+                                          @NotNull Runnable itemChoseCallback,
+                                          @NotNull UsageViewPresentation presentation,
+                                          @NotNull AsyncProcessIcon processIcon,
+                                          @NotNull IntRef minWidth,
+                                          @NotNull Runnable showDialogAndFindUsagesRunnable,
+                                          @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
@@ -604,7 +605,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     int approxWidth = (int)(toolBar.getPreferredSize().getWidth()
                             + new JLabel(fullTitle).getPreferredSize().getWidth()
                             + settingsButton.getPreferredSize().getWidth());
-    myWidth = Math.max(minWidth, approxWidth);
+    minWidth.set(Math.max(minWidth.get(), approxWidth));
     for (AnAction action : toolbar.getChildren(null)) {
       action.unregisterCustomShortcutSet(usageView.getComponent());
       action.registerCustomShortcutSet(action.getShortcutSet(), content);
@@ -771,18 +772,17 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     return width;
   }
 
-  private int myWidth;
-
-  private void rebuildTable(@NotNull UsageViewImpl usageView,
-                            @NotNull List<? extends Usage> usages,
-                            @NotNull List<UsageNode> nodes,
-                            @NotNull ShowUsagesTable table,
-                            @Nullable JBPopup popup,
-                            @NotNull UsageViewPresentation presentation,
-                            @NotNull RelativePoint popupPosition,
-                            boolean findUsagesInProgress,
-                            @NotNull AtomicInteger outOfScopeUsages,
-                            @NotNull SearchScope searchScope) {
+  private static void rebuildTable(@NotNull UsageViewImpl usageView,
+                                   @NotNull List<? extends Usage> usages,
+                                   @NotNull List<UsageNode> nodes,
+                                   @NotNull ShowUsagesTable table,
+                                   @Nullable JBPopup popup,
+                                   @NotNull UsageViewPresentation presentation,
+                                   @NotNull RelativePoint popupPosition,
+                                   @NotNull IntRef minWidth,
+                                   boolean findUsagesInProgress,
+                                   @NotNull AtomicInteger outOfScopeUsages,
+                                   @NotNull SearchScope searchScope) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     boolean shouldShowMoreSeparator = usages.contains(ShowUsagesTable.MORE_USAGES_SEPARATOR);
@@ -828,7 +828,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     ScrollingUtil.ensureIndexIsVisible(table, newSelection, 0);
 
     if (popup != null) {
-      setSizeAndDimensions(table, popup, popupPosition, data);
+      setSizeAndDimensions(table, popup, popupPosition, minWidth, data);
     }
   }
 
@@ -850,10 +850,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     return selection;
   }
 
-  private void setSizeAndDimensions(@NotNull JTable table,
-                                    @NotNull JBPopup popup,
-                                    @NotNull RelativePoint popupPosition,
-                                    @NotNull List<? extends UsageNode> data) {
+  private static void setSizeAndDimensions(@NotNull JTable table,
+                                           @NotNull JBPopup popup,
+                                           @NotNull RelativePoint popupPosition,
+                                           @NotNull IntRef minWidth,
+                                           @NotNull List<? extends UsageNode> data) {
     JComponent content = popup.getContent();
     Window window = SwingUtilities.windowForComponent(content);
     Dimension d = window.getSize();
@@ -862,12 +863,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     width = (int)Math.max(d.getWidth(), width);
     Dimension headerSize = ((AbstractPopup)popup).getHeaderPreferredSize();
     width = Math.max((int)headerSize.getWidth(), width);
-    width = Math.max(myWidth, width);
+    width = Math.max(minWidth.get(), width);
 
-    int delta = myWidth == -1 ? 0 : width - myWidth;
+    int delta = minWidth.get() == -1 ? 0 : width - minWidth.get();
     int newWidth = Math.max(width, d.width + delta);
 
-    myWidth = newWidth;
+    minWidth.set(newWidth);
 
     Dimension footerSize = ((AbstractPopup)popup).getFooterPreferredSize();
 
