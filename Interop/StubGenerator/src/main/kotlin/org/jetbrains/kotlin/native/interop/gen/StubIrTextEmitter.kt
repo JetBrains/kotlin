@@ -445,7 +445,7 @@ class StubIrTextEmitter(
     }
 
     private fun renderValueUsage(value: ValueStub): String = when (value) {
-        is StringConstantStub -> value.value
+        is StringConstantStub -> value.value.quoteAsKotlinLiteral()
         is IntegralConstantStub -> renderIntegralConstant(value)!!
         is DoubleConstantStub -> renderDoubleConstant(value)!!
         is GetConstructorParameter -> value.constructorParameterStub.name
