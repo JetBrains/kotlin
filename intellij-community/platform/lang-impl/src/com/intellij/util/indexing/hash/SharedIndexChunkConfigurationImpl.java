@@ -90,7 +90,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       try {
         IOUtil.closeSafe(LOG, myChunkDescriptorEnumerator, myReadSystem);
       }
-      catch (Exception e) {
+      catch (Throwable e) {
         ///TODO fix shared index deletion in tests
         LOG.info(e);
       }
