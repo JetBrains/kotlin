@@ -20,6 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
@@ -112,6 +113,9 @@ internal open class KotlinTasksProvider(val targetName: String) {
         val taskClass = taskOrWorkersTask<KotlinJsIrLink, KotlinJsIrLinkWithWorkers>(properties)
         val result = project.registerTask(name, taskClass) {
             configureAction(it)
+        }
+        project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure {
+            it.dependsOn(result)
         }
         configure(result, project, properties, compilation)
         return result
