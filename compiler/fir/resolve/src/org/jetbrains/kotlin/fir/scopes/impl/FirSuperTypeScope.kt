@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
@@ -42,13 +39,13 @@ class FirSuperTypeScope private constructor(
     private val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        if(!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
+        if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
             super.processFunctionsByName(name, processor)
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
-        if(!processCallablesByName(name, processor, absentProperties, FirScope::processPropertiesByName)) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        if (!processCallablesByName(name, processor, absentProperties, FirScope::processPropertiesByName)) {
             super.processPropertiesByName(name, processor)
         }
     }

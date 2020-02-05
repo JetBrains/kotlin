@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirStaticScope(private val delegateScope: FirScope) : FirScope() {
@@ -35,7 +35,7 @@ class FirStaticScope(private val delegateScope: FirScope) : FirScope() {
 
     override fun processPropertiesByName(
         name: Name,
-        processor: (FirCallableSymbol<*>) -> Unit
+        processor: (FirVariableSymbol<*>) -> Unit
     ) {
         delegateScope.processPropertiesByName(name) {
             if ((it.fir as? FirCallableMemberDeclaration<*>)?.isStatic == true) {

@@ -45,7 +45,7 @@ abstract class FirAbstractImportingScope(
         name: Name,
         token: TowerScopeLevel.Token<T>,
         processor: (FirCallableSymbol<*>) -> Unit
-    ): Unit {
+    ) {
         val callableId = CallableId(import.packageFqName, import.relativeClassName, name)
 
         val classId = import.resolvedClassId
@@ -88,7 +88,7 @@ abstract class FirAbstractImportingScope(
         ) { if (it is FirFunctionSymbol<*>) processor(it) }
     }
 
-    final override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return processCallables(
             name,
             TowerScopeLevel.Token.Properties

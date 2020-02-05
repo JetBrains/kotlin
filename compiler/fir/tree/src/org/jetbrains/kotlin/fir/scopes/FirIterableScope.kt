@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirIterableScope : FirScope() {
@@ -41,7 +41,7 @@ abstract class FirIterableScope : FirScope() {
         return processComposite(FirScope::processFunctionsByName, name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return processComposite(FirScope::processPropertiesByName, name, processor)
     }
 }

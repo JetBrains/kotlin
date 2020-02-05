@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -52,7 +49,7 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         val symbols = callableCache.getOrPut(name) {
             symbolProvider.getTopLevelCallableSymbols(fqName, name)
         }

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
@@ -35,7 +35,7 @@ class JvmMappedScope(
         declaredMemberScope.processFunctionsByName(name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 

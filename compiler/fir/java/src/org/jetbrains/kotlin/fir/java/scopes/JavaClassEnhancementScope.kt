@@ -56,11 +56,11 @@ class JavaClassEnhancementScope(
 
     private val enhancements = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>>()
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         useSiteMemberScope.processPropertiesByName(name) process@{ original ->
 
             val field = enhancements.getOrPut(original) { enhance(original, name) }
-            processor(field)
+            processor(field as FirVariableSymbol<*>)
         }
 
         return super.processPropertiesByName(name, processor)

@@ -56,7 +56,7 @@ class FirClassSubstitutionScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             when (original) {
                 is FirPropertySymbol -> {

@@ -53,7 +53,7 @@ class FirClassDeclaredMemberScope(
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is FirVariableSymbol) {

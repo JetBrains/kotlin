@@ -41,7 +41,7 @@ class FirLocalScope : FirScope() {
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         val property = properties[name]
         if (property != null) {
             processor(property)

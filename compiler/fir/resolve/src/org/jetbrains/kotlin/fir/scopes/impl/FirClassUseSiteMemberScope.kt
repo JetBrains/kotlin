@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteMemberScope(
@@ -16,8 +16,8 @@ class FirClassUseSiteMemberScope(
     declaredMemberScope: FirScope
 ) : AbstractFirUseSiteMemberScope(session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
-        val seen = mutableSetOf<FirCallableSymbol<*>>()
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        val seen = mutableSetOf<FirVariableSymbol<*>>()
         declaredMemberScope.processPropertiesByName(name) {
             seen += it
             processor(it)

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirScope {
@@ -23,8 +23,7 @@ abstract class FirScope {
 
     open fun processPropertiesByName(
         name: Name,
-        // NB: it'd be great to write FirVariableSymbol<*> here, but there is FirAccessorSymbol :(
-        processor: (FirCallableSymbol<*>) -> Unit
+        processor: (FirVariableSymbol<*>) -> Unit
     ) {}
 }
 

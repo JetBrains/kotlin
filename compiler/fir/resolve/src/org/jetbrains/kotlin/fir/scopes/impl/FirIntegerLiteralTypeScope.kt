@@ -119,7 +119,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         processor(symbol)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
     }
 }
 

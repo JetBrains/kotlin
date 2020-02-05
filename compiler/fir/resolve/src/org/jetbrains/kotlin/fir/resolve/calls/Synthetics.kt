@@ -60,7 +60,7 @@ class FirSyntheticPropertiesScope(
         processor(property.symbol)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         val getterNames = possibleGetterNamesByPropertyName(name)
         for (getterName in getterNames) {
             baseScope.processFunctionsByName(getterName) {

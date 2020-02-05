@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirQualifierScope(
@@ -36,7 +33,7 @@ class FirQualifierScope(
 
     override fun processPropertiesByName(
         name: Name,
-        processor: (FirCallableSymbol<*>) -> Unit
+        processor: (FirVariableSymbol<*>) -> Unit
     ) {
         delegateCallablesScope?.processPropertiesByName(name, processor)
     }

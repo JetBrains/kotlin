@@ -81,7 +81,7 @@ class JavaClassUseSiteMemberScope(
         propertyName: Name,
         getterNames: List<Name>,
         setterName: Name?,
-        processor: (FirCallableSymbol<*>) -> Unit
+        processor: (FirVariableSymbol<*>) -> Unit
     ) {
         val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
         val klass = symbol.fir
@@ -142,7 +142,7 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         // Do not generate accessors at all?
         if (name.isSpecial) {
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)
