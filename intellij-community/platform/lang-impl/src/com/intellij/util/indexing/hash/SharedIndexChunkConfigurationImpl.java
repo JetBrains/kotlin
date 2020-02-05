@@ -87,7 +87,15 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                                                                      EnumeratorStringDescriptor.INSTANCE, 32);
 
     myReadSystem = UncompressedZipFileSystem.create(getSharedIndexStorage());
-    Disposer.register(ApplicationManager.getApplication(), () -> IOUtil.closeSafe(LOG, myChunkDescriptorEnumerator, myReadSystem));
+    Disposer.register(ApplicationManager.getApplication(), () -> {
+      try {
+        IOUtil.closeSafe(LOG, myChunkDescriptorEnumerator, myReadSystem);
+      }
+      catch (Exception e) {
+        ///TODO fix shared index deletion in tests
+        LOG.info(e);
+      }
+    });
 
     ApplicationManager.getApplication().getMessageBus().connect().subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
