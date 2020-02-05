@@ -75,13 +75,15 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -178,14 +180,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (usageTargets == null) {
       FindUsagesAction.chooseAmbiguousTargetAndPerform(project, editor, element -> {
-        startFindUsages(element, popupPosition, editor, getUsagesPageSize());
+        startFindUsages(element, popupPosition, editor);
         return false;
       });
     }
     else if (ArrayUtil.getFirstElement(usageTargets) instanceof PsiElementUsageTarget) {
       PsiElement element = ((PsiElementUsageTarget)usageTargets[0]).getElement();
       if (element != null) {
-        startFindUsages(element, popupPosition, editor, getUsagesPageSize());
+        startFindUsages(element, popupPosition, editor);
       }
     }
   }
@@ -194,14 +196,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     HintManager.getInstance().hideHints(HintManager.HIDE_BY_ANY_KEY, false, false);
   }
 
-  public void startFindUsages(@NotNull PsiElement element, @NotNull RelativePoint popupPosition, @Nullable Editor editor, int maxUsages) {
+  public static void startFindUsages(@NotNull PsiElement element, @NotNull RelativePoint popupPosition, @Nullable Editor editor) {
     Project project = element.getProject();
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
     FindUsagesHandler handler = findUsagesManager.getFindUsagesHandler(element, OperationMode.USAGES_WITH_DEFAULT_OPTIONS);
     if (handler == null) return;
     //noinspection deprecation
     FindUsagesOptions options = handler.getFindUsagesOptions(DataManager.getInstance().getDataContext());
-    showElementUsages(editor, popupPosition, handler, maxUsages, options, new IntRef(0));
+    showElementUsages(editor, popupPosition, handler, options, new IntRef(0));
   }
 
   private static void rulesChanged(@NotNull UsageViewImpl usageView, @NotNull PingEDT pingEDT, JBPopup popup) {
@@ -219,7 +221,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   private static void showElementUsages(@Nullable Editor editor,
                                         @NotNull RelativePoint popupPosition,
                                         @NotNull FindUsagesHandler handler,
-                                        int maxUsages,
                                         @NotNull FindUsagesOptions options,
                                         @NotNull IntRef minWidth) {
     Project project = handler.getProject();
@@ -229,7 +230,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     PsiElement[] secondaryElements = handler.getSecondaryElements();
     UsageSearcher usageSearcher = FindUsagesManager.createUsageSearcher(handler, primaryElements, secondaryElements, options);
     showElementUsages(
-      project, editor, popupPosition, maxUsages, minWidth,
+      project, editor, popupPosition, getUsagesPageSize(), minWidth,
       findUsagesManager.createPresentation(handler, options),
       usageSearcher,
       new ShowUsagesActionHandler() {
@@ -253,7 +254,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         public void showDialogAndFindUsages(@Nullable Editor newEditor) {
           ShowUsagesAction.showDialogAndFindUsages(
             handler,
-            newOptions -> showElementUsages(newEditor, popupPosition, handler, maxUsages, newOptions, minWidth)
+            newOptions -> showElementUsages(newEditor, popupPosition, handler, newOptions, minWidth)
           );
         }
 
@@ -270,7 +271,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         public void showUsagesInScope(@NotNull SearchScope searchScope) {
           FindUsagesOptions newOptions = options.clone();
           newOptions.searchScope = searchScope;
-          showElementUsages(editor, popupPosition, handler, maxUsages, newOptions, minWidth);
+          showElementUsages(editor, popupPosition, handler, newOptions, minWidth);
         }
       }
     );
@@ -1035,5 +1036,17 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         component.removeHierarchyListener(this);
       }
     };
+  }
+
+  /**
+   * @deprecated please use {@link #startFindUsages(PsiElement, RelativePoint, Editor)} overload
+   */
+  @Deprecated
+  @ScheduledForRemoval(inVersion = "2020.3")
+  public void startFindUsages(@NotNull PsiElement element,
+                              @NotNull RelativePoint popupPosition,
+                              @Nullable Editor editor,
+                              @SuppressWarnings("unused") int maxUsages) {
+    startFindUsages(element, popupPosition, editor);
   }
 }

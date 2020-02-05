@@ -135,7 +135,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     }
     else {
       RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(editor);
-      new ShowUsagesAction().startFindUsages(element, popupPosition, editor, ShowUsagesAction.getUsagesPageSize());
+      ShowUsagesAction.startFindUsages(element, popupPosition, editor);
     }
   }
 
