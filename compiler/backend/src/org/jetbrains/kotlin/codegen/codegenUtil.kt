@@ -439,10 +439,13 @@ inline fun FrameMap.evaluateOnce(
 fun MethodNode.textifyMethodNode(): String {
     val text = Textifier()
     val tmv = TraceMethodVisitor(text)
-    this.instructions.asSequence().forEach { it.accept(tmv) }
-    localVariables.forEach { text.visitLocalVariable(it.name, it.desc, it.signature, it.start.label, it.end.label, it.index) }
+    accept(tmv)
     val sw = StringWriter()
-    text.print(PrintWriter(sw))
+    val pw = PrintWriter(sw)
+    pw.print(name)
+    pw.print(desc)
+    pw.print("\n")
+    text.print(pw)
     return "$sw"
 }
 

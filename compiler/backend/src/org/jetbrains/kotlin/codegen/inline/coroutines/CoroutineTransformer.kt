@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -251,6 +252,7 @@ class SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
     override fun performTransformations(methodNode: MethodNode) {
         fun AbstractInsnNode.index() = methodNode.instructions.indexOf(this)
 
+        FixStackMethodTransformer().transform(thisName, methodNode)
         val sourceFrames = MethodTransformer.analyze(thisName, methodNode, SourceInterpreter())
 
         val noinlineInvokes = arrayListOf<Pair<AbstractInsnNode, AbstractInsnNode>>()
