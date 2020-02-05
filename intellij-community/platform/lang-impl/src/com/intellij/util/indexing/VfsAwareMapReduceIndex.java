@@ -427,12 +427,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
   }
 
   private static boolean shouldCreateForwardIndex(@NotNull IndexExtension<?, ?, ?> indexExtension) {
-    if (hasSnapshotMapping(indexExtension)) return false;
-    if (indexExtension instanceof CustomInputsIndexFileBasedIndexExtension) {
-      LOG.error("Index `" + indexExtension.getName() + "` will be created without forward index");
-      return false;
-    }
-    return true;
+    return !hasSnapshotMapping(indexExtension);
   }
 
   private void installMemoryModeListener() {
