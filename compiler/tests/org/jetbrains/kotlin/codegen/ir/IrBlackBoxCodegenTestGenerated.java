@@ -26678,6 +26678,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("enhancedPrimitiveInReturnType.kt")
+        public void testEnhancedPrimitiveInReturnType() throws Exception {
+            runTest("compiler/testData/codegen/box/typeMapping/enhancedPrimitiveInReturnType.kt");
+        }
+
         @TestMetadata("enhancedPrimitives.kt")
         public void testEnhancedPrimitives() throws Exception {
             runTest("compiler/testData/codegen/box/typeMapping/enhancedPrimitives.kt");

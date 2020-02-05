@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -53,6 +54,7 @@ fun IrType.eraseTypeParameters() = when (this) {
     is IrSimpleType ->
         when (val owner = classifier.owner) {
             is IrClass -> IrSimpleTypeImpl(
+                originalKotlinType,
                 classifier,
                 hasQuestionMark,
                 arguments.map { it.eraseTypeParameters() },
@@ -72,7 +74,7 @@ fun IrType.eraseTypeParameters() = when (this) {
     else -> error("Unknown IrType kind: $this")
 }
 
-fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
+private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
     is IrStarProjection -> this
     is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
     else -> error("Unknown IrTypeArgument kind: $this")
