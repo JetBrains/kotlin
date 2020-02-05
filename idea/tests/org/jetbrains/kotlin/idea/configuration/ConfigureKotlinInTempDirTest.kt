@@ -10,6 +10,7 @@ import com.intellij.openapi.application.impl.ApplicationImpl
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.VersionView
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
@@ -34,8 +35,8 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
     fun testNoKotlincExistsNoSettingsLatestRuntime() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.isSaveAllowed = true
-        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
-        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        Assert.assertEquals(VersionView.RELEASED_VERSION, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(VersionView.RELEASED_VERSION, myProject.getLanguageVersionSettings(null).languageVersion)
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
@@ -43,8 +44,8 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
     fun testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.isSaveAllowed = true
-        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
-        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        Assert.assertEquals(VersionView.RELEASED_VERSION, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(VersionView.RELEASED_VERSION, myProject.getLanguageVersionSettings(null).languageVersion)
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             autoAdvanceLanguageVersion = false
             autoAdvanceApiVersion = false
@@ -56,7 +57,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
     fun testDropKotlincOnVersionAutoAdvance() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.isSaveAllowed = true
-        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_4, module.languageVersionSettings.languageVersion)
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             autoAdvanceLanguageVersion = true
             autoAdvanceApiVersion = true
