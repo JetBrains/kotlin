@@ -467,6 +467,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt14296.kt");
         }
 
+        @TestMetadata("kt14869.kt")
+        public void testKt14869() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt14869.kt");
+        }
+
         @TestMetadata("kt15652.kt")
         public void testKt15652() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/kt15652.kt");
