@@ -76,9 +76,9 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
                  createdElement -> {
                    if (createdElement != null) {
                      Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-                     Integer offset = getOffsetToPreserve(editor);
+                     int offset = getOffsetToPreserve(editor);
                      view.selectElement(createdElement);
-                     if (offset != null) {
+                     if (offset != -1 && editor != null) {
                        editor.getCaretModel().moveToOffset(offset);
                      }
                      postProcess(createdElement, selectedTemplateName.get(), builder.getCustomProperties());
@@ -140,9 +140,9 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
   }
 
   private static Integer getOffsetToPreserve(Editor editor) {
-    if (editor == null) return null;
+    if (editor == null) return -1;
     int offset = editor.getCaretModel().getOffset();
-    if (offset == 0) return null;
+    if (offset == 0) return -1;
     return offset;
   }
 
