@@ -174,9 +174,6 @@ fun JavaExec.buildKLib(
     outDir: File,
     commonSources: List<File>
 ) {
-
-    fun File.pathRelativeToWorkingDir(): String = absoluteFile.relativeTo(workingDir).path
-
     inputs.files(sources)
         .withPathSensitivity(PathSensitivity.RELATIVE)
 
@@ -186,10 +183,10 @@ fun JavaExec.buildKLib(
     classpath = jsIrKlibCli
     main = "org.jetbrains.kotlin.ir.backend.js.GenerateJsIrKlibKt"
     workingDir = rootDir
-    args = sources.map { it.pathRelativeToWorkingDir() } +
-            listOf("-n", moduleName, "-o", outDir.pathRelativeToWorkingDir()) +
-            dependencies.flatMap { listOf("-d", it.pathRelativeToWorkingDir()) } +
-            commonSources.flatMap { listOf("-c", it.pathRelativeToWorkingDir()) }
+    args = sources.map(::pathRelativeToWorkingDir) +
+            listOf("-n", moduleName, "-o", pathRelativeToWorkingDir(outDir)) +
+            dependencies.flatMap { listOf("-d", pathRelativeToWorkingDir(it)) } +
+            commonSources.flatMap { listOf("-c", pathRelativeToWorkingDir(it)) }
 
     dependsOn(":compiler:cli-js-klib:jar")
     passClasspathInJar()

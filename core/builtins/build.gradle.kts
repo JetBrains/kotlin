@@ -32,8 +32,8 @@ val serialize by tasks.registering(NoDebugJavaExec::class) {
     main = "org.jetbrains.kotlin.serialization.builtins.RunKt"
     jvmArgs("-Didea.io.use.nio2=true")
     args(
-        outDir.relativeTo(projectDir),
-        *inDirs.map { it.relativeTo(projectDir) }.toTypedArray()
+        pathRelativeToWorkingDir(outDir),
+        *inDirs.map(::pathRelativeToWorkingDir).toTypedArray()
     )
 }
 

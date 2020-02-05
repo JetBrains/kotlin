@@ -7,8 +7,8 @@ import org.gradle.api.Task
 import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.kotlin.dsl.*
 import java.io.File
@@ -69,3 +69,5 @@ inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourc
 fun Project.javaPluginConvention(): JavaPluginConvention = the()
 
 fun Project.findJavaPluginConvention(): JavaPluginConvention? = convention.findByType() ?: convention.findPlugin()
+
+fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
