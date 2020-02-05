@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class FirSyntheticProperty(
+class FirSyntheticProperty private constructor(
     override val session: FirSession,
     override val returnTypeRef: FirTypeRef,
     override val name: Name,
@@ -41,12 +41,14 @@ class FirSyntheticProperty(
         session: FirSession,
         name: Name,
         symbol: FirAccessorSymbol,
-        delegateGetter: FirSimpleFunction
+        delegateGetter: FirSimpleFunction,
+        delegateSetter: FirSimpleFunction? = null
     ) : this(
-        session, delegateGetter.returnTypeRef, name, false, symbol,
-        FirDeclarationStatusImpl(delegateGetter.visibility, delegateGetter.modality),
-        delegateGetter.resolvePhase,
-        FirSyntheticPropertyAccessor(delegateGetter, isGetter = true)
+        session, delegateGetter.returnTypeRef, name, isVar = delegateSetter != null, symbol = symbol,
+        status = FirDeclarationStatusImpl(delegateGetter.visibility, delegateGetter.modality),
+        resolvePhase = delegateGetter.resolvePhase,
+        getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true),
+        setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false) }
     )
 
     override val source: FirSourceElement?

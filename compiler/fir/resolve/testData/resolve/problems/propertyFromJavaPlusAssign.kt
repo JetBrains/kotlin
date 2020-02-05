@@ -18,5 +18,5 @@ public class B {
 // FILE: main.kt
 
 fun test(b: B) {
-    b.<!VARIABLE_EXPECTED!>text<!> += ""
+    b.text += ""
 }

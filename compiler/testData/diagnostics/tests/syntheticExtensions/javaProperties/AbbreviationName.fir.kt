@@ -1,7 +1,7 @@
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.url = javaClass.url + "/"
-    javaClass.<!VARIABLE_EXPECTED!>htmlFile<!> += "1"
+    javaClass.htmlFile += "1"
 
     javaClass.<!UNRESOLVED_REFERENCE!>URL<!>
     javaClass.<!UNRESOLVED_REFERENCE!>uRL<!>

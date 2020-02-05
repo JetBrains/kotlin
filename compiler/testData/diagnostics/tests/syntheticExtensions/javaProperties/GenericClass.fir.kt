@@ -1,6 +1,6 @@
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<String>) {
-    javaClass.<!VARIABLE_EXPECTED!>something<!> += "x"
+    javaClass.something += "x"
 }
 
 // FILE: JavaClass.java

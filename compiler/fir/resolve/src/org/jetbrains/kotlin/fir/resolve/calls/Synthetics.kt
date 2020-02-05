@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -38,24 +38,41 @@ class FirSyntheticPropertiesScope(
     val synthetic: MutableMap<FirCallableSymbol<*>, FirVariableSymbol<*>> = mutableMapOf()
 
     private fun checkGetAndCreateSynthetic(
-        name: Name,
-        symbol: FirFunctionSymbol<*>,
+        propertyName: Name,
+        getterName: Name,
+        getterSymbol: FirFunctionSymbol<*>,
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
-        val fir = symbol.fir as? FirSimpleFunction ?: return
+        val getter = getterSymbol.fir as? FirSimpleFunction ?: return
 
-        if (fir.typeParameters.isNotEmpty()) return
-        if (fir.valueParameters.isNotEmpty()) return
-        if (fir.isStatic) return
-        if (fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Unit) return
+        if (getter.typeParameters.isNotEmpty()) return
+        if (getter.valueParameters.isNotEmpty()) return
+        if (getter.isStatic) return
+        val getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+        if ((getterReturnType as? ConeClassLikeType)?.lookupTag?.classId == StandardClassIds.Unit) return
+
+        var matchingSetter: FirSimpleFunction? = null
+        if (getterReturnType != null) {
+            val setterName = setterNameByGetterName(getterName)
+            baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirFunctionSymbol<*>) {
+                if (matchingSetter != null) return
+                val setter = setterSymbol.fir as? FirSimpleFunction ?: return
+                val parameter = setter.valueParameters.singleOrNull() ?: return
+                if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
+                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
+                if (parameterType != getterReturnType) return
+                matchingSetter = setter
+            })
+        }
 
         val property = FirSyntheticProperty(
-            session, name,
+            session, propertyName,
             symbol = SyntheticPropertySymbol(
-                accessorId = symbol.callableId,
-                callableId = CallableId(symbol.callableId.packageName, symbol.callableId.className, name)
+                accessorId = getterSymbol.callableId,
+                callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, propertyName)
             ),
-            delegateGetter = fir
+            delegateGetter = getter,
+            delegateSetter = matchingSetter
         )
         processor(property.symbol)
     }
@@ -64,7 +81,7 @@ class FirSyntheticPropertiesScope(
         val getterNames = possibleGetterNamesByPropertyName(name)
         for (getterName in getterNames) {
             baseScope.processFunctionsByName(getterName) {
-                checkGetAndCreateSynthetic(name, it, processor)
+                checkGetAndCreateSynthetic(name, getterName, it, processor)
             }
         }
     }
@@ -82,6 +99,16 @@ class FirSyntheticPropertiesScope(
             ).filter {
                 propertyNameByGetMethodName(it) == name
             }
+        }
+
+        fun setterNameByGetterName(name: Name): Name {
+            val identifier = name.identifier
+            val prefix = when {
+                identifier.startsWith("get") -> "get"
+                identifier.startsWith("is") -> "is"
+                else -> throw IllegalArgumentException()
+            }
+            return Name.identifier("set" + identifier.removePrefix(prefix))
         }
 
         private const val GETTER_PREFIX = "get"
