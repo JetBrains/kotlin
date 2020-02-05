@@ -273,6 +273,10 @@ class DifferenceCalculatorForClass(
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
+                ProtoBufClassKind.JVM_EXT_GENERATION_OPTIONS -> {
+                    isClassAffected = true
+                    areSubclassesAffected = true
+                }
             }
         }
 

@@ -127,6 +127,10 @@ extend Class {
   // For anonymous objects from bodies of inline functions copied to the use site, the JVM internal name of the original
   // anonymous object this class is copied from
   optional int32 anonymous_object_origin_name = 103 [(string_id_in_table) = true];
+
+
+  // isFunctionBodyInInterface: 0 if actual body generated in DefaultImpl, 1 - otherwise (in interface default method)
+  optional int32 generation_options = 104 [default = 0];
 }
 
 extend Package {
