@@ -36,6 +36,10 @@ public class IndexedHashesSupport {
 
   private static volatile ContentHashEnumerator ourTextContentHashes;
 
+  public static int getVersion() {
+    return 1;
+  }
+
   public static void initContentHashesEnumerator() throws IOException {
     if (ourTextContentHashes != null) return;
     //noinspection SynchronizeOnThis

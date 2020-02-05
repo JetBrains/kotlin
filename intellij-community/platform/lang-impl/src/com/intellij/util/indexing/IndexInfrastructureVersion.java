@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.hash.ContentHashEnumerator;
+import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +63,8 @@ public final class IndexInfrastructureVersion {
     builder.put("vfs_version", String.valueOf(FSRecords.getVersion()));
     builder.put("persistent_enumerator_version", String.valueOf(PersistentEnumeratorDelegate.getVersion()));
     builder.put("use_btree", String.valueOf(PersistentEnumeratorDelegate.useBtree()));
-    builder.put("hashes_enumerator_versions", String.valueOf(ContentHashEnumerator.getVersion()));
+    builder.put("hashes_enumerator_version", String.valueOf(ContentHashEnumerator.getVersion()));
+    builder.put("hashes_algorithm_version", String.valueOf(IndexedHashesSupport.getVersion()));
     builder.put("inverted_index_version", String.valueOf(VfsAwareMapReduceIndex.VERSION));
 
     //register your index here if that version is vital for shared indexes loading
