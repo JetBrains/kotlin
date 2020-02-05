@@ -19,10 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.hash.ContentHashEnumerator;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexExtension;
-import com.intellij.util.indexing.FileBasedIndexImpl;
-import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
@@ -228,9 +225,13 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                             @NotNull Set<OrderEntry> entries,
                             @NotNull ProgressIndicator indicator) {
     Runnable runnable = () -> {
+      IndexInfrastructureVersion ideVersion = IndexInfrastructureVersion.getIdeVersion();
+
       for (SharedIndexChunkLocator locator : SharedIndexChunkLocator.EP_NAME.getExtensionList()) {
         locator.locateIndex(project, entries, descriptor -> {
-          loadSharedIndex(project, descriptor, indicator);
+          if (ideVersion.getBaseIndexes().equals(descriptor.getSupportedInfrastructureVersion().getBaseIndexes())) {
+            loadSharedIndex(project, descriptor, indicator);
+          }
         }, indicator);
       }
     };

@@ -49,8 +49,7 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
 
         @Override
         public @NotNull IndexInfrastructureVersion getSupportedInfrastructureVersion() {
-          return IndexInfrastructureVersion.fromExtensions(FileBasedIndexExtension.EXTENSION_POINT_NAME.getExtensionList(),
-                                                           StubIndexExtension.EP_NAME.getExtensionList());
+          return IndexInfrastructureVersion.getIdeVersion();
         }
 
         @Override

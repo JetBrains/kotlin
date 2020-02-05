@@ -49,7 +49,7 @@ public final class IndexInfrastructureVersion {
   }
 
   @NotNull
-  public static IndexInfrastructureVersion globalVersion() {
+  public static IndexInfrastructureVersion getIdeVersion() {
     return fromExtensions(
       FileBasedIndexExtension.EXTENSION_POINT_NAME.getExtensionList(),
       StubIndexExtension.EP_NAME.getExtensionList());
