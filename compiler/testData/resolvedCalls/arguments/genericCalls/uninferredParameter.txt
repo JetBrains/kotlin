@@ -10,7 +10,7 @@ fun test(ls: MutableList<String>) {
 Resolved call:
 
 Candidate descriptor: fun <T> foo(t: T, l: MutableList<T>): Unit defined in root package
-Resulting descriptor: fun <T> foo(t: ???, l: MutableList<???>): Unit defined in root package
+Resulting descriptor: fun <T> foo(t: String, l: MutableList<String>): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 Dispatch receiver = NO_RECEIVER
@@ -18,5 +18,5 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-MATCH_MODULO_UNINFERRED_TYPES  t : ??? = 11
-MATCH_MODULO_UNINFERRED_TYPES  l : MutableList<???> = ls
+SUCCESS  t : String = 11
+TYPE_MISMATCH  l : MutableList<String> = ls

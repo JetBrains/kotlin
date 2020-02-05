@@ -10,6 +10,7 @@ val v = <caret>A(1)
 
 Resolved call:
 
+Candidate descriptor: constructor A(x: Int) defined in A
 Resulting descriptor: constructor A(x: Int) defined in A
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER

@@ -16,4 +16,4 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-MATCH_MODULO_UNINFERRED_TYPES  f : () -> ??? = { b }
+SUCCESS  f : () -> ??? = { b }

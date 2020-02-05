@@ -8,6 +8,7 @@ class A {
 
 Resolved call:
 
+Candidate descriptor: constructor B(arg: String) defined in A.B
 Resulting descriptor: constructor B(arg: String) defined in A.B
 
 Explicit receiver kind = DISPATCH_RECEIVER
