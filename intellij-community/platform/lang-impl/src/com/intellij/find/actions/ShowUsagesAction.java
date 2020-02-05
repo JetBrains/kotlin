@@ -194,7 +194,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     HintManager.getInstance().hideHints(HintManager.HIDE_BY_ANY_KEY, false, false);
   }
 
-  public void startFindUsages(@NotNull PsiElement element, @NotNull RelativePoint popupPosition, Editor editor, int maxUsages) {
+  public void startFindUsages(@NotNull PsiElement element, @NotNull RelativePoint popupPosition, @Nullable Editor editor, int maxUsages) {
     Project project = element.getProject();
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
     FindUsagesHandler handler = findUsagesManager.getFindUsagesHandler(element, OperationMode.USAGES_WITH_DEFAULT_OPTIONS);
@@ -216,7 +216,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }));
   }
 
-  private static void showElementUsages(Editor editor,
+  private static void showElementUsages(@Nullable Editor editor,
                                         @NotNull RelativePoint popupPosition,
                                         @NotNull FindUsagesHandler handler,
                                         int maxUsages,
@@ -277,7 +277,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   }
 
   private static void showElementUsages(@NotNull Project project,
-                                        Editor editor,
+                                        @Nullable Editor editor,
                                         @NotNull RelativePoint popupPosition,
                                         int maxUsages,
                                         @NotNull IntRef minWidth,
