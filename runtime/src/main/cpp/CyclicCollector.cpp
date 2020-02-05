@@ -355,7 +355,11 @@ class CyclicCollector {
     auto delta = tick - atomicGet(&lastTick_);
     if (delta > 10 || delta < 0) {
       auto currentTimestampUs = konan::getTimeMicros();
+#if KONAN_NO_64BIT_ATOMIC
+      if (currentTimestampUs - *(volatile int64_t*)&lastTimestampUs_ > 10000) {
+#else
       if (currentTimestampUs - atomicGet(&lastTimestampUs_) > 10000) {
+#endif  // KONAN_NO_64BIT_ATOMIC
         // Do we care if this lock is not here?
         Locker locker(&timestampLock_);
         lastTick_ = currentTick_;
