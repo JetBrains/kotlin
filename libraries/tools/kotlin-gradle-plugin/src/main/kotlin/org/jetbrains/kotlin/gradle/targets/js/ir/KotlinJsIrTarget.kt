@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -91,13 +88,13 @@ constructor(
 
     override fun produceExecutable() {
         produce(KotlinJsProducingType.EXECUTABLE) {
-            produceExecutable()
+            (this as KotlinJsIrSubTarget).produceExecutable()
         }
     }
 
     private fun produce(
         producingType: KotlinJsProducingType,
-        producer: KotlinJsIrSubTarget.() -> Unit = {}
+        producer: KotlinJsSubTargetDsl.() -> Unit = {}
     ) {
         check(this.producingType == null || this.producingType == producingType) {
             "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
@@ -106,11 +103,11 @@ constructor(
         this.producingType = producingType
 
         whenBrowserConfigured {
-            (this as KotlinJsIrSubTarget).producer()
+            producer()
         }
 
         whenNodejsConfigured {
-            (this as KotlinJsIrSubTarget).producer()
+            producer()
         }
     }
 

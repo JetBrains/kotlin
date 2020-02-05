@@ -12,15 +12,15 @@ import org.gradle.api.attributes.AttributesSchema
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
@@ -101,6 +101,7 @@ constructor(
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
+        irTarget?.browser(body)
     }
 
     private val nodejsLazyDelegate = lazy {
@@ -122,23 +123,22 @@ constructor(
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
+        irTarget?.nodejs(body)
     }
 
     override fun produceKotlinLibrary() {
-        produce(KotlinJsProducingType.KOTLIN_LIBRARY) {
-            produceKotlinLibrary()
-        }
+        produce(KotlinJsProducingType.KOTLIN_LIBRARY)
     }
 
     override fun produceExecutable() {
         produce(KotlinJsProducingType.EXECUTABLE) {
-            produceExecutable()
+            (this as KotlinJsSubTarget).produceExecutable()
         }
     }
 
     private fun produce(
         producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTarget.() -> Unit
+        producer: KotlinJsSubTargetDsl.() -> Unit = {}
     ) {
         check(this.producingType == null || this.producingType == producingType) {
             "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
@@ -147,11 +147,15 @@ constructor(
         this.producingType = producingType
 
         whenBrowserConfigured {
-            (this as KotlinJsSubTarget).producer()
+            if (this is KotlinBrowserJs) {
+                producer()
+            }
         }
 
         whenNodejsConfigured {
-            (this as KotlinJsSubTarget).producer()
+            if (this is KotlinNodeJs) {
+                producer()
+            }
         }
     }
 

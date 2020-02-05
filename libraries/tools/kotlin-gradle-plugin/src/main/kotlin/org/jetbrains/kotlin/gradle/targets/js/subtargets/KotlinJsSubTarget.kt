@@ -38,9 +38,6 @@ abstract class KotlinJsSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
-    internal open fun produceKotlinLibrary() {
-    }
-
     internal open fun produceExecutable() {
         configureBuildVariants()
         configureMain()
