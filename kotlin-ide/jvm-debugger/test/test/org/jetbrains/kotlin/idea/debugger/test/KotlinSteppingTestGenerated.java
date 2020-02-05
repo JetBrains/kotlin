@@ -1014,6 +1014,26 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             KotlinTestUtils.runTest(this::doCustomTest, this, testDataFilePath);
         }
 
+        @TestMetadata("afterDefaultParameterValues.kt")
+        public void testAfterDefaultParameterValues() throws Exception {
+            runTest("jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValues2.kt")
+        public void testAfterDefaultParameterValues2() throws Exception {
+            runTest("jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues2.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValues2Intf.kt")
+        public void testAfterDefaultParameterValues2Intf() throws Exception {
+            runTest("jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues2Intf.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValuesIntf.kt")
+        public void testAfterDefaultParameterValuesIntf() throws Exception {
+            runTest("jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValuesIntf.kt");
+        }
+
         @TestMetadata("anonymousFunAsParamDefaultValue.kt")
         public void testAnonymousFunAsParamDefaultValue() throws Exception {
             runTest("testData/stepping/custom/anonymousFunAsParamDefaultValue.kt");

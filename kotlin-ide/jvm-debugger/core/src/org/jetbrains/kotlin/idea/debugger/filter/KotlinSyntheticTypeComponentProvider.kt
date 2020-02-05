@@ -47,13 +47,20 @@ class KotlinSyntheticTypeComponentProvider : SyntheticTypeComponentProvider {
     }
 
     override fun isNotSynthetic(typeComponent: TypeComponent?): Boolean {
-        if (typeComponent is Method && typeComponent.name().endsWith(SUSPEND_IMPL_NAME_SUFFIX)) {
-            if (typeComponent.location()?.isInKotlinSources() == true) {
-                val containingClass = typeComponent.declaringType()
-                if (typeComponent.argumentTypeNames().firstOrNull() == containingClass.name()) {
-                    // Suspend wrapper for open method
-                    return true
+        if (typeComponent is Method) {
+            val name = typeComponent.name()
+
+            if (name.endsWith(SUSPEND_IMPL_NAME_SUFFIX)) {
+                if (typeComponent.location()?.isInKotlinSources() == true) {
+                    val containingClass = typeComponent.declaringType()
+                    if (typeComponent.argumentTypeNames().firstOrNull() == containingClass.name()) {
+                        // Suspend wrapper for open method
+                        return true
+                    }
                 }
+            } else if (name.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) {
+                val originalName = name.dropLast(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX.length)
+                return typeComponent.declaringType().methodsByName(originalName).isNotEmpty()
             }
         }
 
