@@ -94,6 +94,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/noToArrayInJava.kt");
     }
 
+    @TestMetadata("platformTypes.kt")
+    public void testPlatformTypes() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/platformTypes.kt");
+    }
+
     @TestMetadata("privateDefaultSetter.kt")
     public void testPrivateDefaultSetter() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateDefaultSetter.kt");

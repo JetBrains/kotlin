@@ -32,10 +32,8 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -45,6 +43,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.annotation.RetentionPolicy
@@ -150,6 +149,11 @@ abstract class AnnotationCodegen(
             //   class Function<R> { fun invoke(): R }
             // it would be a shame to put @Nullable on the return type of the function, and force all callers to check for null,
             // so we put no annotations
+            return
+        }
+
+        // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
+        if (type.toKotlinType().isNullabilityFlexible()) {
             return
         }
 
