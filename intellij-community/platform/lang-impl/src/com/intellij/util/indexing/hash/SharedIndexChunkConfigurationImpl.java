@@ -23,7 +23,6 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
-import com.intellij.util.io.DataEnumeratorEx;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
@@ -155,29 +154,29 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     }
   }
 
+  // for now called sequentially on a single background thread
   public void loadSharedIndex(@NotNull Project project,
                               @NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor,
                               @NotNull ProgressIndicator indicator) {
     if (project.isDisposed()) return;
 
-    Path sharedIndexChunk = null;
+    Path tempChunk = null;
     try {
       ensureSharedIndexConfigurationRootExist();
-      sharedIndexChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId());
-      descriptor.downloadChunk(sharedIndexChunk, indicator);
-    } catch (Exception e) {
-      if (sharedIndexChunk != null) {
-        try {
-          FileUtil.delete(sharedIndexChunk);
-        } catch (IOException ignored) {}
+      tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId());
+
+      if (chunkIsNotRegistered(descriptor)) {
+        descriptor.downloadChunk(tempChunk, indicator);
+        appendToSharedIndexStorage(tempChunk);
       }
+    } catch (Exception e) {
       //noinspection InstanceofCatchParameter
       if (e instanceof ProcessCanceledException) ExceptionUtil.rethrow(e);
       LOG.error("Failed to download shared index " + descriptor + " " + e.getMessage(), e);
       return;
+    } finally {
+      deleteFile(tempChunk);
     }
-
-    appendToSharedIndexStorage(sharedIndexChunk);
 
     syncSharedIndexStorage();
 
@@ -187,6 +186,18 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     catch (IOException e) {
       LOG.error(e);
     }
+  }
+
+  private static void deleteFile(@Nullable Path sharedIndexChunk) {
+    if (sharedIndexChunk != null) {
+      try {
+        FileUtil.delete(sharedIndexChunk);
+      } catch (IOException ignored) {}
+    }
+  }
+
+  private boolean chunkIsNotRegistered(@NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor) throws IOException {
+    return myChunkDescriptorEnumerator.tryEnumerate(descriptor.getChunkUniqueId()) == 0;
   }
 
   private static void appendToSharedIndexStorage(@NotNull Path sharedIndexChunk) {

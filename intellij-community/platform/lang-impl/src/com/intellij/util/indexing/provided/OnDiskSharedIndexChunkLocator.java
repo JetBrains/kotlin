@@ -58,7 +58,7 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
         }
 
         @Override
-        public void downloadChunk(@NotNull Path targetFile, @NotNull ProgressIndicator indicator) throws IOException {
+        public void downloadChunk(@NotNull Path targetFile, @NotNull ProgressIndicator indicator) {
           PathKt.copy(indexZip.toPath(), targetFile);
         }
       });
