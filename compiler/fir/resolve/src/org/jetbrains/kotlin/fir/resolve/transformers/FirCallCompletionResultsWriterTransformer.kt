@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.calls.returnType
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
@@ -187,7 +188,8 @@ class FirCallCompletionResultsWriterTransformer(
         result = when (result) {
             is FirIntegerOperatorCall -> {
                 val expectedType = data?.getExpectedType(functionCall)
-                resultType = typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
+                resultType =
+                    typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
                 result.transformArguments(this, expectedType?.toExpectedType()).transformSingle(integerApproximator, expectedType)
             }
             else -> {
@@ -238,9 +240,9 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         return argumentMapping?.map { (argument, valueParameter) ->
-            val expectedType = valueParameter.returnTypeRef.substitute(this)
-            argument.unwrapArgument() to expectedType
-        }
+                val expectedType = valueParameter.returnTypeRef.substitute(this)
+                argument.unwrapArgument() to expectedType
+            }
             ?.toMap()?.toExpectedType()
     }
 
@@ -248,7 +250,8 @@ class FirCallCompletionResultsWriterTransformer(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         data: ExpectedArgumentType?
     ): CompositeTransformResult<FirStatement> {
-        val calleeReference = delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
+        val calleeReference =
+            delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
 
         val result = delegatedConstructorCall.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
         return result.transformCalleeReference(
@@ -276,8 +279,8 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?
     ): CompositeTransformResult<FirStatement> {
         val expectedReturnType = data?.getExpectedType(anonymousFunction)
-            ?.takeIf { it.isBuiltinFunctionalType }
-            ?.let { it.typeArguments.last() as? ConeClassLikeType }
+            ?.takeIf { it.isBuiltinFunctionalType(session) }
+            ?.returnType(session) as? ConeClassLikeType
 
         val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         if (initialType != null) {

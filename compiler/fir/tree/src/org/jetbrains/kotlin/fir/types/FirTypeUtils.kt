@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -37,12 +38,6 @@ val FirFunctionTypeRef.parametersCount: Int
         valueParameters.size
 
 const val EXTENSION_FUNCTION_ANNOTATION = "kotlin/ExtensionFunctionType"
-
-fun FirTypeRef.isExtensionFunctionType(): Boolean {
-    return annotations.any {
-        it.isExtensionFunctionAnnotationCall
-    }
-}
 
 val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
     get() = (this as? FirAnnotationCall)?.let {

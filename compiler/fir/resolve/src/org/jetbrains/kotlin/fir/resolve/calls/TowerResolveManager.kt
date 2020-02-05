@@ -168,7 +168,7 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
                         for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {
 
                             val symbol = invokeReceiverCandidate.symbol as FirCallableSymbol<*>
-                            val isExtensionFunctionType = symbol.fir.returnTypeRef.isExtensionFunctionType()
+                            val isExtensionFunctionType = symbol.fir.returnTypeRef.isExtensionFunctionType(towerResolver.components.session)
                             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                                 continue
                             }

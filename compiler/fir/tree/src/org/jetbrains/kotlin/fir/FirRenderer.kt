@@ -769,7 +769,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         annotations.renderAnnotations()
         print("R|")
         val coneType = resolvedTypeRef.type
-        print(coneType.renderFunctionType(kind, resolvedTypeRef.isExtensionFunctionType()))
+        print(coneType.renderFunctionType(kind, resolvedTypeRef.annotations.any {
+            it.isExtensionFunctionAnnotationCall
+        }))
         print("|")
     }
 

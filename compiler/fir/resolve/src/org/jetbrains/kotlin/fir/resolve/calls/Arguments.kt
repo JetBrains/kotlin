@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.withNullability
@@ -19,11 +21,13 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.impl.FirILTTypeRefPlaceHolder
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 fun Candidate.resolveArgumentExpression(
@@ -299,14 +303,14 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType
 ): ConeKotlinType? {
-    if (candidateExpectedType.isBuiltinFunctionalType) return null
+    if (candidateExpectedType.isBuiltinFunctionalType(session)) return null
     // TODO: if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
     val firNamedFunction = symbol.fir as? FirSimpleFunction ?: return null
     if (!samResolver.shouldRunSamConversionForFunction(firNamedFunction)) return null
 
     val argumentIsFunctional = when ((argument as? FirWrappedArgumentExpression)?.expression ?: argument) {
         is FirAnonymousFunction, is FirCallableReferenceAccess -> true
-        else -> argument.typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType == true
+        else -> argument.typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
     }
     if (!argumentIsFunctional) return null
 
@@ -334,4 +338,20 @@ internal fun FirExpression.getExpectedType(
 
 private fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
     return this.arrayElementType(session) ?: error("Failed to extract! ${this.render()}!")
+}
+
+fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
+    if (annotations.any(FirAnnotationCall::isExtensionFunctionAnnotationCall)) return true
+
+    if (this !is FirResolvedTypeRef) return false
+    val type = type as? ConeClassLikeType ?: return false
+    if (type.fullyExpandedType(session) === type) return false
+
+    val typeAlias = type.lookupTag
+        .toSymbol(session)
+        ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return false
+
+    if (typeAlias.expandedTypeRef.annotations.any(FirAnnotationCall::isExtensionFunctionAnnotationCall)) return true
+
+    return false
 }

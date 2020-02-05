@@ -416,7 +416,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: FirImplicitTypeRefImpl(null)
                 val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
                     extractLambdaInfoFromFunctionalType(
-                        it.type, it, anonymousFunction
+                        it.type, it, anonymousFunction, session
                     )
                 }
                 var af = anonymousFunction

@@ -99,8 +99,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
             val receiverType = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
             if (receiverType != null) return receiverType
             val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
-            if (!returnTypeRef.isExtensionFunctionType()) return null
-            return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeTypedProjection)?.type
+            return returnTypeRef.type.receiverType(returnTypeRef, bodyResolveComponents.session)
         }
     }
 

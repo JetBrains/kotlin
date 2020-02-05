@@ -128,6 +128,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/ft.kt");
     }
 
+    @TestMetadata("functionTypeAlias.kt")
+    public void testFunctionTypeAlias() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/functionTypeAlias.kt");
+    }
+
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/functionTypes.kt");

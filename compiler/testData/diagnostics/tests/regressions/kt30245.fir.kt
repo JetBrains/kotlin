@@ -36,13 +36,13 @@ class W4(val f: L2) {
 }
 
 fun test1() { // to extension lambda 0
-    val w10 = <!INAPPLICABLE_CANDIDATE!>W1<!> { this } // oi+ ni+
+    val w10 = W1 { this } // oi+ ni+
     val i10: E0 = id { this } // o1- ni+
     val j10 = <!INAPPLICABLE_CANDIDATE!>id<!><E0> { this } // oi+ ni+
     val f10 = W1(fun Int.(): Int = this) // oi+ ni+
     val g10: E0 = id(fun Int.(): Int = this) // oi+ ni+
 
-    val w11 = W1 { i: Int -> i } // oi- ni-
+    val w11 = <!INAPPLICABLE_CANDIDATE!>W1<!> { i: Int -> i } // oi- ni-
     val i11: E0 = id { i: Int -> i } // o1+ ni+
     val w12 = <!INAPPLICABLE_CANDIDATE!>W1<!> { i -> i } // oi- ni-
     val i12: E0 = id { i -> i } // oi- ni-
@@ -53,23 +53,23 @@ fun test1() { // to extension lambda 0
 //    val i13: E0 = id { it } // this or it: oi- ni-
 //    val j13 = id<E0> { it } // this or it: oi- ni-
 
-    val o14 = <!INAPPLICABLE_CANDIDATE!>W1<!> { -> 0 } // oi+ ni+
+    val o14 = W1 { -> 0 } // oi+ ni+
 }
 
 fun test2() { // to extension lambda 1
-    val w20 = <!INAPPLICABLE_CANDIDATE!>W2<!> { this + <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val w20 = W2 { this + it.length } // oi+ ni+
     val i20: E1 = id { this + <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni+
-    val w21 = <!INAPPLICABLE_CANDIDATE!>W2<!> { this } // oi+ ni+
+    val w21 = W2 { this } // oi+ ni+
     val i21: E1 = id { this } // oi- ni+
-    val f21 = <!INAPPLICABLE_CANDIDATE!>W2<!>(fun Int.(String): Int = this) // oi+ ni+
+    val f21 = W2(fun Int.(String): Int = this) // oi+ ni+
     val g21: E1 = id(fun Int.(String): Int = this) // oi+ ni+
-    val w22 = <!INAPPLICABLE_CANDIDATE!>W2<!> { s -> this + s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val w22 = W2 { s -> this + s.length } // oi+ ni+
     val i22: E1 = id { s -> this + s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
-    val w23 = <!INAPPLICABLE_CANDIDATE!>W2<!> { s -> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
+    val w23 = W2 { s -> s.length } // oi+ ni+
     val i23: E1 = id { s -> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi+ ni+
-    val w24 = <!INAPPLICABLE_CANDIDATE!>W2<!> { s: String -> this + s.length } // oi+ ni+
+    val w24 = W2 { s: String -> this + s.length } // oi+ ni+
 //    val i24: E1 = id { s: String -> this + s.length } //oi- ni-
-    val w25 = <!INAPPLICABLE_CANDIDATE!>W2<!> { s: String -> s.length } // oi+ ni+
+    val w25 = W2 { s: String -> s.length } // oi+ ni+
 //    val i25: E1 = id { s: String -> s.length } // oi- ni-
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
@@ -80,7 +80,7 @@ fun test2() { // to extension lambda 1
 
     val w28 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
     val i28: E1 = id { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
-    val w29 = W2 { i: Int, s: String -> i + s.length } // oi- ni-
+    val w29 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s: String -> i + s.length } // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
@@ -89,9 +89,9 @@ fun test2() { // to extension lambda 1
 }
 
 fun test3() { // to non-extension lambda 1
-    val w30 = <!INAPPLICABLE_CANDIDATE!>W3<!> { i -> i } // oi+ ni+
+    val w30 = W3 { i -> i } // oi+ ni+
     val i30: L1 = id { i -> i } // oi+ ni+
-    val w31 = <!INAPPLICABLE_CANDIDATE!>W3<!> { <!UNRESOLVED_REFERENCE!>it<!> } // oi+ ni+
+    val w31 = W3 { it } // oi+ ni+
     val i31: L1 = id { <!UNRESOLVED_REFERENCE!>it<!> } // oi- ni+
     val j31 = <!INAPPLICABLE_CANDIDATE!>id<!><L1> { <!UNRESOLVED_REFERENCE!>it<!> } // oi+ ni+
 
@@ -100,7 +100,7 @@ fun test3() { // to non-extension lambda 1
 //    val i32: L1 = id { this } // this or it: oi- ni-
 //    val j32 = id<L1> { this } // this or it: oi- ni-
 
-    val w33 = W3(fun Int.(): Int = this) // oi- ni+
+    val w33 = <!INAPPLICABLE_CANDIDATE!>W3<!>(fun Int.(): Int = this) // oi- ni+
     val i33: L1 = id(fun Int.(): Int = this) // oi+ ni+
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
@@ -108,7 +108,7 @@ fun test3() { // to non-extension lambda 1
 }
 
 fun test4() { // to non-extension lambda 2
-    val w30 = <!INAPPLICABLE_CANDIDATE!>W4<!> { i, s -> i } // oi+ ni+
+    val w30 = W4 { i, s -> i } // oi+ ni+
     val i30: L2 = id { i, s -> i } // oi+ ni+
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)
