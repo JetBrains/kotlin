@@ -41,8 +41,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackage
 open class SerialTypeInfo(
     val property: SerializableProperty,
     val elementMethodPrefix: String,
-    val serializer: ClassDescriptor? = null,
-    val unit: Boolean = false
+    val serializer: ClassDescriptor? = null
 )
 
 fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module: ModuleDescriptor): ClassDescriptor? {
@@ -75,7 +74,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
 //          alternative:  KotlinBuiltIns.getPrimitiveType(T)!!.typeName.identifier
         )
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
-        KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)
         KotlinBuiltIns.isNonPrimitiveArray(T.toClassDescriptor!!) -> {
             val serializer = property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(
                 referenceArraySerializerId

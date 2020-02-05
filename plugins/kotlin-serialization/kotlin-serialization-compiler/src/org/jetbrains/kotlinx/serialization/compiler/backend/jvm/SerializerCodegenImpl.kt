@@ -486,7 +486,7 @@ open class SerializerCodegenImpl(
                         (if (useSerializer) kSerialLoaderType.descriptor else "")
                         + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
                         + (if (update) sti.type.descriptor else "")
-                        + ")" + (if (sti.unit) "V" else sti.type.descriptor)
+                        + ")" + (sti.type.descriptor)
             )
         }
 
@@ -508,11 +508,7 @@ open class SerializerCodegenImpl(
             produceCall(false)
         }
 
-        if (sti.unit) {
-            StackValue.putUnitInstance(this)
-        } else {
-            StackValue.coerce(sti.type, propertyType, this)
-        }
+        StackValue.coerce(sti.type, propertyType, this)
         store(propertyVar, propertyType)
     }
 
