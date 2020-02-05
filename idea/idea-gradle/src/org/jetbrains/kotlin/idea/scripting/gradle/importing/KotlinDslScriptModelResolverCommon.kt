@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.util.Pair
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
@@ -16,6 +17,7 @@ import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExten
 
 internal val LOG = Logger.getInstance(KotlinDslScriptModelResolverCommon::class.java)
 
+@Order(Integer.MIN_VALUE) // to be the first
 abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExtension() {
     override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
         return setOf(KotlinDslScriptsModel::class.java)
@@ -83,7 +85,9 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
                 "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
             )
         } else {
-            ideProject.KOTLIN_DSL_SCRIPT_MODELS.addAll(model.toListOfScriptModels())
+            val models = model.toListOfScriptModels()
+
+            saveScriptModels(resolverCtx, models)
         }
     }
 }

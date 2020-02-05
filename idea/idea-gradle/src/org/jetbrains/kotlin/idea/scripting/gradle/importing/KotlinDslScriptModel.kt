@@ -5,19 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.project.ProjectData
-import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
-
-var DataNode<out ProjectData>.KOTLIN_DSL_SCRIPT_MODELS: MutableList<KotlinDslScriptModel>
-        by NotNullableCopyableDataNodeUserDataProperty(
-            Key.create<MutableList<KotlinDslScriptModel>>(
-                "GRADLE_KOTLIN_BUILD_SCRIPTS"
-            ),
-            mutableListOf()
-        )
-
 data class KotlinDslScriptModel(
     val file: String,
     val inputsTimeStamp: Long,
