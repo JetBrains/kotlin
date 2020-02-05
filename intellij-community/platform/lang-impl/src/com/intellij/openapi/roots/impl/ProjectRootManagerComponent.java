@@ -293,8 +293,8 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private void synchronizeRoots() {
     if (!myStartupActivityPerformed) return;
 
-    if (LOG_CACHES_UPDATE || LOG.isDebugEnabled()) {
-      LOG.debug(new Throwable("sync roots"));
+    if (LOG_CACHES_UPDATE || LOG.isTraceEnabled()) {
+      LOG.trace(new Throwable("sync roots"));
     }
     else if (!ApplicationManager.getApplication().isUnitTestMode()) {
       LOG.info("project roots have changed");
@@ -374,16 +374,16 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
       if (myInsideRefresh == 0) {
         beforeRootsChange(false);
-        if (LOG_CACHES_UPDATE || LOG.isDebugEnabled()) {
-          LOG.debug(new Throwable(pointers.length > 0 ? pointers[0].getPresentableUrl():""));
+        if (LOG_CACHES_UPDATE || LOG.isTraceEnabled()) {
+          LOG.trace(new Throwable(pointers.length > 0 ? pointers[0].getPresentableUrl():""));
         }
       }
       else if (!myPointerChangesDetected) {
         //this is the first pointer changing validity
         myPointerChangesDetected = true;
         myProject.getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).beforeRootsChange(new ModuleRootEventImpl(myProject, false));
-        if (LOG_CACHES_UPDATE || LOG.isDebugEnabled()) {
-          LOG.debug(new Throwable(pointers.length > 0 ? pointers[0].getPresentableUrl() : ""));
+        if (LOG_CACHES_UPDATE || LOG.isTraceEnabled()) {
+          LOG.trace(new Throwable(pointers.length > 0 ? pointers[0].getPresentableUrl() : ""));
         }
       }
     }
