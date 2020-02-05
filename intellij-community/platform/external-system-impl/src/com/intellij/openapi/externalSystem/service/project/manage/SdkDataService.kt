@@ -3,12 +3,14 @@ package com.intellij.openapi.externalSystem.service.project.manage
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ModuleSdkData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.project.ProjectSdkData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.util.DisposeAwareProjectChange
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -59,7 +61,7 @@ class ModuleSdkDataService : AbstractProjectDataService<ModuleSdkData, Project?>
     if (toImport.isEmpty() || projectData == null) return
     val useDefaultsIfCan = ExternalSystemApiUtil.isOneToOneMapping(project, projectData, modelsProvider.modules)
     for (sdkDataNode in toImport) {
-      val moduleNode = ExternalSystemApiUtil.findParent(sdkDataNode, ProjectKeys.MODULE) ?: continue
+      val moduleNode = sdkDataNode.getParent(ModuleData::class.java) ?: continue
       val module = moduleNode.getUserData(AbstractModuleDataService.MODULE_KEY) ?: continue
 
       importModuleSdk(module, sdkDataNode.data, modelsProvider, useDefaultsIfCan)
@@ -73,18 +75,18 @@ class ModuleSdkDataService : AbstractProjectDataService<ModuleSdkData, Project?>
     modelsProvider: IdeModifiableModelsProvider,
     useDefaultsIfCan: Boolean
   ) {
-    val moduleSdkName = sdkData.sdkName ?: return
+    val moduleSdkName = sdkData.sdkName
     val projectJdkTable = ProjectJdkTable.getInstance()
-    val sdk = projectJdkTable.findJdk(moduleSdkName)
+    val sdk = moduleSdkName?.let { projectJdkTable.findJdk(moduleSdkName) }
     val modifiableRootModel = modelsProvider.getModifiableRootModel(module)
     if (modifiableRootModel.sdk != null) return
     val projectRootManager = ProjectRootManager.getInstance(module.project)
     val projectSdk = projectRootManager.projectSdk
-    if (useDefaultsIfCan && sdk == projectSdk) {
-      modifiableRootModel.inheritSdk()
-    }
-    else {
-      modifiableRootModel.sdk = sdk
+    when {
+      useDefaultsIfCan && sdk == projectSdk -> modifiableRootModel.inheritSdk()
+      moduleSdkName == null && sdk == null -> modifiableRootModel.inheritSdk()
+      sdk == null -> modifiableRootModel.setInvalidSdk(moduleSdkName, ExternalSystemBundle.message("unknown.sdk.type"))
+      else -> modifiableRootModel.sdk = sdk
     }
   }
 }

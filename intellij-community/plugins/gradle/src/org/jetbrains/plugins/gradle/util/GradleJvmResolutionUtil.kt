@@ -21,9 +21,9 @@ fun suggestGradleJvm(project: Project, projectSdk: Sdk?, externalProjectPath: St
   with(GradleJvmResolutionContext(project, projectSdk, externalProjectPath, gradleVersion)) {
     val suggestedGradleJvm =
       getOrAddGradleJavaHomeJdkReference()
+      ?: getOrAddEnvJavaHomeJdkReference()
       ?: getGradleJdkReference()
       ?: getProjectJdkReference()
-      ?: getOrAddEnvJavaHomeJdkReference()
       ?: getMostRecentJdkReference()
       ?: getAndAddExternalJdkReference()
       ?: return null
@@ -99,7 +99,7 @@ private fun findOrAddJdk(homePath: String): Sdk? {
   val javaSdkType = ExternalSystemJdkUtil.getJavaSdkType()
   val canonicalHomePath = FileUtil.toCanonicalPath(homePath)
   val foundJdk = projectJdkTable.getSdksOfType(javaSdkType)
-    .find { it.homePath == canonicalHomePath }
+    .find { FileUtil.toCanonicalPath(it.homePath) == canonicalHomePath }
   if (foundJdk != null) return foundJdk
   return ExternalSystemJdkUtil.addJdk(canonicalHomePath)
 }

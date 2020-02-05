@@ -16,9 +16,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.ExternalStateComponent;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
+import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
+import com.intellij.openapi.externalSystem.model.ProjectKeys;
+import com.intellij.openapi.externalSystem.model.project.ModuleData;
+import com.intellij.openapi.externalSystem.model.project.ModuleSdkData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
+import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback;
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -46,17 +51,20 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.ObjectUtils;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinBuildScriptDataBuilder;
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -220,17 +228,22 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     ApplicationManager.getApplication().invokeLater(() -> {
       if (myWizardContext.isCreatingNewProject()) {
         // update external projects data to be able to add child modules before the initial import finish
-        ImportSpecBuilder previewSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).usePreviewMode().use(MODAL_SYNC);
+        ImportSpecBuilder previewSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID);
+        previewSpec.usePreviewMode();
+        previewSpec.use(MODAL_SYNC);
+        previewSpec.callback(new ConfigureGradleModuleCallback(previewSpec));
         ExternalSystemUtil.refreshProject(rootProjectPath, previewSpec);
       }
-      ImportSpecBuilder importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).createDirectoriesForEmptyContentRoots();
+      ImportSpecBuilder importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID);
+      importSpec.createDirectoriesForEmptyContentRoots();
+      importSpec.callback(new ConfigureGradleModuleCallback(importSpec));
       ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
       openBuildScriptFile(project, buildScriptFile);
     }, ModalityState.NON_MODAL, project.getDisposed());
   }
 
   private void setupAndLinkGradleProject(@NotNull Project project) {
-    Sdk projectSdk = getNewProjectJdk(myWizardContext);
+    Sdk projectSdk = ObjectUtils.chooseNotNull(getModuleJdk(), getNewProjectJdk(myWizardContext));
     GradleProjectSettings projectSettings = getExternalProjectSettings();
     setupGradleSettings(projectSettings, rootProjectPath, project, projectSdk);
     getSystemSettings(project).linkProject(projectSettings);
@@ -513,5 +526,51 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
   public void setUseKotlinDsl(boolean useKotlinDSL) {
     myUseKotlinDSL = useKotlinDSL;
+  }
+
+  private class ConfigureGradleModuleCallback implements ExternalProjectRefreshCallback {
+
+    private final @Nullable String externalConfigPath;
+    private final @Nullable String sdkName;
+
+    private final @NotNull ImportSpecBuilder.DefaultProjectRefreshCallback defaultCallback;
+
+    ConfigureGradleModuleCallback(@NotNull ImportSpecBuilder importSpecBuilder) {
+      this.defaultCallback = new ImportSpecBuilder.DefaultProjectRefreshCallback(importSpecBuilder.build());
+
+      Sdk sdk = ObjectUtils.chooseNotNull(getModuleJdk(), getNewProjectJdk(myWizardContext));
+      this.sdkName = sdk == null ? null : sdk.getName();
+      this.externalConfigPath = FileUtil.toCanonicalPath(getContentEntryPath());
+    }
+
+    @Override
+    public void onSuccess(@Nullable DataNode<ProjectData> externalProject) {
+      if (externalProject != null) {
+        configureModulesSdk(externalProject);
+      }
+      defaultCallback.onSuccess(externalProject);
+    }
+
+    private void configureModulesSdk(@NotNull DataNode<ProjectData> projectNode) {
+      DataNode<ModuleData> moduleNode = ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE, this::isTargetModule);
+      if (moduleNode == null) return;
+      configureModuleSdk(moduleNode);
+      Collection<DataNode<GradleSourceSetData>> sourceSetsNodes = ExternalSystemApiUtil.getChildren(moduleNode, GradleSourceSetData.KEY);
+      for (DataNode<GradleSourceSetData> sourceSetsNode : sourceSetsNodes) {
+        configureModuleSdk(sourceSetsNode);
+      }
+    }
+
+    private void configureModuleSdk(@NotNull DataNode<? extends ModuleData> moduleNode) {
+      DataNode<ModuleSdkData> moduleSdkNode = ExternalSystemApiUtil.find(moduleNode, ModuleSdkData.KEY);
+      if (moduleSdkNode == null) return;
+      moduleSdkNode.getData().setSdkName(sdkName);
+    }
+
+    private boolean isTargetModule(@NotNull DataNode<ModuleData> moduleNode) {
+      ModuleData moduleData = moduleNode.getData();
+      String linkedExternalProjectPath = moduleData.getLinkedExternalProjectPath();
+      return linkedExternalProjectPath.equals(externalConfigPath);
+    }
   }
 }
