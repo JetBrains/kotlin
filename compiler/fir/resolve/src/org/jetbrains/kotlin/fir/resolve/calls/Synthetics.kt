@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 class SyntheticPropertySymbol(
     callableId: CallableId,
     override val accessorId: CallableId
-) : FirPropertySymbol(callableId), AccessorSymbol, SyntheticSymbol
+) : FirAccessorSymbol(callableId, accessorId), SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(
     callableId: CallableId

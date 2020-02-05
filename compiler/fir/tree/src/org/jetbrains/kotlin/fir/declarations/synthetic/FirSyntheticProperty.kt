@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -27,7 +27,7 @@ class FirSyntheticProperty(
     override val returnTypeRef: FirTypeRef,
     override val name: Name,
     override val isVar: Boolean,
-    override val symbol: FirPropertySymbol,
+    override val symbol: FirAccessorSymbol,
     override val status: FirDeclarationStatus,
     override val resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,
@@ -40,7 +40,7 @@ class FirSyntheticProperty(
     constructor(
         session: FirSession,
         name: Name,
-        symbol: FirPropertySymbol,
+        symbol: FirAccessorSymbol,
         delegateGetter: FirSimpleFunction
     ) : this(
         session, delegateGetter.returnTypeRef, name, false, symbol,

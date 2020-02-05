@@ -106,12 +106,12 @@ class JavaClassEnhancementScope(
                 return symbol
             }
             is FirSyntheticProperty -> {
-                original as FirAccessorSymbol
+                val accessorSymbol = firElement.symbol
                 val enhancedFunctionSymbol = enhanceMethod(
-                    firElement.getter.delegate, original.accessorId, original.accessorId.callableName
+                    firElement.getter.delegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
                 )
                 val enhancedProperty = FirSyntheticProperty(
-                    session, name, FirAccessorSymbol(original.callableId, original.accessorId),
+                    session, name, FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId),
                     enhancedFunctionSymbol.fir as FirSimpleFunction
                 )
                 return enhancedProperty.symbol

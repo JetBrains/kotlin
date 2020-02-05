@@ -49,7 +49,7 @@ class JavaClassUseSiteMemberScope(
         syntheticPropertyName: Name,
         overrideCandidates: MutableSet<FirCallableSymbol<*>>,
         isGetter: Boolean
-    ): FirPropertySymbol? {
+    ): FirAccessorSymbol? {
         if (functionSymbol !is FirNamedFunctionSymbol) {
             return null
         }

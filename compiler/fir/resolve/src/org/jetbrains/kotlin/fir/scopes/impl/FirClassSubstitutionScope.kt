@@ -68,9 +68,7 @@ class FirClassSubstitutionScope(
                     processor(field)
                 }
                 is FirAccessorSymbol -> {
-                    val accessor = fakeOverrideAccessors.getOrPut(original) {
-                        createFakeOverrideAccessor(original) as FirAccessorSymbol
-                    }
+                    val accessor = fakeOverrideAccessors.getOrPut(original) { createFakeOverrideAccessor(original) }
                     processor(accessor)
                 }
                 else -> {
@@ -197,7 +195,7 @@ class FirClassSubstitutionScope(
         return createFakeOverrideField(session, member, original, newReturnType)
     }
 
-    private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirPropertySymbol {
+    private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
         val member = original.fir as FirSyntheticProperty
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
@@ -330,7 +328,7 @@ class FirClassSubstitutionScope(
             baseSymbol: FirAccessorSymbol,
             newReturnType: ConeKotlinType? = null,
             newParameterTypes: List<ConeKotlinType?>? = null
-        ): FirPropertySymbol {
+        ): FirAccessorSymbol {
             val functionSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
             val function = createFakeOverrideFunction(
                 functionSymbol, session, baseProperty.getter.delegate, null, newReturnType, newParameterTypes
