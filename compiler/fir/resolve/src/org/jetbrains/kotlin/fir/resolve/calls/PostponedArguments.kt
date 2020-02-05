@@ -34,7 +34,7 @@ fun Candidate.preprocessLambdaArgument(
 
     val resolvedArgument =
         extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument, bodyResolveComponents.session)
-            ?: extraLambdaInfo(expectedType, expectedTypeRef, argument, csBuilder, bodyResolveComponents.session)
+            ?: extraLambdaInfo(expectedType, argument, csBuilder, bodyResolveComponents.session)
 
     if (expectedType != null) {
         // TODO: add SAM conversion processing
@@ -88,7 +88,7 @@ fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType? {
     return (projection as? ConeTypedProjection)?.type
 }
 
-private fun ConeKotlinType.valueParameterTypes(session: FirSession): List<ConeKotlinType?> {
+private fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType?> {
     require(this is ConeClassLikeType)
     return fullyExpandedType(session).typeArguments.dropLast(1).map {
         (it as? ConeTypedProjection)?.type
@@ -101,32 +101,28 @@ private val FirAnonymousFunction.receiverType get() = receiverTypeRef?.coneTypeS
 
 private fun extraLambdaInfo(
     expectedType: ConeKotlinType?,
-    expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder,
     session: FirSession
 ): ResolvedLambdaAtom {
-//    val builtIns = csBuilder.builtIns
     val isSuspend = expectedType?.isSuspendFunctionType(session) ?: false
 
     val isFunctionSupertype =
         expectedType != null && expectedType.lowerBoundIfFlexible()
             .isBuiltinFunctionalType(session)//isNotNullOrNullableFunctionSupertype(expectedType)
-    val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
 
     val typeVariable = TypeVariableForLambdaReturnType(argument, "_L")
 
-    val receiverType = argumentAsFunctionExpression?.receiverType
+    val receiverType = argument.receiverType
     val returnType =
-        argumentAsFunctionExpression?.returnType
+        argument.returnType
             ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeTypedProjection>()?.type?.takeIf { isFunctionSupertype }
             ?: typeVariable.defaultType
 
-    val nothingType = argument.session.builtinTypes.nothingType
-        .type //StandardClassIds.Nothing(argument.session.firSymbolProvider).constructType(emptyArray(), false)
-    val parameters = argument.valueParameters?.map {
+    val nothingType = argument.session.builtinTypes.nothingType.type
+    val parameters = argument.valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
-    } ?: emptyList()
+    }
 
     val newTypeVariableUsed = returnType == typeVariable.defaultType
     if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
@@ -146,9 +142,8 @@ internal fun extractLambdaInfoFromFunctionalType(
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
-    val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
-    val receiverType = argumentAsFunctionExpression.receiverType ?: expectedType.receiverType(expectedTypeRef, session)
-    val returnType = argumentAsFunctionExpression.returnType ?: expectedType.returnType(session) ?: return null
+    val receiverType = argument.receiverType ?: expectedType.receiverType(expectedTypeRef, session)
+    val returnType = argument.returnType ?: expectedType.returnType(session) ?: return null
     val parameters = extractLambdaParameters(expectedType, argument, expectedTypeRef.isExtensionFunctionType(session), session)
 
     return ResolvedLambdaAtom(
@@ -177,7 +172,6 @@ private fun extractLambdaParameters(
 
     return parameters.mapIndexed { index, parameter ->
         parameter.returnTypeRef.coneTypeSafe() ?: expectedParameters.getOrNull(index) ?: nullableAnyType
-        //expectedType.builtIns.nullableAnyType
     }
 }
 
@@ -185,7 +179,7 @@ private fun ConeKotlinType.extractParametersForFunctionalType(
     isExtensionFunctionType: Boolean,
     session: FirSession
 ): List<ConeKotlinType?> {
-    return valueParameterTypes(session).let {
+    return valueParameterTypesIncludingReceiver(session).let {
         if (isExtensionFunctionType) {
             it.drop(1)
         } else {
@@ -285,19 +279,17 @@ private fun extractInputOutputTypesFromFunctionType(
     functionType: ConeKotlinType,
     session: FirSession
 ): InputOutputTypes {
-    val receiver = null// TODO: functionType.receiverType()
-    val parameters = functionType.valueParameterTypes(session).map {
+    val parameters = functionType.valueParameterTypesIncludingReceiver(session).map {
         it ?: ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(StandardClassIds.Nothing), emptyArray(),
             isNullable = false
         )
     }
 
-    val inputTypes = /*listOfNotNull(receiver) +*/ parameters
     val outputType = functionType.returnType(session) ?: ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(),
         isNullable = true
     )
 
-    return InputOutputTypes(inputTypes, outputType)
+    return InputOutputTypes(parameters, outputType)
 }
