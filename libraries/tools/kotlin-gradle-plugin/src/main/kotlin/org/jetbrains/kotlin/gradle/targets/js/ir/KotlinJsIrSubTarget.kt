@@ -54,32 +54,8 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    internal fun produceKotlinLibrary() {
-        produceByFlags()
-    }
-
     internal fun produceExecutable() {
-        produceByFlags()
-
         configureMain()
-    }
-
-    private fun produceByFlags(vararg flags: String) {
-        target.compilations
-            .matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
-            .all {
-                it.kotlinOptions {
-                    freeCompilerArgs += PRODUCE_JS
-                }
-            }
-
-        target.compilations
-            .matching { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }
-            .all {
-                it.kotlinOptions {
-                    freeCompilerArgs += flags.toList()
-                }
-            }
     }
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {

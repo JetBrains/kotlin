@@ -9,6 +9,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
@@ -45,7 +46,8 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
         outputFile
     }
 
-    internal fun configure() {
+    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
         when (type) {
             PRODUCTION -> {
                 kotlinOptions.configureOptions(ENABLE_DCE, GENERATE_D_TS)

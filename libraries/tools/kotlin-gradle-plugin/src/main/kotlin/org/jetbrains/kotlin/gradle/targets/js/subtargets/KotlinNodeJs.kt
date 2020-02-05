@@ -24,11 +24,6 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     private val irNodejs: KotlinNodeJsIr?
         get() = target.irTarget?.nodejs
 
-    override fun produceKotlinLibrary() {
-        super.produceKotlinLibrary()
-        irNodejs?.produceKotlinLibrary()
-    }
-
     override fun produceExecutable() {
         super.produceExecutable()
         irNodejs?.produceExecutable()

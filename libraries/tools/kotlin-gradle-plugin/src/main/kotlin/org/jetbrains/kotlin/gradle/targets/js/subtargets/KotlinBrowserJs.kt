@@ -47,11 +47,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val irBrowser: KotlinBrowserJsIr?
         get() = target.irTarget?.browser
 
-    override fun produceKotlinLibrary() {
-        super.produceKotlinLibrary()
-        irBrowser?.produceKotlinLibrary()
-    }
-
     override fun produceExecutable() {
         super.produceExecutable()
         irBrowser?.produceExecutable()

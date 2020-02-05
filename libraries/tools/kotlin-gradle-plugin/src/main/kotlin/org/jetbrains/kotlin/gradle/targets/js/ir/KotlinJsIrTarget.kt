@@ -86,9 +86,7 @@ constructor(
     }
 
     override fun produceKotlinLibrary() {
-        produce(KotlinJsProducingType.KOTLIN_LIBRARY) {
-            produceKotlinLibrary()
-        }
+        produce(KotlinJsProducingType.KOTLIN_LIBRARY)
     }
 
     override fun produceExecutable() {
@@ -99,7 +97,7 @@ constructor(
 
     private fun produce(
         producingType: KotlinJsProducingType,
-        producer: KotlinJsIrSubTarget.() -> Unit
+        producer: KotlinJsIrSubTarget.() -> Unit = {}
     ) {
         check(this.producingType == null || this.producingType == producingType) {
             "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"

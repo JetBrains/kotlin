@@ -72,14 +72,6 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                     PRODUCE_UNZIPPED_KLIB
                 )
             }
-
-            it.productionLinkTask.configure {
-                it.configure()
-            }
-
-            it.developmentLinkTask.configure {
-                it.configure()
-            }
         }
     }
 
