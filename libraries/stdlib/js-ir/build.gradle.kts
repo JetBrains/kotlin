@@ -42,7 +42,7 @@ dependencies {
 }
 
 val unimplementedNativeBuiltIns =
-  (file("$rootDir/core/builtins/native/kotlin/").list().toSet() - file("$rootDir/libraries/stdlib/js-ir/builtins/").list())
+  (file("$rootDir/core/builtins/native/kotlin/").list().toSortedSet() - file("$rootDir/libraries/stdlib/js-ir/builtins/").list())
     .map { "core/builtins/native/kotlin/$it" }
 
 // Required to compile native builtins with the rest of runtime
