@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.task.impl;
 
 import com.intellij.execution.ExecutionException;
@@ -49,8 +49,7 @@ import static java.util.stream.Collectors.groupingBy;
  * @author Vladislav.Soroka
  */
 @SuppressWarnings("deprecation")
-public class ProjectTaskManagerImpl extends ProjectTaskManager {
-
+public final class ProjectTaskManagerImpl extends ProjectTaskManager {
   private static final Logger LOG = Logger.getInstance(ProjectTaskManager.class);
   private final ProjectTaskRunner myDummyTaskRunner = new DummyTaskRunner();
   private final ProjectTaskListener myEventPublisher;
@@ -256,7 +255,8 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   private static Supplier<List<String>> moduleOutputPathsProvider(@NotNull Module module) {
     return () -> ReadAction.compute(() -> {
       return JBIterable.of(OrderEnumerator.orderEntries(module).withoutSdk().withoutLibraries().getClassesRoots())
-        .filterMap(file -> file.isDirectory() && !file.getFileSystem().isReadOnly() ? file.getPath() : null).toList();
+        .filterMap(file -> file.isDirectory() && !file.getFileSystem().isReadOnly() ? file.getPath() : null)
+        .toList();
     });
   }
 
