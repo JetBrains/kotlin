@@ -2,7 +2,7 @@
 package com.intellij.psi.search;
 
 import com.intellij.core.CoreProjectScopeBuilder;
-import com.intellij.ide.lightEdit.LightEditUtil;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.UnloadedModuleDescription;
@@ -69,7 +69,7 @@ public class ProjectScopeBuilderImpl extends ProjectScopeBuilder {
   @NotNull
   @Override
   public GlobalSearchScope buildAllScope() {
-    ProjectRootManager projectRootManager = myProject.isDefault() || LightEditUtil.isLightEditProject(myProject)
+    ProjectRootManager projectRootManager = myProject.isDefault() || LightEdit.owns(myProject)
                                             ? null : ProjectRootManager.getInstance(myProject);
     if (projectRootManager == null) {
       return new EverythingGlobalScope(myProject);

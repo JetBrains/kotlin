@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
-import com.intellij.ide.lightEdit.LightEditUtil;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -21,7 +21,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
-import com.intellij.util.indexing.hash.SharedIndexChunkConfigurationImpl;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.roots.*;
 import gnu.trove.THashSet;
@@ -345,7 +344,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   private static List<Runnable> collectIndexableFilesIterateTasks(@NotNull ContentIterator processor,
                                                                   @NotNull Project project,
                                                                   @NotNull ProgressIndicator indicator) {
-    if (LightEditUtil.isLightEditProject(project)) {
+    if (LightEdit.owns(project)) {
       return Collections.emptyList();
     }
     @NotNull List<IndexableRootsProvider> providers = getIndexableRootsProvider(project, indicator);

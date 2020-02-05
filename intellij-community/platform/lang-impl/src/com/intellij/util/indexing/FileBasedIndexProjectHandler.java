@@ -8,7 +8,7 @@ package com.intellij.util.indexing;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.lightEdit.LightEditUtil;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
@@ -90,7 +90,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
 
   @Override
   public boolean isInSet(@NotNull final VirtualFile file) {
-    if (LightEditUtil.isLightEditProject(myProject)) {
+    if (LightEdit.owns(myProject)) {
       return false;
     }
     if (myProjectFileIndex.isInContent(file) || myProjectFileIndex.isInLibrary(file)) {
