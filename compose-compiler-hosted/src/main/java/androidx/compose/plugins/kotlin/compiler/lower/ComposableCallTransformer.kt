@@ -175,6 +175,7 @@ class ComposableCallTransformer(
                             KotlinBuiltIns.isPrimitiveType(this) ||
                                     isFunctionType ||
                                     isEnum ||
+                                    KotlinBuiltIns.isString(this) ||
                                     isMarkedStable() ||
                                     (
                                             isNullable() &&

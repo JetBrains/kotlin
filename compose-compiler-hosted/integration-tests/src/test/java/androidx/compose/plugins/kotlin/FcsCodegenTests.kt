@@ -1293,6 +1293,46 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testStringParameterMemoization(): Unit = forComposerParam(true, false) {
+        val tvId = 258
+        val tagId = (3 shl 24) or "composed_set".hashCode()
+
+        compose(
+            """
+                fun View.setComposed(composed: Set<String>) = setTag($tagId, composed)
+
+                val composedSet = mutableSetOf<String>()
+                val FOO = "foo"
+
+                @Composable fun ComposedString(value: String) {
+                  composedSet.add("ComposedString(" + value + ")")
+                }
+            """,
+            { mapOf("text" to "") },
+            """
+                composedSet.clear()
+
+                ComposedString(FOO)
+                ComposedString("bar")
+
+                TextView(id=$tvId, composed=composedSet)
+            """
+        ).then { activity ->
+            val textView = activity.findViewById(tvId) as TextView
+            val composedSet = textView.getComposedSet(tagId) ?: error("expected a compose set to exist")
+
+            // All composables should execute since it's the first time.
+            assert(composedSet.contains("ComposedString(foo)"))
+            assert(composedSet.contains("ComposedString(bar)"))
+        }.then { activity ->
+            val textView = activity.findViewById(tvId) as TextView
+            val composedSet = textView.getComposedSet(tagId) ?: error("expected a compose set to exist")
+
+            assert(composedSet.isEmpty())
+        }
+    }
+
+    @Test
     fun testCGNSimpleCall(): Unit = forComposerParam(true, false) {
         val tvId = 258
         var text = "Hello, world!"
