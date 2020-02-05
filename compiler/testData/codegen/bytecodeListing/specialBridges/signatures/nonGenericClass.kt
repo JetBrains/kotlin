@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_SIGNATURES
 
 class StringStringMap : MutableMap<String, String> by HashMap<String, String>()

@@ -1,4 +1,5 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")

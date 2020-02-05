@@ -437,6 +437,10 @@ fun main(args: Array<String>) {
             model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
         }
 
+        testClass<AbstractIrBytecodeListingTest> {
+            model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM_IR)
+        }
+
         testClass<AbstractIrCheckLocalVariablesTableTest> {
             model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
         }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun <T> bar() { }
 
 inline fun <U, reified V> baz() {}
