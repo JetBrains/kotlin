@@ -101,21 +101,21 @@ fun InstructionAdapter.genKOutputMethodCall(
     val sti = generator.getSerialTypeInfo(property, propertyType)
     val useSerializer = if (fromClassStartVar == null) stackValueSerializerInstanceFromSerializer(classCodegen, sti, generator)
     else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar, generator)
-    val actualType = if (!sti.unit) ImplementationBodyCodegen.genPropertyOnStack(
+    val actualType = ImplementationBodyCodegen.genPropertyOnStack(
         this,
         expressionCodegen.context,
         property.descriptor,
         propertyOwnerType,
         ownerVar,
         classCodegen.state
-    ) else null
+    )
     actualType?.type?.let { type -> StackValue.coerce(type, sti.type, this) }
     invokeinterface(
         kOutputType.internalName,
         CallingConventions.encode + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
         "(" + descType.descriptor + "I" +
                 (if (useSerializer) kSerialSaverType.descriptor else "") +
-                (if (sti.unit) "" else sti.type.descriptor) + ")V"
+                (sti.type.descriptor) + ")V"
     )
 }
 
@@ -394,9 +394,8 @@ class JVMSerialTypeInfo(
     property: SerializableProperty,
     val type: Type,
     nn: String,
-    serializer: ClassDescriptor? = null,
-    unit: Boolean = false
-) : SerialTypeInfo(property, nn, serializer, unit)
+    serializer: ClassDescriptor? = null
+) : SerialTypeInfo(property, nn, serializer)
 
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialTypeInfo {
     fun SerializableInfo(serializer: ClassDescriptor?) =
@@ -451,8 +450,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
             // no explicit serializer for this property. Check other built in types
             if (KotlinBuiltIns.isString(property.type))
                 return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/String;"), "String")
-            if (KotlinBuiltIns.isUnit(property.type))
-                return JVMSerialTypeInfo(property, Type.getType("Lkotlin/Unit;"), "Unit", unit = true)
             // todo: more efficient enum support here, but only for enums that don't define custom serializer
             // otherwise, it is a serializer for some other type
             val serializer = property.serializableWith?.toClassDescriptor

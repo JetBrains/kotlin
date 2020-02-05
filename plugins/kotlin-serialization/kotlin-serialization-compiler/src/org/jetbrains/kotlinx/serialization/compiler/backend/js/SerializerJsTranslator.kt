@@ -335,13 +335,6 @@ open class SerializerJsTranslator(
                             localProps[i],
                             call
                         ).makeStmt()
-                        // need explicit unit instance
-                        if (sti.unit) {
-                            +JsAstUtils.assignment(
-                                localProps[i],
-                                context.getQualifiedReference(property.type.builtIns.unit)
-                            ).makeStmt()
-                        }
                         // char unboxing crutch
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
                             val coerceTo = TranslationUtils.getReturnTypeForCoercion(property.descriptor)
