@@ -53,6 +53,11 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/runtimeAnnotations.kt");
     }
 
+    @TestMetadata("unsafeCastFunctionOnDynamicType.kt")
+    public void testUnsafeCastFunctionOnDynamicType() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/unsafeCastFunctionOnDynamicType.kt");
+    }
+
     @TestMetadata("wrongMultipleInheritance.kt")
     public void testWrongMultipleInheritance() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/wrongMultipleInheritance.kt");

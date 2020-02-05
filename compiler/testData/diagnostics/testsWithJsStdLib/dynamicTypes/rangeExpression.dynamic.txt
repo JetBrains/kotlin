@@ -1,2 +1,2 @@
-public final fun rangeTo(/*0*/ p0: dynamic): dynamic
+public final operator fun rangeTo(/*0*/ p0: dynamic): dynamic
 public final fun rangeTo(/*0*/ p0: dynamic): dynamic
