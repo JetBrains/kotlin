@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: test/JavaClass.java
 package test;
 

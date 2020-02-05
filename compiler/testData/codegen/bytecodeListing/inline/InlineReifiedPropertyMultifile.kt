@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 @file:[JvmName("Foo") JvmMultifileClass]

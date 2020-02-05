@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface ImmutableCollection<out E> : Collection<E> {
     fun add(element: @UnsafeVariance E): ImmutableCollection<E>
     fun addAll(elements: Collection<@UnsafeVariance E>): ImmutableCollection<E>

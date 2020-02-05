@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 package test
 
 inline fun <reified T> makeRunnable(noinline lambda: ()->Unit) : Runnable {
