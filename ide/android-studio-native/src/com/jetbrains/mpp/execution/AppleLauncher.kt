@@ -14,8 +14,10 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
+import com.jetbrains.cidr.execution.debugger.IPhoneDebugProcess
 import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcess
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler
+import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorProcessHandler
 import com.jetbrains.cidr.execution.testing.CidrLauncher
@@ -47,6 +49,41 @@ abstract class AppleLauncher(
 
     protected abstract fun createInstaller(bundle: File): AppleInstaller
     protected abstract fun createDebugProcess(parameters: RunParameters, session: XDebugSession, state: CommandLineState): CidrDebugProcess
+}
+
+class ApplePhysicalDeviceLauncher(
+    configuration: AppleRunConfiguration,
+    environment: ExecutionEnvironment,
+    device: ApplePhysicalDevice,
+    private val raw: AMDevice
+) : AppleLauncher(configuration, environment, device) {
+
+    override fun createInstaller(bundle: File): AppleInstaller =
+        ApplePhysicalDeviceInstaller(configuration, environment, bundle, raw)
+
+    override fun createProcess(state: CommandLineState): ProcessHandler =
+        throw IllegalStateException("should start debug process instead")
+
+    override fun createDebugProcess(parameters: RunParameters, session: XDebugSession, state: CommandLineState): CidrDebugProcess =
+        object : IPhoneDebugProcess(parameters, raw, session, state.consoleBuilder, true) {
+            private var konanBreakpointHandler: KonanBreakpointHandler? = null
+
+            init {
+                for (handler in super.getBreakpointHandlers()) {
+                    if (handler is CidrBreakpointHandler) { // other handlers are irrelevant in Kotlin context
+                        konanBreakpointHandler = KonanBreakpointHandler(handler, session.project)
+                    }
+                }
+            }
+
+            override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> {
+                if (konanBreakpointHandler == null) {
+                    return emptyArray()
+                }
+
+                return arrayOf(konanBreakpointHandler!!)
+            }
+        }
 }
 
 class AppleSimulatorLauncher(

@@ -13,11 +13,8 @@ import com.jetbrains.cidr.execution.simulatorSupport.SimulatorsRegistry
 import com.jetbrains.mpp.AppleRunConfiguration
 
 class DeviceExecutionTargetProvider : ExecutionTargetProvider() {
-    override fun getTargets(project: Project, configuration: RunConfiguration): List<ExecutionTarget> {
-        if (configuration !is AppleRunConfiguration) {
-            return emptyList()
-        }
-
-        return SimulatorsRegistry.getInstance().configurations.map(::AppleSimulator)
-    }
+    override fun getTargets(project: Project, configuration: RunConfiguration): List<ExecutionTarget> =
+        if (configuration is AppleRunConfiguration)
+            DeviceService.instance.getAll()
+        else emptyList()
 }

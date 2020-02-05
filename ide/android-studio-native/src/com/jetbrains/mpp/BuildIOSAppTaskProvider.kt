@@ -90,7 +90,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
             xcodeprojFile,
             configuration.xcodeScheme,
             FileUtil.join(workDirectory, configuration.iosBuildDirectory),
-            configuration.xcodeSdk
+            configuration.xcodeSdk(environment.executionTarget)
         )
 
         buildContext.processHandler.addProcessListener(BuildProcessListener(buildContext))

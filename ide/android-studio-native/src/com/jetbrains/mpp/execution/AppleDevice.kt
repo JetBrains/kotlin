@@ -9,8 +9,11 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.cidr.execution.CidrConsoleBuilder
+import com.jetbrains.cidr.execution.deviceSupport.AMDevice
+import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.ArchitectureValue
@@ -31,6 +34,26 @@ abstract class AppleDevice(id: String, name: String, osVersion: String) : Device
 
     abstract val arch: ArchitectureValue
 }
+
+class ApplePhysicalDevice(private val raw: AMDevice) : AppleDevice(
+    raw.deviceIdentifier,
+    raw.name,
+    raw.productVersion ?: "Unknown"
+) {
+    override fun createLauncher(configuration: AppleRunConfiguration, environment: ExecutionEnvironment): CidrLauncher =
+        ApplePhysicalDeviceLauncher(configuration, environment, this, raw)
+
+    override fun createCommandLine(bundle: File, project: Project): GeneralCommandLine {
+        val commandLine = GeneralCommandLine()
+        AMDeviceUtil.installApplicationInBackgroundAndAcquireDebugInfo(raw, true, bundle, project, commandLine)
+        commandLine.exePath += "/" + FileUtil.getNameWithoutExtension(bundle)
+        return commandLine
+    }
+
+    override val arch: ArchitectureValue
+        get() = ArchitectureValue(raw.cpuArchitecture!!)
+}
+
 
 class AppleSimulator(private val raw: SimulatorConfiguration) : AppleDevice(
     raw.udid,

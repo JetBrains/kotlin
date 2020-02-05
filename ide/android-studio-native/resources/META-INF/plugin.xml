@@ -21,6 +21,8 @@
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="com.jetbrains.mpp.PathManagerCustomization" overrides="true"/>
 
+    <applicationService serviceImplementation="com.jetbrains.mpp.execution.DeviceService"/>
+
     <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
     <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
