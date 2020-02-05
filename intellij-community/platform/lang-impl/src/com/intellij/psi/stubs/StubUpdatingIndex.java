@@ -309,16 +309,16 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED ? new CompositeBinaryBuilderMap() : null;
 
     MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
-      throws StorageException, IOException {
+      throws IOException {
       super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(), null, null);
       ((StubUpdatingForwardIndexAccessor)getForwardIndexAccessor()).setIndex(this);
 
+      // load stub serializers before usage
       if (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
-        // load stub serializers before usage
         FileTypeRegistry.getInstance().getRegisteredFileTypes();
-        getExtensions(LanguageParserDefinitions.INSTANCE).forEach(ParserDefinition::getFileNodeType);
         getExtensions(BinaryFileStubBuilders.INSTANCE).forEach(builder -> {});
       }
+      getExtensions(LanguageParserDefinitions.INSTANCE).forEach(ParserDefinition::getFileNodeType);
 
     }
 
