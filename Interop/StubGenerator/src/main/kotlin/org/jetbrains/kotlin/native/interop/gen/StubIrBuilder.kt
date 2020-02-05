@@ -66,7 +66,7 @@ class BridgeGenerationComponentsBuilder {
 /**
  * Components that are not passed via StubIr but required for generation of wrappers.
  */
-class WrapperGenerationInfo(val global: GlobalDecl)
+class WrapperGenerationInfo(val global: GlobalDecl, val passViaPointer: Boolean = false)
 
 interface WrapperGenerationComponents {
     val getterToWrapperInfo: Map<PropertyAccessor.Getter.ExternalGetter, WrapperGenerationInfo>

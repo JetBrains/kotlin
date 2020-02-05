@@ -820,6 +820,10 @@ private fun KotlinStubs.mapType(
                 ?: reportUnsupportedType("not a structure or too complex"))
     }
 
+    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true -> {
+        TrivialValuePassing(type, CTypes.voidPtr)
+    }
+
     type.isFunction() -> if (variadic){
         reportUnsupportedType("not supported as variadic argument")
     } else {

@@ -649,7 +649,17 @@ internal class GlobalStubBuilder(
                 }
                 is TypeMirror.ByRef -> {
                     kotlinType = mirror.pointedType
-                    val getter = PropertyAccessor.Getter.InterpretPointed(global.name, kotlinType.toStubIrType())
+                    val getter = when (context.generationMode) {
+                        GenerationMode.SOURCE_CODE -> {
+                            PropertyAccessor.Getter.InterpretPointed(global.name, kotlinType.toStubIrType())
+                        }
+                        GenerationMode.METADATA -> {
+                            val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.name}_getter")
+                            PropertyAccessor.Getter.ExternalGetter(listOf(cCallAnnotation)).also {
+                                context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global, passViaPointer = true)
+                            }
+                        }
+                    }
                     kind = PropertyStub.Kind.Val(getter)
                 }
             }

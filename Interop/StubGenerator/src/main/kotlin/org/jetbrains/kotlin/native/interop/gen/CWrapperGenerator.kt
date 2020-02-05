@@ -75,6 +75,14 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         return CCalleeWrapper(wrapper)
     }
 
+    fun generateCGlobalByPointerGetter(globalDecl: GlobalDecl, symbolName: String): CCalleeWrapper {
+        val wrapperName = generateFunctionWrapperName("${globalDecl.name}_getter")
+        val returnType = "void*"
+        val wrapperBody = "return &${globalDecl.name};"
+        val wrapper = createWrapper(symbolName, wrapperName, returnType, emptyList(), wrapperBody)
+        return CCalleeWrapper(wrapper)
+    }
+
     fun generateCGlobalSetter(globalDecl: GlobalDecl, symbolName: String): CCalleeWrapper {
         val wrapperName = generateFunctionWrapperName("${globalDecl.name}_setter")
         val globalType = globalDecl.type.getStringRepresentation()
