@@ -7,15 +7,22 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
-import org.gradle.tooling.model.GradleProject
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 import org.jetbrains.plugins.gradle.model.Build
+import org.jetbrains.plugins.gradle.model.ClassSetImportModelProvider
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 
 class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
     override fun getModelProvider() = KotlinDslScriptModelProvider()
-    override fun requiresTaskRunning() = true
+
+    override fun getProjectsLoadedModelProvider(): ProjectImportModelProvider? {
+        return ClassSetImportModelProvider(
+            emptySet(),
+            setOf(KotlinDslScriptAdditionalTask::class.java)
+        )
+    }
 
     override fun populateProjectExtraModels(gradleProject: IdeaProject, ideProject: DataNode<ProjectData>) {
         super.populateProjectExtraModels(gradleProject, ideProject)
