@@ -341,6 +341,8 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
     createDefaultSourceSets,
     createTestCompilation
 ) {
+    open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
+
     internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>
 
     override fun configureCompilations(target: KotlinTargetType) {
@@ -355,13 +357,13 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
     }
 
     /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
-    protected open fun createJarTasks(target: KotlinTargetType): Pair<String, Zip> {
-        val result = target.project.tasks.create(target.artifactsTaskName, Jar::class.java)
-        result.description = "Assembles a jar archive containing the main classes."
-        result.group = BasePlugin.BUILD_GROUP
-        result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
-
-        return ArtifactTypeDefinition.JAR_TYPE to result
+    protected open fun createArchiveTasks(target: KotlinTargetType): Zip {
+        //TODO Change Jar on Zip
+        return target.project.tasks.create(target.artifactsTaskName, Jar::class.java).apply {
+            description = "Assembles an archive containing the main classes."
+            group = BasePlugin.BUILD_GROUP
+            from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+        }
     }
 
     override fun configureArchivesAndComponent(target: KotlinTargetType) {
@@ -369,7 +371,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        val (type, task) = createJarTasks(target)
+        val task = createArchiveTasks(target)
 
         target.disambiguationClassifier?.let { task.appendix = it.toLowerCase() }
 
@@ -378,28 +380,28 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
         project.afterEvaluate {
             project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, task) { jarArtifact ->
                 jarArtifact.builtBy(task)
-                jarArtifact.type = type
+                jarArtifact.type = archiveType
 
                 val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
-                addJar(apiElementsConfiguration, jarArtifact, type)
+                addJar(apiElementsConfiguration, jarArtifact)
 
                 if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
                     val runtimeConfiguration = project.configurations.getByName(mainCompilation.deprecatedRuntimeConfigurationName)
                     val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
-                    addJar(runtimeConfiguration, jarArtifact, type)
-                    addJar(runtimeElementsConfiguration, jarArtifact, type)
+                    addJar(runtimeConfiguration, jarArtifact)
+                    addJar(runtimeElementsConfiguration, jarArtifact)
                     // TODO Check Gradle's special split into variants for classes & resources -- do we need that too?
                 }
             }
         }
     }
 
-    private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact, type: String) {
+    private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
         val publications = configuration.outgoing
 
         // Configure an implicit variant
         publications.artifacts.add(jarArtifact)
-        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, type)
+        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, archiveType)
     }
 }
 

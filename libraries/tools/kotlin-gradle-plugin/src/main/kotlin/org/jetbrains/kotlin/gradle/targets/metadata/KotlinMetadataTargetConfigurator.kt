@@ -132,8 +132,8 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         override fun run() = Unit
     }
 
-    override fun createJarTasks(target: KotlinMetadataTarget): Pair<String, Zip> {
-        val result = super.createJarTasks(target)
+    override fun createArchiveTasks(target: KotlinMetadataTarget): Zip {
+        val result = super.createArchiveTasks(target)
 
         if (target.project.isKotlinGranularMetadataEnabled) {
             target.project.locateTask<Jar>(target.artifactsTaskName)!!.configure {

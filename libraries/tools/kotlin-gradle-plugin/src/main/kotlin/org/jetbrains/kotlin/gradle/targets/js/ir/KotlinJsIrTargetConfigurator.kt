@@ -22,6 +22,9 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
 
+    override val archiveType: String
+        get() = KLIB_TYPE
+
     override fun createTestRun(
         name: String,
         target: KotlinJsIrTarget
@@ -50,12 +53,11 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
         return KotlinJsIrSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
     }
 
-    override fun createJarTasks(target: KotlinJsIrTarget): Pair<String, Zip> {
-        val (_, task) = super.createJarTasks(target)
-        // not archiveExtension because it is since Gradle 5.1 only
-        task.extension = KLIB_TYPE
-
-        return KLIB_TYPE to task
+    override fun createArchiveTasks(target: KotlinJsIrTarget): Zip {
+        return super.createArchiveTasks(target).apply {
+            // not archiveExtension because it is since Gradle 5.1 only
+            extension = KLIB_TYPE
+        }
     }
 
     override fun configureCompilations(target: KotlinJsIrTarget) {
