@@ -300,10 +300,21 @@ class ExceptionState private constructor(
         instance = this
         this.stackTrace = stackTrace.reversed()
         if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClass.fqNameForIrSerialization.asString()
+
+        if (fields.none { it.descriptor.equalTo(messageProperty.descriptor) }) {
+            setMessage()
+        }
     }
 
-    constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace)
-    constructor(wrapper: Wrapper, stackTrace: List<String>) : this(wrapper.value as Throwable, wrapper.irClass, stackTrace)
+    constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace) {
+        var wrapperSuperType: Complex? = common
+        while (wrapperSuperType != null && wrapperSuperType !is Wrapper) wrapperSuperType = (wrapperSuperType as Common).superType
+        setUpCauseIfNeeded(wrapperSuperType as? Wrapper)
+    }
+
+    constructor(wrapper: Wrapper, stackTrace: List<String>) : this(wrapper.value as Throwable, wrapper.irClass, stackTrace) {
+        setUpCauseIfNeeded(wrapper)
+    }
 
     constructor(
         exception: Throwable, irClass: IrClass, stackTrace: List<String>
@@ -318,6 +329,15 @@ class ExceptionState private constructor(
         }
     }
 
+    private fun setUpCauseIfNeeded(wrapper: Wrapper?) {
+        val cause = (wrapper?.value as? Throwable)?.cause as? ExceptionData
+        setCause(cause?.state)
+        if (getMessage().value == null && cause != null) {
+            val causeMessage = cause.state.getMessage().value?.let { ": $it" } ?: ""
+            setMessage("$exceptionFqName$causeMessage")
+        }
+    }
+
     fun isSubtypeOf(ancestor: IrClass): Boolean {
         if (exceptionHierarchy.isNotEmpty()) {
             return exceptionHierarchy.any { it.contains(ancestor.name.asString()) }
@@ -325,17 +345,31 @@ class ExceptionState private constructor(
         return irClass.isSubclassOf(ancestor)
     }
 
-    fun getMessage(): Primitive<String> = getState(messageProperty.descriptor) as Primitive<String>
+    private fun setMessage(messageValue: String? = null) {
+        setState(Variable(messageProperty.descriptor, Primitive(messageValue, messageProperty.getter!!.returnType)))
+    }
 
-    fun getCause(): ExceptionState = getState(causeProperty.descriptor) as ExceptionState
+    private fun setCause(causeValue: State?) {
+        setState(Variable(causeProperty.descriptor, causeValue ?: Primitive<Throwable?>(null, causeProperty.getter!!.returnType)))
+    }
+
+    fun getMessage(): Primitive<String?> = getState(messageProperty.descriptor) as Primitive<String?>
+    fun getMessageWithName(): String = getMessage().value?.let { "$exceptionFqName: $it" } ?: exceptionFqName
+
+    fun getCause(): ExceptionState? = getState(causeProperty.descriptor)?.let { if (it is ExceptionState) it else null }
 
     fun getFullDescription(): String {
-        val message = getMessage().value.let { if (it.isNotEmpty()) ": $it" else ""}
+        // TODO remainder of the stack trace with "..."
+        val message = getMessage().value.let { if (it?.isNotEmpty() == true) ": $it" else "" }
         val prefix = if (stackTrace.isNotEmpty()) "\n\t" else ""
         val postfix = if (stackTrace.size > 10) "\n\t..." else ""
+        val causeMessage = getCause()?.getFullDescription()?.let { "\nCaused by: $it" } ?: ""
         return "Exception $exceptionFqName$message" +
-                stackTrace.subList(0, min(stackTrace.size, 10)).joinToString(separator = "\n\t", prefix = prefix, postfix = postfix)
+                stackTrace.subList(0, min(stackTrace.size, 10)).joinToString(separator = "\n\t", prefix = prefix, postfix = postfix) +
+                causeMessage
     }
+
+    fun getThisAsCauseForException() = ExceptionData(this)
 
     override fun copy(): State {
         return ExceptionState(irClass, fields, stackTrace).apply { this@apply.instance = this@ExceptionState.instance }
@@ -358,4 +392,13 @@ class ExceptionState private constructor(
             return listOfNotNull(messageVar, causeVar).toMutableList()
         }
     }
+}
+
+// TODO remove this data class and make ExceptionState a child of Throwable
+// this is possible by converting Complex to an interface
+data class ExceptionData(val state: ExceptionState) : Throwable() {
+    override val message: String? = state.getMessage().value
+    override fun fillInStackTrace() = this
+
+    override fun toString(): String = state.getMessageWithName()
 }

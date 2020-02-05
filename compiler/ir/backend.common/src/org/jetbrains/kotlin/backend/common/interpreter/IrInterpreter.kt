@@ -146,7 +146,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             if (irFunction.fileOrNull != null) {
                 val fileName = irFunction.file.name
                 val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
-                stackTrace += "at ${fileName.replace(".kt", "Kt")}.${irFunction.fqNameForIrSerialization}($fileName:$lineNum)"
+                stackTrace += "at ${fileName.replace(".kt", "Kt").capitalize()}.${irFunction.fqNameForIrSerialization}($fileName:$lineNum)"
             }
 
             if (stackTrace.size == MAX_STACK_SIZE) {

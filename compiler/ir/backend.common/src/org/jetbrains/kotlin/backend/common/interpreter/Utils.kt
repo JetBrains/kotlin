@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common.interpreter
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Frame
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Primitive
-import org.jetbrains.kotlin.backend.common.interpreter.stack.State
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Wrapper
+import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -173,7 +170,14 @@ fun IrType.getFqName(): String? {
 }
 
 fun IrFunction.getArgsForMethodInvocation(data: Frame): List<Any?> {
-    val argsValues = data.getAll().map { (it.state as? Wrapper)?.value ?: (it.state as Primitive<*>).value }.toMutableList()
+    val argsValues = data.getAll().map {
+        when (val state = it.state) {
+            is ExceptionState -> state.getThisAsCauseForException()
+            is Wrapper -> state.value
+            is Primitive<*> -> state.value
+            else -> throw AssertionError("${state::class} is unsupported as argument for wrapper method invocation")
+        }
+    }.toMutableList()
 
     // TODO if vararg isn't last parameter
     // must convert vararg array into separated elements for correct invoke
