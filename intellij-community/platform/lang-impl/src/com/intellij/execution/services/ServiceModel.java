@@ -395,8 +395,14 @@ class ServiceModel implements Disposable, InvokerSupplier {
                                                                   ServiceViewItem parent,
                                                                   ServiceViewContributor<T> contributor) {
     List<ServiceViewItem> children = new ArrayList<>();
-    for (T service : contributor.getServices(project)) {
-      addService(service, children, project, parent, contributor);
+    try {
+      for (T service : contributor.getServices(project)) {
+        addService(service, children, project, parent, contributor);
+      }
+    }
+    catch (Exception e) {
+      PluginException
+        .logPluginError(LOG, "Failed to retrieve service view contributor children " + contributor.getClass(), e, contributor.getClass());
     }
     return children;
   }
