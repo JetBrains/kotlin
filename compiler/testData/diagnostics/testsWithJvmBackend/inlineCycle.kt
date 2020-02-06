@@ -1,3 +1,5 @@
+// !RENDER_DIAGNOSTICS_FULL_TEXT
+
 inline fun inlineFun1(p: () -> Unit) {
     p()
     <!INLINE_CALL_CYCLE, INLINE_CALL_CYCLE!>inlineFun2(p)<!>
