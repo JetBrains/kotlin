@@ -12,7 +12,7 @@ fun unused() {
     secondInline()
 }
 
-// ADDITIONAL_BREAKPOINT: manyFilesWithInlineCalls1.First.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: manyFilesWithInlineCalls1.First.kt / Breakpoint 1
 
 // FILE: manyFilesWithInlineCalls1.First.kt
 package manyFilesWithInlineCalls1.first

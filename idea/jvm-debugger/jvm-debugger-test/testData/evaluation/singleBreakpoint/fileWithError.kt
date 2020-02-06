@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     fileWithInternal.test()
 }
 
-// ADDITIONAL_BREAKPOINT: fileWithInternal.kt:Breakpoint
+// ADDITIONAL_BREAKPOINT: fileWithInternal.kt / Breakpoint
 
 // EXPRESSION: 1
 // RESULT: 1: I

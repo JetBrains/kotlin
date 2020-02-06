@@ -16,7 +16,7 @@ fun secondCall() {
 }
 
 // RESUME: 2
-// ADDITIONAL_BREAKPOINT: severalInlineCallsFromOtherFile.Other.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: severalInlineCallsFromOtherFile.Other.kt / Breakpoint 1
 
 // FILE: severalInlineCallsFromOtherFile.Other.kt
 package severalInlineCallsFromOtherFile

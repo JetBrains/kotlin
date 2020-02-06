@@ -55,23 +55,23 @@ class A {
     }
 }
 
-// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt:Breakpoint1:(1)
+// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt / Breakpoint1 / line / 1
 // EXPRESSION: it + 11
 // RESULT: 12: I
 
-// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt:Breakpoint2:(1)
+// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt / Breakpoint2 / line / 1
 // EXPRESSION: it + 12
 // RESULT: 14: I
 
-// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt:Breakpoint3:(1)
+// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt / Breakpoint3 / line / 1
 // EXPRESSION: it + 13
 // RESULT: 16: I
 
-// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt:Breakpoint4:(1)
+// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt / Breakpoint4 / line / 1
 // EXPRESSION: it + 14
 // RESULT: 18: I
 
-// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt:Breakpoint5:(1)
+// ADDITIONAL_BREAKPOINT: isInsideInlineLambdaInLibrary.kt / Breakpoint5 / line / 1
 // EXPRESSION: it + 15
 // RESULT: 20: I
 
