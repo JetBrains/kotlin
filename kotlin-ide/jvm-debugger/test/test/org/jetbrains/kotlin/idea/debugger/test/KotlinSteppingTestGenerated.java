@@ -1124,6 +1124,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("testData/stepping/custom/inlinePropertyAccessors.kt");
         }
 
+        @TestMetadata("kt14057.kt")
+        public void testKt14057() throws Exception {
+            runTest("testData/stepping/custom/kt14057.kt");
+        }
+
         @TestMetadata("kt15823.kt")
         public void testKt15823() throws Exception {
             runTest("testData/stepping/custom/kt15823.kt");
