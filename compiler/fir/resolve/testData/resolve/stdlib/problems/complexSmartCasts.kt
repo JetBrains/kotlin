@@ -12,7 +12,33 @@ fun foo(a: Any?) {
 
 fun bar(s: String?) {
     if (s?.isNotEmpty() == true) {
+        s.length
+    } else {
         s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    }
+}
+
+fun bar_2(s: String?) {
+    if (s?.isNotEmpty() == false) {
+        s.length
+    } else {
+        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    }
+}
+
+fun bar_3(s: String?) {
+    if (s?.isNotEmpty() != true) {
+        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    } else {
+        s.length
+    }
+}
+
+fun bar_4(s: String?) {
+    if (s?.isNotEmpty() != false) {
+        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    } else {
+        s.length
     }
 }
 

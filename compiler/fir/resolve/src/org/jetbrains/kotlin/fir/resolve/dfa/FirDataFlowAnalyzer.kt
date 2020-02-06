@@ -268,8 +268,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 expressionVariable,
                 shouldRemoveOriginalStatements = operandVariable.isSynthetic()
             ) {
-                if (shouldInvert) (it.condition.invert()) implies (it.effect)
-                else it
+                when (it.condition.operation) {
+                    Operation.EqNull, Operation.NotEqNull -> {
+                        (expressionVariable eq isEq) implies (it.effect)
+                    }
+                    Operation.EqTrue, Operation.EqFalse -> {
+                        if (shouldInvert) (it.condition.invert()) implies (it.effect)
+                        else it
+                    }
+                }
             }
         }
     }

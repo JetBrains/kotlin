@@ -32,7 +32,7 @@ fun <D : Descriptor> test(call: Call<D>, resolvedCall: ResolvedCall<D>) {
 
     val resolvedDescriptor = resolvedCall.candidateDescriptor
     if (resolvedDescriptor?.correct() != true) return
-    resolvedDescriptor.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    resolvedDescriptor.foo()
 }
 
 fun otherTest(call: Call<*>, resolvedCall: ResolvedCall<*>) {
