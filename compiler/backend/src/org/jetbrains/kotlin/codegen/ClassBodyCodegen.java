@@ -222,8 +222,11 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
-            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !JvmAnnotationUtilKt
-                    .isCompiledToJvmDefaultIfNoAbstract(interfaceFun, state.getJvmDefaultMode())) {
+            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) &&
+                !JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefaultIfNoAbstract(
+                        DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(interfaceFun), state.getJvmDefaultMode()
+                )
+            ) {
                 generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
             }
         }

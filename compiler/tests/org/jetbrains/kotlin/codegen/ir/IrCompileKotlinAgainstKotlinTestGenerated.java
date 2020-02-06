@@ -454,6 +454,29 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
                 }
             }
+
+            @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Interop extends AbstractIrCompileKotlinAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInterop() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("newAndOldSchemes.kt")
+                public void testNewAndOldSchemes() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
+                }
+
+                @TestMetadata("newSchemeWithJvmDefault.kt")
+                public void testNewSchemeWithJvmDefault() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6")

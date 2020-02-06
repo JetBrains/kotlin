@@ -1540,7 +1540,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return if (descriptor is AccessorForConstructorDescriptor) false else isAccessor(descriptor)
         }
 
-        private fun findAnyDeclaration(function: FunctionDescriptor): FunctionDescriptor {
+        internal fun findAnyDeclaration(function: FunctionDescriptor): FunctionDescriptor {
             return if (function.kind == CallableMemberDescriptor.Kind.DECLARATION) {
                 function
             } else findBaseDeclaration(function)

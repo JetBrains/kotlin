@@ -732,7 +732,9 @@ public class FunctionCodegen {
             @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
-               JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(functionDescriptor, jvmDefaultMode) &&
+               JvmAnnotationUtilKt
+                       .isCompiledToJvmDefaultIfNoAbstract(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(functionDescriptor),
+                                                           jvmDefaultMode) &&
                jvmDefaultMode.isCompatibility();
     }
 
