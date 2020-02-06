@@ -356,4 +356,5 @@ class JsIrBackendContext(
     }
 }
 
+// TODO: investigate if it could be removed
 fun <T> lazy2(fn: () -> T) = lazy { stageController.withInitialIr(fn) }

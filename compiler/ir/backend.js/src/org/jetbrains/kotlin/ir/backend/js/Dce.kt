@@ -78,6 +78,8 @@ private fun removeUselessDeclarations(module: IrModuleFragment, usefulDeclaratio
                 process(declaration)
             }
 
+            // TODO bring back the primary constructor fix
+
             private fun process(container: IrDeclarationContainer) {
                 container.declarations.transformFlat { member ->
                     if (member !in usefulDeclarations) {
@@ -143,6 +145,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         while (queue.isNotEmpty()) {
             val declaration = queue.pollFirst()
 
+            // TODO remove?
             stageController.lazyLower(declaration)
 
             if (declaration is IrClass) {
@@ -188,6 +191,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 else -> null
             }
 
+            // TODO remove?
             (body as? IrBody)?.let { stageController.lazyLower(it) }
 
             body?.acceptVoid(object : IrElementVisitorVoid {
@@ -285,6 +289,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 }
             }
 
+            // TODO is this needed?
             for (declaration in ArrayList(klass.declarations)) {
                 // TODO this is a hack.
                 if (declaration is IrProperty) {
@@ -293,6 +298,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 }
             }
 
+            // TODO deduplicate
             // Special hack for `IntrinsicsJs.kt` support
             if (klass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }) {
                 ArrayList(klass.declarations).forEach {

@@ -34,6 +34,7 @@ abstract class IrDeclarationBase<T : DeclarationCarrier<T>>(
 
     override var parentField: IrDeclarationParent? = null
 
+    // TODO reduce boilerplate
     override var parent: IrDeclarationParent
         get() = getCarrier().parentField ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
         set(p) {
@@ -84,6 +85,7 @@ abstract class IrPersistingElementBase<T : Carrier<T>>(
 
     var loweredUpTo = stageController.currentStage
 
+    // TODO Array<T>?
     private var values: Array<Any?>? = null
 
     val createdOn: Int = stageController.currentStage
@@ -120,6 +122,7 @@ abstract class IrPersistingElementBase<T : Carrier<T>>(
         }
     }
 
+    // TODO naming? e.g. `mutableCarrier`
     protected fun setCarrier(): T {
         val stage = stageController.currentStage
 
@@ -133,6 +136,7 @@ abstract class IrPersistingElementBase<T : Carrier<T>>(
             error("retrospective modification")
         }
 
+        // TODO move up? i.e. fast path
         if (stage == lastModified) {
             return this as T
         } else {

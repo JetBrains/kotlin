@@ -1,7 +1,9 @@
 // TARGET_BACKEND: JS_IR
-// SKIP_DCE_DRIVEN
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
+
+// TODO fix statics export in DCE-driven mode
+// SKIP_DCE_DRIVEN
 
 @file:JsExport
 

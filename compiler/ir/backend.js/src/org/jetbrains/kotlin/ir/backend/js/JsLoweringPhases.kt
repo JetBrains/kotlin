@@ -641,8 +641,10 @@ val loweringList = listOf<Lowering>(
     validateIrAfterLowering
 )
 
+// TODO comment? Eliminate MouduleLowering's? Don't filter them here?
 val pirLowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering } + staticMembersLoweringPhase
 
+// TODO `fold` -> `reduce`
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",

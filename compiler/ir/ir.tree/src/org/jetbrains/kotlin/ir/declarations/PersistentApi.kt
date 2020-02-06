@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 // TODO make a IrDeclarationBase field? (requires IR factory)
 var stageController: StageController = object : StageController {}
 
+// TODO make a class
 interface StageController {
     val currentStage: Int get() = 0
 

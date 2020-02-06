@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl.carriers
 
+// TODO degenerify
+// TODO degenerify
 interface Carrier<in T : Carrier<T>> {
     val lastModified: Int
 

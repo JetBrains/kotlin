@@ -97,6 +97,7 @@ fun compile(
 
         eliminateDeadDeclarations(moduleFragment, context, mainFunction)
 
+        // TODO investigate whether this is needed anymore
         stageController = object : StageController {
             override val currentStage: Int = controller.currentStage
         }
