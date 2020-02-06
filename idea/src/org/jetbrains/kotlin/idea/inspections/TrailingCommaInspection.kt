@@ -18,10 +18,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.formatter.*
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.findInvalidCommas
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.needComma
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaAllowedInModule
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor.Companion.trailingCommaOrLastElement
 import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -44,7 +40,7 @@ class TrailingCommaInspection(
         }
 
         private fun checkLineBreaks(commaOwner: KtElement) {
-            val first = TrailingCommaPostFormatProcessor.elementBeforeFirstElement(commaOwner)
+            val first = TrailingCommaHelper.elementBeforeFirstElement(commaOwner)
             if (first?.nextLeaf(true)?.isLineBreak() == false) {
                 first.nextSibling?.let {
                     registerProblemForLineBreak(
@@ -59,7 +55,7 @@ class TrailingCommaInspection(
 
             }
 
-            val last = TrailingCommaPostFormatProcessor.elementAfterLastElement(commaOwner)
+            val last = TrailingCommaHelper.elementAfterLastElement(commaOwner)
             if (last?.prevLeaf(true)?.isLineBreak() == false) {
                 registerProblemForLineBreak(
                     commaOwner,
@@ -70,15 +66,15 @@ class TrailingCommaInspection(
         }
 
         private fun checkCommaPosition(commaOwner: KtElement) {
-            for (invalidComma in findInvalidCommas(commaOwner)) {
+            for (invalidComma in TrailingCommaHelper.findInvalidCommas(commaOwner)) {
                 reportProblem(invalidComma, "Comma loses the advantages in this position", "Fix comma position")
             }
         }
 
         private fun checkTrailingComma(commaOwner: KtElement, action: TrailingCommaAction) {
-            val trailingCommaOrLastElement = trailingCommaOrLastElement(commaOwner) ?: return
+            val trailingCommaOrLastElement = TrailingCommaHelper.trailingCommaOrLastElement(commaOwner) ?: return
             if (action == TrailingCommaAction.ADD) {
-                if (!trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
+                if (!TrailingCommaHelper.trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
                 reportProblem(
                     trailingCommaOrLastElement,
                     "Missing trailing comma",
@@ -147,8 +143,8 @@ class TrailingCommaInspection(
         }
 
         private fun createFormatterTextRange(commaOwner: KtElement): TextRange {
-            val startElement = TrailingCommaPostFormatProcessor.elementBeforeFirstElement(commaOwner) ?: commaOwner
-            val endElement = TrailingCommaPostFormatProcessor.elementAfterLastElement(commaOwner) ?: commaOwner
+            val startElement = TrailingCommaHelper.elementBeforeFirstElement(commaOwner) ?: commaOwner
+            val endElement = TrailingCommaHelper.elementAfterLastElement(commaOwner) ?: commaOwner
             return TextRange.create(startElement.startOffset, endElement.endOffset)
         }
 
@@ -175,8 +171,8 @@ private enum class TrailingCommaAction {
 
     companion object {
         fun create(commaOwner: KtElement): TrailingCommaAction = when {
-            needComma(commaOwner, null, checkExistingTrailingComma = false) -> ADD
-            needComma(commaOwner, null, checkExistingTrailingComma = true) -> REFORMAT
+            TrailingCommaHelper.needComma(commaOwner, null, checkExistingTrailingComma = false) -> ADD
+            TrailingCommaHelper.needComma(commaOwner, null, checkExistingTrailingComma = true) -> REFORMAT
             else -> REMOVE
         }
     }
