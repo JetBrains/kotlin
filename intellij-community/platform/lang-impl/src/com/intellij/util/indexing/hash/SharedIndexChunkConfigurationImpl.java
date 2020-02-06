@@ -26,8 +26,6 @@ import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
-import com.intellij.util.io.zip.JBZipEntry;
-import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.TIntLongHashMap;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TIntObjectIterator;
@@ -36,18 +34,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 @ApiStatus.Internal
 public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfiguration {
@@ -113,9 +104,9 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     });
   }
 
-  private static JBZipFile getStorageToAppend() throws IOException {
+  private static @NotNull Path getStorageToAppend() throws IOException {
     ensureSharedIndexConfigurationRootExist();
-    return new JBZipFile(getSharedIndexStorage().toFile());
+    return getSharedIndexStorage();
   }
 
   private static void ensureSharedIndexConfigurationRootExist() throws IOException {
@@ -157,7 +148,8 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   // for now called sequentially on a single background thread
   public void loadSharedIndex(@NotNull Project project,
                               @NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor,
-                              @NotNull ProgressIndicator indicator) {
+                              @NotNull ProgressIndicator indicator,
+                              @NotNull IndexInfrastructureVersion ideVersion) {
     if (project.isDisposed()) return;
 
     Path tempChunk = null;
@@ -167,7 +159,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
       if (chunkIsNotRegistered(descriptor)) {
         descriptor.downloadChunk(tempChunk, indicator);
-        appendToSharedIndexStorage(tempChunk);
+        SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getStorageToAppend(), descriptor, ideVersion);
       }
     } catch (Exception e) {
       //noinspection InstanceofCatchParameter
@@ -200,24 +192,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     return myChunkDescriptorEnumerator.tryEnumerate(descriptor.getChunkUniqueId()) == 0;
   }
 
-  private static void appendToSharedIndexStorage(@NotNull Path sharedIndexChunk) {
-    try (JBZipFile file = getStorageToAppend(); ZipFile zipFile = new ZipFile(sharedIndexChunk.toFile())) {
-      Enumeration<? extends ZipEntry> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = entries.nextElement();
-
-        byte @NotNull [] content = FileUtil.loadBytes(zipFile.getInputStream(entry));
-        String name = entry.getName();
-        JBZipEntry createdEntry = file.getOrCreateEntry(name);
-        createdEntry.setMethod(ZipEntry.STORED);
-        createdEntry.setData(content);
-      }
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
-  }
-
   private void syncSharedIndexStorage() {
     try {
       myReadSystem.sync();
@@ -237,7 +211,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       for (SharedIndexChunkLocator locator : SharedIndexChunkLocator.EP_NAME.getExtensionList()) {
         locator.locateIndex(project, entries, descriptor -> {
           if (ideVersion.getBaseIndexes().equals(descriptor.getSupportedInfrastructureVersion().getBaseIndexes())) {
-            loadSharedIndex(project, descriptor, indicator);
+            loadSharedIndex(project, descriptor, indicator, ideVersion);
           }
         }, indicator);
       }

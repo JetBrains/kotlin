@@ -4,12 +4,15 @@ package com.intellij.util.indexing.zipFs;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.URI;
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class UncompressedZipPath implements Path {
@@ -192,5 +195,19 @@ public final class UncompressedZipPath implements Path {
   @Override
   public String toString() {
     return StringUtil.join(myNameElements, myFileSystem.getSeparator());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    UncompressedZipPath other = (UncompressedZipPath)o;
+    return compareTo(other) == 0;
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(myNameElements);
   }
 }

@@ -34,9 +34,6 @@ public class HashBasedIndexGenerator<K, V> {
   private final FakeIndexExtension<K, V> myExtension;
 
   @NotNull
-  private final String mySharedIndexName;
-
-  @NotNull
   private final FileBasedIndex.InputFilter myInputFilter;
 
   private final Path myStorageFile;
@@ -55,9 +52,9 @@ public class HashBasedIndexGenerator<K, V> {
                                  @NotNull DataExternalizer<V> valueExternalizer,
                                  @NotNull FileBasedIndexExtension<K, V> originalExtension,
                                  @NotNull Path outRoot) {
+    ID<K, V> indexId = originalExtension.getName();
     myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
-    mySharedIndexName = originalExtension.getName().getName();
-    myStorageFile = outRoot.resolve(mySharedIndexName).resolve(mySharedIndexName);
+    myStorageFile = getSharedIndexPath(outRoot, indexId).resolve(indexId.getName());
 
     FileBasedIndex.InputFilter filter = originalExtension.getInputFilter();
 
@@ -72,13 +69,8 @@ public class HashBasedIndexGenerator<K, V> {
   }
 
   @NotNull
-  public String getSharedIndexName() {
-    return mySharedIndexName;
-  }
-
-  @NotNull
-  public String getSharedIndexVersion() {
-    return String.valueOf(getExtension().getVersion());
+  public static Path getSharedIndexPath(@NotNull Path root, ID<?, ?> id) {
+    return root.resolve(id.getName());
   }
 
   public void openIndex() throws IOException {

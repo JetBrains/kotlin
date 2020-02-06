@@ -2,6 +2,7 @@
 package com.intellij.util.indexing;
 
 import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
@@ -10,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
@@ -76,10 +78,20 @@ public final class IndexInfrastructureVersion {
     ImmutableSortedMap.Builder<String, String> builder = ImmutableSortedMap.naturalOrder();
 
     for (FileBasedIndexExtension<?, ?> fileBasedIndexExtension : fileBasedIndexExtensions) {
-      builder.put(fileBasedIndexExtension.getName().getName(), String.valueOf(fileBasedIndexExtension.getVersion()));
+      builder.put(getFileBasedIndexNameName(fileBasedIndexExtension.getName()), getFileBasedIndexVersion(fileBasedIndexExtension));
     }
 
     return builder.build();
+  }
+
+  @NotNull
+  private static String getFileBasedIndexVersion(@NotNull FileBasedIndexExtension<?, ?> fileBasedIndexExtension) {
+    return String.valueOf(fileBasedIndexExtension.getVersion());
+  }
+
+  @NotNull
+  private static String getFileBasedIndexNameName(@NotNull ID<?, ?> fileBasedIndexId) {
+    return fileBasedIndexId.getName();
   }
 
   @NotNull
@@ -205,6 +217,34 @@ public final class IndexInfrastructureVersion {
     }
 
     return bestVersion;
+  }
+
+  @NotNull
+  public IndexInfrastructureVersion pickOnlyRestrictedIndexes(@NotNull IndexInfrastructureVersion targetVersion) {
+    if (!getBaseIndexes().equals(targetVersion.getBaseIndexes())) {
+      throw new IllegalArgumentException("Base versions should be exactly the same");
+    }
+
+    Map<String, String> targetFbiVersions = targetVersion.getFileBasedIndexVersions();
+    Map<String, String> fbiVersions = getFileBasedIndexVersions();
+    Map<String, String> restrictedFbiIndexes = Maps.filterEntries(fbiVersions, e -> {
+      assert e != null;
+      return !e.getValue().equals(targetFbiVersions.get(e.getKey()));
+    });
+
+    Map<String, String> restrictedStubIndexes;
+    if (restrictedFbiIndexes.containsKey(getFileBasedIndexNameName(StubUpdatingIndex.INDEX_ID))) {
+      Map<String, String> targetStubVersions = targetVersion.getStubIndexVersions();
+      Map<String, String> stubVersions = getStubIndexVersions();
+      restrictedStubIndexes = Maps.filterEntries(stubVersions, e -> {
+        assert e != null;
+        return !e.getValue().equals(targetStubVersions.get(e.getKey()));
+      });
+    } else {
+      restrictedStubIndexes = getStubIndexVersions();
+    }
+
+    return new IndexInfrastructureVersion(myBaseIndexes, restrictedFbiIndexes, restrictedStubIndexes);
   }
 
   @Override
