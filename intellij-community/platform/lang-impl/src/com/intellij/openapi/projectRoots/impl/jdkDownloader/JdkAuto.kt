@@ -93,6 +93,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
         return runReadAction { ProjectJdkTable.getInstance().allJdks }
           .filter { it.sdkType == sdkType }
           .filter { runCatching { req.matches(it) }.getOrNull() == true }
+          //TODO: Existing SDK can be still downloading, thus we will skip it here :(
           .filter { runCatching { sdkType.isValidSdkHome(it.homePath) }.getOrNull() == true }
           .filter { runCatching { it.versionString != null }.getOrNull() == true }
           .mapNotNull {
