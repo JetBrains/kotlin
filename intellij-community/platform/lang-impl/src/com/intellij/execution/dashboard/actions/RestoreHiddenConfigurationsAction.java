@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard.actions;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.*;
@@ -25,9 +26,6 @@ import java.util.List;
 import java.util.Set;
 
 public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
-  private static final String POPUP_TEXT = "Restore Hidden Configurations";
-  private static final String SERVICES_TOOLBAR_TEXT = "Hidden Run Configurations";
-
   @Override
   public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();
@@ -37,10 +35,10 @@ public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
     }
     if (ActionPlaces.SERVICES_TOOLBAR.equals(e.getPlace())) {
       e.getPresentation().setEnabledAndVisible(hasHiddenConfiguration(project));
-      e.getPresentation().setText(SERVICES_TOOLBAR_TEXT);
+      e.getPresentation().setText(ExecutionBundle.message("run.dashboard.restore.hidden.configurations.toolbar.action.name"));
       return;
     }
-    e.getPresentation().setText(POPUP_TEXT);
+    e.getPresentation().setText(ExecutionBundle.message("run.dashboard.restore.hidden.configurations.popup.action.name"));
     RunDashboardServiceViewContributor root = ServiceViewActionUtils.getTarget(e, RunDashboardServiceViewContributor.class);
     if (root != null) {
       e.getPresentation().setEnabledAndVisible(hasHiddenConfiguration(project));

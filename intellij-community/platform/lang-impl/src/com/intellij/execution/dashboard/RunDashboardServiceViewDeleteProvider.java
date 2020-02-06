@@ -7,6 +7,7 @@ import com.intellij.execution.dashboard.tree.GroupingNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
 import com.intellij.execution.services.ServiceViewContributorDeleteProvider;
 import com.intellij.ide.DeleteProvider;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -46,12 +47,16 @@ class RunDashboardServiceViewDeleteProvider implements ServiceViewContributorDel
     ConfigurationType onlyType = ContainerUtil.getOnlyItem(targetTypes);
     String message;
     if (onlyType != null) {
-      message = ExecutionBundle.message("run.dashboard.remove.run.configuration.type.action.name", onlyType.getDisplayName()) + "?";
+      message = ExecutionBundle.message("run.dashboard.remove.run.configuration.type.confirmation", onlyType.getDisplayName());
     }
     else {
-      message = "Remove " + targetTypes.size() + " configuration types from Services?";
+      message = ExecutionBundle.message("run.dashboard.remove.run.configuration.types.confirmation", targetTypes.size());
     }
-    if (Messages.showYesNoDialog(project, message, "Remove", "Remove", Messages.getCancelButton(), Messages.getWarningIcon(), null)
+
+    if (Messages.showYesNoDialog(project, message,
+                                 IdeBundle.message("button.remove"),
+                                 IdeBundle.message("button.remove"),
+                                 Messages.getCancelButton(), Messages.getWarningIcon(), null)
         != Messages.YES) {
       return;
     }
