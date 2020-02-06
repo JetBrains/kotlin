@@ -3,12 +3,12 @@ package com.intellij.util.indexing.hash;
 
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.IntIntFunction;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.indexing.impl.UpdatableValueContainer;
+import com.intellij.util.indexing.impl.ValueContainerInputRemapping;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.io.PersistentEnumeratorBase;
 import com.intellij.util.io.PersistentHashMap;
@@ -25,13 +25,13 @@ public class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<
                           @NotNull SharedIndexExtension<Key, Value> sharedExtension,
                           @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
                           @NotNull FileContentHashIndex hashIndex) throws IOException {
-    super(originalExtension, createStorage(chunk.getPath(), originalExtension, sharedExtension, hashIndex.toHashIdToFileIdFunction(chunk.getChunkId())), null, null, null, null);
+    super(originalExtension, createStorage(chunk.getPath(), originalExtension, sharedExtension, hashIndex.getHashIdToFileIdsFunction(chunk.getChunkId())), null, null, null, null);
   }
 
   private static <Key, Value> IndexStorage<Key, Value> createStorage(@NotNull Path baseFile,
                                                                      @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
                                                                      @NotNull SharedIndexExtension<Key, Value> providedExtension,
-                                                                     @NotNull IntIntFunction hashToFileId) throws IOException {
+                                                                     @NotNull ValueContainerInputRemapping hashToFileId) throws IOException {
     return new MyMapIndexStorage<>(baseFile.resolve(originalExtension.getName().getName()), originalExtension, providedExtension, hashToFileId);
   }
 
@@ -41,12 +41,12 @@ public class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<
     private MyMapIndexStorage(Path baseFile,
                               FileBasedIndexExtension<Key, Value> originalExtension,
                               SharedIndexExtension<Key, Value> providedExtension,
-                              IntIntFunction hashToFileId) throws IOException {
+                              ValueContainerInputRemapping hashToFileIds) throws IOException {
       super(baseFile,
             providedExtension.createKeyDescriptor(baseFile),
             providedExtension.createValueExternalizer(baseFile),
             originalExtension.getCacheSize(), originalExtension.keyIsUniqueForIndexedFile(),
-            true, true, hashToFileId);
+            true, true, hashToFileIds);
     }
 
     @Override

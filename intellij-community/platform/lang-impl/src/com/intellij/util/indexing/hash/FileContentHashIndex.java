@@ -2,10 +2,12 @@
 package com.intellij.util.indexing.hash;
 
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IntIntFunction;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.IndexStorage;
+import com.intellij.util.indexing.impl.ValueContainerInputRemapping;
 import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import org.jetbrains.annotations.NotNull;
@@ -34,12 +36,12 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void> {
   }
 
   @NotNull
-  public IntIntFunction toHashIdToFileIdFunction(int indexId) {
+  public ValueContainerInputRemapping getHashIdToFileIdsFunction(int indexId) {
     return hash -> {
       try {
         ValueContainer<Void> data = getData(FileContentHashIndexExtension.getHashId(hash, indexId));
-        if (data.size() == 0) return -1;
-        return data.getValueIterator().getInputIdsIterator().next();
+        if (data.size() == 0) return ArrayUtil.EMPTY_INT_ARRAY;
+        return collect(data.getValueIterator().getInputIdsIterator());
       }
       catch (StorageException e) {
         throw new RuntimeException(e);
@@ -64,5 +66,13 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void> {
     public Boolean compute() {
       return myUnderlying.compute();
     }
+  }
+
+  private static int[] collect(@NotNull ValueContainer.IntIterator intIterator) {
+    int[] result = new int[intIterator.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = intIterator.next();
+    }
+    return result;
   }
 }
