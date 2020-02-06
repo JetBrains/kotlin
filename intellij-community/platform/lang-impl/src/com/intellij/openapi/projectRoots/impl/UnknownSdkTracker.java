@@ -11,10 +11,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ui.configuration.*;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup;
@@ -65,27 +62,40 @@ public class UnknownSdkTracker {
       @Override
       public void run() {
         if (!Registry.is("unknown.sdk") || !UnknownSdkResolver.EP_NAME.hasAnyExtensions()) {
-          showStatus(Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+          showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
           return;
         }
 
         new UnknownSdkCollector(myProject)
           .collectSdksPromise(snapshot -> {
-            onFixableAndMissingSdksCollected(snapshot);
+            //we cannot use snapshot#missingSdks here, because it affects other IDEs/languages where our logic is not good enough
+            onFixableAndMissingSdksCollected(filterOnlyAllowedEntries(snapshot.getResolvableSdks()));
           });
       }
     });
   }
 
-  private void onFixableAndMissingSdksCollected(@NotNull UnknownSdkSnapshot snapshot) {
-    final Map<String, SdkType> missingSdks = new LinkedHashMap<>();
-    final List<UnknownSdk> fixable = new ArrayList<>(snapshot.getResolvableSdks());
-    for (String sdk : snapshot.getTotallyUnknownSdks()) {
-      missingSdks.put(sdk, null);
+  private static boolean allowFixesFor(@NotNull SdkTypeId type) {
+    return UnknownSdkResolver.EP_NAME.findFirstSafe(it -> it.supportsResolution(type)) != null;
+  }
+
+  @NotNull
+  private static <E extends UnknownSdk> List<E> filterOnlyAllowedEntries(@NotNull List<? extends E> input) {
+    List<E> copy = new ArrayList<>();
+    for (E item : input) {
+      SdkType type = item.getSdkType();
+
+      if (allowFixesFor(type)) {
+        copy.add(item);
+      }
     }
 
-    if (snapshot.getResolvableSdks().isEmpty()) {
-      showStatus(missingSdks, Collections.emptyMap(), Collections.emptyMap());
+    return copy;
+  }
+
+  private void onFixableAndMissingSdksCollected(@NotNull List<UnknownSdk> fixable) {
+    if (fixable.isEmpty()) {
+      showStatus(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
       return;
     }
 
@@ -101,38 +111,28 @@ public class UnknownSdkTracker {
 
                indicator.setText("Looking for downloadable SDKs...");
                Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
-               fixable.forEach(it -> missingSdks.put(it.getSdkName(), it.getSdkType()));
 
                if (!localFixes.isEmpty()) {
                  indicator.setText("Configuring SDKs...");
                  configureLocalSdks(localFixes);
                }
 
-               showStatus(missingSdks, localFixes, downloadFixes);
+               showStatus(fixable, localFixes, downloadFixes);
              }
            }
       );
   }
 
-  private void showStatus(@NotNull Map<String, SdkType> missingSdks,
+  private void showStatus(@NotNull List<UnknownSdk> unknownSdksWithoutFix,
                           @NotNull Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes,
                           @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes) {
     UnknownSdkBalloonNotification
       .getInstance(myProject)
       .notifyFixedSdks(localFixes);
 
-    boolean allowProjectSdkExtensions = missingSdks.isEmpty() && downloadFixes.isEmpty();
-    if (!Registry.is("unknown.sdk.show.editor.actions")) {
-      missingSdks.clear();
-      downloadFixes.clear();
-      allowProjectSdkExtensions = true;
-    }
-
     UnknownSdkEditorNotification
       .getInstance(myProject)
-      .showNotifications(allowProjectSdkExtensions,
-                         missingSdks,
-                         downloadFixes);
+      .showNotifications(unknownSdksWithoutFix, downloadFixes);
 
   }
 

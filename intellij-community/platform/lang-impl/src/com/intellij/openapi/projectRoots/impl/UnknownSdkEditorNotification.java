@@ -15,6 +15,7 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
@@ -42,7 +43,6 @@ public class UnknownSdkEditorNotification implements Disposable {
 
   private final Project myProject;
   private final FileEditorManager myFileEditorManager;
-  private final AtomicBoolean myAllowProjectSdkNotifications = new AtomicBoolean(true);
   private final AtomicReference<Set<SdkFixInfo>> myNotifications = new AtomicReference<>(new LinkedHashSet<>());
 
   UnknownSdkEditorNotification(@NotNull Project project) {
@@ -61,7 +61,7 @@ public class UnknownSdkEditorNotification implements Disposable {
   }
 
   public boolean allowProjectSdkNotifications() {
-    return myAllowProjectSdkNotifications.get();
+    return myNotifications.get().isEmpty();
   }
 
   @NotNull
@@ -82,21 +82,28 @@ public class UnknownSdkEditorNotification implements Disposable {
     return ImmutableList.copyOf(myNotifications.get());
   }
 
-  public void showNotifications(boolean allowProjectSdkValidation,
-                                @NotNull Map<String, SdkType> unifiableSdkNames,
+  public void showNotifications(@NotNull List<UnknownSdk> unfixableSdks,
                                 @NotNull Map<UnknownSdk, UnknownSdkDownloadableSdkFix> files) {
     ImmutableSet.Builder<SdkFixInfo> notifications = ImmutableSet.builder();
-    for (Map.Entry<String, SdkType> e : unifiableSdkNames.entrySet()) {
-      String name = e.getKey();
-      @Nullable SdkType type = e.getValue();
-      notifications.add(new SimpleSdkFixInfo(name, type));
+
+    if (Registry.is("unknown.sdk.show.editor.actions")) {
+      for (UnknownSdk e : unfixableSdks) {
+        @Nullable String name = e.getSdkName();
+        SdkType type = e.getSdkType();
+        if (name == null) continue;
+        notifications.add(new SimpleSdkFixInfo(name, type));
+      }
+
+      for (Map.Entry<UnknownSdk, UnknownSdkDownloadableSdkFix> e : files.entrySet()) {
+        UnknownSdk unknownSdk = e.getKey();
+        String name = unknownSdk.getSdkName();
+        if (name == null) continue;
+
+        UnknownSdkDownloadableSdkFix fix = e.getValue();
+        notifications.add(new SimpleSdkFixInfo(name, unknownSdk, fix));
+      }
     }
 
-    for (Map.Entry<UnknownSdk, UnknownSdkDownloadableSdkFix> e : files.entrySet()) {
-      notifications.add(new SimpleSdkFixInfo(e.getKey(), e.getValue()));
-    }
-
-    myAllowProjectSdkNotifications.getAndSet(allowProjectSdkValidation);
     myNotifications.set(notifications.build());
     EditorNotifications.getInstance(myProject).updateAllNotifications();
 
@@ -142,20 +149,20 @@ public class UnknownSdkEditorNotification implements Disposable {
   }
 
   private class SimpleSdkFixInfo implements SdkFixInfo {
-    private final String mySdkName;
+    @NotNull private final String mySdkName;
     @Nullable private final SdkType mySdkType;
     @Nullable private final UnknownSdk mySdk;
     @Nullable private final UnknownSdkDownloadableSdkFix myFix;
 
-    SimpleSdkFixInfo(String sdkName, @Nullable SdkType sdkType) {
+    SimpleSdkFixInfo(@NotNull String sdkName, @NotNull SdkType sdkType) {
       mySdkName = sdkName;
       mySdkType = sdkType;
       mySdk = null;
       myFix = null;
     }
 
-    SimpleSdkFixInfo(@NotNull UnknownSdk sdk, @NotNull UnknownSdkDownloadableSdkFix fix) {
-      mySdkName = sdk.getSdkName();
+    SimpleSdkFixInfo(@NotNull String name, @NotNull UnknownSdk sdk, @NotNull UnknownSdkDownloadableSdkFix fix) {
+      mySdkName = name;
       mySdkType = sdk.getSdkType();
       mySdk = sdk;
       myFix = fix;

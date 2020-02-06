@@ -4,6 +4,7 @@ package com.intellij.openapi.roots.ui.configuration;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,12 @@ import org.jetbrains.annotations.Nullable;
 public interface UnknownSdkResolver {
   @ApiStatus.Internal
   ExtensionPointName<UnknownSdkResolver> EP_NAME = ExtensionPointName.create("com.intellij.unknownSdkResolver");
+
+  /**
+   * Returns {@code true} if the Unknown Sdk features are allowed for the given type,
+   * {@code false} otherwise
+   */
+  boolean supportsResolution(@NotNull SdkTypeId sdkTypeId);
 
   /**
    * Creates search context. The same object is used to process all unknown SDKs in the project,
