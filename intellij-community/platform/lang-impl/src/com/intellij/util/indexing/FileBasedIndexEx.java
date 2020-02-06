@@ -12,8 +12,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileWithId;
+import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.search.EverythingGlobalScope;
@@ -362,7 +362,8 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       Set<VirtualFile> rootsToIndex = provider.getRootsToIndex();
       for (VirtualFile root : rootsToIndex) {
         if (visitedRoots.add(root)) {
-          FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, projectFileIndex);
+          //FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, projectFileIndex);
+          iterateRootRecursively(root, processor, indicator, visitedRoots, projectFileIndex, provider);
         }
       }
     });
@@ -410,6 +411,45 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       SharedIndexChunkConfiguration.getInstance().locateIndexes(project, allEntries, indicator);
 
       return providers;
+    });
+  }
+
+  private static void iterateRootRecursively(@NotNull final VirtualFile root,
+                                             @NotNull final ContentIterator processor,
+                                             @NotNull final ProgressIndicator indicator,
+                                             @NotNull final Set<? super VirtualFile> visitedRoots,
+                                             @NotNull final ProjectFileIndex projectFileIndex,
+                                             @NotNull IndexableRootsProvider provider) {
+    VirtualFileFilter acceptFilter = (file) -> {
+      if (!root.equals(file) && file.isDirectory() && !visitedRoots.add(file)) {
+        return false;
+      }
+      return ReadAction.compute(() -> {
+        if (projectFileIndex.isInContent(file)) {
+          //Index all files belonging to project content and not excluded.
+          return true;
+        }
+        //If file is external to project, we must index it only if it was not excluded.
+        return !(provider instanceof ModuleIndexableRootsProvider) && !projectFileIndex.isExcluded(file);
+      });
+    };
+
+    VirtualFileVisitor.Option[] options;
+    if (Registry.is("indexer.follows.symlinks")) {
+      options = new VirtualFileVisitor.Option[0];
+    } else {
+      options = new VirtualFileVisitor.Option[]{VirtualFileVisitor.NO_FOLLOW_SYMLINKS};
+    }
+
+    VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Void>(options) {
+      @NotNull
+      @Override
+      public Result visitFileEx(@NotNull VirtualFile file) {
+        indicator.checkCanceled();
+        if (!acceptFilter.accept(file)) return SKIP_CHILDREN;
+        if (!processor.processFile(file)) return skipTo(root);
+        return CONTINUE;
+      }
     });
   }
 
