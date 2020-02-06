@@ -38,7 +38,7 @@ public abstract class FileBlockReadOnlyFileChannel extends FileChannel {
   @Override
   public int read(ByteBuffer dst) throws IOException {
     int read = read(dst, myLocalPosition);
-    if (read != -1 && read != 0) {
+    if (read > 0) {
       position(myLocalPosition + read);
     }
     return read;
@@ -104,7 +104,12 @@ public abstract class FileBlockReadOnlyFileChannel extends FileChannel {
     if (position >= mySize) {
       return -1;
     }
-    return myUnderlying.read(dst, globalPosition);
+    int read = myUnderlying.read(dst, globalPosition);
+    if (read <= 0) return read;
+    if (read > mySize - position) {
+      return (int)(mySize - position);
+    }
+    return read;
   }
 
   @Override

@@ -116,9 +116,8 @@ public class IndexesExporter {
       Disposer.dispose(chunkSerializationManager);
     }
 
-    //TODO: recognize these files in FileBasedIndexImpl. Empty indices must not be rebuilt.
-    deleteEmptyIndices(fileBasedGenerators, chunkRoot.resolve("empty-indices.txt"));
-    deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot.resolve("empty-stub-indices.txt"));
+    deleteEmptyIndices(fileBasedGenerators, chunkRoot, false);
+    deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot, true);
 
     IndexInfrastructureVersion indexInfrastructureVersion = IndexInfrastructureVersion.fromExtensions(exportableFileBasedIndexExtensions,
                                                                                                       exportableStubIndexExtensions);
@@ -132,7 +131,8 @@ public class IndexesExporter {
   }
 
   private static void deleteEmptyIndices(@NotNull List<HashBasedIndexGenerator<?, ?>> generators,
-                                         @NotNull Path dumpEmptyIndicesNamesFile) {
+                                         @NotNull Path chunkRoot,
+                                         boolean stubs) {
     Set<String> emptyIndices = new TreeSet<>();
     for (HashBasedIndexGenerator<?, ?> generator : generators) {
       if (generator.isEmpty()) {
@@ -141,14 +141,16 @@ public class IndexesExporter {
         PathKt.delete(indexRoot);
       }
     }
-    if (!emptyIndices.isEmpty()) {
-      String emptyIndicesText = String.join("\n", emptyIndices);
-      try {
-        PathKt.write(dumpEmptyIndicesNamesFile, emptyIndicesText);
+    try {
+      if (stubs) {
+        EmptyIndexEnumerator.writeEmptyStubIndexes(chunkRoot, emptyIndices);
       }
-      catch (IOException e) {
-        throw new RuntimeException("Failed to write indexes file " + dumpEmptyIndicesNamesFile + ". " + e.getMessage(), e);
+      else {
+        EmptyIndexEnumerator.writeEmptyIndexes(chunkRoot, emptyIndices);
       }
+    }
+    catch (IOException e) {
+      throw new RuntimeException("Failed to write indexes file", e);
     }
   }
 

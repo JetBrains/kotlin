@@ -39,12 +39,6 @@ public class SharedIndexExtensions {
 
     @NotNull
     @Override
-    public ID<K, V> getIndexId() {
-      return myOriginalExtension.getName();
-    }
-
-    @NotNull
-    @Override
     public KeyDescriptor<K> createKeyDescriptor(@NotNull Path indexPath) {
       return myOriginalExtension.getKeyDescriptor();
     }

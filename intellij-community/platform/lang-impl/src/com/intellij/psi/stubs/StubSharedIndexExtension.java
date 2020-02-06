@@ -15,12 +15,6 @@ import java.nio.file.Path;
 public class StubSharedIndexExtension implements SharedIndexExtension<Integer, SerializedStubTree> {
   @NotNull
   @Override
-  public ID<Integer, SerializedStubTree> getIndexId() {
-    return StubUpdatingIndex.INDEX_ID;
-  }
-
-  @NotNull
-  @Override
   public KeyDescriptor<Integer> createKeyDescriptor(@NotNull Path indexPath) {
     return EnumeratorIntegerDescriptor.INSTANCE;
   }

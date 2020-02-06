@@ -20,6 +20,8 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
+import com.intellij.util.indexing.hash.building.EmptyIndexEnumerator;
+import com.intellij.util.indexing.hash.building.IndexesExporter;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator.ChunkDescriptor;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
@@ -60,7 +62,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   }
 
   @Override
-  public <Value, Key> void processChunks(@NotNull ID<Key, Value> indexId, @NotNull Processor<HashBasedMapReduceIndex<Key, Value>> processor) {
+  public <Value, Key> void processChunks(@NotNull ID<Key, Value> indexId, @NotNull Processor<UpdatableIndex<Key, Value, FileContent>> processor) {
     ConcurrentMap<Integer, SharedIndexChunk> map = myChunkMap.get(indexId);
     if (map == null) return;
     map.forEach((__, chunk) -> processor.process(chunk.getIndex()));
@@ -68,7 +70,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   @Override
   @Nullable
-  public <Value, Key> HashBasedMapReduceIndex<Key, Value> getChunk(@NotNull ID<Key, Value> indexId, int chunkId) {
+  public <Value, Key> UpdatableIndex<Key, Value, FileContent> getChunk(@NotNull ID<Key, Value> indexId, int chunkId) {
     ConcurrentMap<Integer, SharedIndexChunk> map = myChunkMap.get(indexId);
     return map == null ? null : map.get(chunkId).getIndex();
   }
@@ -261,6 +263,9 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       }
     }
 
+    Set<String> emptyIndexNames = EmptyIndexEnumerator.readEmptyIndexes(chunkRoot);
+    Set<String> emptyStubIndexNames = EmptyIndexEnumerator.readEmptyStubIndexes(chunkRoot);
+
     List<SharedIndexChunk> result = new ArrayList<>();
     for (Path child : Files.newDirectoryStream(chunkRoot)) {
       ID<?, ?> id = ID.findByName(child.getFileName().toString());
@@ -268,9 +273,14 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
         FileBasedIndexExtension<?, ?> extension = FileBasedIndexExtension.EXTENSION_POINT_NAME.findFirstSafe(ex -> ex.getName().equals(id));
         if (extension != null) {
           SharedIndexExtension sharedExtension = SharedIndexExtensions.findExtension(extension);
-
-          SharedIndexChunk chunk = new SharedIndexChunk(chunkRoot, id, chunkId, enumerator, timestamp);
-          chunk.open(sharedExtension, extension, ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex());
+          SharedIndexChunk chunk = new SharedIndexChunk(chunkRoot,
+                                                        id,
+                                                        chunkId,
+                                                        timestamp,
+                                                        emptyIndexNames.contains(id.getName()) || emptyStubIndexNames.contains(id.getName()),
+                                                        sharedExtension,
+                                                        extension,
+                                                        ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex());
           result.add(chunk);
         }
       }

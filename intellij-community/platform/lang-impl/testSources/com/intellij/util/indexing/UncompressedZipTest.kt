@@ -3,6 +3,7 @@ package com.intellij.util.indexing
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem
+import com.intellij.util.io.readText
 import com.intellij.util.io.toByteArray
 import com.intellij.util.io.zip.JBZipFile
 import junit.framework.TestCase
@@ -125,6 +126,24 @@ class UncompressedZipTest : TestCase() {
 
     assertTrue(helloBytes.contentEquals(aByteBuffer.toByteArray()))
     assertTrue(helloBytes.contentEquals(bByteBuffer.toByteArray()))
+
+    fs.close()
+  }
+
+  fun testLongFileRead() {
+    val dir = FileUtil.createTempDirectory("zip0-fs-structure-dir", null)
+
+    val file = File(dir, "archive.zip")
+    val text = "Hello".repeat(10_000)
+    val helloBytes = text.toByteArray(Charsets.UTF_8)
+    JBZipFile(file).use {
+      it.getOrCreateEntry("a.txt").data = helloBytes
+    }
+
+    val fs = UncompressedZipFileSystem.create(file.toPath())
+
+    val readText = fs.getPath("a.txt").readText()
+    assertEquals(text, readText)
 
     fs.close()
   }
