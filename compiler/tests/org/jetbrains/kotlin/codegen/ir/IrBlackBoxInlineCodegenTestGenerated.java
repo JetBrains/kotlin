@@ -3698,6 +3698,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfSuspend.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("jvmName.kt")
+        public void testJvmName_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/jvmName.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("kt26658.kt")
         public void testKt26658() throws Exception {
             runTest("compiler/testData/codegen/boxInline/suspend/kt26658.kt");
