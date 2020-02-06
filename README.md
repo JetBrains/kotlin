@@ -49,4 +49,23 @@ assert(hello.length == "World".substring(1, 4).length)
 	at <stacktrace>
 ```
 
+## Project Snapshots
+
+Snapshot builds are available through Sonatype Snapshot repository.
+
+```groovy
+buildscript {
+  repositories {
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+  }
+  dependencies {
+    classpath "com.bnorm.power:kotlin-power-assert-gradle:0.1.0-SNAPSHOT"
+  }
+}
+
+apply plugin: "com.bnorm.power.kotlin-power-assert"
+```
+
 [groovy-power-assert]: https://groovy-lang.org/testing.html#_power_assertions
