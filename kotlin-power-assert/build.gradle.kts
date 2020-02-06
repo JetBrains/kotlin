@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
+  kotlin("kapt")
   id("org.jetbrains.dokka")
 
   signing
@@ -11,6 +12,9 @@ plugins {
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.60")
+
+  kapt("com.google.auto.service:auto-service:1.0-rc6")
+  compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
 
   testImplementation(kotlin("test-junit"))
   testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.3.60")
