@@ -15,7 +15,6 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
@@ -30,7 +29,6 @@ private data class SdkLookupBuilderImpl(
   val progressIndicator: ProgressIndicator? = null,
 
   val sdkName: String? = null,
-  val sdkUseProjectSdk : Boolean = false,
 
   val sdkType: SdkType? = null,
   val sdkMinVersionInclusive: String? = null,
@@ -47,7 +45,6 @@ private data class SdkLookupBuilderImpl(
   override fun withProject(project: Project?) = copy(project = project)
   override fun withProgressMessageTitle(@Nls message: String) = copy(progressMessageTitle = message)
   override fun withSdkName(name: String) = copy(sdkName = name)
-  override fun withProjectSdk() = copy(sdkUseProjectSdk = true)
   override fun withSdkType(sdkType: SdkType) = copy(sdkType = sdkType)
   override fun withMinSdkVersionInclusive(version: String) = copy(sdkMinVersionInclusive = version)
   override fun withMaxSdkVersionExclusive(version: String) = copy(sdkMaxVersionExclusive = version)
@@ -76,17 +73,10 @@ internal class SdkLookupImpl : SdkLookup {
     }
 
     val sdk = runReadAction {
-      if (sdkUseProjectSdk) {
-        require(sdkName == null) { "sdkName must not be set if sdkUseProjectSdk is configured" }
-        requireNotNull(project) { "project must not be null to access a project SDK with sdkUseProjectSdk set" }
-
-        ProjectRootManager.getInstance(project).projectSdk
-      } else if (sdkName != null) {
-        require(!sdkUseProjectSdk) { "sdkUseProjectSdk must not be set if sdkName is configured" }
+      if (sdkName != null) {
         if (sdkType == null) {
           ProjectJdkTable.getInstance().findJdk(sdkName)
-        }
-        else {
+        } else {
           ProjectJdkTable.getInstance().findJdk(sdkName, sdkType.name)
         }
       } else {

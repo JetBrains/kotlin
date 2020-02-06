@@ -47,9 +47,6 @@ interface SdkLookupBuilder {
   fun withSdkName(name: String): SdkLookupBuilder
 
   @Contract(pure = true)
-  fun withProjectSdk(): SdkLookupBuilder
-
-  @Contract(pure = true)
   fun withSdkType(sdkType: SdkType): SdkLookupBuilder
 
   @Contract(pure = true)
