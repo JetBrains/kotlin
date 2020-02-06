@@ -393,6 +393,59 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @TestMetadata("idea/testData/joinLines/removeTrailingComma")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveTrailingComma extends AbstractJoinLinesTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveTrailingComma() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeTrailingComma"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("destructionDeclaration.kt")
+        public void testDestructionDeclaration() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclaration.kt");
+        }
+
+        @TestMetadata("destructionDeclarationInLambda.kt")
+        public void testDestructionDeclarationInLambda() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclarationInLambda.kt");
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/inner.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/lambda.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/simple.kt");
+        }
+
+        @TestMetadata("typeParameters.kt")
+        public void testTypeParameters() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/typeParameters.kt");
+        }
+
+        @TestMetadata("whenEntry.kt")
+        public void testWhenEntry() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/whenEntry.kt");
+        }
+
+        @TestMetadata("whenEntry2.kt")
+        public void testWhenEntry2() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/whenEntry2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/joinLines/stringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
