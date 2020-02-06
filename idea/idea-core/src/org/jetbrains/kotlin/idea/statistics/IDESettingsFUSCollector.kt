@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.statistics
 
 import com.intellij.internal.statistic.beans.MetricEvent
-import com.intellij.internal.statistic.beans.UsageDescriptor
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.project.Project
