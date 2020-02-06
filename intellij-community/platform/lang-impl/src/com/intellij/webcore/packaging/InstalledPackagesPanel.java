@@ -2,6 +2,7 @@
 package com.intellij.webcore.packaging;
 
 import com.google.common.collect.Lists;
+import com.intellij.CommonBundle;
 import com.intellij.ide.ActivityTracker;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -398,7 +399,7 @@ public class InstalledPackagesPanel extends JPanel {
 
   private void onUpdateStarted() {
     myPackagesTable.setPaintBusy(true);
-    myPackagesTable.getEmptyText().setText(IdeBundle.message("common.text.loading"));
+    myPackagesTable.getEmptyText().setText(CommonBundle.getLoadingTreeNodeText());
   }
 
   private void onUpdateFinished() {

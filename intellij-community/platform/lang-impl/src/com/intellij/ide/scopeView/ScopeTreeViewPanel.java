@@ -2,6 +2,7 @@
 
 package com.intellij.ide.scopeView;
 
+import com.intellij.CommonBundle;
 import com.intellij.ProjectTopics;
 import com.intellij.history.LocalHistory;
 import com.intellij.history.LocalHistoryAction;
@@ -296,7 +297,7 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
     }, settings);
     myTree.setPaintBusy(true);
     myBuilder.setTree(myTree);
-    myTree.getEmptyText().setText(IdeBundle.message("common.text.loading"));
+    myTree.getEmptyText().setText(CommonBundle.getLoadingTreeNodeText());
     myActionCallback = new ActionCallback();
     ComponentUtil.putClientProperty(myTree, TreeState.CALLBACK, new WeakReference<ActionCallback>(myActionCallback));
     myTree.setModel(myBuilder.build(myProject, true, () -> {
