@@ -1265,7 +1265,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   private static void markFileIndexed(@Nullable VirtualFile file) {
-    if (ourIndexedFile.get() != null) throw new AssertionError("Reentrant indexing");
+    if (ourIndexedFile.get() != null || ourFileToBeIndexed.get() != null) throw new AssertionError("Reentrant indexing");
     ourIndexedFile.set(file);
   }
 
@@ -1275,8 +1275,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
   @Override
   public VirtualFile getFileBeingCurrentlyIndexed() {
-    VirtualFile file = ourIndexedFile.get();
-    return file != null ? file : ourFileToBeIndexed.get();
+    return ourIndexedFile.get();
   }
 
   @Override
