@@ -39,7 +39,6 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.uast.test.env.assertEqualsToFile
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
