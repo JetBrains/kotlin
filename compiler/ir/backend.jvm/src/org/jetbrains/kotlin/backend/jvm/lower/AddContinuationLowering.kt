@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
-import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendForInlineOfLambda
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfLambda
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
@@ -71,6 +71,18 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 functionStack.push(declaration)
                 return super.visitFunction(declaration).also { functionStack.pop() }
+            }
+
+            override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
+                val receiverType = expression.dispatchReceiver?.type
+                val newExpression = super.visitMemberAccess(expression) as IrMemberAccessExpression
+                if (receiverType != null && receiverType != newExpression.dispatchReceiver?.type) {
+                    newExpression.dispatchReceiver = IrTypeOperatorCallImpl(
+                        expression.startOffset, expression.endOffset, receiverType,
+                        IrTypeOperator.IMPLICIT_CAST, receiverType, newExpression.dispatchReceiver!!
+                    )
+                }
+                return newExpression
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
