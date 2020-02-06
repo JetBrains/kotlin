@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.services.ServiceEventListener.ServiceEvent;
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.execution.services.ServiceModelFilter.ServiceViewFilter;
@@ -24,7 +25,6 @@ import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
@@ -512,7 +512,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       }
       String name = viewState.id;
       if (StringUtil.isEmpty(name)) {
-        name = Messages.showInputDialog(project, "Group Name:", "Group Services", null, null, null);
+        name = Messages.showInputDialog(project,
+                                        ExecutionBundle.message("service.view.group.label"),
+                                        ExecutionBundle.message("service.view.group.title"),
+                                        null, null, null);
         if (StringUtil.isEmpty(name)) return null;
       }
       return new PresentationData(name, null, AllIcons.Nodes.Folder, null);
@@ -546,15 +549,11 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private static void updateContentTab(ServiceViewItem item, Content content) {
     if (item != null) {
-      Condition<?> expired = o -> {
-        ContentManager contentManager = content.getManager();
-        return contentManager == null || contentManager.isDisposed();
-      };
-      AppUIUtil.invokeOnEdt(() -> {
+      AppUIExecutor.onUiThread().expireWith(content).submit(() -> {
         ItemPresentation itemPresentation = item.getViewDescriptor().getContentPresentation();
         content.setDisplayName(ServiceViewDragHelper.getDisplayName(itemPresentation));
         content.setIcon(itemPresentation.getIcon(false));
-      }, expired);
+      });
     }
   }
 
@@ -847,7 +846,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       if (myContentManager.getContentCount() > 1) {
         Content mainContent = getMainContent(myContentManager);
         if (mainContent != null) {
-          mainContent.setDisplayName("All Services");
+          mainContent.setDisplayName(ExecutionBundle.message("service.view.all.services"));
         }
       }
     }
@@ -982,9 +981,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     ActivateToolWindowByContributorAction(ServiceViewContributor<?> contributor, ItemPresentation contributorPresentation) {
       myContributor = contributor;
       Presentation templatePresentation = getTemplatePresentation();
-      templatePresentation.setText(ServiceViewDragHelper.getDisplayName(contributorPresentation) + " (Services)");
+      templatePresentation.setText(ExecutionBundle.lazyMessage("service.view.activate.tool.window.action.name",
+                                                               ServiceViewDragHelper.getDisplayName(contributorPresentation)));
       templatePresentation.setIcon(contributorPresentation.getIcon(false));
-      templatePresentation.setDescription("Activate " + getToolWindowId() + " window");
+      templatePresentation.setDescription(ExecutionBundle.lazyMessage("service.view.activate.tool.window.action.description"));
     }
 
     @Override

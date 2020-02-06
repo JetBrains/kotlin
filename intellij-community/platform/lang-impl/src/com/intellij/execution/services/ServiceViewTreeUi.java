@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.navigationToolbar.NavBarBorder;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -25,7 +26,8 @@ class ServiceViewTreeUi implements ServiceViewUi {
   private final JPanel myMasterPanel;
   private final JPanel myDetailsPanel;
   private final JPanel myNavBarPanel;
-  private final JBPanelWithEmptyText myMessagePanel = new JBPanelWithEmptyText().withEmptyText("Select service to view details");
+  private final JBPanelWithEmptyText myMessagePanel = new JBPanelWithEmptyText().withEmptyText(
+    ExecutionBundle.message("service.view.empty.selection.text"));
   private final Set<JComponent> myDetailsComponents = ContainerUtil.createWeakSet();
   private ActionToolbar myServiceActionToolbar;
   private ActionToolbar myMasterActionToolbar;

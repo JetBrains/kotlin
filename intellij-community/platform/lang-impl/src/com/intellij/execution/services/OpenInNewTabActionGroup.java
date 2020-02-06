@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -48,7 +49,7 @@ public class OpenInNewTabActionGroup extends DefaultActionGroup implements DumbA
     }
 
     ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(null, this, e.getDataContext(), true, null, 5);
-    popup.setAdText("Drag node onto tool window header to open a new tab", SwingConstants.LEFT);
+    popup.setAdText(ExecutionBundle.message("service.view.open.in.new.tab.ad.text"), SwingConstants.LEFT);
 
     if (e.isFromActionToolbar()) {
       Component source = ObjectUtils.tryCast(e.getInputEvent().getSource(), Component.class);

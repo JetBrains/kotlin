@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.dnd.DnDManager;
@@ -360,8 +361,8 @@ class ServiceTreeView extends ServiceView {
   }
 
   private static void setEmptyText(JComponent component, StatusText emptyText) {
-    emptyText.setText("No services configured.");
-    emptyText.appendSecondaryText("Add Service",
+    emptyText.setText(ExecutionBundle.message("service.view.empty.tree.text"));
+    emptyText.appendSecondaryText(ExecutionBundle.message("service.view.add.service.action.name"),
                                   new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.linkColor()),
                                   new ActionListener() {
                                     @Override

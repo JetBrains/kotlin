@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.CommonBundle;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.DeleteProvider;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -9,7 +11,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +37,10 @@ class ServiceViewDeleteProvider implements DeleteProvider {
     items = filterChildren(items);
     if (items.isEmpty()) return;
 
-    int size = items.size();
     if (Messages.showYesNoDialog(project,
-                                 "Delete " + size + " " + StringUtil.pluralize("item", size) + "?",
-                                 "Delete",
+                                 ExecutionBundle.message("service.view.delete.confirmation",
+                                                         ExecutionBundle.message("service.view.items", items.size())),
+                                 CommonBundle.message("button.delete"),
                                  Messages.getWarningIcon())
         != Messages.YES) {
       return;
