@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.debugger.stepping.filter
+package org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto
 
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.BreakpointStepMethodFilter
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodNameFromAnyLang
 import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineArgument
 import org.jetbrains.kotlin.idea.debugger.safeMethod
-import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinLambdaSmartStepTarget
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
