@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -87,12 +89,15 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
             val representative = coneType.lookupTag.typeParameterSymbol.fir.bounds.firstOrNull {
                 (it as? FirResolvedTypeRef)?.type is ConeClassLikeType
             }
-            if (representative == null) {
+            if (representative == null || representative is FirImplicitNullableAnyTypeRef || representative is FirImplicitAnyTypeRef) {
                 append("Ljava/lang/Object")
             } else {
                 appendClassLikeType(representative.coneTypeUnsafe())
             }
-            append(coneType.lookupTag.name)
+        }
+        is ConeFlexibleType -> {
+            appendConeType(coneType.lowerBound)
+            return
         }
     }
     append(";")

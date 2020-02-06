@@ -24,6 +24,8 @@ class JvmMappedScope(
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
             val jvmSignature = symbol.fir.computeJvmDescriptor()
+                .replace("kotlin/Any", "java/lang/Object")
+                .replace("kotlin/String", "java/lang/String")
             if (jvmSignature in whiteListSignatures) {
                 processor(symbol)
             }

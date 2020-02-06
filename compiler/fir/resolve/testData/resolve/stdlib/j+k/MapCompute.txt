@@ -1,16 +1,16 @@
 FILE: MapCompute.kt
     public final fun <D> R|kotlin/collections/MutableMap<kotlin/String, kotlin/collections/MutableSet<D>>|.initAndAdd(key: R|kotlin/String|, value: R|D|): R|kotlin/Unit| {
-        this@R|/initAndAdd|.<Unresolved name: compute>#(R|<local>/key|, <L> = compute@fun <anonymous>(_: R|ERROR CLASS: No type for parameter|, maybeValues: R|ERROR CLASS: No type for parameter|): R|ERROR CLASS: Unresolved: <error>| {
-            lval setOfValues: R|ERROR CLASS: Unresolved: <error>| = when (lval <elvis>: R|ERROR CLASS: No type for parameter| = R|<local>/maybeValues|) {
+        this@R|/initAndAdd|.R|FakeOverride<java/util/Map.compute: R|kotlin/collections/MutableSet<D>?|>|(R|<local>/key|, <L> = compute@fun <anonymous>(_: R|kotlin/String|, maybeValues: R|kotlin/collections/MutableSet<D>|): R|kotlin/collections/MutableSet<D>| {
+            lval setOfValues: R|kotlin/collections/MutableSet<D>| = when (lval <elvis>: R|kotlin/collections/MutableSet<D>| = R|<local>/maybeValues|) {
                 ==($subj$, Null(null)) ->  {
-                    R|kotlin/collections/mutableSetOf|<R|kotlin/Any?|>()
+                    R|kotlin/collections/mutableSetOf|<R|D|>()
                 }
                 else ->  {
                     R|<local>/<elvis>|
                 }
             }
 
-            R|<local>/setOfValues|.<Unresolved name: add>#(R|<local>/value|)
+            R|<local>/setOfValues|.R|FakeOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/value|)
             ^ R|<local>/setOfValues|
         }
         )
