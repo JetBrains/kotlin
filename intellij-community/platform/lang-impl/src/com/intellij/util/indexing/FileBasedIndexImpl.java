@@ -639,10 +639,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @Override
-  <K> void ensureUpToDate(@NotNull final ID<K, ?> indexId,
-                          @Nullable Project project,
-                          @Nullable GlobalSearchScope filter,
-                          @Nullable VirtualFile restrictedFile) {
+  public <K> boolean ensureUpToDate(@NotNull final ID<K, ?> indexId,
+                                    @Nullable Project project,
+                                    @Nullable GlobalSearchScope filter,
+                                    @Nullable VirtualFile restrictedFile) {
     ProgressManager.checkCanceled();
     getChangedFilesCollector().ensureUpToDate();
     ApplicationManager.getApplication().assertReadAccessAllowed();
@@ -650,18 +650,19 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     NoAccessDuringPsiEvents.checkCallContext();
 
     if (!needsFileContentLoading(indexId)) {
-      return; //indexed eagerly in foreground while building unindexed file list
+      return true; //indexed eagerly in foreground while building unindexed file list
     }
     if (filter == GlobalSearchScope.EMPTY_SCOPE) {
-      return;
+      return false;
     }
-    if (ourDumbModeAccessType.get() == null && ActionUtil.isDumbMode(project)) {
+    boolean dumbModeAccessRestricted = ourDumbModeAccessType.get() == null;
+    if (dumbModeAccessRestricted && ActionUtil.isDumbMode(project)) {
       handleDumbMode(project);
     }
 
     if (myReentrancyGuard.get().booleanValue()) {
       //assert false : "ensureUpToDate() is not reentrant!";
-      return;
+      return true;
     }
     myReentrancyGuard.set(Boolean.TRUE);
 
@@ -669,9 +670,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       if (isUpToDateCheckEnabled()) {
         try {
           if (!RebuildStatus.isOk(indexId)) {
-            throw new ServiceNotReadyException();
+            if (dumbModeAccessRestricted) {
+              throw new ServiceNotReadyException();
+            }
+            else {
+              return false;
+            }
           }
-          if (ourDumbModeAccessType.get() == null || !ActionUtil.isDumbMode(project)) {
+          if (dumbModeAccessRestricted || !ActionUtil.isDumbMode(project)) {
             forceUpdate(project, filter, restrictedFile);
           }
           if (!areUnsavedDocumentsIndexed(indexId)) { // todo: check scope ?
@@ -692,6 +698,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     finally {
       myReentrancyGuard.set(Boolean.FALSE);
     }
+    return true;
   }
 
   private boolean areUnsavedDocumentsIndexed(@NotNull ID<?, ?> indexId) {

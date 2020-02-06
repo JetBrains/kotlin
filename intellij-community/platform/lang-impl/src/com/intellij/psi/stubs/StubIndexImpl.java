@@ -482,8 +482,10 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                                     @NotNull GlobalSearchScope scope,
                                     @Nullable IdFilter idFilter) {
     final UpdatableIndex<K, Void, FileContent> index = getIndex(indexKey); // wait for initialization to finish
-    if (index == null) return true;
-    FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, scope.getProject(), scope);
+    if (index == null ||
+        !((FileBasedIndexEx)FileBasedIndex.getInstance()).ensureUpToDate(StubUpdatingIndex.INDEX_ID, scope.getProject(), scope, null)) {
+      return true;
+    }
 
     try {
       return myAccessValidator.validate(StubUpdatingIndex.INDEX_ID, ()->FileBasedIndexImpl.disableUpToDateCheckIn(()->
@@ -520,9 +522,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     ID<Integer, SerializedStubTree> stubUpdatingIndexId = StubUpdatingIndex.INDEX_ID;
     final UpdatableIndex<Key, Void, FileContent> index = getIndex(indexKey);   // wait for initialization to finish
-    if (index == null) return IdIterator.EMPTY;
-
-    fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope);
+    if (index == null || !fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope, null)) return IdIterator.EMPTY;
 
     if (idFilter == null) {
       idFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).projectIndexableFiles(project);

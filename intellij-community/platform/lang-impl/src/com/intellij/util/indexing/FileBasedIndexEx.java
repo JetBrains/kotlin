@@ -52,11 +52,15 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   @ApiStatus.Internal
   abstract void waitUntilIndicesAreInitialized();
 
+  /**
+   * @return true if index can be processed after it or
+   * false if no need to process it because, for example, scope is empty or index is going to rebuild.
+   */
   @ApiStatus.Internal
-  abstract <K> void ensureUpToDate(@NotNull final ID<K, ?> indexId,
-                                   @Nullable Project project,
-                                   @Nullable GlobalSearchScope filter,
-                                   @Nullable VirtualFile restrictedFile);
+  public abstract <K> boolean ensureUpToDate(@NotNull final ID<K, ?> indexId,
+                                             @Nullable Project project,
+                                             @Nullable GlobalSearchScope filter,
+                                             @Nullable VirtualFile restrictedFile);
 
   @Override
   @NotNull
@@ -111,7 +115,9 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       if (index == null) {
         return true;
       }
-      ensureUpToDate(indexId, scope.getProject(), scope);
+      if (!ensureUpToDate(indexId, scope.getProject(), scope, null)) {
+        return true;
+      }
       if (idFilter == null) {
         idFilter = projectIndexableFiles(scope.getProject());
       }
@@ -201,7 +207,9 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       }
       final Project project = filter.getProject();
       //assert project != null : "GlobalSearchScope#getProject() should be not-null for all index queries";
-      ensureUpToDate(indexId, project, filter, restrictToFile);
+      if (!ensureUpToDate(indexId, project, filter, restrictToFile)) {
+        return null;
+      }
 
       return myAccessValidator.validate(indexId, ()-> ConcurrencyUtil.withLock(index.getReadLock(), ()->computable.convert(index)));
     }
