@@ -93,7 +93,7 @@ class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
             val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.parentDescriptor, value, field)
 
             if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
-                val shouldRenderDelegatedProperty = KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES
+                val shouldRenderDelegatedProperty = KotlinDebuggerSettings.getInstance().renderDelegatedProperties
                 if (shouldRenderDelegatedProperty && !ToggleKotlinVariablesState.getService().kotlinVariableView) {
                     children.add(nodeManager.createNode(fieldDescriptor, context))
                 }

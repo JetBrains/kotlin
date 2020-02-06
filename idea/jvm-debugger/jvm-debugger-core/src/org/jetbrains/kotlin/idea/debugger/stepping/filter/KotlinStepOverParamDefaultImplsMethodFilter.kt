@@ -27,7 +27,7 @@ class KotlinStepOverParamDefaultImplsMethodFilter(
 
             val method = location.safeMethod() ?: return null
             val name = method.name()
-            assert(name.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX));
+            assert(name.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX))
             val originalName = name.dropLast(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX.length)
             val signature = method.signature()
             val containingTypeName = location.declaringType().name()

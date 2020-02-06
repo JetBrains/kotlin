@@ -29,18 +29,18 @@ public class KotlinSteppingConfigurableUi implements ConfigurableUi<KotlinDebugg
 
     @Override
     public void reset(@NotNull KotlinDebuggerSettings settings) {
-        boolean flag = settings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES();
+        boolean flag = settings.getDisableKotlinInternalClasses();
         ignoreKotlinMethods.setSelected(flag);
     }
 
     @Override
     public boolean isModified(@NotNull KotlinDebuggerSettings settings) {
-        return settings.getDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES() != ignoreKotlinMethods.isSelected();
+        return settings.getDisableKotlinInternalClasses() != ignoreKotlinMethods.isSelected();
     }
 
     @Override
     public void apply(@NotNull KotlinDebuggerSettings settings) {
-        settings.setDEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES(ignoreKotlinMethods.isSelected());
+        settings.setDisableKotlinInternalClasses(ignoreKotlinMethods.isSelected());
     }
 
     @NotNull
