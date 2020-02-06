@@ -65,6 +65,10 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
         reloadsQueue.run(object : Task.Backgroundable(project, LOADING_GRADLE_APPLE_PROJECT) {
             override fun run(indicator: ProgressIndicator) {
                 updateOCWorkspace()
+
+                configurationData.values.forEach { data ->
+                    AppleXcodeProjectFileModificationListener.setUp(project, data.target, disposable)
+                }
             }
         })
     }

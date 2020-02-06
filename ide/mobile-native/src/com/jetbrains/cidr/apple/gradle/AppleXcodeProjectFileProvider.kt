@@ -35,17 +35,19 @@ class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
     }
 
     companion object {
+        fun findXcodeProjFile(target: AppleTargetModel): File =
+            target.buildDir.resolve("${target.name}.xcodeproj")
+
         @Synchronized
         private fun generateXcodeProject(project: Project, target: AppleTargetModel): File? {
-            val xcodeProjBaseDir = target.buildDir
-            val xcodeProjFile = xcodeProjBaseDir.resolve("${target.name}.xcodeproj")
+            val xcodeProjFile = findXcodeProjFile(target)
 
             val settings = ExternalSystemTaskExecutionSettings()
             settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
             settings.externalProjectPath = project.basePath
             settings.executionName = MobileBundle.message("generate.xcodeproj")
             settings.taskNames = listOf("generateXcodeproj")
-            settings.vmOptions = "-DxcodeProjBaseDir='${xcodeProjBaseDir.path}'"
+            settings.vmOptions = "-DxcodeProjBaseDir='${xcodeProjFile.parent}'"
 
             val success = FutureResult<File?>()
             val callback = object : TaskCallback {
