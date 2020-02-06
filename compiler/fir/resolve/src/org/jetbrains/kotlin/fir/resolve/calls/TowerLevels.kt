@@ -117,6 +117,7 @@ class MemberScopeTowerLevel(
 
         val withSynthetic = FirSyntheticPropertiesScope(session, scope)
         withSynthetic.processScopeMembers { symbol ->
+            empty = false
             output.consumeCandidate(symbol, NotNullableReceiverValue(dispatchReceiver), extensionReceiver as? ImplicitReceiverValue<*>)
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
