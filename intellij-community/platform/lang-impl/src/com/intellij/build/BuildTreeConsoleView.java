@@ -365,6 +365,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   public String getSelectedNodeConsoleText() {
     ExecutionConsole console = myConsoleViewHandler.getCurrentConsole();
     if (console instanceof ConsoleViewImpl) {
+      ((ConsoleViewImpl)console).flushDeferredText();
       return ((ConsoleViewImpl)console).getText();
     }
     return null;

@@ -133,7 +133,8 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     if (node != selectedPathComponent) {
       assertEquals(node.toString(), selectedPathComponent.toString())
     }
-    consoleTextChecker.invoke(eventView.selectedNodeConsoleText)
+    val selectedNodeConsoleText = runInEdtAndGet { eventView.selectedNodeConsoleText }
+    consoleTextChecker.invoke(selectedNodeConsoleText)
   }
 
   interface TestViewManager : ViewManager {
