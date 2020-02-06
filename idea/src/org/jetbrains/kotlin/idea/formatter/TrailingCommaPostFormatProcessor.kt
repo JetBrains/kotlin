@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -13,7 +14,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
 import com.intellij.psi.util.PsiUtil.getElementType
@@ -49,41 +49,41 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
     }
 
     private fun processCommaOwner(parent: KtElement) {
+        if (!postFormatIsEnable(parent)) return
+        parent.putUserData(IS_INSIDE, true)
+
         val lastElement = trailingCommaOrLastElement(parent) ?: return
         val elementType = getElementType(lastElement)
-        when {
-            needComma(parent, settings, false) -> {
-                // add a missing comma
-                if (elementType != KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
-                    lastElement.addCommaAfter(KtPsiFactory(parent))
+        updatePsi(parent) {
+            when {
+                needComma(parent, settings, false) -> {
+                    // add a missing comma
+                    if (elementType != KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
+                        lastElement.addCommaAfter(KtPsiFactory(parent))
+                    }
+
+                    correctCommaPosition(parent)
                 }
-
-                correctCommaPosition(parent)
+                needComma(parent, settings) -> {
+                    correctCommaPosition(parent)
+                }
+                elementType == KtTokens.COMMA -> {
+                    // remove redundant comma
+                    lastElement.delete()
+                }
             }
-            needComma(parent, settings) -> {
-                correctCommaPosition(parent)
-            }
-            elementType == KtTokens.COMMA -> {
-                // remove redundant comma
-                lastElement.delete()
-            }
-        }
-
-        if (postFormatIsEnable(parent)) {
-            updatePsi(parent)
         }
     }
 
-    private fun updatePsi(element: KtElement) {
-        val oldLength = element.textLength
-        PostprocessReformattingAspect.getInstance(element.project).disablePostprocessFormattingInside {
-            val result = CodeStyleManager.getInstance(element.project).reformat(element)
-            myPostProcessor.updateResultRange(oldLength, result.textLength)
-        }
+    private fun updatePsi(element: KtElement, block: () -> Unit) {
+        val oldLength = element.parent.textLength
+        block()
+
+        val resultElement = CodeStyleManager.getInstance(element.project).reformat(element)
+        myPostProcessor.updateResultRange(oldLength, resultElement.parent.textLength)
     }
 
     private fun correctCommaPosition(parent: KtElement) {
-        if (!postFormatIsEnable(parent)) return
         for (pointerToComma in findInvalidCommas(parent).map { it.createSmartPointer() }) {
             pointerToComma.element?.let {
                 correctComma(it)
@@ -108,11 +108,10 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
 
     companion object {
         private val LOG = Logger.getInstance(TrailingCommaVisitor::class.java)
+        private val IS_INSIDE = Key.create<Boolean>("TrailingCommaPostFormat")
+        private fun postFormatIsEnable(source: PsiElement): Boolean = source.getUserData(IS_INSIDE)?.not() ?: true
     }
 }
-
-
-private fun postFormatIsEnable(source: PsiElement): Boolean = !PostprocessReformattingAspect.getInstance(source.project).isDisabled
 
 private fun PsiElement.addCommaAfter(factory: KtPsiFactory) {
     val comma = factory.createComma()
