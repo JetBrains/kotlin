@@ -33,6 +33,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +43,9 @@ import java.util.*;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public abstract class CreateFromTemplateActionBase extends AnAction {
-  public CreateFromTemplateActionBase(final String title, final String description, final Icon icon) {
+  public CreateFromTemplateActionBase(@Nls(capitalization = Nls.Capitalization.Title) String title,
+                                      @Nls(capitalization = Nls.Capitalization.Sentence) String description,
+                                      Icon icon) {
     super(title, description, icon);
   }
 
