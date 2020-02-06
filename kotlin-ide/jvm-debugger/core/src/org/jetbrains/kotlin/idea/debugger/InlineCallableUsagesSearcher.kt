@@ -62,7 +62,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
                 try {
                     ProgressManager.getInstance().runProcess(task, EmptyProgressIndicator())
                 } catch (e: InterruptedException) {
-                    isSuccess = false;
+                    isSuccess = false
                 }
             }
 

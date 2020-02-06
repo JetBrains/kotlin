@@ -91,36 +91,36 @@ class KotlinSyntheticTypeComponentProvider : SyntheticTypeComponentProvider {
         return hasInterfaceWithImplementation(this)
     }
 
-    private val LOAD_INSTRUCTIONS_WITH_INDEX = Opcodes.ILOAD.toByte()..Opcodes.ALOAD.toByte()
-    private val LOAD_INSTRUCTIONS = (Opcodes.ALOAD + 1).toByte()..(Opcodes.IALOAD - 1).toByte()
-
-    private val RETURN_INSTRUCTIONS = Opcodes.IRETURN.toByte()..Opcodes.RETURN.toByte()
+    private companion object {
+        private val LOAD_INSTRUCTIONS_WITH_INDEX = Opcodes.ILOAD.toByte()..Opcodes.ALOAD.toByte()
+        private val LOAD_INSTRUCTIONS = (Opcodes.ALOAD + 1).toByte()..(Opcodes.IALOAD - 1).toByte()
+        private val RETURN_INSTRUCTIONS = Opcodes.IRETURN.toByte()..Opcodes.RETURN.toByte()
+    }
 
     // Check that method contains only load and invokeStatic instructions. Note that if after load goes ldc instruction it could be checkParametersNotNull method invocation
     private fun hasOnlyInvokeStatic(m: Method): Boolean {
-        val bytecodes = m.bytecodes()
+        val instructions = m.bytecodes()
         var i = 0
         var isALoad0BeforeStaticCall = false
-        while (i < bytecodes.size) {
-            val instr = bytecodes[i]
-            when {
-                instr == 42.toByte() /* ALOAD_0 */ -> {
+        while (i < instructions.size) {
+            when (val instr = instructions[i]) {
+                42.toByte() /* ALOAD_0 */ -> {
                     i += 1
                     isALoad0BeforeStaticCall = true
                 }
-                instr in LOAD_INSTRUCTIONS_WITH_INDEX || instr in LOAD_INSTRUCTIONS -> {
+                in LOAD_INSTRUCTIONS_WITH_INDEX, in LOAD_INSTRUCTIONS -> {
                     i += 1
                     if (instr in LOAD_INSTRUCTIONS_WITH_INDEX) i += 1
-                    val nextInstr = bytecodes[i]
+                    val nextInstr = instructions[i]
                     if (nextInstr == Opcodes.LDC.toByte()) {
                         i += 2
                         isALoad0BeforeStaticCall = false
                     }
                 }
-                instr == Opcodes.INVOKESTATIC.toByte() -> {
+                Opcodes.INVOKESTATIC.toByte() -> {
                     i += 3
-                    if (isALoad0BeforeStaticCall && i == (bytecodes.size - 1)) {
-                        val nextInstr = bytecodes[i]
+                    if (isALoad0BeforeStaticCall && i == (instructions.size - 1)) {
+                        val nextInstr = instructions[i]
                         return nextInstr in RETURN_INSTRUCTIONS
                     }
                 }

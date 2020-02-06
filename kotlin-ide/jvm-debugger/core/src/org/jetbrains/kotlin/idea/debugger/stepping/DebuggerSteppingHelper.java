@@ -25,7 +25,6 @@ import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.settings.DebuggerSettings;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.classFilter.ClassFilter;
 import com.intellij.ui.classFilter.DebuggerClassFilterProvider;
 import com.sun.jdi.Location;
@@ -44,8 +43,6 @@ import org.jetbrains.kotlin.idea.debugger.SafeUtilKt;
 import java.util.List;
 
 public class DebuggerSteppingHelper {
-    private static final Logger LOG = Logger.getInstance(DebuggerSteppingHelper.class);
-
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             SuspendContextImpl suspendContext,
             boolean ignoreBreakpoints,

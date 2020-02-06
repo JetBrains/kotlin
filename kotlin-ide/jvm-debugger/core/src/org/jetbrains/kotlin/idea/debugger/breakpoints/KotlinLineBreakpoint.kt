@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.idea.debugger.isDexDebug

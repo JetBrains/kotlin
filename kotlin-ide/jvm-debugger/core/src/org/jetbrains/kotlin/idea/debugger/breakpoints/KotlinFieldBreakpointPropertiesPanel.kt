@@ -57,20 +57,20 @@ class KotlinFieldBreakpointPropertiesPanel : XBreakpointCustomPropertiesPanel<XL
     }
 
     override fun loadFrom(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>) {
-        myWatchInitializationCheckBox.isSelected = breakpoint.properties.WATCH_INITIALIZATION
-        myWatchAccessCheckBox.isSelected = breakpoint.properties.WATCH_ACCESS
-        myWatchModificationCheckBox.isSelected = breakpoint.properties.WATCH_MODIFICATION
+        myWatchInitializationCheckBox.isSelected = breakpoint.properties.watchInitialization
+        myWatchAccessCheckBox.isSelected = breakpoint.properties.watchAccess
+        myWatchModificationCheckBox.isSelected = breakpoint.properties.watchModification
     }
 
     override fun saveTo(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>) {
-        var changed = breakpoint.properties.WATCH_ACCESS != myWatchAccessCheckBox.isSelected
-        breakpoint.properties.WATCH_ACCESS = myWatchAccessCheckBox.isSelected
+        var changed = breakpoint.properties.watchAccess != myWatchAccessCheckBox.isSelected
+        breakpoint.properties.watchAccess = myWatchAccessCheckBox.isSelected
 
-        changed = breakpoint.properties.WATCH_MODIFICATION != myWatchModificationCheckBox.isSelected || changed
-        breakpoint.properties.WATCH_MODIFICATION = myWatchModificationCheckBox.isSelected
+        changed = breakpoint.properties.watchModification != myWatchModificationCheckBox.isSelected || changed
+        breakpoint.properties.watchModification = myWatchModificationCheckBox.isSelected
 
-        changed = breakpoint.properties.WATCH_INITIALIZATION != myWatchInitializationCheckBox.isSelected || changed
-        breakpoint.properties.WATCH_INITIALIZATION = myWatchInitializationCheckBox.isSelected
+        changed = breakpoint.properties.watchInitialization != myWatchInitializationCheckBox.isSelected || changed
+        breakpoint.properties.watchInitialization = myWatchInitializationCheckBox.isSelected
 
         if (changed) {
             (breakpoint as XBreakpointBase<*, *, *>).fireBreakpointChanged()
