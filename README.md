@@ -49,6 +49,20 @@ assert(hello.length == "World".substring(1, 4).length)
 	at <stacktrace>
 ```
 
+## Kotlin IR
+
+Using this compiler plugin only works if the code is compiled using IR. This can
+only be enabled when compiling the test SourceSet if desired. As Kotlin IR is
+still experimental, mileage may vary.
+
+```groovy
+compileTestKotlin {
+    kotlinOptions {
+        useIR = true
+    }
+}
+```
+
 ## Project Snapshots
 
 Snapshot builds are available through Sonatype Snapshot repository.
