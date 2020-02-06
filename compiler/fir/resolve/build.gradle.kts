@@ -13,6 +13,7 @@ dependencies {
     compile(project(":core:deserialization"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:fir:tree"))
+    compile(project(":compiler:frontend"))
     compile("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.2")
 
     compileOnly(project(":kotlin-reflect-api"))
