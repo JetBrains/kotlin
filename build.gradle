@@ -83,7 +83,6 @@ ext {
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
     kotlinNativeUtilsModule="org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}"
     kotlinUtilKliMetadatabModule="org.jetbrains.kotlin:kotlin-util-klib-metadata:${kotlinVersion}"
-    kotlinCoroutinesExperimentalCompatModule="org.jetbrains.kotlin:kotlin-coroutines-experimental-compat:${kotlinVersion}:sources"
 
     konanVersionFull = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
     gradlePluginVersion = konanVersionFull
