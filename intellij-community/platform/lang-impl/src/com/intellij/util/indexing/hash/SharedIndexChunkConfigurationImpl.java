@@ -21,6 +21,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
+import com.intellij.util.indexing.provided.SharedIndexChunkLocator.ChunkDescriptor;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -136,7 +137,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     return FileContentHashIndexExtension.NULL_HASH_ID;
   }
 
-  private void attachChunk(@NotNull SharedIndexChunkLocator.ChunkDescriptor chunkDescriptor,
+  private void attachChunk(@NotNull ChunkDescriptor chunkDescriptor,
                            @NotNull Project project) throws IOException {
     for (SharedIndexChunk chunk : registerChunk(chunkDescriptor)) {
       ConcurrentMap<Integer, SharedIndexChunk> chunks = myChunkMap.computeIfAbsent(chunk.getIndexName(), __ -> new ConcurrentHashMap<>());
@@ -147,7 +148,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   // for now called sequentially on a single background thread
   public void loadSharedIndex(@NotNull Project project,
-                              @NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor,
+                              @NotNull ChunkDescriptor descriptor,
                               @NotNull ProgressIndicator indicator,
                               @NotNull IndexInfrastructureVersion ideVersion) {
     if (project.isDisposed()) return;
@@ -188,7 +189,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     }
   }
 
-  private boolean chunkIsNotRegistered(@NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor) throws IOException {
+  private boolean chunkIsNotRegistered(@NotNull ChunkDescriptor descriptor) throws IOException {
     return myChunkDescriptorEnumerator.tryEnumerate(descriptor.getChunkUniqueId()) == 0;
   }
 
@@ -209,11 +210,20 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       IndexInfrastructureVersion ideVersion = IndexInfrastructureVersion.getIdeVersion();
 
       for (SharedIndexChunkLocator locator : SharedIndexChunkLocator.EP_NAME.getExtensionList()) {
-        locator.locateIndex(project, entries, descriptor -> {
+        List<ChunkDescriptor> descriptors;
+        try {
+          descriptors = locator.locateIndex(project, entries, indicator);
+        }
+        catch (Throwable t) {
+          LOG.error("Failed to execute SharedIndexChunkLocator: " + locator.getClass() + ". " + t.getMessage(), t);
+          continue;
+        }
+
+        for (ChunkDescriptor descriptor : descriptors) {
           if (ideVersion.getBaseIndexes().equals(descriptor.getSupportedInfrastructureVersion().getBaseIndexes())) {
             loadSharedIndex(project, descriptor, indicator, ideVersion);
           }
-        }, indicator);
+        }
       }
     };
     if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -224,7 +234,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   }
 
   @NotNull
-  private List<SharedIndexChunk> registerChunk(SharedIndexChunkLocator.@NotNull ChunkDescriptor descriptor) throws IOException {
+  private List<SharedIndexChunk> registerChunk(@NotNull ChunkDescriptor descriptor) throws IOException {
     String chunkRootName = descriptor.getChunkUniqueId();
     int chunkId = myChunkDescriptorEnumerator.enumerate(chunkRootName);
     if (chunkId == 0) {

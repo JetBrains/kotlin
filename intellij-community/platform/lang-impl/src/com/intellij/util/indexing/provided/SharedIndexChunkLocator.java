@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,10 +29,9 @@ public interface SharedIndexChunkLocator {
    * This method should work fast and it should only download/process indexes metadata.
    * The actual download run with {@link ChunkDescriptor#downloadChunk(Path, ProgressIndicator)} method later.
    */
-  void locateIndex(@NotNull Project project,
-                   @NotNull Collection<? extends OrderEntry> entries,
-                   @NotNull Consumer<? super ChunkDescriptor> descriptorProcessor,
-                   @NotNull ProgressIndicator indicator);
+  List<ChunkDescriptor> locateIndex(@NotNull Project project,
+                                    @NotNull Collection<? extends OrderEntry> entries,
+                                    @NotNull ProgressIndicator indicator);
 
   /**
    * A handler for a possible indexes chunk that this extension is able to supply

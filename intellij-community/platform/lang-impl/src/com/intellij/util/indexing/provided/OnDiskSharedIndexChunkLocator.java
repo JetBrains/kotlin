@@ -5,9 +5,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.stubs.StubIndexExtension;
-import com.intellij.util.Consumer;
-import com.intellij.util.indexing.FileBasedIndexExtension;
 import com.intellij.util.indexing.IndexInfrastructureVersion;
 import com.intellij.util.io.PathKt;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +15,7 @@ import java.net.URI;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jps.TimingLog.LOG;
 
@@ -25,23 +23,22 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
   public static final String ROOT_PROP = "on.disk.shared.index.root";
 
   @Override
-  public void locateIndex(@NotNull Project project,
-                          @NotNull Collection<? extends OrderEntry> entries,
-                          @NotNull Consumer<? super ChunkDescriptor> descriptorProcessor,
-                          @NotNull ProgressIndicator indicator) {
+  public List<ChunkDescriptor> locateIndex(@NotNull Project project,
+                                           @NotNull Collection<? extends OrderEntry> entries,
+                                           @NotNull ProgressIndicator indicator) {
     String indexRoot = System.getProperty(ROOT_PROP);
-    if (indexRoot == null) return;
+    if (indexRoot == null) return Collections.emptyList();
     File indexZip = new File(indexRoot);
-    if (!indexZip.exists() || !indexZip.isFile()) return;
+    if (!indexZip.exists() || !indexZip.isFile()) return Collections.emptyList();
     URI uri = URI.create("jar:" + indexZip.toURI());
     try {
       String name;
       try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
         name = getUniqueChunk(fs);
       }
-      if (name == null) return;
+      if (name == null) return Collections.emptyList();
 
-      descriptorProcessor.consume(new ChunkDescriptor() {
+      return Collections.singletonList(new ChunkDescriptor() {
         @Override
         public @NotNull String getChunkUniqueId() {
           return name;
@@ -66,6 +63,8 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
     catch (IOException e) {
       LOG.error(e);
     }
+
+    return Collections.emptyList();
   }
 
   private static String getUniqueChunk(@NotNull FileSystem fs) throws IOException {
