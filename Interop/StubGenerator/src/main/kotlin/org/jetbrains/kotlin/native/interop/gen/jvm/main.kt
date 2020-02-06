@@ -337,7 +337,8 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
                     moduleName = moduleName,
                     outputPath = cinteropArguments.output,
                     manifest = def.manifestAddendProperties,
-                    dependencies = allLibraryDependencies
+                    dependencies = allLibraryDependencies,
+                    nopack = cinteropArguments.nopack
             )
             createInteropLibrary(args)
             return null

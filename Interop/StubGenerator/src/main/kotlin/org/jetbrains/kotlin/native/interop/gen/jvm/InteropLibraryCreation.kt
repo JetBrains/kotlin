@@ -30,7 +30,8 @@ data class LibraryCreationArguments(
         val nativeBitcodePath: String,
         val target: KonanTarget,
         val manifest: Properties,
-        val dependencies: List<KotlinLibrary>
+        val dependencies: List<KotlinLibrary>,
+        val nopack: Boolean
 )
 
 fun createInteropLibrary(arguments: LibraryCreationArguments) {
@@ -46,7 +47,8 @@ fun createInteropLibrary(arguments: LibraryCreationArguments) {
             File(outputPathWithoutExtension),
             arguments.moduleName,
             version,
-            arguments.target
+            arguments.target,
+            nopack = arguments.nopack
     ).apply {
         val metadata = arguments.metadata.write(ChunkingWriteStrategy())
         addMetadata(SerializedMetadata(metadata.header, metadata.fragments, metadata.fragmentNames))
