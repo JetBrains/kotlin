@@ -5,7 +5,7 @@ FILE: functionTypeAlias.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/b|(<L> = b@fun R|kotlin/String|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
-            this@R|special/anonymous|.R|kotlin/String.length|.R|kotlin/Int.plus|(R|<local>/it|)
+            ^ this@R|special/anonymous|.R|kotlin/String.length|.R|kotlin/Int.plus|(R|<local>/it|)
         }
         )
     }
