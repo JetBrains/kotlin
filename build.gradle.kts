@@ -1,19 +1,17 @@
 plugins {
-    kotlin("jvm") version "1.3.60" apply false
-    id("org.jetbrains.dokka") version "0.10.0" apply false
-    id("nebula.release") version "13.1.1"
+  kotlin("jvm") version "1.3.60" apply false
+  id("org.jetbrains.dokka") version "0.10.0" apply false
+  id("com.gradle.plugin-publish") version "0.10.1" apply false
 }
 
-val release = tasks.findByPath(":release")
-release?.finalizedBy(project.getTasksByName("publish", true))
-
 allprojects {
-    group = "com.bnorm.power"
+  group = "com.bnorm.power"
+  version = "0.1.0-SNAPSHOT"
 }
 
 subprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
 }

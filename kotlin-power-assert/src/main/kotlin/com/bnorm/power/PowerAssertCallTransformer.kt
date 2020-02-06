@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPackageFragment
@@ -74,6 +73,7 @@ class PowerAssertCallTransformer(
   private lateinit var file: IrFile
   private lateinit var fileSource: String
 
+  // TODO this is the only thing keeping this project from being multiplatform
   private val constructor = this@PowerAssertCallTransformer.context.ir.symbols.assertionErrorConstructor
 
   override fun lower(irFile: IrFile) {
@@ -138,7 +138,7 @@ class PowerAssertCallTransformer(
         require(assertCondition is IrGetValue)
 
 //        print(buildString {
-//          append(callSource).newline()
+//          append(callSource).appendln()
 //          val sorted = stack.sortedBy { it.indentation }
 //
 //          val indentations = sorted.map { it.indentation }
@@ -149,7 +149,7 @@ class PowerAssertCallTransformer(
 //            }
 //            last = i
 //          }
-//          newline()
+//          appendln()
 //
 //          for (tmp in sorted.asReversed()) {
 //
@@ -163,7 +163,7 @@ class PowerAssertCallTransformer(
 //            }
 //
 //            indent(tmp.indentation - last - 1)
-//            append(tmp.source).newline()
+//            append(tmp.source).appendln()
 //          }
 //        })
 
@@ -190,8 +190,8 @@ class PowerAssertCallTransformer(
             val indentations = sorted.map { it.indentation }
 
             addArgument(irString(buildString {
-              newline()
-              append(callSource).newline()
+              appendln()
+              append(callSource).appendln()
               var last = -1
               for (i in indentations) {
                 if (i > last) {
@@ -205,7 +205,7 @@ class PowerAssertCallTransformer(
             for (tmp in sorted.asReversed()) {
               addArgument(irString(buildString {
                 var last = -1
-                newline()
+                appendln()
                 for (i in indentations) {
                   if (i == tmp.indentation) break
                   if (i > last) {
@@ -233,12 +233,4 @@ fun IrFile.info(expression: IrElement): SourceRangeInfo {
   return fileEntry.getSourceRangeInfo(expression.startOffset, expression.endOffset)
 }
 
-fun StringBuilder.indent(indentation: Int) = apply {
-  repeat(indentation) {
-    append(" ")
-  }
-}
-
-fun StringBuilder.newline() = apply {
-  append("\n")
-}
+fun StringBuilder.indent(indentation: Int): StringBuilder = append(" ".repeat(indentation))

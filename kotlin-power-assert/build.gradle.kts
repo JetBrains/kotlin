@@ -49,7 +49,7 @@ tasks.register("dokkaJar", Jar::class) {
 }
 
 signing {
-  setRequired(provider { gradle.taskGraph.hasTask("release") })
+  setRequired(provider { gradle.taskGraph.hasTask("publish") })
   sign(publishing.publications)
 }
 

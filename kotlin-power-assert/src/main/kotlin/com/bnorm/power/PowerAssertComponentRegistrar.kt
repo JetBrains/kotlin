@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+
+val KEY_ENABLED = CompilerConfigurationKey<Boolean>("whether the plugin is enabled")
 
 @AutoService(ComponentRegistrar::class)
 class PowerAssertComponentRegistrar : ComponentRegistrar {
@@ -28,6 +31,9 @@ class PowerAssertComponentRegistrar : ComponentRegistrar {
     project: MockProject,
     configuration: CompilerConfiguration
   ) {
+    if (configuration[KEY_ENABLED] == false) {
+      return
+    }
     IrGenerationExtension.registerExtension(project, PowerAssertIrGenerationExtension())
   }
 }
