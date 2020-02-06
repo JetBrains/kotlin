@@ -475,11 +475,21 @@ private val bridgesConstructionPhase = makeDeclarationTransformerPhase(
     prerequisite = setOf(suspendFunctionsLoweringPhase)
 )
 
+private val singleAbstractMethodPhase = makeIrModulePhase(
+    ::JsSingleAbstractMethodLowering,
+    name = "SingleAbstractMethod",
+    description = "Replace SAM conversions with instances of interface-implementing classes"
+).toModuleLowering()
+
 private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     ::TypeOperatorLowering,
     name = "TypeOperatorLowering",
     description = "Lower IrTypeOperator with corresponding logic",
-    prerequisite = setOf(bridgesConstructionPhase, removeInlineFunctionsWithReifiedTypeParametersLoweringPhase)
+    prerequisite = setOf(
+        bridgesConstructionPhase,
+        removeInlineFunctionsWithReifiedTypeParametersLoweringPhase,
+        singleAbstractMethodPhase
+    )
 )
 
 private val secondaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
@@ -580,6 +590,7 @@ val loweringList = listOf<Lowering>(
     copyInlineFunctionBodyLoweringPhase,
     createScriptFunctionsPhase,
     provisionalFunctionExpressionPhase,
+    singleAbstractMethodPhase,
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,

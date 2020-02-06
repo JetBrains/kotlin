@@ -415,7 +415,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
         startOffset, endOffset,
         IrDeclarationOrigin.INSTANCE_RECEIVER,
         IrValueParameterSymbolImpl(thisReceiverDescriptor),
-        Name.identifier("<this>"),
+        Name.special("<this>"),
         index = -1,
         type = symbol.typeWithParameters(typeParameters),
         varargElementType = null,
