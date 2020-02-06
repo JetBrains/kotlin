@@ -1,7 +1,7 @@
 == C ==
 class C {
-    fun component1() = 1
-    fun component2() = 2
+    operator fun component1() = 1
+    operator fun component2() = 2
 }
 ---------------------
 L0:
@@ -14,7 +14,7 @@ sink:
     <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == component1 ==
-fun component1() = 1
+operator fun component1() = 1
 ---------------------
 L0:
   1 <START>
@@ -28,7 +28,7 @@ sink:
     <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == component2 ==
-fun component2() = 2
+operator fun component2() = 2
 ---------------------
 L0:
   1 <START>
