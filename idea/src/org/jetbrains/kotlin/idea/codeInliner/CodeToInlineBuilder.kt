@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -34,10 +35,12 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.sure
@@ -167,7 +170,12 @@ class CodeToInlineBuilder(
                     target.importableFqName
                 }
                 if (importableFqName != null) {
-                    codeToInline.fqNamesToImport.add(importableFqName)
+                    val lexicalScope = (expression?.containingFile as? KtFile)?.getResolutionScope(bindingContext, resolutionFacade)
+                    val lookupName = importableFqName?.let {
+                        lexicalScope?.findClassifier(it.shortName(), NoLookupLocation.FROM_IDE)?.typeConstructor
+                            ?.declarationDescriptor?.fqNameOrNull()
+                    }
+                    codeToInline.fqNamesToImport.add(lookupName ?: importableFqName)
                 }
             }
 

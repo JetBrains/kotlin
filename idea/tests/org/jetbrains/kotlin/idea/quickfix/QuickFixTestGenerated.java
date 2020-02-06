@@ -6980,6 +6980,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/onlyAliasDeprecated.kt");
             }
 
+            @TestMetadata("stdlibAliased.kt")
+            public void testStdlibAliased() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/stdlibAliased.kt");
+            }
+
             @TestMetadata("transitiveFromClass.kt")
             public void testTransitiveFromClass() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/transitiveFromClass.kt");
