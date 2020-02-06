@@ -182,11 +182,11 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
       titledRow(message("editor.options.scrolling")) {
         row { checkBox(cdSmoothScrolling) }
         row {
-          buttonGroup(message("editor.options.prefer.scrolling.editor.label")) {
-            row { radioButton(message("editor.options.prefer.scrolling.editor.canvas.to.keep.caret.line.centered")) }
-            row {
-              radioButton(message("editor.options.prefer.moving.caret.line.to.minimize.editor.scrolling"))
-                .withSelectedBinding(PropertyBinding(editorSettings::isRefrainFromScrolling, editorSettings::setRefrainFromScrolling))
+          buttonGroup(editorSettings::isRefrainFromScrolling,
+                      editorSettings::setRefrainFromScrolling) {
+            checkBoxGroup(message("editor.options.prefer.scrolling.editor.label")) {
+              row { radioButton(message("editor.options.prefer.scrolling.editor.canvas.to.keep.caret.line.centered"), value = false) }
+              row { radioButton(message("editor.options.prefer.moving.caret.line.to.minimize.editor.scrolling"), value = true) }
             }
           }
         }
@@ -203,15 +203,16 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
         row {
           val copyShortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_COPY)
           val copyShortcutText = copyShortcut?.let { " (" + KeymapUtil.getShortcutText(it) + ")" } ?: ""
-          buttonGroup(message("radiogroup.enable.richcopy.label", copyShortcutText)) {
-            row {
-              cell(isFullWidth = true) {
-                radioButton(message("radiobutton.enable.richcopy.as.rich.text"))
-                  .withSelectedBinding(PropertyBinding(richCopySettings::isEnabled, richCopySettings::setEnabled))
-                comment(message("radiobutton.enable.richcopy.as.rich.text.comment")).withLargeLeftGap()
+          buttonGroup(richCopySettings::isEnabled, richCopySettings::setEnabled) {
+            checkBoxGroup(message("radiogroup.enable.richcopy.label", copyShortcutText)) {
+              row {
+                cell(isFullWidth = true) {
+                  radioButton(message("radiobutton.enable.richcopy.as.rich.text")).bindValue(true)
+                  comment(message("radiobutton.enable.richcopy.as.rich.text.comment")).withLargeLeftGap()
+                }
               }
+              row { radioButton(message("radiobutton.enable.richcopy.as.simple.text")).bindValue(false) }
             }
-            row { radioButton(message("radiobutton.enable.richcopy.as.simple.text")) }
           }
         }
         row {
@@ -322,16 +323,12 @@ class EditorCodeEditingConfigurable : BoundConfigurable(message("title.code.edit
       }
       titledRow(message("group.refactorings")) {
         row {
-          buttonGroup(message("radiogroup.rename.local.variables")) {
-            row {
-              radioButton(
-                message("radiobutton.rename.local.variables.inplace"),
-                editorSettings::isVariableInplaceRenameEnabled,
-                editorSettings::setVariableInplaceRenameEnabled
-              )
+          buttonGroup(editorSettings::isVariableInplaceRenameEnabled,
+                      editorSettings::setVariableInplaceRenameEnabled) {
+            checkBoxGroup(message("radiogroup.rename.local.variables")) {
+              row { radioButton(message("radiobutton.rename.local.variables.inplace"), value = true) }
+              row { radioButton(message("radiobutton.rename.local.variables.in.dialog"), value = false) }.largeGapAfter()
             }
-            row { radioButton(message("radiobutton.rename.local.variables.in.dialog")) }
-              .largeGapAfter()
           }
         }
         row { checkBox(preselectCheckBox) }
