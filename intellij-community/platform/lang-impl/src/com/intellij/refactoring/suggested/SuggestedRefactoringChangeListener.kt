@@ -254,6 +254,11 @@ class SuggestedRefactoringChangeListener(
         }
 
         override fun beforeChildrenChange(event: PsiTreeChangeEvent) {
+            if (event.parent is PsiFile) {
+                // beforeChildrenChange for a file often has incorrect old range, and it doesn't make sense for us anyway
+                reset()
+                return
+            }
             processBeforeEvent(event)
         }
 
