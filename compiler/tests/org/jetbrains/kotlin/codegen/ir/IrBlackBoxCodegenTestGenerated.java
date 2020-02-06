@@ -14813,6 +14813,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/jvmStatic/interfaceCompanion.kt");
         }
 
+        @TestMetadata("jvmNameForAccessor.kt")
+        public void testJvmNameForAccessor() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/jvmNameForAccessor.kt");
+        }
+
         @TestMetadata("kt21246.kt")
         public void testKt21246() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/kt21246.kt");

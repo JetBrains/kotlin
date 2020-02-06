@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
@@ -62,28 +63,14 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             it is IrClass && it.isCompanion
         } as IrClass?
 
-        companion?.declarations?.filter(::isJvmStaticFunction)?.forEach {
-            val jvmStaticFunction = it as IrSimpleFunction
+        companion?.declarations?.filter(::isJvmStaticFunction)?.forEach { declaration ->
+            val jvmStaticFunction = declaration as IrSimpleFunction
             val newName = Name.identifier(context.methodSignatureMapper.mapFunctionName(jvmStaticFunction))
-            if (!jvmStaticFunction.visibility.isPublicAPI) {
-                // TODO: Synthetic accessor creation logic should be supported in SyntheticAccessorLowering in the future.
-                val accessorName = Name.identifier("access\$$newName")
-                val accessor = createProxy(
-                    jvmStaticFunction, companion, companion, accessorName, Visibilities.PUBLIC,
-                    isSynthetic = true
-                )
-                companion.addMember(accessor)
-                val proxy = createProxy(
-                    accessor, irClass, companion, newName, jvmStaticFunction.visibility, isSynthetic = false
-                )
-                irClass.addMember(proxy)
-            } else {
-                val proxy = createProxy(
-                    jvmStaticFunction, irClass, companion, newName, jvmStaticFunction.visibility,
-                    isSynthetic = false
-                )
-                irClass.addMember(proxy)
-            }
+            val proxy = createProxy(
+                jvmStaticFunction, irClass, companion, newName, jvmStaticFunction.visibility,
+                isSynthetic = false
+            )
+            irClass.addMember(proxy)
         }
 
     }
