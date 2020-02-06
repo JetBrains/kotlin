@@ -362,7 +362,6 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       Set<VirtualFile> rootsToIndex = provider.getRootsToIndex();
       for (VirtualFile root : rootsToIndex) {
         if (visitedRoots.add(root)) {
-          //FileBasedIndex.iterateRecursively(root, processor, indicator, visitedRoots, projectFileIndex);
           iterateRootRecursively(root, processor, indicator, visitedRoots, projectFileIndex, provider);
         }
       }
