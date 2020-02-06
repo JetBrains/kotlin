@@ -15,7 +15,7 @@ interface ShowUsagesActionHandler {
 
   void findUsages();
 
-  void showDialogAndFindUsages(@Nullable Editor newEditor);
+  void showDialogAndShowUsages(@Nullable Editor newEditor);
 
   void showUsagesInScope(@NotNull SearchScope searchScope);
 

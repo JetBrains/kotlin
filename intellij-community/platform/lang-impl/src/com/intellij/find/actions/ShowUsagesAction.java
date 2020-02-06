@@ -251,8 +251,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         }
 
         @Override
-        public void showDialogAndFindUsages(@Nullable Editor newEditor) {
-          ShowUsagesAction.showDialogAndFindUsages(
+        public void showDialogAndShowUsages(@Nullable Editor newEditor) {
+          showDialog(
             handler,
             newOptions -> showElementUsages(newEditor, popupPosition, handler, newOptions, minWidth)
           );
@@ -336,7 +336,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     JBPopup popup = isPreviewMode ? null : createUsagePopup(project, usages, visibleNodes,
                                                             usageView, table, itemChosenCallback, presentation, processIcon, minWidth,
-                                                            () -> actionHandler.showDialogAndFindUsages(editor),
+                                                            () -> actionHandler.showDialogAndShowUsages(editor),
                                                             actionHandler);
     ProgressIndicator indicator = new ProgressIndicatorBase();
     if (popup != null) {
@@ -507,15 +507,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     });
   }
 
-  private static void showDialogAndFindUsages(@NotNull FindUsagesHandler handler,
-                                              @NotNull Consumer<@NotNull FindUsagesOptions> showUsagesWithOptions) {
+  private static void showDialog(@NotNull FindUsagesHandler handler, @NotNull Consumer<@NotNull FindUsagesOptions> optionsConsumer) {
     FUCounterUsageLogger.getInstance().logEvent("toolbar", "ShowUsagesPopup.showSettings");
     AbstractFindUsagesDialog dialog = handler.getFindUsagesDialog(false, false, false);
     if (dialog.showAndGet()) {
       dialog.calcFindUsagesOptions();
       //noinspection deprecation
       FindUsagesOptions options = handler.getFindUsagesOptions(DataManager.getInstance().getDataContext());
-      showUsagesWithOptions.accept(options);
+      optionsConsumer.accept(options);
     }
   }
 
@@ -948,7 +947,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         createSettingsButton(
           project,
           ShowUsagesAction::hideHints,
-          () -> actionHandler.showDialogAndFindUsages(editor)
+          () -> actionHandler.showDialogAndShowUsages(editor)
         )
       );
 
