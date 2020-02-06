@@ -390,6 +390,12 @@ allprojects {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
     }
 
+    normalization {
+        runtimeClasspath {
+            ignore("META-INF/MANIFEST.MF")
+        }
+    }
+
     tasks {
         register("listArchives") { listConfigurationContents("archives") }
 
