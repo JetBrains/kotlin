@@ -35,7 +35,6 @@ internal object MethodBridgeSelector : MethodBridgeParameter()
 internal sealed class MethodBridgeValueParameter : MethodBridgeParameter() {
     data class Mapped(val bridge: TypeBridge) : MethodBridgeValueParameter()
     object ErrorOutParameter : MethodBridgeValueParameter()
-    data class KotlinResultOutParameter(val bridge: TypeBridge) : MethodBridgeValueParameter()
 }
 
 internal data class MethodBridge(
@@ -55,7 +54,7 @@ internal data class MethodBridge(
 
         sealed class WithError : ReturnValue() {
             object Success : WithError()
-            data class RefOrNull(val successBridge: ReturnValue) : WithError()
+            data class ZeroForError(val successBridge: ReturnValue, val successMayBeZero: Boolean) : WithError()
         }
     }
 
@@ -87,8 +86,7 @@ internal fun MethodBridge.valueParametersAssociated(
         when (it) {
             is MethodBridgeValueParameter.Mapped -> it to kotlinParameters.next()
 
-            is MethodBridgeValueParameter.ErrorOutParameter,
-            is MethodBridgeValueParameter.KotlinResultOutParameter -> it to null
+            is MethodBridgeValueParameter.ErrorOutParameter -> it to null
         }
     }.also { assert(!kotlinParameters.hasNext()) }
 }
@@ -103,8 +101,7 @@ internal fun MethodBridge.parametersAssociated(
             is MethodBridgeValueParameter.Mapped, MethodBridgeReceiver.Instance ->
                 it to kotlinParameters.next()
 
-            MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter,
-            is MethodBridgeValueParameter.KotlinResultOutParameter ->
+            MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter ->
                 it to null
 
             MethodBridgeReceiver.Factory -> {

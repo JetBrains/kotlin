@@ -237,7 +237,6 @@ private fun ObjCExportMapper.bridgeParameter(parameter: ParameterDescriptor): Me
 
 private fun ObjCExportMapper.bridgeReturnType(
         descriptor: FunctionDescriptor,
-        valueParameters: MutableList<MethodBridgeValueParameter>,
         convertExceptionsToErrors: Boolean
 ): MethodBridge.ReturnValue {
     val returnType = descriptor.returnType!!
@@ -247,7 +246,11 @@ private fun ObjCExportMapper.bridgeReturnType(
         } else {
             MethodBridge.ReturnValue.Instance.InitResult
         }.let {
-            if (convertExceptionsToErrors) MethodBridge.ReturnValue.WithError.RefOrNull(it) else it
+            if (convertExceptionsToErrors) {
+                MethodBridge.ReturnValue.WithError.ZeroForError(it, successMayBeZero = false)
+            } else {
+                it
+            }
         }
 
         descriptor.containingDeclaration == descriptor.builtIns.any && descriptor.name.asString() == "hashCode" -> {
@@ -268,18 +271,23 @@ private fun ObjCExportMapper.bridgeReturnType(
 
         else -> {
             val returnTypeBridge = bridgeType(returnType)
+            val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
             if (convertExceptionsToErrors) {
-                if (returnTypeBridge is ReferenceBridge && !TypeUtils.isNullableType(returnType)) {
-                    MethodBridge.ReturnValue.WithError.RefOrNull(MethodBridge.ReturnValue.Mapped(returnTypeBridge))
-                } else {
-                    valueParameters += MethodBridgeValueParameter.KotlinResultOutParameter(returnTypeBridge)
-                    MethodBridge.ReturnValue.WithError.Success
-                }
+                val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || TypeUtils.isNullableType(returnType)
+                MethodBridge.ReturnValue.WithError.ZeroForError(
+                        successReturnValueBridge,
+                        successMayBeZero = canReturnZero
+                )
             } else {
-                MethodBridge.ReturnValue.Mapped(returnTypeBridge)
+                successReturnValueBridge
             }
         }
     }
+}
+
+private fun TypeBridge.isReferenceOrPointer(): Boolean = when (this) {
+    ReferenceBridge, is BlockPointerBridge -> true
+    is ValueTypeBridge -> this.objCValueType == ObjCValueType.POINTER
 }
 
 private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): MethodBridge {
@@ -306,7 +314,7 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
         valueParameters += bridgeParameter(it)
     }
 
-    val returnBridge = bridgeReturnType(descriptor, valueParameters, convertExceptionsToErrors)
+    val returnBridge = bridgeReturnType(descriptor, convertExceptionsToErrors)
     if (convertExceptionsToErrors) {
         valueParameters += MethodBridgeValueParameter.ErrorOutParameter
     }

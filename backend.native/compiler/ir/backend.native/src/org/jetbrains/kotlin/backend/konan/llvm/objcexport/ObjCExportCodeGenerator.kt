@@ -755,8 +755,6 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     }
 
     var errorOutPtr: LLVMValueRef? = null
-    var kotlinResultOutPtr: LLVMValueRef? = null
-    lateinit var kotlinResultOutBridge: TypeBridge
 
     val kotlinArgs = methodBridge.paramBridges.mapIndexedNotNull { index, paramBridge ->
         val parameter = param(index)
@@ -772,13 +770,6 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             MethodBridgeValueParameter.ErrorOutParameter -> {
                 assert(errorOutPtr == null)
                 errorOutPtr = parameter
-                null
-            }
-
-            is MethodBridgeValueParameter.KotlinResultOutParameter -> {
-                assert(kotlinResultOutPtr == null)
-                kotlinResultOutPtr = parameter
-                kotlinResultOutBridge = paramBridge.bridge
                 null
             }
         }
@@ -803,12 +794,12 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 
                 MethodBridge.ReturnValue.WithError.Success -> Int8(0).llvm // false
 
-                is MethodBridge.ReturnValue.WithError.RefOrNull -> {
+                is MethodBridge.ReturnValue.WithError.ZeroForError -> {
                     if (returnType.successBridge == MethodBridge.ReturnValue.Instance.InitResult) {
                         // Release init receiver, as required by convention.
                         callFromBridge(objcRelease, listOf(param(0)))
                     }
-                    kNullInt8Ptr
+                    Zero(returnType.objCType(context)).llvm
                 }
             }
 
@@ -818,13 +809,6 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 
     val targetResult = callKotlin(kotlinArgs, Lifetime.ARGUMENT, exceptionHandler)
 
-    kotlinResultOutPtr?.let {
-        ifThen(icmpNe(it, LLVMConstNull(it.type)!!)) {
-            val objCResult = kotlinToObjC(targetResult!!, kotlinResultOutBridge)
-            store(objCResult, it)
-        }
-    }
-
     tailrec fun genReturnValueOnSuccess(returnBridge: MethodBridge.ReturnValue): LLVMValueRef? = when (returnBridge) {
         MethodBridge.ReturnValue.Void -> null
         MethodBridge.ReturnValue.HashCode -> {
@@ -833,7 +817,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         }
         is MethodBridge.ReturnValue.Mapped -> kotlinToObjC(targetResult!!, returnBridge.bridge)
         MethodBridge.ReturnValue.WithError.Success -> Int8(1).llvm // true
-        is MethodBridge.ReturnValue.WithError.RefOrNull -> genReturnValueOnSuccess(returnBridge.successBridge)
+        is MethodBridge.ReturnValue.WithError.ZeroForError -> genReturnValueOnSuccess(returnBridge.successBridge)
         MethodBridge.ReturnValue.Instance.InitResult -> param(0)
         MethodBridge.ReturnValue.Instance.FactoryResult -> kotlinReferenceToObjC(targetResult!!) // provided by [callKotlin]
     }
@@ -904,8 +888,6 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val result = generateFunction(codegen, functionType, "kotlin2objc") {
         var errorOutPtr: LLVMValueRef? = null
-        var kotlinResultOutPtr: LLVMValueRef? = null
-        lateinit var kotlinResultOutBridge: TypeBridge
 
         val parameters = irFunction.allParameters.mapIndexed { index, parameterDescriptor ->
             parameterDescriptor to param(index)
@@ -937,12 +919,9 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     error("Method is not instance and thus can't have bridge for overriding: $baseMethod")
 
                 MethodBridgeValueParameter.ErrorOutParameter ->
-                    alloca(int8TypePtr).also { errorOutPtr = it }
-
-                is MethodBridgeValueParameter.KotlinResultOutParameter ->
-                    alloca(bridge.bridge.objCType).also {
-                        kotlinResultOutPtr = it
-                        kotlinResultOutBridge = bridge.bridge
+                    alloca(int8TypePtr).also {
+                        store(kNullInt8Ptr, it)
+                        errorOutPtr = it
                     }
             }
         }
@@ -981,17 +960,20 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                 ifThen(icmpEq(targetResult, Int8(0).llvm)) {
                     rethrow()
                 }
-
-                kotlinResultOutPtr?.let {
-                    objCToKotlin(load(it), kotlinResultOutBridge, lifetime)
-                }
+                null
             }
 
-            is MethodBridge.ReturnValue.WithError.RefOrNull -> {
-                ifThen(icmpEq(targetResult, kNullInt8Ptr)) {
-                    rethrow()
+            is MethodBridge.ReturnValue.WithError.ZeroForError -> {
+                if (returnBridge.successMayBeZero) {
+                    val error = load(errorOutPtr!!)
+                    ifThen(icmpNe(error, kNullInt8Ptr)) {
+                        rethrow()
+                    }
+                } else {
+                    ifThen(icmpEq(targetResult, kNullInt8Ptr)) {
+                        rethrow()
+                    }
                 }
-                assert(kotlinResultOutPtr == null)
                 genKotlinBaseMethodResult(lifetime, returnBridge.successBridge)
             }
 
@@ -1446,7 +1428,6 @@ private val MethodBridgeParameter.objCType: LLVMTypeRef get() = when (this) {
     is MethodBridgeReceiver -> ReferenceBridge.objCType
     MethodBridgeSelector -> int8TypePtr
     MethodBridgeValueParameter.ErrorOutParameter -> pointerType(ReferenceBridge.objCType)
-    is MethodBridgeValueParameter.KotlinResultOutParameter -> pointerType(this.bridge.objCType)
 }
 
 private fun MethodBridge.ReturnValue.objCType(context: Context): LLVMTypeRef {
@@ -1457,8 +1438,8 @@ private fun MethodBridge.ReturnValue.objCType(context: Context): LLVMTypeRef {
         MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.llvmType
 
         MethodBridge.ReturnValue.Instance.InitResult,
-        MethodBridge.ReturnValue.Instance.FactoryResult,
-        is MethodBridge.ReturnValue.WithError.RefOrNull -> ReferenceBridge.objCType
+        MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.objCType
+        is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.objCType(context)
     }
 }
 
@@ -1503,8 +1484,8 @@ private fun MethodBridge.ReturnValue.getObjCEncoding(targetFamily: Family): Stri
     MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.encoding
 
     MethodBridge.ReturnValue.Instance.InitResult,
-    MethodBridge.ReturnValue.Instance.FactoryResult,
-    is MethodBridge.ReturnValue.WithError.RefOrNull -> ReferenceBridge.objCEncoding
+    MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.objCEncoding
+    is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.getObjCEncoding(targetFamily)
 }
 
 private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
@@ -1512,7 +1493,6 @@ private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
     is MethodBridgeReceiver -> ReferenceBridge.objCEncoding
     MethodBridgeSelector -> ":"
     MethodBridgeValueParameter.ErrorOutParameter -> "^${ReferenceBridge.objCEncoding}"
-    is MethodBridgeValueParameter.KotlinResultOutParameter -> "^${this.bridge.objCEncoding}"
 }
 
 private val TypeBridge.objCEncoding: String get() = when (this) {

@@ -453,13 +453,11 @@ internal class ObjCExportNamerImpl(
                         else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
-                    is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
                 }
 
                 if (index == 0) {
                     append(when {
-                        bridge is MethodBridgeValueParameter.ErrorOutParameter ||
-                                bridge is MethodBridgeValueParameter.KotlinResultOutParameter -> "AndReturn"
+                        bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
 
                         method is ConstructorDescriptor -> "With"
                         else -> ""
@@ -504,7 +502,6 @@ internal class ObjCExportNamerImpl(
                         else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
-                    is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
                 }
 
                 append(label)

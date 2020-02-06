@@ -270,9 +270,9 @@ __attribute__((swift_name("BridgeBase")))
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
-- (BOOL)foo2AndReturnResult:(int32_t * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2(result:)")));
+- (int32_t)foo2AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2()"))) __attribute__((swift_error(nonnull_error)));
 - (BOOL)foo3AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo3()")));
-- (BOOL)foo4AndReturnResult:(ValuesKotlinNothing * _Nullable * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4(result:)")));
+- (ValuesKotlinNothing * _Nullable)foo4AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4()"))) __attribute__((swift_error(nonnull_error)));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -281,9 +281,9 @@ __attribute__((swift_name("Bridge")))
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (ValuesKotlinNothing * _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
-- (BOOL)foo2AndReturnResult:(int32_t * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2(result:)")));
+- (int32_t)foo2AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2()"))) __attribute__((swift_error(nonnull_error)));
 - (BOOL)foo3AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo3()")));
-- (BOOL)foo4AndReturnResult:(ValuesKotlinNothing * _Nullable * _Nullable)result error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4(result:)")));
+- (ValuesKotlinNothing *)foo4AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4()"))) __attribute__((swift_error(nonnull_error)));
 @end;
 
 __attribute__((objc_subclassing_restricted))

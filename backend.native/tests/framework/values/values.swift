@@ -291,8 +291,7 @@ func testExceptions() throws {
         try assertTrue(error.kotlinException is MyException)
     }
     do {
-        var result: Int32 = 0
-        try bridge.foo2(result: &result)
+        try bridge.foo2()
     } catch let error as NSError {
         try assertTrue(error.kotlinException is MyException)
     }
@@ -302,8 +301,7 @@ func testExceptions() throws {
         try assertTrue(error.kotlinException is MyException)
     }
     do {
-        var result: KotlinNothing? = nil
-        try bridge.foo4(result: &result)
+        try bridge.foo4()
     } catch let error as NSError {
         try assertTrue(error.kotlinException is MyException)
     }
