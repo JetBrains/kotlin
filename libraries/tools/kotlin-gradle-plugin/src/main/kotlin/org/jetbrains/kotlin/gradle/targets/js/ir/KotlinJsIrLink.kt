@@ -29,7 +29,7 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     @get:SkipWhenEmpty
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val entryModule: File
+    internal val entryModule: File
         get() = File(
             (taskData.compilation as KotlinJsIrCompilation)
                 .output
