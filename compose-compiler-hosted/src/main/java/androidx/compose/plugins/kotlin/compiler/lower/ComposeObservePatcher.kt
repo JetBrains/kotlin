@@ -336,18 +336,13 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                                 )
                             }
                             descriptor.dispatchReceiverParameter?.let {
-                                    receiverDescriptor ->
                                 // Ensure we get the correct type by trying to avoid
                                 // going through a KotlinType if possible.
-                                val receiverType = (receiverDescriptor as?
-                                        WrappedReceiverParameterDescriptor)?.owner?.type
-                                    ?: receiverDescriptor.type.toIrType()
+                                val parameter = original.dispatchReceiverParameter
+                                    ?: error("Expected dispatch receiver on declaration")
                                 val receiver = irGet(
-                                    receiverType,
-                                    original.dispatchReceiverParameter?.symbol
-                                        ?: error(
-                                            "Expected dispatch receiver on declaration"
-                                        )
+                                    parameter.type,
+                                    parameter.symbol
                                 )
 
                                 // Save the dispatch receiver into a temporary created in
@@ -357,7 +352,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                                 val tmp = outerBuilder.irTemporary(
                                     value = receiver,
                                     nameHint = "rcvr",
-                                    irType = receiverType
+                                    irType = parameter.type
                                 )
                                 dispatchReceiver = irGet(tmp)
                             }

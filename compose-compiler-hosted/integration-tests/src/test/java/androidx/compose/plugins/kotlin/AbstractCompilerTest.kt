@@ -85,11 +85,7 @@ abstract class AbstractCompilerTest : TestCase() {
 
     open fun forComposerParam(vararg values: Boolean, block: () -> Unit) {
         val exceptions = mutableListOf<Pair<Boolean, Throwable>>()
-        val valuesToRun = if (INVERT_COMPOSER_PARAM_TESTS) {
-            if (values.size == 2) error("Intentional failure to make success indicate a change")
-            arrayOf(true) // assume if there is just one value provided that it was "false"
-        } else
-            values.toTypedArray()
+        val valuesToRun = arrayOf(true)
         for (flag in valuesToRun) {
             val prevValue = ComposeFlags.COMPOSER_PARAM
             try {
@@ -282,11 +278,19 @@ abstract class AbstractCompilerTest : TestCase() {
     companion object {
         val homeDir by lazy { File(computeHomeDirectory()).absolutePath }
         val projectRoot by lazy { File(homeDir, "../../../../..").absolutePath }
+        val kotlinHome by lazy {
+            File(projectRoot, "prebuilts/androidx/external/org/jetbrains/kotlin/")
+        }
+        val outDir by lazy {
+            File(System.getenv("OUT_DIR") ?: File(projectRoot, "out").absolutePath)
+        }
+        val composePluginJar by lazy {
+
+            File(outDir, "ui/compose/compose-compiler/build/jarjar/compose-compiler.jar")
+        }
 
         fun kotlinRuntimeJar(module: String) = File(
-            projectRoot,
-                "prebuilts/androidx/external/org/jetbrains/kotlin/$module/" +
-                        "$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar")
+            kotlinHome, "$module/$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar")
 
         init {
             System.setProperty("idea.home",

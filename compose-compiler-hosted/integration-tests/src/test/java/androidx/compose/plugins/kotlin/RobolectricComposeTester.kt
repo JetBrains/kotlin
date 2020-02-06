@@ -21,8 +21,15 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.compose.Compose
+import androidx.compose.Composer
+import androidx.compose.Composition
+import androidx.compose.Recomposer
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
+import kotlin.reflect.full.findParameterByName
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.full.starProjectedType
 
 const val ROOT_ID = 18284847
 
@@ -65,7 +72,23 @@ class RobolectricComposeTester internal constructor(
         val activity = controller.create().get()
         val root = activity.root
         scheduler.advanceToLastPostedRunnable()
-        val composition = Compose.composeInto(root, null, composable)
+        val composition = if (ComposeFlags.COMPOSER_PARAM) {
+            val composeInto = Compose::class.java.methods.first {
+                if (it.name != "composeInto") false
+                else {
+                    val param = it.parameters.getOrNull(2)
+                    param?.type == Function1::class.java
+                }
+            }
+            composeInto.invoke(
+                Compose,
+                root,
+                null,
+                { composer: Composer<*> -> composable() }
+            ) as Composition
+        } else {
+            Compose.composeInto(root, null, composable)
+        }
         scheduler.advanceToLastPostedRunnable()
         block(activity)
         val advanceFn = advance ?: { composition.compose() }

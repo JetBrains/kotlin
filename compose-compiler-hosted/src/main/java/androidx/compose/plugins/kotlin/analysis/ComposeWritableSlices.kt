@@ -56,6 +56,8 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_COMPOSABLE_CALL: WritableSlice<IrAttributeContainer, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val IS_INLINE_COMPOSABLE_CALL: WritableSlice<IrAttributeContainer, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
 private val REWRITES_ALLOWED = object : RewritePolicy {

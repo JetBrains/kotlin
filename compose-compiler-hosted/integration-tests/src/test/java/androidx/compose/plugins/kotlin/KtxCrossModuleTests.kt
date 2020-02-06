@@ -75,6 +75,35 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testConstCrossModule(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestG", mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                    package x
+
+                    const val MyConstant: String = ""
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/B.kt" to """
+                    package b
+
+                    import x.MyConstant
+
+                    fun Test(foo: String = MyConstant) {
+                        print(foo)
+                    }
+                """
+                )
+            )
+        ) {
+            assert(it.contains("LDC \"\""))
+            assert(!it.contains("INVOKESTATIC x/AKt.getMyConstant"))
+        }
+    }
+
+    @Test
     fun testNonCrossinlineComposable(): Unit = forComposerParam(true, false) {
         compile(
             "TestG", mapOf(
@@ -140,7 +169,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 """
                 )
             )
-        , dumpClasses = true)
+        )
     }
 
     @Test
@@ -512,7 +541,34 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_SimpleComposition(): Unit = forComposerParam(/*true, */false) {
+    fun testXModuleCtorComposableParam(): Unit = forComposerParam(true, false) {
+        compile(
+            "TestJ", mapOf(
+                "library module" to mapOf(
+                    "a/Foo.kt" to """
+                    package a
+
+                    import androidx.compose.*
+
+                    class Foo(val bar: @Composable() () -> Unit)
+                 """
+                ),
+                "Main" to mapOf(
+                    "B.kt" to """
+                    import a.Foo
+                    import androidx.compose.*
+
+                    @Composable fun Example(bar: @Composable() () -> Unit) {
+                        val foo = Foo(bar)
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testCrossModule_SimpleComposition(): Unit = forComposerParam(true, false) {
         val tvId = 29
 
         compose(
@@ -573,7 +629,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_ComponentFunction(): Unit = forComposerParam(/*true, */false) {
+    fun testCrossModule_ComponentFunction(): Unit = forComposerParam(true, false) {
         val tvName = 101
         val tvAge = 102
 
@@ -644,7 +700,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_ObjectFunction(): Unit = forComposerParam(/*true, */false) {
+    fun testCrossModule_ObjectFunction(): Unit = forComposerParam(true, false) {
         val tvName = 101
         val tvAge = 102
 
@@ -719,7 +775,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     fun compile(
         mainClassName: String,
         modules: Map<String, Map<String, String>>,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        validate: ((String) -> Unit)? = null
     ): List<OutputFile> {
         val libraryClasses = (modules.filter { it.key != "Main" }.map {
             // Setup for compile
@@ -744,9 +801,15 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             ?: error("No Main module specified"), dumpClasses).allGeneratedFiles
 
         // Load the files looking for mainClassName
-        return (libraryClasses + appClasses).filter {
+        val outputFiles = (libraryClasses + appClasses).filter {
             it.relativePath.endsWith(".class")
         }
+
+        if (validate != null) {
+            validate(outputFiles.joinToString("\n") { it.asText().replace('$', '%') })
+        }
+
+        return outputFiles
     }
 
     fun compose(
