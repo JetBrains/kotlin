@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.util.PlatformUtils
 
 class CommonLocationFeatures : ContextFeatureProvider {
   override fun getName(): String = "common"
@@ -48,10 +49,9 @@ class CommonLocationFeatures : ContextFeatureProvider {
 
   private fun MutableMap<String, MLFeatureValue>.addPsiParents(position: PsiElement, numParents: Int) {
     // First parent is always referenceExpression
-    var curParent = position.parent ?: return
+    var curParent: PsiElement? = position.parent ?: return
     for (i in 1..numParents) {
-      curParent = curParent.parent
-      if (curParent == null) return
+      curParent = curParent?.parent ?: return
       val parentName = "parent_$i"
       this[parentName] = MLFeatureValue.className(curParent::class.java)
       if (curParent is PsiFileSystemItem) return
