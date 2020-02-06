@@ -80,9 +80,11 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
     ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(myProject, SYSTEM_ID).use(ProgressExecutionMode.MODAL_SYNC))
 
     if (currentGradleBaseVersion >= GradleVersion.version("4.8")) {
-      assertSyncViewTreeEquals("-\n" +
-                               " -failed\n" +
-                               "  Build cancelled")
+      if (currentGradleBaseVersion != GradleVersion.version("4.10.3")) {
+        assertSyncViewTreeEquals("-\n" +
+                                 " -failed\n" +
+                                 "  Build cancelled")
+      }
       assertReceivedModels(mapOf("prop1" to "error"))
     }
     else {
