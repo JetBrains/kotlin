@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -106,11 +107,14 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
         }
 
-    protected fun registerKotlinCompileTask(name: String = kotlinCompilation.compileKotlinTaskName): TaskProvider<out T> {
+    protected fun registerKotlinCompileTask(
+        name: String = kotlinCompilation.compileKotlinTaskName,
+        compileDestinationDir: File = defaultKotlinDestinationDir
+    ): TaskProvider<out T> {
         logger.kotlinDebug("Creating kotlin compile task $name")
 
         KotlinCompileTaskData.register(name, kotlinCompilation).apply {
-            destinationDir.set(project.provider { defaultKotlinDestinationDir })
+            destinationDir.set(project.provider { compileDestinationDir })
         }
 
         return doRegisterTask(project, name) {
@@ -374,7 +378,8 @@ internal class KotlinJsIrSourceSetProcessor(
             compilation.developmentLinkTaskName
         ).onEach { taskName ->
             registerKotlinCompileTask(
-                taskName
+                taskName,
+                compilation.npmProject.dist
             )
         }.forEach { taskName ->
             project.tasks.named(taskName).configure {

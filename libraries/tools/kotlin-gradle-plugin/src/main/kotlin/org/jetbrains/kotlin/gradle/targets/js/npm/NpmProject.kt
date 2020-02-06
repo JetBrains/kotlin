@@ -52,8 +52,11 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonTask: KotlinPackageJsonTask
         get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
 
+    val dist: File
+        get() = dir.resolve(DIST_FOLDER)
+
     val main: String
-        get() = "kotlin/$name.js"
+        get() = "$DIST_FOLDER/$name.js"
 
     val externalsDirRoot: File
         get() = project.buildDir.resolve("externals").resolve(name)
@@ -115,5 +118,6 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     companion object {
         const val PACKAGE_JSON = "package.json"
         const val NODE_MODULES = "node_modules"
+        const val DIST_FOLDER = "kotlin"
     }
 }

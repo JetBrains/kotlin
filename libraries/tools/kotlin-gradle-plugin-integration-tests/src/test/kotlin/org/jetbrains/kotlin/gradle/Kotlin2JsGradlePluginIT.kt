@@ -29,6 +29,44 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             assert(dts.readText().contains("function bar(): string"))
         }
     }
+
+    @Test
+    fun testCleanOutputWithEmptySources() {
+        with(Project("kotlin-js-nodejs-project", GradleVersionRequired.AtLeast("5.2"))) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build(
+                "build",
+                options = defaultBuildOptions().copy(jsCompilerType = JsCompilerType.ir)
+            ) {
+                assertSuccessful()
+
+                assertTasksExecuted(":compileProductionKotlinJs")
+
+                assertFileExists("build/js/packages/kotlin-js-nodejs/kotlin/kotlin-js-nodejs.js")
+            }
+
+            File("${projectDir.canonicalPath}/src").deleteRecursively()
+
+            gradleBuildScript().appendText(
+                """${"\n"}
+                tasks {
+                    compileProductionKotlinJs {
+                        type = org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
+                    }
+                }
+            """.trimIndent()
+            )
+
+            build("build") {
+                assertSuccessful()
+
+                assertNoSuchFile("build/js/packages/kotlin-js-nodejs/kotlin/")
+            }
+        }
+    }
 }
 
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
@@ -547,4 +585,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertFileExists("app/build/distributions/index.html")
         }
     }
+
+
 }
