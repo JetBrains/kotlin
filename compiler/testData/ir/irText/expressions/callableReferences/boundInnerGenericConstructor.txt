@@ -87,7 +87,7 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
           <B>: kotlin.String
           a: CONST String type=kotlin.String value="O"
           b: CONST String type=kotlin.String value="K"
-          x: FUNCTION_REFERENCE 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) [primary] declared in test.Foo.Inner' type=kotlin.reflect.KFunction2<@[ParameterName(name = 'a')] kotlin.String, @[ParameterName(name = 'b')] kotlin.String, test.Foo.Inner<kotlin.String, kotlin.String>> origin=null reflectionTarget=<same>
+          x: FUNCTION_REFERENCE 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) [primary] declared in test.Foo.Inner' type=kotlin.reflect.KFunction2<kotlin.String, kotlin.String, test.Foo.Inner<kotlin.String, kotlin.String>> origin=null reflectionTarget=<same>
             <P>: kotlin.String
             $this: GET_VAR 'val z: test.Foo<kotlin.String> [val] declared in test.box' type=test.Foo<kotlin.String> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in test'

@@ -47,11 +47,10 @@ FILE fqName:<root> fileName:/when.kt
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
               if: CALL 'public final fun contains <T> (element: T of kotlin.collections.contains): kotlin.Boolean [operator] declared in kotlin.collections' type=kotlin.Boolean origin=IN
-                <T>: kotlin.Number
+                <T>: kotlin.Any?
                 $receiver: CALL 'public final fun setOf <T> (): kotlin.collections.Set<T of kotlin.collections.setOf> [inline] declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                   <T>: kotlin.Nothing
-                element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
-                  GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
+                element: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="nothingness?"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true

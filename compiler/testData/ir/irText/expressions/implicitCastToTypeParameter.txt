@@ -36,11 +36,11 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.<get-asT>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-asT> <T> (): T of <root>.<get-asT>? [inline] declared in <root>'
-          WHEN type=T of <root>.<get-asT>? origin=IF
+          WHEN type=kotlin.Any? origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.<get-asT>
                 GET_VAR '<this>: <root>.Foo<T of <root>.<get-asT>> declared in <root>.<get-asT>' type=<root>.Foo<T of <root>.<get-asT>> origin=null
-              then: TYPE_OP type=T of <root>.<get-asT> origin=IMPLICIT_CAST typeOperand=T of <root>.<get-asT>
+              then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
                 GET_VAR '<this>: <root>.Foo<T of <root>.<get-asT>> declared in <root>.<get-asT>' type=<root>.Foo<T of <root>.<get-asT>> origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true

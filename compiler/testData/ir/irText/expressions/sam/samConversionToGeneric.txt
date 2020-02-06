@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): <root>.J<kotlin.String> declared in <root>'
         TYPE_OP type=<root>.J<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String>
-          FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.String?> origin=LAMBDA
+          FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String?, kotlin.String?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String?) returnType:kotlin.String?
               VALUE_PARAMETER name:x index:0 type:kotlin.String?
               BLOCK_BODY
@@ -13,11 +13,11 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.J<kotlin.String?> declared in <root>'
         TYPE_OP type=<root>.J<kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?>
-          FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+          FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String?
               VALUE_PARAMETER name:x index:0 type:kotlin.String
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.test2'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String? declared in <root>.test2'
                   GET_VAR 'x: kotlin.String declared in <root>.test2.<anonymous>' type=kotlin.String origin=null
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
@@ -25,11 +25,11 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
         CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
           <X>: kotlin.String?
           j: TYPE_OP type=<root>.J<kotlin.String?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?>?
-            FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+            FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String?
                 VALUE_PARAMETER name:x index:0 type:kotlin.String
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.test3'
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String? declared in <root>.test3'
                     GET_VAR 'x: kotlin.String declared in <root>.test3.<anonymous>' type=kotlin.String origin=null
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any

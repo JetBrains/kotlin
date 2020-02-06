@@ -21,10 +21,10 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Any declared in <root>'
         CALL 'public final fun checkAny (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test1'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.test1'
                   TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
                     CALL 'public open fun foo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
@@ -74,17 +74,17 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.Any? declared in <root>'
         CALL 'public final fun checkAnyN (fn: kotlin.Function0<kotlin.Any?>): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test5'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.test5'
                   CALL 'public open fun foo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
   FUN name:test6 visibility:public modality:FINAL <> () returnType:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test6 (): kotlin.Any? declared in <root>'
         CALL 'public final fun checkAnyN (fn: kotlin.Function0<kotlin.Any?>): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.test6'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.test6'
                   CALL 'public open fun nnFoo (): kotlin.String declared in <root>.J' type=kotlin.String origin=null

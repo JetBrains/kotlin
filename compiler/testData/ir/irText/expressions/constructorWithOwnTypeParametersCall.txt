@@ -10,11 +10,11 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double, kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> <Y2> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Double, kotlin.Int> origin=null
-          <class: X2>: kotlin.Double
-          <Y2>: kotlin.CharSequence
+          <class: X2>: kotlin.Double?
+          <Y2>: kotlin.CharSequence?
           $outer: CONSTRUCTOR_CALL 'public constructor <init> <Y1> () declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
-            <class: X1>: kotlin.Int
-            <Y1>: kotlin.String
+            <class: X1>: kotlin.Int?
+            <Y1>: kotlin.String?
   CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1<T1 of <root>.K1>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Number]

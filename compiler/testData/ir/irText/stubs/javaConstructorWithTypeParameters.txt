@@ -3,27 +3,27 @@ FILE fqName:<root> fileName:/javaConstructorWithTypeParameters.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): <root>.J1<kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
-          <class: T1>: kotlin.Int
+          <class: T1>: kotlin.Int?
   FUN name:test2 visibility:public modality:FINAL <> () returnType:<root>.J1<kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.J1<kotlin.Int> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> <X1> (x1: X1 of <root>.J1.<init>?) declared in <root>.J1' type=<root>.J1<kotlin.Int> origin=null
-          <class: T1>: kotlin.Int
-          <X1>: kotlin.Int
+          <class: T1>: kotlin.Int?
+          <X1>: kotlin.Int?
           x1: CONST Int type=kotlin.Int value=1
   FUN name:test3 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:<root>.J1.J2<kotlin.Int, kotlin.Any>
     VALUE_PARAMETER name:j1 index:0 type:<root>.J1<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (j1: <root>.J1<kotlin.Any>): <root>.J1.J2<kotlin.Int, kotlin.Any> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Int, kotlin.Any> origin=null
-          <class: T2>: kotlin.Int
+          <class: T2>: kotlin.Int?
           $outer: GET_VAR 'j1: <root>.J1<kotlin.Any> declared in <root>.test3' type=<root>.J1<kotlin.Any> origin=null
   FUN name:test4 visibility:public modality:FINAL <> (j1:<root>.J1<kotlin.Any>) returnType:<root>.J1.J2<kotlin.Int, kotlin.Any>
     VALUE_PARAMETER name:j1 index:0 type:<root>.J1<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (j1: <root>.J1<kotlin.Any>): <root>.J1.J2<kotlin.Int, kotlin.Any> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> <X2> (x2: X2 of <root>.J1.J2.<init>?) declared in <root>.J1.J2' type=<root>.J1.J2<kotlin.Int, kotlin.Any> origin=null
-          <class: T2>: kotlin.Int
-          <X2>: kotlin.Int
+          <class: T2>: kotlin.Int?
+          <X2>: kotlin.Int?
           $outer: GET_VAR 'j1: <root>.J1<kotlin.Any> declared in <root>.test4' type=<root>.J1<kotlin.Any> origin=null
           x2: CONST Int type=kotlin.Int value=1
