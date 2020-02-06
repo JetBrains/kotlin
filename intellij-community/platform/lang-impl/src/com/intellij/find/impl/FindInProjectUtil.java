@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.find.impl;
 
@@ -12,7 +12,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
@@ -514,27 +513,8 @@ public class FindInProjectUtil {
     }
 
     @Override
-    public void findUsagesInEditor(@NotNull FileEditor editor) {}
-    @Override
-    public void highlightUsages(@NotNull PsiFile file, @NotNull Editor editor, boolean clearHighlights) {}
-
-    @Override
     public boolean isValid() {
       return true;
-    }
-
-    @Override
-    public boolean isReadOnly() {
-      return true;
-    }
-
-    @Override
-    public VirtualFile @Nullable [] getFiles() {
-      return null;
-    }
-
-    @Override
-    public void update() {
     }
 
     @Override
