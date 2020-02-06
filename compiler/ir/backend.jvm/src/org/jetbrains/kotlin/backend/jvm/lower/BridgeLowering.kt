@@ -119,7 +119,11 @@ internal val bridgePhase = makeIrFilePhase(
 
 private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     // Represents a synthetic bridge to `overridden` with a precomputed signature
-    private class Bridge(val overridden: IrSimpleFunction, val signature: Method)
+    private class Bridge(
+        val overridden: IrSimpleFunction,
+        val signature: Method,
+        val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = mutableListOf()
+    )
 
     // Represents a special bridge to `overridden`. Special bridges are always public and non-synthetic.
     // There are ten type-safe wrappers for different collection methods, which have an additional `methodInfo`
@@ -257,8 +261,10 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
 
         irFunction.allOverridden().filter { !it.isFakeOverride }.forEach { override ->
             val signature = override.jvmMethod
-            if (targetMethod != signature && signature !in generated && signature !in blacklist) {
-                generated[signature] = Bridge(override, signature)
+            if (targetMethod != signature && signature !in blacklist) {
+                generated.getOrPut(signature) {
+                    Bridge(override, signature)
+                }.overriddenSymbols += override.symbol
             }
         }
 
@@ -351,7 +357,11 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         }.apply {
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             body = context.createIrBuilder(symbol).run { irExprBody(delegatingCall(this@apply, target)) }
-            overriddenSymbols += bridge.overridden.symbol
+
+            val redundantOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) {
+                it.owner.allOverridden().map { override -> override.symbol }.asIterable()
+            }
+            overriddenSymbols = bridge.overriddenSymbols.filter { it !in redundantOverrides }
         }
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
