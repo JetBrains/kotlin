@@ -145,7 +145,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             fun CompiledProject.checkProgramCompilationCommandLine(check: (String) -> Unit) {
                 output.lineSequence().filter {
-                    it.contains("Run tool: konanc") && it.contains("-p program")
+                    it.contains("Run tool: \"konanc\"") && it.contains("-p program")
                 }.toList().also {
                     assertTrue(it.isNotEmpty())
                 }.forEach(check)
@@ -1026,7 +1026,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         val commandLine = output.lineSequence().dropWhile {
             !it.contains("Executing actions for task '$taskPath'")
         }.first {
-            it.contains("Run tool: konanc")
+            it.contains("Run tool: \"konanc\"")
         }
         check(commandLine)
     }
