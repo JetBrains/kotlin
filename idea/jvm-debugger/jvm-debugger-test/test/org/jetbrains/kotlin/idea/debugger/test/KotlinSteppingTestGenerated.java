@@ -1053,6 +1053,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/funLiteral.kt");
         }
 
+        @TestMetadata("functionBreakpointInStdlib.kt")
+        public void testFunctionBreakpointInStdlib() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/functionBreakpointInStdlib.kt");
+        }
+
         @TestMetadata("functionBreakpoints.kt")
         public void testFunctionBreakpoints() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/functionBreakpoints.kt");
