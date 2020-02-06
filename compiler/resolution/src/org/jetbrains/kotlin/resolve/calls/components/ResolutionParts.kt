@@ -173,7 +173,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
         }
     }
 
-    private fun TypeParameterDescriptor.shouldBeFlexible(): Boolean {
+    fun TypeParameterDescriptor.shouldBeFlexible(): Boolean {
         return upperBounds.any {
             it.isFlexible() || ((it.constructor.declarationDescriptor as? TypeParameterDescriptor)?.run { shouldBeFlexible() } ?: false)
         }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
@@ -27,7 +28,11 @@ class ConstraintIncorporator(
 
         fun getConstraintsForVariable(typeVariable: TypeVariableMarker): Collection<Constraint>
 
-        fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker)
+        fun addNewIncorporatedConstraint(
+            lowerType: KotlinTypeMarker,
+            upperType: KotlinTypeMarker,
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+        )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
@@ -49,11 +54,14 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
+        val shouldBeTypeVariableFlexible =
+            typeVariable is TypeVariableFromCallableDescriptor && typeVariable.originalTypeParameter.shouldBeFlexible()
+
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type)
+                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible)
                 }
             }
         }
@@ -62,7 +70,7 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.UPPER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
-                    addNewIncorporatedConstraint(constraint.type, it.type)
+                    addNewIncorporatedConstraint(constraint.type, it.type, shouldBeTypeVariableFlexible)
                 }
             }
         }

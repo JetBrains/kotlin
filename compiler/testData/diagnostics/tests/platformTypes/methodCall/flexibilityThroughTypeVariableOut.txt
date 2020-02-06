@@ -1,0 +1,18 @@
+package
+
+public fun main(/*0*/ o: Out<kotlin.Nothing?>): kotlin.Unit
+public fun takeConvertor(/*0*/ c: Convertor<kotlin.String, kotlin.String>): kotlin.Unit
+
+public interface Convertor</*0*/ Src : kotlin.Any!, /*1*/ Dst : kotlin.Any!> {
+    public abstract fun convert(/*0*/ o: Out<Src!>!): Out<Dst!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

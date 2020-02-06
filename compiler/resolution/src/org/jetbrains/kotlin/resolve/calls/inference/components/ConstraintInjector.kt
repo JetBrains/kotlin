@@ -148,10 +148,33 @@ class ConstraintInjector(
             }
         }
 
-        fun runIsSubtypeOf(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
-            if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)) {
+        fun runIsSubtypeOf(
+            lowerType: KotlinTypeMarker,
+            upperType: KotlinTypeMarker,
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean = false
+        ) {
+            fun isSubtypeOf(upperType: KotlinTypeMarker) =
+                AbstractTypeChecker.isSubtypeOf(
+                    this@TypeCheckerContext as AbstractTypeCheckerContext,
+                    lowerType,
+                    upperType
+                )
+
+            if (!isSubtypeOf(upperType)) {
                 // todo improve error reporting -- add information about base types
-                c.addError(NewConstraintError(lowerType, upperType, position))
+                if (shouldTryUseDifferentFlexibilityForUpperType && upperType is SimpleType) {
+                    /*
+                     * Please don't reuse this logic.
+                     * It's necessary to solve constraint systems when flexibility isn't propagated through a type variable.
+                     * It's OK in the old inference because it uses already substituted types, that are with the correct flexibility.
+                     */
+                    val flexibleUpperType = createFlexibleType(upperType, upperType.withNullability(true))
+                    if (!isSubtypeOf(flexibleUpperType)) {
+                        c.addError(NewConstraintError(lowerType, flexibleUpperType, position))
+                    }
+                } else {
+                    c.addError(NewConstraintError(lowerType, upperType, position))
+                }
             }
         }
 
@@ -181,10 +204,14 @@ class ConstraintInjector(
         }
 
         // from ConstraintIncorporator.Context
-        override fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
+        override fun addNewIncorporatedConstraint(
+            lowerType: KotlinTypeMarker,
+            upperType: KotlinTypeMarker,
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+        ) {
             if (lowerType === upperType) return
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
-                runIsSubtypeOf(lowerType, upperType)
+                runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType)
             }
         }
 

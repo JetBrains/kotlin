@@ -16478,6 +16478,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/entrySet.kt");
                 }
 
+                @TestMetadata("flexibilityThroughTypeVariable.kt")
+                public void testFlexibilityThroughTypeVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/flexibilityThroughTypeVariable.kt");
+                }
+
+                @TestMetadata("flexibilityThroughTypeVariableOut.kt")
+                public void testFlexibilityThroughTypeVariableOut() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/flexibilityThroughTypeVariableOut.kt");
+                }
+
                 @TestMetadata("genericsAndArrays.kt")
                 public void testGenericsAndArrays() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/methodCall/genericsAndArrays.kt");
