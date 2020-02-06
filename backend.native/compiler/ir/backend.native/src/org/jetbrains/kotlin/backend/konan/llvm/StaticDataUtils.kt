@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 
-
 /**
  * Creates const array-typed global with given name and value.
  * Returns pointer to the first element of the array.

@@ -395,6 +395,30 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun mapRuntimeType(type: LLVMTypeRef): Int =
             runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
 
+    private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
+        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
+            parseBitcodeFile(it)
+        }
+    }
+
+    private val debugOperations: ConstValue by lazy {
+        if (debugRuntimeOrNull != null) {
+            val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
+            val local = LLVMAddGlobal(context.llvmModule, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
+            constPointer(LLVMConstBitCast(local, kInt8PtrPtr)!!)
+        } else {
+            Zero(kInt8PtrPtr)
+        }
+    }
+
+    val debugOperationsSize: ConstValue by lazy {
+        if (debugRuntimeOrNull != null) {
+            val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
+            Int32(LLVMGetArrayLength(LLVMGetElementType(LLVMTypeOf(external))))
+        } else
+            Int32(0)
+    }
+
     private fun makeExtendedInfo(irClass: IrClass): ConstPointer {
         // TODO: shall we actually do that?
         if (context.shouldOptimize())
@@ -404,12 +428,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
         val bodyType = llvmDeclarations.bodyType
         val elementType = arrayClasses[className]
+
         val value = if (elementType != null) {
             // An array type.
             val runtimeElementType = mapRuntimeType(elementType)
             Struct(runtime.extendedTypeInfoType,
                     Int32(-runtimeElementType),
-                    NullPointer(int32Type), NullPointer(int8Type), NullPointer(kInt8Ptr))
+                    NullPointer(int32Type), NullPointer(int8Type), NullPointer(kInt8Ptr),
+                    debugOperationsSize, debugOperations)
         } else {
             data class FieldRecord(val offset: Int, val type: Int, val name: String)
             val fields = getStructElements(bodyType).drop(1).mapIndexed { index, type ->
@@ -424,7 +450,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     fields.map { Int8(it.type.toByte()) })
             val namesPtr = staticData.placeGlobalConstArray("kextname:$className", kInt8Ptr,
                     fields.map { staticData.placeCStringLiteral(it.name) })
-            Struct(runtime.extendedTypeInfoType, Int32(fields.size), offsetsPtr, typesPtr, namesPtr)
+
+            Struct(runtime.extendedTypeInfoType, Int32(fields.size), offsetsPtr, typesPtr, namesPtr,
+                    debugOperationsSize, debugOperations)
+
         }
         val result = staticData.placeGlobal("", value)
         result.setConstant(true)
@@ -565,6 +594,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                         .toList().reversed()
                         .joinToString(".") { it.name.asString() }
         )
+    }
+
+    fun dispose() {
+        debugRuntimeOrNull?.let { LLVMDisposeModule(it) }
     }
 }
 

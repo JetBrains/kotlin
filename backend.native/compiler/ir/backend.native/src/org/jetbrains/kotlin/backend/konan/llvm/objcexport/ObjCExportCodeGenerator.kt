@@ -51,6 +51,10 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         }
     }
 
+    fun dispose() {
+        rttiGenerator.dispose()
+    }
+
     // TODO: currently bridges don't have any custom `landingpad`s,
     // so it is correct to use [callAtFunctionScope] here.
     // However, exception handling probably should be refactored
@@ -103,6 +107,7 @@ internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExport
     fun generate() {
         emitFunctionConverters()
         emitBlockToKotlinFunctionConverters()
+        dispose()
     }
 }
 

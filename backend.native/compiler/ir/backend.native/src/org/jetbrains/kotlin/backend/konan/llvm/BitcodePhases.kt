@@ -61,7 +61,11 @@ internal val disposeLLVMPhase = namedUnitPhase(
 internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",
-        op = { context, irModule -> irModule.acceptVoid(RTTIGeneratorVisitor(context)) }
+        op = { context, irModule ->
+            val visitor = RTTIGeneratorVisitor(context)
+            irModule.acceptVoid(visitor)
+            visitor.dispose()
+        }
 )
 
 internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(

@@ -102,6 +102,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
 
         objCCodeGenerator.emitRtti()
+        objCCodeGenerator.dispose()
     }
 
     private fun produceFrameworkSpecific(headerLines: List<String>) {

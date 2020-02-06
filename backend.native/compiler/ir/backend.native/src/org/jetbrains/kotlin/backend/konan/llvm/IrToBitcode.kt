@@ -105,6 +105,9 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
         }
     }
 
+    fun dispose() {
+        generator.dispose()
+    }
 }
 
 //-------------------------------------------------------------------------//

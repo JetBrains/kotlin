@@ -49,7 +49,8 @@ enum Konan_RuntimeType {
   RT_FLOAT32    = 6,
   RT_FLOAT64    = 7,
   RT_NATIVE_PTR = 8,
-  RT_BOOLEAN    = 9
+  RT_BOOLEAN    = 9,
+  RT_VECTOR128  = 10
 };
 
 // Flags per type.
@@ -77,7 +78,10 @@ struct ExtendedTypeInfo {
   const uint8_t* fieldTypes_;
   // Names of all fields.
   const char** fieldNames_;
-  // TODO: do we want any other info here?
+  // Number of supported debug operations.
+  int32_t debugOperationsCount_;
+  // Table of supported debug operations functions.
+  void** debugOperations_;
 };
 
 typedef void const* VTableElement;
