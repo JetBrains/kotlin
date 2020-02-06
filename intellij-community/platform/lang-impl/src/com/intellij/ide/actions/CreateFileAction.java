@@ -60,7 +60,7 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
   }
 
   @Override
-  protected void invokeDialog(Project project, PsiDirectory directory, Consumer<PsiElement[]> elementsConsumer) {
+  protected void invokeDialog(@NotNull Project project, @NotNull PsiDirectory directory, @NotNull Consumer<PsiElement[]> elementsConsumer) {
     MyInputValidator validator = new MyValidator(project, directory);
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       try {
