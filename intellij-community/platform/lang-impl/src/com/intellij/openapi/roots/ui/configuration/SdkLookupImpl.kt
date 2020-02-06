@@ -198,6 +198,7 @@ internal class SdkLookupImpl : SdkLookup {
     val unknownSdk = object: UnknownSdk {
       val versionPredicate = versionPredicate()
 
+      override fun getSdkName() = this@continueSdkLookupWithSuggestions.sdkName
       override fun getSdkType() : SdkType = this@continueSdkLookupWithSuggestions.sdkType
       override fun getSdkVersionStringPredicate() = versionPredicate
       override fun getSdkHomePredicate() = sdkHomeFilter?.let { filter -> Predicate<String> { path -> filter(path) } }
