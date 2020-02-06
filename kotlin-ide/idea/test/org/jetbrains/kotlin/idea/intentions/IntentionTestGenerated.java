@@ -15027,6 +15027,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/toOrdinaryStringLiteral/quotesAndSlashes.kt");
         }
 
+        @TestMetadata("quotesInExpression.kt")
+        public void testQuotesInExpression() throws Exception {
+            runTest("testData/intentions/toOrdinaryStringLiteral/quotesInExpression.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("testData/intentions/toOrdinaryStringLiteral/simple.kt");
@@ -15035,6 +15040,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("trimIndent1.kt")
         public void testTrimIndent1() throws Exception {
             runTest("testData/intentions/toOrdinaryStringLiteral/trimIndent1.kt");
+        }
+
+        @TestMetadata("trimIndent10.kt")
+        public void testTrimIndent10() throws Exception {
+            runTest("testData/intentions/toOrdinaryStringLiteral/trimIndent10.kt");
+        }
+
+        @TestMetadata("trimIndent11.kt")
+        public void testTrimIndent11() throws Exception {
+            runTest("testData/intentions/toOrdinaryStringLiteral/trimIndent11.kt");
         }
 
         @TestMetadata("trimIndent2.kt")
