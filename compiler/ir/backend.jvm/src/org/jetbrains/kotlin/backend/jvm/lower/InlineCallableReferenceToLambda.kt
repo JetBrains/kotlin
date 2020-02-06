@@ -127,7 +127,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 name = Name.identifier("stub_for_inlining")
                 visibility = Visibilities.LOCAL
                 returnType = referencedFunction.returnType
-                isSuspend = false
+                isSuspend = referencedFunction.isSuspend
             }.apply {
                 for ((index, argumentType) in argumentTypes.withIndex()) {
                     addValueParameter {
@@ -137,12 +137,12 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 }
 
                 body = this@InlineCallableReferenceToLambdaPhase.context.createJvmIrBuilder(
-                    this.symbol,
+                    symbol,
                     expression.startOffset,
                     expression.endOffset
                 ).run {
                     irExprBody(irCall(referencedFunction).apply {
-                        this@apply.symbol.owner.allTypeParameters.forEach {
+                        symbol.owner.allTypeParameters.forEach {
                             putTypeArgument(it.index, expression.getTypeArgument(it.index))
                         }
 
