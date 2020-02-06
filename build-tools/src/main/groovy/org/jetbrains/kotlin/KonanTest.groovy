@@ -539,7 +539,7 @@ fun runTest() {
         }
 
         def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
-        if (version.size() != 0 && !version.contains("1.3")) {
+        if (version.size() != 0 && (!version.contains("1.3") || !version.contains("1.4"))) {
             // Support tests for 1.3 and exclude 1.2
             return false
         }
