@@ -32,6 +32,7 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -376,7 +377,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             useScope,
             kotlinOptions = searchOptions
         )
-        val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(::checkReference) }
+        val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(Processor { checkReference(it) }) }
 
         if (descriptor is FunctionDescriptor && DescriptorUtils.findJvmNameAnnotation(descriptor) != null) {
             if (referenceUsed) return true
@@ -386,7 +387,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 val lightMethodsUsed = lightMethods.any { method ->
-                    !MethodReferencesSearch.search(method).forEach(::checkReference)
+                    !MethodReferencesSearch.search(method).forEach(Processor { checkReference(it) })
                 }
                 if (lightMethodsUsed) return true
                 if (!declaration.hasActualModifier()) return false

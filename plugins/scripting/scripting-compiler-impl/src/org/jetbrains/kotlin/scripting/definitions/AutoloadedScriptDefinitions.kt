@@ -31,7 +31,7 @@ class AutoloadedScriptDefinitions(
                 loadScriptTemplatesFromClasspath(
                     listOf("org.jetbrains.kotlin.mainKts.MainKtsScript"),
                     mainKtsJars,
-                    emptyList(),
+                    emptyList<File>(),
                     baseClassloader,
                     hostConfiguration,
                     messageReporter

@@ -315,7 +315,7 @@ private fun OrderEntry.toIdeaModuleInfo(
 /**
  * @see [org.jetbrains.kotlin.types.typeUtil.closure].
  */
-fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence {
+fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence<T> {
     if (size == 0) return@sequence
     var sizeBeforeIteration = 0
 

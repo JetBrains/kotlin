@@ -308,7 +308,7 @@ class ExpressionsOfTypeProcessor(
         }
 
         val file = psiClass.containingFile
-        (file ?: psiClass).useScope
+        if (file != null) file.useScope else psiClass.useScope
     }
 
     private fun addStaticMemberToProcess(psiMember: PsiMember, scope: SearchScope, processor: ReferenceProcessor) {

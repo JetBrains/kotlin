@@ -381,7 +381,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                 doRefactoringOnElement(sourceData, targetFile)
             }
 
-            refactoringResult.copiedDeclaration?.let { newDeclaration ->
+            refactoringResult.copiedDeclaration?.let<KtNamedDeclaration, Unit> { newDeclaration ->
                 if (targetData.newName == newDeclaration.name) return@let
                 val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
                 runWriteAction {

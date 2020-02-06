@@ -202,7 +202,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
         val element = element ?: return
 
-        runWriteAction {
+        runWriteAction<Unit> {
             with(classInfo) {
                 val targetParent =
                     when (selectedParent) {
