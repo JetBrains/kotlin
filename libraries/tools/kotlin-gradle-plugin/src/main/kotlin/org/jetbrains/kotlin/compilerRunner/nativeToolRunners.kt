@@ -121,7 +121,7 @@ internal class KotlinNativeCInteropRunner(project: Project) : KotlinNativeToolRu
 }
 
 /** Kotlin/Native compiler runner */
-internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRunner("kotlinc-native", project) {
+internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRunner("konanc", project) {
     private val useArgFile get() = project.disableKonanDaemon
 
     override val mustRunViaExec get() = project.disableKonanDaemon
