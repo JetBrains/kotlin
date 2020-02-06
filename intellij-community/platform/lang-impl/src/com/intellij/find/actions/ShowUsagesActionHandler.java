@@ -4,7 +4,6 @@ package com.intellij.find.actions;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +20,7 @@ interface ShowUsagesActionHandler {
 
   @NotNull SearchScope getSelectedScope();
 
-  @NotNull GlobalSearchScope getMaximalScope();
+  @NotNull SearchScope getMaximalScope();
 
   static void showUsagesInMaximalScope(@NotNull ShowUsagesActionHandler actionHandler) {
     actionHandler.showUsagesInScope(actionHandler.getMaximalScope());
@@ -32,7 +31,7 @@ interface ShowUsagesActionHandler {
     if (shortcut == null) {
       return null;
     }
-    GlobalSearchScope maximalScope = actionHandler.getMaximalScope();
+    SearchScope maximalScope = actionHandler.getMaximalScope();
     if (actionHandler.getSelectedScope().equals(maximalScope)) {
       return null;
     }
