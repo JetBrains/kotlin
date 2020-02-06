@@ -52,7 +52,7 @@ assert(hello.length == "World".substring(1, 4).length)
 ## Kotlin IR
 
 Using this compiler plugin only works if the code is compiled using IR. This can
-only be enabled when compiling the test SourceSet if desired. As Kotlin IR is
+be enabled only when compiling the test SourceSet if desired. As Kotlin IR is
 still experimental, mileage may vary.
 
 ```groovy
@@ -65,7 +65,9 @@ compileTestKotlin {
 
 ## Project Snapshots
 
-Snapshot builds are available through Sonatype Snapshot repository.
+Snapshot builds of the Kotlin compiler plugin are available through Sonatype
+Snapshot repository. Builds of the Gradle plugin are also available through the
+[Gradle Plugin Portal][kotlin-power-assert-gradle].
 
 ```groovy
 buildscript {
@@ -80,6 +82,14 @@ buildscript {
 }
 
 apply plugin: "com.bnorm.power.kotlin-power-assert"
+
+repositories {
+  // Required to find Kotlin compiler plugin as it is not bundled with Gradle plugin
+  maven {
+    url "https://oss.sonatype.org/content/repositories/snapshots"
+  }
+}
 ```
 
 [groovy-power-assert]: https://groovy-lang.org/testing.html#_power_assertions
+[kotlin-power-assert-gradle]: https://plugins.gradle.org/plugin/com.bnorm.power.kotlin-power-assert
