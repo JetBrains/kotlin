@@ -46,14 +46,6 @@ class ComposeResolutionMetadataTransformer(val context: JvmBackendContext) :
 
         val descriptor = expression.descriptor
 
-        if (descriptor is ComposableCallableDescriptor) {
-            context.state.irTrace.record(
-                ComposeWritableSlices.COMPOSER_IR_METADATA,
-                expression,
-                descriptor.composerMetadata
-            )
-        }
-
         if (descriptor is ComposableEmitDescriptor) {
             context.state.irTrace.record(
                 ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,

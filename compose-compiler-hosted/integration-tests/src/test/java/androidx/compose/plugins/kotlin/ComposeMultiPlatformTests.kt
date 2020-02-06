@@ -16,3 +16,56 @@
 
 package androidx.compose.plugins.kotlin
 
+import org.junit.Test
+
+class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
+    @Test
+    fun testBasicMpp() = forComposerParam(true) {
+        multiplatform(
+            """
+            expect val foo: String
+        """,
+            """
+            actual val foo = ""
+        """,
+            """
+            public final class JvmKt {
+              private final static Ljava/lang/String; foo = ""
+              public final static getFoo()Ljava/lang/String;
+              public final static <clinit>()V
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testBasicComposable() = forComposerParam(true) {
+        multiplatform(
+        """
+            import androidx.compose.Composable
+
+            expect @Composable fun Test()
+        """,
+        """
+            import androidx.compose.Composable
+
+            actual @Composable fun Test() {}
+        """,
+        """
+        final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+          OUTERCLASS JvmKt Test (Landroidx/compose/Composer;)V
+          final static INNERCLASS JvmKt%Test%1 null null
+          private final synthetic Landroidx/compose/Composer; %%composer
+          synthetic <init>(Landroidx/compose/Composer;)V
+          public final invoke()V
+          public synthetic bridge invoke()Ljava/lang/Object;
+        }
+        public final class JvmKt {
+          final static INNERCLASS JvmKt%Test%1 null null
+          public final static Test(Landroidx/compose/Composer;)V
+          public final static synthetic Test()V
+        }
+        """
+        )
+    }
+}

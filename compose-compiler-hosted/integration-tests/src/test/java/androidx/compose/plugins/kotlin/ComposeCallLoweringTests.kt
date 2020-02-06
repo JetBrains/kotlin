@@ -43,7 +43,7 @@ import kotlin.reflect.KClass
 class ComposeCallLoweringTests : AbstractCodegenTest() {
 
     @Test
-    fun testInlineGroups(): Unit = forComposerParam(/*true, */false) {
+    fun testInlineGroups(): Unit = forComposerParam(true, false) {
         compose("""
 
             @Composable
@@ -611,7 +611,7 @@ fun WebComponent(
     }
 
     @Test // java.lang.ClassNotFoundException: Z
-    fun testObservableLambda(): Unit = forComposerParam(/*true, */false) {
+    fun testObservableLambda(): Unit = forComposerParam(true, false) {
         compose(
             """
                 @Model
@@ -648,7 +648,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableGenericFunction(): Unit = forComposerParam(/*true, */false) {
+    fun testObservableGenericFunction(): Unit = forComposerParam(true, false) {
         compose("""
             @Model
             class Counter() {

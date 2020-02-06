@@ -16,15 +16,10 @@
 
 package androidx.compose.plugins.kotlin
 
-import android.app.Activity
-import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.FrameManager
-import androidx.compose.Compose
-import androidx.compose.ViewComposer
-import androidx.compose.runWithCurrent
+import androidx.compose.Composer
+import androidx.compose.currentComposerNonNull
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -339,9 +334,18 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
         val advanceMethod = instanceClass.getMethod("advance", *parameterTypes)
-        val composeMethod = instanceClass.getMethod("compose")
+        val composeMethod = if (ComposeFlags.COMPOSER_PARAM)
+            instanceClass.getMethod("compose", Composer::class.java)
+        else
+            instanceClass.getMethod("compose")
 
-        return composeMulti({ composeMethod.invoke(instanceOfClass) }) {
+        return composeMulti({
+            if (ComposeFlags.COMPOSER_PARAM) {
+                composeMethod.invoke(instanceOfClass, currentComposerNonNull)
+            } else {
+                composeMethod.invoke(instanceOfClass)
+            }
+        }) {
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()
             advanceMethod.invoke(instanceOfClass, *arguments)

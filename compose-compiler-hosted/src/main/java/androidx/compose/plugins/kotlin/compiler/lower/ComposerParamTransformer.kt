@@ -28,18 +28,15 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertySetterDesc
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -61,7 +58,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -91,18 +87,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private const val DEBUG_LOG = false
@@ -132,7 +123,8 @@ class ComposerParamTransformer(
         val transformer = DeepCopyIrTreeWithSymbolsPreservingMetadata(
             context,
             symbolRemapper,
-            typeRemapper
+            typeRemapper,
+            typeTranslator
         ).also { typeRemapper.deepCopy = it }
         module.transformChildren(
             transformer,
@@ -309,6 +301,10 @@ class ComposerParamTransformer(
         // TODO(b/147250515)
         if (isNonComposableInlinedLambda()) return this
 
+        // we don't bother transforming expect functions. They exist only for type resolution and
+        // don't need to be transformed to have a composer parameter
+        if (isExpect) return this
+
         // cache the transformed function with composer parameter
         return transformedFunctions[this] ?: copyWithComposerParam()
     }
@@ -430,10 +426,31 @@ class ComposerParamTransformer(
             fn.copyTypeParametersFrom(this)
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
             fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
-            valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn) }
+            valueParameters.mapTo(fn.valueParameters) { p ->
+                // Composable lambdas will always have `IrGet`s of all of their parameters
+                // generated, since they are passed into the restart lambda. This causes an
+                // interesting corner case with "anonymous parameters" of composable functions.
+                // If a parameter is anonymous (using the name `_`) in user code, you can usually
+                // make the assumption that it is never used, but this is technically not the
+                // case in composable lambdas. The synthetic name that kotlin generates for
+                // anonymous parameters has an issue where it is not safe to dex, so we sanitize
+                // the names here to ensure that dex is always safe.
+                p.copyTo(fn, name = dexSafeName(p.name))
+            }
             annotations.mapTo(fn.annotations) { a -> a }
             fn.body = body?.deepCopyWithSymbols(this)
         }
+    }
+
+    private fun dexSafeName(name: Name): Name {
+        return if (name.isSpecial && name.asString().contains(' ')) {
+            val sanitized = name
+                .asString()
+                .replace(' ', '$')
+                .replace('<', '$')
+                .replace('>', '$')
+            Name.identifier(sanitized)
+        } else name
     }
 
     private fun jvmNameAnnotation(name: String): IrConstructorCall {
@@ -553,14 +570,34 @@ class ComposerParamTransformer(
                 }
 
                 override fun visitCall(expression: IrCall): IrExpression {
-                    val expr = if (!isNestedScope)
-                        expression.withComposerParamIfNeeded(composerParam)
+                    val expr = if (!isNestedScope) {
+                        expression.withComposerParamIfNeeded(composerParam).also { call ->
+                            if (
+                                fn.isInline &&
+                                call !== expression &&
+                                call.isInlineParameterLambdaInvoke()
+                            ) {
+                                context.state.irTrace.record(
+                                    ComposeWritableSlices.IS_INLINE_COMPOSABLE_CALL,
+                                    call,
+                                    true
+                                )
+                            }
+                        }
+                    }
                     else
                         expression
                     return super.visitCall(expr)
                 }
             })
         }
+    }
+
+    fun IrCall.isInlineParameterLambdaInvoke(): Boolean {
+        if (origin != IrStatementOrigin.INVOKE) return false
+        val lambda = dispatchReceiver as? IrGetValue
+        val valueParameter = lambda?.symbol?.owner as? IrValueParameter
+        return valueParameter?.isInlineParameter() == true
     }
 
     fun IrCall.isComposableLambdaInvoke(): Boolean {
@@ -636,7 +673,8 @@ class ComposerParamTransformer(
             val transformer = DeepCopyIrTreeWithSymbolsPreservingMetadata(
                 context,
                 symbolRemapper,
-                typeRemapper
+                typeRemapper,
+                typeTranslator
             ).also { typeRemapper.deepCopy = it }
             val result = d.transform(
                 transformer,
