@@ -126,11 +126,8 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
             return super.visitCall(expression)
         }
 
-        // TODO: This is too eagerly resolving the fake override statically. It
-        // should cf the old backend call precisely <supertype>.foo, not
-        // resolve foo to its implementation.
-        val superCallee = (expression.symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
-        if (superCallee.isDefinitelyNotDefaultImplsMethod() || superCallee.hasJvmDefault()) return super.visitCall(expression)
+        val superCallee = expression.symbol.owner as IrSimpleFunction
+        if (superCallee.isDefinitelyNotDefaultImplsMethod()) return super.visitCall(expression)
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
         val newCall = createDelegatingCallWithPlaceholderTypeArguments(expression, redirectTarget, context.irBuiltIns)
@@ -174,9 +171,10 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
 }
 
 private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
-    resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
+    resolveFakeOverride()?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
             origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME) ||
+            hasJvmDefault() ||
             (name.asString() == "clone" &&
                     parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
                     valueParameters.isEmpty())
@@ -237,7 +235,6 @@ internal fun IrSimpleFunction.findInterfaceImplementation(): IrSimpleFunction? {
         || Visibilities.isPrivate(implementation.visibility)
         || implementation.isDefinitelyNotDefaultImplsMethod()
         || implementation.isMethodOfAny()
-        || implementation.hasJvmDefault()
     ) {
         return null
     }

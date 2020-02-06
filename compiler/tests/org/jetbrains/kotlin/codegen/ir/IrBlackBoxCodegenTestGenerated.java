@@ -26142,6 +26142,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/super/multipleSuperTraits.kt");
         }
 
+        @TestMetadata("superCallToNonGenericImplThroughGenericDefaultImpls.kt")
+        public void testSuperCallToNonGenericImplThroughGenericDefaultImpls() throws Exception {
+            runTest("compiler/testData/codegen/box/super/superCallToNonGenericImplThroughGenericDefaultImpls.kt");
+        }
+
         @TestMetadata("traitproperty.kt")
         public void testTraitproperty() throws Exception {
             runTest("compiler/testData/codegen/box/super/traitproperty.kt");
