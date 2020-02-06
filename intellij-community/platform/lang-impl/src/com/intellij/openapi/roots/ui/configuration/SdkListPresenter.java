@@ -9,6 +9,8 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ui.SdkAppearanceService;
 import com.intellij.openapi.roots.ui.configuration.SdkListItem.GroupItem;
 import com.intellij.openapi.roots.ui.configuration.SdkListItem.SdkItem;
+import com.intellij.openapi.roots.ui.configuration.SdkListItem.SdkReferenceItem;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
@@ -198,19 +200,32 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
     }
     else if (value instanceof NoneSdkItem) {
       SdkAppearanceService.getInstance()
-        .forSdk(null, false, selected, false)
+        .forNullSdk(selected)
         .customize(this);
     }
+    else if(value instanceof SdkReferenceItem) {
+      SdkReferenceItem item = (SdkReferenceItem)value;
+
+      SdkAppearanceService.getInstance()
+        .forSdk(item.getSdkType(), item.getName(), null, item.isValid(), false, selected);
+
+      String version = item.getVersionString();
+      if (version == null) version = item.getSdkType().getPresentableName();
+      append(" " + version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
+    }
     else {
-      customizeCellRenderer(list, new NoneSdkItem(), index, selected, hasFocus);
+      SdkAppearanceService.getInstance()
+        .forNullSdk(selected)
+        .customize(this);
     }
   }
 
   @NotNull
   public static String presentDetectedSdkPath(@NotNull String home) {
     //for macOS, let's try removing Bundle internals
-    home = StringUtil.trimEnd(home, "/Contents/Home");
-    home = StringUtil.trimEnd(home, "/Contents/MacOS");
+    home = StringUtil.trimEnd(home, "/Contents/Home"); //NON-NLS
+    home = StringUtil.trimEnd(home, "/Contents/MacOS");  //NON-NLS
+    home = FileUtil.getLocationRelativeToUserHome(home);
     home = StringUtil.shortenTextWithEllipsis(home, 50, 30);
     return home;
   }

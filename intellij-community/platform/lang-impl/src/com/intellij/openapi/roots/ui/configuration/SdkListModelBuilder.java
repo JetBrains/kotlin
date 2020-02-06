@@ -6,8 +6,10 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.*;
-import com.intellij.openapi.projectRoots.impl.DependentSdkType;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.SdkTypeId;
+import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.roots.ui.configuration.SdkDetector.DetectedSdkListener;
 import com.intellij.openapi.roots.ui.configuration.SdkListItem.*;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
@@ -25,7 +27,6 @@ import java.util.Arrays;
 import java.util.EventListener;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public final class SdkListModelBuilder {
   @Nullable private final Project myProject;
@@ -46,6 +47,7 @@ public final class SdkListModelBuilder {
   private ProjectSdkItem myProjectSdkItem = null;
   private NoneSdkItem myNoneSdkItem = null;
   private InvalidSdkItem myInvalidItem = null;
+  private ImmutableList<SdkReferenceItem> myReferenceItems = ImmutableList.of();
 
   public SdkListModelBuilder(@Nullable Project project,
                              @NotNull ProjectSdksModel sdkModel,
@@ -92,6 +94,41 @@ public final class SdkListModelBuilder {
   }
 
   @NotNull
+  public SdkReferenceItem addSdkReferenceItem(@NotNull SdkType type,
+                                              @NotNull String name,
+                                              @Nullable String versionString,
+                                              boolean isValid) {
+    SdkReferenceItem element = new SdkReferenceItem(type, name, versionString, isValid);
+    //similar element might already be included!
+    removeSdkReferenceItem(element);
+
+    ImmutableList.Builder<SdkReferenceItem> builder = ImmutableList.builder();
+    builder.addAll(myReferenceItems);
+    builder.add(element);
+
+    myReferenceItems = builder.build();
+    syncModel();
+
+    return element;
+  }
+
+  public void removeSdkReferenceItem(@NotNull SdkReferenceItem item) {
+    boolean hasMatch = false;
+    ImmutableList.Builder<SdkReferenceItem> builder = ImmutableList.builder();
+    for (SdkReferenceItem element : myReferenceItems) {
+      if (Objects.equals(element, item)) continue;
+
+      builder.add(element);
+      hasMatch = true;
+    }
+
+    if (!hasMatch) return;
+
+    myReferenceItems = builder.build();
+    syncModel();
+  }
+
+  @NotNull
   private SdkListModel syncModel() {
     SdkListModel model = buildModel();
     myModelListener.getMulticaster().syncModel(model);
@@ -115,6 +152,8 @@ public final class SdkListModelBuilder {
     if (myInvalidItem != null) {
       newModel.add(myInvalidItem);
     }
+
+    newModel.addAll(myReferenceItems);
 
     newModel.addAll(myHead);
 

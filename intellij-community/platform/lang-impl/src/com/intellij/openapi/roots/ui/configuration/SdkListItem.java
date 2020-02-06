@@ -16,6 +16,61 @@ import java.util.Objects;
 public abstract class SdkListItem {
   private SdkListItem() {}
 
+  /**
+   * A class the represents a reference to an {@link Sdk}. Is it up to
+   * the code that creates it to interpret a possible selections items
+   * of that type.
+   */
+  public static final class SdkReferenceItem extends SdkListItem {
+    private final SdkType mySdkType;
+    private final String myName;
+    private final String myVersionString;
+    private final boolean myHasValidPath;
+
+    SdkReferenceItem(@NotNull SdkType sdkType,
+                     @NotNull String name,
+                     @Nullable String versionString,
+                     boolean hasValidPath) {
+      mySdkType = sdkType;
+      myName = name;
+      myVersionString = versionString;
+      myHasValidPath = hasValidPath;
+    }
+
+    @NotNull
+    public SdkType getSdkType() {
+      return mySdkType;
+    }
+
+    @NotNull
+    public String getName() {
+      return myName;
+    }
+
+    @Nullable
+    public String getVersionString() {
+      return myVersionString;
+    }
+
+    public boolean isValid() {
+      return myHasValidPath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof SdkReferenceItem)) return false;
+      SdkReferenceItem item = (SdkReferenceItem)o;
+      return mySdkType.equals(item.mySdkType) &&
+             myName.equals(item.myName);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(mySdkType, myName);
+    }
+  }
+
   public static abstract class SdkItem extends SdkListItem {
     private final Sdk mySdk;
 
