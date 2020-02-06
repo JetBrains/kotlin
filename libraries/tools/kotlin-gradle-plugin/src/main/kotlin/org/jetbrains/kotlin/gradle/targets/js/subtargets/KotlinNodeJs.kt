@@ -31,12 +31,10 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
-        irNodejs?.runTask(body)
     }
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {
         super<KotlinJsSubTarget>.testTask(body)
-        irNodejs?.testTask(body)
     }
 
     override fun configureDefaultTestFramework(testTask: KotlinJsTest) {

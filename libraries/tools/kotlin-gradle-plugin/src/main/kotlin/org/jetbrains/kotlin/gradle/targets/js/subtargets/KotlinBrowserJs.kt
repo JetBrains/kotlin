@@ -60,29 +60,20 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     override fun runTask(body: KotlinWebpack.() -> Unit) {
         commonRunConfigurations.add(body)
-        irBrowser?.runTask(body)
     }
 
     @ExperimentalDistributionDsl
     override fun distribution(body: Distribution.() -> Unit) {
         distribution.body()
-        target.irTarget?.browser?.distribution(body)
     }
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
         commonWebpackConfigurations.add(body)
-        irBrowser?.webpackTask(body)
     }
 
     @ExperimentalDceDsl
     override fun dceTask(body: KotlinJsDce.() -> Unit) {
         dceConfigurations.add(body)
-        irBrowser?.dceTask(body)
-    }
-
-    override fun testTask(body: KotlinJsTest.() -> Unit) {
-        super<KotlinJsSubTarget>.testTask(body)
-        irBrowser?.testTask(body)
     }
 
     override fun configureMain(compilation: KotlinJsCompilation) {
