@@ -149,7 +149,7 @@ public class UnknownSdkTracker {
   }
 
   public void applyDownloadableFix(@NotNull UnknownSdk info, @NotNull UnknownSdkDownloadableSdkFix fix) {
-    downloadFix(myProject, info, fix, sdk -> {
+    downloadFix(myProject, info, fix, sdk -> {}, sdk -> {
       if (sdk != null) {
         updateUnknownSdks();
       }
@@ -160,6 +160,7 @@ public class UnknownSdkTracker {
   public static void downloadFix(@Nullable Project project,
                                  @NotNull UnknownSdk info,
                                  @NotNull UnknownSdkDownloadableSdkFix fix,
+                                 @NotNull Consumer<? super Sdk> onSdkNameReady,
                                  @NotNull Consumer<? super Sdk> onCompleted) {
     SdkDownloadTask task;
     String title = "Configuring SDK";
@@ -171,6 +172,7 @@ public class UnknownSdkTracker {
         }
       });
     } catch (ProcessCanceledException e) {
+      onCompleted.consume(null);
       throw e;
     } catch (Exception error) {
       LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
@@ -200,6 +202,8 @@ public class UnknownSdkTracker {
         });
 
         registerNewSdkInJdkTable(actualSdkName, sdk);
+        onSdkNameReady.consume(sdk);
+
         downloadTracker.startSdkDownloadIfNeeded(sdk);
 
       } catch (Exception error) {

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -108,6 +109,25 @@ public class SdkDownloadTracker implements Disposable {
     if (task == null) return;
 
     task.startDownloadIfNeeded(sdkFromTable);
+  }
+
+  /**
+   * Looks into the currently downloading SDK instances
+   * and returns one with matching name
+   */
+  public List<Sdk> findDownloadingSdks(@Nullable String sdkName) {
+    if (sdkName == null) return null;
+
+    List<Sdk> result = new ArrayList<>();
+    for (PendingDownload task : myPendingTasks) {
+      for (Sdk sdk : task.myEditableSdks.copy()) {
+        if (Objects.equals(sdkName, sdk.getName())) {
+          result.add(sdk);
+        }
+      }
+    }
+
+    return result;
   }
 
   /**

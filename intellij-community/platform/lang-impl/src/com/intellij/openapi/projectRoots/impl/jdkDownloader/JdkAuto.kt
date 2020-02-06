@@ -51,6 +51,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
                               ?.first ?: return null
 
         return object: UnknownSdkDownloadableSdkFix {
+          override fun getVersionString() = jdkToDownload.versionString
           override fun getDownloadDescription() = jdkToDownload.fullPresentationText
 
           override fun createTask(indicator: ProgressIndicator): SdkDownloadTask {

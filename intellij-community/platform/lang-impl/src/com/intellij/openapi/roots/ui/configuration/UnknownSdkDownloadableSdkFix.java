@@ -15,6 +15,13 @@ public interface UnknownSdkDownloadableSdkFix {
   String getDownloadDescription();
 
   /**
+   * @return it is helpful for the UI to know the version of the SDK
+   * beforehand (e.g. while the SDK is downloading)
+   */
+  @NotNull
+  String getVersionString();
+
+  /**
    * Creates and SDK download task to apply the fix.
    * @see com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
    * @see com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
