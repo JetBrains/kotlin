@@ -11,6 +11,10 @@ annotation class CStruct(val spelling: String) {
     annotation class MemberAt(val offset: Long)
 
     @Retention(AnnotationRetention.BINARY)
+    @Target(AnnotationTarget.PROPERTY_GETTER)
+    annotation class ArrayMemberAt(val offset: Long)
+
+    @Retention(AnnotationRetention.BINARY)
     @Target(
             AnnotationTarget.PROPERTY_GETTER,
             AnnotationTarget.PROPERTY_SETTER

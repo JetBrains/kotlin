@@ -39,6 +39,9 @@ private fun isEnumVarValueAccessor(function: IrFunction, symbols: KonanSymbols):
 private fun isMemberAtAccessor(function: IrFunction): Boolean =
         function.hasAnnotation(RuntimeNames.cStructMemberAt)
 
+private fun isArrayMemberAtAccessor(function: IrFunction): Boolean =
+        function.hasAnnotation(RuntimeNames.cStructArrayMemberAt)
+
 private fun isBitFieldAccessor(function: IrFunction): Boolean =
         function.hasAnnotation(RuntimeNames.cStructBitField)
 
@@ -238,6 +241,8 @@ internal fun tryGenerateInteropMemberAccess(
         generateInteropCall(symbols, builder) { generateMemberAtAccess(callSite) }
     isBitFieldAccessor(callSite.symbol.owner) ->
         generateInteropCall(symbols, builder) { generateBitFieldAccess(callSite) }
+    isArrayMemberAtAccessor(callSite.symbol.owner) ->
+        generateInteropCall(symbols, builder) { generateArrayMemberAtAccess(callSite) }
     else -> null
 }
 
@@ -280,6 +285,16 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             }
         }
         else -> error("")
+    }
+}
+
+private fun InteropCallContext.generateArrayMemberAtAccess(callSite: IrCall): IrExpression {
+    val accessor = callSite.symbol.owner
+    val memberAt = accessor.getAnnotation(RuntimeNames.cStructArrayMemberAt)!!
+    val offset = (memberAt.getValueArgument(0) as IrConst<Long>).value
+    val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
+    return builder.irCall(symbols.interopInterpretCPointer).also {
+        it.putValueArgument(0, fieldPointer)
     }
 }
 

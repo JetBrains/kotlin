@@ -86,7 +86,7 @@ internal class StructStubBuilder(
                     }
                     val getter = when (context.generationMode) {
                         GenerationMode.SOURCE_CODE -> PropertyAccessor.Getter.ArrayMemberAt(offset)
-                        GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.MemberAt(offset)))
+                        GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.ArrayMemberAt(offset)))
                     }
                     val kind = PropertyStub.Kind.Val(getter)
                     // TODO: Should receiver be added?

@@ -393,6 +393,9 @@ private class MappingExtensions(
             is AnnotationStub.CStruct.MemberAt -> mapOfNotNull(
                     ("offset" to KmAnnotationArgument.LongValue(offset))
             )
+            is AnnotationStub.CStruct.ArrayMemberAt -> mapOfNotNull(
+                    ("offset" to KmAnnotationArgument.LongValue(offset))
+            )
             is AnnotationStub.CStruct.BitField -> mapOfNotNull(
                     ("offset" to KmAnnotationArgument.LongValue(offset)),
                     ("size" to KmAnnotationArgument.IntValue(size))

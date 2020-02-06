@@ -185,6 +185,11 @@ private object PredefinedTypesHandler {
         return AbbreviatedType(objCClass, KotlinTypes.objCObjectMeta, emptyList(), nullable)
     }
 
+    private fun expandCArrayPointer(typeArguments: List<TypeArgument>, nullable: Boolean): AbbreviatedType {
+        val cPointer = ClassifierStubType(KotlinTypes.cPointer, typeArguments)
+        return AbbreviatedType(cPointer, KotlinTypes.cArrayPointer, typeArguments, nullable)
+    }
+
     /**
      * @return [ClassifierStubType] if [classifier] is a typealias from [kotlinx.cinterop] package.
      */
@@ -195,6 +200,7 @@ private object PredefinedTypesHandler {
                 KotlinTypes.cOpaquePointerVar.classifier -> expandCOpaquePointerVar(nullable)
                 KotlinTypes.cPointerVar -> expandCPointerVar(typeArguments, nullable)
                 KotlinTypes.objCObjectMeta -> expandObjCObjectMeta(typeArguments, nullable)
+                KotlinTypes.cArrayPointer -> expandCArrayPointer(typeArguments, nullable)
                 else -> null
             }
 
