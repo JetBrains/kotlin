@@ -24445,6 +24445,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testReflectOnLambdaInStaticField() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInStaticField.kt");
             }
+
+            @TestMetadata("reflectOnLambdaInSuspend.kt")
+            public void testReflectOnLambdaInSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInSuspend.kt");
+            }
+
+            @TestMetadata("reflectOnLambdaInSuspendLambda.kt")
+            public void testReflectOnLambdaInSuspendLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInSuspendLambda.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
