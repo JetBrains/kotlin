@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addField
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -97,9 +100,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private fun IrBuilderWithScope.computeSignatureString(expression: IrCallableReference): IrExpression {
         return expression.getter?.let { getter ->
             localPropertyIndices[getter]?.let { irString("<v#$it>") }
-                ?: if (getter.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
-                    // Default property accessor. Compute the signature now, so that we will not get into trouble
-                    // if the getter is transformed to a static method by inline classes lowering.
+                ?: if (getter.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && getter.owner.parentAsClass.isInline) {
+                    // Default property accessor in an inline class. Compute the signature now, so that we will not
+                    // get into trouble if the getter is transformed to a static method by inline classes lowering.
                     irString(getter.owner.signature)
                 } else {
                     // Delay the computation of the signature until after inline classes lowering to make sure

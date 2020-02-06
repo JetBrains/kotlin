@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
@@ -28,12 +29,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -58,6 +61,7 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             )
 
             UpdateFunctionCallSites(functionDelegates).lower(input)
+            UpdateConstantFacadePropertyReferences(context).lower(input)
 
             context.multifileFacadesToAdd.clear()
 
@@ -139,6 +143,7 @@ private fun generateMultifileFacades(
 
         for (partClass in partClasses) {
             context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
+            context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
 
             moveFieldsOfConstProperties(partClass, facadeClass)
 
@@ -258,5 +263,28 @@ private class UpdateFunctionCallSites(
                 }
             }
         }
+    }
+}
+
+private class UpdateConstantFacadePropertyReferences(private val context: JvmBackendContext) : ClassLoweringPass {
+    override fun lower(irClass: IrClass) {
+        // Find property reference classes for properties whose fields were moved to the facade class.
+        if (irClass.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
+            return
+        val property = (irClass.attributeOwnerId as? IrPropertyReference)?.getter?.owner?.correspondingPropertySymbol?.owner
+            ?: return
+        val facadeClass = context.multifileFacadeClassForPart[property.parentAsClass.attributeOwnerId]
+            ?: return
+        if (property.backingField?.shouldMoveToFacade() != true)
+            return
+
+        // Replace the class reference in the body of the property reference class (in getOwner) to refer to the facade class instead.
+        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement = declaration
+
+            override fun visitClassReference(expression: IrClassReference): IrExpression = IrClassReferenceImpl(
+                expression.startOffset, expression.endOffset, facadeClass.defaultType, facadeClass.symbol, facadeClass.defaultType
+            )
+        })
     }
 }
