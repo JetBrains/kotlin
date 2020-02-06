@@ -70,7 +70,7 @@ fun foo(x: Any) {
     }
 
     when {
-        x in coll,
+        x in coll
         -> {
 
         }

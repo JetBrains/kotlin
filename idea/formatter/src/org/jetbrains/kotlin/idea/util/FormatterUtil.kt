@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtWhenEntry
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 /*
  * ASTBlock.node is nullable, this extension was introduced to minimize changes
@@ -64,7 +66,7 @@ fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings?, checkExist
 fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean = needTrailingComma(
     settings = settings,
     trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
-    additionalCheck = { !isElse },
+    additionalCheck = { !isElse && parent.cast<KtWhenExpression>().leftParenthesis != null },
     globalEndOffset = { arrow?.endOffset },
 )
 

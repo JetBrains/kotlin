@@ -3443,16 +3443,4 @@
     <offset>8</offset>
     <length>1</length>
   </problem>
-  <problem>
-    <file>WhenEntry.kt</file>
-    <line>69</line>
-    <module>testProject</module>
-    <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Missing trailing comma</description>
-    <highlighted_element>l</highlighted_element>
-    <offset>16</offset>
-    <length>1</length>
-  </problem>
 </problems>
