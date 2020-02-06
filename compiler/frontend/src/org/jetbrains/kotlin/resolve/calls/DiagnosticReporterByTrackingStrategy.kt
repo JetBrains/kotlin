@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -391,6 +392,9 @@ class DiagnosticReporterByTrackingStrategy(
                     }
                 ) return
 
+                if (isSpecialFunction(error.resolvedAtom))
+                    return
+
                 val expression = when (val atom = error.resolvedAtom.atom) {
                     is PSIKotlinCall -> atom.psiCall.calleeExpression
                     is PSIKotlinCallArgument -> atom.valueArgument.getArgumentExpression()
@@ -404,6 +408,14 @@ class DiagnosticReporterByTrackingStrategy(
                 }
                 trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
             }
+        }
+    }
+
+    private fun isSpecialFunction(atom: ResolvedAtom): Boolean {
+        if (atom !is ResolvedCallAtom) return false
+
+        return ControlStructureTypingUtils.ResolveConstruct.values().any { specialFunction ->
+            specialFunction.specialFunctionName == atom.candidateDescriptor.name
         }
     }
 

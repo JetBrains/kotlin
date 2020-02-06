@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ K> id(/*0*/ arg: K): K
+public fun test(): kotlin.Unit
