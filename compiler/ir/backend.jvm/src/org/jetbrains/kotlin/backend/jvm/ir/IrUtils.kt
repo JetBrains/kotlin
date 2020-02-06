@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -128,7 +130,12 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
     val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
     val value = const.value as? String ?: return null
-    return if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) "$value\$default" else value
+    return when (origin) {
+        IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
+        JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE,
+        JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE -> "$value$FOR_INLINE_SUFFIX"
+        else -> value
+    }
 }
 
 val IrFunction.propertyIfAccessor: IrDeclaration

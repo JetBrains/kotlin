@@ -618,6 +618,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             if (view.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
                     }.apply {
+                        annotations += view.annotations.map { it.deepCopyWithSymbols(this) }
                         copyTypeParameters(view.typeParameters)
                         dispatchReceiverParameter = view.dispatchReceiverParameter?.copyTo(this)
                         extensionReceiverParameter = view.extensionReceiverParameter?.copyTo(this)
