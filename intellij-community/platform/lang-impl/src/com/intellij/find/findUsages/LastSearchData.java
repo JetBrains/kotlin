@@ -5,14 +5,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.usages.UsageInfoToUsageConverter;
 import org.jetbrains.annotations.NotNull;
 
-final class LastSearchedData {
+/**
+ * Stores pointers to searched elements to be able to restore them
+ * and continue search when Find Next/Previous Occurrence is invoked.
+ */
+final class LastSearchData {
 
   private final UsageInfoToUsageConverter.TargetElementsDescriptor myDescriptor;
   private final FindUsagesOptions myOptions;
 
-  LastSearchedData(@NotNull PsiElement @NotNull [] primaryElements,
-                   @NotNull PsiElement @NotNull [] secondaryElements,
-                   @NotNull FindUsagesOptions options) {
+  LastSearchData(@NotNull PsiElement @NotNull [] primaryElements,
+                 @NotNull PsiElement @NotNull [] secondaryElements,
+                 @NotNull FindUsagesOptions options) {
     myDescriptor = new UsageInfoToUsageConverter.TargetElementsDescriptor(primaryElements, secondaryElements);
     myOptions = options;
   }

@@ -78,7 +78,7 @@ public final class FindUsagesManager {
   @NonNls private static final String VALUE_START_USAGE_AGAIN = "START_AGAIN";
   private final Project myProject;
 
-  private LastSearchedData myLastSearchInFileData; // EDT only
+  private LastSearchData myLastSearchInFileData; // EDT only
   private final UsageHistory myHistory = new UsageHistory();
 
   public FindUsagesManager(@NotNull Project project) {
@@ -153,7 +153,7 @@ public final class FindUsagesManager {
                                      PsiElement @NotNull [] secondaryElements) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    myLastSearchInFileData = new LastSearchedData(primaryElements, secondaryElements, findUsagesOptions);
+    myLastSearchInFileData = new LastSearchData(primaryElements, secondaryElements, findUsagesOptions);
   }
 
   @Nullable
