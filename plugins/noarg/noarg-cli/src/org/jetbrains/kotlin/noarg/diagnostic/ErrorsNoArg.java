@@ -28,7 +28,7 @@ public interface ErrorsNoArg {
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
-            Errors.Initializer.initializeFactoryNames(ErrorsNoArg.class);
+            Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(ErrorsNoArg.class, DefaultErrorMessagesNoArg.INSTANCE);
         }
     };
 

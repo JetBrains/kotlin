@@ -5,5 +5,5 @@ import kotlinx.serialization.*
 
 open class NonSerializableParent(val arg: Int)
 
-<!PLUGIN_ERROR("Impossible to make this class serializable because its parent is not serializable and does not have exactly one constructor without parameters")!>@Serializable<!>
+<!NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR!>@Serializable<!>
 class Derived(val someData: String): NonSerializableParent(42)

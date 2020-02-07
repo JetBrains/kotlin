@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -62,7 +60,7 @@ public interface ErrorsAndroid {
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
-            Errors.Initializer.initializeFactoryNames(ErrorsAndroid.class);
+            Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(ErrorsAndroid.class, DefaultErrorMessagesAndroid.INSTANCE);
         }
     };
 
