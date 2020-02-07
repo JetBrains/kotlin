@@ -1,5 +1,5 @@
 FILE: removeOnAbstractMap.kt
     public final fun test(map: R|java/util/AbstractMap<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
         R|<local>/map|.R|FakeOverride<kotlin/collections/MutableMap.remove: R|kotlin/Boolean|>|(String(), Null(null))
-        R|<local>/map|.R|FakeOverride<kotlin/collections/MutableMap.remove: R|kotlin/Int?|>|(Null(null))
+        R|<local>/map|.R|FakeOverride<java/util/AbstractMap.remove: R|kotlin/Int?|>|(Null(null))
     }

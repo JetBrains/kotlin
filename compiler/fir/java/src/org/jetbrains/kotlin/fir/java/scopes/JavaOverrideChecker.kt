@@ -28,15 +28,22 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
-        return if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
-        } else {
-            with(context) {
-                isEqualTypeConstructors(
-                    substitutor.substituteOrSelf(candidateType).typeConstructor(),
-                    substitutor.substituteOrSelf(baseType).typeConstructor()
-                )
+        if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
+            return candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+        }
+        if (candidateType is ConeClassLikeType && baseType is ConeTypeParameterType) {
+            val boundType = baseType.lookupTag.typeParameterSymbol.fir.bounds.singleOrNull()?.toNotNullConeKotlinType(
+                session, javaTypeParameterStack
+            )
+            if (boundType != null) {
+                return isEqualTypes(candidateType, boundType, substitutor)
             }
+        }
+        return with(context) {
+            isEqualTypeConstructors(
+                substitutor.substituteOrSelf(candidateType).typeConstructor(),
+                substitutor.substituteOrSelf(baseType).typeConstructor()
+            )
         }
     }
 

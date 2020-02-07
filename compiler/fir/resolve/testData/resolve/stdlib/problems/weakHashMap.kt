@@ -5,6 +5,6 @@ import java.util.*
 val someMap = WeakHashMap<Any?, Any?>()
 
 fun foo() {
-    <!AMBIGUITY!>someMap[""]<!>
+    someMap[""]
 }
 

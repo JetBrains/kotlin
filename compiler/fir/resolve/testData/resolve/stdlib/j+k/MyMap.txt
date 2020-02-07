@@ -4,7 +4,7 @@ FILE: test.kt
             ^ String(value)
         }
         )
-        lval otherResult: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|ft<kotlin/String, kotlin/String?>!|>|(String(key), String(value))
+        lval otherResult: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/map|.R|FakeOverride<java/util/Map.getOrDefault: R|ft<kotlin/String, kotlin/String?>!|>|(String(key), String(value))
         lval anotherResult: R|kotlin/String?| = R|<local>/map|.R|FakeOverride<java/util/Map.replace: R|kotlin/String?|>|(String(key), String(value))
         R|<local>/map|.R|FakeOverride<java/util/Map.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))

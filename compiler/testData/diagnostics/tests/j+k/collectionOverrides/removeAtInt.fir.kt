@@ -18,6 +18,6 @@ fun main(a: A, b: B, c: ArrayList<Int>) {
     a.removeAt(0)
     b.remove(1)
     b.removeAt(0)
-    c.<!AMBIGUITY!>remove<!>(1)
+    c.remove(1)
     c.removeAt(0)
 }

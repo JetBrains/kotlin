@@ -39,9 +39,9 @@ fun test2(value: Any?) {
 
 // From KT-32116
 fun test3(h: HashMap<*, *>) {
-    val a = <!AMBIGUITY!>h["str"]<!>
-    val b = <!AMBIGUITY!>h[1]<!>
-    val c = <!AMBIGUITY!>h["other"]<!> as? Double
+    val a = h["str"]
+    val b = h[1]
+    val c = h["other"] as? Double
 }
 
 // From KT-32218

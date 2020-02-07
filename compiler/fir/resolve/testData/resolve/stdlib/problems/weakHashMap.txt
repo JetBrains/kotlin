@@ -2,5 +2,5 @@ FILE: weakHashMap.kt
     public final val someMap: R|java/util/WeakHashMap<kotlin/Any?, kotlin/Any?>| = R|java/util/WeakHashMap.WeakHashMap|<R|kotlin/Any?|, R|kotlin/Any?|>()
         public get(): R|java/util/WeakHashMap<kotlin/Any?, kotlin/Any?>|
     public final fun foo(): R|kotlin/Unit| {
-        R|/someMap|.<Ambiguity: get, [java/util/WeakHashMap.get, kotlin/collections/Map.get]>#(String())
+        R|/someMap|.R|FakeOverride<java/util/WeakHashMap.get: R|kotlin/Any?|>|(String())
     }
