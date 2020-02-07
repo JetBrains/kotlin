@@ -199,6 +199,26 @@ assert(text == null || (text.length == 5 && text.toLowerCase() == text))
 """.trimIndent()
     )
   }
+
+  @Test
+  fun conditionalAccess() {
+    assertMessage(
+      """
+fun main() {
+  val text: String? = "Hello"
+  assert(text?.length?.minus(2) == 1)
+}""",
+      """
+Assertion failed
+assert(text?.length?.minus(2) == 1)
+       |     |       |        |
+       |     |       |        false
+       |     |       3
+       |     5
+       Hello
+""".trimIndent()
+    )
+  }
 }
 
 fun assertMessage(@Language("kotlin") source: String, message: String) {

@@ -149,7 +149,9 @@ fun buildAssertTree(expression: IrExpression): RootNode {
           }
         }
         else -> {
-          super.visitWhen(expression, data)
+          // Add as basic expression and terminate
+          // TODO this has to be broken and not work in all cases...
+          ExpressionNode(data)
         }
       }
     }
