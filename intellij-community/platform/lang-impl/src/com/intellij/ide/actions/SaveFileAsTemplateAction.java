@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -19,25 +18,25 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Objects;
 
-import static com.intellij.util.ObjectUtils.assertNotNull;
-
-public class SaveFileAsTemplateAction extends AnAction{
+final class SaveFileAsTemplateAction extends AnAction {
   @Override
-  public void actionPerformed(@NotNull AnActionEvent e){
-    Project project = assertNotNull(e.getData(CommonDataKeys.PROJECT));
-    String fileText = assertNotNull(e.getData(PlatformDataKeys.FILE_TEXT));
-    VirtualFile file = assertNotNull(e.getData(CommonDataKeys.VIRTUAL_FILE));
+  public void actionPerformed(@NotNull AnActionEvent e) {
+    Project project = Objects.requireNonNull(e.getData(CommonDataKeys.PROJECT));
+    String fileText = Objects.requireNonNull(e.getData(PlatformDataKeys.FILE_TEXT));
+    VirtualFile file = Objects.requireNonNull(e.getData(CommonDataKeys.VIRTUAL_FILE));
     String extension = StringUtil.notNullize(file.getExtension());
     String nameWithoutExtension = file.getNameWithoutExtension();
     PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-    for(SaveFileAsTemplateHandler handler: SaveFileAsTemplateHandler.EP_NAME.getExtensionList()) {
+    for (SaveFileAsTemplateHandler handler : SaveFileAsTemplateHandler.EP_NAME.getExtensionList()) {
       String textFromHandler = handler.getTemplateText(psiFile, fileText, nameWithoutExtension);
       if (textFromHandler != null) {
         fileText = textFromHandler;
         break;
       }
     }
+
     FileTemplateManager templateManager = FileTemplateManager.getInstance(project);
     FileTemplate[] templates = templateManager.getAllTemplates();
     FileTemplate template = FileTemplateUtil.createTemplate(nameWithoutExtension, extension, fileText, templates);

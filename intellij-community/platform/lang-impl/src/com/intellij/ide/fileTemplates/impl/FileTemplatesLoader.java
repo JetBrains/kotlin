@@ -59,7 +59,7 @@ class FileTemplatesLoader {
   FileTemplatesLoader(@Nullable Project project) {
     Path configDir;
     if (project == null || project.isDefault()) {
-      configDir = PathManager.getConfigDir();
+      configDir = PathManager.getConfigDir().resolve(TEMPLATES_DIR);
     }
     else {
       String storeDirPath = Objects.requireNonNull(ProjectKt.getStateStore(project).getDirectoryStorePath(true));

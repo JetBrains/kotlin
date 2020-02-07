@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.fileTemplates.impl;
 
 import com.intellij.application.options.CodeStyle;
@@ -42,11 +42,11 @@ public class FTManager {
   private volatile List<FileTemplateBase> mySortedTemplates;
   private final List<DefaultTemplate> myDefaultTemplates = new ArrayList<>();
 
-  FTManager(@NotNull @NonNls String name, @NotNull @NonNls Path defaultTemplatesDirName) {
+  FTManager(@NotNull @NonNls String name, @NotNull Path defaultTemplatesDirName) {
     this(name, defaultTemplatesDirName, false);
   }
 
-  FTManager(@NotNull @NonNls String name, @NotNull @NonNls Path defaultTemplatesDirName, boolean internal) {
+  FTManager(@NotNull @NonNls String name, @NotNull Path defaultTemplatesDirName, boolean internal) {
     myName = name;
     myInternal = internal;
     myTemplatesDir = defaultTemplatesDirName;
