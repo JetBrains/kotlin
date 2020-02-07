@@ -17,26 +17,21 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 internal val jvmStaticAnnotationPhase = makeIrFilePhase(
     ::JvmStaticAnnotationLowering,
@@ -65,45 +60,24 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
 
         companion?.declarations?.filter(::isJvmStaticFunction)?.forEach { declaration ->
             val jvmStaticFunction = declaration as IrSimpleFunction
-            val newName = Name.identifier(context.methodSignatureMapper.mapFunctionName(jvmStaticFunction))
-            val proxy = createProxy(
-                jvmStaticFunction, irClass, companion, newName, jvmStaticFunction.visibility,
-                isSynthetic = false
-            )
+            val proxy = createProxy(jvmStaticFunction, irClass, companion)
             irClass.addMember(proxy)
         }
 
     }
 
-    private fun createProxy(
-        target: IrSimpleFunction,
-        irClass: IrClass,
-        companion: IrClass,
-        name: Name,
-        visibility: Visibility,
-        isSynthetic: Boolean
-    ): IrSimpleFunction {
-        val origin =
-            if (isSynthetic) JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER_SYNTHETIC else JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
-        val descriptor = WrappedSimpleFunctionDescriptor(target.descriptor.annotations)
-        return IrFunctionImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            origin,
-            IrSimpleFunctionSymbolImpl(descriptor),
-            name,
-            visibility,
-            // FINAL on static interface members makes JVM unhappy, so remove it.
-            if (irClass.isInterface) Modality.OPEN else target.modality,
-            returnType = target.returnType,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = target.isSuspend,
-            isExpect = false,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-            isOperator = false
-        ).apply {
-            descriptor.bind(this)
+    private fun createProxy(target: IrSimpleFunction, irClass: IrClass, companion: IrClass): IrSimpleFunction {
+        return buildFun {
+            updateFrom(target)
+            returnType = target.returnType
+            origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+            name = target.name
+            modality = if (irClass.isInterface) Modality.OPEN else target.modality
+            isInline = false
+            isExternal = false
+            isTailrec = false
+            isExpect = false
+        }.apply {
             parent = irClass
             copyTypeParametersFrom(target)
             target.extensionReceiverParameter?.let { extensionReceiverParameter = it.copyTo(this) }
@@ -212,27 +186,18 @@ private class MakeCallsStatic(
         return super.visitCall(expression)
     }
 
-    private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction {
-        val newDescriptor = (descriptor as? DescriptorWithContainerSource)?.let {
-            WrappedFunctionDescriptorWithContainerSource(it.containerSource)
-        } ?: WrappedSimpleFunctionDescriptor(descriptor)
-        return IrFunctionImpl(
-            startOffset, endOffset, origin,
-            IrSimpleFunctionSymbolImpl(newDescriptor),
-            name,
-            visibility, modality, returnType,
-            isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-            isOperator = isOperator
-        ).also {
-            newDescriptor.bind(it)
+    private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction =
+        buildFunWithDescriptorForInlining(descriptor) {
+            updateFrom(this@copyRemovingDispatchReceiver)
+            name = this@copyRemovingDispatchReceiver.name
+            returnType = this@copyRemovingDispatchReceiver.returnType
+        }.also {
             it.parent = parent
             it.correspondingPropertySymbol = correspondingPropertySymbol
             it.annotations += annotations
             it.copyParameterDeclarationsFrom(this)
             it.dispatchReceiverParameter = null
         }
-    }
 }
 
 private fun isJvmStaticFunction(declaration: IrDeclaration): Boolean =
