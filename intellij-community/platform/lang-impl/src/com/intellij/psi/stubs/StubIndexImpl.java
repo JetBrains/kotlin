@@ -666,7 +666,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       LOG.info("Dropping indices:" + StringUtil.join(indicesToDrop, ","));
 
       for (String s : indicesToDrop) {
-        FileUtil.delete(IndexInfrastructure.getIndexRootDir(StubIndexKey.createIndexKey(s)));
+        FileUtil.delete(IndexInfrastructure.getStubIndexRootDir(s));
       }
       return true;
     }
