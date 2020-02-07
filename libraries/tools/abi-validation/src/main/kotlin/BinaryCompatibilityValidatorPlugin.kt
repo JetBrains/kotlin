@@ -7,6 +7,9 @@ package kotlinx.validation
 import org.gradle.api.*
 import org.gradle.api.plugins.*
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
+import java.io.*
 
 const val API_DIR = "api"
 
@@ -41,14 +44,37 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         }
 
         project.pluginManager.withPlugin("kotlin-multiplatform") {
-            project.sourceSets.all { sourceSet ->
-                if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
-                    return@all
+            project.afterEvaluate {
+                val kotlin = it.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+                val javaTargets = kotlin.targets.filter {
+                    it.platformType == KotlinPlatformType.jvm
+                            || it.platformType == KotlinPlatformType.androidJvm
                 }
-                project.configureApiTasks(sourceSet)
+
+                javaTargets.flatMap { it.compilations }.filter {
+                    it.compilationName == "main"
+                }.forEach {
+                    project.configureMultiplatformProject(it)
+                }
             }
         }
     }
+}
+
+private fun Project.configureMultiplatformProject(compilation: KotlinCompilation<KotlinCommonOptions>) {
+    val projectName = project.name
+    val apiBuildDir = file(buildDir.resolve(API_DIR))
+
+    val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
+        onlyIf { apiCheckEnabled }
+        // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
+        description =
+            "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
+        inputClassesDirs = files(provider<Any> { if (isEnabled) compilation.output.allOutputs else emptyList<Any>() })
+        inputDependencies = files(provider<Any> { if (isEnabled) compilation.compileDependencyFiles else emptyList<Any>() })
+        outputApiDir = apiBuildDir
+    }
+    configureCheckTasks(apiBuildDir, apiBuild)
 }
 
 val Project.sourceSets: SourceSetContainer
@@ -60,8 +86,6 @@ val Project.apiCheckEnabled
 private fun Project.configureApiTasks(sourceSet: SourceSet) {
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
-    val apiCheckDir = file(projectDir.resolve(API_DIR))
-
     val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
         onlyIf { apiCheckEnabled }
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
@@ -72,6 +96,16 @@ private fun Project.configureApiTasks(sourceSet: SourceSet) {
         outputApiDir = apiBuildDir
     }
 
+    configureCheckTasks(apiBuildDir, apiBuild)
+}
+
+
+private fun Project.configureCheckTasks(
+    apiBuildDir: File,
+    apiBuild: TaskProvider<KotlinApiBuildTask>
+) {
+    val projectName = project.name
+    val apiCheckDir = file(projectDir.resolve(API_DIR))
     val apiCheck = task<ApiCompareCompareTask>("apiCheck") {
         onlyIf { apiCheckEnabled }
         group = "verification"
