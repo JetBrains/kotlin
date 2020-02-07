@@ -4,11 +4,17 @@
 
 package kotlinx.validation.build
 
+import org.gradle.api.*
+import org.gradle.api.file.*
 import org.gradle.api.publish.maven.*
+import org.gradle.jvm.tasks.*
+import org.gradle.kotlin.dsl.*
 
 fun MavenPublication.mavenCentralMetadata() {
     pom {
         name.set("Binary API validator")
+        description.set("Kotlin binary public API management tool")
+        url.set("https://github.com/Kotlin/binary-compatibility-validator")
         licenses {
             license {
                 name.set("The Apache Software License, Version 2.0")
@@ -25,7 +31,20 @@ fun MavenPublication.mavenCentralMetadata() {
             }
         }
         scm {
-            url.set("https://github.com/Kotlin/")
+            url.set("https://github.com/Kotlin/binary-compatibility-validator")
         }
     }
+}
+
+fun MavenPublication.mavenCentralArtifacts(project: Project, sources: SourceDirectorySet) {
+    val sourcesJar by project.tasks.creating(Jar::class) {
+        archiveClassifier.set("sources")
+        from(sources)
+    }
+    val javadocJar by project.tasks.creating(Jar::class) {
+        archiveClassifier.set("javadoc")
+        // contents are deliberately left empty
+    }
+    artifact(sourcesJar)
+    artifact(javadocJar)
 }
