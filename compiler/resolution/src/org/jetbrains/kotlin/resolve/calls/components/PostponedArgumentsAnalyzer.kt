@@ -132,7 +132,7 @@ class PostponedArgumentsAnalyzer(
 
         val subResolvedKtPrimitives = returnArgumentsInfo.nonErrorArguments.map {
             resolveKtPrimitive(
-                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false, convertedType = null
+                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, ReceiverInfo.notReceiver, convertedType = null
             )
         }
 

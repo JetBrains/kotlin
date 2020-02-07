@@ -104,9 +104,14 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             UnsafeCallError::class.java -> {
-                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke
-                    ?: callReceiver.receiver.receiverValue.type.isExtensionFunctionType
-                tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
+                val unsafeCallErrorDiagnostic = diagnostic.cast<UnsafeCallError>()
+                val isForImplicitInvoke = when (callReceiver) {
+                    is ReceiverExpressionKotlinCallArgument -> callReceiver.isForImplicitInvoke
+                    else -> unsafeCallErrorDiagnostic.isForImplicitInvoke
+                            || callReceiver.receiver.receiverValue.type.isExtensionFunctionType
+                }
+
+                tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, isForImplicitInvoke)
             }
 
             SuperAsExtensionReceiver::class.java -> {
