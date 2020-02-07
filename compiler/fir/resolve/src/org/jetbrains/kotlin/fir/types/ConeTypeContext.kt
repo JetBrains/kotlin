@@ -486,7 +486,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         getClassFqNameUnsafe()?.startsWith(Name.identifier("kotlin")) == true
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? {
-        return toFirRegularClass()?.symbol?.toLookupTag()?.classId?.asSingleFqName()?.toUnsafe()
+        if (this !is FirClassLikeSymbol<*>) return null
+        return toLookupTag().classId.asSingleFqName().toUnsafe()
     }
 
     override fun TypeParameterMarker.getName() = (this as FirTypeParameterSymbol).name

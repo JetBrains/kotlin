@@ -9,5 +9,5 @@ fun test() {
     val c = C()
     c += ""
     var c1 = C()
-    <!ASSIGN_OPERATOR_AMBIGUITY!>c1 += ""<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY!>c1 += ""<!>
 }

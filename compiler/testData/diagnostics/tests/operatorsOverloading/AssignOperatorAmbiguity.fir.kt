@@ -11,7 +11,7 @@ fun test(m: MyInt) {
     m += m
 
     var i = 1
-    <!ASSIGN_OPERATOR_AMBIGUITY!>i += 34<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY!>i += 34<!>
 }
 
 

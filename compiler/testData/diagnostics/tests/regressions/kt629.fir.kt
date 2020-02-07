@@ -13,11 +13,11 @@ fun box() : Boolean {
     var c = A()
     val d = c;
     c %= A();
-    return (c != d) && <!INFERENCE_ERROR!>(c.p = "yeah")<!>
+    return (c != d) && (c.p = "yeah")
 }
 
 
 fun box2() : Boolean {
     var c = A()
-    return <!INFERENCE_ERROR!>(c.p = "yeah")<!> && true
+    return (c.p = "yeah") && true
 }
