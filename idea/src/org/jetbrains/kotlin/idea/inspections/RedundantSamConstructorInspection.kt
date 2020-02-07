@@ -148,7 +148,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
         private class CallWithConvertedArguments(
             original: Call,
-            val callArgumentMapToConvert: Map<KtValueArgument, KtCallExpression>
+            callArgumentMapToConvert: Map<KtValueArgument, KtCallExpression>,
         ) : DelegatingCall(original) {
             private val newArguments: List<ValueArgument>
 
@@ -166,26 +166,19 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
         fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): Collection<KtCallExpression> {
             val valueArguments = functionCall.valueArguments
-            if (valueArguments.all { !canBeSamConstructorCall(it) }) {
-                return emptyList()
-            }
+            if (valueArguments.none { canBeSamConstructorCall(it) }) return emptyList()
 
             val bindingContext = functionCall.analyze(BodyResolveMode.PARTIAL)
             val functionResolvedCall = functionCall.getResolvedCall(bindingContext) ?: return emptyList()
             if (!functionResolvedCall.isReallySuccess()) return emptyList()
 
-            val samConstructorCallArgumentMap = valueArguments.keysToMapExceptNulls { it.toCallExpression() }.filter { (_, call) ->
+            val samConstructorCallArgumentMap = valueArguments.keysToMapExceptNulls { it.toCallExpression() }.filterValues { call ->
                 call.getResolvedCall(bindingContext)?.resultingDescriptor?.original is SamConstructorDescriptor
             }
 
             if (samConstructorCallArgumentMap.isEmpty()) return emptyList()
 
-            if (samConstructorCallArgumentMap.values.any {
-                    val samValueArgument = it.samConstructorValueArgument()
-                    val samConstructorName = (it.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
-                    samValueArgument == null || samConstructorName == null ||
-                            samValueArgument.hasLabeledReturnPreventingConversion(samConstructorName)
-                }) return emptyList()
+            if (samConstructorCallArgumentMap.values.any(::containsLabeledReturnPreventingConversion)) return emptyList()
 
             val originalFunctionDescriptor = functionResolvedCall.resultingDescriptor.original as? FunctionDescriptor ?: return emptyList()
             val containingClass = originalFunctionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
@@ -248,6 +241,14 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             val parametersWithSamTypeCount = originalFunction.valueParameters.count { JavaSingleAbstractMethodUtils.isSamType(it.type) }
             return parametersWithSamTypeCount == samConstructorsCount
+        }
+
+        private fun containsLabeledReturnPreventingConversion(it: KtCallExpression): Boolean {
+            val samValueArgument = it.samConstructorValueArgument()
+            val samConstructorName = (it.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
+            return samValueArgument == null ||
+                    samConstructorName == null ||
+                    samValueArgument.hasLabeledReturnPreventingConversion(samConstructorName)
         }
 
         private fun KtValueArgument.hasLabeledReturnPreventingConversion(samConstructorName: Name) =
