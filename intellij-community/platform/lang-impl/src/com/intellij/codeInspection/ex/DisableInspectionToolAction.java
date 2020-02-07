@@ -60,7 +60,7 @@ public class DisableInspectionToolAction extends IntentionAndQuickFixAction impl
     final InspectionProjectProfileManager profileManager = InspectionProjectProfileManager.getInstance(project);
     InspectionProfile inspectionProfile = profileManager.getCurrentProfile();
     InspectionToolWrapper toolWrapper = inspectionProfile.getInspectionTool(myToolId, project);
-    return toolWrapper == null || toolWrapper.getDefaultLevel() != HighlightDisplayLevel.NON_SWITCHABLE_ERROR;
+    return toolWrapper == null || !toolWrapper.getDefaultLevel().isNonSwitchable();
   }
 
   @Override

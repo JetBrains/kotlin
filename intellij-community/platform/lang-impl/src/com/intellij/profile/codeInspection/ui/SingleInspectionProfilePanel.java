@@ -382,7 +382,7 @@ public class SingleInspectionProfilePanel extends JPanel {
   }
 
   protected boolean accept(InspectionToolWrapper entry) {
-    return entry.getDefaultLevel() != HighlightDisplayLevel.NON_SWITCHABLE_ERROR;
+    return !entry.getDefaultLevel().isNonSwitchable();
   }
 
   private void postProcessModification() {
