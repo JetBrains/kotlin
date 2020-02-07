@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
+import com.intellij.core.CoreBundle
 import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.command.WriteCommandAction
@@ -63,7 +64,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     FileUtil.ensureExists(file.parentFile)
     FileUtil.ensureCanCreateFile(file)
     if (!file.createNewFile()) {
-      throw IOException(VfsBundle.message("file.create.already.exists.error", parentPath, relativePath))
+      throw IOException(CoreBundle.message("file.create.already.exists.error", parentPath, relativePath))
     }
     return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)!!
   }
