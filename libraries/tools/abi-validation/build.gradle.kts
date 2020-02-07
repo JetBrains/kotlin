@@ -52,6 +52,7 @@ tasks {
     }
 }
 
+properties["DeployVersion"]?.let { version = it }
 publishing {
     publications {
         create<MavenPublication>("maven") {
