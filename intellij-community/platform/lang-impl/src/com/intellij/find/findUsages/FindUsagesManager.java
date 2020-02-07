@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.findUsages;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -78,7 +78,7 @@ public final class FindUsagesManager {
   @NonNls private static final String VALUE_START_USAGE_AGAIN = "START_AGAIN";
   private final Project myProject;
 
-  private PsiElement2UsageTargetComposite myLastSearchInFileData; // EDT only
+  private LastSearchedData myLastSearchInFileData; // EDT only
   private final UsageHistory myHistory = new UsageHistory();
 
   public FindUsagesManager(@NotNull Project project) {
@@ -143,7 +143,7 @@ public final class FindUsagesManager {
 
     FindUsagesHandler handler = getFindUsagesHandler(primaryElements[0], false);
     if (handler == null) return false;
-    findUsagesInEditor(primaryElements, secondaryElements, handler, psiFile, direction, myLastSearchInFileData.myOptions, editor);
+    findUsagesInEditor(primaryElements, secondaryElements, handler, psiFile, direction, myLastSearchInFileData.getOptions(), editor);
     return true;
   }
 
@@ -153,7 +153,7 @@ public final class FindUsagesManager {
                                      PsiElement @NotNull [] secondaryElements) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    myLastSearchInFileData = new PsiElement2UsageTargetComposite(primaryElements, secondaryElements, findUsagesOptions);
+    myLastSearchInFileData = new LastSearchedData(primaryElements, secondaryElements, findUsagesOptions);
   }
 
   @Nullable
