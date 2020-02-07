@@ -126,12 +126,36 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
 
+            // TODO do we really need this?... It will point to JVM stdlib
+            val additionalStack = mutableListOf<String>()
+            if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
+                for ((index, stackTraceElement) in e.stackTrace.withIndex()) {
+                    if (stackTraceElement.methodName == "invokeWithArguments") {
+                        additionalStack.addAll(e.stackTrace.slice(0 until index).reversed().map { "at $it" })
+                        break
+                    }
+                }
+
+                var cause = e.cause
+                val lastNeededValue = e.stackTrace.first().className + "." + e.stackTrace.first().methodName
+                while (cause != null) {
+                    for ((causeStackIndex, causeStackTraceElement) in cause.stackTrace.withIndex()) {
+                        val currentStackTraceValue = causeStackTraceElement.className + "." + causeStackTraceElement.methodName
+                        if (currentStackTraceValue== lastNeededValue) {
+                            cause.stackTrace = cause.stackTrace.sliceArray(0 until causeStackIndex).reversedArray()
+                            break
+                        }
+                    }
+                    cause = cause.cause
+                }
+            }
+
             val exceptionState = when {
                 // this block is used to replace jvm null pointer exception with common one
                 // TODO figure something better
                 irExceptionClass == irBuiltIns.throwableClass.owner && exceptionName == "KotlinNullPointerException" ->
-                    ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }, stackTrace)
-                else -> ExceptionState(e, irExceptionClass, stackTrace)
+                    ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }, stackTrace + additionalStack)
+                else -> ExceptionState(e, irExceptionClass, stackTrace + additionalStack)
             }
 
             data.pushReturnValue(exceptionState)
@@ -161,7 +185,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun MethodHandle.invokeMethod(irFunction: IrFunction, data: Frame): Code {
-        // TODO try catch
         val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data))
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
 

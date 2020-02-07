@@ -318,14 +318,13 @@ class ExceptionState private constructor(
 
     constructor(
         exception: Throwable, irClass: IrClass, stackTrace: List<String>
-    ) : this(irClass, evaluateFields(exception, irClass), stackTrace) {
-        if (irClass.name.asString() == "Throwable" && exception::class.java.name != "Throwable") {
+    ) : this(irClass, evaluateFields(exception, irClass, stackTrace), stackTrace) {
+        if (irClass.name.asString() != exception::class.java.simpleName) {
             // ir class wasn't found in classpath, a stub was passed => need to save java class hierarchy
-            exceptionHierarchy += exception::class.java.name
+            this.exceptionFqName = exception::class.java.name
+            exceptionHierarchy += this.exceptionFqName
             generateSequence(exception::class.java.superclass) { it.superclass }.forEach { exceptionHierarchy += it.name }
             exceptionHierarchy.removeAt(exceptionHierarchy.lastIndex) // remove unnecessary java.lang.Object
-
-            this.exceptionFqName = exception::class.java.name
         }
     }
 
@@ -333,8 +332,8 @@ class ExceptionState private constructor(
         val cause = (wrapper?.value as? Throwable)?.cause as? ExceptionData
         setCause(cause?.state)
         if (getMessage().value == null && cause != null) {
-            val causeMessage = cause.state.getMessage().value?.let { ": $it" } ?: ""
-            setMessage("$exceptionFqName$causeMessage")
+            val causeMessage = cause.state.exceptionFqName + (cause.state.getMessage().value?.let { ": $it" } ?: "")
+            setMessage(causeMessage)
         }
     }
 
@@ -363,7 +362,7 @@ class ExceptionState private constructor(
         val message = getMessage().value.let { if (it?.isNotEmpty() == true) ": $it" else "" }
         val prefix = if (stackTrace.isNotEmpty()) "\n\t" else ""
         val postfix = if (stackTrace.size > 10) "\n\t..." else ""
-        val causeMessage = getCause()?.getFullDescription()?.let { "\nCaused by: $it" } ?: ""
+        val causeMessage = getCause()?.getFullDescription()?.replaceFirst("Exception ", "\nCaused by: ") ?: ""
         return "Exception $exceptionFqName$message" +
                 stackTrace.subList(0, min(stackTrace.size, 10)).joinToString(separator = "\n\t", prefix = prefix, postfix = postfix) +
                 causeMessage
@@ -382,13 +381,14 @@ class ExceptionState private constructor(
                 ?: this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
         }
 
-        private fun evaluateFields(exception: Throwable, irClass: IrClass): MutableList<Variable> {
+        private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): MutableList<Variable> {
             val messageProperty = irClass.getPropertyByName("message")
             val causeProperty = irClass.getPropertyByName("cause")
 
             val messageVar = Variable(messageProperty.descriptor, exception.message.toState(messageProperty.getter!!.returnType))
-            // TODO load stack trace from cause
-            val causeVar = exception.cause?.let { Variable(causeProperty.descriptor, ExceptionState(it, irClass, listOf())) }
+            val causeVar = exception.cause?.let {
+                Variable(causeProperty.descriptor, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
+            }
             return listOfNotNull(messageVar, causeVar).toMutableList()
         }
     }
