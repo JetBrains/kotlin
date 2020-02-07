@@ -105,15 +105,27 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(this is ConeKotlinType)
         // if (this is TypeUtils.SpecialType) return 0 // TODO: WTF?
 
-        var result = 0
+        var maxArgumentDepth = 0
         for (arg in typeArguments) {
             val current = if (arg is ConeStarProjection) 1 else (arg as ConeTypedProjection).type.typeDepth()
-            if (current > result) {
-                result = current
+            if (current > maxArgumentDepth) {
+                maxArgumentDepth = current
             }
         }
 
-        return result + 1
+        var result = maxArgumentDepth + 1
+
+        if (this is ConeClassLikeType) {
+            val fullyExpanded = fullyExpandedType(session)
+            if (this !== fullyExpanded) {
+                val fullyExpandedTypeDepth = fullyExpanded.typeDepth()
+                if (fullyExpandedTypeDepth > result) {
+                    result = fullyExpandedTypeDepth
+                }
+            }
+        }
+
+        return result
     }
 
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {

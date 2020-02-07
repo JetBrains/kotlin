@@ -928,6 +928,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         public void testSimpleCapturedTypes() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/simpleCapturedTypes.kt");
         }
+
+        @TestMetadata("typeDepthForTypeAlias.kt")
+        public void testTypeDepthForTypeAlias() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/typeDepthForTypeAlias.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/multifile")
