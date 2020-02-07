@@ -40,7 +40,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
             }
         }
 
-        project.pluginManager.withPlugin("kotlin-multiplatform") { plugin ->
+        project.pluginManager.withPlugin("kotlin-multiplatform") {
             project.sourceSets.all { sourceSet ->
                 if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
                     return@all
