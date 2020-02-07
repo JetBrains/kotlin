@@ -251,6 +251,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/superConstructorWithObjectParameter.kt");
         }
 
+        @TestMetadata("withInlineMethod.kt")
+        public void testWithInlineMethod() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
