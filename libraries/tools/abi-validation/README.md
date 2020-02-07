@@ -1,3 +1,7 @@
+[![JetBrains incubator project](https://jb.gg/badges/incubator.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![Apache license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Download](https://api.bintray.com/packages/kotlin/kotlinx/binary-compatibility-validator/images/download.svg)](https://bintray.com/kotlin/kotlinx/binary-compatibility-validator/_latestVersion)
+
 # Binary compatibility validator
 
 The tool allows to dump binary API of a Kotlin libraries that is public in sense of Kotlin visibilities and ensures that the public binary API wasn't changed in a way that make this change binary incompatible.
@@ -18,7 +22,7 @@ The tool allows to dump binary API of a Kotlin libraries that is public in sense
 ## Setup
 Binary compatibility validator is a Gradle plugin that is added to the `build.gradle` in the following way:
 ```
-ext.validator_version = "0.1.0"
+ext.validator_version = "0.1.1"
 
 buildscript {
     dependencies {
