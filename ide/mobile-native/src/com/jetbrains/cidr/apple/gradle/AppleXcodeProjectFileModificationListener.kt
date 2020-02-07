@@ -19,12 +19,11 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.jetbrains.mobile.MobileBundle
 import java.io.File
 
-class AppleXcodeProjectFileModificationListener(val project: Project, val projectFile: File) : AsyncFileListener {
+class AppleXcodeProjectFileModificationListener(private val project: Project, private val projectFile: File) : AsyncFileListener {
     override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier? {
         val changed = events.any {
-            it.file?.let { file ->
-                it is VFileContentChangeEvent && VfsUtilCore.virtualToIoFile(file) == projectFile
-            } ?: false
+            val file = it.file
+            file != null && it is VFileContentChangeEvent && VfsUtilCore.virtualToIoFile(file) == projectFile
         }
 
         if (changed) {
