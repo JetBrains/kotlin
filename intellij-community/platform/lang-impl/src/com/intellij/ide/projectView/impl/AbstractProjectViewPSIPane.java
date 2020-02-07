@@ -90,7 +90,8 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
       setTreeBuilder(treeBuilder);
     }
     else {
-      myAsyncSupport = new AsyncProjectViewSupport(this, myProject, myTree, myTreeStructure, createComparator());
+      myAsyncSupport = new AsyncProjectViewSupport(this, myProject, myTreeStructure, createComparator());
+      myAsyncSupport.setModelTo(myTree);
     }
 
     initTree();

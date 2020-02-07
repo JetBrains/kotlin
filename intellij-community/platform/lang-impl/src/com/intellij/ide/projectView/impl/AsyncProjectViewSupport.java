@@ -27,6 +27,7 @@ import com.intellij.ui.tree.project.ProjectFileNodeUpdater;
 import com.intellij.util.SmartList;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
 
@@ -40,17 +41,17 @@ import java.util.Set;
 import static com.intellij.ide.util.treeView.TreeState.expand;
 import static com.intellij.ui.tree.project.ProjectFileNode.findArea;
 
-class AsyncProjectViewSupport {
+@ApiStatus.Internal
+public class AsyncProjectViewSupport {
   private static final Logger LOG = Logger.getInstance(AsyncProjectViewSupport.class);
   private final ProjectFileNodeUpdater myNodeUpdater;
   private final StructureTreeModel myStructureTreeModel;
   private final AsyncTreeModel myAsyncTreeModel;
 
-  AsyncProjectViewSupport(@NotNull Disposable parent,
-                          @NotNull Project project,
-                          @NotNull JTree tree,
-                          @NotNull AbstractTreeStructure structure,
-                          @NotNull Comparator<NodeDescriptor<?>> comparator) {
+  public AsyncProjectViewSupport(@NotNull Disposable parent,
+                                 @NotNull Project project,
+                                 @NotNull AbstractTreeStructure structure,
+                                 @NotNull Comparator<NodeDescriptor<?>> comparator) {
     myStructureTreeModel = new StructureTreeModel<>(structure, comparator, parent);
     myAsyncTreeModel = new AsyncTreeModel(myStructureTreeModel, parent);
     myAsyncTreeModel.setRootImmediately(myStructureTreeModel.getRootImmediately());
@@ -74,7 +75,6 @@ class AsyncProjectViewSupport {
         }
       }
     };
-    setModel(tree, myAsyncTreeModel);
     MessageBusConnection connection = project.getMessageBus().connect(parent);
     connection.subscribe(BookmarksListener.TOPIC, new BookmarksListener() {
       @Override
@@ -148,6 +148,10 @@ class AsyncProjectViewSupport {
         updatePresentationsFromRootTo(file);
       }
     });
+  }
+
+  public AsyncTreeModel getTreeModel() {
+    return myAsyncTreeModel;
   }
 
   public void setComparator(@NotNull Comparator<? super NodeDescriptor<?>> comparator) {
@@ -286,11 +290,11 @@ class AsyncProjectViewSupport {
     }, list, false);
   }
 
-  private static void setModel(@NotNull JTree tree, @NotNull AsyncTreeModel model) {
+  void setModelTo(@NotNull JTree tree) {
     RestoreSelectionListener listener = new RestoreSelectionListener();
     tree.addTreeSelectionListener(listener);
-    tree.setModel(model);
-    Disposer.register(model, () -> {
+    tree.setModel(myAsyncTreeModel);
+    Disposer.register(myAsyncTreeModel, () -> {
       tree.setModel(null);
       tree.removeTreeSelectionListener(listener);
     });
