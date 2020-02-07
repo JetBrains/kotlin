@@ -267,7 +267,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private void loadViews(ContentManager contentManager,
                          ServiceView mainView,
-                         Collection<ServiceViewContributor<?>> contributors,
+                         Collection<? extends ServiceViewContributor<?>> contributors,
                          List<ServiceViewState> viewStates) {
     myModel.getInvoker().invokeLater(() -> {
       Map<String, ServiceViewContributor<?>> contributorsMap = FactoryMap.create(className -> {
@@ -338,7 +338,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private void promiseFindView(Class<?> contributorClass, AsyncPromise<Void> result,
-                               Function<ServiceView, Promise<?>> action, Consumer<Content> onSuccess) {
+                               Function<? super ServiceView, ? extends Promise<?>> action, Consumer<? super Content> onSuccess) {
     ServiceViewContentHolder holder = getContentHolder(contributorClass);
     if (holder == null) {
       result.setError("Content manager not initialized");
@@ -354,8 +354,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     promiseFindView(contents.iterator(), result, action, onSuccess);
   }
 
-  private static void promiseFindView(Iterator<Content> iterator, AsyncPromise<Void> result,
-                                      Function<ServiceView, Promise<?>> action, Consumer<Content> onSuccess) {
+  private static void promiseFindView(Iterator<? extends Content> iterator, AsyncPromise<Void> result,
+                                      Function<? super ServiceView, ? extends Promise<?>> action, Consumer<? super Content> onSuccess) {
     Content content = iterator.next();
     ServiceView serviceView = getServiceView(content);
     if (serviceView == null) {
@@ -400,11 +400,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   public Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass) {
     AsyncPromise<Void> result = new AsyncPromise<>();
     // Ensure model is updated, then iterate over service views on EDT in order to find view with service and select it.
-    myModel.getInvoker().invoke(() -> AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
+    myModel.getInvoker().invoke(() -> AppUIUtil.invokeLaterIfProjectAlive(myProject, () ->
       promiseFindView(contributorClass, result,
-                      serviceView -> serviceView.expand(service, contributorClass),
-                      null);
-    }));
+                    serviceView -> serviceView.expand(service, contributorClass),
+                      null)));
     return result;
   }
 
@@ -554,26 +553,22 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }
   }
 
-  private void loadGroups(Collection<ServiceViewContributor<?>> contributors) {
+  private void loadGroups(Collection<? extends ServiceViewContributor<?>> contributors) {
     if (Registry.is("ide.service.view.split")) {
       for (ServiceViewContributor<?> contributor : contributors) {
         myGroups.put(contributor.getViewDescriptor(myProject).getId(), new SmartList<>(contributor));
       }
     }
-    else {
-      if (!contributors.isEmpty()) {
-        String servicesToolWindowId = getToolWindowId();
-        Collection<ServiceViewContributor<?>> servicesContributors = myGroups.get(servicesToolWindowId);
-        if (servicesContributors == null) {
-          servicesContributors = ConcurrentHashMap.newKeySet();
-          myGroups.put(servicesToolWindowId, servicesContributors);
-        }
-        servicesContributors.addAll(contributors);
-      }
+    else if (!contributors.isEmpty()) {
+      String servicesToolWindowId = getToolWindowId();
+      Collection<ServiceViewContributor<?>> servicesContributors =
+        myGroups.computeIfAbsent(servicesToolWindowId, __ -> ContainerUtil.newConcurrentSet());
+      servicesContributors.addAll(contributors);
     }
   }
 
-  private Pair<ServiceViewState, List<ServiceViewState>> getServiceViewStates(String groupId) {
+  @NotNull
+  private Pair<ServiceViewState, List<ServiceViewState>> getServiceViewStates(@NotNull String groupId) {
     List<ServiceViewState> states = ContainerUtil.filter(myState.viewStates, state -> groupId.equals(state.groupId));
     ServiceViewState mainState = ContainerUtil.find(states, state -> StringUtil.isEmpty(state.viewType));
     if (mainState == null) {
@@ -743,7 +738,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return null;
   }
 
-  static boolean isMainView(@NotNull ServiceView serviceView) {
+  private static boolean isMainView(@NotNull ServiceView serviceView) {
     return serviceView.getModel() instanceof AllServicesModel;
   }
 
@@ -869,7 +864,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }
   }
 
-  private static void registerActivateByContributorActions(Project project, Collection<ServiceViewContributor<?>> contributors) {
+  private static void registerActivateByContributorActions(Project project, Collection<? extends ServiceViewContributor<?>> contributors) {
     for (ServiceViewContributor<?> contributor : contributors) {
       ActionManager actionManager = ActionManager.getInstance();
       String actionId = getActivateContributorActionId(contributor);
@@ -1026,7 +1021,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       return views;
     }
 
-    private void processAllModels(Consumer<ServiceViewModel> consumer) {
+    private void processAllModels(Consumer<? super ServiceViewModel> consumer) {
       List<ServiceViewModel> models = ContainerUtil.map(getServiceViews(), ServiceView::getModel);
       ServiceViewModel model = ContainerUtil.getFirstItem(models);
       if (model != null) {

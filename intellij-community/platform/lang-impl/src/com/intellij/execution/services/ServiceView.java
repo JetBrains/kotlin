@@ -87,7 +87,7 @@ abstract class ServiceView extends JPanel implements Disposable {
     myAutoScrollToSourceHandler = autoScrollToSourceHandler;
   }
 
-  protected void onViewSelected(@NotNull ServiceViewDescriptor descriptor) {
+  void onViewSelected(@NotNull ServiceViewDescriptor descriptor) {
     descriptor.onNodeSelected();
     if (myAutoScrollToSourceHandler != null) {
       myAutoScrollToSourceHandler.onMouseClicked(this);
@@ -139,7 +139,7 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
         List<ServiceViewItem> selection = serviceView.getSelectedItems();
-        ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyRootContributor(selection);
+        ServiceViewContributor<?> contributor = ServiceViewDragHelper.getTheOnlyRootContributor(selection);
         DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor(serviceView.getProject()).getDataProvider();
         DeleteProvider deleteProvider = delegate == null ? null : PlatformDataKeys.DELETE_ELEMENT_PROVIDER.getData(delegate);
         if (deleteProvider == null) return new ServiceViewDeleteProvider(serviceView);

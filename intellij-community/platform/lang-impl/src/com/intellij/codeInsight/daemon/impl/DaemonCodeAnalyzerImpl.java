@@ -708,7 +708,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   }
 
   @Nullable
-  public IntentionHintComponent getLastIntentionHint() {
+  IntentionHintComponent getLastIntentionHint() {
     return ((IntentionsUIImpl)IntentionsUI.getInstance(myProject)).getLastIntentionHint();
   }
 
