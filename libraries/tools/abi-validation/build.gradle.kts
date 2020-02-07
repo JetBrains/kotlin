@@ -1,3 +1,4 @@
+import kotlinx.validation.build.*
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
@@ -53,6 +54,8 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            mavenCentralMetadata()
+            mavenCentralArtifacts(project, project.sourceSets.main.get().allSource)
         }
     }
 }
