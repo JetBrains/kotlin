@@ -61,6 +61,22 @@ public final class SdkListModel extends AbstractListModel<SdkListItem> implement
   }
 
   @Nullable
+  public SdkListItem findProjectSdkItem() {
+    Class<ProjectSdkItem> itemClass = ProjectSdkItem.class;
+    return findFirstItemOfType(itemClass);
+  }
+
+  @Nullable
+  public SdkListItem findNoneSdkItem() {
+    return findFirstItemOfType(ProjectSdkItem.class);
+  }
+
+  @Nullable
+  private SdkListItem findFirstItemOfType(Class<ProjectSdkItem> itemClass) {
+    return getItems().stream().filter(itemClass::isInstance).findFirst().orElse(null);
+  }
+
+  @Nullable
   Sdk resolveProjectSdk() {
     return myGetProjectSdk.produce();
   }
