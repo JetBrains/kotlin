@@ -23,10 +23,12 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.editor.event.EditorEventMulticaster;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +59,8 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
             LOG.debug("Excluding Kotlin plugin updates using old API", throwable);
             UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
         }
-        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
+        EditorEventMulticaster eventMulticaster = EditorFactory.getInstance().getEventMulticaster();
+        DocumentListener documentListener = new DocumentListener() {
             @Override
             public void documentChanged(@NotNull DocumentEvent e) {
                 VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(e.getDocument());
@@ -65,9 +68,12 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
                     KotlinPluginUpdater.Companion.getInstance().kotlinFileEdited(virtualFile);
                 }
             }
-        }, project);
+        };
+        eventMulticaster.addDocumentListener(documentListener, project);
 
-        ServiceManager.getService(IndexPatternSearch.class).registerExecutor(new KotlinTodoSearcher());
+        IndexPatternSearch indexPatternSearch = ServiceManager.getService(IndexPatternSearch.class);
+        KotlinTodoSearcher kotlinTodoSearcher = new KotlinTodoSearcher();
+        indexPatternSearch.registerExecutor(kotlinTodoSearcher);
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
 
@@ -75,6 +81,11 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
 
         //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();
+
+        Disposer.register(project, () -> {
+            eventMulticaster.removeDocumentListener(documentListener);
+            indexPatternSearch.unregisterExecutor(kotlinTodoSearcher);
+        });
     }
 
     private static void registerPathVariable() {

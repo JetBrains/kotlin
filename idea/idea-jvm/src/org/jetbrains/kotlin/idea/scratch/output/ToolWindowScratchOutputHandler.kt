@@ -113,8 +113,8 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
                     OpenFileHyperlinkInfo(
                         project,
                         psiFile.virtualFile,
-                        expression.lineStart,
-                    ),
+                        expression.lineStart
+                    )
                 )
                 print(" ", ConsoleViewContentType.NORMAL_OUTPUT)
             }
@@ -194,7 +194,7 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
             parentDisposable,
             Disposable {
                 toolWindowManager.unregisterToolWindow(ScratchToolWindowFactory.ID)
-            },
+            }
         )
 
         return window
@@ -250,7 +250,7 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
                         "PsiFile cannot be found for scratch to render inlays in tests:\n" +
                                 "project.isDisposed = ${file.project.isDisposed}\n" +
                                 "inlays = ${inlays.joinToString { it.second }}\n" +
-                                "errors = ${errors.joinToString()}",
+                                "errors = ${errors.joinToString()}"
                     )
 
                 if (inlays.isNotEmpty()) {
@@ -258,7 +258,7 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
                         psiFile,
                         inlays.map { (expression, text) ->
                             "/** ${getLineInfo(psiFile, expression)} $text */"
-                        },
+                        }
                     )
                     inlays.clear()
                 }
@@ -267,7 +267,7 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
                     testPrint(psiFile, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
                     errors.clear()
                 }
-            },
+            }
         )
     }
 
@@ -276,7 +276,7 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
             for (comment in comments) {
                 file.addAfter(
                     KtPsiFactory(file.project).createComment(comment),
-                    file.lastChild,
+                    file.lastChild
                 )
             }
         }
