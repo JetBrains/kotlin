@@ -777,7 +777,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       StringBuilder updated = new StringBuilder();
       String updatedIndices = indicesRegistrationSink.changedIndices();
       if (!updatedIndices.isEmpty()) updated.append(updatedIndices);
-      if (someIndicesWereDropped) updated.append(" and some indices were dropped");
+      if (someIndicesWereDropped && !InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) updated.append(" and some indices were dropped");
       indicesRegistrationSink.logChangedAndFullyBuiltIndices(LOG, "Following stub indices will be updated:",
                                                              "Following stub indices will be built:");
 
