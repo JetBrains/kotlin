@@ -514,7 +514,8 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     override val kotlinOptions: KotlinJsOptions
         get() = kotlinOptionsImpl
 
-    private val defaultOutputFile: File
+    @get:Internal
+    protected val defaultOutputFile: File
         get() = File(destinationDir, "${taskData.compilation.ownModuleName}.js")
 
     @Suppress("unused")

@@ -41,6 +41,14 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
         return !inputs.isIncremental && !entryModule.exists()
     }
 
+    override fun getDestinationDir(): File {
+        return if (kotlinOptions.outputFile == null) {
+            super.getDestinationDir()
+        } else {
+            outputFile.parentFile
+        }
+    }
+
     @OutputFile
     val outputFileProperty: RegularFileProperty = project.newFileProperty {
         outputFile
