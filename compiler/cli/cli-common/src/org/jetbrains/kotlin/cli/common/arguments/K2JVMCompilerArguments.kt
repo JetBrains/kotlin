@@ -360,8 +360,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             || languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
         ) {
             collector.report(
-                CompilerMessageSeverity.ERROR,
-                "IR backend cannot be used with language or API version below 1.3"
+                CompilerMessageSeverity.STRONG_WARNING,
+                "IR backend does not support language or API version lower than 1.3. " +
+                        "This can lead to unexpected behavior or compilation failures"
             )
         }
     }
