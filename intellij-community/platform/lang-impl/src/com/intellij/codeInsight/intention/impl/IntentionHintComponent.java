@@ -119,9 +119,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
 
   private static final int DELAY = 500;
   private final MyComponentHint myComponentHint;
-  private volatile boolean myPopupShown;
-  private boolean myDisposed;
-  private volatile ListPopup myPopup;
+  private boolean myPopupShown; // accessed in EDT only
+  private boolean myDisposed; // accessed in EDT only
+  private ListPopup myPopup; // accessed in EDT only
   private final PsiFile myFile;
   private final JPanel myPanel = new JPanel() {
     @Override
@@ -359,6 +359,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   }
 
   private void onMouseExit(final boolean small) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
     Window ancestor = SwingUtilities.getWindowAncestor(myPopup.getContent());
     if (ancestor == null) {
       myIconLabel.setIcon(myInactiveIcon);
@@ -408,6 +409,10 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (myPopup != null) {
       Disposer.dispose(myPopup);
+    }
+    if (isDisposed() || myEditor.isDisposed()) {
+      myPopup = null;
+      return;
     }
     myPopup = JBPopupFactory.getInstance().createListPopup(step);
     if (myPopup instanceof WizardPopup) {
@@ -503,7 +508,9 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   }
 
   private void updatePreviewPopup(@NotNull IntentionAction action, int index) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
     myPreviewPopupUpdateProcessor.setup(text -> {
+      ApplicationManager.getApplication().assertIsDispatchThread();
       myPopup.setAdText(text, SwingConstants.LEFT);
       return Unit.INSTANCE;
     }, index);
@@ -511,6 +518,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   }
 
   private void registerShowPreviewAction() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
     ((WizardPopup)myPopup).registerAction("showIntentionPreview", KeymapUtil.getKeyStroke(INTENTION_PREVIEW_SHORTCUT_SET), new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -529,6 +537,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
   }
 
   void canceled(@NotNull ListPopupStep<IntentionActionWithTextCaching> intentionListStep) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
     if (myPopup.getListStep() == intentionListStep && !isDisposed()) {
       // Root canceled. Create new popup. This one cannot be reused.
       recreateMyPopup(intentionListStep);
