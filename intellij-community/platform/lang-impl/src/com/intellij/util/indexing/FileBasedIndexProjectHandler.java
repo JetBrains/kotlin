@@ -8,15 +8,12 @@ package com.intellij.util.indexing;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Disposer;
@@ -35,14 +32,13 @@ import java.util.Collection;
 @Service
 public final class FileBasedIndexProjectHandler implements IndexableFileSet {
   private static final Logger LOG = Logger.getInstance(FileBasedIndexProjectHandler.class);
-  private final Project myProject;
-  private final @NotNull ProjectFileIndex myProjectFileIndex;
+
+  private final FileBasedIndexScanRunnableCollector myCollector;
 
   private boolean isRemoved;
 
   private FileBasedIndexProjectHandler(@NotNull Project project) {
-    myProject = project;
-    myProjectFileIndex = ProjectFileIndex.getInstance(myProject);
+    myCollector = FileBasedIndexScanRunnableCollector.getInstance(project);
   }
 
   static final class FileBasedIndexProjectHandlerStartupActivity implements StartupActivity {
@@ -90,13 +86,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
 
   @Override
   public boolean isInSet(@NotNull final VirtualFile file) {
-    if (LightEdit.owns(myProject)) {
-      return false;
-    }
-    if (myProjectFileIndex.isInContent(file) || myProjectFileIndex.isInLibrary(file)) {
-      return !FileTypeManager.getInstance().isFileIgnored(file);
-    }
-    return false;
+    return myCollector.shouldCollect(file);
   }
 
   @Override

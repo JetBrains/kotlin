@@ -1,28 +1,22 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
-import com.intellij.ide.lightEdit.LightEdit;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
-import com.intellij.util.indexing.roots.*;
 import gnu.trove.THashSet;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.ApiStatus;
@@ -330,126 +324,22 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   }
 
   @Override
-  public void iterateIndexableFilesConcurrently(@NotNull ContentIterator processor,
-                                                @NotNull Project project,
-                                                @NotNull ProgressIndicator indicator) {
-    List<Runnable> tasks = collectIndexableFilesIterateTasks(processor, project, indicator);
-    if (!tasks.isEmpty()) {
-      PushedFilePropertiesUpdaterImpl.invokeConcurrentlyIfPossible(tasks);
-    }
+  public void iterateIndexableFilesConcurrently(@NotNull ContentIterator processor, @NotNull Project project, @NotNull ProgressIndicator indicator) {
+    PushedFilePropertiesUpdaterImpl.invokeConcurrentlyIfPossible(collectScanRootRunnables(processor, project, indicator));
   }
 
   @Override
-  public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, @Nullable ProgressIndicator indicator) {
-    final ProgressIndicator finalIndicator = indicator == null ? new EmptyProgressIndicator() : indicator;
-    List<Runnable> tasks = collectIndexableFilesIterateTasks(processor, project, finalIndicator);
-    for (Runnable task : tasks) {
-      task.run();
-    }
+  public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, ProgressIndicator indicator) {
+    for (Runnable r : collectScanRootRunnables(processor, project, indicator)) r.run();
   }
 
   @NotNull
-  private static List<Runnable> collectIndexableFilesIterateTasks(@NotNull ContentIterator processor,
-                                                                  @NotNull Project project,
-                                                                  @NotNull ProgressIndicator indicator) {
-    if (LightEdit.owns(project)) {
-      return Collections.emptyList();
-    }
-    @NotNull List<IndexableRootsProvider> providers = getIndexableRootsProvider(project, indicator);
-    ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
-    Set<VirtualFile> visitedRoots = ContainerUtil.newConcurrentSet();
-    return ContainerUtil.map(providers, provider -> () -> {
-      Set<VirtualFile> rootsToIndex = provider.getRootsToIndex();
-      for (VirtualFile root : rootsToIndex) {
-        if (visitedRoots.add(root)) {
-          iterateRootRecursively(root, processor, indicator, visitedRoots, projectFileIndex, provider);
-        }
-      }
-    });
-  }
-
-  @NotNull
-  private static List<IndexableRootsProvider> getIndexableRootsProvider(@NotNull Project project,
-                                                                        @NotNull ProgressIndicator indicator) {
-    return ReadAction.compute(() -> {
-      if (project.isDisposed()) {
-        return Collections.emptyList();
-      }
-
-      Set<OrderEntry> allEntries = new THashSet<>();
-      List<IndexableRootsProvider> providers = new ArrayList<>();
-      Module[] modules = ModuleManager.getInstance(project).getModules();
-      for (Module module : modules) {
-        if (module.isDisposed()) continue;
-        providers.add(new ModuleIndexableRootsProvider(module));
-
-        // iterate associated libraries
-        OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
-        for (OrderEntry orderEntry : orderEntries) {
-          allEntries.add(orderEntry);
-          if (!(orderEntry instanceof LibraryOrSdkOrderEntry) || !orderEntry.isValid()) {
-            continue;
-          }
-
-          final LibraryOrSdkOrderEntry entry = (LibraryOrSdkOrderEntry)orderEntry;
-          providers.add(new LibraryOrSdkOrderEntryIndexableRootsProvider(entry));
-        }
-      }
-
-      for (IndexableSetContributor contributor : IndexableSetContributor.EP_NAME.getExtensionList()) {
-        providers.add(new IndexableSetContributorRootsProvider(contributor, project));
-      }
-
-      // iterate synthetic project libraries
-      for (AdditionalLibraryRootsProvider provider : AdditionalLibraryRootsProvider.EP_NAME.getExtensionList()) {
-        for (SyntheticLibrary library : provider.getAdditionalProjectLibraries(project)) {
-          providers.add(new SyntheticLibraryIndexableRootsProvider(library));
-        }
-      }
-
-      SharedIndexChunkConfiguration.getInstance().locateIndexes(project, allEntries, indicator);
-
-      return providers;
-    });
-  }
-
-  private static void iterateRootRecursively(@NotNull final VirtualFile root,
-                                             @NotNull final ContentIterator processor,
-                                             @NotNull final ProgressIndicator indicator,
-                                             @NotNull final Set<? super VirtualFile> visitedRoots,
-                                             @NotNull final ProjectFileIndex projectFileIndex,
-                                             @NotNull IndexableRootsProvider provider) {
-    VirtualFileFilter acceptFilter = (file) -> {
-      if (!root.equals(file) && file.isDirectory() && !visitedRoots.add(file)) {
-        return false;
-      }
-      return ReadAction.compute(() -> {
-        if (projectFileIndex.isInContent(file)) {
-          //Index all files belonging to project content and not excluded.
-          return true;
-        }
-        //If file is external to project, we must index it only if it was not excluded.
-        return !(provider instanceof ModuleIndexableRootsProvider) && !projectFileIndex.isExcluded(file);
-      });
-    };
-
-    VirtualFileVisitor.Option[] options;
-    if (Registry.is("indexer.follows.symlinks")) {
-      options = new VirtualFileVisitor.Option[0];
-    } else {
-      options = new VirtualFileVisitor.Option[]{VirtualFileVisitor.NO_FOLLOW_SYMLINKS};
-    }
-
-    VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Void>(options) {
-      @NotNull
-      @Override
-      public Result visitFileEx(@NotNull VirtualFile file) {
-        indicator.checkCanceled();
-        if (!acceptFilter.accept(file)) return SKIP_CHILDREN;
-        if (!processor.processFile(file)) return skipTo(root);
-        return CONTINUE;
-      }
-    });
+  private static List<Runnable> collectScanRootRunnables(@NotNull final ContentIterator processor,
+                                                         @NotNull final Project project,
+                                                         ProgressIndicator indicator) {
+    FileBasedIndexScanRunnableCollector collector = FileBasedIndexScanRunnableCollector.getInstance(project);
+    ProgressIndicator finalIndicator = indicator != null ? indicator : new EmptyProgressIndicator();
+    return collector.collectScanRootRunnables(processor, finalIndicator);
   }
 
   @Nullable
