@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.rendering.DeclarationWithDiagnosticComponents;
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -1156,6 +1159,14 @@ public interface Errors {
         }
 
         public static void initializeFactoryNames(@NotNull Class<?> aClass) {
+            initializeFactoryNamesAndDefaultErrorMessages(aClass, DiagnosticFactoryToRendererMap::new);
+        }
+
+        public static void initializeFactoryNamesAndDefaultErrorMessages(
+                @NotNull Class<?> aClass,
+                @NotNull DefaultErrorMessages.Extension defaultErrorMessages
+        ) {
+            DiagnosticFactoryToRendererMap diagnosticToRendererMap = defaultErrorMessages.getMap();
             for (Field field : aClass.getFields()) {
                 if (Modifier.isStatic(field.getModifiers())) {
                     try {
@@ -1163,6 +1174,9 @@ public interface Errors {
                         if (value instanceof DiagnosticFactory) {
                             DiagnosticFactory<?> factory = (DiagnosticFactory<?>)value;
                             factory.setName(field.getName());
+
+                            //noinspection rawtypes, unchecked
+                            factory.setDefaultRenderer((DiagnosticRenderer) diagnosticToRendererMap.get(factory));
                         }
                     }
                     catch (IllegalAccessException e) {
@@ -1170,6 +1184,7 @@ public interface Errors {
                     }
                 }
             }
+
         }
 
         private static final Initializer INSTANCE = new Initializer();

@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
-import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -45,10 +44,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     private fun canBeSerializedInternally(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace): Boolean {
         if (descriptor.isSerializableEnumWithMissingSerializer()) {
             val declarationToReport = declaration.modifierList ?: declaration
-            trace.reportFromPlugin(
-                SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED.on(declarationToReport),
-                SerializationPluginErrorsRendering
-            )
+            trace.report(SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED.on(declarationToReport))
             return false
         }
 
@@ -111,10 +107,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         props.serializableProperties.forEach {
             if (!namesSet.add(it.name)) {
                 descriptor.safeReport { a ->
-                    trace.reportFromPlugin(
-                        SerializationErrors.DUPLICATE_SERIAL_NAME.on(a, it.name),
-                        SerializationPluginErrorsRendering
-                    )
+                    trace.report(SerializationErrors.DUPLICATE_SERIAL_NAME.on(a, it.name))
                 }
             }
         }
@@ -136,17 +129,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             if (!hasBackingField && isMarkedTransient) {
                 val transientPsi =
                     (descriptor.annotations.findAnnotation(SerializationAnnotations.serialTransientFqName) as? LazyAnnotationDescriptor)?.annotationEntry
-                trace.reportFromPlugin(
-                    SerializationErrors.TRANSIENT_IS_REDUNDANT.on(transientPsi ?: declaration),
-                    SerializationPluginErrorsRendering
-                )
+                trace.report(SerializationErrors.TRANSIENT_IS_REDUNDANT.on(transientPsi ?: declaration))
             }
 
             if (isMarkedTransient && !isInitialized && hasBackingField) {
-                trace.reportFromPlugin(
-                    SerializationErrors.TRANSIENT_MISSING_INITIALIZER.on(declaration),
-                    SerializationPluginErrorsRendering
-                )
+                trace.report(SerializationErrors.TRANSIENT_MISSING_INITIALIZER.on(declaration))
             }
         }
     }
@@ -203,20 +190,14 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (type.genericIndex != null) return // type arguments always have serializer stored in class' field
         val element = ktType?.typeElement
         if (type.isUnsupportedInlineType()) {
-            trace.reportFromPlugin(
-                SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element ?: fallbackElement),
-                SerializationPluginErrorsRendering
-            )
+            trace.report(SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element ?: fallbackElement))
         }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
             checkSerializerNullability(type, serializer.defaultType, element, trace, fallbackElement)
             checkTypeArguments(module, type, element, trace, fallbackElement)
         } else {
-            trace.reportFromPlugin(
-                SerializationErrors.SERIALIZER_NOT_FOUND.on(element ?: fallbackElement, type),
-                SerializationPluginErrorsRendering
-            )
+            trace.report(SerializationErrors.SERIALIZER_NOT_FOUND.on(element ?: fallbackElement, type))
         }
     }
 
@@ -231,9 +212,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val castedToKSerial = serializerType.supertypes().find { isKSerializer(it) } ?: return
 
         if (!classType.isMarkedNullable && castedToKSerial.arguments.first().type.isMarkedNullable)
-            trace.reportFromPlugin(
+            trace.report(
                 SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE.on(element ?: fallbackElement, serializerType, classType),
-                SerializationPluginErrorsRendering
             )
     }
 
@@ -243,10 +223,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun BindingTrace.reportOnSerializableAnnotation(descriptor: ClassDescriptor, error: DiagnosticFactory0<in KtAnnotationEntry>) {
         descriptor.safeReport { e ->
-            reportFromPlugin(
-                error.on(e),
-                SerializationPluginErrorsRendering
-            )
+            report(error.on(e))
         }
     }
 }
