@@ -60,7 +60,10 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             """.trimIndent()
             )
 
-            build("build") {
+            build(
+                "build",
+                options = defaultBuildOptions().copy(jsCompilerType = JsCompilerType.ir)
+            ) {
                 assertSuccessful()
 
                 assertNoSuchFile("build/js/packages/kotlin-js-nodejs/kotlin/")
