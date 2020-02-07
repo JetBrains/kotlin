@@ -13,6 +13,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -21,7 +23,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.building.EmptyIndexEnumerator;
-import com.intellij.util.indexing.hash.building.IndexesExporter;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator.ChunkDescriptor;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
@@ -55,6 +56,8 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   private final ConcurrentMap<ID<?, ?>, ConcurrentMap<Integer, SharedIndexChunk>> myChunkMap = new ConcurrentHashMap<>();
 
   private final UncompressedZipFileSystem myReadSystem;
+
+  private final Map<Project, Long> myProjectStructureStamps = Collections.synchronizedMap(new WeakHashMap<>());
 
   @Override
   public void disposeIndexChunkData(@NotNull ID<?, ?> indexId, int chunkId) {
@@ -209,6 +212,11 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                             @NotNull Set<OrderEntry> entries,
                             @NotNull ProgressIndicator indicator) {
     Runnable runnable = () -> {
+      if (project.isDisposed()) return;
+      Long evaluatedStamp = myProjectStructureStamps.get(project);
+      long actualStamp = ProjectRootManager.getInstance(project).getModificationCount();
+      if (Comparing.equal(evaluatedStamp, actualStamp)) return;
+
       IndexInfrastructureVersion ideVersion = IndexInfrastructureVersion.getIdeVersion();
 
       for (SharedIndexChunkLocator locator : SharedIndexChunkLocator.EP_NAME.getExtensionList()) {
@@ -227,6 +235,8 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
           }
         }
       }
+
+      myProjectStructureStamps.put(project, actualStamp);
     };
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       runnable.run();
