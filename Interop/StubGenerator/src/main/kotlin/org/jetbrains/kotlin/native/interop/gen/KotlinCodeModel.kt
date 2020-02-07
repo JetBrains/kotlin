@@ -331,17 +331,6 @@ abstract class KotlinFile(
 
 }
 
-data class KotlinParameter(
-        val name: String,
-        val type: KotlinType,
-        val isVararg: Boolean,
-        val annotations: List<String>
-) {
-    fun render(scope: KotlinScope) = buildString {
-        annotations.forEach { append("$it ") }
-        if (isVararg) append("vararg ")
-        append(name.asSimpleName())
-        append(": ")
-        append(type.render(scope))
-    }
-}
+// Try to use the provided name. If failed, mangle it with underscore and try again:
+internal tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, name: String): String =
+        scope.declareProperty(name) ?: getTopLevelPropertyDeclarationName(scope, name + "_")

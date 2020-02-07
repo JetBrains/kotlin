@@ -279,10 +279,6 @@ class StubIrTextEmitter(
         }
     }
 
-    // Try to use the provided name. If failed, mangle it with underscore and try again:
-    private tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, name: String): String =
-            scope.declareProperty(name) ?: getTopLevelPropertyDeclarationName(scope, name + "_")
-
     private fun emitProperty(element: PropertyStub, owner: StubContainer?) {
         if (element in bridgeBuilderResult.excludedStubs) return
 

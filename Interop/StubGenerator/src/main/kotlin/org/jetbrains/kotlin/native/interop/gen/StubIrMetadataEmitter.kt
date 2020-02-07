@@ -12,18 +12,20 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class StubIrMetadataEmitter(
         private val context: StubIrContext,
         private val builderResult: StubIrBuilderResult,
-        private val moduleName: String
+        private val moduleName: String,
+        private val scope: KotlinScope
 ) {
     fun emit(): KlibModuleMetadata {
         val annotations = emptyList<KmAnnotation>()
-        val fragments = emitModuleFragments()
+        val fragments = emitModuleFragments(scope)
         return KlibModuleMetadata(moduleName, fragments, annotations)
     }
 
-    private fun emitModuleFragments(): List<KmModuleFragment> =
+    private fun emitModuleFragments(scope: KotlinScope): List<KmModuleFragment> =
             ModuleMetadataEmitter(
                     context.configuration.pkgName,
-                    builderResult.stubs
+                    builderResult.stubs,
+                    scope
             ).emit().let { kmModuleFragment ->
                 // We need to create module fragment for each part of package name.
                 val pkgName = context.configuration.pkgName
@@ -43,7 +45,8 @@ class StubIrMetadataEmitter(
  */
 internal class ModuleMetadataEmitter(
         private val packageFqName: String,
-        private val module: SimpleStubContainer
+        private val module: SimpleStubContainer,
+        private val scope: KotlinScope
 ) {
 
     fun emit(): KmModuleFragment {
@@ -87,6 +90,16 @@ internal class ModuleMetadataEmitter(
             val uniqIds: StubIrUniqIdProvider,
             val typeParametersInterner: Interner<TypeParameterStub> = Interner()
     )
+
+    private fun isTopLevelContainer(container: StubContainer?): Boolean =
+            container == null
+
+    private fun getPropertyNameInScope(originalName: String, container: StubContainer?): String =
+        if (isTopLevelContainer(container)) {
+            getTopLevelPropertyDeclarationName(scope, originalName)
+        } else {
+            originalName
+        }
 
     private val visitor = object : StubIrVisitor<VisitingContext, Any> {
 
@@ -146,7 +159,8 @@ internal class ModuleMetadataEmitter(
 
         override fun visitProperty(element: PropertyStub, data: VisitingContext) =
                 with (MappingExtensions(data.typeParametersInterner)) {
-                    KmProperty(element.flags, element.name, element.getterFlags, element.setterFlags).also { km ->
+                    val name = getPropertyNameInScope(element.name, data.container)
+                    KmProperty(element.flags, name, element.getterFlags, element.setterFlags).also { km ->
                         element.annotations.mapTo(km.annotations) { it.map() }
                         km.uniqId = data.uniqIds.uniqIdForProperty(element)
                         km.returnType = element.type.map()
