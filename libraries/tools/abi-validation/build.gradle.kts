@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     kotlin("jvm")
+    `java-gradle-plugin`
     `maven-publish`
 }
 
@@ -57,6 +58,16 @@ publishing {
             from(components["java"])
             mavenCentralMetadata()
             mavenCentralArtifacts(project, project.sourceSets.main.get().allSource)
+        }
+    }
+}
+
+apply(plugin = "org.gradle.java-gradle-plugin")
+gradlePlugin {
+    plugins {
+        create("binary-compatibility-validator") {
+            id = "binary-compatibility-validator"
+            implementationClass = "kotlinx.validation.BinaryCompatibilityValidatorPlugin"
         }
     }
 }
