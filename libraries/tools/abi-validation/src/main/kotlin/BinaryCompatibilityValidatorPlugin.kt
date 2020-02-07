@@ -80,8 +80,11 @@ private fun Project.configureMultiplatformProject(compilation: KotlinCompilation
 val Project.sourceSets: SourceSetContainer
     get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-val Project.apiCheckEnabled
-    get() = project.name !in project.rootProject.extensions.getByType(ApiValidationExtension::class.java).ignoredProjects
+val Project.apiCheckEnabled: Boolean
+    get() {
+        val extension = project.rootProject.extensions.getByType(ApiValidationExtension::class.java)
+        return project.name !in extension.ignoredProjects && !extension.validationDisabled
+    }
 
 private fun Project.configureApiTasks(sourceSet: SourceSet) {
     val projectName = project.name
