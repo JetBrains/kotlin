@@ -104,7 +104,7 @@ internal class KotlinNativeCInteropRunner(project: Project) : KotlinNativeToolRu
     }
 
     private val llvmExecutablesPath: String? by lazy {
-        if (HostManager.host != KonanTarget.MINGW_X64) {
+        if (HostManager.host == KonanTarget.MINGW_X64) {
             // TODO: Read it from Platform properties when it is accessible.
             val konanProperties = Properties().apply {
                 project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
