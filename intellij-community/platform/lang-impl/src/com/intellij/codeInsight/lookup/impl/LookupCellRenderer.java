@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.lookup.impl;
 
 import com.intellij.codeInsight.lookup.*;
+import com.intellij.ide.ui.AntialiasingType;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -15,6 +16,7 @@ import com.intellij.openapi.editor.ex.util.EditorUIUtil;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -513,12 +515,20 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private static class MySimpleColoredComponent extends SimpleColoredComponent {
     private MySimpleColoredComponent() {
       setFocusBorderAroundIcon(true);
+    }
+
+    @Override
+    public void updateUI() {
+      super.updateUI();
       UISettings.setupEditorAntialiasing(this);
     }
 
     @Override
     protected void applyAdditionalHints(@NotNull Graphics2D g) {
       EditorUIUtil.setupAntialiasing(g);
+      if (SystemInfo.isMacOSCatalina) { // TODO: remove this statement when preferred size can be computed properly in JDK. See IDEA-231300
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+      }
     }
   }
 
