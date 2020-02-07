@@ -209,7 +209,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     doClearIndices(id -> indexesToRebuild.contains(id));
     String rebuiltIndexesLog = indexesToRebuild.isEmpty()
       ? ""
-      : "; indexes \" + indexesToRebuild + \" will be rebuild completely due to version change\" ";
+      : "; indexes " + indexesToRebuild + " will be rebuild completely due to version change";
     scheduleIndexRebuild("File type change" + rebuiltIndexesLog);
   }
 
