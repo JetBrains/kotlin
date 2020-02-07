@@ -265,25 +265,90 @@ __attribute__((swift_name("MyException")))
 - (instancetype)initWithCause:(ValuesKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @end;
 
-__attribute__((swift_name("BridgeBase")))
-@interface ValuesBridgeBase : ValuesBase
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("MyError")))
+@interface ValuesMyError : ValuesKotlinError
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (id _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
-- (int32_t)foo2AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2()"))) __attribute__((swift_error(nonnull_error)));
-- (BOOL)foo3AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo3()")));
-- (ValuesKotlinNothing * _Nullable)foo4AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4()"))) __attribute__((swift_error(nonnull_error)));
+- (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithMessage:(NSString * _Nullable)message cause:(ValuesKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithCause:(ValuesKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@end;
+
+__attribute__((swift_name("SwiftOverridableMethodsWithThrows")))
+@protocol ValuesSwiftOverridableMethodsWithThrows
+@required
+- (BOOL)unitAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("unit()")));
+- (BOOL)nothingAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothing()")));
+- (id _Nullable)anyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("any()")));
+- (ValuesInt *(^ _Nullable)(void))blockAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("block()")));
+@end;
+
+__attribute__((swift_name("MethodsWithThrows")))
+@protocol ValuesMethodsWithThrows <ValuesSwiftOverridableMethodsWithThrows>
+@required
+- (ValuesKotlinNothing * _Nullable)nothingNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothingN()"))) __attribute__((swift_error(nonnull_error)));
+- (id _Nullable)anyNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("anyN()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesInt *(^ _Nullable)(void))blockNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("blockN()"))) __attribute__((swift_error(nonnull_error)));
+- (void * _Nullable)pointerAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointer()")));
+- (void * _Nullable)pointerNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointerN()"))) __attribute__((swift_error(nonnull_error)));
+- (int32_t)intAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("int()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesLong * _Nullable)longNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("longN()"))) __attribute__((swift_error(nonnull_error)));
+- (double)doubleAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("double()"))) __attribute__((swift_error(nonnull_error)));
+@end;
+
+__attribute__((swift_name("MethodsWithThrowsUnitCaller")))
+@protocol ValuesMethodsWithThrowsUnitCaller
+@required
+- (BOOL)callMethods:(id<ValuesMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call(methods:)")));
+@end;
+
+__attribute__((swift_name("Throwing")))
+@interface ValuesThrowing : ValuesBase <ValuesMethodsWithThrows>
+- (instancetype _Nullable)initWithDoThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("init(doThrow:)"))) __attribute__((objc_designated_initializer));
+- (BOOL)unitAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("unit()")));
+- (BOOL)nothingAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothing()")));
+- (ValuesKotlinNothing * _Nullable)nothingNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothingN()"))) __attribute__((swift_error(nonnull_error)));
+- (id _Nullable)anyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("any()")));
+- (id _Nullable)anyNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("anyN()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesInt *(^ _Nullable)(void))blockAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("block()")));
+- (ValuesInt *(^ _Nullable)(void))blockNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("blockN()"))) __attribute__((swift_error(nonnull_error)));
+- (void * _Nullable)pointerAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointer()")));
+- (void * _Nullable)pointerNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointerN()"))) __attribute__((swift_error(nonnull_error)));
+- (int32_t)intAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("int()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesLong * _Nullable)longNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("longN()"))) __attribute__((swift_error(nonnull_error)));
+- (double)doubleAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("double()"))) __attribute__((swift_error(nonnull_error)));
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("Bridge")))
-@interface ValuesBridge : ValuesBridgeBase
+__attribute__((swift_name("NotThrowing")))
+@interface ValuesNotThrowing : ValuesBase <ValuesMethodsWithThrows>
+- (instancetype _Nullable)initAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (BOOL)unitAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("unit()")));
+- (BOOL)nothingAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothing()")));
+- (ValuesKotlinNothing * _Nullable)nothingNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothingN()"))) __attribute__((swift_error(nonnull_error)));
+- (id _Nullable)anyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("any()")));
+- (id _Nullable)anyNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("anyN()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesInt *(^ _Nullable)(void))blockAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("block()")));
+- (ValuesInt *(^ _Nullable)(void))blockNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("blockN()"))) __attribute__((swift_error(nonnull_error)));
+- (void * _Nullable)pointerAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointer()")));
+- (void * _Nullable)pointerNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointerN()"))) __attribute__((swift_error(nonnull_error)));
+- (int32_t)intAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("int()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesLong * _Nullable)longNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("longN()"))) __attribute__((swift_error(nonnull_error)));
+- (double)doubleAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("double()"))) __attribute__((swift_error(nonnull_error)));
+@end;
+
+__attribute__((swift_name("ThrowsWithBridgeBase")))
+@protocol ValuesThrowsWithBridgeBase
+@required
+- (id _Nullable)plusOneX:(int32_t)x error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("plusOne(x:)")));
+@end;
+
+__attribute__((swift_name("ThrowsWithBridge")))
+@interface ValuesThrowsWithBridge : ValuesBase <ValuesThrowsWithBridgeBase>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (ValuesKotlinNothing * _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
-- (int32_t)foo2AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo2()"))) __attribute__((swift_error(nonnull_error)));
-- (BOOL)foo3AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo3()")));
-- (ValuesKotlinNothing *)foo4AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo4()"))) __attribute__((swift_error(nonnull_error)));
+- (ValuesInt * _Nullable)plusOneX:(int32_t)x error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("plusOne(x:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -1102,7 +1167,13 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)isFrozenObj:(id)obj __attribute__((swift_name("isFrozen(obj:)")));
 + (id)kotlinLambdaBlock:(id (^)(id))block __attribute__((swift_name("kotlinLambda(block:)")));
 + (int64_t)multiplyInt:(int32_t)int_ long:(int64_t)long_ __attribute__((swift_name("multiply(int:long:)")));
-+ (id _Nullable)callFoo1Bridge:(ValuesBridgeBase *)bridge error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callFoo1(bridge:)")));
++ (BOOL)throwExceptionError:(BOOL)error error:(NSError * _Nullable * _Nullable)error_ __attribute__((swift_name("throwException(error:)")));
++ (ValuesKotlinObjCErrorException * _Nullable)testSwiftThrowingMethods:(id<ValuesSwiftOverridableMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftThrowing(methods:)")));
++ (BOOL)testSwiftNotThrowingMethods:(id<ValuesSwiftOverridableMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftNotThrowing(methods:)")));
++ (BOOL)callUnitMethods:(id<ValuesSwiftOverridableMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callUnit(methods:)")));
++ (BOOL)callUnitCallerCaller:(id<ValuesMethodsWithThrowsUnitCaller>)caller methods:(id<ValuesMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callUnitCaller(caller:methods:)")));
++ (BOOL)testSwiftThrowingTest:(id<ValuesThrowsWithBridgeBase>)test flag:(BOOL)flag error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftThrowing(test:flag:)")));
++ (BOOL)testSwiftNotThrowingTest:(id<ValuesThrowsWithBridgeBase>)test error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftNotThrowing(test:)")));
 + (id)same:(id)receiver __attribute__((swift_name("same(_:)")));
 + (ValuesInt * _Nullable)callBase1:(id<ValuesBase1>)base1 value:(ValuesInt * _Nullable)value __attribute__((swift_name("call(base1:value:)")));
 + (ValuesInt * _Nullable)callExtendedBase1:(id<ValuesExtendedBase1>)extendedBase1 value:(ValuesInt * _Nullable)value __attribute__((swift_name("call(extendedBase1:value:)")));

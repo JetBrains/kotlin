@@ -14,6 +14,7 @@ import kotlin.native.ref.WeakReference
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.test.*
 import kotlinx.cinterop.*
 
 // Ensure loaded function IR classes aren't ordered by arity:
@@ -253,27 +254,124 @@ fun kotlinLambda(block: (Any) -> Any): Any = block
 fun multiply(int: Int, long: Long) = int * long
 
 class MyException : Exception()
+class MyError : Error()
 
-open class BridgeBase {
-    @Throws(MyException::class)
-    open fun foo1(): Any = Any()
-    @Throws(MyException::class)
-    open fun foo2(): Int = 42
-    @Throws(MyException::class)
-    open fun foo3(): Unit = Unit
-    @Throws(MyException::class)
-    open fun foo4(): Nothing? = throw IllegalStateException()
+@Throws(MyException::class, MyError::class)
+fun throwException(error: Boolean): Unit {
+    throw if (error) MyError() else MyException()
 }
 
-class Bridge : BridgeBase() {
-    override fun foo1() = throw MyException()
-    override fun foo2() = throw MyException()
-    override fun foo3() = throw MyException()
-    override fun foo4() = throw MyException()
+interface SwiftOverridableMethodsWithThrows {
+    @Throws(MyException::class) fun unit(): Unit
+    @Throws(MyException::class) fun nothing(): Nothing
+    @Throws(MyException::class) fun any(): Any
+    @Throws(MyException::class) fun block(): () -> Int
 }
 
-@Throws(NullPointerException::class)
-fun callFoo1(bridge: BridgeBase) = bridge.foo1()
+interface MethodsWithThrows : SwiftOverridableMethodsWithThrows {
+    @Throws(MyException::class) fun nothingN(): Nothing?
+    @Throws(MyException::class) fun anyN(): Any?
+    @Throws(MyException::class) fun blockN(): (() -> Int)?
+    @Throws(MyException::class) fun pointer(): CPointer<*>
+    @Throws(MyException::class) fun pointerN(): CPointer<*>?
+    @Throws(MyException::class) fun int(): Int
+    @Throws(MyException::class) fun longN(): Long?
+    @Throws(MyException::class) fun double(): Double
+
+    interface UnitCaller {
+        @Throws(MyException::class) fun call(methods: MethodsWithThrows): Unit
+    }
+}
+
+open class Throwing : MethodsWithThrows {
+    @Throws(MyException::class) constructor(doThrow: Boolean) {
+        if (doThrow) throw MyException()
+    }
+
+    override fun unit(): Unit = throw MyException()
+    override fun nothing(): Nothing = throw MyException()
+    override fun nothingN(): Nothing? = throw MyException()
+    override fun any(): Any = throw MyException()
+    override fun anyN(): Any? = throw MyException()
+    override fun block(): () -> Int = throw MyException()
+    override fun blockN(): (() -> Int)? = throw MyException()
+    override fun pointer(): CPointer<*> = throw MyException()
+    override fun pointerN(): CPointer<*>? = throw MyException()
+    override fun int(): Int = throw MyException()
+    override fun longN(): Long? = throw MyException()
+    override fun double(): Double = throw MyException()
+}
+
+class NotThrowing : MethodsWithThrows {
+    @Throws(MyException::class) constructor() {}
+
+    override fun unit(): Unit {}
+    override fun nothing(): Nothing = throw MyException()
+    override fun nothingN(): Nothing? = null
+    override fun any(): Any = Any()
+    override fun anyN(): Any? = Any()
+    override fun block(): () -> Int = { 42 }
+    override fun blockN(): (() -> Int)? = null
+    override fun pointer(): CPointer<*> = 1L.toCPointer<COpaque>()!!
+    override fun pointerN(): CPointer<*>? = null
+    override fun int(): Int = 42
+    override fun longN(): Long? = null
+    override fun double(): Double = 3.14
+}
+
+@Throws(Throwable::class)
+fun testSwiftThrowing(methods: SwiftOverridableMethodsWithThrows) = with(methods) {
+    assertSwiftThrowing { unit() }
+    assertSwiftThrowing { nothing() }
+    assertSwiftThrowing { any() }
+    assertSwiftThrowing { block() }
+}
+
+private inline fun assertSwiftThrowing(block: () -> Unit) =
+        assertFailsWith<kotlin.native.internal.ObjCErrorException>(block = block)
+
+@Throws(Throwable::class)
+fun testSwiftNotThrowing(methods: SwiftOverridableMethodsWithThrows) = with(methods) {
+    unit()
+    assertEquals(42, any())
+    assertEquals(17, block()())
+}
+
+@Throws(MyError::class)
+fun callUnit(methods: SwiftOverridableMethodsWithThrows) = methods.unit()
+
+@Throws(Throwable::class)
+fun callUnitCaller(caller: MethodsWithThrows.UnitCaller, methods: MethodsWithThrows) {
+    assertFailsWith<MyException> { caller.call(methods) }
+}
+
+interface ThrowsWithBridgeBase {
+    @Throws(MyException::class)
+    fun plusOne(x: Int): Any
+}
+
+abstract class ThrowsWithBridge : ThrowsWithBridgeBase {
+    abstract override fun plusOne(x: Int): Int
+}
+
+@Throws(Throwable::class)
+fun testSwiftThrowing(test: ThrowsWithBridgeBase, flag: Boolean) {
+    assertFailsWith<kotlin.native.internal.ObjCErrorException> {
+        if (flag) {
+            test.plusOne(0)
+        } else {
+            val test1 = test as ThrowsWithBridge
+            val ignore: Int = test1.plusOne(1)
+        }
+    }
+}
+
+@Throws(Throwable::class)
+fun testSwiftNotThrowing(test: ThrowsWithBridgeBase) {
+    assertEquals(3, test.plusOne(2))
+    val test1 = test as ThrowsWithBridge
+    assertEquals<Int>(4, test1.plusOne(3))
+}
 
 fun Any.same() = this
 

@@ -275,43 +275,112 @@ func testFunctions() throws {
     try assertEquals(actual: ValuesKt.multiply(int: 3, long: 2), expected: 6)
 }
 
-class BridgeSwift : BridgeBase {
-    class Err : Error {}
+class SwiftThrowing : SwiftOverridableMethodsWithThrows {
+    class E : Error {}
 
-    override func foo1() throws -> Any {
-        throw Err()
+    func unit() throws -> Void { throw E() }
+    func nothing() throws -> Void { throw E() }
+    func any() throws -> Any { throw E() }
+    func block() throws -> () -> KotlinInt { throw E() }
+}
+
+class TestThrowingConstructorRelease : Throwing {
+    static var deinitialized = false
+    deinit {
+        TestThrowingConstructorRelease.deinitialized = true
+    }
+}
+
+class SwiftNotThrowing : SwiftOverridableMethodsWithThrows {
+    func unit() throws -> Void {  }
+    func nothing() throws -> Void { throw SwiftThrowing.E() }
+    func any() throws -> Any { return 42 as Int32 }
+    func block() throws -> () -> KotlinInt { return { 17 } }
+}
+
+class SwiftUnitCaller : MethodsWithThrowsUnitCaller {
+    func call(methods: MethodsWithThrows) throws -> Void {
+        try methods.unit()
+    }
+}
+
+class SwiftThrowingWithBridge : ThrowsWithBridge {
+    override func plusOne(x: Int32) throws -> KotlinInt {
+        throw SwiftThrowing.E()
+    }
+}
+
+class SwiftNotThrowingWithBridge : ThrowsWithBridge {
+    override func plusOne(x: Int32) throws -> KotlinInt {
+        return KotlinInt(value: x + 1)
     }
 }
 
 func testExceptions() throws {
-    let bridge = Bridge()
+    func testThrowing(_ block: () throws -> Void) throws {
+        do {
+            try block()
+        } catch let error as NSError {
+            try assertTrue(error.kotlinException is MyException)
+        }
+    }
+
+    try testThrowing { try ValuesKt.throwException(error: false) }
     do {
-        try bridge.foo1()
+        try ValuesKt.throwException(error: true)
     } catch let error as NSError {
-        try assertTrue(error.kotlinException is MyException)
+        try assertTrue(error.kotlinException is MyError)
     }
+
+    try assertFalse(TestThrowingConstructorRelease.deinitialized)
+    try testThrowing { try TestThrowingConstructorRelease(doThrow: true) }
+    ValuesKt.gc()
+    try assertTrue(TestThrowingConstructorRelease.deinitialized)
+
+    try testThrowing { try Throwing(doThrow: true) }
+
+    let throwing = try Throwing(doThrow: false)
+    try testThrowing { try throwing.unit() }
+    try testThrowing { try throwing.nothing() }
+    try testThrowing { try throwing.nothingN() }
+    try testThrowing { try throwing.any() }
+    try testThrowing { try throwing.anyN() }
+    try testThrowing { try throwing.block()() }
+    try testThrowing { try throwing.blockN() }
+    try testThrowing { try throwing.pointer() }
+    try testThrowing { try throwing.pointerN() }
+    try testThrowing { try throwing.int() }
+    try testThrowing { try throwing.longN() }
+    try testThrowing { try throwing.double() }
+
+    let notThrowing = try NotThrowing()
+
+    try notThrowing.unit()
+    try assertEquals(actual: notThrowing.nothingN(), expected: nil)
+    try assertTrue(notThrowing.any() is KotlinBase)
+    try assertTrue(notThrowing.anyN() is KotlinBase)
+    try assertEquals(actual: notThrowing.block()(), expected: 42)
+    try assertTrue(notThrowing.blockN() == nil)
+    try assertEquals(actual: Int(bitPattern: notThrowing.pointer()), expected: 1)
+    try assertEquals(actual: notThrowing.pointerN(), expected: nil)
+    try assertEquals(actual: notThrowing.int(), expected: 42)
+    try assertEquals(actual: notThrowing.longN(), expected: nil)
+    try assertEquals(actual: notThrowing.double(), expected: 3.14)
+
+    try ValuesKt.testSwiftThrowing(methods: SwiftThrowing())
+    try ValuesKt.testSwiftNotThrowing(methods: SwiftNotThrowing())
+
     do {
-        try bridge.foo2()
-    } catch let error as NSError {
-        try assertTrue(error.kotlinException is MyException)
+        try ValuesKt.callUnit(methods: SwiftThrowing())
+    } catch let e as SwiftThrowing.E {
+        // Ok.
     }
-    do {
-        try bridge.foo3()
-    } catch let error as NSError {
-        try assertTrue(error.kotlinException is MyException)
-    }
-    do {
-        try bridge.foo4()
-    } catch let error as NSError {
-        try assertTrue(error.kotlinException is MyException)
-    }
-    do {
-        try ValuesKt.callFoo1(bridge: BridgeSwift())
-    } catch let error as BridgeSwift.Err {
-        // Ok
-    } catch {
-        try assertTrue(false)
-    }
+
+    try ValuesKt.callUnitCaller(caller: SwiftUnitCaller(), methods: throwing)
+
+    try ValuesKt.testSwiftThrowing(test: SwiftThrowingWithBridge(), flag: false)
+    try ValuesKt.testSwiftThrowing(test: SwiftThrowingWithBridge(), flag: true)
+    try ValuesKt.testSwiftNotThrowing(test: SwiftNotThrowingWithBridge())
 }
 
 func testFuncType() throws {
