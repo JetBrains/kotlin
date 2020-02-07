@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -97,8 +96,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.compilation = compilation
                 it.entry = getByKind(
                     kind,
-                    compilation.productionLinkTask.map {it.outputFile},
-                    compilation.developmentLinkTask.map{it.outputFile}
+                    compilation.productionLinkTask.map { it.outputFile },
+                    compilation.developmentLinkTask.map { it.outputFile }
                 ).get()
                 it.description = "start ${kind.name.toLowerCase()} webpack dev server"
 
@@ -134,13 +133,15 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
         distribution.directory = distribution.directory ?: baseDist
 
-        val distributionTask = project.registerTask<Copy>(
+        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
+
+        val distributeResourcesTask = project.registerTask<Copy>(
             disambiguateCamelCased(
-                DISTRIBUTION_TASK_NAME
+                DISTRIBUTE_RESOURCES_TASK_NAME
             )
         ) {
             it.dependsOn(
-                target.project.tasks.getByName(compilation.processResourcesTaskName)
+                processResourcesTask
             )
 
             it.from(compilation.output.resourcesDir)
@@ -148,7 +149,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
 
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(distributionTask)
+        assembleTask.dependsOn(distributeResourcesTask)
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
@@ -165,7 +166,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         compilation.productionLinkTask,
                         compilation.developmentLinkTask
                     ),
-                    distributionTask
+                    distributeResourcesTask
                 )
 
                 it.configureOptimization(kind)
@@ -186,8 +187,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
             if (kind == BuildVariantKind.PRODUCTION) {
                 assembleTask.dependsOn(webpackTask)
-                project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
                     it.dependsOn(webpackTask)
+                }
+                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                    it.dependsOn(webpackCommonTask)
+                    it.dependsOn(distributeResourcesTask)
                 }
             }
         }
@@ -240,6 +245,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         const val DEVELOPMENT = "development"
 
         private const val WEBPACK_TASK_NAME = "webpack"
+        private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         private const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }
