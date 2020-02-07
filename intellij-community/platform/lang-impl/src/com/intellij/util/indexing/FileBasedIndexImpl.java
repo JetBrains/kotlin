@@ -319,11 +319,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   static <K, V> void registerIndexer(@NotNull final FileBasedIndexExtension<K, V> extension, @NotNull IndexConfiguration state,
                                      @NotNull IndicesRegistrationResult registrationStatusSink) throws IOException {
     ID<K, V> name = extension.getName();
-    int version = extension.getVersion();
-
-    if (VfsAwareMapReduceIndex.hasSnapshotMapping(extension)) {
-      version += SnapshotInputMappings.getVersion();
-    }
+    int version = getIndexExtensionVersion(extension);
 
     final File versionFile = IndexInfrastructure.getVersionFile(name);
 
@@ -1695,4 +1691,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
   }
   public static final boolean DO_TRACE_STUB_INDEX_UPDATE = SystemProperties.getBooleanProperty("idea.trace.stub.index.update", false);
+
+  @ApiStatus.Internal
+  static <K, V> int getIndexExtensionVersion(@NotNull FileBasedIndexExtension<K, V> extension) {
+    int version = extension.getVersion();
+
+    if (VfsAwareMapReduceIndex.hasSnapshotMapping(extension)) {
+      version += SnapshotInputMappings.getVersion();
+    }
+    return version;
+  }
 }
