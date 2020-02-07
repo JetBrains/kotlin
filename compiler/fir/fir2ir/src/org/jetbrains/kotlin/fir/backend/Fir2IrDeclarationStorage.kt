@@ -16,13 +16,8 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.getOrPut
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
@@ -421,11 +416,12 @@ class Fir2IrDeclarationStorage(
         fun create(): IrSimpleFunction {
             val containerSource = function.containerSource
             val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
+            val updatedOrigin = if (function.symbol.callableId.isKFunctionInvoke()) IrDeclarationOrigin.FAKE_OVERRIDE else origin
             return function.convertWithOffsets { startOffset, endOffset ->
                 enterScope(descriptor)
                 val result = irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
                     IrFunctionImpl(
-                        startOffset, endOffset, origin, symbol,
+                        startOffset, endOffset, updatedOrigin, symbol,
                         function.name, function.visibility, function.modality!!,
                         function.returnTypeRef.toIrType(session, this),
                         isInline = function.isInline,
@@ -433,7 +429,7 @@ class Fir2IrDeclarationStorage(
                         isTailrec = function.isTailRec,
                         isSuspend = function.isSuspend,
                         isExpect = function.isExpect,
-                        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                        isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
                         isOperator = function.isOperator
                     )
                 }
@@ -775,6 +771,11 @@ class Fir2IrDeclarationStorage(
             is FirSimpleFunction -> {
                 val irDeclaration = getIrFunction(firDeclaration, irParent, shouldLeaveScope = true).apply {
                     setAndModifyParent(irParent)
+                } as IrSimpleFunction
+                if (firFunctionSymbol.callableId.isKFunctionInvoke()) {
+                    (firFunctionSymbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
+                        irDeclaration.overriddenSymbols += (it.toFunctionSymbol(this) as IrSimpleFunctionSymbol)
+                    }
                 }
                 irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
             }

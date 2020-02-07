@@ -463,6 +463,12 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAc
 }
 
 fun CallableId.isInvoke() =
-    packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+    isKFunctionInvoke()
+            || callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
-            && callableName.asString() == "invoke"
+            && packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+
+fun CallableId.isKFunctionInvoke() =
+    callableName.asString() == "invoke"
+            && className?.asString()?.startsWith("KFunction") == true
+            && packageName.asString() == "kotlin.reflect"
