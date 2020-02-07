@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -128,6 +129,12 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
                         scopedVisibility(inInlineFunctionScope)
                     else
                         declaration.visibility
+
+                override fun forCapturedField(value: IrValueSymbol): Visibility =
+                    if (value is IrValueParameterSymbol && value.owner.isCrossinline)
+                        JavaVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
+                    else
+                        Visibilities.PRIVATE
 
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): Visibility =
                     if (inInlineFunctionScope) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY

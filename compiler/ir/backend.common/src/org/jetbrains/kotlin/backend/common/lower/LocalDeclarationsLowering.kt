@@ -66,6 +66,9 @@ interface VisibilityPolicy {
     fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
         Visibilities.PRIVATE
 
+    fun forCapturedField(value: IrValueSymbol): Visibility =
+        Visibilities.PRIVATE
+
     companion object {
         val DEFAULT = object : VisibilityPolicy {}
     }
@@ -778,7 +781,7 @@ class LocalDeclarationsLowering(
                     classDeclaration.startOffset,
                     classDeclaration.endOffset,
                     suggestNameForCapturedValue(owner, generatedNames),
-                    Visibilities.PRIVATE,
+                    visibilityPolicy.forCapturedField(capturedValue),
                     classDeclaration,
                     owner.type,
                     owner is IrValueParameter && owner.isCrossinline
