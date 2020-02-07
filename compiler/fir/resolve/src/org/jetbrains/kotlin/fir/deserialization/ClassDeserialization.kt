@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirClassImplBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirSealedClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -58,6 +59,16 @@ fun deserializeClassToSymbol(
     }
     val isSealed = modality == Modality.SEALED
     val classBuilder = if (isSealed) FirSealedClassBuilder() else FirClassImplBuilder()
+    val context =
+        parentContext?.childContext(
+            classProto.typeParameterList,
+            nameResolver,
+            TypeTable(classProto.typeTable),
+            classId.relativeClassName
+        ) ?: FirDeserializationContext.createForClass(
+            classId, classProto, nameResolver, session,
+            defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
+        )
     classBuilder.apply {
         this.session = session
         name = classId.shortClassName
@@ -67,18 +78,8 @@ fun deserializeClassToSymbol(
         this.symbol = symbol
 
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-        val context =
-            parentContext?.childContext(
-                classProto.typeParameterList,
-                nameResolver,
-                TypeTable(classProto.typeTable),
-                classId.relativeClassName
-            ) ?: FirDeserializationContext.createForClass(
-                classId, classProto, nameResolver, session,
-                defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
-            )
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.fir }
-        annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
+//        annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         val typeDeserializer = context.typeDeserializer
         val classDeserializer = context.memberDeserializer
@@ -134,5 +135,7 @@ fun deserializeClassToSymbol(
             }
         }
         calculateSAM()
+    }.build().also {
+        (it.annotations as MutableList<FirAnnotationCall>) += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
     }
 }
