@@ -81,6 +81,124 @@ assert(1 == 2) { "Not equal" }
 """.trimIndent()
     )
   }
+
+  @Test
+  fun booleanExpressionsShortCircuit() {
+    assertMessage(
+      """
+fun main() {
+  val text: String? = null
+  assert(text != null && text.length == 1)
+}""",
+      """
+Assertion failed
+assert(text != null && text.length == 1)
+       |    |
+       |    false
+       null
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun booleanAnd() {
+    assertMessage(
+      """
+fun main() {
+  val text: String? = "Hello"
+  assert(text != null && text.length == 5 && text.toLowerCase() == text)
+}""",
+      """
+Assertion failed
+assert(text != null && text.length == 5 && text.toLowerCase() == text)
+       |    |          |    |      |       |    |             |  |
+       |    |          |    |      |       |    |             |  Hello
+       |    |          |    |      |       |    |             false
+       |    |          |    |      |       |    hello
+       |    |          |    |      |       Hello
+       |    |          |    |      true
+       |    |          |    5
+       |    |          Hello
+       |    true
+       Hello
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun booleanOr() {
+    assertMessage(
+      """
+fun main() {
+  val text: String? = "Hello"
+  assert(text == null || text.length == 1 || text.toLowerCase() == text)
+}""",
+      """
+Assertion failed
+assert(text == null || text.length == 1 || text.toLowerCase() == text)
+       |    |          |    |      |       |    |             |  |
+       |    |          |    |      |       |    |             |  Hello
+       |    |          |    |      |       |    |             false
+       |    |          |    |      |       |    hello
+       |    |          |    |      |       Hello
+       |    |          |    |      false
+       |    |          |    5
+       |    |          Hello
+       |    false
+       Hello
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun booleanMixAndFirst() {
+    assertMessage(
+      """
+fun main() {
+  val text: String? = "Hello"
+  assert(text != null && (text.length == 1 || text.toLowerCase() == text))
+}""",
+      """
+Assertion failed
+assert(text != null && (text.length == 1 || text.toLowerCase() == text))
+       |    |           |    |      |       |    |             |  |
+       |    |           |    |      |       |    |             |  Hello
+       |    |           |    |      |       |    |             false
+       |    |           |    |      |       |    hello
+       |    |           |    |      |       Hello
+       |    |           |    |      false
+       |    |           |    5
+       |    |           Hello
+       |    true
+       Hello
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun booleanMixOrFirst() {
+    assertMessage(
+      """
+fun main() {
+  val text: String? = "Hello"
+  assert(text == null || (text.length == 5 && text.toLowerCase() == text))
+}""",
+      """
+Assertion failed
+assert(text == null || (text.length == 5 && text.toLowerCase() == text))
+       |    |           |    |      |       |    |             |  |
+       |    |           |    |      |       |    |             |  Hello
+       |    |           |    |      |       |    |             false
+       |    |           |    |      |       |    hello
+       |    |           |    |      |       Hello
+       |    |           |    |      true
+       |    |           |    5
+       |    |           Hello
+       |    false
+       Hello
+""".trimIndent()
+    )
+  }
 }
 
 fun assertMessage(@Language("kotlin") source: String, message: String) {
