@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
@@ -209,30 +206,11 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                                 type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
                             }
                         }
-
-                        addDeclaration(
-                            buildSimpleFunction {
-                                session = this@FirBuiltinSymbolProvider.session
-                                returnTypeRef = typeArguments.last()
-                                this.name = name
-                                status = functionStatus
-                                symbol = FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name))
-                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                                valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
-                                    val parameterName = Name.identifier("p${index + 1}")
-                                    buildValueParameter {
-                                        session = this@FirBuiltinSymbolProvider.session
-                                        returnTypeRef = typeArgument
-                                        this.name = parameterName
-                                        symbol = FirVariableSymbol(parameterName)
-                                        defaultValue = null
-                                        isCrossinline = false
-                                        isNoinline = false
-                                        isVararg = false
-                                    }
-                                }
-                            },
-                        )
+                        val superKind: FunctionClassDescriptor.Kind? = when (kind) {
+                            FunctionClassDescriptor.Kind.KFunction -> FunctionClassDescriptor.Kind.Function
+                            FunctionClassDescriptor.Kind.KSuspendFunction -> FunctionClassDescriptor.Kind.SuspendFunction
+                            else -> null
+                        }
 
                         fun createSuperType(
                             kind: FunctionClassDescriptor.Kind,
@@ -259,12 +237,46 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                             FunctionClassDescriptor.Kind.KSuspendFunction ->
                                 createSuperType(FunctionClassDescriptor.Kind.SuspendFunction)
                         }
+                        addDeclaration(
+                            buildSimpleFunction {
+                                session = this@FirBuiltinSymbolProvider.session
+                                returnTypeRef = typeArguments.last()
+                                this.name = name
+                                status = functionStatus
+                                symbol = FirNamedFunctionSymbol(
+                                    CallableId(packageFqName, relativeClassName, name),
+                                    // set overriddenSymbol for "invoke" of KFunction/KSuspendFunction
+                                    superKind != null, superKind?.getInvoke(arity)
+                                )
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                                valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
+                                    val parameterName = Name.identifier("p${index + 1}")
+                                    buildValueParameter {
+                                        session = this@FirBuiltinSymbolProvider.session
+                                        returnTypeRef = typeArgument
+                                        this.name = parameterName
+                                        symbol = FirVariableSymbol(parameterName)
+                                        defaultValue = null
+                                        isCrossinline = false
+                                        isNoinline = false
+                                        isVararg = false
+                                    }
+                                }
+                            }
+                        )
                     }
                 }
             }
         }
     }
 
+    // Find the symbol for "invoke" in the function class
+    private fun FunctionClassDescriptor.Kind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
+        val functionClass = getClassLikeSymbolByFqName(classId(arity)) ?: return null
+        val invoke =
+            functionClass.fir.declarations.find { it is FirSimpleFunction && it.name == OperatorNameConventions.INVOKE } ?: return null
+        return (invoke as FirSimpleFunction).symbol as? FirNamedFunctionSymbol
+    }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {

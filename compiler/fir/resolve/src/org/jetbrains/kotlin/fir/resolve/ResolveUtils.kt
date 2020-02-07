@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedQualifierBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -463,6 +462,12 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAc
 }
 
 fun CallableId.isInvoke() =
-    packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+    isKFunctionInvoke()
+            || callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
-            && callableName.asString() == "invoke"
+            && packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+
+fun CallableId.isKFunctionInvoke() =
+    callableName.asString() == "invoke"
+            && className?.asString()?.startsWith("KFunction") == true
+            && packageName.asString() == "kotlin.reflect"
