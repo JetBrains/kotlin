@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
@@ -96,11 +97,11 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
         }
         return IrClassImpl(
             0, fileEntry.maxOffset,
-            IrDeclarationOrigin.FILE_CLASS,
+            if (!fileClassInfo.withJvmMultifileClass) IrDeclarationOrigin.FILE_CLASS else IrDeclarationOrigin.MULTIFILE_PART_CLASS,
             symbol = IrClassSymbolImpl(descriptor),
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
-            visibility = Visibilities.PUBLIC,
+            visibility = if (!fileClassInfo.withJvmMultifileClass) Visibilities.PUBLIC else Visibilities.PRIVATE,
             modality = Modality.FINAL,
             isCompanion = false,
             isInner = false,

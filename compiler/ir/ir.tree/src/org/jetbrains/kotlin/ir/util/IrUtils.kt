@@ -670,3 +670,6 @@ fun SymbolTable.findOrDeclareExternalPackageFragment(descriptor: PackageFragment
             declareExternalPackageFragment(descriptor)
         }
     }.owner
+
+val IrDeclaration.isFileClass: Boolean
+    get() = origin == IrDeclarationOrigin.FILE_CLASS || origin == IrDeclarationOrigin.MULTIFILE_PART_CLASS
