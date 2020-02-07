@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
-import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.plugin.sources.UnsatisfiedSourceSetVisibilityException
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -337,14 +337,16 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testSourceSetCyclicDependencyDetection() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
-        gradleBuildScript().appendText("\n" + """
+        gradleBuildScript().appendText(
+            "\n" + """
             kotlin.sourceSets {
                 a
                 b { dependsOn a }
                 c { dependsOn b }
                 a.dependsOn(c)
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         build("assemble") {
             assertFailed()
@@ -862,7 +864,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().modify {
                 it.replace("implementation 'com.example:sample-lib:1.0'", "implementation 'com.example:sample-lib-metadata:1.0'") +
-                "\nrepositories { maven { url '${repoDir.toURI()}' } }\n\n" + dependencies
+                        "\nrepositories { maven { url '${repoDir.toURI()}' } }\n\n" + dependencies
             }
 
             build("assemble") {
@@ -1098,14 +1100,15 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     }
 
-    private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) = taskPaths.forEach { taskPath ->
-        val commandLine = output.lineSequence().dropWhile {
-            !it.contains("Executing actions for task '$taskPath'")
-        }.first {
-            it.contains("Run tool: \"konanc\"")
+    private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) =
+        taskPaths.forEach { taskPath ->
+            val commandLine = output.lineSequence().dropWhile {
+                !it.contains("Executing actions for task '$taskPath'")
+            }.first {
+                it.contains("Run tool: \"konanc\"")
+            }
+            check(commandLine)
         }
-        check(commandLine)
-    }
 
     @Test
     fun testNativeBinaryKotlinDSL() = with(
@@ -1246,8 +1249,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFileExists("build/bin/ios/debugFramework/native_binary.framework")
                 assertTrue(
                     fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
-                    .readText()
-                    .contains("+ (int32_t)exported")
+                        .readText()
+                        .contains("+ (int32_t)exported")
                 )
                 // Check that by default debug frameworks have bitcode marker embedded.
                 checkNativeCommandLineFor(":linkDebugFrameworkIos") {
@@ -1595,11 +1598,13 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             setupWorkingDir()
             listOf(gradleBuildScript(), gradleBuildScript("publishedLibrary")).forEach {
-                it.appendText("""
+                it.appendText(
+                    """
                     repositories {
                         maven { url '$repo' }
                     }
-                """.trimIndent())
+                """.trimIndent()
+                )
             }
 
             val targetsToBuild = if (HostManager.hostIsMingw) {
@@ -2071,10 +2076,16 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         fun testDependencies() = testResolveAllConfigurations("app") {
             assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
-            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count())
+            assertEquals(
+                1,
+                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
+            )
 
             assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count())
+            assertEquals(
+                1,
+                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
+            )
 
             assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
             assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
@@ -2297,25 +2308,27 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testAssociateCompilations() {
-        testAssociateCompilationsImpl(false)
+        testAssociateCompilationsImpl(JsCompilerType.legacy)
     }
 
     @Test
     fun testAssociateCompilationsWithJsIr() {
-        testAssociateCompilationsImpl(true)
+        testAssociateCompilationsImpl(JsCompilerType.ir)
     }
 
-    private fun testAssociateCompilationsImpl(jsIr: Boolean) {
+    private fun testAssociateCompilationsImpl(jsCompilerType: JsCompilerType) {
         with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-            if (!jsIr) {
-                gradleProperties().appendText(jsCompilerType(JsCompilerType.legacy))
-            }
 
             val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
 
-            build(*tasks.toTypedArray()) {
+            build(
+                *tasks.toTypedArray(),
+                options = defaultBuildOptions().copy(
+                    jsCompilerType = jsCompilerType
+                )
+            ) {
                 assertSuccessful()
                 assertTasksExecuted(*tasks.toTypedArray())
 
@@ -2329,7 +2342,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 // JS:
                 assertFileExists(
-                    if (jsIr) {
+                    if (jsCompilerType == JsCompilerType.ir) {
                         "build/classes/kotlin/js/integrationTest/default/manifest"
                     } else {
                         "build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js"
