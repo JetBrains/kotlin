@@ -454,8 +454,10 @@ internal class EnumStubBuilder(
 
 internal class FunctionStubBuilder(
         override val context: StubsBuildingContext,
-        private val func: FunctionDecl
+        private val func: FunctionDecl,
+        private val skipOverloads: Boolean = false
 ) : StubElementBuilder {
+
     override fun build(): List<StubIrElement> {
         val platform = context.platform
         val parameters = mutableListOf<FunctionParameterStub>()
@@ -508,6 +510,8 @@ internal class FunctionStubBuilder(
             context.mirror(func.returnType).argType
         }.toStubIrType()
 
+        if (skipOverloads && context.isOverloading(func))
+            return emptyList()
 
         val annotations: List<AnnotationStub>
         val mustBeExternal: Boolean
