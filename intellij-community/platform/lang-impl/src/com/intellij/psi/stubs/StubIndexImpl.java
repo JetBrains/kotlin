@@ -395,7 +395,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
         }
 
         StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey<>(key, id), __ -> {
-          return myStubProcessingHelper.retrieveStubIdList(indexKey, key, file);
+          return myStubProcessingHelper.retrieveStubIdList(indexKey, key, file, project);
         });
         if (list == null) {
           LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
