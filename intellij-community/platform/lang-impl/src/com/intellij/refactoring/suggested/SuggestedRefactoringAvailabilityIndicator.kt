@@ -101,6 +101,20 @@ class SuggestedRefactoringAvailabilityIndicator(private val project: Project) {
         editorsAndHighlighters.clear()
     }
 
+    fun disable() {
+        ApplicationManager.getApplication().assertIsDispatchThread()
+        val data = data ?: return
+        if (data.refactoringEnabled) {
+            show(
+                data.document,
+                data.highlighterRangeMarker.range ?: return,
+                data.availabilityRangeMarker.range ?: return,
+                false,
+                data.tooltip
+            )
+        }
+    }
+
     // for tests
     val hasData: Boolean
         get() = data != null

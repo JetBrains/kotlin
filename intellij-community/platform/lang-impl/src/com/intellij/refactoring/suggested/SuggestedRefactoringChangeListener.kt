@@ -228,7 +228,12 @@ class SuggestedRefactoringChangeListener(
 
             if (declaration == null || signatureRange == null || strippedWatchedRange != signatureRange.stripWhitespace(chars)) {
                 val range = signatureRange?.union(watchedRange) ?: watchedRange
-                if (!psiFile.hasErrorElementInRange(range)) {
+                if (psiFile.hasErrorElementInRange(range)) {
+                    if (!editingState.isRefactoringSuppressed) {
+                        watcher.inconsistentState(refactoringSupport)
+                    }
+                }
+                else {
                     reset()
                 }
                 return
@@ -289,5 +294,6 @@ class SuggestedRefactoringChangeListener(
 interface SuggestedRefactoringSignatureWatcher {
     fun editingStarted(declaration: PsiElement, refactoringSupport: SuggestedRefactoringSupport)
     fun nextSignature(declaration: PsiElement, refactoringSupport: SuggestedRefactoringSupport)
+    fun inconsistentState(refactoringSupport: SuggestedRefactoringSupport)
     fun reset()
 }

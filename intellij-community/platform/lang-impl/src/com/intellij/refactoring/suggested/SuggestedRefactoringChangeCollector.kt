@@ -23,6 +23,11 @@ class SuggestedRefactoringChangeCollector(
         updateAvailabilityIndicator()
     }
 
+    override fun inconsistentState(refactoringSupport: SuggestedRefactoringSupport) {
+        state = state?.copy(syntaxError = true)
+        updateAvailabilityIndicator()
+    }
+
     override fun reset() {
         state = null
         updateAvailabilityIndicator()
@@ -36,6 +41,12 @@ class SuggestedRefactoringChangeCollector(
         }
 
         val refactoringSupport = state.refactoringSupport
+        if (!state.declaration.isValid || refactoringSupport.nameRange(state.declaration) == null) {
+            require(state.syntaxError)
+            availabilityIndicator.disable()
+            return
+        }
+
         val refactoringData = if (!state.syntaxError)
             refactoringSupport.availability.detectAvailableRefactoring(state)
         else
