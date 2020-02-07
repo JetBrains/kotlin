@@ -9,6 +9,6 @@ fun foo() : Int {
 }
 
 // fake inline variables occupy 2 ISTOREs.
-// 5 ISTORE
-// 7 ILOAD
+// 3 ISTORE
+// 5 ILOAD
 // 0 InlineMarker
