@@ -7,14 +7,12 @@ import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.CompressionUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetriever;
-import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,19 +20,15 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInputMappingIndex<Key, Value, FileContent> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
 
-  private static final boolean USE_MANUAL_COMPRESSION = SystemProperties.getBooleanProperty("snapshots.use.manual.compression", false);
-
   public static int getVersion() {
     assert FileBasedIndex.ourSnapshotMappingsEnabled;
-    return 0xFFF + // base index version modifier
-           1 + // snapshot input mappings version
-           0xFF * (USE_MANUAL_COMPRESSION ? 1 : 0);
+    return 0xFFF +  // base index version modifier
+           1 // snapshot input mappings version
+      ;
   }
 
   private final ID<Key, Value> myIndexId;
@@ -111,13 +105,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   @Nullable
   private Map<Key, Value> doReadData(int hashId) throws IOException {
     ByteArraySequence byteSequence = readContents(hashId);
-    if (byteSequence != null) {
-      if (USE_MANUAL_COMPRESSION) {
-        byteSequence = decompress(byteSequence);
-      }
-      return deserialize(byteSequence);
-    }
-    return null;
+    return byteSequence != null ? deserialize(byteSequence) : null;
   }
 
   @NotNull
@@ -179,7 +167,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     }
     int hash = getHashOfContent((FileContentImpl)content);
     if (myCompositeHashIdEnumerator != null) {
-      int subIndexerTypeId = mySubIndexerRetriever.getFileIndexerId((FileContentImpl)content);
+      int subIndexerTypeId = mySubIndexerRetriever.getFileIndexerId(content);
       return myCompositeHashIdEnumerator.enumerate(hash, subIndexerTypeId);
     }
     return hash;
@@ -370,9 +358,6 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   }
 
   private void saveContents(int id, ByteArraySequence byteSequence) throws IOException {
-    if (USE_MANUAL_COMPRESSION) {
-      byteSequence = compress(byteSequence);
-    }
     if (SharedIndicesData.ourFileSharedIndicesEnabled) {
       if (SharedIndicesData.DO_CHECKS) {
         synchronized (myContents) {
@@ -385,17 +370,5 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     } else {
       myContents.put(id, byteSequence);
     }
-  }
-
-  @NotNull
-  private static ByteArraySequence decompress(@NotNull ByteArraySequence seq) throws IOException {
-    return new ByteArraySequence(CompressionUtil.readCompressed(seq.toInputStream()));
-  }
-
-  @NotNull
-  private static ByteArraySequence compress(@NotNull ByteArraySequence seq) throws IOException {
-    UnsyncByteArrayOutputStream result = new UnsyncByteArrayOutputStream();
-    CompressionUtil.writeCompressed(new DataOutputStream(result), seq.getBytes(), seq.getOffset(), seq.length());
-    return result.toByteArraySequence();
   }
 }
