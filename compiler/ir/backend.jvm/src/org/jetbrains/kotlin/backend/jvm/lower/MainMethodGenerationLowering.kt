@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -40,7 +41,7 @@ internal class MainMethodGenerationLowering(val context: JvmBackendContext) : Cl
 
     override fun lower(irClass: IrClass) {
         if (!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
-        if (irClass.origin != IrDeclarationOrigin.FILE_CLASS) return
+        if (!irClass.isFileClass) return
 
         val parameterlessMain = irClass.functions.find { it.isParameterlessMainMethod() } ?: return
 

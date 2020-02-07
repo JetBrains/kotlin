@@ -374,7 +374,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             // The non-IR backend generates equally meaningless "kotlin/KotlinPackage" in this case (see KT-17151).
             val kClass = kClassReference((irContainer as? IrClass)?.defaultType ?: context.irBuiltIns.anyNType)
 
-            if ((irContainer as? IrClass)?.origin != IrDeclarationOrigin.FILE_CLASS && irContainer !is IrPackageFragment)
+            if ((irContainer as? IrClass)?.isFileClass != true && irContainer !is IrPackageFragment)
                 return kClass
 
             return irCall(context.ir.symbols.getOrCreateKotlinPackage).apply {

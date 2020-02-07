@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -209,7 +210,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         private fun IrFunctionSymbol.toKey(): Key? {
             val parent = owner.parent
             val ownerFqName = when {
-                parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS ->
+                parent is IrClass && parent.isFileClass ->
                     (parent.parent as IrPackageFragment).fqName
                 parent is IrClass -> parent.fqNameWhenAvailable ?: return null
                 parent is IrPackageFragment -> parent.fqName

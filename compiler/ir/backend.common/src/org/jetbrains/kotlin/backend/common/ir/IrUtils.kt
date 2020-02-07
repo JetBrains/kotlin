@@ -393,7 +393,7 @@ val IrDeclaration.isTopLevel: Boolean
     get() {
         if (parent is IrPackageFragment) return true
         val parentClass = parent as? IrClass
-        return parentClass?.origin == IrDeclarationOrigin.FILE_CLASS && parentClass.parent is IrPackageFragment
+        return parentClass?.isFileClass == true && parentClass.parent is IrPackageFragment
     }
 
 fun Scope.createTemporaryVariableWithWrappedDescriptor(

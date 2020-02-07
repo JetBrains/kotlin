@@ -1069,7 +1069,7 @@ open class WrappedFieldDescriptor(
 private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
     val parent = declaration.parent
     val parentDescriptor = (parent as IrSymbolOwner).symbol.descriptor
-    return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS) {
+    return if (parent is IrClass && parent.isFileClass) {
         // JVM IR adds facade classes for IR of functions/properties loaded both from sources and dependencies. However, these shouldn't
         // exist in the descriptor hierarchy, since this is what the old backend (dealing with descriptors) expects.
         parentDescriptor.containingDeclaration!!
