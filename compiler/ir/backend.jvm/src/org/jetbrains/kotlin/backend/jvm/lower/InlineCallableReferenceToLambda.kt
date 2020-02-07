@@ -55,12 +55,13 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        expression.transformChildrenVoid(this)
         if (expression !in inlinableReferences || expression.origin.isLambda) return expression
-
         return expandInlineFunctionReferenceToLambda(expression, expression.symbol.owner)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
+        expression.transformChildrenVoid(this)
         if (expression !in inlinableReferences) return expression
 
         return if (expression.field?.owner == null) {
