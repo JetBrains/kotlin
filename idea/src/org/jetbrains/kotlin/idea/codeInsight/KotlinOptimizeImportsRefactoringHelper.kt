@@ -31,6 +31,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -72,9 +73,11 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
             for ((counter, pointer) in pointers.withIndex()) {
                 indicator.fraction = counter.toDouble() / myTotal
 
-                val directive = pointer.element
-                if (directive?.isValid == true) {
-                    val presentableUrl = directive.containingFile.virtualFile.presentableUrl
+                runReadAction {
+                    val element = pointer.element
+                    if (element?.isValid == true) element!! else null
+                }?.let { directive ->
+                    val presentableUrl = runReadAction { directive.containingFile }.virtualFile.presentableUrl
                     indicator.text2 = presentableUrl
                     ApplicationManager.getApplication().invokeAndWait {
                         project.executeWriteCommand("delete $presentableUrl") {
