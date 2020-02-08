@@ -74,7 +74,7 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
               assert editor != null;
 
               if (Registry.is("ide.new.color.picker")) {
-                ColorPicker.showColorPickerPopup(element.getProject(), color, (c, l) -> WriteAction.run(() -> colorProvider.setColorTo(elt, c)));
+                ColorPicker.showColorPickerPopup(element.getProject(), color, editor, (c, l) -> WriteAction.run(() -> colorProvider.setColorTo(elt, c)));
               } else {
                 final Color c = ColorChooser.chooseColor(editor.getProject(), editor.getComponent(), "Choose Color", color, true);
                 if (c != null) {
