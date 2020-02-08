@@ -114,6 +114,7 @@ class PowerAssertCallTransformer(
       return irBlock {
         buildAssert(this@PowerAssertCallTransformer.context, file, fileSource, callSource, callIndent, title, root)
       }
+//        .also { println(it.dump())}
     }
   }
 }
@@ -161,8 +162,9 @@ private inline fun IrBlockBuilder.irIfNotThan(
   node: ExpressionNode,
   thenPart: IrBlockBuilder.(subStack: MutableList<IrStackVariable>) -> IrExpression
 ): IrWhen {
-  val stackTransformer = StackBuilder(this, stack, file, fileSource, callIndent, node.expressions)
-  val transformed = node.expressions.first().transform(stackTransformer, null)
+  val expressions = node.getExpressionsCopy()
+  val stackTransformer = StackBuilder(this, stack, file, fileSource, callIndent, expressions)
+  val transformed = expressions.first().transform(stackTransformer, null)
   return irIfThen(irNot(transformed), thenPart(stack.toMutableList()))
 }
 
@@ -197,7 +199,11 @@ class StackBuilder(
   }
 
   override fun visitExpression(expression: IrExpression): IrExpression {
-    return super.visitExpression(expression).also { if (expression in transform) push(it) }
+    return if (expression in transform) {
+      push(super.visitExpression(expression))
+    } else {
+      super.visitExpression(expression)
+    }
   }
 }
 

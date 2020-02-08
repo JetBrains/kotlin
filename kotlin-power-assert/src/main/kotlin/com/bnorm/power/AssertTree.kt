@@ -16,6 +16,7 @@
 
 package com.bnorm.power
 
+import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -60,9 +61,20 @@ class ExpressionNode(
     parent.mutableChildren.add(this)
   }
 
-  val expressions: MutableList<IrExpression> = mutableListOf()
+  private val _expressions: MutableList<IrExpression> = mutableListOf()
 
-  override fun toString() = "ExpressionNode($expressions)"
+  fun add(expression: IrExpression) {
+    _expressions.add(expression)
+  }
+
+  fun getExpressionsCopy(): List<IrExpression> {
+    // Return a copy of all the expression by creating a deep copy of the head
+    // expression and running back through the assertion tree builder
+    val headCopy = _expressions.first().deepCopyWithVariables()
+    return (buildAssertTree(headCopy).children.single() as ExpressionNode)._expressions
+  }
+
+  override fun toString() = "ExpressionNode($_expressions)"
 }
 
 class RootNode : Node() {
@@ -84,7 +96,7 @@ fun buildAssertTree(expression: IrExpression): RootNode {
 
     override fun visitExpression(expression: IrExpression, data: Node) {
       val node = data as? ExpressionNode ?: ExpressionNode(data)
-      node.expressions += expression
+      node.add(expression)
       expression.acceptChildren(this, node)
     }
 
