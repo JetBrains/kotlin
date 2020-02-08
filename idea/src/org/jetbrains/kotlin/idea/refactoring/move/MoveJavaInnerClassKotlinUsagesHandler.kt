@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class MoveJavaInnerClassKotlinUsagesHandler : MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass, parameterNameOuterClass: String?) {
+        parameterNameOuterClass ?: return
+
         val innerCall = usage.element?.parent as? KtCallExpression ?: return
         val receiverExpression = innerCall.getQualifiedExpressionForSelector()?.receiverExpression
 
