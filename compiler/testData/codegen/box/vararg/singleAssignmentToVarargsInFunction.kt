@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun box(): String {
     if (test1(p = 1) != "1") return "fail 1"

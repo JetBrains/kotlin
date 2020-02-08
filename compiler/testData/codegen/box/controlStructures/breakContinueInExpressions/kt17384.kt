@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun returnNullable(): String? = null
 
 inline fun Array<String>.matchAll(fn: (String) -> Unit) {

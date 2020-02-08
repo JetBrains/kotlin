@@ -471,3 +471,6 @@ fun CallableId.isKFunctionInvoke() =
     callableName.asString() == "invoke"
             && className?.asString()?.startsWith("KFunction") == true
             && packageName.asString() == "kotlin.reflect"
+
+fun CallableId.isIteratorNext() =
+    callableName.asString() == "next" && className?.asString()?.equals("Iterator") == true && packageName.asString() == "kotlin.collections"

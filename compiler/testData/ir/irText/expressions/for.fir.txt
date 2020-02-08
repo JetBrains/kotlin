@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/for.kt
           $this: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testEmpty' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Unit origin=null
           VAR name:s type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testEmpty' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN name:testIterable visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/for.kt
           $this: GET_VAR 'val tmp_3: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testIterable' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Unit origin=null
           VAR name:s type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_3: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testIterable' type=kotlin.collections.Iterator<kotlin.String> origin=null
           CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             message: GET_VAR 'val s: kotlin.String [val] declared in <root>.testIterable' type=kotlin.String origin=null
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/for.kt
           $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> [val] declared in <root>.testDestructuring' type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> origin=null
         body: BLOCK type=kotlin.Unit origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Pair<kotlin.Int, kotlin.String> [val]
-            CALL 'public abstract fun next (): kotlin.Pair<kotlin.Int, kotlin.String> [operator] declared in kotlin.collections.Iterator' type=kotlin.Pair<kotlin.Int, kotlin.String> origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.Pair<kotlin.Int, kotlin.String> origin=null
               $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> [val] declared in <root>.testDestructuring' type=kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>> origin=null
           VAR name:i type:kotlin.Int [val]
             CALL 'public final fun component1 (): kotlin.Int [operator] declared in kotlin.Pair' type=kotlin.Int origin=null
