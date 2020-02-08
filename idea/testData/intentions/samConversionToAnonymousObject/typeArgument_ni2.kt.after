@@ -1,0 +1,7 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference
+
+val o = object : OwnAble<String?, Int, Long> {
+    override fun method(x: Int, y: Long): String? {
+        return "$x $y"
+    }
+}

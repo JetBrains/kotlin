@@ -3056,6 +3056,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/convertToAnonymousObject/typeArgument.kt");
         }
 
+        @TestMetadata("typeArgument2.kt")
+        public void testTypeArgument2() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/typeArgument2.kt");
+        }
+
         @TestMetadata("unit.kt")
         public void testUnit() throws Exception {
             runTest("idea/testData/quickfix/convertToAnonymousObject/unit.kt");

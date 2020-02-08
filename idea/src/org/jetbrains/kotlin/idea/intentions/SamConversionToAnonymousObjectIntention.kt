@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCallExpression>(
@@ -63,9 +66,11 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val lambda = getLambdaExpression(element) ?: return
         val context = element.analyze(BodyResolveMode.PARTIAL)
-        val functionDescriptor = lambda.functionLiteral.functionDescriptor(context) ?: return
-        val functionName = element.getSingleAbstractMethod(context)?.name?.asString() ?: return
-        convertToAnonymousObject(element, lambda, functionDescriptor, functionName)
+        val lambdaDescriptor = lambda.functionLiteral.functionDescriptor(context) ?: return
+        val sam = element.getSingleAbstractMethod(context) ?: return
+        val classDescriptor = sam.containingDeclaration as? ClassDescriptor
+        val typeParameters = typeParameters(element, context, classDescriptor, sam, lambdaDescriptor)
+        convertToAnonymousObject(element, lambda, lambdaDescriptor, sam.name.asString(), typeParameters)
     }
 
     private fun KtCallExpression.getSingleAbstractMethod(context: BindingContext): FunctionDescriptor? {
@@ -83,7 +88,8 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             call: KtCallExpression,
             lambda: KtLambdaExpression,
             functionDescriptor: FunctionDescriptor,
-            functionName: String
+            functionName: String,
+            typeParameters: Map<TypeConstructor, KotlinType>
         ) {
             val parentOfCall = call.getQualifiedExpressionForSelector()
             val interfaceName = if (parentOfCall != null) {
@@ -92,14 +98,13 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
                 call.calleeExpression?.text
             } ?: return
 
-            val typeArguments = call.typeArguments.mapNotNull { it.typeReference }
+            val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES
+            val typeArguments = typeParameters.values.map { typeSourceCode.renderType(it) }
             val typeArgumentsText = if (typeArguments.isEmpty())
                 ""
             else
-                typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.text }
+                typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ")
 
-            val classDescriptor = functionDescriptor.containingDeclaration as? ClassDescriptor
-            val typeParameters = classDescriptor?.declaredTypeParameters?.map { it.name.asString() }?.zip(typeArguments)?.toMap().orEmpty()
             LambdaToAnonymousFunctionIntention.convertLambdaToFunction(lambda, functionDescriptor, functionName, typeParameters) {
                 it.addModifier(KtTokens.OVERRIDE_KEYWORD)
                 (parentOfCall ?: call).replaced(
@@ -111,5 +116,39 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
         fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? =
             element.lambdaArguments.firstOrNull()?.getLambdaExpression()
                 ?: element.valueArguments.firstOrNull()?.getArgumentExpression() as? KtLambdaExpression
+
+        fun typeParameters(
+            call: KtCallExpression,
+            context: BindingContext,
+            classDescriptor: ClassDescriptor?,
+            functionDescriptor: FunctionDescriptor,
+            lambdaDescriptor: FunctionDescriptor?
+        ): Map<TypeConstructor, KotlinType> {
+            val declaredTypeParameters = classDescriptor?.declaredTypeParameters.orEmpty()
+            if (declaredTypeParameters.isEmpty()) return emptyMap()
+            val typeArguments = call.typeArguments
+            return if (typeArguments.isNotEmpty()) {
+                declaredTypeParameters
+                    .map { it.typeConstructor }
+                    .zip(typeArguments.mapNotNull { context[BindingContext.TYPE, it.typeReference] })
+                    .toMap()
+            } else {
+                if (lambdaDescriptor == null) return emptyMap()
+                val functionParameterTypes = functionDescriptor.valueParameters.map { it.type.constructor }
+                val functionReturnType = functionDescriptor.returnType?.constructor
+                val lambdaParameterTypes = lambdaDescriptor.valueParameters.map { it.type }
+                val lambdaReturnType = lambdaDescriptor.returnType
+                declaredTypeParameters.mapNotNull { typeParameter ->
+                    val typeConstructor = typeParameter.typeConstructor
+                    val type = if (functionReturnType == typeConstructor) {
+                        lambdaReturnType
+                    } else {
+                        val index = functionParameterTypes.indexOfFirst { it == typeConstructor }
+                        lambdaParameterTypes.getOrNull(index)
+                    } ?: return@mapNotNull null
+                    typeConstructor to type
+                }.toMap()
+            }
+        }
     }
 }

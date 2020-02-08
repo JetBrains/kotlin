@@ -15812,9 +15812,19 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/samConversionToAnonymousObject/typeArgument.kt");
         }
 
+        @TestMetadata("typeArgument2.kt")
+        public void testTypeArgument2() throws Exception {
+            runTest("idea/testData/intentions/samConversionToAnonymousObject/typeArgument2.kt");
+        }
+
         @TestMetadata("typeArgument_ni.kt")
         public void testTypeArgument_ni() throws Exception {
             runTest("idea/testData/intentions/samConversionToAnonymousObject/typeArgument_ni.kt");
+        }
+
+        @TestMetadata("typeArgument_ni2.kt")
+        public void testTypeArgument_ni2() throws Exception {
+            runTest("idea/testData/intentions/samConversionToAnonymousObject/typeArgument_ni2.kt");
         }
 
         @TestMetadata("usedSameFunction.kt")
