@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
   CLASS CLASS name:Base1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base1
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base1<T of <root>.Base1>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Derived1]
     CONSTRUCTOR visibility:public <> () returnType:<root>.Base1<T of <root>.Base1> [primary]
       BLOCK_BODY

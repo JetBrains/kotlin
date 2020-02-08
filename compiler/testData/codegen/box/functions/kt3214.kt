@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class A {
     fun get(vararg x: Int) = x.size
 }

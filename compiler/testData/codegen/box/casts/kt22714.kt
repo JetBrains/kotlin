@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun <T> Array<T>.getLength(): Int {
     return this.size
 }

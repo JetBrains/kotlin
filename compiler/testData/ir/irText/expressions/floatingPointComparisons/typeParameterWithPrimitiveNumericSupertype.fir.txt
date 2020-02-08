@@ -120,14 +120,14 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F<T of <root>.F>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Float]
     CONSTRUCTOR visibility:public <> () returnType:<root>.F<T of <root>.F> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:testCapturedType visibility:public modality:FINAL <> ($this:<root>.F, x:T of <root>.F, y:kotlin.Any) returnType:kotlin.Boolean
-      $this: VALUE_PARAMETER name:<this> type:<root>.F
+    FUN name:testCapturedType visibility:public modality:FINAL <> ($this:<root>.F<T of <root>.F>, x:T of <root>.F, y:kotlin.Any) returnType:kotlin.Boolean
+      $this: VALUE_PARAMETER name:<this> type:<root>.F<T of <root>.F>
       VALUE_PARAMETER name:x index:0 type:T of <root>.F
       VALUE_PARAMETER name:y index:1 type:kotlin.Any
       BLOCK_BODY

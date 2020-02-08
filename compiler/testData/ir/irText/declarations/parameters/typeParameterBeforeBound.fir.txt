@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1<T of <root>.Test1, U of <root>.Test1>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.Test1]
     TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1<T of <root>.Test1, U of <root>.Test1> [primary]

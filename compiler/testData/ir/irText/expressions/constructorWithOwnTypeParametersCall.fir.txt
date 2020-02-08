@@ -9,14 +9,14 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
       RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double> declared in <root>'
         ERROR_EXPR 'Cannot bind 2 type arguments to ??? call with 1 type parameters' type=<root>.J1.J2<kotlin.Double>
   CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1<T1 of <root>.K1>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Number]
     CONSTRUCTOR visibility:public <> () returnType:<root>.K1<T1 of <root>.K1> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:K2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1.K2
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K1.K2<T2 of <root>.K1.K2>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.CharSequence]
       CONSTRUCTOR visibility:public <> () returnType:<root>.K1.K2<T2 of <root>.K1.K2> [primary]
         BLOCK_BODY

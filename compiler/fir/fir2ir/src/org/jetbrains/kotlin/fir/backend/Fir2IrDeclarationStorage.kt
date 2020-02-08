@@ -130,11 +130,18 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun IrClass.setThisReceiver() {
+    private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameter>? = null) {
         enterScope(descriptor)
+        val typeArguments = typeParameters?.map {
+            IrSimpleTypeImpl(
+                it.symbol.toTypeParameterSymbol(this@Fir2IrDeclarationStorage),
+                false,
+                emptyList(),
+                emptyList())
+        } ?: emptyList()
         thisReceiver = declareThisReceiverParameter(
             parent = this,
-            thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
+            thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
         leaveScope(descriptor)
@@ -197,7 +204,7 @@ class Fir2IrDeclarationStorage(
                                 parent = getIrExternalPackageFragment(packageFqName)
                             }
                         }
-                        setThisReceiver()
+                        setThisReceiver((klass as? FirRegularClass)?.typeParameters)
                     }
                 }
             }
