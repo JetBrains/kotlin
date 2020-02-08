@@ -13,7 +13,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
-import kotlin.annotations.jvm.Mutable
 
 open class CocoapodsExtension(private val project: Project) {
     @get:Input
@@ -65,9 +64,6 @@ open class CocoapodsExtension(private val project: Project) {
      */
     @Input
     var frameworkName: String = project.name.asValidFrameworkName()
-
-//    @Nested
-//    val buildSettings: MutableMap<String, String> = mutableMapOf()
 
     private val _pods = project.container(CocoapodsDependency::class.java)
 
