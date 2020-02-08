@@ -128,13 +128,13 @@ fun IrBlockBuilder.buildAssert(
   node: Node,
   stack: MutableList<IrStackVariable> = mutableListOf(),
   constructor: IrConstructorSymbol = context.ir.symbols.assertionErrorConstructor,
-  thenPart: IrBlockBuilder.(stack: MutableList<IrStackVariable>) -> IrExpression = { stack -> buildThrow(constructor, buildMessage(title, stack, callSource)) }
+  thenPart: IrBlockBuilder.(stack: MutableList<IrStackVariable>) -> IrExpression = { subStack -> buildThrow(constructor, buildMessage(title, subStack, callSource)) }
 ) {
   fun IrBlockBuilder.nest(children: List<Node>, index: Int, stack: MutableList<IrStackVariable>) {
     val child = children[index]
-    buildAssert(context, file, fileSource, callSource, callIndent, title, child, stack, constructor) { stack ->
-      if (index + 1 == children.size) buildThrow(constructor, buildMessage(title, stack, callSource))
-      else irBlock { nest(children, index + 1, stack) }
+    buildAssert(context, file, fileSource, callSource, callIndent, title, child, stack, constructor) { subStack ->
+      if (index + 1 == children.size) buildThrow(constructor, buildMessage(title, subStack, callSource))
+      else irBlock { nest(children, index + 1, subStack) }
     }
   }
 
@@ -159,11 +159,11 @@ private inline fun IrBlockBuilder.irIfNotThan(
   fileSource: String,
   callIndent: Int,
   node: ExpressionNode,
-  thenPart: IrBlockBuilder.(stack: MutableList<IrStackVariable>) -> IrExpression
+  thenPart: IrBlockBuilder.(subStack: MutableList<IrStackVariable>) -> IrExpression
 ): IrWhen {
   val stackTransformer = StackBuilder(this, stack, file, fileSource, callIndent, node.expressions)
   val transformed = node.expressions.first().transform(stackTransformer, null)
-  return irIfThen(irNot(transformed), thenPart(stack))
+  return irIfThen(irNot(transformed), thenPart(stack.toMutableList()))
 }
 
 class StackBuilder(
@@ -197,11 +197,7 @@ class StackBuilder(
   }
 
   override fun visitExpression(expression: IrExpression): IrExpression {
-    return if (expression in transform) {
-      push(super.visitExpression(expression))
-    } else {
-      super.visitExpression(expression)
-    }
+    return super.visitExpression(expression).also { if (expression in transform) push(it) }
   }
 }
 

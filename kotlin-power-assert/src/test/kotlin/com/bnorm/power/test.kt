@@ -176,6 +176,29 @@ assert(text != null && (text.length == 1 || text.toLowerCase() == text))
   }
 
   @Test
+  fun booleanMixAndLast() {
+    assertMessage(
+      """
+fun main() {
+  val text = "Hello"
+  assert((text.length == 1 || text.toLowerCase() == text) && text.length == 1)
+}""",
+      """
+Assertion failed
+assert((text.length == 1 || text.toLowerCase() == text) && text.length == 1)
+        |    |      |       |    |             |  |
+        |    |      |       |    |             |  Hello
+        |    |      |       |    |             false
+        |    |      |       |    hello
+        |    |      |       Hello
+        |    |      false
+        |    5
+        Hello
+""".trimIndent()
+    )
+  }
+
+  @Test
   fun booleanMixOrFirst() {
     assertMessage(
       """
@@ -196,6 +219,32 @@ assert(text == null || (text.length == 5 && text.toLowerCase() == text))
        |    |           Hello
        |    false
        Hello
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun booleanMixOrLast() {
+    assertMessage(
+      """
+fun main() {
+    val text = "Hello"
+    assert((text.length == 5 && text.toLowerCase() == text) || text.length == 1)
+}""",
+      """
+Assertion failed
+assert((text.length == 5 && text.toLowerCase() == text) || text.length == 1)
+        |    |      |       |    |             |  |        |    |      |
+        |    |      |       |    |             |  |        |    |      false
+        |    |      |       |    |             |  |        |    5
+        |    |      |       |    |             |  |        Hello
+        |    |      |       |    |             |  Hello
+        |    |      |       |    |             false
+        |    |      |       |    hello
+        |    |      |       Hello
+        |    |      true
+        |    5
+        Hello
 """.trimIndent()
     )
   }
