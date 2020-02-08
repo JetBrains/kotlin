@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
           $this: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak1' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_1: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak1' type=kotlin.collections.Iterator<kotlin.String> origin=null
           BREAK label=null loop.label=null
   FUN name:testForBreak2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
           $this: GET_VAR 'val tmp_3: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s1 type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_3: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.collections.List<kotlin.String> [val]
             GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForBreak2' type=kotlin.collections.List<kotlin.String> origin=null
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
               $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
             body: BLOCK type=kotlin.Nothing origin=null
               VAR name:s2 type:kotlin.String [val]
-                CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+                CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
                   $this: GET_VAR 'val tmp_5: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForBreak2' type=kotlin.collections.Iterator<kotlin.String> origin=null
               BREAK label=OUTER loop.label=OUTER
               BREAK label=INNER loop.label=INNER
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
           $this: GET_VAR 'val tmp_7: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue1' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_7: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue1' type=kotlin.collections.Iterator<kotlin.String> origin=null
           CONTINUE label=null loop.label=null
   FUN name:testForContinue2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
           $this: GET_VAR 'val tmp_9: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
         body: BLOCK type=kotlin.Nothing origin=null
           VAR name:s1 type:kotlin.String [val]
-            CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+            CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
               $this: GET_VAR 'val tmp_9: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.collections.List<kotlin.String> [val]
             GET_VAR 'ss: kotlin.collections.List<kotlin.String> declared in <root>.testForContinue2' type=kotlin.collections.List<kotlin.String> origin=null
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
               $this: GET_VAR 'val tmp_11: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
             body: BLOCK type=kotlin.Nothing origin=null
               VAR name:s2 type:kotlin.String [val]
-                CALL 'public abstract fun next (): kotlin.String [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
+                CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.String origin=null
                   $this: GET_VAR 'val tmp_11: kotlin.collections.Iterator<kotlin.String> [val] declared in <root>.testForContinue2' type=kotlin.collections.Iterator<kotlin.String> origin=null
               CONTINUE label=OUTER loop.label=OUTER
               CONTINUE label=INNER loop.label=INNER

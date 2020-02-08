@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 public class StockMarketTableModel() {
 
     public fun getColumnCount() : Int {

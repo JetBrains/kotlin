@@ -466,3 +466,6 @@ fun CallableId.isInvoke() =
     packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
             && className?.asString()?.startsWith("Function") == true
             && callableName.asString() == "invoke"
+
+fun CallableId.isArrayOperator() =
+    callableName.asString() == "next" && className?.asString()?.equals("Iterator") == true && packageName.asString() == "kotlin.collections"
