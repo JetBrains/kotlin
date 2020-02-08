@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.util.registry;
 
 import com.intellij.icons.AllIcons;
@@ -58,6 +58,7 @@ public class RegistryUi implements Disposable {
   private static final Icon RESTART_ICON = PlatformIcons.CHECK_ICON;
   private final RestoreDefaultsAction myRestoreDefaultsAction;
   private final MyTableModel myModel;
+  private final Map<String, String> myModifiedValuesRequiringRestart = new HashMap<>();
 
   public RegistryUi() {
     myContent.setLayout(new BorderLayout(UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP));
@@ -141,7 +142,7 @@ public class RegistryUi implements Disposable {
           if (row != -1) {
             RegistryValue rv = myModel.getRegistryValue(row);
             if (rv.isBoolean()) {
-              rv.setValue(!rv.asBoolean());
+              setValue(rv, !rv.asBoolean());
               keyChanged(rv.getKey());
               for (int i : new int[]{0, 1, 2}) myModel.fireTableCellUpdated(row, i);
               invalidateActions();
@@ -366,7 +367,29 @@ public class RegistryUi implements Disposable {
   }
 
   private void processClose() {
-    RegistryBooleanOptionDescriptor.suggestRestartIfNecessary(myContent);
+    if (!myModifiedValuesRequiringRestart.isEmpty()) {
+      RegistryBooleanOptionDescriptor.suggestRestart(myContent);
+    }
+  }
+
+  private void setValue(@NotNull RegistryValue registryValue, boolean value) {
+    setValue(registryValue, Boolean.toString(value));
+  }
+
+  private void setValue(@NotNull RegistryValue registryValue, @NotNull String value) {
+    boolean required = registryValue.isRestartRequired();
+    if (required) {
+      String key = registryValue.getKey();
+      if (!myModifiedValuesRequiringRestart.containsKey(key)) {
+        // store previous value that represent an initial value for this dialog
+        myModifiedValuesRequiringRestart.put(key, registryValue.asString());
+      }
+      else if (value.equals(myModifiedValuesRequiringRestart.get(key))) {
+        // remove stored value if it is equals to the new value
+        myModifiedValuesRequiringRestart.remove(key);
+      }
+    }
+    registryValue.setValue(value);
   }
 
   private void restoreDefaults() {
@@ -498,7 +521,7 @@ public class RegistryUi implements Disposable {
       if (myValue.asColor(null) != null) {
         final Color color = ColorChooser.chooseColor(table, "Choose Color", myValue.asColor(Color.WHITE));
         if (color != null) {
-          myValue.setValue(color.getRed() + "," + color.getGreen() + "," + color.getBlue());
+          setValue(myValue, color.getRed() + "," + color.getGreen() + "," + color.getBlue());
           keyChanged(myValue.getKey());
         }
         return null;
@@ -518,9 +541,9 @@ public class RegistryUi implements Disposable {
     public boolean stopCellEditing() {
       if (myValue != null) {
         if (myValue.isBoolean()) {
-          myValue.setValue(myCheckBox.isSelected());
+          setValue(myValue, myCheckBox.isSelected());
         } else {
-          myValue.setValue(myField.getText().trim());
+          setValue(myValue, myField.getText().trim());
         }
         keyChanged(myValue.getKey());
       }
