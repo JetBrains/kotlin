@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -42,8 +41,8 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val isGetter: Boolean,
     override var status: FirDeclarationStatus,
     override val annotations: MutableList<FirAnnotationCall>,
-) : FirPropertyAccessor(), FirModifiableFunction<FirPropertyAccessor> {
-    override var receiverTypeRef: FirTypeRef? = null
+) : FirPropertyAccessor() {
+    override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override var contractDescription: FirContractDescription = FirEmptyContractDescription
     override val isSetter: Boolean get() = !isGetter
@@ -54,7 +53,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
@@ -66,7 +64,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
         typeParameters.transformInplace(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
@@ -83,7 +80,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
         return this
     }
 
@@ -115,9 +111,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-        receiverTypeRef = newReceiverTypeRef
-    }
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()

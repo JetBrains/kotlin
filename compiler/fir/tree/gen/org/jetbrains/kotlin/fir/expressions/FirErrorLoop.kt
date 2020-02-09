@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirErrorLoop : FirPureAbstractElement(), FirLoop, FirDiagnosticHolder {
+abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val block: FirBlock

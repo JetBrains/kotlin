@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirBlock : FirPureAbstractElement(), FirExpression {
+abstract class FirBlock : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
     abstract val statements: List<FirStatement>

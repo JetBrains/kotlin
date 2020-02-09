@@ -15,13 +15,17 @@ fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
         else -> "red"
     }
 
-    val elements = builder.elements + builder.elements.flatMap { it.allParents }
+    val elements = builder.elements
 
     data class Edge(val from: String, val to: String) {
         override fun toString(): String {
             return "$from -> $to"
         }
     }
+
+    val (interfaces, classes) = elements.partition { it.kind == Implementation.Kind.Interface }
+    println("Interfaces: ${interfaces.size}")
+    println("Classes: ${classes.size}")
 
     File("FirTree.dot").printWriter().use { printer ->
         with(printer) {

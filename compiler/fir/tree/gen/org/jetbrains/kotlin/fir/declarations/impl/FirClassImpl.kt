@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -41,7 +39,7 @@ internal class FirClassImpl(
     override val symbol: FirRegularClassSymbol,
     override var companionObject: FirRegularClass?,
     override val superTypeRefs: MutableList<FirTypeRef>,
-) : FirPureAbstractElement(), FirRegularClass, FirModifiableRegularClass {
+) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = false
 
     init {

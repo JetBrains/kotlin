@@ -38,7 +38,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val annotations: MutableList<FirAnnotationCall>,
     override var status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,
-) : FirPureAbstractElement(), FirConstructor {
+) : FirConstructor() {
     override val receiverTypeRef: FirTypeRef? get() = null
 
     init {

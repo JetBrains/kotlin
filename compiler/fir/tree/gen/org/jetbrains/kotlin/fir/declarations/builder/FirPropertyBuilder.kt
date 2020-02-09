@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableVariable
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression

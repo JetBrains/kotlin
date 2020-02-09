@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -33,7 +32,7 @@ internal class FirComponentCallImpl(
     override val arguments: MutableList<FirExpression>,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
-) : FirComponentCall(), FirCallWithArgumentList {
+) : FirComponentCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val safe: Boolean get() = false
     override val dispatchReceiver: FirExpression get() = FirNoReceiverExpression

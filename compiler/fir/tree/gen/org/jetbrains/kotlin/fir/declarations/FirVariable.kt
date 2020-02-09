@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -21,34 +22,34 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirVariable<F : FirVariable<F>> : FirCallableDeclaration<F>, FirDeclaration, FirStatement {
-    override val source: FirSourceElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val returnTypeRef: FirTypeRef
-    override val receiverTypeRef: FirTypeRef?
-    val name: Name
-    override val symbol: FirVariableSymbol<F>
-    val initializer: FirExpression?
-    val delegate: FirExpression?
-    val delegateFieldSymbol: FirDelegateFieldSymbol<F>?
-    val isVar: Boolean
-    val isVal: Boolean
-    val getter: FirPropertyAccessor?
-    val setter: FirPropertyAccessor?
-    override val annotations: List<FirAnnotationCall>
+abstract class FirVariable<F : FirVariable<F>> : FirPureAbstractElement(), FirCallableDeclaration<F>, FirDeclaration, FirStatement {
+    abstract override val source: FirSourceElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract val name: Name
+    abstract override val symbol: FirVariableSymbol<F>
+    abstract val initializer: FirExpression?
+    abstract val delegate: FirExpression?
+    abstract val delegateFieldSymbol: FirDelegateFieldSymbol<F>?
+    abstract val isVar: Boolean
+    abstract val isVal: Boolean
+    abstract val getter: FirPropertyAccessor?
+    abstract val setter: FirPropertyAccessor?
+    abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariable(this, data)
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
-    fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable<F>
+    abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
-    fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
+    abstract fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
-    fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
+    abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
-    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirVariable<F>
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirVariable<F>
 }

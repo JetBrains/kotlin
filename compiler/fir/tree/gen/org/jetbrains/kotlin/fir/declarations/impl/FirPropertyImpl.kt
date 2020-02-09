@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -50,7 +48,7 @@ internal class FirPropertyImpl(
     override val isLocal: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
-) : FirProperty(), FirModifiableVariable<FirProperty>, FirModifiableTypeParametersOwner {
+) : FirProperty() {
     override val isVal: Boolean get() = !isVar
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)

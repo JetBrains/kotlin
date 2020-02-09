@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractLoop
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -25,7 +24,7 @@ internal class FirDoWhileLoopImpl(
     override var block: FirBlock,
     override var condition: FirExpression,
     override var label: FirLabel?,
-) : FirDoWhileLoop(), FirAbstractLoop {
+) : FirDoWhileLoop() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         block.accept(visitor, data)

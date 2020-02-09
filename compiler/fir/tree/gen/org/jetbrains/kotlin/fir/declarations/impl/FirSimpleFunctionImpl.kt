@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -46,7 +44,7 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
     override val name: Name,
     override val symbol: FirFunctionSymbol<FirSimpleFunction>,
     override val annotations: MutableList<FirAnnotationCall>,
-) : FirSimpleFunction(), FirModifiableFunction<FirSimpleFunction>, FirModifiableTypeParametersOwner {
+) : FirSimpleFunction() {
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override var contractDescription: FirContractDescription = FirEmptyContractDescription
 

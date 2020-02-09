@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.OpenCla
 import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
-    private lateinit var abstractAnnotatedElement: Implementation
-
     fun configureImplementations() {
         configure()
         generateDefaultImplementations(FirTreeBuilder)
@@ -21,18 +19,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
     }
 
     private fun configure() = with(FirTreeBuilder) {
-        val callWithArgumentList = impl(call, "FirCallWithArgumentList")
-
-        abstractAnnotatedElement = impl(annotationContainer, "FirAbstractAnnotatedElement")
-
-        val modifiableTypeParametersOwner = impl(typeParametersOwner, "FirModifiableTypeParametersOwner")
-
-        val modifiableConstructor = impl(constructor, "FirModifiableConstructor") {
-            parents += modifiableTypeParametersOwner
-        }
-
         impl(constructor) {
-            parents += modifiableConstructor
             defaultFalse("isPrimary", withGetter = true)
             default("typeParameters") {
                 needAcceptAndTransform = false
@@ -40,8 +27,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(constructor, "FirPrimaryConstructor") {
-            parents += modifiableConstructor
-
             defaultTrue("isPrimary", withGetter = true)
             default("typeParameters") {
                 needAcceptAndTransform = false
@@ -52,15 +37,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(declarationStatus)
         noImpl(resolvedDeclarationStatus)
 
-        val modifiableClass = impl(klass, "FirModifiableClass")
-
-        val modifiableRegularClass = impl(regularClass, "FirModifiableRegularClass") {
-            parents += modifiableClass.withArg(regularClass)
-            parents += modifiableTypeParametersOwner
-        }
-
         val regularClassConfig: ImplementationContext.() -> Unit = {
-            parents += modifiableRegularClass
             defaultFalse("hasLazyNestedClassifiers", withGetter = true)
         }
 
@@ -68,13 +45,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(sealedClass, config = regularClassConfig)
 
-        impl(anonymousObject) {
-            parents += modifiableClass.withArg(anonymousObject)
-        }
+        impl(anonymousObject)
 
-        impl(typeAlias) {
-            parents += modifiableTypeParametersOwner
-        }
+        impl(typeAlias)
 
         impl(import)
 
@@ -103,16 +76,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(annotationCall) {
-            parents += callWithArgumentList
             default("typeRef") {
                 value = "annotationTypeRef"
                 withGetter = true
             }
         }
 
-        impl(arrayOfCall) {
-            parents += callWithArgumentList
-        }
+        impl(arrayOfCall)
 
         val modifiableQualifiedAccess = impl(qualifiedAccessWithoutCallee, "FirModifiableQualifiedAccess") {
             isMutable("safe")
@@ -135,7 +105,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(componentCall) {
-            parents += callWithArgumentList // modifiableQualifiedAccess
             default("safe") {
                 value = "false"
                 withGetter = true
@@ -151,18 +120,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             optInToInternals()
         }
 
-        val abstractLoop = impl(loop, "FirAbstractLoop")
+        impl(whileLoop)
 
-        impl(whileLoop) {
-            parents += abstractLoop
-        }
-
-        impl(doWhileLoop) {
-            parents += abstractLoop
-        }
+        impl(doWhileLoop)
 
         impl(delegatedConstructorCall) {
-            parents += callWithArgumentList
             default(
                 "calleeReference",
                 "if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)"
@@ -174,7 +136,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(explicitThisReferenceType, explicitSuperReferenceType)
         }
 
-        val elseIfTrueCondition = impl(expression, "FirElseIfTrueCondition") {
+        impl(expression, "FirElseIfTrueCondition") {
             default("typeRef", "FirImplicitBooleanTypeRef(source)")
             useTypes(implicitBooleanTypeRefType)
             publicImplementation()
@@ -201,7 +163,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(functionCall) {
             parents += modifiableQualifiedAccess
-            parents += callWithArgumentList
             kind = OpenClass
         }
 
@@ -213,18 +174,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(expressionWithSmartcast)
 
         impl(getClassCall) {
-            parents += callWithArgumentList
             default("argument") {
                 value = "arguments.first()"
                 withGetter = true
             }
         }
 
-        val modifiableVariable = impl(variable, "FirModifiableVariable")
-
         impl(property) {
-            parents += modifiableVariable.withArg(property)
-            parents += modifiableTypeParametersOwner
             default("isVal") {
                 value = "!isVar"
                 withGetter = true
@@ -276,7 +232,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(operatorCall) {
-            parents += callWithArgumentList
             default("typeRef", """
                 |if (operation in FirOperation.BOOLEANS) {
                 |        FirImplicitBooleanTypeRef(null)
@@ -288,9 +243,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(implicitTypeRefType, implicitBooleanTypeRefType)
         }
 
-        impl(typeOperatorCall) {
-            parents += callWithArgumentList
-        }
+        impl(typeOperatorCall)
 
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "safe")
@@ -312,7 +265,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(stringConcatenationCall) {
-            parents += callWithArgumentList
             default("typeRef", "FirImplicitStringTypeRef(source)")
             useTypes(implicitStringTypeRefType)
         }
@@ -346,15 +298,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        val modifiableFunction = impl(function, "FirModifiableFunction")
-
         impl(anonymousFunction) {
-            parents += modifiableFunction.withArg(anonymousFunction)
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
 
         impl(propertyAccessor) {
-            parents += modifiableFunction.withArg(propertyAccessor)
             default("receiverTypeRef") {
                 value = "null"
                 withGetter = true
@@ -493,23 +441,18 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             noSource()
         }
 
-        val abstractLoopJump = impl(loopJump, "FirAbstractLoopJump") {}
-
         impl(breakExpression) {
-            parents += abstractLoopJump
             default("typeRef", "FirImplicitNothingTypeRef(source)")
             useTypes(implicitNothingTypeRefType)
         }
 
         impl(continueExpression) {
-            parents += abstractLoopJump
             default("typeRef", "FirImplicitNothingTypeRef(source)")
             useTypes(implicitNothingTypeRefType)
         }
 
         impl(valueParameter) {
             kind = OpenClass
-            parents += modifiableVariable.withArg(valueParameter)
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
             defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", "delegateFieldSymbol", withGetter = true)
@@ -521,8 +464,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(simpleFunction) {
             kind = OpenClass
-            parents += modifiableFunction.withArg(simpleFunction)
-            parents += modifiableTypeParametersOwner
             default("contractDescription", "FirEmptyContractDescription")
             useTypes(emptyContractDescriptionType)
         }

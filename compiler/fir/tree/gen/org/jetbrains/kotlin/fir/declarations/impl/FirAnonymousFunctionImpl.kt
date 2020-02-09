@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -41,7 +40,7 @@ internal class FirAnonymousFunctionImpl(
     override var label: FirLabel?,
     override var invocationKind: InvocationKind?,
     override val isLambda: Boolean,
-) : FirAnonymousFunction(), FirModifiableFunction<FirAnonymousFunction> {
+) : FirAnonymousFunction() {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 
     init {

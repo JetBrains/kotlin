@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -43,7 +42,7 @@ internal class FirSealedClassImpl(
     override var companionObject: FirRegularClass?,
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val inheritors: MutableList<ClassId>,
-) : FirSealedClass(), FirModifiableRegularClass {
+) : FirSealedClass() {
     override val hasLazyNestedClassifiers: Boolean get() = false
 
     init {

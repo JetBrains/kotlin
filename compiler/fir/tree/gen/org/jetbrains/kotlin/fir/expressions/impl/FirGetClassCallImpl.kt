@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -23,7 +22,7 @@ internal class FirGetClassCallImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val arguments: MutableList<FirExpression>,
-) : FirGetClassCall(), FirCallWithArgumentList {
+) : FirGetClassCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val argument: FirExpression get() = arguments.first()
 

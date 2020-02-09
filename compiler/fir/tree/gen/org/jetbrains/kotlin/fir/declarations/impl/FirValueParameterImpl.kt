@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -37,15 +36,15 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
-) : FirValueParameter(), FirModifiableVariable<FirValueParameter> {
-    override var receiverTypeRef: FirTypeRef? = null
-    override var initializer: FirExpression? = null
-    override var delegate: FirExpression? = null
+) : FirValueParameter() {
+    override val receiverTypeRef: FirTypeRef? get() = null
+    override val initializer: FirExpression? get() = null
+    override val delegate: FirExpression? get() = null
     override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>? get() = null
     override val isVar: Boolean get() = false
     override val isVal: Boolean get() = true
-    override var getter: FirPropertyAccessor? = null
-    override var setter: FirPropertyAccessor? = null
+    override val getter: FirPropertyAccessor? get() = null
+    override val setter: FirPropertyAccessor? get() = null
 
     init {
         symbol.bind(this)
@@ -54,21 +53,12 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         defaultValue?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
-        transformInitializer(transformer, data)
-        transformGetter(transformer, data)
-        transformSetter(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -79,27 +69,22 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        initializer = initializer?.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        getter = getter?.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        setter = setter?.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        delegate = delegate?.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         defaultValue = defaultValue?.transformSingle(transformer, data)
         return this
@@ -113,7 +98,5 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-        receiverTypeRef = newReceiverTypeRef
-    }
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 }

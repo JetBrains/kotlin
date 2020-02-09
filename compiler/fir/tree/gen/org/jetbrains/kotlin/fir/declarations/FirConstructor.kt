@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -21,32 +22,32 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirConstructor : FirFunction<FirConstructor>, FirCallableMemberDeclaration<FirConstructor> {
-    override val source: FirSourceElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val returnTypeRef: FirTypeRef
-    override val receiverTypeRef: FirTypeRef?
-    override val typeParameters: List<FirTypeParameter>
-    override val controlFlowGraphReference: FirControlFlowGraphReference
-    override val valueParameters: List<FirValueParameter>
-    override val status: FirDeclarationStatus
-    override val containerSource: DeserializedContainerSource?
-    override val annotations: List<FirAnnotationCall>
-    override val symbol: FirConstructorSymbol
-    val delegatedConstructor: FirDelegatedConstructorCall?
-    override val body: FirBlock?
-    val isPrimary: Boolean
+abstract class FirConstructor : FirPureAbstractElement(), FirFunction<FirConstructor>, FirCallableMemberDeclaration<FirConstructor> {
+    abstract override val source: FirSourceElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val valueParameters: List<FirValueParameter>
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val symbol: FirConstructorSymbol
+    abstract val delegatedConstructor: FirDelegatedConstructorCall?
+    abstract override val body: FirBlock?
+    abstract val isPrimary: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitConstructor(this, data)
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructor
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructor
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor
+    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor
 }

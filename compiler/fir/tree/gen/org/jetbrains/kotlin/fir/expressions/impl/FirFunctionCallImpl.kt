@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -33,7 +32,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var extensionReceiver: FirExpression,
     override val arguments: MutableList<FirExpression>,
     override var calleeReference: FirNamedReference,
-) : FirFunctionCall(), FirModifiableQualifiedAccess, FirCallWithArgumentList {
+) : FirFunctionCall(), FirModifiableQualifiedAccess {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }

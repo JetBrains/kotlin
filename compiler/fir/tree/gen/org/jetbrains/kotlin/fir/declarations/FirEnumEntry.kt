@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirEnumEntry : FirPureAbstractElement(), FirVariable<FirEnumEntry>, FirCallableMemberDeclaration<FirEnumEntry> {
+abstract class FirEnumEntry : FirVariable<FirEnumEntry>(), FirCallableMemberDeclaration<FirEnumEntry> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase

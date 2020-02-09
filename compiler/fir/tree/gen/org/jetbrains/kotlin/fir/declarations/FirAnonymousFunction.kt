@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousFunction : FirPureAbstractElement(), FirFunction<FirAnonymousFunction>, FirExpression {
+abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase

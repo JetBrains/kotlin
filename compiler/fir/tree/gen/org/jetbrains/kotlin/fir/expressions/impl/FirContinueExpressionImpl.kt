@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractLoopJump
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -24,7 +23,7 @@ internal class FirContinueExpressionImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val target: FirTarget<FirLoop>,
-) : FirContinueExpression(), FirAbstractLoopJump {
+) : FirContinueExpression() {
     override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

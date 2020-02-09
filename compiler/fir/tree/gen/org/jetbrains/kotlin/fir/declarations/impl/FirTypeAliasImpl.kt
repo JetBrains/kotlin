@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,7 +32,7 @@ internal class FirTypeAliasImpl(
     override val symbol: FirTypeAliasSymbol,
     override var expandedTypeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
-) : FirTypeAlias(), FirModifiableTypeParametersOwner {
+) : FirTypeAlias() {
     init {
         symbol.bind(this)
     }

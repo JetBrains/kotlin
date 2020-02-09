@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -26,7 +25,7 @@ internal class FirOperatorCallImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override val arguments: MutableList<FirExpression>,
     override val operation: FirOperation,
-) : FirOperatorCall(), FirCallWithArgumentList {
+) : FirOperatorCall() {
     override var typeRef: FirTypeRef = if (operation in FirOperation.BOOLEANS) {
         FirImplicitBooleanTypeRef(null)
     } else {

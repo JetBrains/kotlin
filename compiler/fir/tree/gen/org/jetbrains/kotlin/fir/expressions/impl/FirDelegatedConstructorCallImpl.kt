@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
@@ -27,7 +26,7 @@ internal class FirDelegatedConstructorCallImpl(
     override val arguments: MutableList<FirExpression>,
     override var constructedTypeRef: FirTypeRef,
     override val isThis: Boolean,
-) : FirDelegatedConstructorCall(), FirCallWithArgumentList {
+) : FirDelegatedConstructorCall() {
     override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)
     override val isSuper: Boolean get() = !isThis
 

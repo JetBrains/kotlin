@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -24,7 +23,7 @@ internal class FirAnnotationCallImpl(
     override val arguments: MutableList<FirExpression>,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
-) : FirAnnotationCall(), FirCallWithArgumentList {
+) : FirAnnotationCall() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

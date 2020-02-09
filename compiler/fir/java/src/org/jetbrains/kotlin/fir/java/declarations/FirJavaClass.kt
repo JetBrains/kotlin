@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -46,7 +45,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val typeParameters: MutableList<FirTypeParameter>,
     internal val javaTypeParameterStack: JavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>
-) : FirPureAbstractElement(), FirRegularClass, FirModifiableClass<FirRegularClass> {
+) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
 
     init {

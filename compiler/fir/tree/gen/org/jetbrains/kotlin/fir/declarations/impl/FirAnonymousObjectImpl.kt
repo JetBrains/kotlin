@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -34,7 +33,7 @@ internal class FirAnonymousObjectImpl(
     override val scopeProvider: FirScopeProvider,
     override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousObjectSymbol,
-) : FirAnonymousObject(), FirModifiableClass<FirAnonymousObject> {
+) : FirAnonymousObject() {
     init {
         symbol.bind(this)
     }

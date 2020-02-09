@@ -11,9 +11,8 @@ import java.io.File
 
 
 fun main(args: Array<String>) {
-//    val generationPath = args.firstOrNull()?.let { File(it) }
-//        ?: File("/home/demiurg/Programming/kotlin/kotlin/compiler/fir/tree/gen").absoluteFile
-    val generationPath = File("/home/demiurg/Programming/kotlin/kotlin/compiler/fir/tree/gen").absoluteFile
+    val generationPath = args.firstOrNull()?.let { File(it) }
+        ?: File("compiler/fir/tree/gen").absoluteFile
 
     NodeConfigurator.configureFields()
     detectBaseTransformerTypes(FirTreeBuilder)
@@ -25,5 +24,3 @@ fun main(args: Array<String>) {
 //    printFieldUsageTable(FirTreeBuilder)
 //    printHierarchyGraph(FirTreeBuilder)
 }
-
-// FirTreeBuilder.constExpression.fields.first()

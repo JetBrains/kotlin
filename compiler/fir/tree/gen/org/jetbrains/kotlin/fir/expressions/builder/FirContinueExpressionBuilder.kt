@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirLoopJumpBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractLoopJump
 import org.jetbrains.kotlin.fir.expressions.impl.FirContinueExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
