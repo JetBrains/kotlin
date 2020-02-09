@@ -15,6 +15,7 @@
  */
 package com.intellij.compiler.inspection;
 
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.GroupNames;
 import com.intellij.codeInsight.intention.HighPriorityAction;
@@ -22,6 +23,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Pair;
@@ -203,8 +205,8 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
     DialogWrapper dlg = new DialogWrapper(project, false) {
 
       {
-        setOKButtonText("Remove");
-        setTitle("Choose Members");
+        setOKButtonText(CommonBundle.message("button.without.mnemonic.remove"));
+        setTitle(CompilerBundle.message("choose.members"));
         init();
       }
       @NotNull

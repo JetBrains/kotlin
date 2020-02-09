@@ -59,7 +59,8 @@ class ArchiveElementType extends CompositePackagingElementType<ArchivePackagingE
   @Override
   public CompositePackagingElement<?> createComposite(CompositePackagingElement<?> parent, @Nullable String baseName, @NotNull ArtifactEditorContext context) {
     final String initialValue = PackagingElementFactoryImpl.suggestFileName(parent, baseName != null ? baseName : "archive", ".jar");
-    final String path = Messages.showInputDialog(context.getProject(), "Enter archive name: ", "New Archive", null, initialValue, new FilePathValidator());
+    final String path = Messages.showInputDialog(context.getProject(), CompilerBundle.message("enter.archive.name"),
+                                                 CompilerBundle.message("title.new.archive"), null, initialValue, new FilePathValidator());
     if (path == null) return null;
     return PackagingElementFactoryImpl.createDirectoryOrArchiveWithParents(path, true);
   }

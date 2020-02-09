@@ -8,6 +8,7 @@ import com.intellij.ide.util.TreeClassChooserFactory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.compiler.make.ManifestBuilder;
 import com.intellij.openapi.deployment.DeploymentUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -268,7 +269,7 @@ public class ManifestFileUtil {
 
   public static FileChooserDescriptor createDescriptorForManifestDirectory() {
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    descriptor.setTitle("Select Directory for META-INF/MANIFEST.MF file");
+    descriptor.setTitle(CompilerBundle.message("select.directory.for.meta.inf.manifest.mf.file"));
     return descriptor;
   }
 

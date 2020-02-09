@@ -58,7 +58,8 @@ class DirectoryElementType extends CompositePackagingElementType<DirectoryPackag
   @Override
   public CompositePackagingElement<?> createComposite(CompositePackagingElement<?> parent, String baseName, @NotNull ArtifactEditorContext context) {
     final String initialValue = PackagingElementFactoryImpl.suggestFileName(parent, baseName != null ? baseName : "folder", "");
-    String path = Messages.showInputDialog(context.getProject(), "Enter directory name: ", "New Directory", null, initialValue, new FilePathValidator());
+    String path = Messages.showInputDialog(context.getProject(), CompilerBundle.message("dialog.message.enter.directory.name"),
+                                           CompilerBundle.message("title.new.directory"), null, initialValue, new FilePathValidator());
     if (path == null) return null;
     return PackagingElementFactoryImpl.createDirectoryOrArchiveWithParents(path, false);
   }

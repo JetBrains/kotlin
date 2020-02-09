@@ -17,6 +17,7 @@ package com.intellij.packaging.impl.artifacts;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -77,7 +78,7 @@ public class JarFromModulesTemplate extends ArtifactTemplate {
       }
       catch (IOException e) {
         LOG.info(e);
-        Messages.showErrorDialog(project, "Cannot create directory '" + directoryForManifest + "': " + e.getMessage(),
+        Messages.showErrorDialog(project, CompilerBundle.message("cannot.create.directory.0.1", directoryForManifest, e.getMessage()),
                                  CommonBundle.getErrorTitle());
         return null;
       }

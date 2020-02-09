@@ -19,6 +19,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ShortcutSet;
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -147,7 +148,7 @@ public class AnnotationProcessorsPanel extends JPanel {
     @Override
     public TreePath addNode(TreePath parentOrNeighbour) {
       final String newProfileName = Messages.showInputDialog(
-        myProject, "Profile name", "Create new profile", null, "",
+        myProject, CompilerBundle.message("dialog.message.profile.name"), CompilerBundle.message("title.create.new.profile"), null, "",
         new InputValidatorEx() {
           @Override
           public boolean checkInput(String inputString) {
@@ -328,7 +329,7 @@ public class AnnotationProcessorsPanel extends JPanel {
   private class MoveProfileAction extends AnActionButton {
 
     MoveProfileAction() {
-      super("Move to", AllIcons.Actions.Forward);
+      super(CompilerBundle.message("action.text.move.to"), AllIcons.Actions.Forward);
     }
 
     @Override
@@ -342,7 +343,7 @@ public class AnnotationProcessorsPanel extends JPanel {
       profiles.remove(nodeProfile);
       final JBPopup popup = JBPopupFactory.getInstance()
         .createPopupChooserBuilder(profiles)
-        .setTitle("Move to")
+        .setTitle(CompilerBundle.message("action.text.move.to"))
         .setItemChosenCallback((chosenProfile) -> {
           final Module toSelect = (Module)node.getUserObject();
           if (selectedNodes != null) {

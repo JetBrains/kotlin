@@ -71,7 +71,7 @@ public class PackageFileWorker {
   public static ActionCallback startPackagingFiles(final Project project, final List<? extends VirtualFile> files,
                                                    final Artifact[] artifacts, final boolean packIntoArchives) {
     final ActionCallback callback = new ActionCallback();
-    ProgressManager.getInstance().run(new Task.Backgroundable(project, "Packaging Files") {
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, CompilerBundle.message("packaging.files")) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {
@@ -84,7 +84,7 @@ public class PackageFileWorker {
               catch (IOException e) {
                 LOG.info(e);
                 String message = CompilerBundle.message("message.tect.package.file.io.error", e.toString());
-                Notifications.Bus.notify(new Notification("Package File", "Cannot package file", message, NotificationType.ERROR));
+                Notifications.Bus.notify(new Notification("Package File", CompilerBundle.message("cannot.package.file"), message, NotificationType.ERROR));
               }
             });
             callback.setDone();

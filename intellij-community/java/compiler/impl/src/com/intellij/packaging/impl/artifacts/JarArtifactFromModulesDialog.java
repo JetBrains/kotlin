@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.artifacts;
 
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -38,7 +39,7 @@ public class JarArtifactFromModulesDialog extends DialogWrapper {
   public JarArtifactFromModulesDialog(PackagingElementResolvingContext context) {
     super(context.getProject());
     myContext = context;
-    setTitle("Create JAR from Modules");
+    setTitle(CompilerBundle.message("create.jar.from.modules"));
     myMainClassLabel.setLabelFor(myMainClassField.getTextField());
     myManifestDirLabel.setLabelFor(myManifestDirField.getTextField());
 
@@ -77,7 +78,7 @@ public class JarArtifactFromModulesDialog extends DialogWrapper {
     }
     myModuleComboBox.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
       label.setIcon(value != null ? ModuleType.get(value).getIcon() : null);
-      label.setText(value != null ? value.getName() : "<All Modules>");
+      label.setText(value != null ? value.getName() : CompilerBundle.message("all.modules"));
     }));
     new ComboboxSpeedSearch(myModuleComboBox) {
       @Override

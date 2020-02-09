@@ -145,7 +145,9 @@ public final class CompilerTask extends Task.Backgroundable {
   @NotNull
   @Override
   public NotificationInfo getNotificationInfo() {
-    return new NotificationInfo(myErrorCount > 0? "Compiler (errors)" : "Compiler (success)", "Compilation Finished", myErrorCount + " Errors, " + myWarningCount + " Warnings", true);
+    return new NotificationInfo(myErrorCount > 0? "Compiler (errors)" : "Compiler (success)",
+                                CompilerBundle.message("compilation.finished"),
+                                CompilerBundle.message("0.errors.1.warnings", myErrorCount, myWarningCount), true);
   }
 
   private CloseListener myCloseListener;

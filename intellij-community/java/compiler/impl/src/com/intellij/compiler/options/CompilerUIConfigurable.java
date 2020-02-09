@@ -172,11 +172,11 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
     myResourcePatternsField.setText(patternsToString(configuration.getResourceFilePatterns()));
 
     if (PowerSaveMode.isEnabled()) {
-      myEnableAutomakeLegendLabel.setText("(disabled in Power Save mode)");
+      myEnableAutomakeLegendLabel.setText(CompilerBundle.message("disabled.in.power.save.mode"));
       myEnableAutomakeLegendLabel.setFont(myEnableAutomakeLegendLabel.getFont().deriveFont(Font.BOLD));
     }
     else {
-      myEnableAutomakeLegendLabel.setText("(only works while not running / debugging)");
+      myEnableAutomakeLegendLabel.setText(CompilerBundle.message("only.works.while.not.running.debugging"));
       myEnableAutomakeLegendLabel.setFont(myEnableAutomakeLegendLabel.getFont().deriveFont(Font.PLAIN));
     }
   }

@@ -457,8 +457,9 @@ public final class CompileDriver {
     compileTask.start(compileWork, () -> {
       if (isRebuild) {
         final int rv = Messages.showOkCancelDialog(
-            myProject, "You are about to rebuild the whole project.\nRun 'Build Project' instead?", "Confirm Project Rebuild",
-            "Build", "Rebuild", Messages.getQuestionIcon()
+          myProject, CompilerBundle.message("you.are.about.to.rebuild.the.whole.project"),
+          CompilerBundle.message("confirm.project.rebuild"),
+          CommonBundle.message("button.build"), CompilerBundle.message("button.rebuild"), Messages.getQuestionIcon()
         );
         if (rv == Messages.OK /*yes, please, do run make*/) {
           startup(scope, false, false, callback, null);
@@ -486,7 +487,7 @@ public final class CompileDriver {
         Collection<String> affectedRoots = ContainerUtil.newHashSet(CompilerPaths.getOutputPaths(affectedModules));
         if (!affectedRoots.isEmpty()) {
           ProgressIndicator indicator = compileContext.getProgressIndicator();
-          indicator.setText("Synchronizing output directories...");
+          indicator.setText(CompilerBundle.message("synchronizing.output.directories"));
           CompilerUtil.refreshOutputRoots(affectedRoots);
           indicator.setText("");
         }

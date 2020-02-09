@@ -5,6 +5,7 @@ import com.intellij.codeInspection.*;
 import com.intellij.compiler.CompilerReferenceService;
 import com.intellij.compiler.backwardRefs.CompilerReferenceServiceEx;
 import com.intellij.compiler.backwardRefs.ReferenceIndexUnavailableException;
+import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -84,7 +85,7 @@ public class FrequentlyUsedInheritorInspection extends AbstractBaseJavaLocalInsp
 
     return new ProblemDescriptor[]{manager
       .createProblemDescriptor(highlightingElement,
-                               "Class can have more common super class",
+                               CompilerBundle.message("class.can.have.more.common.super.class"),
                                isOnTheFly,
                                topInheritorsQuickFix.toArray(LocalQuickFix.EMPTY_ARRAY),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
