@@ -17,7 +17,7 @@
 package com.bnorm.power
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irConcat
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -29,27 +29,29 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 
 data class IrStackVariable(
   val variable: IrVariable,
-  val indentation: Int,
+  val startColumnNumber: Int,
   val source: String
 )
 
-fun IrBlockBuilder.buildThrow(
+fun IrBuilderWithScope.buildThrow(
   constructor: IrConstructorSymbol,
   message: IrExpression
 ): IrThrow = irThrow(irCall(constructor).apply {
   putValueArgument(0, message)
 })
 
-fun IrBlockBuilder.buildMessage(
+fun IrBuilderWithScope.buildMessage(
   title: IrExpression,
   stack: List<IrStackVariable>,
-  callSource: String
+  callSource: String,
+  callIndent: Int = 0
 ): IrExpression {
+  val stack = stack.map { it.copy(startColumnNumber = it.startColumnNumber - callIndent) }
   return irConcat().apply {
     addArgument(title)
 
-    val sorted = stack.sortedBy { it.indentation }
-    val indentations = sorted.map { it.indentation }
+    val sorted = stack.sortedBy { it.startColumnNumber }
+    val indentations = sorted.map { it.startColumnNumber }
 
     addArgument(irString(buildString {
       newline()
@@ -69,13 +71,13 @@ fun IrBlockBuilder.buildMessage(
         var last = -1
         newline()
         for (i in indentations) {
-          if (i == tmp.indentation) break
+          if (i == tmp.startColumnNumber) break
           if (i > last) {
             indent(i - last - 1).append("|")
           }
           last = i
         }
-        indent(tmp.indentation - last - 1)
+        indent(tmp.startColumnNumber - last - 1)
       }))
       addArgument(irGet(tmp.variable))
     }
