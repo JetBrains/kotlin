@@ -66,7 +66,14 @@ then
     kotlin_app=("${KOTLIN_HOME}/lib/kotlin-runner.jar" "org.jetbrains.kotlin.runner.Main")
 else
     [ -n "$KOTLIN_COMPILER" ] || KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-    java_args=("${java_args[@]}" "-noverify")
+    # "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
+    # were deprecated in JDK 13 and will likely be removed in a future release."
+    # so only add -noverify for older versions
+    java_version=$("${JAVACMD:=java}" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+    if [[ "$java_version" < "13" ]];
+    then
+        java_args=("${java_args[@]}" "-noverify")
+    fi
 
     declare additional_classpath=""
     if [ -n "$KOTLIN_TOOL" ];
