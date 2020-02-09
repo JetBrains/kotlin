@@ -23,7 +23,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         context.settingContext.allPluginSettings.map { setting ->
             val value = context.settingContext.pluginSettingValue(setting) ?: return@map ValidationResult.OK
             when (setting.neededAtPhase) {
-                in phases -> setting.validator.validate(this, value)
+                in phases -> (setting.validator as SettingValidator<Any>).validate(this, value)
                 else -> ValidationResult.OK
             }
         }.fold(ValidationResult.OK, ValidationResult::and).toResult()

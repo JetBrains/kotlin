@@ -309,7 +309,7 @@ class ValueSettingType<V : Any>(
     ) : SettingBuilder<V, ValueSettingType<V>>(path, title, neededAtPhase) {
         init {
             validate { value ->
-                if (value is Validatable<*>) value.validator.validate(this, value)
+                if (value is Validatable<*>) (value.validator as SettingValidator<Any>).validate(this, value)
                 else ValidationResult.OK
             }
         }
@@ -354,7 +354,7 @@ class ListSettingType<V : Any>(private val parser: Parser<V>) : SettingType<List
             validate { values ->
                 values.fold(ValidationResult.OK as ValidationResult) { result, value ->
                     result and when (value) {
-                        is Validatable<*> -> value.validator.validate(this, value)
+                        is Validatable<*> -> (value.validator as SettingValidator<Any>).validate(this, value)
                         else -> ValidationResult.OK
                     }
                 }

@@ -39,7 +39,7 @@ class Module(
                 val value = setting.reference.notRequiredSettingValue
                     ?: setting.defaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                setting.validator.validate(this@settingValidator, value)
+                (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
             }.fold()
         }
     } and settingValidator { module ->
@@ -49,7 +49,7 @@ class Module(
                 val value = setting.reference.notRequiredSettingValue
                     ?: setting.defaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                setting.validator.validate(this@settingValidator, value)
+                (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
             }.fold()
         }
     } and inValidatorContext { module ->
