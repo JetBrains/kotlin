@@ -19,6 +19,7 @@ package com.bnorm.power
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.junit.Test
 import java.lang.reflect.InvocationTargetException
 import kotlin.test.assertEquals
@@ -265,6 +266,23 @@ assert(text?.length?.minus(2) == 1)
        |     |       3
        |     5
        Hello
+""".trimIndent()
+    )
+  }
+
+  @Test
+  fun infixFunctions() {
+    assertMessage(
+      """
+fun main() {
+  assert(1 shl 1 == 4)
+}""",
+      """
+Assertion failed
+assert(1 shl 1 == 4)
+         |     |
+         |     false
+         2
 """.trimIndent()
     )
   }

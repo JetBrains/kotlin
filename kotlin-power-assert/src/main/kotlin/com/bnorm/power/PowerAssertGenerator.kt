@@ -36,14 +36,6 @@ abstract class PowerAssertGenerator(
   private val file: IrFile,
   private val fileSource: String
 ) {
-
-//  private fun IrStatementsBuilder<*>.buildAssertThrow(
-//    callSource: String,
-//    title: IrExpression,
-//    subStack: MutableList<IrStackVariable>,
-//    callIndent: Int = 0
-//  ) = buildThrow(constructor, buildMessage(title, subStack, callSource, callIndent))
-
   abstract fun IrBuilderWithScope.buildAssertThrow(subStack: List<IrStackVariable>): IrExpression
 
   fun buildAssert(
@@ -107,7 +99,12 @@ abstract class PowerAssertGenerator(
 
       var startColumnNumber = file.info(expression).startColumnNumber
       if (expression is IrMemberAccessExpression) {
-        // TODO Is this the best way to fix indentation of infix operators?
+        val descriptor = expression.descriptor
+        if (descriptor is FunctionDescriptor && descriptor.isInfix) {
+          startColumnNumber += source.indexOf(descriptor.name.asString())
+        }
+
+        // TODO handle equality and comparison better?
         startColumnNumber += when (expression.origin) {
           IrStatementOrigin.EQEQ, IrStatementOrigin.EQEQEQ -> source.indexOf("==")
           IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> source.indexOf("!=")
