@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.utils.SmartList
 
 fun PsiElement.processAllExactUsages(
-    options: () -> FindUsagesOptions,
+    options: FindUsagesOptions,
     processor: (UsageInfo) -> Unit
 ) {
     fun elementsToCheckReferenceAgainst(reference: PsiReference): List<PsiElement> {
@@ -62,7 +62,7 @@ fun PsiElement.processAllExactUsages(
                 }
                 true
             },
-            options()
+            options
         )
 }
 

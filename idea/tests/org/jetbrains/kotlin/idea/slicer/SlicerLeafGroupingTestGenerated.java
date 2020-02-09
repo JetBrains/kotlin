@@ -24,6 +24,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("abstractFun.kt")
+    public void testAbstractFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/abstractFun.kt");
+    }
+
     public void testAllFilesPresentInInflow() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer/inflow"), Pattern.compile("^(.+)\\.kt$"), null);
     }
@@ -221,6 +226,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("nullsAndNotNulls.kt")
     public void testNullsAndNotNulls() throws Exception {
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
+    }
+
+    @TestMetadata("overrideFun.kt")
+    public void testOverrideFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideFun.kt");
     }
 
     @TestMetadata("overridingFunctionResult.kt")

@@ -28,6 +28,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer"), Pattern.compile("^(.+)\\.kt$"), null);
     }
 
+    @TestMetadata("inflow/abstractFun.kt")
+    public void testInflow_AbstractFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/abstractFun.kt");
+    }
+
     @TestMetadata("inflow/anonymousFunBodyExpression.kt")
     public void testInflow_AnonymousFunBodyExpression() throws Exception {
         runTest("idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
@@ -221,6 +226,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     @TestMetadata("inflow/nullsAndNotNulls.kt")
     public void testInflow_NullsAndNotNulls() throws Exception {
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
+    }
+
+    @TestMetadata("inflow/overrideFun.kt")
+    public void testInflow_OverrideFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideFun.kt");
     }
 
     @TestMetadata("inflow/overridingFunctionResult.kt")

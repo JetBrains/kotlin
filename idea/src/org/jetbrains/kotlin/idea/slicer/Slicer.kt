@@ -28,14 +28,18 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
+import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
@@ -51,9 +55,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -79,17 +80,23 @@ private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor
         .forEach(processor)
 }
 
-private fun KtFunction.processCalls(scope: SearchScope, processor: (UsageInfo) -> Unit) {
-    processAllExactUsages(
-        {
-            KotlinFunctionFindUsagesOptions(project).apply {
-                isSearchForTextOccurrences = false
-                isSkipImportStatements = true
-                searchScope = scope.intersectWith(useScope)
+private fun KtFunction.processCalls(scope: SearchScope, exactFunctionOnly: Boolean, processor: (UsageInfo) -> Unit) {
+    val options = KotlinFunctionFindUsagesOptions(project).apply {
+        isSearchForTextOccurrences = false
+        isSkipImportStatements = true
+        searchScope = scope.intersectWith(useScope)
+    }
+    if (exactFunctionOnly) {
+        processAllExactUsages(options, processor)
+    } else {
+        val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
+        for (superDescriptor in descriptor.getDeepestSuperDeclarations()) {
+            when (val declaration = superDescriptor.originalSource.getPsi()) {
+                is KtDeclaration -> declaration.processAllUsages(options, processor)
+                else -> {} //TODO
             }
-        },
-        processor
-    )
+        }
+    }
 }
 
 private enum class AccessKind {
@@ -102,16 +109,13 @@ private fun KtDeclaration.processVariableAccesses(
     processor: (UsageInfo) -> Unit
 ) {
     processAllExactUsages(
-        {
-            KotlinPropertyFindUsagesOptions(project).apply {
-                isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
-                isWriteAccess =
-                    kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
-                isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
-                isSearchForTextOccurrences = false
-                isSkipImportStatements = true
-                searchScope = scope.intersectWith(useScope)
-            }
+        KotlinPropertyFindUsagesOptions(project).apply {
+            isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
+            isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+            isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+            isSearchForTextOccurrences = false
+            isSkipImportStatements = true
+            searchScope = scope.intersectWith(useScope)
         },
         processor
     )
@@ -231,7 +235,6 @@ class InflowSlicer(
         if (!canProcess()) return
 
         val function = ownerFunction ?: return
-        if (function.isOverridable()) return
 
         if (function is KtPropertyAccessor && function.isSetter) {
             function.property.processPropertyAssignments()
@@ -251,7 +254,7 @@ class InflowSlicer(
 
         val parameterDescriptor = resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
-        (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@{
+        (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope(), exactFunctionOnly = false) body@{
             val refElement = it.element ?: return@body
             val refParent = refElement.parent
 
@@ -259,8 +262,9 @@ class InflowSlicer(
                 refElement is KtExpression -> {
                     val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
                     val resolvedCall = callElement.resolveToCall() ?: return@body
-                    val valueArguments = resolvedCall.originalValueArguments
-                    when (val resolvedArgument = valueArguments[parameterDescriptor] ?: return@body) {
+                    val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
+                    val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return@body
+                    when (resolvedArgument) {
                         is DefaultValueArgument -> defaultValue
                         is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
                         else -> null
@@ -431,7 +435,7 @@ class OutflowSlicer(
         if (this is KtConstructor<*> || this is KtNamedFunction && name != null) {
             processHierarchyUpward(parentUsage.scope) {
                 if (this is KtFunction) {
-                    processCalls(parentUsage.scope.toSearchScope()) {
+                    processCalls(parentUsage.scope.toSearchScope(), exactFunctionOnly = true) {
                         when (val refElement = it.element) {
                             null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
                             is KtExpression -> {
@@ -535,18 +539,4 @@ private val DeclarationDescriptorWithSource.originalSource: SourceElement
             descriptor = descriptor.original
         }
         return descriptor.source
-    }
-
-private val ResolvedCall<*>.originalValueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>
-    get() = when (this) {
-        is NewResolvedCallImpl<*> -> LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also {
-            for ((valueParameter, argument) in valueArguments) {
-                var parameter = valueParameter
-                while (parameter != parameter.original) {
-                    parameter = parameter.original
-                }
-                it[parameter] = argument
-            }
-        }
-        else -> valueArguments
     }
