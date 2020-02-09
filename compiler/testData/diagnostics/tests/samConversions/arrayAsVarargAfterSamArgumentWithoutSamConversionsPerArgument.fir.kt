@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument
+// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument -SamConversionPerArgument
 // IGNORE_BACKEND: JS, JS_IR
 // SKIP_TXT
 

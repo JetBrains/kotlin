@@ -48,7 +48,8 @@ class JavaSyntheticScopes(
 
     init {
         val samConversionPerArgumentIsEnabled =
-            languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)
+            languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
+                    languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
         val javaSyntheticPropertiesScope = JavaSyntheticPropertiesScope(storageManager, lookupTracker)
         val scopesFromExtensions = SyntheticScopeProviderExtension
