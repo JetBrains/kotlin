@@ -1,4 +1,5 @@
 9 println(<bold>p</bold>)
 8 	override fun foo(<bold>p: Int</bold>) {
+2 		void <bold>foo(int p);</bold>
 13 		foo(<bold>1</bold>)
 18 		i.foo(<bold>2</bold>)

@@ -80,25 +80,6 @@ private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor
         .forEach(processor)
 }
 
-private fun KtFunction.processCalls(scope: SearchScope, exactFunctionOnly: Boolean, processor: (UsageInfo) -> Unit) {
-    val options = KotlinFunctionFindUsagesOptions(project).apply {
-        isSearchForTextOccurrences = false
-        isSkipImportStatements = true
-        searchScope = scope.intersectWith(useScope)
-    }
-    if (exactFunctionOnly) {
-        processAllExactUsages(options, processor)
-    } else {
-        val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
-        for (superDescriptor in descriptor.getDeepestSuperDeclarations()) {
-            when (val declaration = superDescriptor.originalSource.getPsi()) {
-                is KtDeclaration -> declaration.processAllUsages(options, processor)
-                else -> {} //TODO
-            }
-        }
-    }
-}
-
 private enum class AccessKind {
     READ_ONLY, WRITE_ONLY, WRITE_WITH_OPTIONAL_READ, READ_OR_WRITE
 }
@@ -150,6 +131,28 @@ abstract class Slicer(
     }
 
     abstract fun processChildren()
+
+    protected fun KtFunction.processCalls(scope: SearchScope, exactFunctionOnly: Boolean, usageProcessor: (UsageInfo) -> Unit) {
+        val options = KotlinFunctionFindUsagesOptions(project).apply {
+            isSearchForTextOccurrences = false
+            isSkipImportStatements = true
+            searchScope = scope.intersectWith(useScope)
+        }
+        if (exactFunctionOnly) {
+            processAllExactUsages(options, usageProcessor)
+        } else {
+            val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
+            for (superDescriptor in descriptor.getDeepestSuperDeclarations()) {
+                val declaration = superDescriptor.originalSource.getPsi() ?: continue
+                when (declaration) {
+                    is KtDeclaration -> declaration.processAllUsages(options, usageProcessor)
+                    // todo: work around the bug in JavaSliceProvider.transform()
+                    is PsiMethod -> processor.process(JavaSliceUsage.createRootUsage(declaration, parentUsage.params))
+                    else -> declaration.passToProcessor()
+                }
+            }
+        }
+    }
 }
 
 class InflowSlicer(
