@@ -42,7 +42,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.jar")
             }
 
-            gradleProperties().appendText(jsCompilerType(JsCompilerType.legacy))
+            gradleProperties().appendText(jsCompilerType(JsCompilerType.ir))
 
             testResolveAllConfigurations(
                 subproject = innerProject.projectName,
