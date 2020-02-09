@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiCall
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -132,23 +131,39 @@ abstract class Slicer(
 
     abstract fun processChildren()
 
-    protected fun KtFunction.processCalls(scope: SearchScope, exactFunctionOnly: Boolean, usageProcessor: (UsageInfo) -> Unit) {
+    protected fun KtFunction.processCalls(scope: SearchScope, includeOverriders: Boolean, usageProcessor: (UsageInfo) -> Unit) {
         val options = KotlinFunctionFindUsagesOptions(project).apply {
             isSearchForTextOccurrences = false
             isSkipImportStatements = true
             searchScope = scope.intersectWith(useScope)
         }
-        if (exactFunctionOnly) {
-            processAllExactUsages(options, usageProcessor)
-        } else {
-            val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
-            for (superDescriptor in descriptor.getDeepestSuperDeclarations()) {
-                val declaration = superDescriptor.originalSource.getPsi() ?: continue
-                when (declaration) {
-                    is KtDeclaration -> declaration.processAllUsages(options, usageProcessor)
+
+        val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
+        val superDescriptors = if (includeOverriders)
+            descriptor.getDeepestSuperDeclarations()
+        else
+            listOf(descriptor) + DescriptorUtils.getAllOverriddenDeclarations(descriptor)
+
+        for (superDescriptor in superDescriptors) {
+            val declaration = superDescriptor.originalSource.getPsi() ?: continue
+            when (declaration) {
+                is KtDeclaration -> {
+                    if (includeOverriders) {
+                        declaration.processAllUsages(options, usageProcessor)
+                    } else {
+                        declaration.processAllExactUsages(options, usageProcessor)
+                    }
+                }
+
+                is PsiMethod -> {
                     // todo: work around the bug in JavaSliceProvider.transform()
-                    is PsiMethod -> processor.process(JavaSliceUsage.createRootUsage(declaration, parentUsage.params))
-                    else -> declaration.passToProcessor()
+                    processor.process(JavaSliceUsage.createRootUsage(declaration, parentUsage.params))
+                }
+
+                else -> {
+                    if (declaration in scope) {
+                        declaration.passToProcessor()
+                    }
                 }
             }
         }
@@ -257,7 +272,7 @@ class InflowSlicer(
 
         val parameterDescriptor = resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
-        (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope(), exactFunctionOnly = false) body@{
+        (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope(), includeOverriders = true) body@{
             val refElement = it.element ?: return@body
             val refParent = refElement.parent
 
@@ -436,23 +451,14 @@ class OutflowSlicer(
 
     private fun KtFunction.processFunction() {
         if (this is KtConstructor<*> || this is KtNamedFunction && name != null) {
-            processHierarchyUpward(parentUsage.scope) {
-                if (this is KtFunction) {
-                    processCalls(parentUsage.scope.toSearchScope(), exactFunctionOnly = true) {
-                        when (val refElement = it.element) {
-                            null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
-                            is KtExpression -> {
-                                refElement.getCallElementForExactCallee()?.passToProcessor()
-                                refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
-                            }
-                            else -> refElement.passToProcessor()
-                        }
+            processCalls(parentUsage.scope.toSearchScope(), includeOverriders = false) {
+                when (val refElement = it.element) {
+                    null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
+                    is KtExpression -> {
+                        refElement.getCallElementForExactCallee()?.passToProcessor()
+                        refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
                     }
-                } else if (this is PsiMethod && language == JavaLanguage.INSTANCE) {
-                    // todo: work around the bug in JavaSliceProvider.transform()
-                    processor.process(JavaSliceUsage.createRootUsage(this, parentUsage.params))
-                } else {
-                    passToProcessor()
+                    else -> refElement.passToProcessor()
                 }
             }
             return
