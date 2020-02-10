@@ -3374,6 +3374,11 @@ if (PlatformInfo.isAppleTarget(project)) {
         def includePath = file("interop/objc/kt34467").absolutePath
         it.compilerOpts "-fmodule-map-file=$moduleMap", "-I$includePath"
     }
+    createInterop("objcGh3343") {
+        it.defFile 'framework/gh3343/objclib.def'
+        it.headers "$projectDir/framework/gh3343/objclib.h"
+        it.linkerOpts "-L$buildDir",  "-lobjcgh3343"
+    }
 }
 
 createInterop("withSpaces") {
@@ -3876,6 +3881,42 @@ if (isAppleTarget(project)) {
         }
         swiftSources = ['framework/multiple/multiple.swift']
     }
+
+    task testGh3343Framework(type: FrameworkTest) {
+        final String frameworkName = 'Gh3343'
+        testName = frameworkName
+        frameworkNames = [frameworkName]
+
+        def mainTask = it
+
+        konanArtifacts {
+            def lib = "objcGh3343"
+            def libTask = "compileKonan${lib.capitalize()}${target.name.capitalize()}"
+            UtilsKt.dependsOnDist(project, libTask)
+            UtilsKt.sameDependenciesAs(libTask, mainTask)
+            mainTask.dependsOn(libTask)
+
+            def lnOpts = (project.tasks.getByName(libTask)).linkerOpts
+
+            framework(frameworkName, targets: [ target ]) {
+                libraries {
+                    artifact lib
+                }
+                srcDir 'framework/gh3343'
+                baseDir "$testOutputFramework/$testName"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
+
+                linkerOpts lnOpts
+                extraOpts "-Xembed-bitcode-marker"
+                extraOpts project.globalTestArgs
+            }
+        }
+        swiftSources = ['framework/gh3343/uselib.swift']
+    }
+
 }
 
 /**
