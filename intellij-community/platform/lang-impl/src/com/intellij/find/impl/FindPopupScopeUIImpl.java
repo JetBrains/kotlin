@@ -18,7 +18,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiBundle;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.scale.JBUIScale;
@@ -26,6 +25,7 @@ import com.intellij.util.Functions;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.IndexingBundle;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,7 +94,7 @@ class FindPopupScopeUIImpl implements FindPopupScopeUI {
       final String moduleFilesScopeName;
 
       {
-        String moduleScopeName = PsiBundle.message("search.scope.module", "");
+        String moduleScopeName = IndexingBundle.message("search.scope.module", "");
         final int ind = moduleScopeName.indexOf(' ');
         moduleFilesScopeName = moduleScopeName.substring(0, ind + 1);
       }
