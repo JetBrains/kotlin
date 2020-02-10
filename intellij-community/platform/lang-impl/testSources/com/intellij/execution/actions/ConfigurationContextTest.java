@@ -8,10 +8,12 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.impl.FakeConfigurationFactory;
 import com.intellij.execution.impl.FakeRunConfiguration;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.fileTypes.FileTypes;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.MapDataContext;
@@ -26,43 +28,84 @@ import java.util.Objects;
 
 public class ConfigurationContextTest extends BasePlatformTestCase {
 
+  public void testBasicExistingConfigurations() {
+    myFixture.configureByText(FileTypes.PLAIN_TEXT, "qq<caret>q");
+
+    ConfigurationContext context = ConfigurationContext.getFromContext(createDataContext());
+    Assert.assertNull(context.findExisting());
+
+    Disposable disposable = Disposer.newDisposable();
+    RunConfigurationProducer.EP_NAME.getPoint(null).registerExtension(new FakeRunConfigurationProducer(""), disposable);
+    List<RunnerAndConfigurationSettings> configs = getConfigurationsFromContext();
+    Assert.assertEquals(1, configs.size());
+    for (RunnerAndConfigurationSettings config : configs) {
+      addConfiguration(config);
+    }
+
+    context = ConfigurationContext.getFromContext(createDataContext());
+    RunnerAndConfigurationSettings existing = Objects.requireNonNull(context.findExisting());
+    Assert.assertTrue(existing.getConfiguration() instanceof FakeRunConfiguration);
+
+    Disposer.dispose(disposable);
+    context = ConfigurationContext.getFromContext(createDataContext());
+    Assert.assertNull(context.findExisting());
+  }
+
   public void testPreferredExistingConfiguration() {
     myFixture.configureByText(FileTypes.PLAIN_TEXT, "hello,<caret>world");
+    @SuppressWarnings("rawtypes")
     ExtensionPoint<RunConfigurationProducer> ep = RunConfigurationProducer.EP_NAME.getPoint(null);
-    FakeRunConfigurationProducer producer1 = new FakeRunConfigurationProducer("hello_");
-    ep.registerExtension(producer1, getTestRootDisposable());
-    FakeRunConfigurationProducer producer2 = new FakeRunConfigurationProducer("world_");
-    ep.registerExtension(producer2, getTestRootDisposable());
+    ep.registerExtension(new FakeRunConfigurationProducer("hello_"), getTestRootDisposable());
+    ep.registerExtension(new FakeRunConfigurationProducer("world_"), getTestRootDisposable());
 
-    DataContext dataContext = createDataContext();
     FakeRunConfigurationProducer.SORTING = SortingMode.NONE;
-    ConfigurationContext context = ConfigurationContext.getFromContext(dataContext);
-    List<ConfigurationFromContext> list = PreferredProducerFind.getConfigurationsFromContext(dataContext.getData(Location.DATA_KEY), context, false);
-    List<RunnerAndConfigurationSettings> configs = ContainerUtil.map(list, context1 -> context1.getConfigurationSettings());
+    List<RunnerAndConfigurationSettings> configs = getConfigurationsFromContext();
     Assert.assertEquals(2, configs.size());
     for (RunnerAndConfigurationSettings config : configs) {
-      Assert.assertTrue(config.getConfiguration() instanceof FakeRunConfiguration);
-      RunManager.getInstance(getProject()).addConfiguration(config);
+      addConfiguration(config);
     }
 
     FakeRunConfigurationProducer.SORTING = SortingMode.NAME_ASC;
-    context = ConfigurationContext.getFromContext(dataContext);
+    ConfigurationContext context = ConfigurationContext.getFromContext(createDataContext());
     RunnerAndConfigurationSettings existing = Objects.requireNonNull(context.findExisting());
     Assert.assertTrue(existing.getConfiguration().getName().startsWith("hello_"));
 
     FakeRunConfigurationProducer.SORTING = SortingMode.NAME_DESC;
-    context = ConfigurationContext.getFromContext(dataContext);
+    context = ConfigurationContext.getFromContext(createDataContext());
     existing = Objects.requireNonNull(context.findExisting());
     Assert.assertTrue(existing.getConfiguration().getName().startsWith("world_"));
   }
 
-  private DataContext createDataContext() {
+  private @NotNull DataContext createDataContext() {
     MapDataContext dataContext = new MapDataContext();
     dataContext.put(CommonDataKeys.PROJECT, getProject());
     int offset = myFixture.getEditor().getCaretModel().getOffset();
     PsiElement element = Objects.requireNonNull(myFixture.getFile().findElementAt(offset));
     dataContext.put(Location.DATA_KEY, PsiLocation.fromPsiElement(element));
     return dataContext;
+  }
+
+  private void addConfiguration(@NotNull RunnerAndConfigurationSettings configuration) {
+    Assert.assertTrue(configuration.getConfiguration() instanceof FakeRunConfiguration);
+    final RunManager runManager = RunManager.getInstance(getProject());
+    runManager.addConfiguration(configuration);
+    Disposer.register(getTestRootDisposable(), new Disposable() {
+      @Override
+      public void dispose() {
+        runManager.removeConfiguration(configuration);
+      }
+    });
+  }
+
+  @NotNull
+  private List<RunnerAndConfigurationSettings> getConfigurationsFromContext() {
+    DataContext dataContext = createDataContext();
+    List<ConfigurationFromContext> list = PreferredProducerFind.getConfigurationsFromContext(
+      dataContext.getData(Location.DATA_KEY),
+      ConfigurationContext.getFromContext(dataContext),
+      false
+    );
+    return ContainerUtil.map(list, ConfigurationFromContext::getConfigurationSettings);
   }
 
   private static class FakeRunConfigurationProducer extends LazyRunConfigurationProducer<FakeRunConfiguration> {
