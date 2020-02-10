@@ -37,9 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -282,31 +280,59 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         throw IllegalArgumentException(operatorCall.render())
     }
 
+    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
+        val baseTypeArguments = argument.typeRef.coneTypeSafe<ConeKotlinType>()?.typeArguments
+        val type = coneTypeSafe<ConeKotlinType>()
+        return if (type?.typeArguments?.isEmpty() != true ||
+            type is ConeTypeParameterType ||
+            baseTypeArguments?.isEmpty() != false ||
+            (type is ConeClassLikeType &&
+                    (type.lookupTag.toSymbol(session)?.fir as? FirTypeParametersOwner)?.typeParameters?.isEmpty() == true)
+        ) {
+            this
+        } else {
+            withReplacedConeType(type.withArguments(baseTypeArguments))
+        }
+    }
+
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
-        val symbolProvider = session.firSymbolProvider
         val resolved = (transformExpression(typeOperatorCall, data).single as FirTypeOperatorCall)
             .transformArguments(integerLiteralTypeApproximator, null)
+        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
+        resolved.transformChildren(object : FirDefaultTransformer<Nothing?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+                return element.compose()
+            }
+
+            override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+                return if (typeRef === resolved.conversionTypeRef) {
+                    conversionTypeRef.compose()
+                } else {
+                    typeRef.compose()
+                }
+            }
+        }, null)
         when (resolved.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 resolved.resultType = session.builtinTypes.booleanType
             }
             FirOperation.AS -> {
-                resolved.resultType = resolved.conversionTypeRef
+                resolved.resultType = conversionTypeRef
             }
             FirOperation.SAFE_AS -> {
                 resolved.resultType =
-                    resolved.conversionTypeRef.withReplacedConeType(
-                        resolved.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(
+                    conversionTypeRef.withReplacedConeType(
+                        conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(
                             ConeNullability.NULLABLE, session.inferenceContext,
                         ),
                     )
             }
             else -> error("Unknown type operator")
         }
-        dataFlowAnalyzer.exitTypeOperatorCall(typeOperatorCall)
+        dataFlowAnalyzer.exitTypeOperatorCall(resolved)
         return resolved.transform(integerLiteralTypeApproximator, null)
     }
 

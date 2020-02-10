@@ -33,6 +33,6 @@ import p.*
 
 fun test(b: B<Tr>?) {
     if (b is C) {
-        b?.<!AMBIGUITY!>foo<!>(null)
+        b?.foo(null)
     }
 }

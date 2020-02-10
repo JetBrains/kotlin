@@ -29,11 +29,11 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
 
         public final fun unwrap(): R|T| {
             ^unwrap when (this@R|/Maybe|) {
-                ($subj$ is R|Maybe.Nope|) ->  {
+                ($subj$ is R|Maybe.Nope<T>|) ->  {
                     throw R|java/lang/Exception.Exception|(String())
                 }
-                ($subj$ is R|Maybe.Yeah|) ->  {
-                    this@R|/Maybe|.R|/Maybe.Yeah.meat|
+                ($subj$ is R|Maybe.Yeah<T>|) ->  {
+                    this@R|/Maybe|.R|FakeOverride</Maybe.Yeah.meat: R|T|>|
                 }
             }
 

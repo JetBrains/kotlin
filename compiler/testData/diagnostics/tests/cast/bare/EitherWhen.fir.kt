@@ -12,7 +12,7 @@ class C2(val v2: Int)
 
 fun _when(e: Either<C1, C2>): Any {
     return when (e) {
-        is Left -> e.value.<!UNRESOLVED_REFERENCE!>v1<!>
+        is Left -> e.value.v1
         is Right -> e.value.<!UNRESOLVED_REFERENCE!>v2<!>
         else -> e
     }
