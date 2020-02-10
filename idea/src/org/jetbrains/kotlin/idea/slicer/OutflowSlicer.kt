@@ -139,13 +139,7 @@ class OutflowSlicer(
         } ?: return
 
         if (receiver != null && resolvedCall.dispatchReceiver == receiver) {
-            processor.process(
-                KotlinSliceDereferenceUsage(
-                    expression,
-                    parentUsage,
-                    parentUsage.lambdaLevel
-                )
-            )
+            processor.process(KotlinSliceDereferenceUsage(expression, parentUsage, parentUsage.lambdaLevel))
         }
     }
 
