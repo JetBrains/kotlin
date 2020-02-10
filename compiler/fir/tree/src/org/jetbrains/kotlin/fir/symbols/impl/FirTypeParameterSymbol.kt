@@ -17,13 +17,5 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
     private val lookupTag = ConeTypeParameterLookupTag(this)
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag
-
-    override fun equals(other: Any?): Boolean {
-        return other is FirTypeParameterSymbol && fir == other.fir
-    }
-
-    override fun hashCode(): Int {
-        return fir.hashCode()
-    }
 }
 

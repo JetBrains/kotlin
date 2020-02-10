@@ -15,11 +15,6 @@ sealed class FirClassLikeSymbol<D>(
     val classId: ClassId
 ) : FirClassifierSymbol<D>() where D : FirClassLikeDeclaration<D>, D : FirSymbolOwner<D> {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
-
-    override fun equals(other: Any?): Boolean =
-        other is FirClassLikeSymbol<*> && fir == other.fir
-
-    override fun hashCode(): Int = fir.hashCode()
 }
 
 sealed class FirClassSymbol<C : FirClass<C>>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
