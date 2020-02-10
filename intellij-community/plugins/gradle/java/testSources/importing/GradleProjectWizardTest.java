@@ -67,15 +67,6 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
 
   public void testGradleProject() throws Exception {
     final String projectName = "testProject";
-    ApplicationManager.getApplication().getMessageBus().connect(getTestRootDisposable()).subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-      @Override
-      public void projectOpened(@NotNull Project project) {
-        assertNotEmpty(ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID));
-        // project save is not called in unit mode, see com.intellij.ide.impl.NewProjectUtil.doCreate
-        ExternalProjectsDataStorage.getInstance(project).doSave();
-      }
-    });
-
     Project project = createProject(step -> {
       if (step instanceof ProjectTypeStep) {
         assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
