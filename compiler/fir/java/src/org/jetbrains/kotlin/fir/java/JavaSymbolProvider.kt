@@ -49,6 +49,7 @@ class JavaSymbolProvider(
     private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
 
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
+    private val parentClassTypeParameterStackCache: MutableMap<FirRegularClassSymbol, JavaTypeParameterStack> = mutableMapOf()
 
     private fun findClass(
         classId: ClassId,
@@ -135,9 +136,10 @@ class JavaSymbolProvider(
                 if (!isTopLevel) {
                     val parentId = ClassId(classId.packageFqName, parentFqName, false)
                     val parentClassSymbol = getClassLikeSymbolByFqName(parentId)
-                    val parentClass = parentClassSymbol?.fir
-                    if (parentClass is FirJavaClass) {
-                        javaTypeParameterStack.addStack(parentClass.javaTypeParameterStack)
+                    val parentStack = parentClassTypeParameterStackCache[parentClassSymbol] ?:
+                        (parentClassSymbol?.fir as? FirJavaClass)?.javaTypeParameterStack
+                    if (parentStack != null) {
+                        javaTypeParameterStack.addStack(parentStack)
                     }
                 }
                 buildJavaClass {
@@ -151,6 +153,7 @@ class JavaSymbolProvider(
                     this.isTopLevel = isTopLevel
                     isStatic = javaClass.isStatic
                     this.javaTypeParameterStack = javaTypeParameterStack
+                    parentClassTypeParameterStackCache[firSymbol] = javaTypeParameterStack
                     existingNestedClassifierNames += javaClass.innerClassNames
                     scopeProvider = this@JavaSymbolProvider.scopeProvider
                     typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
@@ -255,6 +258,7 @@ class JavaSymbolProvider(
                         generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
                     }
                     isNotSam = isNotSam()
+                    parentClassTypeParameterStackCache.remove(firSymbol)
                 }
             }
         }
