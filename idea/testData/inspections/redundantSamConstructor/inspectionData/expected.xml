@@ -105,11 +105,33 @@
     </problem>
     <problem>
         <file>otherGenericsInParams.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="method" FQNAME="redundantSamConstructor.OtherGenericsInParamsKt void test()" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant SAM constructor</problem_class>
+        <description>Redundant SAM-constructor</description>
+        <highlighted_element>Runnable</highlighted_element>
+        <offset>21</offset>
+        <length>8</length>
+    </problem>
+    <problem>
+        <file>otherGenericsInParams.kt</file>
         <line>8</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="otherGenericsInParams.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant SAM-constructor</problem_class>
         <description>Redundant SAM-constructor</description>
+    </problem>
+    <problem>
+        <file>otherGenericsInParams.kt</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="method" FQNAME="redundantSamConstructor.OtherGenericsInParamsKt void test()" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant SAM constructor</problem_class>
+        <description>Redundant SAM-constructor</description>
+        <highlighted_element>Runnable</highlighted_element>
+        <offset>35</offset>
+        <length>8</length>
     </problem>
     <problem>
         <file>otherGenericsInParams.kt</file>
