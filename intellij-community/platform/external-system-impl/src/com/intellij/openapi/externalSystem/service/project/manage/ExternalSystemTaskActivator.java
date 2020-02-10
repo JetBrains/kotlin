@@ -24,7 +24,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.task.*;
+import com.intellij.task.ModuleBuildTask;
+import com.intellij.task.ProjectTaskContext;
+import com.intellij.task.ProjectTaskManager;
 import com.intellij.task.impl.ProjectTaskManagerImpl;
 import com.intellij.task.impl.ProjectTaskManagerListener;
 import com.intellij.task.impl.ProjectTaskScope;
@@ -33,6 +35,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.util.*;
 
@@ -382,9 +385,10 @@ public class ExternalSystemTaskActivator {
     BEFORE_REBUILD("external.system.task.before.rebuild"),
     AFTER_REBUILD("external.system.task.after.rebuild");
 
+    @PropertyKey(resourceBundle = ExternalSystemBundle.PATH_TO_BUNDLE)
     public final String myMessageKey;
 
-    Phase(String messageKey) {
+    Phase(@PropertyKey(resourceBundle = ExternalSystemBundle.PATH_TO_BUNDLE) String messageKey) {
       myMessageKey = messageKey;
     }
 

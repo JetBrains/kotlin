@@ -71,6 +71,7 @@ import com.intellij.util.ui.*;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -918,8 +919,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   @NotNull
-  private static StateRestoringCheckBox createCheckBox(String message, String optionName) {
-    StateRestoringCheckBox checkBox = new StateRestoringCheckBox(FindBundle.message(message));
+  private static StateRestoringCheckBox createCheckBox(@PropertyKey(resourceBundle = FindBundle.BUNDLE) String messageKey, String optionName) {
+    StateRestoringCheckBox checkBox = new StateRestoringCheckBox(FindBundle.message(messageKey));
     checkBox.addActionListener(
       __ -> FUCounterUsageLogger.getInstance().logEvent(
         "find", "check.box.toggled", new FeatureUsageData().

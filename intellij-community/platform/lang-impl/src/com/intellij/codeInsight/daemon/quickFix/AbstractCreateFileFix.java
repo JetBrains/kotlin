@@ -26,6 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
 import java.util.List;
@@ -44,8 +45,8 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
   protected final String myNewFileName;
   protected final List<TargetDirectory> myDirectories;
   protected final String[] mySubPath;
-  @NotNull
-  protected final String myKey;
+  @PropertyKey(resourceBundle = CodeInsightBundle.BUNDLE)
+  protected final @NotNull String myKey;
 
   protected boolean myIsAvailable;
   protected long myIsAvailableTimeStamp;

@@ -26,6 +26,7 @@ import com.intellij.util.containers.IntArrayList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -206,7 +207,7 @@ class TextPainter extends BasePainter {
     }
   }
 
-  private boolean printPageInReadAction(final Graphics2D g2d, final PageFormat pageFormat, final String progressMessageKey) {
+  private boolean printPageInReadAction(final Graphics2D g2d, final PageFormat pageFormat, @PropertyKey(resourceBundle = CodeEditorBundle.BUNDLE) String progressMessageKey) {
     return ReadAction.compute(() -> {
       if (!isValidRange(myRangeToPrint)) {
         return false;

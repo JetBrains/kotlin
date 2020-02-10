@@ -26,11 +26,12 @@ public enum LocationSettingType {
   EXPLICIT_INCORRECT("setting.type.location.explicit.incorrect"),
 
   EXPLICIT_CORRECT("setting.type.location.explicit.correct");
-  
+
+  @PropertyKey(resourceBundle = ExternalSystemBundle.PATH_TO_BUNDLE)
   @NotNull private final String myDescriptionKey;
   @NotNull private final Color myColor;
 
-  LocationSettingType(@NotNull String descriptionKey) {
+  LocationSettingType(@NotNull @PropertyKey(resourceBundle = ExternalSystemBundle.PATH_TO_BUNDLE) String descriptionKey) {
     this(descriptionKey, "TextField.foreground");
   }
 

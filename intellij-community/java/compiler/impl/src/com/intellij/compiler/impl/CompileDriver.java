@@ -46,10 +46,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.text.DateFormatUtil;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 import org.jetbrains.jps.api.*;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
@@ -742,7 +739,7 @@ public final class CompileDriver {
     return !ModuleRootManager.getInstance(module).getSourceRoots(rootType).isEmpty();
   }
 
-  private void showNotSpecifiedError(@NonNls final String resourceId, boolean notSpecifiedValueInheritedFromProject, List<String> modules,
+  private void showNotSpecifiedError(@PropertyKey(resourceBundle = CompilerBundle.BUNDLE) @NonNls String resourceId, boolean notSpecifiedValueInheritedFromProject, List<String> modules,
                                      String editorNameToSelect) {
     String nameToSelect = null;
     final StringBuilder names = new StringBuilder();

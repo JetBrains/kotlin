@@ -24,7 +24,7 @@ import org.jetbrains.annotations.PropertyKey;
 import java.util.function.Supplier;
 
 public class CodeEditorBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "messages.CodeEditorBundle";
+  @NonNls public static final String BUNDLE = "messages.CodeEditorBundle";
   private static final CodeEditorBundle INSTANCE = new CodeEditorBundle();
 
   private CodeEditorBundle() { super(BUNDLE); }
