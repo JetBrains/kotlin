@@ -170,7 +170,7 @@ class InflowSlicer(
                     }
                     return
                 }
-                accessedDeclaration.processHierarchyDownwardAndPass()
+                accessedDeclaration.passDeclarationToProcessorWithOverriders()
             }
 
             is MergeInstruction -> createdAt.passInputsToProcessor()
@@ -193,7 +193,7 @@ class InflowSlicer(
                 if (resultingDescriptor is FunctionInvokeDescriptor) {
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
                 } else {
-                    resultingDescriptor.originalSource.getPsi()?.processHierarchyDownwardAndPass()
+                    resultingDescriptor.originalSource.getPsi()?.passDeclarationToProcessorWithOverriders()
                 }
             }
         }
@@ -269,14 +269,10 @@ class InflowSlicer(
 
     private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
-    private fun PsiElement.processHierarchyDownwardAndPass() {
-        processHierarchyDownward(parentUsage.scope.toSearchScope()) { passToProcessor() }
-    }
-
-    private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
-        processor()
-        HierarchySearchRequest(this, scope).searchOverriders().forEach {
-            it.namedUnwrappedElement?.processor()
-        }
+    private fun PsiElement.passDeclarationToProcessorWithOverriders() {
+        passToProcessor()
+        HierarchySearchRequest(this, parentUsage.scope.toSearchScope())
+            .searchOverriders()
+            .forEach { it.namedUnwrappedElement?.passToProcessor() }
     }
 }
