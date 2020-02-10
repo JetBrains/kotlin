@@ -352,7 +352,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
     for (int attempt = 0; attempt < 2; attempt++) {
       try {
-        if (extension.hasSnapshotMapping()) {
+        if (VfsAwareMapReduceIndex.hasSnapshotMapping(extension)) {
           IndexedHashesSupport.initContentHashesEnumerator();
           contentHashesEnumeratorOk = true;
         }
