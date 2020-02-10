@@ -130,7 +130,7 @@ abstract class Slicer(
         }
     }
 
-    protected fun KtParameter.canProcess() = !isVarArg
+    protected fun canProcessParameter(parameter: KtParameter) = !parameter.isVarArg
 
     protected val DeclarationDescriptorWithSource.originalSource: SourceElement
         get() {

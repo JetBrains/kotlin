@@ -35,7 +35,7 @@ class OutflowSlicer(
     }
 
     private fun processVariable(variable: KtCallableDeclaration) {
-        if (variable is KtParameter && !variable.canProcess()) return
+        if (variable is KtParameter && !canProcessParameter(variable)) return
 
         val withDereferences = parentUsage.params.showInstanceDereferences
         val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY

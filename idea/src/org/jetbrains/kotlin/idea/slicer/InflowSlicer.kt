@@ -86,7 +86,7 @@ class InflowSlicer(
     }
 
     private fun processParameter(parameter: KtParameter, includeOverriders: Boolean) {
-        if (!parameter.canProcess()) return
+        if (!canProcessParameter(parameter)) return
 
         val function = parameter.ownerFunction ?: return
 
