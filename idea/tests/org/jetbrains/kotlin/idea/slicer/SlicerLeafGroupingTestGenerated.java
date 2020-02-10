@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -226,6 +226,16 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("nullsAndNotNulls.kt")
     public void testNullsAndNotNulls() throws Exception {
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
+    }
+
+    @TestMetadata("openFun.kt")
+    public void testOpenFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFun.kt");
+    }
+
+    @TestMetadata("openFunInvokeOnParameter.kt")
+    public void testOpenFunInvokeOnParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
     }
 
     @TestMetadata("overrideFun.kt")

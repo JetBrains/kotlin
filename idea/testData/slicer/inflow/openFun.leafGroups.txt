@@ -1,0 +1,5 @@
+8 other?.bar(<bold>p + 1</bold>)
+12 	println(<bold>p</bold> + 2)
+11 		fun bar(<bold>p: Int</bold>) {
+8 			other?.bar(<bold>p + 1</bold>)
+

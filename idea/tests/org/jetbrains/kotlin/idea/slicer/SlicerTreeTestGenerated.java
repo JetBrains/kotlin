@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -226,6 +226,16 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     @TestMetadata("inflow/nullsAndNotNulls.kt")
     public void testInflow_NullsAndNotNulls() throws Exception {
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
+    }
+
+    @TestMetadata("inflow/openFun.kt")
+    public void testInflow_OpenFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFun.kt");
+    }
+
+    @TestMetadata("inflow/openFunInvokeOnParameter.kt")
+    public void testInflow_OpenFunInvokeOnParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
     }
 
     @TestMetadata("inflow/overrideFun.kt")
