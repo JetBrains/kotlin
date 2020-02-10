@@ -7,6 +7,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.PlatformEditorBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.VerticalFlowLayout;
@@ -795,7 +796,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
   private class SortEmAction extends ToggleAction {
     SortEmAction() {
-      super(IdeBundle.lazyMessage("action.sort.alphabetically"), IdeBundle.lazyMessage("action.sort.alphabetically"),
+      super(PlatformEditorBundle.lazyMessage("action.sort.alphabetically"), PlatformEditorBundle.lazyMessage("action.sort.alphabetically"),
             AllIcons.ObjectBrowser.Sorted);
     }
 

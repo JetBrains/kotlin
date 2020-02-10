@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.PlatformEditorBundle;
 import com.intellij.openapi.fileEditor.PsiElementNavigatable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -604,7 +605,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   protected class AlphaSortAction extends ToggleAction {
     public AlphaSortAction() {
-      super(IdeBundle.lazyMessage("action.sort.alphabetically"), IdeBundle.lazyMessage("action.sort.alphabetically"),
+      super(PlatformEditorBundle.lazyMessage("action.sort.alphabetically"), PlatformEditorBundle.lazyMessage("action.sort.alphabetically"),
             AllIcons.ObjectBrowser.Sorted);
     }
 
