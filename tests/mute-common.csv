@@ -51,6 +51,7 @@ org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildEr
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Custom.testBuildError2Levels, Since dc8240c24ebd-ab79c3e0a06f0 Function has several compatible actual declarations in modules
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testMixedInheritance, Different clean up
 org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_8170, KT-36459
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, Broken between 20 nov and 10 dec
