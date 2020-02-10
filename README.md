@@ -1,5 +1,7 @@
 # kotlin-power-assert
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bnorm.power/kotlin-power-assert/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bnorm.power/kotlin-power-assert)
+
 Kotlin Compiler Plugin which high-jacks Kotlin assert function calls and
 transforms them similar to [Groovy's Power Assert feature][groovy-power-assert].
 This plugin uses the new IR backend for the Kotlin compiler.
@@ -49,6 +51,17 @@ assert(hello.length == "World".substring(1, 4).length)
 	at <stacktrace>
 ```
 
+## Gradle Plugin
+
+Builds of the Gradle plugin are available through the
+[Gradle Plugin Portal][kotlin-power-assert-gradle].
+
+```groovy
+plugins {
+  id "com.bnorm.power.kotlin-power-assert" version "0.1.0"
+}
+```
+
 ## Kotlin IR
 
 Using this compiler plugin only works if the code is compiled using IR. This can
@@ -60,34 +73,6 @@ compileTestKotlin {
     kotlinOptions {
         useIR = true
     }
-}
-```
-
-## Project Snapshots
-
-Snapshot builds of the Kotlin compiler plugin are available through Sonatype
-Snapshot repository. Builds of the Gradle plugin are also available through the
-[Gradle Plugin Portal][kotlin-power-assert-gradle].
-
-```groovy
-buildscript {
-  repositories {
-    maven {
-      url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-  }
-  dependencies {
-    classpath "com.bnorm.power:kotlin-power-assert-gradle:0.1.0-SNAPSHOT"
-  }
-}
-
-apply plugin: "com.bnorm.power.kotlin-power-assert"
-
-repositories {
-  // Required to find Kotlin compiler plugin as it is not bundled with Gradle plugin
-  maven {
-    url "https://oss.sonatype.org/content/repositories/snapshots"
-  }
 }
 ```
 
