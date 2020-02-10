@@ -193,7 +193,7 @@ internal object Devirtualization {
                     symbolTable.mapClassReferenceType(context.irBuiltIns.anyClass.owner), 1, "Array\$Item")
             val functions = mutableMapOf<DataFlowIR.FunctionSymbol, Function>()
             val concreteClasses = mutableMapOf<DataFlowIR.Type.Declared, Node>()
-            val externalFunctions = mutableMapOf<DataFlowIR.FunctionSymbol, Node>()
+            val externalFunctions = mutableMapOf<Pair<DataFlowIR.FunctionSymbol, DataFlowIR.Type>, Node>()
             val fields = mutableMapOf<DataFlowIR.Field, Node>() // Do not distinguish receivers.
             val virtualCallSiteReceivers = mutableMapOf<DataFlowIR.Node.VirtualCall, VirtualCallSiteReceivers>()
 
@@ -1019,7 +1019,7 @@ internal object Devirtualization {
                     val resolvedCallee = callee.resolved()
                     val calleeConstraintGraph = createFunctionConstraintGraph(resolvedCallee, false)
                     return if (calleeConstraintGraph == null) {
-                        constraintGraph.externalFunctions.getOrPut(resolvedCallee) {
+                        constraintGraph.externalFunctions.getOrPut(resolvedCallee to returnType) {
                             val fictitiousReturnNode = ordinaryNode { "External$resolvedCallee" }
                             if (returnType.isFinal)
                                 concreteClass(returnType).addEdge(fictitiousReturnNode)
