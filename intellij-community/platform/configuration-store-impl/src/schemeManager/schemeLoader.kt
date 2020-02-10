@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.schemeManager
 
 import com.intellij.configurationStore.*
@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.options.NonLazySchemeProcessor
 import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.util.JDOMUtil
+import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
@@ -15,7 +16,6 @@ import gnu.trove.THashSet
 import org.jdom.Element
 import org.xmlpull.mxp1.MXParser
 import org.xmlpull.v1.XmlPullParser
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Path
@@ -179,8 +179,8 @@ internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManag
     }
     else {
       val element = when (preloadedBytes) {
-        null -> JDOMUtil.load(input!!.bufferedReader())
-        else -> JDOMUtil.load(ByteArrayInputStream(preloadedBytes))
+        null -> JDOMUtil.load(CharsetToolkit.inputStreamSkippingBOM(input!!.buffered()))
+        else -> JDOMUtil.load(CharsetToolkit.inputStreamSkippingBOM(preloadedBytes.inputStream()))
       }
       scheme = (processor as NonLazySchemeProcessor).readScheme(element, isDuringLoad) ?: return null
       val schemeKey = processor.getSchemeKey(scheme!!)
