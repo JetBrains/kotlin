@@ -8,6 +8,7 @@ import com.intellij.model.search.PsiSymbolDeclarationSearchParameters
 import com.intellij.model.search.PsiSymbolDeclarationSearcher
 import com.intellij.pom.PomTargetPsiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiTarget
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
@@ -23,21 +24,30 @@ class PsiElementDeclarationSearcher : PsiSymbolDeclarationSearcher {
   }
 
   private fun getDeclaration(psi: PsiElement, searchScope: SearchScope): PsiSymbolDeclaration? {
-    if (psi is PomTargetPsiElement) {
-      val target = psi.target
-      if (target is PsiTarget) {
-        val navigationElement = target.navigationElement
-        if (navigationElement in searchScope) {
-          return PsiElement2Declaration.createFromPom(target, navigationElement)
-        }
-      }
-      return null
+    return when (psi) {
+      is PsiFile -> null // files don't have declarations inside PSI
+      is PomTargetPsiElement -> fromPomTargetElement(psi, searchScope)
+      else -> fromPsiElement(psi, searchScope)
+    }
+  }
+
+  private fun fromPomTargetElement(psi: PomTargetPsiElement, searchScope: SearchScope): PsiSymbolDeclaration? {
+    val target = psi.target as? PsiTarget ?: return null
+    val navigationElement = target.navigationElement
+    if (navigationElement in searchScope) {
+      return PsiElement2Declaration.createFromPom(target, navigationElement)
     }
     else {
-      if (psi !in searchScope) {
-        return null
-      }
+      return null
+    }
+  }
+
+  private fun fromPsiElement(psi: PsiElement, searchScope: SearchScope): PsiSymbolDeclaration? {
+    if (psi in searchScope) {
       return PsiElement2Declaration.createFromPsi(psi, psi)
+    }
+    else {
+      return null
     }
   }
 
