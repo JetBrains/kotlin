@@ -44,17 +44,14 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         }
 
         project.pluginManager.withPlugin("kotlin-multiplatform") {
-            project.afterEvaluate {
-                val kotlin = it.extensions.getByName("kotlin") as KotlinMultiplatformExtension
-                val javaTargets = kotlin.targets.filter {
-                    it.platformType == KotlinPlatformType.jvm
-                            || it.platformType == KotlinPlatformType.androidJvm
-                }
-
-                javaTargets.flatMap { it.compilations }.filter {
-                    it.compilationName == "main"
-                }.forEach {
+            val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+            kotlin.targets.matching {
+                it.platformType == KotlinPlatformType.jvm
+                        || it.platformType == KotlinPlatformType.androidJvm
+            }.all { target ->
+                target.compilations.matching { it.name == "main" }.all {
                     project.configureMultiplatformProject(it)
+
                 }
             }
         }
