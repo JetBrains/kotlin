@@ -19,11 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class CompilationException extends Exception {
-
-  private final Collection<Message> myMessages;
+  private final Collection<? extends Message> myMessages;
 
   public static class Message {
     @NotNull
@@ -34,10 +32,6 @@ public class CompilationException extends Exception {
     private final String myUrl;
     private final int myLine;
     private final int myColumn;
-
-    public Message(CompilerMessageCategory category, String message) {
-      this(category, message, null, -1, -1);
-    }
 
     public Message(@NotNull CompilerMessageCategory category, @NotNull String message, @Nullable String url, int line, int column) {
       myCategory = category;
@@ -71,17 +65,13 @@ public class CompilationException extends Exception {
     }
   }
 
-  public CompilationException(String message) {
-    this(message, Collections.emptyList());
-  }
-
-  public CompilationException(String message, Collection<Message> messages) {
+  public CompilationException(@NotNull String message, @NotNull Collection<? extends Message> messages) {
     super(message);
     myMessages = messages;
   }
 
   @NotNull
-  public Collection<Message> getMessages() {
+  public Collection<? extends Message> getMessages() {
     return myMessages;
   }
 }
