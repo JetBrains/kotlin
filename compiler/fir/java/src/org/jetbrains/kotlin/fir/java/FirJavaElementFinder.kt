@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 
@@ -68,8 +66,7 @@ class FirJavaElementFinder(
             firProvider.getFirClassifierByFqName(classId) as? FirRegularClass
                 ?: return null
 
-        val ktFile = firClass.psi?.containingFile as? KtFile ?: return null
-        val fileStub = createJavaFileStub(classId.packageFqName, listOf(ktFile))
+        val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
 
         return buildStub(firClass, fileStub).psi
     }
@@ -187,20 +184,16 @@ private fun newTypeParameterList(parent: StubElement<*>, parameters: List<Pair<S
     }
 }
 
-private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
+private fun createJavaFileStub(packageFqName: FqName, psiManager: PsiManager): PsiJavaFileStub {
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
 
-    val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
+    val fakeFile = object : ClsFileImpl(DummyHolderViewProvider(psiManager)) {
         override fun getStub() = javaFileStub
 
         override fun getPackageName() = packageFqName.asString()
 
         override fun isPhysical() = false
-
-        override fun getText(): String {
-            return files.singleOrNull()?.text ?: super.getText()
-        }
     }
 
     javaFileStub.psi = fakeFile
