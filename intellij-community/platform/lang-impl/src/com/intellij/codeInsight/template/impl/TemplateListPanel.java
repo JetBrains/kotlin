@@ -850,9 +850,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
       newGroup = new TemplateGroup(template.getGroupName());
       insertNewGroup(newGroup);
     }
-    if (!newGroup.contains(template)) {
-      newGroup.addElement(template);
-    }
+    newGroup.addElement(template);
 
     CheckedTreeNode node = new CheckedTreeNode(template);
     node.setChecked(!template.isDeactivated());

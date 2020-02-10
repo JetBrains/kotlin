@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -37,9 +36,7 @@ public class CompoundScheme<E extends SchemeElement> implements ExternalizableSc
   }
 
   public final void addElement(E t) {
-    if (!contains(t)) {
-      myElements.add(t);
-    }
+    myElements.add(t);
   }
 
   @NotNull
@@ -65,12 +62,7 @@ public class CompoundScheme<E extends SchemeElement> implements ExternalizableSc
   }
 
   public final void removeElement(final E template) {
-    for (Iterator<E> templateIterator = myElements.iterator(); templateIterator.hasNext();) {
-      E t = templateIterator.next();
-      if (t.getKey() != null && t.getKey().equals(template.getKey())) {
-        templateIterator.remove();
-      }
-    }
+    myElements.remove(template);
   }
 
   public final boolean isEmpty() {
@@ -110,14 +102,8 @@ public class CompoundScheme<E extends SchemeElement> implements ExternalizableSc
     }
   }
 
-  public boolean contains(@NotNull E element) {
-    for (E t : myElements) {
-      String key = t.getKey();
-      if (key != null && key.equals(element.getKey())) {
-        return true;
-      }
-    }
-    return false;
+  public boolean containsElement(@NotNull String key) {
+    return ContainerUtil.exists(myElements, e -> key.equals(e.getKey()));
   }
 
   public static final class MutatorHelper<T extends CompoundScheme<E>, E extends SchemeElement> {

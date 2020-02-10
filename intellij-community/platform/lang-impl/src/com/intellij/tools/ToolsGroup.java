@@ -8,21 +8,15 @@ public final class ToolsGroup<T extends Tool> extends CompoundScheme<T> {
     super(name);
   }
 
-  public void moveElementUp(final T tool) {
+  void moveElementUp(T tool) {
     int index = myElements.indexOf(tool);
-    removeElement(tool);
-    insertElement(tool, index - 1);
+    myElements.remove(index);
+    myElements.add(index - 1, tool);
   }
 
-  public void moveElementDown(final T tool) {
+  void moveElementDown(T tool) {
     int index = myElements.indexOf(tool);
-    removeElement(tool);
-    insertElement(tool, index + 1);
-  }
-
-  public void insertElement(T element, final int i) {
-    if (!contains(element)) {
-      myElements.add(i, element);
-    }
+    myElements.remove(index);
+    myElements.add(index + 1, tool);
   }
 }
