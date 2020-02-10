@@ -176,7 +176,7 @@ class KotlinPluginUpdater : Disposable {
     }
 
     private fun initPluginDescriptor(newVersion: String): IdeaPluginDescriptor {
-        val originalPlugin = PluginManager.getPlugin(KotlinPluginUtil.KOTLIN_PLUGIN_ID)!!
+        val originalPlugin = PluginManagerCore.getPlugin(KotlinPluginUtil.KOTLIN_PLUGIN_ID)!!
         return PluginNode(KotlinPluginUtil.KOTLIN_PLUGIN_ID).apply {
             version = newVersion
             name = originalPlugin.name

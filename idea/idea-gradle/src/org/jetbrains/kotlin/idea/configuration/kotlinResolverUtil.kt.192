@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
@@ -19,8 +19,7 @@ const val NATIVE_DEBUG_ID = "com.intellij.nativeDebug"
 
 fun suggestNativeDebug(projectPath: String) {
     if (!PlatformUtils.isIdeaUltimate() ||
-        PluginManagerCore.isPluginInstalled(PluginId.getId(NATIVE_DEBUG_ID))
-    ) {
+        PluginManager.isPluginInstalled(PluginId.getId(NATIVE_DEBUG_ID))) {
         return
     }
 

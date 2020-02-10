@@ -9,7 +9,7 @@ import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.junit.JUnitConfigurationProducer
 import com.intellij.execution.testframework.AbstractPatternBasedConfigurationProducer
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId.getId
 import com.intellij.openapi.util.component1
 import com.intellij.openapi.util.component2
@@ -20,7 +20,7 @@ private val isJUnitEnabled by lazy { isPluginEnabled("JUnit") }
 private val isTestNgEnabled by lazy { isPluginEnabled("TestNG-J") }
 
 private fun isPluginEnabled(id: String): Boolean {
-    return PluginManager.isPluginInstalled(getId(id)) && !PluginManager.isDisabled(id)
+    return PluginManagerCore.isPluginInstalled(getId(id)) && !PluginManagerCore.isDisabled(id)
 }
 
 internal fun ConfigurationFromContext.isJpsJunitConfiguration(): Boolean {
