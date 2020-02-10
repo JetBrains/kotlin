@@ -1,0 +1,11 @@
+8 override var prop: Int = <bold>0</bold>
+13 	val <bold>v = c.prop</bold>
+13 		val v = <bold>c.prop</bold>
+8 			override var <bold>prop: Int = 0</bold>
+8 				override var prop: Int = <bold>0</bold>
+
+12 i.prop = <bold>10</bold>
+13 	val <bold>v = c.prop</bold>
+13 		val v = <bold>c.prop</bold>
+8 			override var <bold>prop: Int = 0</bold>
+12 				i.prop = <bold>10</bold>

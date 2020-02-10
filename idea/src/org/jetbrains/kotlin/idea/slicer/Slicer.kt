@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
-import com.intellij.analysis.AnalysisScope
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
@@ -106,19 +105,7 @@ abstract class Slicer(
             it.namedUnwrappedElement?.processor()
         }
     }
-
-    protected fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor: PsiElement.() -> Unit) {
-        processor()
-        val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
-        DescriptorUtils
-            .getAllOverriddenDescriptors(descriptor)
-            .asSequence()
-            .mapNotNull { it.originalSource.getPsi() }
-            .filter { scope.contains(it) }
-            .toList()
-            .forEach(processor)
-    }
-
+    
     protected enum class AccessKind {
         READ_ONLY, WRITE_ONLY, WRITE_WITH_OPTIONAL_READ, READ_OR_WRITE
     }
@@ -126,19 +113,29 @@ abstract class Slicer(
     protected fun KtDeclaration.processVariableAccesses(
         scope: SearchScope,
         kind: AccessKind,
-        processor: (UsageInfo) -> Unit
+        usageProcessor: (UsageInfo) -> Unit
     ) {
-        processAllExactUsages(
-            KotlinPropertyFindUsagesOptions(project).apply {
-                isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
-                isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
-                isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
-                isSearchForTextOccurrences = false
-                isSkipImportStatements = true
-                searchScope = scope.intersectWith(useScope)
-            },
-            processor
-        )
+        val allDeclarations = mutableListOf(this)
+        val descriptor = unsafeResolveToDescriptor()
+        if (descriptor is CallableMemberDescriptor) {
+            DescriptorUtils.getAllOverriddenDeclarations(descriptor).mapNotNullTo(allDeclarations) {
+                it.originalSource.getPsi() as? KtDeclaration
+            }
+        }
+
+        for (declaration in allDeclarations) {
+            declaration.processAllExactUsages(
+                KotlinPropertyFindUsagesOptions(project).apply {
+                    isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
+                    isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+                    isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+                    isSearchForTextOccurrences = false
+                    isSkipImportStatements = true
+                    searchScope = scope.intersectWith(declaration.useScope)
+                },
+                usageProcessor
+            )
+        }
     }
 
     protected fun KtParameter.canProcess() = !isVarArg

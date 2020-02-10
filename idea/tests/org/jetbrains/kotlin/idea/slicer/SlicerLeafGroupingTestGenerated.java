@@ -243,6 +243,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         runTest("idea/testData/slicer/inflow/overrideFun.kt");
     }
 
+    @TestMetadata("overrideProperty.kt")
+    public void testOverrideProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideProperty.kt");
+    }
+
     @TestMetadata("overridingFunctionResult.kt")
     public void testOverridingFunctionResult() throws Exception {
         runTest("idea/testData/slicer/inflow/overridingFunctionResult.kt");
@@ -271,6 +276,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("primaryConstructorParameterWithDefault.kt")
     public void testPrimaryConstructorParameterWithDefault() throws Exception {
         runTest("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
+    }
+
+    @TestMetadata("propertyInInterface.kt")
+    public void testPropertyInInterface() throws Exception {
+        runTest("idea/testData/slicer/inflow/propertyInInterface.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForQualifiedRef.kt")

@@ -48,9 +48,7 @@ class InflowSlicer(
     private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
     private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
-        processVariableAccesses(accessSearchScope,
-                                AccessKind.WRITE_WITH_OPTIONAL_READ
-        ) body@{
+        processVariableAccesses(accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@{
             val refElement = it.element ?: return@body
             val refParent = refElement.parent
 

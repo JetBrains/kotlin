@@ -21,26 +21,24 @@ class OutflowSlicer(
     processor: Processor<SliceUsage>,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
-    private fun KtDeclaration.processVariable() {
-        processHierarchyUpward(parentUsage.scope) {
-            if (this is KtParameter && !canProcess()) return@processHierarchyUpward
+    private fun KtCallableDeclaration.processVariable() {
+        if (this is KtParameter && !canProcess()) return
 
-            val withDereferences = parentUsage.params.showInstanceDereferences
-            val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
-            (this as? KtDeclaration)?.processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@{
-                val refElement = it.element
-                if (refElement !is KtExpression) {
-                    refElement?.passToProcessor()
-                    return@body
-                }
+        val withDereferences = parentUsage.params.showInstanceDereferences
+        val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
+        processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@{
+            val refElement = it.element
+            if (refElement !is KtExpression) {
+                refElement?.passToProcessor()
+                return@body
+            }
 
-                val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
-                if (withDereferences) {
-                    refExpression.processDereferences()
-                }
-                if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == ReadWriteAccessDetector.Access.Read) {
-                    refExpression.passToProcessor()
-                }
+            val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
+            if (withDereferences) {
+                refExpression.processDereferences()
+            }
+            if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == ReadWriteAccessDetector.Access.Read) {
+                refExpression.passToProcessor()
             }
         }
     }
@@ -152,7 +150,8 @@ class OutflowSlicer(
         if (parentUsage.forcedExpressionMode) return element.processExpression()
 
         when (element) {
-            is KtProperty, is KtParameter -> (element as KtDeclaration).processVariable()
+            is KtProperty -> element.processVariable()
+            is KtParameter -> element.processVariable()
             is KtFunction -> element.processFunction()
             is KtPropertyAccessor -> if (element.isGetter) {
                 element.property.processVariable()

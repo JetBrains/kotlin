@@ -243,6 +243,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         runTest("idea/testData/slicer/inflow/overrideFun.kt");
     }
 
+    @TestMetadata("inflow/overrideProperty.kt")
+    public void testInflow_OverrideProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideProperty.kt");
+    }
+
     @TestMetadata("inflow/overridingFunctionResult.kt")
     public void testInflow_OverridingFunctionResult() throws Exception {
         runTest("idea/testData/slicer/inflow/overridingFunctionResult.kt");
@@ -271,6 +276,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     @TestMetadata("inflow/primaryConstructorParameterWithDefault.kt")
     public void testInflow_PrimaryConstructorParameterWithDefault() throws Exception {
         runTest("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
+    }
+
+    @TestMetadata("inflow/propertyInInterface.kt")
+    public void testInflow_PropertyInInterface() throws Exception {
+        runTest("idea/testData/slicer/inflow/propertyInInterface.kt");
     }
 
     @TestMetadata("inflow/qualifiedAssignmentsForQualifiedRef.kt")
