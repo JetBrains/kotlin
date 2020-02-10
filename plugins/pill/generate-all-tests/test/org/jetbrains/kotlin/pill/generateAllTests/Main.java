@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.generators.tests.*;
 
 public class Main {
     public static void main(String[] args) {
-        GenerateCompilerTestsKt.main();
+        GenerateCompilerTestsKt.main(args);
         GenerateTestsKt.main(args);
         GenerateJsTestsKt.main(args);
         GenerateJava8TestsKt.main(args);
