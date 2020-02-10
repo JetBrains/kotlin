@@ -123,7 +123,7 @@ class OutflowSlicer(
         return if (callee == this) callableRef else null
     }
 
-    private fun processDereferenceIsNeeded(
+    private fun processDereferenceIfNeeded(
         expression: KtExpression,
         pseudoValue: PseudoValue,
         instr: InstructionWithReceivers
@@ -157,8 +157,8 @@ class OutflowSlicer(
     private fun KtExpression.processDereferences() {
         processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
-                is ReadValueInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
-                is CallInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
+                is ReadValueInstruction -> processDereferenceIfNeeded(this, pseudoValue, instr)
+                is CallInstruction -> processDereferenceIfNeeded(this, pseudoValue, instr)
             }
         }
     }
