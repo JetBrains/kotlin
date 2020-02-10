@@ -161,11 +161,6 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
     return IdeBundle.message("title.cannot.create.file");
   }
 
-  @Override
-  protected String getCommandName() {
-    return IdeBundle.message("command.create.file");
-  }
-
   protected String getFileName(String newName) {
     if (getDefaultExtension() == null || FileUtilRt.getExtension(newName).length() > 0) {
       return newName;
