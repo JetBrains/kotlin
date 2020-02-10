@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -66,15 +67,15 @@ class JavaClassUseSiteMemberScope(
             }
         }
         overrideCandidates += functionSymbol
-        val accessorProperty = FirSyntheticProperty(
-            session, syntheticPropertyName,
+        return buildSyntheticProperty {
+            session = this@JavaClassUseSiteMemberScope.session
+            name = syntheticPropertyName
             symbol = FirAccessorSymbol(
                 accessorId = functionSymbol.callableId,
                 callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, syntheticPropertyName)
-            ),
+            )
             delegateGetter = fir
-        )
-        return accessorProperty.symbol
+        }.symbol
     }
 
     private fun processAccessorFunctionsAndPropertiesByName(

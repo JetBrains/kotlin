@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -65,15 +66,16 @@ class FirSyntheticPropertiesScope(
             })
         }
 
-        val property = FirSyntheticProperty(
-            session, propertyName,
+        val property = buildSyntheticProperty {
+            session = this@FirSyntheticPropertiesScope.session
+            name = propertyName
             symbol = SyntheticPropertySymbol(
                 accessorId = getterSymbol.callableId,
                 callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, propertyName)
-            ),
-            delegateGetter = getter,
+            )
+            delegateGetter = getter
             delegateSetter = matchingSetter
-        )
+        }
         processor(property.symbol)
     }
 

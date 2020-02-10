@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -333,10 +334,12 @@ class FirClassSubstitutionScope(
             val function = createFakeOverrideFunction(
                 functionSymbol, session, baseProperty.getter.delegate, null, newReturnType, newParameterTypes
             )
-            val property = FirSyntheticProperty(
-                session, baseProperty.name, FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId), function
-            )
-            return property.symbol
+            return buildSyntheticProperty {
+                this.session = session
+                name = baseProperty.name
+                symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
+                delegateGetter = function
+            }.symbol
         }
     }
 }

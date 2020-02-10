@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -110,11 +111,12 @@ class JavaClassEnhancementScope(
                 val enhancedFunctionSymbol = enhanceMethod(
                     firElement.getter.delegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
                 )
-                val enhancedProperty = FirSyntheticProperty(
-                    session, name, FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId),
-                    enhancedFunctionSymbol.fir as FirSimpleFunction
-                )
-                return enhancedProperty.symbol
+                return buildSyntheticProperty {
+                    session = this@JavaClassEnhancementScope.session
+                    this.name = name
+                    symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
+                    delegateGetter = enhancedFunctionSymbol.fir as FirSimpleFunction
+                }.symbol
             }
             else -> {
                 if (original is FirPropertySymbol || original is FirAccessorSymbol) return original
