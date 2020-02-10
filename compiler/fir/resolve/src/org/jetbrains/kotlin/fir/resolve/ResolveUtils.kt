@@ -98,9 +98,15 @@ fun ConeClassLikeType.directExpansionType(
         .toSymbol(useSiteSession)
         ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return null
 
-    val resultType = expandedConeType(typeAlias) ?: return null
+    val resultType = expandedConeType(typeAlias)?.applyNullabilityFrom(this) ?: return null
+
     if (resultType.typeArguments.isEmpty()) return resultType
     return mapTypeAliasArguments(typeAlias, this, resultType) as? ConeClassLikeType
+}
+
+private fun ConeClassLikeType.applyNullabilityFrom(abbreviation: ConeClassLikeType): ConeClassLikeType {
+    if (abbreviation.isMarkedNullable) return withNullability(ConeNullability.NULLABLE)
+    return this
 }
 
 private fun mapTypeAliasArguments(

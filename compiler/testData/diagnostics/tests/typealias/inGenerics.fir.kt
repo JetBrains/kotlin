@@ -9,4 +9,4 @@ val ms: MyString = "MyString"
 val msn: MyString? = null
 
 val msc: MyStringContainer = Container(ms)
-val msc1 = <!INAPPLICABLE_CANDIDATE!>MyStringContainer<!>(null)
+val msc1 = MyStringContainer(null)

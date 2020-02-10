@@ -78,6 +78,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/concurrent.kt");
     }
 
+    @TestMetadata("concurrentMapOfAliases.kt")
+    public void testConcurrentMapOfAliases() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/concurrentMapOfAliases.kt");
+    }
+
     @TestMetadata("emptyArray.kt")
     public void testEmptyArray() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/emptyArray.kt");
