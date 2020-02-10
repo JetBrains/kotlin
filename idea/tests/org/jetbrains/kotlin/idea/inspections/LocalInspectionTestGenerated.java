@@ -13019,6 +13019,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousDeeply.kt");
         }
 
+        @TestMetadata("inAnonymousDeeplyInTopLevel.kt")
+        public void testInAnonymousDeeplyInTopLevel() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousDeeplyInTopLevel.kt");
+        }
+
+        @TestMetadata("inAnonymousInCompanion.kt")
+        public void testInAnonymousInCompanion() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousInCompanion.kt");
+        }
+
+        @TestMetadata("inAnonymousInTopLovel.kt")
+        public void testInAnonymousInTopLovel() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousInTopLovel.kt");
+        }
+
         @TestMetadata("inAnonymousRunWrapped.kt")
         public void testInAnonymousRunWrapped() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousRunWrapped.kt");
