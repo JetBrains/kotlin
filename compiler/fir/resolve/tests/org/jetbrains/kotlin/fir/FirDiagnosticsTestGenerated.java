@@ -689,6 +689,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
         }
 
+        @TestMetadata("syntheticInImplicitBody.kt")
+        public void testSyntheticInImplicitBody() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/syntheticInImplicitBody.kt");
+        }
+
         @TestMetadata("syntheticSmartCast.kt")
         public void testSyntheticSmartCast() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/syntheticSmartCast.kt");

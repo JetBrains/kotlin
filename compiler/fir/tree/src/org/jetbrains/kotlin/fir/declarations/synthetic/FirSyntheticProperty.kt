@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.declarations.synthetic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -24,12 +23,12 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class FirSyntheticProperty(
     override val session: FirSession,
-    override val returnTypeRef: FirTypeRef,
+    override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val isVar: Boolean,
     override val symbol: FirAccessorSymbol,
     override val status: FirDeclarationStatus,
-    override val resolvePhase: FirResolvePhase,
+    override var resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null
 ) : FirProperty() {
@@ -114,11 +113,11 @@ class FirSyntheticProperty(
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        throw AssertionError("Mutation of synthetic property isn't supported")
+        resolvePhase = newResolvePhase
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
-        throw AssertionError("Mutation of synthetic property isn't supported")
+        returnTypeRef = newReturnTypeRef
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {

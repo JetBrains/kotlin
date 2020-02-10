@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -75,6 +76,11 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
+        if (property is FirSyntheticProperty) {
+            transformSimpleFunction(property.getter.delegate, data)
+            property.replaceReturnTypeRef(property.getter.delegate.returnTypeRef)
+            return property.compose()
+        }
         return withScopeCleanup(topLevelScopes) {
             prepareTypeParameterOwnerForBodyResolve(property)
             if (property.isLocal) {
