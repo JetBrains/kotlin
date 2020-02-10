@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -160,14 +159,6 @@ internal val dcePhase = makeKonanModuleOpPhase(
                     if (declaration.parentAsClass.name.asString() == InteropFqNames.nativePointedName && declaration.isPrimary)
                         referencedFunctions.add(declaration)
                     super.visitConstructor(declaration)
-                }
-
-                override fun visitClass(declaration: IrClass) {
-                    context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
-                        assert (it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                        referencedFunctions.add(it.constructors.single())
-                    }
-                    super.visitClass(declaration)
                 }
             })
 
