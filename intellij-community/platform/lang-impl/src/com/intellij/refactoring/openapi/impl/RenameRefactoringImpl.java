@@ -57,7 +57,7 @@ public class RenameRefactoringImpl extends RefactoringImpl<RenameProcessor> impl
   }
 
   @Override
-  public void addAutomaticRenames() {
+  public void respectEnabledAutomaticRenames() {
     for (AutomaticRenamerFactory factory : AutomaticRenamerFactory.EP_NAME.getExtensionList()) {
       if (factory.isEnabled() && getElements().stream().anyMatch(element -> factory.isApplicable(element))) {
         myProcessor.addRenamerFactory(factory);
