@@ -9,6 +9,6 @@ class Main {
     private val x: I
     init {
         x = s()
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
 }

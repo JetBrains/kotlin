@@ -218,6 +218,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/simpleIf.kt");
         }
 
+        @TestMetadata("smartCastInInit.kt")
+        public void testSmartCastInInit() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartCastInInit.kt");
+        }
+
         @TestMetadata("smartcastAfterReassignment.kt")
         public void testSmartcastAfterReassignment() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastAfterReassignment.kt");

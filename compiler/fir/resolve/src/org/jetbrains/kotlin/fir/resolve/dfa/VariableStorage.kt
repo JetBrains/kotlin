@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -38,7 +35,7 @@ class VariableStorage {
         fir: FirElement,
     ): Identifier {
         return localVariableAliases[symbol] ?: run {
-            val expression = fir as? FirQualifiedAccessExpression
+            val expression = fir as? FirQualifiedAccess
             Identifier(
                 symbol,
                 expression?.dispatchReceiver?.takeIf { it != FirNoReceiverExpression }?.let(this::getOrCreateVariable),
@@ -53,9 +50,11 @@ class VariableStorage {
     private fun createRealVariableInternal(identifier: Identifier, originalFir: FirElement): RealVariable {
         val receiver: FirExpression?
         val isThisReference: Boolean
-        val expression = when (originalFir) {
+        val expression: FirQualifiedAccess? = when (originalFir) {
             is FirQualifiedAccessExpression -> originalFir
             is FirWhenSubjectExpression -> originalFir.whenSubject.whenExpression.subject as? FirQualifiedAccessExpression
+            is FirVariableAssignment -> originalFir
+            is FirArraySetCall -> originalFir
             else -> null
         }
 

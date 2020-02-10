@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ClassDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
@@ -629,14 +630,23 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitConstExpresion(constExpression).mergeIncomingFlow()
     }
 
-    fun exitVariableDeclaration(variable: FirProperty) {
+    fun exitLocalVariableDeclaration(variable: FirProperty) {
         val node = graphBuilder.exitVariableDeclaration(variable).mergeIncomingFlow()
         val initializer = variable.initializer ?: return
-        exitVariableInitialization(node, initializer, variable, isVariableDeclaration = true)
+        exitVariableInitialization(node, initializer, variable, assignment = null)
     }
 
-    private fun exitVariableInitialization(node: CFGNode<*>, initializer: FirExpression, variable: FirProperty, isVariableDeclaration: Boolean) {
-        var propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, variable)
+    fun exitVariableAssignment(assignment: FirVariableAssignment) {
+        val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
+        val property = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty ?: return
+        // TODO: add unstable smartcast
+        if (!property.isLocal && property.isVar) return
+        exitVariableInitialization(node, assignment.rValue, property, assignment)
+    }
+
+    private fun exitVariableInitialization(node: CFGNode<*>, initializer: FirExpression, variable: FirProperty, assignment: FirVariableAssignment?) {
+        var propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, assignment ?: variable)
+        val isVariableDeclaration = assignment == null
         if (!isVariableDeclaration) {
             // Don't remove statements for variable under alias
             if (propertyVariable.identifier.symbol == variable.symbol) {
@@ -644,7 +654,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             } else {
                 variableStorage.unboundPossiblyAliasedVariable(variable.symbol)
                 // We should create new dataFlowVariable for local variable without alias
-                propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, variable)
+                propertyVariable = variableStorage.getOrCreateRealVariable(variable.symbol, assignment ?: variable)
             }
         }
 
@@ -674,12 +684,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitVariableAssignment(assignment: FirVariableAssignment) {
-        val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
-        val property = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty ?: return //error("left side of assignment should have symbol")
-        if (!property.isLocal) return
-        exitVariableInitialization(node, assignment.rValue, property, isVariableDeclaration = false)
-    }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {
         graphBuilder.exitThrowExceptionNode(throwExpression).mergeIncomingFlow()

@@ -18,7 +18,7 @@ FILE: smartCastInInit.kt
 
         init {
             this@R|/Main|.R|/Main.x| = R|/s|()
-            this@R|/Main|.R|/Main.x|.<Unresolved name: foo>#()
+            this@R|/Main|.R|/Main.x|.R|/S.foo|()
         }
 
     }

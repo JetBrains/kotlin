@@ -129,7 +129,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         variable.transformAccessors()
         localScopes.lastOrNull()?.storeVariable(variable)
         variable.replaceResolvePhase(transformerPhase)
-        dataFlowAnalyzer.exitVariableDeclaration(variable)
+        dataFlowAnalyzer.exitLocalVariableDeclaration(variable)
         return variable.compose()
     }
 
