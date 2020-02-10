@@ -16,8 +16,8 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
         // Important: the order of entries affects that order of tasks execution
         INFORMATIONAL,
         COMMONIZATION(
-            prologue = "Kotlin KLIB commonizer: Please wait while processing libraries.",
-            epilogue = "Kotlin KLIB commonizer: Done.\n",
+            prologue = "\nKotlin KLIB commonizer: Please wait while preparing libraries.",
+            epilogue = "\n",
             logEachStep = true
         )
     }
