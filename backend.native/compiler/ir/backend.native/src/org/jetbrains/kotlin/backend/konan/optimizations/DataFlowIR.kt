@@ -307,7 +307,7 @@ internal object DataFlowIR {
 
                 is Node.StaticCall -> {
                     val result = StringBuilder()
-                    result.appendln("        STATIC CALL ${node.callee}")
+                    result.appendln("        STATIC CALL ${node.callee}. Return type = ${node.returnType}")
                     node.arguments.forEach {
                         result.append("            ARG #${ids[it.node]!!}")
                         if (it.castToType == null)
@@ -320,7 +320,7 @@ internal object DataFlowIR {
 
                 is Node.VtableCall -> {
                     val result = StringBuilder()
-                    result.appendln("        VIRTUAL CALL ${node.callee}")
+                    result.appendln("        VIRTUAL CALL ${node.callee}. Return type = ${node.returnType}")
                     result.appendln("            RECEIVER: ${node.receiverType}")
                     result.appendln("            VTABLE INDEX: ${node.calleeVtableIndex}")
                     node.arguments.forEach {
@@ -335,7 +335,7 @@ internal object DataFlowIR {
 
                 is Node.ItableCall -> {
                     val result = StringBuilder()
-                    result.appendln("        INTERFACE CALL ${node.callee}")
+                    result.appendln("        INTERFACE CALL ${node.callee}. Return type = ${node.returnType}")
                     result.appendln("            RECEIVER: ${node.receiverType}")
                     result.appendln("            METHOD HASH: ${node.calleeHash}")
                     node.arguments.forEach {
