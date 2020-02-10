@@ -120,7 +120,6 @@ class ModulesToIRsConverter(
             modulePath,
             dependenciesIRs,
             module.template,
-            module.configurator.moduleType,
             module,
             module.sourcesets.map { sourceset ->
                 SingleplatformSourcesetIR(
@@ -210,7 +209,6 @@ class ModulesToIRsConverter(
             target.name,
             modulePath,
             with(target.configurator) { createModuleIRs(data, target) },
-            target.configurator.moduleType,
             target.template,
             target,
             sourcesetss

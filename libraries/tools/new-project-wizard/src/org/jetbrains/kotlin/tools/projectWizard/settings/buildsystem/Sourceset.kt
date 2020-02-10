@@ -35,7 +35,6 @@ data class PathBasedSourcesetDependency(val path: ModulePath) : SourcesetDepende
 // A `main` or `test` sourceset for single or multiplatform projects
 class Sourceset(
     val sourcesetType: SourcesetType,
-    val containingModuleType: ModuleType,
     var dependencies: List<SourcesetDependency>,
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(sourcesetType.name)
@@ -44,7 +43,7 @@ class Sourceset(
     override val greyText: String? get() = null
 
     companion object {
-        fun parser(moduleType: ModuleType) = mapParser { map, path ->
+        fun parser() = mapParser { map, path ->
             val (sourcesetType) = map.parseValue<SourcesetType>(this, path, "type", enumParser())
             val identificator = GeneratedIdentificator(sourcesetType.name)
             val (dependencies) = map.parseValue(
@@ -54,7 +53,7 @@ class Sourceset(
                 listParser(PathBasedSourcesetDependency.parser)
             ) { emptyList() }
 
-            Sourceset(sourcesetType, moduleType, dependencies, identificator = identificator)
+            Sourceset(sourcesetType, dependencies, identificator = identificator)
         }
     }
 }

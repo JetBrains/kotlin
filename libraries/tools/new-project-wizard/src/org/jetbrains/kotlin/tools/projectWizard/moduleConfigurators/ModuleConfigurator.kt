@@ -184,7 +184,6 @@ val Module.configuratorSettings
 
 interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val moduleKind: ModuleKind
-    val moduleType: ModuleType
     override val text: String
         get() = id
 
@@ -198,7 +197,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
         emptyList()
 
     fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
-        moduleType.correspondingStdlib()
+        safeAs<ModuleConfiguratorWithModuleType>()?.moduleType?.correspondingStdlib()
 
     fun createRootBuildFileIrs(configurationData: ModuleConfigurationData): List<BuildSystemIR> = emptyList()
     fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =

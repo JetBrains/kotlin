@@ -26,7 +26,8 @@ import java.nio.file.Path
 
 object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(),
     SinglePlatformModuleConfigurator,
-    AndroidModuleConfigurator {
+    AndroidModuleConfigurator,
+    ModuleConfiguratorWithModuleType{
     override val moduleType = ModuleType.jvm
     override val id = "android"
     override val suggestedModuleName = "android"

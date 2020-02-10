@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
-interface JSConfigurator : ModuleConfigurator {
+interface JSConfigurator : ModuleConfiguratorWithModuleType {
     override val moduleType: ModuleType get() = ModuleType.js
 }
 

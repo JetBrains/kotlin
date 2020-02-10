@@ -89,7 +89,7 @@ val ModuleType.icon: Icon
 
 val Module.icon: Icon
     get() = when (kind) {
-        ModuleKind.target -> configurator.moduleType.icon
+        ModuleKind.target -> (configurator as TargetConfigurator).moduleType.icon
         ModuleKind.multiplatform -> AllIcons.Nodes.Module
         ModuleKind.singleplatformJs -> KotlinIcons.JS
         ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module

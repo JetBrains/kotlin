@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinArbitraryDependencyIR
@@ -29,7 +30,7 @@ abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
         filter = filter@{ reference, kotlinTestFramework ->
             if (reference !is ModuleConfiguratorSettingReference<*, *>) return@filter true
 
-            val moduleType = reference.module?.configurator?.moduleType
+            val moduleType = reference.module?.configurator?.safeAs<ModuleConfiguratorWithModuleType>()?.moduleType
             kotlinTestFramework.moduleType == moduleType
         }
     }

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -71,7 +72,7 @@ class CreateModuleOrTargetPopup private constructor(
     ) {
         override fun getIconFor(value: DisplayableSettingItem): Icon? = when (value) {
             is DisplayableTargetConfiguratorGroup -> value.moduleType.icon
-            is ModuleConfigurator -> value.moduleType.icon
+            is ModuleConfigurator -> value.moduleType?.icon ?: AllIcons.Nodes.Module
             else -> null
         }
 

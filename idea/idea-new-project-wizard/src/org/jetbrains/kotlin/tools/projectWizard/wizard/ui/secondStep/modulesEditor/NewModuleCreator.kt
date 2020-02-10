@@ -27,7 +27,6 @@ class NewModuleCreator {
         SourcesetType.values().map { sourcesetType ->
             Sourceset(
                 sourcesetType,
-                configurator.moduleType,
                 dependencies = emptyList()
             )
         }
@@ -57,7 +56,6 @@ class NewModuleCreator {
                 else -> SourcesetType.values().map { sourcesetType ->
                     Sourceset(
                         sourcesetType,
-                        ModuleType.jvm,
                         dependencies = emptyList()
                     )
                 }

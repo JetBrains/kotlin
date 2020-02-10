@@ -88,7 +88,6 @@ private fun ModuleType.createDefaultSourcesets() =
     SourcesetType.values().map { sourcesetType ->
         Sourceset(
             sourcesetType,
-            this,
             dependencies = emptyList()
         )
     }
@@ -212,7 +211,7 @@ object AndroidApplication : ProjectTemplate() {
                     AndroidSinglePlatformModuleConfigurator,
                     template = null,
                     sourcesets = SourcesetType.ALL.map { type ->
-                        Sourceset(type, ModuleType.jvm, dependencies = emptyList())
+                        Sourceset(type, dependencies = emptyList())
                     },
                     subModules = emptyList()
                 )
@@ -260,7 +259,7 @@ object JsBrowserApplication : ProjectTemplate() {
                     JsSingleplatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
-                        Sourceset(type, ModuleType.jvm, dependencies = emptyList())
+                        Sourceset(type, dependencies = emptyList())
                     },
                     subModules = emptyList()
                 )

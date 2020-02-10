@@ -98,7 +98,7 @@ class Module(
                 this,
                 path,
                 "sourcesets",
-                listParser(Sourceset.parser(configurator.moduleType))
+                listParser(Sourceset.parser())
             ) { emptyList() }
             val (submodules) = map.parseValue(this, path, "subModules", listParser(Module.parser)) { emptyList() }
             Module(name, kind, configurator, template, sourcesets, submodules, identificator = identificator)

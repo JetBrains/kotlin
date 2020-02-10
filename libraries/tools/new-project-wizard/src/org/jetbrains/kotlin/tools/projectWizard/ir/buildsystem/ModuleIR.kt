@@ -16,7 +16,6 @@ sealed class ModuleIR : IrsOwner, BuildSystemIR {
     abstract val name: String
     abstract val path: Path
     abstract val template: Template?
-    abstract val type: ModuleType
     abstract val originalModule: Module
     abstract val sourcesets: List<SourcesetIR>
 }
@@ -27,7 +26,6 @@ data class SingleplatformModuleIR(
     override val path: Path,
     override val irs: List<BuildSystemIR>,
     override val template: Template?,
-    override val type: ModuleType,
     override val originalModule: Module,
     override val sourcesets: List<SingleplatformSourcesetIR>
 ) : ModuleIR() {
@@ -52,7 +50,6 @@ data class MultiplatformModuleIR(
     override val name: String,
     override val path: Path,
     override val irs: List<BuildSystemIR>,
-    override val type: ModuleType,
     override val template: Template?,
     override val originalModule: Module,
     override val sourcesets: List<MultiplatformSourcesetIR>

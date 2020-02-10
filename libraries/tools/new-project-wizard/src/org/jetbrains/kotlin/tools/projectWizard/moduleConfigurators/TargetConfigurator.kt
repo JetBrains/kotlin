@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
 
-interface TargetConfigurator : ModuleConfigurator {
+interface TargetConfigurator : ModuleConfiguratorWithModuleType {
     override val moduleKind get() = ModuleKind.target
 
     fun canCoexistsWith(other: List<TargetConfigurator>): Boolean = true
