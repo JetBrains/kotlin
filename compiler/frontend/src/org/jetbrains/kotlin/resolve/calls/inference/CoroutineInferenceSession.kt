@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
@@ -90,10 +91,10 @@ class CoroutineInferenceSession(
     }
 
     private fun skipCall(callInfo: SingleCallResolutionResult): Boolean {
-        // FakeCallableDescriptorForObject can't introduce new information for inference, so it's safe to complete it fully
-        if (callInfo.resultCallAtom.candidateDescriptor is FakeCallableDescriptorForObject) return true
-
-        return false
+        // FakeCallableDescriptorForObject and LocalVariableDescriptor can't introduce new information for inference,
+        // so it's safe to complete it fully
+        val descriptor = callInfo.resultCallAtom.candidateDescriptor
+        return descriptor is FakeCallableDescriptorForObject || descriptor is LocalVariableDescriptor
     }
 
     override fun currentConstraintSystem(): ConstraintStorage {
