@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="true" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="33"/>
+      <xy x="20" y="20" width="500" height="34"/>
     </constraints>
     <properties/>
     <clientProperties>
@@ -17,7 +17,7 @@
         </constraints>
         <properties>
           <labelFor value="38432"/>
-          <text value="Add as module to"/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.wizard.add.as.module.to"/>
         </properties>
       </component>
       <component id="38432" class="com.intellij.ui.EditorTextField" binding="myParentPathField" custom-create="true">

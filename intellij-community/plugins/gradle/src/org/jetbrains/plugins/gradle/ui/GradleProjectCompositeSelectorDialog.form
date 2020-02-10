@@ -27,7 +27,7 @@
       <component id="5dd5f" class="com.intellij.ui.components.JBLabel" binding="myDescriptionLbl">
         <constraints border-constraint="North"/>
         <properties>
-          <text value="Please select project participants to include in the gradle composite."/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.composite.selector.description"/>
         </properties>
       </component>
     </children>

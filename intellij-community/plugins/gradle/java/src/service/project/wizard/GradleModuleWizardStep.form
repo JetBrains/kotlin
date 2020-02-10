@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <labelFor value="d7d25"/>
-          <text value="GroupId"/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.wizard.groupid"/>
         </properties>
       </component>
       <component id="bbb74" class="javax.swing.JLabel">
@@ -23,7 +23,7 @@
         </constraints>
         <properties>
           <labelFor value="efb5e"/>
-          <text value="ArtifactId"/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.wizard.artifactid"/>
         </properties>
       </component>
       <component id="4eb56" class="javax.swing.JLabel">
@@ -32,7 +32,7 @@
         </constraints>
         <properties>
           <labelFor value="b1344"/>
-          <text value="Version"/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.wizard.version"/>
         </properties>
       </component>
       <component id="d7d25" class="javax.swing.JTextField" binding="myGroupIdField">
@@ -64,7 +64,7 @@
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Inherit"/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.wizard.inherit"/>
         </properties>
       </component>
       <component id="897ff" class="javax.swing.JCheckBox" binding="myInheritVersionCheckBox">
@@ -72,7 +72,7 @@
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Inherit"/>
+          <text resource-bundle="messages/GradleBundle" key="gradle.settings.wizard.inherit"/>
         </properties>
       </component>
       <grid id="102d8" binding="myAddToPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
