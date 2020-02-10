@@ -106,6 +106,9 @@ object JvmTargetConfigurator : JvmModuleConfigurator(),
     SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
 
+    override val text: String
+        get() = "JVM"
+
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
     override fun ValuesReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
