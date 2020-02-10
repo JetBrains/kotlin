@@ -44,7 +44,7 @@ internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollec
                     )
                 )
             }
-            _diagnostics.add(ScriptDiagnostic(message, mappedSeverity, location?.path, mappedLocation))
+            _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
         }
         parentMessageCollector?.report(severity, message, location)
     }

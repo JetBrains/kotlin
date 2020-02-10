@@ -57,12 +57,14 @@ fun getScriptKtFile(
     return when {
         ktFile == null -> ResultWithDiagnostics.Failure(
             ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
                 message = "Cannot create PSI",
                 severity = ScriptDiagnostic.Severity.ERROR
             )
         )
         ktFile.declarations.firstIsInstanceOrNull<KtScript>() == null -> ResultWithDiagnostics.Failure(
             ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
                 message = "There is not Script",
                 severity = ScriptDiagnostic.Severity.ERROR
             )

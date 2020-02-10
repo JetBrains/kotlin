@@ -44,7 +44,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
-                e.asDiagnostics("Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId)
+                e.asDiagnostics(customMessage = "Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId)
             )
         }
     }
@@ -103,7 +103,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
-                e.asDiagnostics("Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId)
+                e.asDiagnostics(customMessage = "Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId)
             )
         }
     }
