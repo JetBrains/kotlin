@@ -396,6 +396,29 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(Project("hierarchical-mpp-project-dependency")) {
+        publishThirdPartyLib(withGranularMetadata = true)
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
+        projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
+            """
+            import kotlin.test.Test
+                
+            class UseCompileOnlyDependency {
+                @Test
+                fun myTest() = Unit
+            }
+            """.trimIndent()
+        )
+
+        build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testProcessingDependencyDeclaredInNonRootSourceSet() {
         publishThirdPartyLib(withGranularMetadata = true)
 
