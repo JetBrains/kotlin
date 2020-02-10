@@ -12,7 +12,6 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
-import com.intellij.codeInsight.intention.LightEditIntention;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewUnsupportedOperationException;
 import com.intellij.codeInsight.lookup.LookupEx;
@@ -23,6 +22,7 @@ import com.intellij.codeInspection.SuppressIntentionActionFromFix;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.featureStatistics.FeatureUsageTrackerImpl;
 import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.IntentionsCollector;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -131,7 +131,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       Project project = psiFile.getProject();
       action = IntentionActionDelegate.unwrap(action);
 
-      if (LightEdit.owns(project) && !(action instanceof LightEditIntention)) return false;
+      if (LightEdit.owns(project) && !(action instanceof LightEditCompatible)) return false;
 
       if (action instanceof SuppressIntentionActionFromFix) {
         final ThreeState shouldBeAppliedToInjectionHost = ((SuppressIntentionActionFromFix)action).isShouldBeAppliedToInjectionHost();
