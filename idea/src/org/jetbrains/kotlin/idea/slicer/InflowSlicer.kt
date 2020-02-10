@@ -60,11 +60,12 @@ class InflowSlicer(
     }
 
     private fun processProperty(property: KtProperty) {
-        val bindingContext by lazy { property.analyzeWithContent() }
-
         if (property.hasDelegateExpression()) {
             val getter = (property.unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
-            val delegateGetterResolvedCall = getter?.let { bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
+            val delegateGetterResolvedCall = getter?.let {
+                val bindingContext = property.analyzeWithContent()
+                bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it]
+            }
             delegateGetterResolvedCall?.resultingDescriptor?.originalSource?.getPsi()?.passToProcessor()
             return
         }
