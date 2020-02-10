@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.documentation;
 
@@ -443,6 +443,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     DefaultActionGroup gearActions = new MyGearActionGroup();
     ShowAsToolwindowAction showAsToolwindowAction = new ShowAsToolwindowAction();
     gearActions.add(showAsToolwindowAction);
+    gearActions.add(new ToggleShowDocsOnHoverAction());
     gearActions.add(new MyShowSettingsAction(false));
     gearActions.add(new ShowToolbarAction());
     gearActions.add(new RestoreDefaultSizeAction());
@@ -1660,7 +1661,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class ShowToolbarAction extends ToggleAction implements HintManagerImpl.ActionToIgnore {
     ShowToolbarAction() {
-      super("Show Toolbar");
+      super(CodeInsightBundle.lazyMessage("javadoc.show.toolbar"));
     }
 
     @Override
@@ -1749,7 +1750,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class ShowAsToolwindowAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     ShowAsToolwindowAction() {
-      super("Open as Tool Window");
+      super(CodeInsightBundle.lazyMessage("javadoc.open.as.tool.window"));
     }
 
     @Override
@@ -1772,7 +1773,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class RestoreDefaultSizeAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     RestoreDefaultSizeAction() {
-      super("Restore Size");
+      super(CodeInsightBundle.lazyMessage("javadoc.restore.size"));
     }
 
     @Override
