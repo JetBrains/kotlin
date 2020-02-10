@@ -59,7 +59,10 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
         val projectDir = baseDir.resolve("${target.name}.xcodeproj")
 
         if (projectDir.exists()) {
-            projectDir.delete()
+            with(execActionFactory.newExecAction()) {
+                commandLine("rm", "-rf", projectDir)
+                execute().assertNormalExitValue()
+            }
         }
         projectDir.mkdirs()
 
