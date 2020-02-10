@@ -36,6 +36,8 @@ abstract class Slicer(
     protected val processor: Processor<SliceUsage>,
     protected val parentUsage: KotlinSliceUsage
 ) {
+    abstract fun processChildren()
+
     protected class PseudocodeCache {
         private val computedPseudocodes = HashMap<KtElement, Pseudocode>()
 
@@ -56,8 +58,6 @@ abstract class Slicer(
     ) {
         processor.process(KotlinSliceUsage(this, parentUsage, lambdaLevel, forcedExpressionMode))
     }
-
-    abstract fun processChildren()
 
     protected fun KtFunction.processCalls(scope: SearchScope, includeOverriders: Boolean, usageProcessor: (UsageInfo) -> Unit) {
         val options = KotlinFunctionFindUsagesOptions(project).apply {

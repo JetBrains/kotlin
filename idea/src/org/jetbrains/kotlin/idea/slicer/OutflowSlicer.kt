@@ -21,7 +21,19 @@ class OutflowSlicer(
     processor: Processor<SliceUsage>,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
-    
+
+    override fun processChildren() {
+        if (parentUsage.forcedExpressionMode) return processExpression(element)
+
+        when (element) {
+            is KtProperty -> processVariable(element)
+            is KtParameter -> processVariable(element)
+            is KtFunction -> processFunction(element)
+            is KtPropertyAccessor -> if (element.isGetter) processVariable(element.property)
+            else -> processExpression(element)
+        }
+    }
+
     private fun processVariable(variable: KtCallableDeclaration) {
         if (variable is KtParameter && !variable.canProcess()) return
 
@@ -48,25 +60,6 @@ class OutflowSlicer(
         }
     }
 
-    private fun PsiElement.getCallElementForExactCallee(): PsiElement? {
-        if (this is KtArrayAccessExpression) return this
-
-        val operationRefExpr = getNonStrictParentOfType<KtOperationReferenceExpression>()
-        if (operationRefExpr != null) return operationRefExpr.parent as? KtOperationExpression
-
-        val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
-        val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
-        if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, true)) return parentCall
-
-        return null
-    }
-
-    private fun PsiElement.getCallableReferenceForExactCallee(): KtCallableReferenceExpression? {
-        val callableRef = getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } ?: return null
-        val callee = KtPsiUtil.safeDeparenthesize(callableRef.callableReference)
-        return if (callee == this) callableRef else null
-    }
-
     private fun processFunction(function: KtFunction) {
         if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
             function.processCalls(this.parentUsage.scope.toSearchScope(), includeOverriders = false) {
@@ -88,6 +81,46 @@ class OutflowSlicer(
             else -> null
         } ?: return
         (funExpression as PsiElement).passToProcessor(parentUsage.lambdaLevel + 1, true)
+    }
+
+    private fun processExpression(expression: KtExpression) {
+        expression.processPseudocodeUsages { pseudoValue, instr ->
+            when (instr) {
+                is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
+                is CallInstruction -> {
+                    if (this.parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
+                        instr.element.passToProcessor(this.parentUsage.lambdaLevel - 1)
+                    } else {
+                        instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
+                    }
+                }
+                is ReturnValueInstruction -> instr.subroutine.passToProcessor()
+                is MagicInstruction -> when (instr.kind) {
+                    MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> instr.outputValue.element?.passToProcessor()
+                    else -> {
+                    }
+                }
+            }
+        }
+    }
+
+    private fun PsiElement.getCallElementForExactCallee(): PsiElement? {
+        if (this is KtArrayAccessExpression) return this
+
+        val operationRefExpr = getNonStrictParentOfType<KtOperationReferenceExpression>()
+        if (operationRefExpr != null) return operationRefExpr.parent as? KtOperationExpression
+
+        val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
+        val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
+        if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, true)) return parentCall
+
+        return null
+    }
+
+    private fun PsiElement.getCallableReferenceForExactCallee(): KtCallableReferenceExpression? {
+        val callableRef = getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } ?: return null
+        val callee = KtPsiUtil.safeDeparenthesize(callableRef.callableReference)
+        return if (callee == this) callableRef else null
     }
 
     private fun processDereferenceIsNeeded(
@@ -127,41 +160,6 @@ class OutflowSlicer(
                 is ReadValueInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
                 is CallInstruction -> processDereferenceIsNeeded(this, pseudoValue, instr)
             }
-        }
-    }
-
-    private fun processExpression(expression: KtExpression) {
-        expression.processPseudocodeUsages { pseudoValue, instr ->
-            when (instr) {
-                is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
-                is CallInstruction -> {
-                    if (this.parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
-                        instr.element.passToProcessor(this.parentUsage.lambdaLevel - 1)
-                    } else {
-                        instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
-                    }
-                }
-                is ReturnValueInstruction -> instr.subroutine.passToProcessor()
-                is MagicInstruction -> when (instr.kind) {
-                    MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> instr.outputValue.element?.passToProcessor()
-                    else -> {
-                    }
-                }
-            }
-        }
-    }
-
-    override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) return processExpression(element)
-
-        when (element) {
-            is KtProperty -> processVariable(element)
-            is KtParameter -> processVariable(element)
-            is KtFunction -> processFunction(element)
-            is KtPropertyAccessor -> if (element.isGetter) {
-                processVariable(element.property)
-            }
-            else -> processExpression(element)
         }
     }
 }

@@ -44,61 +44,19 @@ class InflowSlicer(
     processor: Processor<SliceUsage>,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
-    private fun PsiElement.processHierarchyDownwardAndPass() {
-        processHierarchyDownward(parentUsage.scope.toSearchScope()) { passToProcessor() }
-    }
 
-    private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
-        processor()
-        HierarchySearchRequest(this, scope).searchOverriders().forEach {
-            it.namedUnwrappedElement?.processor()
+    override fun processChildren() {
+        if (parentUsage.forcedExpressionMode) {
+            return processExpression(element)
         }
-    }
 
-    private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
-
-    private fun processAssignments(variableDeclaration: KtCallableDeclaration, accessSearchScope: SearchScope) {
-        processVariableAccesses(variableDeclaration, accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@{
-            val refElement = it.element ?: return@body
-            val refParent = refElement.parent
-
-            val rhsValue = when {
-                refElement is KtExpression -> {
-                    val (accessKind, accessExpression) = refElement.readWriteAccessWithFullExpression(true)
-                    if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
-                        accessExpression.right
-                    } else {
-                        accessExpression
-                    }
-                }
-
-                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(0)
-
-                else -> null
-            }
-            rhsValue?.passToProcessorAsValue()
+        when (element) {
+            is KtProperty -> processProperty(element)
+            // for parameter, we include overriders only when the feature is invoked on parameter itself
+            is KtParameter -> processParameter(parameter = element, includeOverriders = parentUsage.parent == null)
+            is KtDeclarationWithBody -> element.processBody()
+            else -> processExpression(element)
         }
-    }
-
-    private fun KtPropertyAccessor.processBackingFieldAssignments() {
-        forEachDescendantOfType<KtBinaryExpression> body@{
-            if (it.operationToken != KtTokens.EQ) return@body
-            val lhs = it.left?.let { expression -> KtPsiUtil.safeDeparenthesize(expression) } ?: return@body
-            val rhs = it.right ?: return@body
-            if (!lhs.isBackingFieldReference()) return@body
-            rhs.passToProcessor()
-        }
-    }
-
-    private fun KtProperty.processPropertyAssignments() {
-        val analysisScope = parentUsage.scope.toSearchScope()
-        val accessSearchScope = if (isVar) {
-            analysisScope
-        } else {
-            val containerScope = getStrictParentOfType<KtDeclaration>()?.let { LocalSearchScope(it) } ?: return
-            analysisScope.intersectWith(containerScope)
-        }
-        processAssignments(this, accessSearchScope)
     }
 
     private fun processProperty(property: KtProperty) {
@@ -177,30 +135,6 @@ class InflowSlicer(
         }
     }
 
-    private fun KtDeclarationWithBody.processBody() {
-        val bodyExpression = bodyExpression ?: return
-        val pseudocode = pseudocodeCache[bodyExpression] ?: return
-        pseudocode.traverse(TraversalOrder.FORWARD) { instr ->
-            if (instr is ReturnValueInstruction && instr.subroutine == this) {
-                (instr.returnExpressionIfAny?.returnedExpression ?: instr.element as? KtExpression)?.passToProcessorAsValue()
-            }
-        }
-    }
-
-    private fun Instruction.passInputsToProcessor() {
-        inputValues.forEach {
-            if (it.createdAt != null) {
-                it.element?.passToProcessorAsValue()
-            }
-        }
-    }
-
-    private fun KtExpression.isBackingFieldReference(): Boolean {
-        return this is KtSimpleNameExpression &&
-                getReferencedName() == SyntheticFieldDescriptor.NAME.asString() &&
-                resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
-    }
-
     private fun processExpression(expression: KtExpression) {
         val lambda = when (expression) {
             is KtLambdaExpression -> expression.functionLiteral
@@ -265,15 +199,84 @@ class InflowSlicer(
         }
     }
 
-    override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) return processExpression(element)
+    private fun KtProperty.processPropertyAssignments() {
+        val analysisScope = parentUsage.scope.toSearchScope()
+        val accessSearchScope = if (isVar) {
+            analysisScope
+        } else {
+            val containerScope = getStrictParentOfType<KtDeclaration>()?.let { LocalSearchScope(it) } ?: return
+            analysisScope.intersectWith(containerScope)
+        }
+        processAssignments(this, accessSearchScope)
+    }
 
-        when (element) {
-            is KtProperty -> processProperty(element)
-            // for parameter, we include overriders only when the feature is invoked on parameter itself
-            is KtParameter -> processParameter(parameter = element, includeOverriders = parentUsage.parent == null)
-            is KtDeclarationWithBody -> element.processBody()
-            else -> processExpression(element)
+    private fun processAssignments(variable: KtCallableDeclaration, accessSearchScope: SearchScope) {
+        processVariableAccesses(variable, accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@{
+            val refElement = it.element ?: return@body
+            val refParent = refElement.parent
+
+            val rhsValue = when {
+                refElement is KtExpression -> {
+                    val (accessKind, accessExpression) = refElement.readWriteAccessWithFullExpression(true)
+                    if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
+                        accessExpression.right
+                    } else {
+                        accessExpression
+                    }
+                }
+
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(0)
+
+                else -> null
+            }
+            rhsValue?.passToProcessorAsValue()
+        }
+    }
+
+    private fun KtPropertyAccessor.processBackingFieldAssignments() {
+        forEachDescendantOfType<KtBinaryExpression> body@{
+            if (it.operationToken != KtTokens.EQ) return@body
+            val lhs = it.left?.let { expression -> KtPsiUtil.safeDeparenthesize(expression) } ?: return@body
+            val rhs = it.right ?: return@body
+            if (!lhs.isBackingFieldReference()) return@body
+            rhs.passToProcessor()
+        }
+    }
+
+    private fun KtExpression.isBackingFieldReference(): Boolean {
+        return this is KtSimpleNameExpression &&
+                getReferencedName() == SyntheticFieldDescriptor.NAME.asString() &&
+                resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
+    }
+
+    private fun KtDeclarationWithBody.processBody() {
+        val bodyExpression = bodyExpression ?: return
+        val pseudocode = pseudocodeCache[bodyExpression] ?: return
+        pseudocode.traverse(TraversalOrder.FORWARD) { instr ->
+            if (instr is ReturnValueInstruction && instr.subroutine == this) {
+                (instr.returnExpressionIfAny?.returnedExpression ?: instr.element as? KtExpression)?.passToProcessorAsValue()
+            }
+        }
+    }
+
+    private fun Instruction.passInputsToProcessor() {
+        inputValues.forEach {
+            if (it.createdAt != null) {
+                it.element?.passToProcessorAsValue()
+            }
+        }
+    }
+
+    private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
+
+    private fun PsiElement.processHierarchyDownwardAndPass() {
+        processHierarchyDownward(parentUsage.scope.toSearchScope()) { passToProcessor() }
+    }
+
+    private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
+        processor()
+        HierarchySearchRequest(this, scope).searchOverriders().forEach {
+            it.namedUnwrappedElement?.processor()
         }
     }
 }
