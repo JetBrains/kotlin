@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
-fun main() {
+fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
