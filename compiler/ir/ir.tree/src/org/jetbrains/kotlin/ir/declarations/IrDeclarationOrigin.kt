@@ -37,7 +37,7 @@ interface IrDeclarationOrigin {
     object MOVED_EXTENSION_RECEIVER : IrDeclarationOriginImpl("MOVED_EXTENSION_RECEIVER")
 
     object FILE_CLASS : IrDeclarationOriginImpl("FILE_CLASS")
-    object MULTIFILE_PART_CLASS : IrDeclarationOriginImpl("MULTIFILE_PART_CLASS", isSynthetic = true)
+    object SYNTHETIC_FILE_CLASS : IrDeclarationOriginImpl("SYNTHETIC_FILE_CLASS", isSynthetic = true)
     object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")
     object GENERATED_INLINE_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_INLINE_CLASS_MEMBER")
     object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")

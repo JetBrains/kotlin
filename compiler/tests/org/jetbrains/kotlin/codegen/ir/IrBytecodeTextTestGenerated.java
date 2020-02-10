@@ -114,6 +114,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/falseSmartCast.kt");
     }
 
+    @TestMetadata("flagsInMultiFileInherit.kt")
+    public void testFlagsInMultiFileInherit() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/flagsInMultiFileInherit.kt");
+    }
+
     @TestMetadata("inlineFromOtherModule.kt")
     public void testInlineFromOtherModule() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/inlineFromOtherModule.kt");
