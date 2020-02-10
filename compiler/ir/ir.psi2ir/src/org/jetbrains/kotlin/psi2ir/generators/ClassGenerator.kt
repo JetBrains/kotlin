@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -47,12 +46,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
+import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 class ClassGenerator(
@@ -144,17 +143,43 @@ class ClassGenerator(
     private fun KtEnumEntry.hasMemberDeclarations() = declarations.isNotEmpty()
 
     private fun generateFakeOverrideMemberDeclarations(irClass: IrClass, ktClassOrObject: KtPureClassOrObject) {
-        irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors()
-            .mapNotNull {
-                it.safeAs<CallableMemberDescriptor>().takeIf { memberDescriptor ->
-                    memberDescriptor?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-                }
+        val classDescriptor = irClass.descriptor
+
+        classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
+            .filterIsInstance<CallableMemberDescriptor>()
+            .filter {
+                it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
             }
             .sortedByRenderer()
             .forEach { fakeOverride ->
                 declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let { irClass.declarations.add(it) }
             }
+
+        context.extensions.getParentClassStaticScope(classDescriptor)?.run {
+            getContributedDescriptors()
+                .filterIsInstance<FunctionDescriptor>()
+                .filter {
+                    Visibilities.isVisibleIgnoringReceiver(it, classDescriptor)
+                }
+                .sortedByRenderer()
+                .forEach { parentStaticMember ->
+                    val fakeOverride = createFakeOverrideDescriptorForParentStaticMember(classDescriptor, parentStaticMember)
+                    declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let {
+                        irClass.declarations.add(it)
+                    }
+                }
+        }
     }
+
+    private fun createFakeOverrideDescriptorForParentStaticMember(
+        classDescriptor: ClassDescriptor,
+        parentStaticMember: FunctionDescriptor
+    ): FunctionDescriptor =
+        parentStaticMember.copy(
+            classDescriptor, parentStaticMember.modality, parentStaticMember.visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false
+        ).apply {
+            setSingleOverridden(parentStaticMember)
+        }
 
     private fun generateMembersDeclaredInSupertypeList(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         val ktSuperTypeList = ktClassOrObject.getSuperTypeList() ?: return

@@ -127,7 +127,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
-            model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM)
+            model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
         }
 
         testClass<AbstractDiagnosticsTestWithJvmIrBackend> {

@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.psi2ir
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -78,7 +75,7 @@ class PsiSourceManager : SourceManager {
         fun findPsiElement(irElement: IrElement): PsiElement? {
             var psiElement = fileViewProvider.findElementAt(irElement.startOffset)
             while (psiElement != null) {
-                if (psiElement.endOffset == irElement.endOffset) break
+                if (irElement.endOffset == psiElement.textRange?.endOffset) break
                 psiElement = psiElement.parent
             }
             return psiElement

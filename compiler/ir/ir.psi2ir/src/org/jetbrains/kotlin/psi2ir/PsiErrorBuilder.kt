@@ -30,6 +30,8 @@ class PsiErrorBuilder(
                 ?: throw AssertionError("No PsiElement found for '${irDeclaration.render()}'")
         )
 
+    fun <E : PsiElement> at(psiElement: E) = Location(psiElement)
+
     fun <E : PsiElement> at(irElement: IrElement, irDeclaration: IrDeclaration, psiElementClass: KClass<E>): Location<E> =
         Location(
             psiSourceManager.findPsiElement(irElement, irDeclaration, psiElementClass)

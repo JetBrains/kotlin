@@ -130,6 +130,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
         }
 
+        @TestMetadata("fakeOverridesForJavaStaticMembers.kt")
+        public void testFakeOverridesForJavaStaticMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaStaticMembers.kt");
+        }
+
         @TestMetadata("implicitNotNullOnDelegatedImplementation.kt")
         public void testImplicitNotNullOnDelegatedImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/implicitNotNullOnDelegatedImplementation.kt");

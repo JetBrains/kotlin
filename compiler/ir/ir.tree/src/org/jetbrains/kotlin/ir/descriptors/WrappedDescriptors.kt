@@ -1055,13 +1055,9 @@ open class WrappedFieldDescriptor(
 
     override val isDelegated get() = false
 
-    override fun getBackingField(): FieldDescriptor? {
-        TODO("not implemented")
-    }
-
-    override fun getDelegateField(): FieldDescriptor? {
-        TODO("not implemented")
-    }
+    // Following functions are used in error reporting when rendering annotations on properties
+    override fun getBackingField(): FieldDescriptor? = null // TODO
+    override fun getDelegateField(): FieldDescriptor? = null // TODO
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }

@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T> foo(/*0*/ x: T): T
+public fun foo(/*0*/ x: kotlin.Any): kotlin.Any

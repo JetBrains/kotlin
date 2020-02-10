@@ -185,7 +185,7 @@ class GenerationState private constructor(
 
     val diagnostics: DiagnosticSink get() = extraJvmDiagnosticsTrace
     val collectedExtraJvmDiagnostics: Diagnostics = LazyJvmDiagnostics {
-        duplicateSignatureFactory.reportDiagnostics()
+        duplicateSignatureFactory?.reportDiagnostics()
         extraJvmDiagnosticsTrace.bindingContext.diagnostics
     }
 
@@ -221,7 +221,7 @@ class GenerationState private constructor(
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
     val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module, configuration.languageVersionSettings)
     val factory: ClassFileFactory
-    private lateinit var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
+    private var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics? = null
 
     val scriptSpecific = ForScript()
 
@@ -284,11 +284,16 @@ class GenerationState private constructor(
                         it
                 },
                 {
-                    BuilderFactoryForDuplicateSignatureDiagnostics(
-                        it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
-                        shouldGenerate = { !shouldOnlyCollectSignatures(it) },
-                        mapAsmMethod = if (isIrBackend) { descriptor: FunctionDescriptor -> irBasedMapAsmMethod(descriptor) } else null
-                    ).apply { duplicateSignatureFactory = this }
+                    // In IR backend, we have more precise information about classes and methods we are going to generate,
+                    // and report signature conflict errors in JvmSignatureClashTracker.
+                    if (isIrBackend)
+                        it
+                    else
+                        BuilderFactoryForDuplicateSignatureDiagnostics(
+                            it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
+                            shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
+                            mapAsmMethod = if (isIrBackend) { descriptor: FunctionDescriptor -> irBasedMapAsmMethod(descriptor) } else null
+                        ).apply { duplicateSignatureFactory = this }
                 },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
                 {

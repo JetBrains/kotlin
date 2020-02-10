@@ -131,6 +131,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
         }
 
+        @TestMetadata("fakeOverridesForJavaStaticMembers.kt")
+        public void testFakeOverridesForJavaStaticMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaStaticMembers.kt");
+        }
+
         @TestMetadata("implicitNotNullOnDelegatedImplementation.kt")
         public void testImplicitNotNullOnDelegatedImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/implicitNotNullOnDelegatedImplementation.kt");

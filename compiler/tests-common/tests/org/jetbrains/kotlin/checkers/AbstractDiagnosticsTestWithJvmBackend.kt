@@ -49,6 +49,9 @@ abstract class AbstractDiagnosticsTestWithJvmBackend : AbstractDiagnosticsTest()
         return analysisResult
     }
 
+    // DO NOT use FE-based diagnostics for JVM signature conflict
+    override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean = true
+
     protected abstract fun GenerationState.Builder.setupGenerationState(): GenerationState.Builder
 }
 
