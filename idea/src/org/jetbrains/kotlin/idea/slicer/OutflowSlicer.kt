@@ -75,11 +75,12 @@ class OutflowSlicer(
             return
         }
 
-        val funExpression: PsiElement = when (function) {
+        val funExpression = when (function) {
             is KtFunctionLiteral -> function.parent as? KtLambdaExpression
             is KtNamedFunction -> function
             else -> null
         } ?: return
+        funExpression as PsiElement
         funExpression.passToProcessor(parentUsage.lambdaLevel + 1, true)
     }
 
