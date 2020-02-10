@@ -100,14 +100,14 @@ class InflowSlicer(
             && function.hasModifier(KtTokens.OPERATOR_KEYWORD)
         ) {
 
-            ReferencesSearch.search(function, parentUsage.scope.toSearchScope())
+            ReferencesSearch.search(function, analysisScope)
                 .filterIsInstance<KtPropertyDelegationMethodsReference>()
                 .forEach { (it.element.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
-        (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope(), includeOverriders) body@{
+        (function as? KtFunction)?.processCalls(analysisScope, includeOverriders) body@{
             val refElement = it.element ?: return@body
             val refParent = refElement.parent
 
@@ -132,7 +132,7 @@ class InflowSlicer(
         }
 
         if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
-            processAssignments(parameter, parentUsage.scope.toSearchScope())
+            processAssignments(parameter, analysisScope)
         }
     }
 
@@ -201,7 +201,6 @@ class InflowSlicer(
     }
 
     private fun KtProperty.processPropertyAssignments() {
-        val analysisScope = parentUsage.scope.toSearchScope()
         val accessSearchScope = if (isVar) {
             analysisScope
         } else {
@@ -272,7 +271,7 @@ class InflowSlicer(
 
     private fun PsiElement.passDeclarationToProcessorWithOverriders() {
         passToProcessor()
-        HierarchySearchRequest(this, parentUsage.scope.toSearchScope())
+        HierarchySearchRequest(this, analysisScope)
             .searchOverriders()
             .forEach { it.namedUnwrappedElement?.passToProcessor() }
     }

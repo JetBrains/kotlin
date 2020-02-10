@@ -41,7 +41,7 @@ class OutflowSlicer(
         val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
         processVariableAccesses(
             variable,
-            parentUsage.scope.toSearchScope(),
+            analysisScope,
             accessKind
         ) body@{
             val refElement = it.element
@@ -62,12 +62,12 @@ class OutflowSlicer(
 
     private fun processFunction(function: KtFunction) {
         if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
-            function.processCalls(this.parentUsage.scope.toSearchScope(), includeOverriders = false) {
+            function.processCalls(analysisScope, includeOverriders = false) {
                 when (val refElement = it.element) {
                     null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
                     is KtExpression -> {
                         refElement.getCallElementForExactCallee()?.passToProcessor()
-                        refElement.getCallableReferenceForExactCallee()?.passToProcessor(this.parentUsage.lambdaLevel + 1)
+                        refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
                     }
                     else -> refElement.passToProcessor()
                 }
@@ -88,8 +88,8 @@ class OutflowSlicer(
             when (instr) {
                 is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                 is CallInstruction -> {
-                    if (this.parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
-                        instr.element.passToProcessor(this.parentUsage.lambdaLevel - 1)
+                    if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
+                        instr.element.passToProcessor(parentUsage.lambdaLevel - 1)
                     } else {
                         instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
                     }
