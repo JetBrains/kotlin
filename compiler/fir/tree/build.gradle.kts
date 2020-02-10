@@ -28,7 +28,7 @@ dependencies {
     generatorClasspath(project("tree-generator"))
 }
 
-val generationRoot = File(projectDir.resolve("gen"))
+val generationRoot = projectDir.resolve("gen")
 
 val generateTree by tasks.registering(NoDebugJavaExec::class) {
 
