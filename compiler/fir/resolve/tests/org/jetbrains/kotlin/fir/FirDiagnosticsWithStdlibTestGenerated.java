@@ -509,11 +509,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/KJKComplexHierarchy.kt");
         }
 
-        @TestMetadata("KJKComplexHierarchyNestedLoop.kt")
-        public void testKJKComplexHierarchyNestedLoop() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/KJKComplexHierarchyNestedLoop.kt");
-        }
-
         @TestMetadata("KJKComplexHierarchyWithNested.kt")
         public void testKJKComplexHierarchyWithNested() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/KJKComplexHierarchyWithNested.kt");
@@ -645,6 +640,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("inapplicableRemoveAll.kt")
         public void testInapplicableRemoveAll() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/inapplicableRemoveAll.kt");
+        }
+
+        @TestMetadata("KJKComplexHierarchyNestedLoop.kt")
+        public void testKJKComplexHierarchyNestedLoop() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/problems/KJKComplexHierarchyNestedLoop.kt");
         }
 
         @TestMetadata("weakHashMap.kt")

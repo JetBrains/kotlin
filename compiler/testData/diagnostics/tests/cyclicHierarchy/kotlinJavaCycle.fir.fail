@@ -1,0 +1,2 @@
+Failures detected in FirSupertypeResolverTransformer, file: /K.kt
+Cause: kotlin.UninitializedPropertyAccessException: lateinit property fir has not been initialized
