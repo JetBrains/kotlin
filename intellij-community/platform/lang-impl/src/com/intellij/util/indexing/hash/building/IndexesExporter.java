@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
@@ -52,17 +53,21 @@ public class IndexesExporter {
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
-  public void exportIndices(@NotNull List<IndexChunk> chunks,
-                            @NotNull Path zipFile,
-                            @NotNull ProgressIndicator indicator) {
+  @NotNull
+  public IndexInfrastructureVersion exportIndices(@NotNull List<IndexChunk> chunks,
+                                                  @NotNull Path zipFile,
+                                                  @NotNull ProgressIndicator indicator) {
     Path indexRoot = getUnpackedIndexRoot(zipFile);
 
     indicator.setIndeterminate(false);
     AtomicInteger idx = new AtomicInteger();
+    AtomicReference<IndexInfrastructureVersion> versionRef = new AtomicReference<>(null);
     if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(chunks, indicator, chunk -> {
       indicator.setText("Indexing chunk " + chunk.getName());
       Path chunkRoot = indexRoot.resolve(chunk.getName());
-      ReadAction.run(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
+      IndexInfrastructureVersion infrastructureVersion = ReadAction.compute(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
+      //all the versions are similar, we need any
+      versionRef.set(infrastructureVersion);
       indicator.setFraction(((double) idx.incrementAndGet()) / chunks.size());
       return true;
     })) {
@@ -70,6 +75,7 @@ public class IndexesExporter {
     }
 
     zipIndexOut(indexRoot, zipFile, indicator);
+    return versionRef.get();
   }
 
   @NotNull
@@ -201,7 +207,7 @@ public class IndexesExporter {
           });
         }
 
-        LOG.warn("Collected " + files.size() + " files to index");
+        LOG.warn("Collected " + files.size() + " files to index for " + chunk.getName());
         indicator.setText("Indexing files...");
 
         boolean isOk = JobLauncher.getInstance().invokeConcurrentlyUnderProgress(new ArrayList<>(files),
