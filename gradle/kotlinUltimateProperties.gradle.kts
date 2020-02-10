@@ -203,7 +203,7 @@ val mobilePluginNumber: String = findProperty("mobilePluginNumber")?.toString() 
 val mobilePluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("CLion", clionVersion, mobilePluginNumber))
 val mobilePluginZipPath: File by rootProject.extra(
         propertyAsPath("mobilePluginZipPath")
-                ?: defaultCidrPluginZipPath(mobilePluginVersionFull)
+                ?: defaultCidrPluginZipPath(mobilePluginVersionFull, "mobile")
 )
 val mobileCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
@@ -243,8 +243,8 @@ fun cidrPluginVersionFull(productName: String, productVersion: String, cidrPlugi
 
 fun propertyAsPath(propertyName: String): File? = findProperty(propertyName)?.let { File(it.toString()).canonicalFile }
 
-fun defaultCidrPluginZipPath(cidrProductVersionFull: String): File =
-        artifactsForCidrDir.resolve("kotlin-plugin-$cidrProductVersionFull.zip").canonicalFile
+fun defaultCidrPluginZipPath(cidrProductVersionFull: String, productName: String = "kotlin"): File =
+        artifactsForCidrDir.resolve("$productName-plugin-$cidrProductVersionFull.zip").canonicalFile
 
 fun cidrCustomPluginRepoUrl(repoUrlPropertyName: String, cidrPluginZipPath: File): URL =
         findProperty(repoUrlPropertyName)?.let {
