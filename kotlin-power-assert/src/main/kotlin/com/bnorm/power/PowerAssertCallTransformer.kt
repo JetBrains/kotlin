@@ -75,9 +75,6 @@ class PowerAssertCallTransformer(
     if (!function.isAssert)
       return super.visitCall(expression)
 
-    val callSource = fileSource.substring(expression.startOffset, expression.endOffset)
-    val callIndent = file.info(expression).startColumnNumber
-
     val assertionArgument = expression.getValueArgument(0)!!
     val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
@@ -97,9 +94,9 @@ class PowerAssertCallTransformer(
 //      println(assertionArgument.dump())
 //      println(tree.dump())
 
-      val generator = object : PowerAssertGenerator(file, fileSource) {
+      val generator = object : PowerAssertGenerator() {
         override fun IrBuilderWithScope.buildAssertThrow(subStack: List<IrStackVariable>): IrExpression {
-          return buildThrow(constructor, buildMessage(title, subStack, callSource, callIndent))
+          return buildThrow(constructor, buildMessage(file, fileSource, title, expression, subStack))
         }
       }
 
@@ -113,9 +110,3 @@ class PowerAssertCallTransformer(
 
 val IrFunction.isAssert: Boolean
   get() = name.asString() == "assert" && getPackageFragment()?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
-
-fun String.substring(expression: IrElement) = substring(expression.startOffset, expression.endOffset)
-fun IrFile.info(expression: IrElement) = fileEntry.getSourceRangeInfo(expression.startOffset, expression.endOffset)
-
-fun StringBuilder.indent(indentation: Int): StringBuilder = append(" ".repeat(indentation))
-fun StringBuilder.newline(): StringBuilder = append("\n")

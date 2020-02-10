@@ -18,24 +18,17 @@ package com.bnorm.power
 
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-abstract class PowerAssertGenerator(
-  private val file: IrFile,
-  private val fileSource: String
-) {
+abstract class PowerAssertGenerator {
   abstract fun IrBuilderWithScope.buildAssertThrow(subStack: List<IrStackVariable>): IrExpression
 
   fun buildAssert(
@@ -95,28 +88,7 @@ abstract class PowerAssertGenerator(
   ) : IrElementTransformerVoid() {
     private fun push(expression: IrExpression): IrGetValue = with(builder) {
       val variable = irTemporary(expression)
-      val source = fileSource.substring(expression)
-
-      var startColumnNumber = file.info(expression).startColumnNumber
-      if (expression is IrMemberAccessExpression) {
-        val descriptor = expression.descriptor
-        if (descriptor is FunctionDescriptor && descriptor.isInfix) {
-          startColumnNumber += source.indexOf(descriptor.name.asString())
-        }
-
-        // TODO handle equality and comparison better?
-        startColumnNumber += when (expression.origin) {
-          IrStatementOrigin.EQEQ, IrStatementOrigin.EQEQEQ -> source.indexOf("==")
-          IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> source.indexOf("!=")
-          IrStatementOrigin.LT -> source.indexOf("<") // TODO What about generics?
-          IrStatementOrigin.GT -> source.indexOf(">") // TODO What about generics?
-          IrStatementOrigin.LTEQ -> source.indexOf("<=")
-          IrStatementOrigin.GTEQ -> source.indexOf(">=")
-          else -> 0
-        }
-      }
-
-      stack.add(IrStackVariable(variable, startColumnNumber, source))
+      stack.add(IrStackVariable(variable, expression))
       irGet(variable)
     }
 

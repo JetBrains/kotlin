@@ -285,6 +285,47 @@ assert(1 shl 1 == 4)
 """.trimIndent()
     )
   }
+
+  @Test
+  fun multiline() {
+    assertMessage(
+      """fun main() {
+  val text: String? = "Hello"
+  assert(
+    text
+        == null ||
+        (
+            text.length == 5 &&
+                text.toLowerCase() == text
+            )
+  )
+}""",
+      """
+Assertion failed
+assert(
+  text
+  |
+  Hello
+      == null ||
+      |
+      false
+      (
+          text.length == 5 &&
+          |    |      |
+          |    |      true
+          |    5
+          Hello
+              text.toLowerCase() == text
+              |    |             |  |
+              |    |             |  Hello
+              |    |             false
+              |    hello
+              Hello
+          )
+)
+""".trimIndent()
+    )
+  }
 }
 
 fun assertMessage(@Language("kotlin") source: String, message: String) {
