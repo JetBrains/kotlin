@@ -207,7 +207,7 @@ class InflowSlicer(
         val accessSearchScope = if (isVar) {
             analysisScope
         } else {
-            val containerScope = getStrictParentOfType<KtDeclaration>()?.let { LocalSearchScope(it) } ?: return
+            val containerScope = LocalSearchScope(getStrictParentOfType<KtDeclaration>() ?: return)
             analysisScope.intersectWith(containerScope)
         }
         processAssignments(this, accessSearchScope)

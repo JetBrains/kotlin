@@ -38,7 +38,7 @@ abstract class Slicer(
 ) {
     abstract fun processChildren()
 
-    protected val analysisScope = parentUsage.scope.toSearchScope()
+    protected val analysisScope: SearchScope = parentUsage.scope.toSearchScope()
 
     protected class PseudocodeCache {
         private val computedPseudocodes = HashMap<KtElement, Pseudocode>()
