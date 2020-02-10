@@ -34,18 +34,19 @@ import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-fun PsiElement.processAllExactUsages(
+fun KtDeclaration.processAllExactUsages(
     options: FindUsagesOptions,
     processor: (UsageInfo) -> Unit
 ) {
     fun elementsToCheckReferenceAgainst(reference: PsiReference): List<PsiElement> {
-        if (reference is KtReference || this !is KtDeclaration) return listOf(this)
+        if (reference is KtReference) return listOf(this)
         return SmartList<PsiElement>().also { list ->
             list += this
             list += toLightElements()
             if (this is KtConstructor<*>) {
-                getContainingClassOrObject().toLightClass()?.let { list += it }
+                list.addIfNotNull(getContainingClassOrObject().toLightClass())
             }
         }
     }
