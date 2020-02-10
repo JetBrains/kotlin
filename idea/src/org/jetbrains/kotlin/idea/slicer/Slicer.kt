@@ -71,7 +71,7 @@ abstract class Slicer(
         val options = KotlinFunctionFindUsagesOptions(project).apply {
             isSearchForTextOccurrences = false
             isSkipImportStatements = true
-            searchScope = scope.intersectWith(function.useScope)
+            searchScope = scope
         }
 
         val descriptor = function.unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
@@ -115,6 +115,16 @@ abstract class Slicer(
         kind: AccessKind,
         usageProcessor: (UsageInfo) -> Unit
     ) {
+        val options = KotlinPropertyFindUsagesOptions(project).apply {
+            isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
+            isWriteAccess =
+                kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+            isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+            isSearchForTextOccurrences = false
+            isSkipImportStatements = true
+            searchScope = scope
+        }
+
         val allDeclarations = mutableListOf(declaration)
         val descriptor = declaration.unsafeResolveToDescriptor()
         if (descriptor is CallableMemberDescriptor) {
@@ -123,19 +133,7 @@ abstract class Slicer(
             }
         }
 
-        for (aDeclaration in allDeclarations) {
-            aDeclaration.processAllExactUsages(
-                KotlinPropertyFindUsagesOptions(project).apply {
-                    isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
-                    isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
-                    isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
-                    isSearchForTextOccurrences = false
-                    isSkipImportStatements = true
-                    searchScope = scope.intersectWith(aDeclaration.useScope)
-                },
-                usageProcessor
-            )
-        }
+        allDeclarations.forEach { it.processAllExactUsages(options, usageProcessor) }
     }
 
     protected fun canProcessParameter(parameter: KtParameter) = !parameter.isVarArg
