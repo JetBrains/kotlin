@@ -122,7 +122,10 @@ class JavaSymbolProvider(
             classId,
             {
                 val foundClass = findClass(classId, content)
-                if (foundClass == null || foundClass.annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }) {
+                if (foundClass == null || foundClass.annotations.any {
+                        it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME
+                    }
+                ) {
                     null to null
                 } else {
                     FirRegularClassSymbol(classId) to foundClass
@@ -136,13 +139,13 @@ class JavaSymbolProvider(
                 if (!isTopLevel) {
                     val parentId = ClassId(classId.packageFqName, parentFqName, false)
                     val parentClassSymbol = getClassLikeSymbolByFqName(parentId)
-                    val parentStack = parentClassTypeParameterStackCache[parentClassSymbol] ?:
-                        (parentClassSymbol?.fir as? FirJavaClass)?.javaTypeParameterStack
+                    val parentStack = parentClassTypeParameterStackCache[parentClassSymbol]
+                        ?: (parentClassSymbol?.fir as? FirJavaClass)?.javaTypeParameterStack
                     if (parentStack != null) {
                         javaTypeParameterStack.addStack(parentStack)
                     }
                 }
-                buildJavaClass {
+                val firJavaClass = buildJavaClass {
                     source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirSourceElement()
                     session = this@JavaSymbolProvider.session
                     symbol = firSymbol
@@ -158,11 +161,6 @@ class JavaSymbolProvider(
                     scopeProvider = this@JavaSymbolProvider.scopeProvider
                     typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
-                    for (supertype in javaClass.supertypes) {
-                        superTypeRefs += supertype.toFirResolvedTypeRef(
-                            this@JavaSymbolProvider.session, javaTypeParameterStack, typeParametersNullability = ConeNullability.UNKNOWN
-                        )
-                    }
                     // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage
                     for (javaField in javaClass.fields) {
@@ -218,7 +216,7 @@ class JavaSymbolProvider(
                     ): FirJavaConstructorBuilder {
                         val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
-                        val firJavaConstructor = FirJavaConstructorBuilder().apply {
+                        return FirJavaConstructorBuilder().apply {
                             source = psi?.toFirSourceElement()
                             session = this@JavaSymbolProvider.session
                             symbol = constructorSymbol
@@ -233,7 +231,6 @@ class JavaSymbolProvider(
                             }
                             typeParameters += classTypeParameters
                         }
-                        return firJavaConstructor
                     }
 
                     if (javaClassDeclaredConstructors.isEmpty() && javaClass.classKind == ClassKind.CLASS) {
@@ -260,6 +257,13 @@ class JavaSymbolProvider(
                     isNotSam = isNotSam()
                     parentClassTypeParameterStackCache.remove(firSymbol)
                 }
+                firJavaClass.replaceSuperTypeRefs(
+                    javaClass.supertypes.map { supertype ->
+                        supertype.toFirResolvedTypeRef(
+                            this@JavaSymbolProvider.session, javaTypeParameterStack, typeParametersNullability = ConeNullability.UNKNOWN
+                        )
+                    }
+                )
             }
         }
     }
