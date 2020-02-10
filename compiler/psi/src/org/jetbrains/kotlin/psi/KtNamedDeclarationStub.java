@@ -130,6 +130,21 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
         KtElement enclosingBlock = KtPsiUtil.getEnclosingElementForLocalDeclaration(this, false);
         if (enclosingBlock != null) {
             PsiElement enclosingParent = enclosingBlock.getParent();
+
+            KtObjectDeclaration containingObject = PsiTreeUtil.getParentOfType(this, KtObjectDeclaration.class);
+            if (containingObject != null && containingObject.isObjectLiteral()) {
+                KtDeclarationWithInitializer declaration =
+                        PsiTreeUtil.getParentOfType(containingObject, KtDeclarationWithInitializer.class);
+                if (declaration != null && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+                    if (enclosingParent instanceof KtFile) {
+                        return new LocalSearchScope(enclosingParent);
+                    }
+                    if (enclosingParent instanceof KtObjectDeclaration && ((KtObjectDeclaration) enclosingParent).isCompanion()) {
+                        return new LocalSearchScope(enclosingParent.getParent());
+                    }
+                }
+            }
+
             if (enclosingParent instanceof KtContainerNode) {
                 enclosingParent = enclosingParent.getParent();
             }
