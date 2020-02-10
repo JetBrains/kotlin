@@ -132,7 +132,9 @@ class InflowSlicer(
             argumentExpression?.passToProcessorAsValue()
         }
 
-        (function as? KtFunction)?.processCalls(analysisScope, includeOverriders, ::processCall)
+        if (function is KtFunction) {
+            processCalls(function, analysisScope, includeOverriders, ::processCall)
+        }
 
         if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
             processAssignments(parameter, analysisScope)

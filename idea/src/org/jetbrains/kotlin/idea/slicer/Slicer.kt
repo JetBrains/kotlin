@@ -39,6 +39,7 @@ abstract class Slicer(
     abstract fun processChildren()
 
     protected val analysisScope: SearchScope = parentUsage.scope.toSearchScope()
+    protected val project = element.project
 
     protected class PseudocodeCache {
         private val computedPseudocodes = HashMap<KtElement, Pseudocode>()
@@ -61,14 +62,19 @@ abstract class Slicer(
         processor.process(KotlinSliceUsage(this, parentUsage, lambdaLevel, forcedExpressionMode))
     }
 
-    protected fun KtFunction.processCalls(scope: SearchScope, includeOverriders: Boolean, usageProcessor: (UsageInfo) -> Unit) {
+    protected fun processCalls(
+        function: KtFunction,
+        scope: SearchScope,
+        includeOverriders: Boolean,
+        usageProcessor: (UsageInfo) -> Unit
+    ) {
         val options = KotlinFunctionFindUsagesOptions(project).apply {
             isSearchForTextOccurrences = false
             isSkipImportStatements = true
-            searchScope = scope.intersectWith(useScope)
+            searchScope = scope.intersectWith(function.useScope)
         }
 
-        val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
+        val descriptor = function.unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
         val superDescriptors = if (includeOverriders)
             descriptor.getDeepestSuperDeclarations()
         else
@@ -119,7 +125,7 @@ abstract class Slicer(
 
         for (aDeclaration in allDeclarations) {
             aDeclaration.processAllExactUsages(
-                KotlinPropertyFindUsagesOptions(aDeclaration.project).apply {
+                KotlinPropertyFindUsagesOptions(project).apply {
                     isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
                     isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
                     isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE

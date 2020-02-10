@@ -62,7 +62,7 @@ class OutflowSlicer(
 
     private fun processFunction(function: KtFunction) {
         if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
-            function.processCalls(analysisScope, includeOverriders = false) { usageInfo ->
+            processCalls(function, analysisScope, includeOverriders = false) { usageInfo ->
                 when (val refElement = usageInfo.element) {
                     null -> (usageInfo.reference as? LightMemberReference)?.element?.passToProcessor()
                     is KtExpression -> {
