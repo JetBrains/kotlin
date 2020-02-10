@@ -6,6 +6,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.slicer.SliceUsage
+import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
@@ -107,16 +108,16 @@ class InflowSlicer(
 
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
-        (function as? KtFunction)?.processCalls(analysisScope, includeOverriders) body@{
-            val refElement = it.element ?: return@body
+        fun processCall(usageInfo: UsageInfo) {
+            val refElement = usageInfo.element ?: return
             val refParent = refElement.parent
 
             val argumentExpression = when {
                 refElement is KtExpression -> {
-                    val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
-                    val resolvedCall = callElement.resolveToCall() ?: return@body
+                    val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return
+                    val resolvedCall = callElement.resolveToCall() ?: return
                     val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
-                    val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return@body
+                    val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return
                     when (resolvedArgument) {
                         is DefaultValueArgument -> parameter.defaultValue
                         is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
@@ -130,6 +131,8 @@ class InflowSlicer(
             }
             argumentExpression?.passToProcessorAsValue()
         }
+
+        (function as? KtFunction)?.processCalls(analysisScope, includeOverriders, ::processCall)
 
         if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
             processAssignments(parameter, analysisScope)
@@ -211,8 +214,8 @@ class InflowSlicer(
     }
 
     private fun processAssignments(variable: KtCallableDeclaration, accessSearchScope: SearchScope) {
-        processVariableAccesses(variable, accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@{
-            val refElement = it.element ?: return@body
+        fun processVariableAccess(usageInfo: UsageInfo) {
+            val refElement = usageInfo.element ?: return
             val refParent = refElement.parent
 
             val rhsValue = when {
@@ -231,6 +234,8 @@ class InflowSlicer(
             }
             rhsValue?.passToProcessorAsValue()
         }
+
+        processVariableAccesses(variable, accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ, ::processVariableAccess)
     }
 
     private fun KtPropertyAccessor.processBackingFieldAssignments() {

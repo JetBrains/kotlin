@@ -4,6 +4,7 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.slicer.SliceUsage
+import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -39,15 +40,12 @@ class OutflowSlicer(
 
         val withDereferences = parentUsage.params.showInstanceDereferences
         val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
-        processVariableAccesses(
-            variable,
-            analysisScope,
-            accessKind
-        ) body@{
-            val refElement = it.element
+
+        fun processVariableAccess(usageInfo: UsageInfo) {
+            val refElement = usageInfo.element ?: return
             if (refElement !is KtExpression) {
-                refElement?.passToProcessor()
-                return@body
+                refElement.passToProcessor()
+                return
             }
 
             val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
@@ -58,13 +56,15 @@ class OutflowSlicer(
                 refExpression.passToProcessor()
             }
         }
+
+        processVariableAccesses(variable, analysisScope, accessKind, ::processVariableAccess)
     }
 
     private fun processFunction(function: KtFunction) {
         if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
-            function.processCalls(analysisScope, includeOverriders = false) {
-                when (val refElement = it.element) {
-                    null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
+            function.processCalls(analysisScope, includeOverriders = false) { usageInfo ->
+                when (val refElement = usageInfo.element) {
+                    null -> (usageInfo.reference as? LightMemberReference)?.element?.passToProcessor()
                     is KtExpression -> {
                         refElement.getCallElementForExactCallee()?.passToProcessor()
                         refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
@@ -75,12 +75,12 @@ class OutflowSlicer(
             return
         }
 
-        val funExpression = when (function) {
+        val funExpression: PsiElement = when (function) {
             is KtFunctionLiteral -> function.parent as? KtLambdaExpression
             is KtNamedFunction -> function
             else -> null
         } ?: return
-        (funExpression as PsiElement).passToProcessor(parentUsage.lambdaLevel + 1, true)
+        funExpression.passToProcessor(parentUsage.lambdaLevel + 1, true)
     }
 
     private fun processExpression(expression: KtExpression) {
