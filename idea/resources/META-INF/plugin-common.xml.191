@@ -3120,6 +3120,76 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitTypeParametersForLocalVariablesMigrationInspection"
+                     displayName="Local variables are not allowed to have type parameters since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitJvmOverloadsOnConstructorsOfAnnotationClassesMigrationInspection"
+                     displayName="'@JvmOverloads' annotation cannot be used on constructors of annotation classes since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.RestrictReturnStatementTargetMigrationInspection"
+                     displayName="Target label does not denote a function since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.RedundantLabelMigrationInspection"
+                     displayName="Redundant labels since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitUseSiteTargetAnnotationsOnSuperTypesMigrationInspection"
+                     displayName="Annotations on superclass are meaningless since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitRepeatedUseSiteTargetAnnotationsMigrationInspection"
+                     displayName="This annotation is not repeatable since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.WarningOnMainUnusedParameterMigrationInspection"
+                     displayName="Unused `args` on `main` since 1.4"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ObsoleteExperimentalCoroutinesInspection"
                      displayName="Experimental coroutines usages are deprecated since 1.3"
                      groupPath="Kotlin"
