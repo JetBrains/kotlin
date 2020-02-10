@@ -385,7 +385,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     }
     if (selectErrorNodeTask != null) {
       Runnable finalSelectErrorTask = selectErrorNodeTask;
-      myTreeModel.invalidate(getRootElement(), false).onProcessed(p -> finalSelectErrorTask.run());
+      myTreeModel.invalidate(getRootElement(), true).onProcessed(p -> finalSelectErrorTask.run());
     }
   }
 
