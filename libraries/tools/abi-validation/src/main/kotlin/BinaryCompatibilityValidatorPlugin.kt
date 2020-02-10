@@ -113,8 +113,8 @@ private fun Project.configureCheckTasks(
         onlyIf { apiCheckEnabled }
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
-        expectedDir = apiCheckDir
-        actualDir = apiBuildDir
+        projectApiDir = apiCheckDir
+        this.apiBuildDir = apiBuildDir
         dependsOn(apiBuild)
     }
 
