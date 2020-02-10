@@ -143,6 +143,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts.kt");
         }
 
+        @TestMetadata("boundSmartcastsInBranches.kt")
+        public void testBoundSmartcastsInBranches() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcastsInBranches.kt");
+        }
+
         @TestMetadata("casts.kt")
         public void testCasts() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/casts.kt");
@@ -203,6 +208,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/nullability.kt");
         }
 
+        @TestMetadata("overridenOpenVal.kt")
+        public void testOverridenOpenVal() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/overridenOpenVal.kt");
+        }
+
         @TestMetadata("returns.kt")
         public void testReturns() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/returns.kt");
@@ -236,6 +246,16 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         @TestMetadata("smartcastOnLambda.kt")
         public void testSmartcastOnLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastOnLambda.kt");
+        }
+
+        @TestMetadata("smartcastToNothing.kt")
+        public void testSmartcastToNothing() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastToNothing.kt");
+        }
+
+        @TestMetadata("thisOfExtensionProperty.kt")
+        public void testThisOfExtensionProperty() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/thisOfExtensionProperty.kt");
         }
 
         @TestMetadata("when.kt")

@@ -1,0 +1,50 @@
+FILE: smartcastToNothing.kt
+    public final fun getNothing(): R|kotlin/Nothing| {
+        ^getNothing throw R|java/lang/Exception.Exception|()
+    }
+    public final fun getNullableNothing(): R|kotlin/Nothing?| {
+        ^getNullableNothing Null(null)
+    }
+    public final val R|kotlin/String?|.q: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+    public final val R|kotlin/String|.qq: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(2)
+        }
+    public final fun <T> myListOf(x: R|T|): R|kotlin/collections/List<T>| {
+        ^myListOf Null(null)!!
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/Boolean| = Boolean(true)
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final fun test_0(results: R|kotlin/collections/List<kotlin/Nothing>|): R|kotlin/Unit| {
+        lvar s: R|A?| = Null(null)
+        lval <range>: R|kotlin/collections/List<kotlin/Nothing>| = R|<local>/results|
+        lval <iterator>: R|kotlin/collections/Iterator<kotlin/Nothing>| = R|<local>/<range>|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Nothing>|>|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval result: R|kotlin/Nothing| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Nothing|>|()
+            R|<local>/s| = R|<local>/result|
+            when () {
+                R|<local>/result|.<Unresolved name: b># ->  {
+                    break@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()]
+                }
+            }
+
+        }
+
+        R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+            ^ R|<local>/it|.R|/A.a|
+        }
+        )
+    }

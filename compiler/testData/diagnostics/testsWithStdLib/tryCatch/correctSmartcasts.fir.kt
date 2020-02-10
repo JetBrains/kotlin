@@ -15,7 +15,7 @@ fun test1(s: String?) {
         catch (e: Exception) {
             requireNotNull(s)
         }
-        t2.<!UNRESOLVED_REFERENCE!>not<!>()
+        t2.<!INAPPLICABLE_CANDIDATE!>not<!>()
         s.length
     }
 }
@@ -45,7 +45,7 @@ fun test3() {
         s = null
         return
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!>
+    s.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 fun test4() {
@@ -61,7 +61,7 @@ fun test4() {
     catch (e: ExcB) {
 
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!>
+    s.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 fun test5(s: String?) {

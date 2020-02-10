@@ -44,7 +44,7 @@ fun gaz(s: String?) {
             x = null
         }
         run {
-            x.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+            x.hashCode()
         }
     }
 }

@@ -11,11 +11,11 @@ fun list(start: SomeObject) {
         // In theory smart cast is possible here
         // But in practice we have a loop with changing e
         // ?: should we "or" entrance type info with condition type info?
-        if (<!UNRESOLVED_REFERENCE!>!<!>e.<!INAPPLICABLE_CANDIDATE!>doSomething<!>())
+        if (!e.doSomething())
             break
         // Smart cast here is still not possible
-        e = e.<!INAPPLICABLE_CANDIDATE!>next<!>()
+        e = e.next()
     } while (e != null)
     // e can be null because of next()
-    e.<!INAPPLICABLE_CANDIDATE!>doSomething<!>()
+    e.doSomething()
 }

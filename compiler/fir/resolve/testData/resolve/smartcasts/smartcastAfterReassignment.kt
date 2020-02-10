@@ -17,5 +17,5 @@ fun test_3() {
     x = ""
     x.length
     x = null
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.<!INAPPLICABLE_CANDIDATE!>length<!>
 }

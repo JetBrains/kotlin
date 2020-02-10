@@ -1,0 +1,157 @@
+FILE: noBoundSmartcastAfterContinue.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public final fun test_0(list: R|kotlin/collections/List<A>|): R|kotlin/Unit| {
+        lvar goodA: R|A?| = Null(null)
+        lval <range>: R|kotlin/collections/List<A>| = R|<local>/list|
+        lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/<range>|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval a: R|A| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|A|>|()
+            when () {
+                ==(R|<local>/goodA|, Null(null)) ->  {
+                    R|<local>/goodA| = R|<local>/a|
+                    continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()]
+                }
+            }
+
+            R|<local>/goodA|.R|/A.s|
+        }
+
+    }
+    public final fun test_1(a: R|A|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|kotlin/Any|
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/x| = R|/A.A|()
+            }
+            else ->  {
+                R|<local>/x| = R|<local>/a|
+            }
+        }
+
+        R|<local>/x|.R|/A.s|
+    }
+    public final fun test_2(a: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|kotlin/Any|
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/x| = R|/A.A|()
+            }
+            else ->  {
+                R|<local>/x| = R|<local>/a|
+                (R|<local>/a| as R|A|)
+            }
+        }
+
+        R|<local>/x|.R|/A.s|
+    }
+    public final fun test_3(a: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|kotlin/Any|
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/x| = R|/A.A|()
+            }
+            else ->  {
+                (R|<local>/a| as R|A|)
+                R|<local>/x| = R|<local>/a|
+            }
+        }
+
+        R|<local>/x|.R|/A.s|
+    }
+    public final fun test_4(a: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|kotlin/Any|
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/x| = R|<local>/a|
+            }
+            else ->  {
+                R|<local>/x| = R|<local>/a|
+            }
+        }
+
+        (R|<local>/x| as R|A|)
+        R|<local>/x|.R|/A.s|
+        R|<local>/a|.R|/A.s|
+    }
+    public final fun test_5(a: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|kotlin/Any|
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/x| = R|<local>/a|
+            }
+            else ->  {
+                R|<local>/x| = R|<local>/a|
+            }
+        }
+
+        (R|<local>/a| as R|A|)
+        R|<local>/x|.R|/A.s|
+        R|<local>/a|.R|/A.s|
+    }
+    public final fun test_6(a: R|A|): R|kotlin/Unit| {
+        lval x: R|kotlin/Any|
+        R|<local>/x| = R|<local>/a|
+        R|<local>/x|.R|/A.s|
+    }
+    public final fun test_7(): R|kotlin/Unit| {
+        lval z: R|kotlin/String?| = Null(null)
+        lvar y: R|kotlin/String?| = R|<local>/z|
+        lval x: R|kotlin/String?| = R|<local>/y|
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+        when () {
+            !=(R|<local>/y|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+        when () {
+            !=(R|<local>/z|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+        R|<local>/y| = Null(null)
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+        when () {
+            !=(R|<local>/y|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+            }
+        }
+
+        when () {
+            !=(R|<local>/z|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+    }

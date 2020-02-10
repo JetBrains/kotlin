@@ -1,0 +1,33 @@
+FILE: overridenOpenVal.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Any|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/Any| = R|<local>/x|
+            public get(): R|kotlin/Any|
+
+    }
+    public final class B : R|A| {
+        public constructor(x: R|kotlin/Any|): R|B| {
+            super<R|A|>(R|<local>/x|)
+        }
+
+        public final fun test_1(): R|kotlin/Unit| {
+            when () {
+                (this@R|/B|.R|/A.x| is R|kotlin/String|) ->  {
+                    this@R|/B|.R|/A.x|.R|kotlin/String.length|
+                }
+            }
+
+        }
+
+    }
+    public final fun test_2(b: R|B|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/b|.R|/A.x| is R|kotlin/String|) ->  {
+                R|<local>/b|.R|/A.x|.R|kotlin/String.length|
+            }
+        }
+
+    }

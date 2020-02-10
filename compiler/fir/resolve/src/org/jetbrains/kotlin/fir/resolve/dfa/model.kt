@@ -41,6 +41,7 @@ class RealVariable(
     val identifier: Identifier,
     val isThisReference: Boolean,
     val explicitReceiverVariable: DataFlowVariable?,
+    val originalType: ConeKotlinType,
     variableIndexForDebug: Int
 ) : DataFlowVariable(variableIndexForDebug) {
     override val isStable: Boolean by lazy {
@@ -51,6 +52,8 @@ class RealVariable(
                     property.isLocal -> true
                     property.isVar -> false
                     property.modality != Modality.FINAL -> false
+                    property.receiverTypeRef != null -> false
+                    property.getter != null -> false
                     // TODO: getters, delegates
                     else -> true
                 }

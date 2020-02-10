@@ -13,5 +13,5 @@ fun list(start: String) {
         e = e.next()
     }
     // e can never be null but we do not know it
-    e.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    e.hashCode()
 }

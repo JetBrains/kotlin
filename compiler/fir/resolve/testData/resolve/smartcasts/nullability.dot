@@ -499,11 +499,11 @@ digraph nullability_kt {
                 172 [label="Access variable R|/Q.data|"];
                 173 [label="Access variable R|<local>/q|"];
                 174 [label="Access variable R|/Q.data|"];
-                175 [label="Access variable R|/MyData.s|"];
+                175 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
                 176 [label="Access variable R|<local>/q|"];
                 177 [label="Access variable R|/Q.data|"];
-                178 [label="Access variable R|/MyData.s|"];
-                179 [label="Function call: R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()"];
+                178 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
+                179 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
                 180 [label="Exit block"];
             }
             181 [label="Exit when branch result"];
@@ -596,11 +596,11 @@ digraph nullability_kt {
         216 [label="Access variable R|/Q.data|"];
         217 [label="Access variable R|<local>/q|"];
         218 [label="Access variable R|/Q.data|"];
-        219 [label="Access variable R|/MyData.s|"];
+        219 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
         220 [label="Access variable R|<local>/q|"];
         221 [label="Access variable R|/Q.data|"];
-        222 [label="Access variable R|/MyData.s|"];
-        223 [label="Function call: R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()"];
+        222 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
+        223 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
         224 [label="Exit function test_6" style="filled" fillcolor=red];
     }
 
@@ -1288,11 +1288,11 @@ digraph nullability_kt {
                 486 [label="Access variable R|/QImplWithCustomGetter.data|"];
                 487 [label="Access variable R|<local>/q|"];
                 488 [label="Access variable R|/QImplWithCustomGetter.data|"];
-                489 [label="Access variable R|/MyData.s|"];
+                489 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
                 490 [label="Access variable R|<local>/q|"];
                 491 [label="Access variable R|/QImplWithCustomGetter.data|"];
-                492 [label="Access variable R|/MyData.s|"];
-                493 [label="Function call: R|<local>/q|.R|/QImplWithCustomGetter.data|.R|/MyData.s|.R|kotlin/Int.inc|()"];
+                492 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
+                493 [label="Function call: R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
                 494 [label="Exit block"];
             }
             495 [label="Exit when branch result"];
@@ -1365,11 +1365,11 @@ digraph nullability_kt {
                 518 [label="Access variable R|/QImplMutable.data|"];
                 519 [label="Access variable R|<local>/q|"];
                 520 [label="Access variable R|/QImplMutable.data|"];
-                521 [label="Access variable R|/MyData.s|"];
+                521 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
                 522 [label="Access variable R|<local>/q|"];
                 523 [label="Access variable R|/QImplMutable.data|"];
-                524 [label="Access variable R|/MyData.s|"];
-                525 [label="Function call: R|<local>/q|.R|/QImplMutable.data|.R|/MyData.s|.R|kotlin/Int.inc|()"];
+                524 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
+                525 [label="Function call: R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
                 526 [label="Exit block"];
             }
             527 [label="Exit when branch result"];

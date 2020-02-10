@@ -93,7 +93,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     }
 }
 
-val CFGNode<*>.firstPreviousNode: CFGNode<*> get() = previousNodes.first()
+val CFGNode<*>.firstPreviousNode: CFGNode<*> get() = previousNodes[0]
 
 interface EnterNodeMarker
 interface ExitNodeMarker

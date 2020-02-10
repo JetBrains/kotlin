@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 
@@ -14,6 +15,13 @@ abstract class Flow {
     abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>
     abstract fun getVariablesInTypeStatements(): Collection<RealVariable>
     abstract fun removeOperations(variable: DataFlowVariable): Collection<Implication>
+
+    abstract val directAliasMap: Map<RealVariable, RealVariable>
+    abstract val backwardsAliasMap: Map<RealVariable, List<RealVariable>>
+}
+
+fun Flow.unwrapVariable(variable: RealVariable): RealVariable {
+    return directAliasMap[variable] ?: variable
 }
 
 abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceContext) {
@@ -44,6 +52,9 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         shouldForkFlow: Boolean,
         shouldRemoveSynthetics: Boolean,
     ): FLOW
+
+    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
+    abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
 
     protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
 

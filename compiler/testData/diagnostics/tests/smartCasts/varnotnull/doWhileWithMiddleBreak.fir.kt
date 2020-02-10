@@ -8,5 +8,5 @@ public fun foo(pp: String?): Int {
         p = null
     } while (!x())
     // Smart cast is NOT possible here
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p.length
 }

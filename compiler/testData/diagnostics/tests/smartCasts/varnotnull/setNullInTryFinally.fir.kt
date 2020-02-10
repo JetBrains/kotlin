@@ -12,5 +12,5 @@ fun foo() {
     finally {
         bar()
     }
-    s.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+    s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
 }

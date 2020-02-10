@@ -6,5 +6,5 @@ public fun foo(p: String?): Int {
         if (x()) break
     }
     // p is nullable because it's possible loop body is not executed at all
-    return p.length
+    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
 }

@@ -16,5 +16,5 @@ fun list(start: SomeObject) {
         e = e.next()
     } 
     // e can be null because of next()
-    e.<!INAPPLICABLE_CANDIDATE!>doSomething<!>()
+    e.doSomething()
 }

@@ -1166,11 +1166,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
         }
 
-        @TestMetadata("noBoundSmartcastAfterContinue.kt")
-        public void testNoBoundSmartcastAfterContinue() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/noBoundSmartcastAfterContinue.kt");
-        }
-
         @TestMetadata("propertyFromJavaPlusAssign.kt")
         public void testPropertyFromJavaPlusAssign() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/propertyFromJavaPlusAssign.kt");

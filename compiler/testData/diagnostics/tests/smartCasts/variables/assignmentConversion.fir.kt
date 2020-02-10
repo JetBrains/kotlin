@@ -8,7 +8,7 @@ fun test1() {
     if (newC != null) {
         c = newC
     }
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(c)
+    foo(c)
 }
 
 fun test2() {
@@ -19,7 +19,7 @@ fun test2() {
     if (newC is String) {
         c = newC
     }
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(c)
+    foo(c)
 }
 
 fun test3() {
@@ -30,6 +30,6 @@ fun test3() {
     if (newC == null) return
     c = newC
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(c)
+    foo(c)
 }
 

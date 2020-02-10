@@ -2,8 +2,8 @@
 fun foo(): String {
     var s: String?
     s = null
-    s?.<!UNRESOLVED_REFERENCE!>length<!>
-    s.<!UNRESOLVED_REFERENCE!>length<!>
+    s?.length
+    s.<!INAPPLICABLE_CANDIDATE!>length<!>
     if (s == null) return s!!
     var t: String? = "y"
     if (t == null) t = "x"

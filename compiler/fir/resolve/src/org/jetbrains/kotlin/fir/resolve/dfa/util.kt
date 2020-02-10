@@ -5,18 +5,26 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import kotlinx.collections.immutable.PersistentMap
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -62,6 +70,20 @@ internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunct
     val existing = this[key]
     if (existing == null) {
         put(key, value)
+    } else {
+        put(key, remappingFunction(existing))
+    }
+}
+
+@UseExperimental(ExperimentalContracts::class)
+internal inline fun <K, V> PersistentMap<K, V>.put(key: K, valueProducer: () -> V, remappingFunction: (existing: V) -> V): PersistentMap<K, V> {
+    contract {
+        callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(valueProducer, InvocationKind.AT_MOST_ONCE)
+    }
+    val existing = this[key]
+    return if (existing == null) {
+        put(key, valueProducer())
     } else {
         put(key, remappingFunction(existing))
     }
@@ -119,3 +141,8 @@ internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
     }
+
+//val ConeKotlinType.isNothingOrNullableNothing: Boolean = when (this) {
+//    is ConeFlexibleType -> lowerBound.isNothingOrNullableNothing
+//    else -> false
+//}

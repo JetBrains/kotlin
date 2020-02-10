@@ -41,7 +41,7 @@ fun f(a: SomeClass?) {
     if (aa as? SomeSubClass != null) {
         aa = null
         // 'aa' cannot be cast to SomeSubClass
-        aa.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        aa.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
         (aa as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
         (aa as SomeSubClass).foo
@@ -50,7 +50,7 @@ fun f(a: SomeClass?) {
     aa = null
     if (b != null) {
         // 'aa' cannot be cast to SomeSubClass
-        aa.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        aa.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
         (aa as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
         (aa as SomeSubClass).foo

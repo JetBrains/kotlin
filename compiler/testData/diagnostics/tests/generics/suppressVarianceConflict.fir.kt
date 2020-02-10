@@ -10,8 +10,8 @@ class A<out T, in E> {
 fun foo(x: A<String, Any?>, cs: CharSequence, ls: List<CharSequence>) {
     val y: A<CharSequence, String> = x
 
-    y.foo(cs)
-    val s: String = y.foo(cs, ls)
+    y.<!INAPPLICABLE_CANDIDATE!>foo<!>(cs)
+    val s: String = y.<!INAPPLICABLE_CANDIDATE!>foo<!>(cs, ls)
 
     val ls2: List<String> = y.bar()
 }

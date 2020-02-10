@@ -28,11 +28,11 @@ fun test() {
     x.foo().checkType { _<CharSequence?>() }
 
     if (x is B && x is C) {
-        x.foo().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><CharSequence?>() }
+        x.foo().checkType { _<CharSequence?>() }
         x.baz("")
-        x.baz(1).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
-        x.baz(1, 2)
+        x.baz(1).checkType { _<Unit>() }
+        x.<!INAPPLICABLE_CANDIDATE!>baz<!>(1, 2)
 
-        x.foobar().checkType { _<String>() }
+        x.<!UNRESOLVED_REFERENCE!>foobar<!>().<!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
     }
 }

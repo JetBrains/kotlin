@@ -110,8 +110,8 @@ FILE: nullability.kt
         when () {
             !=(R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/Q.data|
-                R|<local>/q|.R|/Q.data|.R|/MyData.s|
-                R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
+                R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
             }
         }
 
@@ -127,8 +127,8 @@ FILE: nullability.kt
         }
 
         R|<local>/q|.R|/Q.data|
-        R|<local>/q|.R|/Q.data|.R|/MyData.s|
-        R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+        R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
+        R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
     }
     public final fun test_7(q: R|Q?|): R|kotlin/Unit| {
         when () {
@@ -232,8 +232,8 @@ FILE: nullability.kt
         when () {
             !=(R|<local>/q|?.R|/QImplWithCustomGetter.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/QImplWithCustomGetter.data|
-                R|<local>/q|.R|/QImplWithCustomGetter.data|.R|/MyData.s|
-                R|<local>/q|.R|/QImplWithCustomGetter.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
             }
         }
 
@@ -242,8 +242,8 @@ FILE: nullability.kt
         when () {
             !=(R|<local>/q|?.R|/QImplMutable.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/QImplMutable.data|
-                R|<local>/q|.R|/QImplMutable.data|.R|/MyData.s|
-                R|<local>/q|.R|/QImplMutable.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
             }
         }
 

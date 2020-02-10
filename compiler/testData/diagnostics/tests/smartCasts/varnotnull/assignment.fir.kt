@@ -5,7 +5,7 @@ fun foo() {
     v = "abc"
     v.length
     v = null
-    v.<!UNRESOLVED_REFERENCE!>length<!>
+    v.<!INAPPLICABLE_CANDIDATE!>length<!>
     v = "abc"
     v.length
 }

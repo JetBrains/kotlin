@@ -9,5 +9,5 @@ public fun foo(pp: String?): Int {
     }
     // Smart cast is NOT possible here
     // (we could provide it but p = null makes it much harder)
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p.length
 }

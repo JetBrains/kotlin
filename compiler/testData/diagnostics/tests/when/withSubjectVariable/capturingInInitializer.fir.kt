@@ -27,11 +27,11 @@ fun testUnsafeCaptureVarInInitializer() {
 
     val s = when (val y = run { x = null; 32 }) {
         0 -> {
-            x.<!UNRESOLVED_REFERENCE!>inc<!>() // NB smart cast should be impossible
+            x.<!INAPPLICABLE_CANDIDATE!>inc<!>() // NB smart cast should be impossible
             "0"
         }
         else -> "!= 0"
     }
 
-    x.<!UNRESOLVED_REFERENCE!>inc<!>() // NB smart cast should be impossible
+    x.<!INAPPLICABLE_CANDIDATE!>inc<!>() // NB smart cast should be impossible
 }
