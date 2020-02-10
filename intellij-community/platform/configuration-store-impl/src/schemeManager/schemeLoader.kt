@@ -28,7 +28,7 @@ internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManag
                                                          private val oldSchemes: List<T>,
                                                          private val preScheduledFilesToDelete: MutableSet<String>,
                                                          private val isDuringLoad: Boolean) {
-  private val filesToDelete: MutableSet<String> = THashSet<String>()
+  private val filesToDelete: MutableSet<String> = THashSet()
 
   private val schemes: MutableList<T> = oldSchemes.toMutableList()
   private var newSchemesOffset = schemes.size
@@ -54,7 +54,7 @@ internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManag
    */
   fun apply(): List<T> {
     LOG.assertTrue(isApplied.compareAndSet(false, true))
-    if (!filesToDelete.isEmpty() || !preScheduledFilesToDelete.isEmpty()) {
+    if (filesToDelete.isNotEmpty() || preScheduledFilesToDelete.isNotEmpty()) {
       LOG.debug { "Schedule to delete: ${filesToDelete.joinToString()} (and preScheduledFilesToDelete: ${preScheduledFilesToDelete.joinToString()})" }
       schemeManager.filesToDelete.addAll(filesToDelete)
       schemeManager.filesToDelete.addAll(preScheduledFilesToDelete)
@@ -173,7 +173,7 @@ internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManag
 
         val externalInfo = createInfo(schemeKey, null)
         scheme = processor.createScheme(SchemeDataHolderImpl(processor, bytes, externalInfo), schemeKey, attributeProvider)
-        schemeToInfo.put(scheme, externalInfo)
+        schemeToInfo.put(scheme!!, externalInfo)
         retainProbablyScheduledForDeleteFile(fileName)
       }
     }
@@ -188,7 +188,7 @@ internal class SchemeLoader<T : Any, MUTABLE_SCHEME : T>(private val schemeManag
         return null
       }
 
-      schemeToInfo.put(scheme, createInfo(schemeKey, element))
+      schemeToInfo.put(scheme!!, createInfo(schemeKey, element))
       retainProbablyScheduledForDeleteFile(fileName)
     }
 
