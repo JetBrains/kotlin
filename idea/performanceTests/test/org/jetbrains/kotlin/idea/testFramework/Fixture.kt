@@ -46,9 +46,10 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import java.io.Closeable
 
 
-class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, val vFile: VirtualFile = psiFile.virtualFile) {
+class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, val vFile: VirtualFile = psiFile.virtualFile) : Closeable {
     private var delegate = EditorTestFixture(project, editor, vFile)
 
     val document: Document
@@ -76,7 +77,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
                 applyText(text)
             }
         } finally {
-            cleanupCaches(project, vFile)
+            cleanupCaches(project)
         }
     }
 
@@ -103,14 +104,19 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
         dispatchAllInvocationEvents()
     }
 
+    override fun close() = close(project, vFile)
+
     companion object {
         // quite simple impl - good so far
         fun isAKotlinScriptFile(fileName: String) = fileName.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
 
-        fun cleanupCaches(project: Project, vFile: VirtualFile) {
+        fun cleanupCaches(project: Project) {
             commitAllDocuments()
-            FileEditorManager.getInstance(project).closeFile(vFile)
             PsiManager.getInstance(project).dropPsiCaches()
+        }
+
+        fun close(project: Project, file: VirtualFile) {
+            FileEditorManager.getInstance(project).closeFile(file)
         }
 
         fun enableAnnotatorsAndLoadDefinitions(project: Project) {

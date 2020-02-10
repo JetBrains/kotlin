@@ -660,7 +660,7 @@ tasks {
     register("idea-plugin-performance-tests") {
         dependsOn("dist")
         dependsOn(
-            ":idea:performanceTest"
+            ":idea:performanceTests:performanceTest"
         )
     }
 

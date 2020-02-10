@@ -152,16 +152,29 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     perfOpenKotlinProjectFast(stat)
                 }
 
+//                runAndMeasure("type and autocomplete") {
+//                    perfTypeAndAutocomplete(
+//                        stat,
+//                        "build.gradle.kts",
+//                        "tasks {",
+//                        "default",
+//                        lookupElements = listOf("defaultJvmTarget"),
+//                        note = "tasks-create"
+//                    )
+//                }
+
                 runAndMeasure("type and autocomplete") {
                     perfTypeAndAutocomplete(
                         stat,
                         "build.gradle.kts",
                         "tasks {",
-                        "crea",
-                        lookupElements = listOf("create"),
+                        "reg",
+                        lookupElements = listOf("register"),
                         note = "tasks-create"
                     )
                 }
+
+
             }
         }
     }
@@ -319,7 +332,9 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     extraTimingsNs.add(mapOf(TEST_KEY to (timer.get() - v.first)))
 
                 }
-                cleanupCaches(project, fixture.vFile)
+                fixture.use {
+                    cleanupCaches(project)
+                }
             }
         }
     }

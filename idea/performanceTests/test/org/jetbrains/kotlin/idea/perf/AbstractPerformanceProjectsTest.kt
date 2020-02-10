@@ -55,10 +55,12 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.testFramework.*
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
+import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.close
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.openFileInEditor
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.openFixture
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.nio.file.Paths
 
@@ -229,8 +231,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
                     // close all project but last - we're going to return and use it further
                     if (counter < warmUpIterations + iterations - 1) {
-                        closeProject(project)
                         myApplication.setDataProvider(null)
+                        closeProject(project)
                     }
                     counter++
                 }
@@ -306,61 +308,64 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
-        performanceTest<Pair<String, Fixture>, Array<LookupElement>> {
-            name("typeAndAutocomplete ${notePrefix(note)}$fileName")
-            stats(stats)
-            warmUpIterations(8)
-            iterations(15)
-            setUp {
-                val fixture = openFixture(project, fileName)
-                val editor = fixture.editor
+        openFixture(project, fileName).use { fixture ->
+            val editor = fixture.editor
 
-                val initialText = editor.document.text
-                updateScriptDependenciesIfNeeded(fileName, fixture, project)
+            val initialText = editor.document.text
+            updateScriptDependenciesIfNeeded(fileName, fixture, project)
+            val scriptConfigurationManager = ScriptConfigurationManager.getInstance(fixture.project)
+            val configuration = scriptConfigurationManager.getConfiguration(fixture.psiFile as KtFile)
+            //scriptConfigurationManager.reloadScriptDefinitions()
+            //scriptConfigurationManager.forceReloadConfiguration(fixture.vFile, loaderForOutOfProjectScripts)
 
-                val tasksIdx = editor.document.text.indexOf(marker)
-                assertTrue("marker '$marker' not found in $fileName", tasksIdx > 0)
-                if (typeAfterMarker) {
-                    editor.caretModel.moveToOffset(tasksIdx + marker.length + 1)
-                } else {
-                    editor.caretModel.moveToOffset(tasksIdx - 1)
-                }
+            performanceTest<Pair<String, Fixture>, Array<LookupElement>> {
+                name("typeAndAutocomplete ${notePrefix(note)}$fileName")
+                stats(stats)
+                warmUpIterations(8)
+                iterations(15)
+                profileEnabled(true)
+                setUp {
+                    val tasksIdx = editor.document.text.indexOf(marker)
+                    assertTrue("marker '$marker' not found in $fileName", tasksIdx > 0)
+                    if (typeAfterMarker) {
+                        editor.caretModel.moveToOffset(tasksIdx + marker.length + 1)
+                    } else {
+                        editor.caretModel.moveToOffset(tasksIdx - 1)
+                    }
 
-                for (surroundItem in surroundItems) {
-                    EditorTestUtil.performTypingAction(editor, surroundItem)
-                }
-
-                editor.caretModel.moveToOffset(editor.caretModel.offset - if (typeAfterMarker) 1 else 2)
-
-                if (!typeAfterMarker) {
                     for (surroundItem in surroundItems) {
                         EditorTestUtil.performTypingAction(editor, surroundItem)
                     }
-                    editor.caretModel.moveToOffset(editor.caretModel.offset - 2)
-                }
 
-                fixture.type(insertString)
+                    editor.caretModel.moveToOffset(editor.caretModel.offset - if (typeAfterMarker) 1 else 2)
 
-                it.setUpValue = Pair(initialText, fixture)
-            }
-            test {
-                val fixture = it.setUpValue!!.second
-                it.value = fixture.complete()
-            }
-            tearDown {
-                val items = it.value?.map { e -> e.lookupString }?.toList() ?: emptyList()
-                try {
-                    for (lookupElement in lookupElements) {
-                        assertTrue("'$lookupElement' has to be present in items", items.contains(lookupElement))
+                    if (!typeAfterMarker) {
+                        for (surroundItem in surroundItems) {
+                            EditorTestUtil.performTypingAction(editor, surroundItem)
+                        }
+                        editor.caretModel.moveToOffset(editor.caretModel.offset - 2)
                     }
-                } finally {
-                    it.setUpValue?.let { pair ->
-                        pair.second.revertChanges(revertChangesAtTheEnd, pair.first)
+
+                    fixture.type(insertString)
+
+                    it.setUpValue = Pair(initialText, fixture)
+                }
+                test {
+                    val fixture = it.setUpValue!!.second
+                    it.value = fixture.complete()
+                }
+                tearDown {
+                    val items = it.value?.map { e -> e.lookupString }?.toList() ?: emptyList()
+                    try {
+                        for (lookupElement in lookupElements) {
+                            assertTrue("'$lookupElement' has to be present in items $items", items.contains(lookupElement))
+                        }
+                    } finally {
+                        fixture.revertChanges(revertChangesAtTheEnd, initialText)
+                        commitAllDocuments()
                     }
-                    commitAllDocuments()
                 }
             }
-            profileEnabled(true)
         }
     }
 
@@ -624,7 +629,10 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 it.value = it.setUpValue
             }
             tearDown {
-                it.setUpValue?.let { ef -> cleanupCaches(project, ef.psiFile.virtualFile) }
+                it.setUpValue?.let { ef ->
+                    cleanupCaches(project)
+                    close(project, ef.psiFile.virtualFile)
+                }
                 it.value?.let { v -> assertNotNull(v) }
             }
             profileEnabled(true)

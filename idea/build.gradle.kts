@@ -28,25 +28,6 @@ sourceSets {
             "idea-live-templates/tests"
         )
     }
-
-    "performanceTest" {
-        java.srcDirs("performanceTests")
-    }
-}
-
-val performanceTestCompile by configurations
-performanceTestCompile.apply {
-    extendsFrom(configurations["testCompile"])
-}
-
-val performanceTestCompileOnly by configurations
-performanceTestCompileOnly.apply {
-    extendsFrom(configurations["testCompileOnly"])
-}
-
-val performanceTestRuntime by configurations
-performanceTestRuntime.apply {
-    extendsFrom(configurations["testRuntime"])
 }
 
 dependencies {
@@ -189,13 +170,6 @@ dependencies {
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
     }
-
-    performanceTestCompile(sourceSets["test"].output)
-    performanceTestCompile(sourceSets["main"].output)
-    performanceTestCompile(project(":nj2k"))
-    performanceTestCompile(project(":idea:idea-gradle-tooling-api"))
-    performanceTestCompile(intellijPluginDep("gradle"))
-    performanceTestRuntime(sourceSets["performanceTest"].output)
 }
 
 tasks.named<Copy>("processResources") {
@@ -209,35 +183,6 @@ projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-projectTest(taskName = "performanceTest") {
-    dependsOn(":dist")
-    dependsOn(performanceTestRuntime)
-
-    testClassesDirs = sourceSets["performanceTest"].output.classesDirs
-    classpath = performanceTestRuntime + files("${System.getenv("ASYNC_PROFILER_HOME")}/build/async-profiler.jar")
-    workingDir = rootDir
-
-    jvmArgs?.removeAll { it.startsWith("-Xmx") }
-
-    maxHeapSize = "3g"
-    jvmArgs("-Didea.debug.mode=true")
-    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
-    jvmArgs(
-        "-XX:ReservedCodeCacheSize=240m",
-        "-XX:+UseCompressedOops",
-        "-XX:+UseConcMarkSweepGC"
-    )
-
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-        project.findProperty("cacheRedirectorEnabled")?.let {
-            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
-        }
-    }
-}
-
-testsJar {
-    from(sourceSets["performanceTest"].output)
-}
-
 configureFormInstrumentation()
+
+testsJar()
