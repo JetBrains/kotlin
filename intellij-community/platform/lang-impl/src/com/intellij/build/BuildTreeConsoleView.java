@@ -79,6 +79,7 @@ import static com.intellij.openapi.util.text.StringUtil.isEmpty;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
 import static com.intellij.util.ObjectUtils.chooseNotNull;
+import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static com.intellij.util.ui.UIUtil.getTreeSelectionForeground;
 
 /**
@@ -284,11 +285,11 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
           if (event instanceof MessageEvent) {
             MessageEvent messageEvent = (MessageEvent)event;
             currentNode.setStartTime(messageEvent.getEventTime());
-            addNotNull(structureChanged, currentNode.setEndTime(messageEvent.getEventTime()));
+            addIfNotNull(structureChanged, currentNode.setEndTime(messageEvent.getEventTime()));
             Navigatable messageEventNavigatable = messageEvent.getNavigatable(myProject);
             currentNode.setNavigatable(messageEventNavigatable);
             MessageEventResult messageEventResult = messageEvent.getResult();
-            addNotNull(structureChanged, currentNode.setResult(messageEventResult));
+            addIfNotNull(structureChanged, currentNode.setResult(messageEventResult));
 
             if (messageEventResult instanceof FailureResult) {
               for (Failure failure : ((FailureResult)messageEventResult).getFailures()) {
@@ -352,8 +353,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       if (result instanceof DerivedResult) {
         result = calculateDerivedResult((DerivedResult)result, currentNode);
       }
-      addNotNull(structureChanged, currentNode.setResult(result));
-      addNotNull(structureChanged, currentNode.setEndTime(event.getEventTime()));
+      addIfNotNull(structureChanged, currentNode.setResult(result));
+      addIfNotNull(structureChanged, currentNode.setEndTime(event.getEventTime()));
       SkippedResult skippedResult = new SkippedResultImpl();
       finishChildren(structureChanged, currentNode, skippedResult);
       if (result instanceof FailureResult) {
@@ -399,12 +400,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       return ((ConsoleViewImpl)console).getText();
     }
     return null;
-  }
-
-  private static void addNotNull(@NotNull SmartHashSet<ExecutionNode> changed, @Nullable ExecutionNode result) {
-    if (result != null) {
-      changed.add(result);
-    }
   }
 
   private static EventResult calculateDerivedResult(DerivedResult result, ExecutionNode node) {
@@ -542,7 +537,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         continue;
       }
       finishChildren(structureChanged, child, result);
-      addNotNull(structureChanged, child.setResult(result));
+      addIfNotNull(structureChanged, child.setResult(result));
     }
   }
 
