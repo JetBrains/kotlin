@@ -170,12 +170,18 @@ internal fun JavaClassifierType.toConeKotlinTypeWithNullability(
             classId = classId.readOnlyToMutable() ?: classId
 
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
-            lookupTag.constructClassType(
-                typeArguments.map { argument ->
+
+            val mappedTypeArguments = when (isRaw) {
+                true -> classifier.typeParameters.map { ConeStarProjection }
+                false -> typeArguments.map { argument ->
                     argument.toConeProjection(
                         session, javaTypeParameterStack, boundTypeParameter = null, nullability = typeParametersNullability
                     )
-                }.toTypedArray(), nullability.isNullable
+                }
+            }
+
+            lookupTag.constructClassType(
+                mappedTypeArguments.toTypedArray(), nullability.isNullable
             )
         }
         is JavaTypeParameter -> {
