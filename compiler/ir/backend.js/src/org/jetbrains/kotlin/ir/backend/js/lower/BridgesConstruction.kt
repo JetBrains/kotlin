@@ -72,8 +72,8 @@ abstract class BridgesConstruction<FunctionSignature>(val context: CommonBackend
 
     private fun generateBridges(function: IrSimpleFunction): List<IrDeclaration>? {
         // equals(Any?), hashCode(), toString() never need bridges
-        if (function.isMethodOfAny())
-            return null
+//        if (function.isMethodOfAny())
+//            return null
 
         val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
             specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)

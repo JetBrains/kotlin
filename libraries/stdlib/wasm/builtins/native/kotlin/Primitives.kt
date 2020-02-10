@@ -626,7 +626,7 @@ public inline class Short @ExcludedFromCodegen private constructor(val value: Sh
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt()).reinterpretAsBoolean()
 
-    public override fun toString(): String = shortToStringImpl()
+    public override fun toString(): String = shortToStringImpl(this)
 
     // TODO: Implement Short.toString()
 
@@ -640,7 +640,7 @@ public inline class Short @ExcludedFromCodegen private constructor(val value: Sh
 }
 
 @WasmImport("runtime", "coerceToString")
-private fun shortToStringImpl(): String = implementedAsIntrinsic
+private fun shortToStringImpl(x: Short): String = implementedAsIntrinsic
 
 /**
  * Represents a 32-bit signed integer.

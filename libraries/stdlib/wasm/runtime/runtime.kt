@@ -19,8 +19,8 @@ internal fun unsafeNotNull(x: Any?): Any =
     implementedAsIntrinsic
 
 internal fun nullableEquals(lhs: Any?, rhs: Any?): Boolean {
-    if(wasm_ref_is_null(lhs).reinterpretAsBoolean())
-        return wasm_ref_is_null(rhs).reinterpretAsBoolean()
+    if (wasm_ref_is_null(lhs))
+        return wasm_ref_is_null(rhs)
     return unsafeNotNull(lhs).equals(rhs)
 }
 

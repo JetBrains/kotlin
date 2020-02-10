@@ -35,7 +35,7 @@ public open class Any {
      * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
      */
     // @WasmRefOp(WasmRefOp.REF_EQ)
-    public open operator fun equals(other: Any?): Boolean = wasm_ref_eq(this, other) == 1
+    public open operator fun equals(other: Any?): Boolean = wasm_ref_eq(this, other)
 
     /**
      * Returns a hash code value for the object.  The general contract of `hashCode` is:

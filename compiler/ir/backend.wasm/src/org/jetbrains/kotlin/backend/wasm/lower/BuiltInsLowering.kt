@@ -43,25 +43,30 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
                 return irCall(call, newSymbol)
             }
-            irBuiltins.eqeqSymbol, irBuiltins.eqeqeqSymbol, in irBuiltins.ieee754equalsFunByOperandType.values -> {
-                val type = call.getValueArgument(0)!!.type
-                val newSymbol = symbols.equalityFunctions[type]
-                if (newSymbol == null) {
-                    if (symbol == irBuiltins.eqeqeqSymbol) {
-                        return irCall(call, symbols.refEq)
-                    }
-                    if (type.isNullable()) {
-                        return irCall(call, symbols.nullableEquals)
-                    }
-                    val equalsMethod = type.findEqualsMethod()?.symbol
-                        ?: error("Unsupported equality operator with type: ${type.render()}")
-                    return irCall(call, equalsMethod, argumentsAsReceivers = true)
-                } else {
-                    val type2 = call.getValueArgument(1)!!.type
-                    if (type2.isNullable()) {
-                        return irCall(call, symbols.nullableEquals)
+            irBuiltins.eqeqSymbol -> {
+                val lhsType = call.getValueArgument(0)!!.type
+                val rhsType = call.getValueArgument(1)!!.type
+
+                if (lhsType == rhsType) {
+                    val newSymbol = symbols.equalityFunctions[lhsType]
+                    if (newSymbol != null) {
+                        return irCall(call, newSymbol)
                     }
                 }
+
+                if (!lhsType.isNullable()) {
+                    val equalsMethod = lhsType.findEqualsMethod()?.symbol
+                        ?: error("Unsupported equality operator with type: ${lhsType.render()}")
+                    return irCall(call, equalsMethod, argumentsAsReceivers = true)
+                }
+
+                return irCall(call, symbols.nullableEquals)
+            }
+
+            irBuiltins.eqeqeqSymbol -> {
+                val type = call.getValueArgument(0)!!.type
+                val newSymbol =
+                    symbols.equalityFunctions[type] ?: symbols.floatEqualityFunctions[type] ?: symbols.refEq
                 return irCall(call, newSymbol)
             }
 

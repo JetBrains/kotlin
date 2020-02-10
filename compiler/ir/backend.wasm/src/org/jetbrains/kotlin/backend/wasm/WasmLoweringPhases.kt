@@ -406,6 +406,7 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             // arrayConstructorPhase then
 
             functionInliningPhase then
+            provisionalFunctionExpressionPhase then
             lateinitNullableFieldsPhase then
             lateinitDeclarationLoweringPhase then
             lateinitUsageLoweringPhase then

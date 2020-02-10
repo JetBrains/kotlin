@@ -74,9 +74,12 @@ class WasmSymbols(
         context.irBuiltIns.charType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.intType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
-        context.irBuiltIns.floatType to getInternalFunction("wasm_f32_eq"),
-        context.irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq"),
         context.irBuiltIns.stringType to getInternalFunction("wasm_string_eq")
+    )
+
+    val floatEqualityFunctions = mapOf(
+        context.irBuiltIns.floatType to getInternalFunction("wasm_f32_eq"),
+        context.irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq")
     )
 
     private fun wasmString(classfier: IrClassifierSymbol): String = with(context.irBuiltIns) {

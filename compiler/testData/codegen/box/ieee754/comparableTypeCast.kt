@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     if ((-0.0 as Comparable<Double>) >= 0.0) return "fail 0"

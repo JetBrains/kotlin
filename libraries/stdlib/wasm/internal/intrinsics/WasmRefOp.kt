@@ -19,7 +19,7 @@ internal annotation class WasmRefOp(val name: String) {
 external fun wasm_ref_null(): Any?
 
 @WasmRefOp(WasmRefOp.REF_IS_NULL)
-external fun wasm_ref_is_null(a: Any?): Int
+external fun wasm_ref_is_null(a: Any?): Boolean
 
 @WasmRefOp(WasmRefOp.REF_EQ)
-external fun wasm_ref_eq(a: Any?, b: Any?): Int
+external fun wasm_ref_eq(a: Any?, b: Any?): Boolean

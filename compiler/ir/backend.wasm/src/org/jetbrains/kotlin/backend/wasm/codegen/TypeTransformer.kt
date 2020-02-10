@@ -56,6 +56,9 @@ class WasmTypeTransformer(
             builtIns.nothingNType ->
                 WasmStructRef(context.referenceStructType(builtIns.anyClass))
 
+            builtIns.nothingType ->
+                WasmAnyRef
+
             else -> {
                 val ic = this.getWasmInlinedClass()
                 if (ic != null) {

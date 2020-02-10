@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 class It(val id: String)
 

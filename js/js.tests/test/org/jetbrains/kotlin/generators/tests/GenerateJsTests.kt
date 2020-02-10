@@ -91,7 +91,7 @@ fun main(args: Array<String>) {
                     "contracts", "platformTypes", "specialBuiltins",
 
                     // TODO: Support coroutines
-                    "coroutines",
+                    "coroutines", "parametersMetadata",
 
                     // TODO: Support exceptions
                     "finally", "deadCodeElimination", "controlStructures/tryCatchInExpressions",
