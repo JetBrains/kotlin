@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 
+private val Project.isNativeDependencyPropagationEnabled: Boolean
+    get() = (findProperty("kotlin.native.enableDependencyPropagation") as? String)?.toBoolean() ?: true
+
 internal fun Project.setUpKotlinNativePlatformDependencies() {
     if (multiplatformExtensionOrNull == null) {
         // not a multiplatform project, nothing to set up
@@ -35,6 +38,7 @@ internal fun Project.setUpKotlinNativePlatformDependencies() {
     // run commonizer only for 1.4+, only for HMPP projects and only on IDE sync
     val allowCommonizer = compareVersionNumbers(kotlinVersion, "1.4") >= 0
             && isKotlinGranularMetadataEnabled
+            && !isNativeDependencyPropagationEnabled // temporary fix: turn on commonizer only when native deps propagation is disabled
             && isInIdeaSync
 
     val dependencyResolver = NativePlatformDependencyResolver(this, kotlinVersion)
