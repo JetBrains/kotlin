@@ -31,7 +31,7 @@ class PathFieldComponent(
     onValueUpdate
 ) {
     override val uiComponent: TextFieldWithBrowseButton = TextFieldWithBrowseButton(
-        textField(initialValue?.toString().orEmpty()) { path -> fireValueUpdated(Paths.get(path)) }
+        textField(initialValue?.toString().orEmpty()) { path -> fireValueUpdated(Paths.get(path.trim())) }
     ).apply {
         addBrowseFolderListener(
             TextBrowseFolderListener(
@@ -45,5 +45,5 @@ class PathFieldComponent(
         uiComponent.text = newValue.toString()
     }
 
-    override fun getUiValue(): Path = Paths.get(uiComponent.text)
+    override fun getUiValue(): Path = Paths.get(uiComponent.text.trim())
 }
