@@ -11,10 +11,10 @@ import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.projectModel.ProjectModelBundle;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
@@ -179,7 +179,7 @@ public abstract class AbstractDependencyDataService<E extends AbstractDependency
           return PathUtil.toPresentableUrl(url);
         }
         else {
-          return ProjectBundle.message("library.empty.library.item");
+          return ProjectModelBundle.message("library.empty.library.item");
         }
       }
     }
