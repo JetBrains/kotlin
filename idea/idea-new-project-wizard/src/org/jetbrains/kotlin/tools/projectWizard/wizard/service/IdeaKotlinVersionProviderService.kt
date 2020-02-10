@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
@@ -20,12 +21,10 @@ import java.net.URL
 import java.util.stream.Collectors
 
 class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizardService {
-    override fun getKotlinVersion(): Version {
-        if (KotlinPluginUtil.isSnapshotVersion()) {
-            return VersionsDownloader.getLatestEapOrStableKotlinVersion() ?: KotlinVersionProviderServiceImpl.DEFAULT
-        }
-        return KotlinPluginUtil.getPluginVersion().let { Version.fromString(it) }
-    }
+    override fun getKotlinVersion(): Version =
+        KotlinCompilerVersion.getVersion()?.let { Version.fromString(it) }
+            ?: VersionsDownloader.getLatestEapOrStableKotlinVersion()
+            ?: KotlinVersionProviderServiceImpl.DEFAULT
 }
 
 private object VersionsDownloader {
