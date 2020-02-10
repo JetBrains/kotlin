@@ -169,9 +169,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 DISTRIBUTE_RESOURCES_TASK_NAME
             )
         ) {
-            it.dependsOn(processResourcesTask)
-
-            it.from(compilation.output.resourcesDir)
+            it.from(processResourcesTask)
             it.into(distribution.directory ?: baseDist)
         }
 
