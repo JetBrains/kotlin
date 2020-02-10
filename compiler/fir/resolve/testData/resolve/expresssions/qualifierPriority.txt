@@ -73,6 +73,10 @@ FILE: qualifierPriority.kt
 
         }
 
+        public final fun foo(): R|kotlin/Unit| {
+            R|/G.values|()
+        }
+
         public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|G.Companion| {
                 super<R|kotlin/Any|>()

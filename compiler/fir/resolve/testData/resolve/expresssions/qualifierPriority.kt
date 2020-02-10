@@ -27,6 +27,11 @@ val de = D.E // extension
 
 enum class G {
     H;
+
+    fun foo() {
+        values()
+    }
+
     companion object {
         val H = ""
 
