@@ -8,7 +8,11 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "9"
+        }
+    }
     js("a") {
         browser {
 

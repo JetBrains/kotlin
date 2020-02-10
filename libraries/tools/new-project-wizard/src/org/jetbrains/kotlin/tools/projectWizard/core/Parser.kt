@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import java.nio.file.Paths
 import kotlin.reflect.KClass
@@ -31,16 +32,17 @@ fun <T : Any> alwaysFailingParser() = object : Parser<T>() {
 fun <T : Any> Parser<T>.parse(context: ParsingContext, value: Any?, path: String) =
     with(context) { parse(value, path) }
 
-inline fun <reified E : Enum<E>> enumParser(): Parser<E> = object : Parser<E>() {
+inline fun <reified E> enumParser(): Parser<E> where E : Enum<E>, E : DisplayableSettingItem = object : Parser<E>() {
     override fun ParsingContext.parse(value: Any?, path: String): TaskResult<E> = computeM {
-        val (enumName) = value.parseAs<String>(path)
-        safe { enumValueOf<E>(enumName) }.mapFailure {
-            listOf(
-                ParseError(
-                    "For setting `$path` one of [${enumValues<E>().joinToString { it.name }}] was expected but `$enumName` was found"
-                )
+        val (name) = value.parseAs<String>(path)
+        val createError = {
+            ParseError(
+                "For setting `$path` one of [${enumValues<E>().joinToString { it.name }}] was expected but `$name` was found"
             )
         }
+        val byEnumName = safe { enumValueOf<E>(name) }.mapFailure { createError() }
+        val byText = enumValues<E>().firstOrNull { it.text == name }.toResult { createError() }
+        byEnumName.recover { byText }
     }
 }
 
@@ -189,7 +191,7 @@ val pathParser = valueParser { value, path ->
     value.parseAs<String>(path).map { Paths.get(it) }.get()
 }
 
-infix fun <V: Any> Parser<V>.or(alternative: Parser<V>): Parser<V>  = object : Parser<V>() {
+infix fun <V : Any> Parser<V>.or(alternative: Parser<V>): Parser<V> = object : Parser<V>() {
     override fun ParsingContext.parse(value: Any?, path: String): TaskResult<V> =
         this@or.parse(this, value, path).recover { alternative.parse(this, value, path) }
 }

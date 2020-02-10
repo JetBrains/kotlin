@@ -5,12 +5,10 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
-interface GradleTaskAccessIR : GradleIR {
-    val name: String
-}
+interface GradleTaskAccessIR : GradleIR
 
 data class GradleByNameTaskAccessIR(
-    override val name: String,
+    val name: String,
     val taskClass: String? = null
 ) : GradleTaskAccessIR {
     override fun GradlePrinter.renderGradle() {
@@ -22,6 +20,21 @@ data class GradleByNameTaskAccessIR(
                 +"tasks.getByName"
                 taskClass?.let { +"<$it>" }
                 +"(${name.quotified})"
+            }
+        }
+    }
+}
+
+data class GradleByClassTasksAccessIR(
+    val taskClass: String
+) : GradleTaskAccessIR {
+    override fun GradlePrinter.renderGradle() {
+        when (dsl) {
+            GradlePrinter.GradleDsl.GROOVY -> {
+                +"tasks.withType($taskClass)"
+            }
+            GradlePrinter.GradleDsl.KOTLIN -> {
+                +"tasks.withType<$taskClass>()"
             }
         }
     }

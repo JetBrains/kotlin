@@ -59,8 +59,11 @@ class Sourceset(
 }
 
 @Suppress("EnumEntryName")
-enum class SourcesetType {
+enum class SourcesetType: DisplayableSettingItem {
     main, test;
+
+    override val text: String
+        get() = name
 
     companion object {
         val ALL = values().toSet()

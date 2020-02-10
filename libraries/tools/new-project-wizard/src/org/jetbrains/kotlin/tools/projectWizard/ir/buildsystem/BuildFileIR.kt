@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenPropertyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.PluginRepositoryMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
@@ -83,6 +84,7 @@ data class BuildFileIR(
             node("properties") {
                 singleLineNode("project.build.sourceEncoding") { +"UTF-8" }
                 singleLineNode("kotlin.code.style") { +"official" }
+                irsOfType<MavenPropertyIR>().listNl()
             }
 
             distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->

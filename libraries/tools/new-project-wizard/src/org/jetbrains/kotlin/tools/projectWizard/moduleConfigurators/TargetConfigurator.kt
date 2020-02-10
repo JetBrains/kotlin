@@ -1,10 +1,14 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -16,8 +20,8 @@ interface TargetConfigurator : ModuleConfiguratorWithModuleType {
 
     fun canCoexistsWith(other: List<TargetConfigurator>): Boolean = true
 
-    fun createTargetIrs(module: Module): List<BuildSystemIR>
-    fun createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
+    fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR>
+    fun ValuesReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
 }
 
 abstract class TargetConfiguratorWithTests : ModuleConfiguratorWithTests(), TargetConfigurator
@@ -36,7 +40,7 @@ interface SimpleTargetConfigurator : TargetConfigurator, SingleCoexistenceTarget
     override val suggestedModuleName: String? get() = moduleSubType.name
 
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(moduleSubType),
             createInnerTargetIrs(module)
@@ -60,7 +64,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
             buildList {
@@ -78,7 +82,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     override val suggestedModuleName = "nodeJs"
 
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
             buildList {
@@ -96,14 +100,27 @@ object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetCon
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.COMMON
 }
 
-object JvmTargetConfigurator : TargetConfiguratorWithTests(),
+object JvmTargetConfigurator : JvmModuleConfigurator(),
     TargetConfigurator,
     SimpleTargetConfigurator,
-    JvmModuleConfigurator,
     SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
+
+    override fun ValuesReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+        val targetVersionValue = withSettingsOf(module) { targetJvmVersion.reference.settingValue.value }
+        when {
+            buildSystemType.isGradle -> {
+                +GradleSectionIR(
+                    "compilations.all",
+                    BodyIR(
+                        GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersionValue))
+                    )
+                )
+            }
+        }
+    }
 }
 
 object AndroidTargetConfigurator : TargetConfigurator,

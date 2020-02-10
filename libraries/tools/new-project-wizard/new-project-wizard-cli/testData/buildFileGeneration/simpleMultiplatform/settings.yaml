@@ -6,6 +6,7 @@ kotlin:
       name: a
       subModules:
         - type:
+            targetJvmVersion: "9"
             name: jvmTarget
             testFramework: JUNIT4
           kind: target
@@ -14,8 +15,8 @@ kotlin:
             - type: main
             - type: test
         - type:
-              name: jsBrowser
-              testFramework: JS
+            name: jsBrowser
+            testFramework: JS
           kind: target
           name: a
           sourcesets:

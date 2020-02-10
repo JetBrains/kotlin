@@ -20,12 +20,21 @@ interface MavenIR : BuildSystemIR {
 
 data class PluginRepositoryMavenIR(
     val repository: Repository
-): MavenIR {
+) : MavenIR {
     override fun MavenPrinter.renderMaven() {
         node("pluginRepository") {
             singleLineNode("id") { +repository.idForMaven }
             singleLineNode("url") { +repository.url }
         }
+    }
+}
+
+data class MavenPropertyIR(
+    val name: String,
+    val value: String
+) : MavenIR {
+    override fun MavenPrinter.renderMaven() {
+        singleLineNode(name) { +value }
     }
 }
 

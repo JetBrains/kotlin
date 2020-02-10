@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 
 @Suppress("EnumEntryName")
-enum class ModuleKind {
+enum class ModuleKind : DisplayableSettingItem {
     multiplatform,
     target,
     singleplatformJvm,
-    singleplatformJs,
+    singleplatformJs, ;
+
+    override val text: String
+        get() = name
 }
 
 // TODO separate to classes

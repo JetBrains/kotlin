@@ -34,7 +34,7 @@ class Version private constructor(internal val mavenVersion: ArtifactVersion) : 
         val parser: Parser<Version> = valueParser { value, path ->
             val (stringVersion) = value.parseAs<String>(path)
             safe { fromString(stringVersion) }.mapFailure {
-                listOf(ParseError("Bad version format for setting `$path`"))
+                ParseError("Bad version format for setting `$path`")
             }.get()
         }
     }

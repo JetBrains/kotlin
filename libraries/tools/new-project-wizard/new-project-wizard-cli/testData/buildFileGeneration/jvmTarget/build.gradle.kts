@@ -8,7 +8,11 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
     sourceSets {
         val jvmMain by getting {
             dependencies {

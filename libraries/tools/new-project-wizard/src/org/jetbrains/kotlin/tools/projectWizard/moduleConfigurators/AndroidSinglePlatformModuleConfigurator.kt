@@ -46,7 +46,10 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
     }
 
 
-    override fun createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module) =
+    override fun ValuesReadingContext.createBuildFileIRs(
+        configurationData: ModuleConfigurationData,
+        module: Module
+    ) =
         buildList<BuildSystemIR> {
             +GradleOnlyPluginByNameIR("com.android.application")
 

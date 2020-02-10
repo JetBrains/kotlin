@@ -156,7 +156,7 @@ class ModulesToIRsConverter(
         val modulePath = calculatePathForModule(module, state.parentPath)
         taskRunningContext.mutateProjectStructureByModuleConfigurator(module, modulePath)
         val targetIrs = module.subModules.flatMap { subModule ->
-            (subModule.configurator as TargetConfigurator).createTargetIrs(subModule)
+            with(subModule.configurator as TargetConfigurator) { createTargetIrs(subModule) }
         }
 
         val targetModuleIrs = module.subModules.map { target ->
@@ -223,7 +223,7 @@ class ModulesToIRsConverter(
         runArbitraryTask(data, module, modulePath)
     }
 
-    private fun createBuildFileIRs(
+    private fun ValuesReadingContext.createBuildFileIRs(
         module: Module,
         state: ModulesToIrsState
     ) = buildList<BuildSystemIR> {
@@ -239,7 +239,7 @@ class ModulesToIRsConverter(
                 }
             }
         addIfNotNull(kotlinPlugin)
-        +module.configurator.createBuildFileIRs(data, module)
+        +with(module.configurator) { createBuildFileIRs(data, module) }
     }
 
     private fun SourcesetDependency.toIR(type: DependencyType): DependencyIR = with(data) {

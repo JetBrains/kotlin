@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystem
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdlib
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
@@ -190,7 +189,10 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val suggestedModuleName: String? get() = null
     val canContainSubModules: Boolean get() = false
 
-    fun createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    fun ValuesReadingContext.createBuildFileIRs(
+        configurationData: ModuleConfigurationData,
+        module: Module
+    ): List<BuildSystemIR> =
         emptyList()
 
     fun ValuesReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
@@ -232,19 +234,20 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
         val BY_ID = ALL.associateBy(ModuleConfigurator::id)
         val BY_MODULE_KIND = ALL.groupBy(ModuleConfigurator::moduleKind)
 
-        fun getParser(moduleIdentificator: Identificator): Parser<ModuleConfigurator> = mapParser { map, path ->
-            val (id) = map.parseValue<String>(path, "name")
-            val (configurator) = BY_ID[id].toResult { ConfiguratorNotFoundError(id) }
-            val (settingsWithValues) = configurator.settings.mapComputeM { setting ->
-                val (settingValue) = map[setting.path].toResult { ParseError("No value was found for a key `$path.${setting.path}`") }
-                val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
-                setting.type.parse(this, settingValue, setting.path).map { reference to it }
-            }.sequence()
-            updateState { it.withSettings(settingsWithValues) }
-            configurator
-        } or valueParserM { value, path ->
-            val (id) = value.parseAs<String>(path)
-            BY_ID[id].toResult { ConfiguratorNotFoundError(id) }
-        }
+        fun getParser(moduleIdentificator: Identificator): Parser<ModuleConfigurator> =
+            valueParserM { value, path ->
+                val (id) = value.parseAs<String>(path)
+                BY_ID[id].toResult { ConfiguratorNotFoundError(id) }
+            } or mapParser { map, path ->
+                val (id) = map.parseValue<String>(path, "name")
+                val (configurator) = BY_ID[id].toResult { ConfiguratorNotFoundError(id) }
+                val (settingsWithValues) = configurator.settings.mapComputeM { setting ->
+                    val (settingValue) = map[setting.path].toResult { ParseError("No value was found for a key `$path.${setting.path}`") }
+                    val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
+                    setting.type.parse(this, settingValue, setting.path).map { reference to it }
+                }.sequence()
+                updateState { it.withSettings(settingsWithValues) }
+                configurator
+            }
     }
 }

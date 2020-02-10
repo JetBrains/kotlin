@@ -112,7 +112,7 @@ class SimpleJsClientTemplate : Template() {
         +interceptTemplate(KtorServerTemplate()) {
             applicableIf { buildFileIR ->
                 val tasks = buildFileIR.irsOfTypeOrNull<GradleConfigureTaskIR>() ?: return@applicableIf false
-                tasks.none { it.taskAccess.name.endsWith("Jar") }
+                tasks.none { it.taskAccess.safeAs<GradleByNameTaskAccessIR>()?.name?.endsWith("Jar") == true }
             }
 
             interceptAtPoint(template.routes) { value ->

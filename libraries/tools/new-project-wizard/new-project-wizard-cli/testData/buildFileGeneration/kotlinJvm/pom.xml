@@ -14,6 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
+        <kotlin.compiler.jvmTarget>1.6</kotlin.compiler.jvmTarget>
     </properties>
 
     <repositories>

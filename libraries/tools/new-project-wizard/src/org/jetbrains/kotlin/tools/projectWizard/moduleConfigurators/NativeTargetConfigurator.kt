@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR
@@ -33,7 +34,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
     override val text = "For Current System"
 
 
-    override fun createTargetIrs(module: Module): List<BuildSystemIR> {
+    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> {
         val moduleName = module.name
         val variableName = "${moduleName}Target"
 
@@ -73,7 +74,10 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
         }
     }
 
-    override fun createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> = buildList {
+    override fun ValuesReadingContext.createBuildFileIRs(
+        configurationData: ModuleConfigurationData,
+        module: Module
+    ): List<BuildSystemIR> = buildList {
         if (configurationData.buildSystemType == BuildSystemType.GradleGroovyDsl) {
             +GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests")
         }
