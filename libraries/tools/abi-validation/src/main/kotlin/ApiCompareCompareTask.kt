@@ -13,11 +13,11 @@ import java.io.*
 open class ApiCompareCompareTask : DefaultTask() {
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var expectedDir: File
+    lateinit var projectApiDir: File
 
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var actualDir: File
+    lateinit var apiBuildDir: File
 
     @OutputFile
     @Optional
@@ -25,43 +25,45 @@ open class ApiCompareCompareTask : DefaultTask() {
 
     @TaskAction
     fun verify() {
-        if (!expectedDir.exists())
-            error("Expected API folder '$expectedDir' does not exist")
-        if (!actualDir.exists())
-            error("Actual API folder '$actualDir' does not exist")
+        if (!projectApiDir.exists())
+            error("Expected folder with API declarations '$projectApiDir' does not exist")
+        if (!apiBuildDir.exists())
+            error("Folder with built API declarations '$apiBuildDir' does not exist")
 
         val subject = project.name
-        val actualFiles = mutableSetOf<RelativePath>()
-        val expectedFiles = mutableSetOf<RelativePath>()
-        project.fileTree(actualDir).visit { file ->
-            actualFiles.add(file.relativePath)
+        val apiBuildDirFiles = mutableSetOf<RelativePath>()
+        val expectedApiFiles = mutableSetOf<RelativePath>()
+        project.fileTree(apiBuildDir).visit { file ->
+            apiBuildDirFiles.add(file.relativePath)
         }
-        project.fileTree(expectedDir).visit { file ->
-            expectedFiles.add(file.relativePath)
+        project.fileTree(projectApiDir).visit { file ->
+            expectedApiFiles.add(file.relativePath)
         }
 
-        val missingFiles = expectedFiles - actualFiles
-        val extraFiles = actualFiles - expectedFiles
-
-        if (missingFiles.isNotEmpty()) {
-            error("API check failed for $subject.\nMissing files: $missingFiles")
+        if (apiBuildDirFiles.size != 1) {
+            error("Expected a single file $subject.api, but found: $expectedApiFiles")
         }
-        if (extraFiles.isNotEmpty()) {
-            error("API check failed for $subject.\nExtra files: $extraFiles")
+
+        val expectedApiDeclaration = apiBuildDirFiles.single()
+        if (expectedApiDeclaration !in expectedApiFiles) {
+            error("File ${expectedApiDeclaration.lastName} is missing from ${projectApiDir.relativePath()}, please run " +
+                    ":$subject:apiDump task to generate one")
         }
 
         val diffSet = mutableSetOf<String>()
-        expectedFiles.forEach { relative ->
-            val expectedFile = relative.getFile(expectedDir)
-            val actualFile = relative.getFile(actualDir)
-            val diff = compareFiles(expectedFile, actualFile)
-            if (diff != null)
-                diffSet.add(diff)
-        }
+        val expectedFile = expectedApiDeclaration.getFile(projectApiDir)
+        val actualFile = expectedApiDeclaration.getFile(apiBuildDir)
+        val diff = compareFiles(expectedFile, actualFile)
+        if (diff != null)
+            diffSet.add(diff)
         if (diffSet.isNotEmpty()) {
             val diffText = diffSet.joinToString("\n\n")
-            error("API check failed for $subject. Files are different.\n$diffText")
+            error("API check failed for project $subject.\n$diffText\n\n You can run :$subject:apiDump task to overwrite API declarations")
         }
+    }
+
+    private fun File.relativePath(): String {
+        return relativeTo(project.rootProject.rootDir).toString() + "/"
     }
 
     private fun compareFiles(checkFile: File, builtFile: File): String? {
