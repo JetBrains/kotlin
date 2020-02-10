@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
+import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.ui.treeStructure.SimpleTreeStructure;
@@ -18,6 +19,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.tree.TreePath;
 import java.util.*;
 
 /**
@@ -31,6 +33,7 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
   private RootNode myRoot;
 
   private final Map<String, ExternalSystemNode> myNodeMapping = new THashMap<>();
+  private AsyncTreeModel myAsyncTreeModel;
 
   public ExternalProjectsStructure(Project project, Tree tree) {
     myProject = project;
@@ -42,7 +45,8 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     myExternalProjectsView = externalProjectsView;
     myRoot = new RootNode();
     myTreeModel = new StructureTreeModel<>(this, this);
-    myTree.setModel(new AsyncTreeModel(myTreeModel, this));
+    myAsyncTreeModel = new AsyncTreeModel(myTreeModel, this);
+    myTree.setModel(myAsyncTreeModel);
     TreeUtil.expand(myTree, 1);
   }
 
@@ -212,10 +216,23 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     return myNodeMapping.get(projectPath);
   }
 
-  public <T extends ExternalSystemNode> void updateNodes(@NotNull Class<? extends T> nodeClass) {
-    for (T node : getNodes(nodeClass)) {
-      updateFrom(node);
-    }
+
+  public <T extends ExternalSystemNode> void updateNodesAsync(@NotNull Collection<Class<? extends T>> nodeClasses) {
+    updateNodesAsync(nodeClasses, false);
+  }
+  public <T extends ExternalSystemNode> void updateNodesAsync(@NotNull Collection<Class<? extends T>> nodeClasses, boolean structure) {
+    final List<TreePath> nodes = new LinkedList<>();
+    myAsyncTreeModel
+      .accept(new CollectingVisitor<>(nodes, nodeClasses), false)
+      .onSuccess(p -> {
+        if (!nodes.isEmpty()) {
+          invalidatePaths(nodes, structure);
+        }
+      });
+  }
+
+  private void invalidatePaths(@NotNull Collection<TreePath> paths, boolean structure) {
+    paths.forEach(p -> myTreeModel.invalidate(p, structure));
   }
 
   public <T extends ExternalSystemNode> void visitNodes(@NotNull Class<? extends T> nodeClass, @NotNull Consumer<? super T> consumer) {
@@ -229,6 +246,35 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     this.myExternalProjectsView = null;
     this.myNodeMapping.clear();
     this.myRoot = null;
+  }
+
+  private static class CollectingVisitor<T extends ExternalSystemNode> implements TreeVisitor {
+    private final List<TreePath> myNodes;
+    private final Collection<Class<? extends T>> myNodeClasses;
+
+    public CollectingVisitor(List<TreePath> nodes, Collection<Class<? extends T>> nodeClasses) {
+      myNodes = nodes;
+      myNodeClasses = nodeClasses;
+    }
+
+    @NotNull
+    @Override
+    public Action visit(@NotNull TreePath path) {
+      Object object = TreeUtil.getLastUserObject(path);
+      if (object != null && anyAssignableFrom(object.getClass())) {
+        myNodes.add(path);
+      }
+      return Action.CONTINUE;
+    }
+
+    boolean anyAssignableFrom(Class<?> classParam) {
+      for (Class<? extends T> aClass : myNodeClasses) {
+        if (aClass.isAssignableFrom(classParam)) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   public class RootNode<T> extends ExternalSystemNode<T> {

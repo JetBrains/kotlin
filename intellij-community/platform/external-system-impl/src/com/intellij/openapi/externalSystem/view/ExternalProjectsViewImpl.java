@@ -196,23 +196,13 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     });
 
     getShortcutsManager().addListener(() -> {
-      scheduleTasksUpdate();
-
-      scheduleStructureRequest(() -> {
-        assert myStructure != null;
-        myStructure.updateNodes(RunConfigurationNode.class);
-      });
+      scheduleTaskAndRunConfigUpdate();
     });
 
     getTaskActivator().addListener(new ExternalSystemTaskActivator.Listener() {
       @Override
       public void tasksActivationChanged() {
-        scheduleTasksUpdate();
-
-        scheduleStructureRequest(() -> {
-          assert myStructure != null;
-          myStructure.updateNodes(RunConfigurationNode.class);
-        });
+        scheduleTaskAndRunConfigUpdate();
       }
     });
 
@@ -244,6 +234,14 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
 
     scheduleStructureUpdate();
   }
+
+  private void scheduleTaskAndRunConfigUpdate() {
+    scheduleStructureRequest(() -> {
+      assert myStructure != null;
+      myStructure.updateNodesAsync(new SmartList<>(TaskNode.class, RunConfigurationNode.class));
+    });
+  }
+
 
   @Override
   public void handleDoubleClickOrEnter(@NotNull ExternalSystemNode node, @Nullable String actionId, InputEvent inputEvent) {
@@ -521,14 +519,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
       for (T tasksNode : myStructure.getNodes(nodeClass)) {
         tasksNode.cleanUpCache();
       }
-      myStructure.updateNodes(nodeClass);
-    });
-  }
-
-  private void scheduleTasksUpdate() {
-    scheduleStructureRequest(() -> {
-      assert myStructure != null;
-      myStructure.updateNodes(TaskNode.class);
+      myStructure.updateNodesAsync(Collections.singleton(nodeClass));
     });
   }
 
