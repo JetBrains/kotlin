@@ -18,16 +18,21 @@ import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.jetbrains.mobile.MobileBundle
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
 
-class AppleXcodeProjectFileModificationListener(private val project: Project, private val projectFile: File) : AsyncFileListener {
+class AppleXcodeProjectFileModificationListener(private val project: Project, private val pbxProjFile: File) : AsyncFileListener {
     override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier? {
         val changed = events.any {
             val file = it.file
-            file != null && it is VFileContentChangeEvent && VfsUtilCore.virtualToIoFile(file) == projectFile
+            file != null && it is VFileContentChangeEvent && VfsUtilCore.virtualToIoFile(file) == pbxProjFile
         }
 
         if (changed) {
-            showWarning()
+            val attr = Files.readAttributes(pbxProjFile.parentFile.toPath(), BasicFileAttributes::class.java)
+            if (attr.creationTime().toMillis() + 4_000 < attr.lastModifiedTime().toMillis()) {
+                showWarning()
+            }
         }
         return null
     }

@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.FutureResult
 import com.jetbrains.cidr.xcode.XcodeProjectFileProvider
+import com.jetbrains.cidr.xcode.model.PBXProjectFile
 import com.jetbrains.mobile.MobileBundle
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import java.io.File
@@ -52,6 +53,7 @@ class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
             val success = FutureResult<File?>()
             val callback = object : TaskCallback {
                 override fun onSuccess() {
+                    VfsUtil.findFileByIoFile(xcodeProjFile.resolve(PBXProjectFile.PROJECT_FILE), true)
                     success.set(xcodeProjFile)
                 }
 
