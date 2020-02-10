@@ -19,7 +19,6 @@ package com.bnorm.power
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.junit.Test
 import java.lang.reflect.InvocationTargetException
 import kotlin.test.assertEquals
