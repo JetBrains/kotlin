@@ -21,12 +21,17 @@ class OutflowSlicer(
     processor: Processor<SliceUsage>,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
-    private fun KtCallableDeclaration.processVariable() {
-        if (this is KtParameter && !canProcess()) return
+    
+    private fun processVariable(variable: KtCallableDeclaration) {
+        if (variable is KtParameter && !variable.canProcess()) return
 
         val withDereferences = parentUsage.params.showInstanceDereferences
         val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
-        processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@{
+        processVariableAccesses(
+            variable,
+            parentUsage.scope.toSearchScope(),
+            accessKind
+        ) body@{
             val refElement = it.element
             if (refElement !is KtExpression) {
                 refElement?.passToProcessor()
@@ -62,14 +67,14 @@ class OutflowSlicer(
         return if (callee == this) callableRef else null
     }
 
-    private fun KtFunction.processFunction() {
-        if (this is KtConstructor<*> || this is KtNamedFunction && name != null) {
-            processCalls(parentUsage.scope.toSearchScope(), includeOverriders = false) {
+    private fun processFunction(function: KtFunction) {
+        if (function is KtConstructor<*> || function is KtNamedFunction && function.name != null) {
+            function.processCalls(this.parentUsage.scope.toSearchScope(), includeOverriders = false) {
                 when (val refElement = it.element) {
                     null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
                     is KtExpression -> {
                         refElement.getCallElementForExactCallee()?.passToProcessor()
-                        refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                        refElement.getCallableReferenceForExactCallee()?.passToProcessor(this.parentUsage.lambdaLevel + 1)
                     }
                     else -> refElement.passToProcessor()
                 }
@@ -77,9 +82,9 @@ class OutflowSlicer(
             return
         }
 
-        val funExpression = when (this) {
-            is KtFunctionLiteral -> parent as? KtLambdaExpression
-            is KtNamedFunction -> this
+        val funExpression = when (function) {
+            is KtFunctionLiteral -> function.parent as? KtLambdaExpression
+            is KtNamedFunction -> function
             else -> null
         } ?: return
         (funExpression as PsiElement).passToProcessor(parentUsage.lambdaLevel + 1, true)
@@ -125,13 +130,13 @@ class OutflowSlicer(
         }
     }
 
-    private fun KtExpression.processExpression() {
-        processPseudocodeUsages { pseudoValue, instr ->
+    private fun processExpression(expression: KtExpression) {
+        expression.processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
                 is WriteValueInstruction -> instr.target.accessedDescriptor?.originalSource?.getPsi()?.passToProcessor()
                 is CallInstruction -> {
-                    if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
-                        instr.element.passToProcessor(parentUsage.lambdaLevel - 1)
+                    if (this.parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
+                        instr.element.passToProcessor(this.parentUsage.lambdaLevel - 1)
                     } else {
                         instr.arguments[pseudoValue]?.originalSource?.getPsi()?.passToProcessor()
                     }
@@ -147,16 +152,16 @@ class OutflowSlicer(
     }
 
     override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) return element.processExpression()
+        if (parentUsage.forcedExpressionMode) return processExpression(element)
 
         when (element) {
-            is KtProperty -> element.processVariable()
-            is KtParameter -> element.processVariable()
-            is KtFunction -> element.processFunction()
+            is KtProperty -> processVariable(element)
+            is KtParameter -> processVariable(element)
+            is KtFunction -> processFunction(element)
             is KtPropertyAccessor -> if (element.isGetter) {
-                element.property.processVariable()
+                processVariable(element.property)
             }
-            else -> element.processExpression()
+            else -> processExpression(element)
         }
     }
 }

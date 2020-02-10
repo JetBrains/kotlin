@@ -9,8 +9,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.JavaSliceUsage
+import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -22,11 +23,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
-import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -35,7 +33,7 @@ import java.util.*
 
 abstract class Slicer(
     protected val element: KtExpression,
-    protected val processor: SliceUsageProcessor,
+    protected val processor: Processor<SliceUsage>,
     protected val parentUsage: KotlinSliceUsage
 ) {
     protected class PseudocodeCache {
@@ -99,39 +97,33 @@ abstract class Slicer(
         }
     }
 
-    protected fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
-        processor()
-        HierarchySearchRequest(this, scope).searchOverriders().forEach {
-            it.namedUnwrappedElement?.processor()
-        }
-    }
-    
     protected enum class AccessKind {
         READ_ONLY, WRITE_ONLY, WRITE_WITH_OPTIONAL_READ, READ_OR_WRITE
     }
 
-    protected fun KtDeclaration.processVariableAccesses(
+    protected fun processVariableAccesses(
+        declaration: KtCallableDeclaration,
         scope: SearchScope,
         kind: AccessKind,
         usageProcessor: (UsageInfo) -> Unit
     ) {
-        val allDeclarations = mutableListOf(this)
-        val descriptor = unsafeResolveToDescriptor()
+        val allDeclarations = mutableListOf(declaration)
+        val descriptor = declaration.unsafeResolveToDescriptor()
         if (descriptor is CallableMemberDescriptor) {
             DescriptorUtils.getAllOverriddenDeclarations(descriptor).mapNotNullTo(allDeclarations) {
-                it.originalSource.getPsi() as? KtDeclaration
+                it.originalSource.getPsi() as? KtCallableDeclaration
             }
         }
 
-        for (declaration in allDeclarations) {
-            declaration.processAllExactUsages(
-                KotlinPropertyFindUsagesOptions(project).apply {
+        for (aDeclaration in allDeclarations) {
+            aDeclaration.processAllExactUsages(
+                KotlinPropertyFindUsagesOptions(aDeclaration.project).apply {
                     isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
                     isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
                     isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
                     isSearchForTextOccurrences = false
                     isSkipImportStatements = true
-                    searchScope = scope.intersectWith(declaration.useScope)
+                    searchScope = scope.intersectWith(aDeclaration.useScope)
                 },
                 usageProcessor
             )

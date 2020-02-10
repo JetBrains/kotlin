@@ -7,6 +7,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.slicer.SliceUsage
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -45,10 +48,17 @@ class InflowSlicer(
         processHierarchyDownward(parentUsage.scope.toSearchScope()) { passToProcessor() }
     }
 
+    private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
+        processor()
+        HierarchySearchRequest(this, scope).searchOverriders().forEach {
+            it.namedUnwrappedElement?.processor()
+        }
+    }
+
     private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
-    private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
-        processVariableAccesses(accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@{
+    private fun processAssignments(variableDeclaration: KtCallableDeclaration, accessSearchScope: SearchScope) {
+        processVariableAccesses(variableDeclaration, accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@{
             val refElement = it.element ?: return@body
             val refParent = refElement.parent
 
@@ -82,47 +92,44 @@ class InflowSlicer(
 
     private fun KtProperty.processPropertyAssignments() {
         val analysisScope = parentUsage.scope.toSearchScope()
-        val accessSearchScope = if (isVar) analysisScope
-        else {
-            val containerScope = getStrictParentOfType<KtDeclaration>()?.let {
-                LocalSearchScope(
-                    it
-                )
-            } ?: return
+        val accessSearchScope = if (isVar) {
+            analysisScope
+        } else {
+            val containerScope = getStrictParentOfType<KtDeclaration>()?.let { LocalSearchScope(it) } ?: return
             analysisScope.intersectWith(containerScope)
         }
-        processAssignments(accessSearchScope)
+        processAssignments(this, accessSearchScope)
     }
 
-    private fun KtProperty.processProperty() {
-        val bindingContext by lazy { analyzeWithContent() }
+    private fun processProperty(property: KtProperty) {
+        val bindingContext by lazy { property.analyzeWithContent() }
 
-        if (hasDelegateExpression()) {
-            val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
+        if (property.hasDelegateExpression()) {
+            val getter = (property.unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
             val delegateGetterResolvedCall = getter?.let { bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
             delegateGetterResolvedCall?.resultingDescriptor?.originalSource?.getPsi()?.passToProcessor()
             return
         }
 
-        initializer?.passToProcessor()
+        property.initializer?.passToProcessor()
 
-        getter?.processFunction()
+        property.getter?.processBody()
 
-        val isDefaultGetter = getter?.bodyExpression == null
-        val isDefaultSetter = setter?.bodyExpression == null
+        val isDefaultGetter = property.getter?.bodyExpression == null
+        val isDefaultSetter = property.setter?.bodyExpression == null
         if (isDefaultGetter) {
             if (isDefaultSetter) {
-                processPropertyAssignments()
+                property.processPropertyAssignments()
             } else {
-                setter!!.processBackingFieldAssignments()
+                property.setter!!.processBackingFieldAssignments()
             }
         }
     }
 
-    private fun KtParameter.processParameter(includeOverriders: Boolean) {
-        if (!canProcess()) return
+    private fun processParameter(parameter: KtParameter, includeOverriders: Boolean) {
+        if (!parameter.canProcess()) return
 
-        val function = ownerFunction ?: return
+        val function = parameter.ownerFunction ?: return
 
         if (function is KtPropertyAccessor && function.isSetter) {
             function.property.processPropertyAssignments()
@@ -139,7 +146,7 @@ class InflowSlicer(
                 .forEach { (it.element.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
-        val parameterDescriptor = resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
+        val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope(), includeOverriders) body@{
             val refElement = it.element ?: return@body
@@ -152,25 +159,25 @@ class InflowSlicer(
                     val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
                     val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return@body
                     when (resolvedArgument) {
-                        is DefaultValueArgument -> defaultValue
+                        is DefaultValueArgument -> parameter.defaultValue
                         is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
                         else -> null
                     }
                 }
 
-                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(this@processParameter.parameterIndex())
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameter.parameterIndex())
 
                 else -> null
             }
             argumentExpression?.passToProcessorAsValue()
         }
 
-        if (valOrVarKeyword.toValVar() == KotlinValVar.Var) {
-            processAssignments(parentUsage.scope.toSearchScope())
+        if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
+            processAssignments(parameter, parentUsage.scope.toSearchScope())
         }
     }
 
-    private fun KtDeclarationWithBody.processFunction() {
+    private fun KtDeclarationWithBody.processBody() {
         val bodyExpression = bodyExpression ?: return
         val pseudocode = pseudocodeCache[bodyExpression] ?: return
         pseudocode.traverse(TraversalOrder.FORWARD) { instr ->
@@ -194,10 +201,10 @@ class InflowSlicer(
                 resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
     }
 
-    private fun KtExpression.processExpression() {
-        val lambda = when (this) {
-            is KtLambdaExpression -> functionLiteral
-            is KtNamedFunction -> if (name == null) this else null
+    private fun processExpression(expression: KtExpression) {
+        val lambda = when (expression) {
+            is KtLambdaExpression -> expression.functionLiteral
+            is KtNamedFunction -> if (expression.name == null) expression else null
             else -> null
         }
         if (lambda != null) {
@@ -207,14 +214,14 @@ class InflowSlicer(
             return
         }
 
-        val pseudocode = pseudocodeCache[this] ?: return
-        val expressionValue = pseudocode.getElementValue(this) ?: return
+        val pseudocode = pseudocodeCache[expression] ?: return
+        val expressionValue = pseudocode.getElementValue(expression) ?: return
         when (val createdAt = expressionValue.createdAt) {
             is ReadValueInstruction -> {
                 if (createdAt.target == AccessTarget.BlackBox) {
                     val originalElement = expressionValue.element as? KtExpression ?: return
-                    if (originalElement != this) {
-                        originalElement.processExpression()
+                    if (originalElement != expression) {
+                        processExpression(originalElement)
                     }
                     return
                 }
@@ -239,7 +246,7 @@ class InflowSlicer(
                 MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
                     val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression
                         ?: return
-                    val referencedDescriptor = analyze()[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
+                    val referencedDescriptor = expression.analyze()[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
                     val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi() ?: return
                     referencedDeclaration.passToProcessor(parentUsage.lambdaLevel - 1)
                 }
@@ -259,14 +266,14 @@ class InflowSlicer(
     }
 
     override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) return element.processExpression()
+        if (parentUsage.forcedExpressionMode) return processExpression(element)
 
         when (element) {
-            is KtProperty -> element.processProperty()
+            is KtProperty -> processProperty(element)
             // for parameter, we include overriders only when the feature is invoked on parameter itself
-            is KtParameter -> element.processParameter(includeOverriders = parentUsage.parent == null)
-            is KtDeclarationWithBody -> element.processFunction()
-            else -> element.processExpression()
+            is KtParameter -> processParameter(parameter = element, includeOverriders = parentUsage.parent == null)
+            is KtDeclarationWithBody -> element.processBody()
+            else -> processExpression(element)
         }
     }
 }
