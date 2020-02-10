@@ -50,13 +50,11 @@ public abstract class BaseMoveHandler extends EditorWriteActionHandler {
     documentManager.commitDocument(document);
     PsiFile file = getRoot(documentManager.getPsiFile(document), editor);
 
-    if (file != null) {
-      final MoverWrapper mover = getSuitableMover(editor, file);
-      if (mover != null && mover.getInfo().toMove2 != null) {
-        LineRange range = mover.getInfo().toMove;
-        if ((range.startLine > 0 || isDown) && (range.endLine < document.getLineCount() || !isDown)) {
-          mover.move(editor, file);
-        }
+    final MoverWrapper mover = getSuitableMover(editor, file);
+    if (mover != null && mover.getInfo().toMove2 != null) {
+      LineRange range = mover.getInfo().toMove;
+      if ((range.startLine > 0 || isDown) && (range.endLine < document.getLineCount() || !isDown)) {
+        mover.move(editor, file);
       }
     }
   }
@@ -70,7 +68,7 @@ public abstract class BaseMoveHandler extends EditorWriteActionHandler {
   }
 
   @Nullable
-  protected abstract MoverWrapper getSuitableMover(@NotNull Editor editor, @NotNull PsiFile file);
+  protected abstract MoverWrapper getSuitableMover(@NotNull Editor editor, @Nullable PsiFile file);
 
   @Nullable
   private static PsiFile getRoot(final PsiFile file, final Editor editor) {

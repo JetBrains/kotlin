@@ -15,7 +15,8 @@ class MoveStatementHandler extends BaseMoveHandler {
 
   @Override
   @Nullable
-  protected MoverWrapper getSuitableMover(@NotNull final Editor editor, @NotNull final PsiFile file) {
+  protected MoverWrapper getSuitableMover(@NotNull final Editor editor, @Nullable final PsiFile file) {
+    if (file == null) return null;
     // order is important!
     final StatementUpDownMover.MoveInfo info = new StatementUpDownMover.MoveInfo();
     for (final StatementUpDownMover mover : StatementUpDownMover.STATEMENT_UP_DOWN_MOVER_EP.getExtensionList()) {
