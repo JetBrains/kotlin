@@ -59,16 +59,6 @@ private fun Logger.logStackTrace(error: Throwable) {
     verbose(stringWriter.toString())
 }
 
-private fun createTempDir(prefix: String, parent: File): File =
-        File(createTempDir(prefix, directory = JFile(parent.absolutePath)).absolutePath)
-
-private sealed class ProcessingStatus {
-    object WAIT: ProcessingStatus()
-    object SUCCESS: ProcessingStatus()
-    object FAILED_DEPENDENCIES: ProcessingStatus()
-    class FAIL(val error: Throwable) : ProcessingStatus()
-}
-
 // TODO: Use Distribution's paths after compiler update.
 fun generatePlatformLibraries(args: Array<String>) {
     // IMPORTANT! These command line keys are used by the Gradle plugin to configure platform libraries generation,
@@ -122,6 +112,10 @@ fun generatePlatformLibraries(args: Array<String>) {
             description = "An argument passed to compiler during cache building. Used only if -cache-directory is specified."
     ).multiple()
 
+    val rebuild by argParser.option(
+            ArgType.Boolean, fullName = "rebuild", description = "Rebuild already existing libraries"
+    ).default(false)
+
     argParser.parse(args)
 
     val distribution = customerDistribution()
@@ -147,16 +141,42 @@ fun generatePlatformLibraries(args: Array<String>) {
 
     val logger = Logger(if (verbose) Logger.Level.VERBOSE else Logger.Level.NORMAL)
 
+    val cacheInfo = cacheDirectory?.let { CacheInfo(it, cacheKind, cacheArgs) }
+
     generatePlatformLibraries(
             target, mode,
-            inputDirectory, outputDirectory,
-            saveTemps, cacheDirectory, stdlibFile,
-            cacheKind, cacheArgs, logger
+            DirectoriesInfo(inputDirectory, outputDirectory, stdlibFile), cacheInfo,
+            rebuild, saveTemps, logger
     )
 }
 
+private sealed class ProcessingStatus {
+    object WAIT: ProcessingStatus()
+    object SUCCESS: ProcessingStatus()
+    object FAILED_DEPENDENCIES: ProcessingStatus()
+    class FAIL(val error: Throwable) : ProcessingStatus()
+}
+
+private data class DirectoriesInfo(val inputDirectory: File, val outputDirectory: File, val stdlib: File)
+
+private data class CacheInfo(val cacheDirectory: File,  val cacheKind: String,  val cacheArgs: List<String>)
+
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
     override fun toString(): String = "$name: [${depends.joinToString(separator = ", ") { it.name }}]"
+}
+
+private fun createTempDir(prefix: String, parent: File): File =
+        File(createTempDir(prefix, directory = JFile(parent.absolutePath)).absolutePath)
+
+private fun File.deleteAtomicallyIfPossible(tmpDirectory: File) {
+    // Try to atomically delete the old directory.
+    val tmpToDelete = createTempFile(directory = JFile(tmpDirectory.absolutePath))
+    if (renameAtomic(this.absolutePath, tmpToDelete.absolutePath, replaceExisting = true)) {
+        tmpToDelete.deleteRecursively()
+    } else {
+        // Can't move to a tmp directory -> delete in a regular way.
+        this.deleteRecursively()
+    }
 }
 
 private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
@@ -188,15 +208,15 @@ private fun generateLibrary(
         target: KonanTarget,
         mode: String,
         def: DefFile,
-        inputDirectory: File,
-        outputDirectory: File,
+        directories: DirectoriesInfo,
         tmpDirectory: File,
+        rebuild: Boolean,
         logger: Logger
-) {
+) = with(directories) {
     val defFile = inputDirectory.child("${def.name}.def")
     val outKlib = outputDirectory.child(def.name)
 
-    if (outKlib.exists) {
+    if (outKlib.exists && !rebuild) {
         logger.verbose("Skip generating ${def.name} as it's already generated")
         return
     }
@@ -216,6 +236,10 @@ private fun generateLibrary(
         )
         logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")
         invokeInterop("native", cinteropArgs)?.let { K2Native.mainNoExit(it) }
+
+        if (rebuild) {
+            outKlib.deleteAtomicallyIfPossible(tmpDirectory)
+        }
 
         // Atomically move the generated library to the destination path.
         if (!renameAtomic(tmpKlib.absolutePath, outKlib.absolutePath, replaceExisting = false)) {
@@ -241,15 +265,18 @@ private fun buildCache(
         target: KonanTarget,
         def: DefFile,
         outputDirectory: File,
-        cacheDirectory: File,
-        cacheKind: String,
-        cacheArgs: List<String>,
+        cacheInfo: CacheInfo,
+        rebuild: Boolean,
         logger: Logger
-) {
+) = with(cacheInfo) {
     val cacheFile = getCacheFile(def.name, target, cacheDirectory, cacheKind)
-    if (cacheFile.exists) {
+    if (cacheFile.exists && !rebuild) {
         logger.verbose("Skip precompiling ${def.name} as it's already precompiled")
         return
+    }
+
+    if (rebuild) {
+        cacheFile.delete()
     }
 
     val compilerArgs = arrayOf(
@@ -267,11 +294,9 @@ private fun buildCache(
 private fun buildStdlibCache(
         target: KonanTarget,
         stdlib: File,
-        cacheDirectory: File,
-        cacheKind: String,
-        cacheArgs: List<String>,
+        cacheInfo: CacheInfo,
         logger: Logger
-) {
+) = with(cacheInfo) {
     val stdlibCacheFile = getCacheFile("stdlib", target, cacheDirectory, cacheKind)
     if (stdlibCacheFile.exists) {
         logger.verbose("Skip precompiling standard library as it's already precompiled")
@@ -291,17 +316,15 @@ private fun buildStdlibCache(
 }
 
 private fun generatePlatformLibraries(target: KonanTarget, mode: String,
-                                      inputDirectory: File, outputDirectory: File,
-                                      saveTemps: Boolean, cacheDirectory: File?, stdlibFile: File,
-                                      cacheKind: String, cacheArgs: List<String>,
-                                      logger: Logger) {
-    if (cacheDirectory != null) {
-        buildStdlibCache(target, stdlibFile, cacheDirectory, cacheKind, cacheArgs, logger)
+                                      directories: DirectoriesInfo, cacheInfo: CacheInfo?,
+                                      rebuild: Boolean, saveTemps: Boolean, logger: Logger) = with(directories) {
+    if (cacheInfo != null) {
+        buildStdlibCache(target, stdlib, cacheInfo, logger)
     }
 
     logger.verbose("Generating platform libraries from $inputDirectory to $outputDirectory for ${target.visibleName}")
-    if (cacheDirectory != null) {
-        logger.verbose("Precompiling platform libraries to $cacheDirectory (cache kind: $cacheKind)")
+    if (cacheInfo != null) {
+        logger.verbose("Precompiling platform libraries to ${cacheInfo.cacheDirectory} (cache kind: ${cacheInfo.cacheKind})")
     }
 
     val tmpDirectory = createTempDir("build-", outputDirectory)
@@ -359,9 +382,9 @@ private fun generatePlatformLibraries(target: KonanTarget, mode: String,
                     }
 
                     logger.log("Processing ${def.name} (${countProcessed.incrementAndGet()}/$countTotal)...")
-                    generateLibrary(target, mode, def, inputDirectory, outputDirectory, tmpDirectory, logger)
-                    if (cacheDirectory != null) {
-                        buildCache(target, def, outputDirectory, cacheDirectory, cacheKind, cacheArgs, logger)
+                    generateLibrary(target, mode, def, directories, tmpDirectory, rebuild, logger)
+                    if (cacheInfo != null) {
+                        buildCache(target, def, outputDirectory, cacheInfo, rebuild, logger)
                     }
 
                     built[def] = ProcessingStatus.SUCCESS
