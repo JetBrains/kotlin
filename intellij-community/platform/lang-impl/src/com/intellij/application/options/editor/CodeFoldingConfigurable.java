@@ -110,10 +110,13 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
     return ID;
   }
 
+  @NotNull
   private static String sortByTitle(@NotNull CodeFoldingOptionsProvider p) {
     if (p instanceof BeanConfigurable) {
       String title = ((BeanConfigurable)p).getTitle();
-      return ApplicationBundle.message("title.general").equals(title) ? "" : title;
+      if (title != null) {
+        return ApplicationBundle.message("title.general").equals(title) ? "" : title;
+      }
     }
     return "z";
   }
