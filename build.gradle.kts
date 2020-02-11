@@ -20,6 +20,7 @@ buildscript {
 
 val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+val localMavenRepo: String? = findProperty("localMavenRepo")?.toString()
 
 if (isStandaloneBuild) { // only for standalone build:
     allprojects {
@@ -30,6 +31,7 @@ if (isStandaloneBuild) { // only for standalone build:
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
             }
             jcenter()
+            localMavenRepo?.let { maven(it) }
         }
 
         tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
