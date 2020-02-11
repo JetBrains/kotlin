@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.util.indexing;
+package com.intellij.util.indexing.caches;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -22,8 +22,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.indexing.caches.CachedFileContent;
-import com.intellij.util.indexing.caches.CachedFileContentQueue;
+import com.intellij.util.indexing.UnindexedFilesUpdater;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,17 +32,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-final class CacheUpdateRunner {
+public final class CacheUpdateRunner {
   private static final Logger LOG = Logger.getInstance(CacheUpdateRunner.class);
   private static final Key<Boolean> FAILED_TO_INDEX = Key.create("FAILED_TO_INDEX");
 
   private CacheUpdateRunner() {
   }
 
-  static void processFiles(@NotNull ProgressIndicator indicator,
-                          @NotNull Collection<VirtualFile> files,
-                          @NotNull Project project,
-                          @NotNull Consumer<? super CachedFileContent> processor) {
+  public static void processFiles(@NotNull ProgressIndicator indicator,
+                                  @NotNull Collection<VirtualFile> files,
+                                  @NotNull Project project,
+                                  @NotNull Consumer<? super CachedFileContent> processor) {
     ProgressIndicator updaterProgressIndicator = PoweredProgressIndicator.apply(indicator);
     updaterProgressIndicator.checkCanceled();
     final CachedFileContentQueue queue = new CachedFileContentQueue(project, files, updaterProgressIndicator);

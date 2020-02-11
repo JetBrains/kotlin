@@ -144,21 +144,17 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     }
   }
 
-  private void iterateIndexableFilesConcurrently(@NotNull Project project,
-                                                 @NotNull ProgressIndicator indicator,
-                                                 @NotNull ContentIterator processor) {
-    Set<IndexableFilesProvider> providers = myIndex.getIndexableFilesProviders(project, indicator);
-    VisitedFileSet visitedFileSet = new VisitedFileSet();
-    List<Runnable> tasks = ContainerUtil.map(providers, provider -> () -> {
-      provider.iterateFiles(project, processor, visitedFileSet);
-    });
-    if (!tasks.isEmpty()) {
-      PushedFilePropertiesUpdaterImpl.invokeConcurrentlyIfPossible(tasks);
+  private static double getPowerForSmoothProgressIndicator() {
+    String rawValue = Registry.stringValue("indexing.progress.indicator.power");
+    if ("-".equals(rawValue)) {
+      return 1.0;
     }
-  }
-
-  private void indexFiles(ProgressIndicator indicator, List<VirtualFile> files) {
-    myIndex.indexFiles(myProject, files, indicator);
+    try {
+      return Double.parseDouble(rawValue);
+    }
+    catch (NumberFormatException e) {
+      return 1.0;
+    }
   }
 
   @Override

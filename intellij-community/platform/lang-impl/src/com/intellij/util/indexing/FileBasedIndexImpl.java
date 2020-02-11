@@ -51,6 +51,7 @@ import com.intellij.util.SmartFMap;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
+import com.intellij.util.indexing.caches.CacheUpdateRunner;
 import com.intellij.util.indexing.caches.CachedFileContent;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
