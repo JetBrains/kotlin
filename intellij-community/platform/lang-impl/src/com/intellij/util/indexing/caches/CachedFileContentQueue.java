@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * @author peter
  */
-public class FileContentQueue {
-  private static final Logger LOG = Logger.getInstance(FileContentQueue.class);
+public final class CachedFileContentQueue {
+  private static final Logger LOG = Logger.getInstance(CachedFileContentQueue.class);
 
   private static final long MAX_SIZE_OF_BYTES_IN_QUEUE = 1024 * 1024;
   private static final long PROCESSED_FILE_BYTES_THRESHOLD = 1024 * 1024 * 3;
@@ -36,7 +36,7 @@ public class FileContentQueue {
   private static final Executor ourExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("FileContentQueue Pool");
 
   // Unbounded (!)
-  private final LinkedBlockingDeque<FileContent> myLoadedContents = new LinkedBlockingDeque<>();
+  private final LinkedBlockingDeque<CachedFileContent> myLoadedContents = new LinkedBlockingDeque<>();
   private final AtomicInteger myContentsToLoad = new AtomicInteger();
 
   private final AtomicLong myLoadedBytesInQueue = new AtomicLong();
@@ -48,11 +48,11 @@ public class FileContentQueue {
   private final Object myProceedWithProcessingLock = new Object();
   private final BlockingQueue<VirtualFile> myFilesQueue;
   private final ProgressIndicator myProgressIndicator;
-  private static final Deque<FileContentQueue> ourContentLoadingQueues = new LinkedBlockingDeque<>();
+  private static final Deque<CachedFileContentQueue> ourContentLoadingQueues = new LinkedBlockingDeque<>();
 
-  FileContentQueue(@NotNull Project project,
-                   @NotNull Collection<? extends VirtualFile> files,
-                   @NotNull final ProgressIndicator indicator) {
+  public CachedFileContentQueue(@NotNull Project project,
+                                @NotNull Collection<? extends VirtualFile> files,
+                                @NotNull final ProgressIndicator indicator) {
     myProject = project;
     int numberOfFiles = files.size();
     myContentsToLoad.set(numberOfFiles);
@@ -67,7 +67,7 @@ public class FileContentQueue {
     ourContentLoadingQueues.addLast(this);
 
     Runnable task = () -> {
-      FileContentQueue contentQueue = ourContentLoadingQueues.pollFirst();
+      CachedFileContentQueue contentQueue = ourContentLoadingQueues.pollFirst();
 
       while (contentQueue != null) {
         PreloadState preloadState = contentQueue.preloadNextContent();
@@ -114,7 +114,7 @@ public class FileContentQueue {
     if (file == null) return false;
 
     try {
-      FileContent content = new FileContent(file);
+      CachedFileContent content = new CachedFileContent(file);
       if (!isValidFile(file) || !doLoadContent(content)) {
         content.setEmptyContent();
       }
@@ -131,7 +131,7 @@ public class FileContentQueue {
   }
 
   @SuppressWarnings("InstanceofCatchParameter")
-  private boolean doLoadContent(@NotNull FileContent content) {
+  private boolean doLoadContent(@NotNull CachedFileContent content) {
     final long contentLength = content.getLength();
 
     try {
@@ -163,8 +163,8 @@ public class FileContentQueue {
   }
 
   @Nullable
-  public FileContent take(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
-    final FileContent content = doTake(indicator);
+  public CachedFileContent take(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
+    final CachedFileContent content = doTake(indicator);
     if (content == null) {
       return null;
     }
@@ -203,8 +203,8 @@ public class FileContentQueue {
   }
 
   @Nullable
-  private FileContent doTake(ProgressIndicator indicator) {
-    FileContent result = null;
+  private CachedFileContent doTake(ProgressIndicator indicator) {
+    CachedFileContent result = null;
     boolean waitForContentsToBeLoaded = false;
 
     while (result == null) {
@@ -236,7 +236,7 @@ public class FileContentQueue {
   }
 
   @Nullable
-  private FileContent pollLoadedContent(boolean waitForContentsToBeLoaded) {
+  private CachedFileContent pollLoadedContent(boolean waitForContentsToBeLoaded) {
     if (waitForContentsToBeLoaded) {
       try {
         return myLoadedContents.poll(50, TimeUnit.MILLISECONDS);
@@ -246,14 +246,14 @@ public class FileContentQueue {
     }
   }
 
-  public void release(@NotNull FileContent content) {
+  public void release(@NotNull CachedFileContent content) {
     synchronized (myProceedWithProcessingLock) {
       myBytesBeingProcessed -= content.getLength();
       myProceedWithProcessingLock.notifyAll(); // ask all sleeping threads to proceed, there can be more than one of them
     }
   }
 
-  public void pushBack(@NotNull FileContent content) {
+  public void pushBack(@NotNull CachedFileContent content) {
     myLoadedBytesInQueue.addAndGet(content.getLength());
     myLoadedContents.addFirst(content);
   }

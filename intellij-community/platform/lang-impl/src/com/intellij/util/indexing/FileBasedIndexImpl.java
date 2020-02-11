@@ -51,6 +51,7 @@ import com.intellij.util.SmartFMap;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
+import com.intellij.util.indexing.caches.CachedFileContent;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
@@ -1109,7 +1110,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   // caller is responsible to ensure no concurrent same document processing
-  void processRefreshedFile(@Nullable Project project, @NotNull final com.intellij.util.indexing.caches.FileContent fileContent) {
+  void processRefreshedFile(@Nullable Project project, @NotNull final CachedFileContent fileContent) {
     // ProcessCanceledException will cause re-adding the file to processing list
     final VirtualFile file = fileContent.getVirtualFile();
     if (getChangedFilesCollector().isScheduledForUpdate(file)) {
@@ -1123,7 +1124,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     CacheUpdateRunner.processFiles(indicator, files, project, (fileContent) -> indexFileContent(project, fileContent));
   }
 
-  private void indexFileContent(@Nullable Project project, @NotNull com.intellij.util.indexing.caches.FileContent content) {
+  private void indexFileContent(@Nullable Project project, @NotNull CachedFileContent content) {
     VirtualFile file = content.getVirtualFile();
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 
@@ -1132,12 +1133,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
       // in this case we consider that current indexing (out of roots backed CacheUpdater) will cover its content
       if (file.isValid() && content.getTimeStamp() != file.getTimeStamp()) {
-        content = new com.intellij.util.indexing.caches.FileContent(file);
+        content = new CachedFileContent(file);
       }
       if (!file.isValid() || isTooLarge(file)) {
         removeDataFromIndicesForFile(fileId, file);
         if (file instanceof DeletedVirtualFileStub && ((DeletedVirtualFileStub)file).isResurrected()) {
-          doIndexFileContent(project, new com.intellij.util.indexing.caches.FileContent(((DeletedVirtualFileStub)file).getOriginalFile()));
+          doIndexFileContent(project, new CachedFileContent(((DeletedVirtualFileStub)file).getOriginalFile()));
         }
       }
       else {
@@ -1152,7 +1153,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     if (file instanceof VirtualFileSystemEntry && setIndexedStatus) ((VirtualFileSystemEntry)file).setFileIndexed(true);
   }
 
-  private boolean doIndexFileContent(@Nullable Project project, @NotNull final com.intellij.util.indexing.caches.FileContent content) {
+  private boolean doIndexFileContent(@Nullable Project project, @NotNull final CachedFileContent content) {
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
     getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
@@ -1288,7 +1289,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private class VirtualFileUpdateTask extends UpdateTask<VirtualFile> {
     @Override
     void doProcess(VirtualFile item, Project project) {
-      processRefreshedFile(project, new com.intellij.util.indexing.caches.FileContent(item));
+      processRefreshedFile(project, new CachedFileContent(item));
     }
   }
 

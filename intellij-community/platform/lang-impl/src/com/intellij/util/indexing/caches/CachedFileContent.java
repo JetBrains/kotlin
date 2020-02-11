@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class FileContent extends UserDataHolderBase {
+public final class CachedFileContent extends UserDataHolderBase {
   private final VirtualFile myVirtualFile;
   private byte[] myCachedBytes;
   private long myCachedLength = -1;
   private long myCachedTimeStamp = -1;
   private Boolean myCachedWritable;
 
-  public FileContent(@NotNull VirtualFile virtualFile) {
+  public CachedFileContent(@NotNull VirtualFile virtualFile) {
     myVirtualFile = virtualFile;
   }
 

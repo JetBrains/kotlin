@@ -22,8 +22,8 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.indexing.caches.FileContent;
-import com.intellij.util.indexing.caches.FileContentQueue;
+import com.intellij.util.indexing.caches.CachedFileContent;
+import com.intellij.util.indexing.caches.CachedFileContentQueue;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,10 +43,10 @@ final class CacheUpdateRunner {
   static void processFiles(@NotNull ProgressIndicator indicator,
                           @NotNull Collection<VirtualFile> files,
                           @NotNull Project project,
-                          @NotNull Consumer<? super FileContent> processor) {
+                          @NotNull Consumer<? super CachedFileContent> processor) {
     ProgressIndicator updaterProgressIndicator = PoweredProgressIndicator.apply(indicator);
     updaterProgressIndicator.checkCanceled();
-    final FileContentQueue queue = new FileContentQueue(project, files, updaterProgressIndicator);
+    final CachedFileContentQueue queue = new CachedFileContentQueue(project, files, updaterProgressIndicator);
     final double total = files.size();
     queue.startLoading();
 
@@ -98,11 +98,11 @@ final class CacheUpdateRunner {
     void processingSuccessfullyFinished(@NotNull VirtualFile file);
   }
 
-  private static boolean processSomeFilesWhileUserIsInactive(@NotNull FileContentQueue queue,
+  private static boolean processSomeFilesWhileUserIsInactive(@NotNull CachedFileContentQueue queue,
                                                              @NotNull ProgressUpdater progressUpdater,
                                                              @NotNull ProgressIndicator suspendableIndicator,
                                                              @NotNull Project project,
-                                                             @NotNull Consumer<? super FileContent> fileProcessor) {
+                                                             @NotNull Consumer<? super CachedFileContent> fileProcessor) {
     final ProgressIndicatorBase innerIndicator = new ProgressIndicatorBase() {
       @Override
       protected boolean isCancelable() {
@@ -186,12 +186,12 @@ final class CacheUpdateRunner {
   }
 
   private static Runnable createRunnable(@NotNull Project project,
-                                         @NotNull FileContentQueue queue,
+                                         @NotNull CachedFileContentQueue queue,
                                          @NotNull ProgressUpdater progressUpdater,
                                          @NotNull ProgressIndicator suspendableIndicator,
                                          @NotNull ProgressIndicatorBase innerIndicator,
                                          @NotNull AtomicBoolean isFinished,
-                                         @NotNull Consumer<? super FileContent> fileProcessor) {
+                                         @NotNull Consumer<? super CachedFileContent> fileProcessor) {
     Runnable runnable = new UpdateWorker(project, queue, progressUpdater, suspendableIndicator, innerIndicator, isFinished, fileProcessor);
     return ConcurrencyUtil.underThreadNameRunnable("Indexing", runnable);
   }
@@ -203,20 +203,20 @@ final class CacheUpdateRunner {
 
   private static class UpdateWorker implements Runnable {
     private final Project myProject;
-    private final FileContentQueue myQueue;
+    private final CachedFileContentQueue myQueue;
     private final ProgressUpdater myProgressUpdater;
     private final ProgressIndicator mySuspendableIndicator;
     private final ProgressIndicatorBase myInnerIndicator;
     private final AtomicBoolean myIsFinished;
-    private final Consumer<? super FileContent> myFileProcessor;
+    private final Consumer<? super CachedFileContent> myFileProcessor;
 
     UpdateWorker(@NotNull Project project,
-                 @NotNull FileContentQueue queue,
+                 @NotNull CachedFileContentQueue queue,
                  @NotNull ProgressUpdater progressUpdater,
                  @NotNull ProgressIndicator suspendableIndicator,
                  @NotNull ProgressIndicatorBase innerIndicator,
                  @NotNull AtomicBoolean isFinished,
-                 @NotNull Consumer<? super FileContent> fileProcessor) {
+                 @NotNull Consumer<? super CachedFileContent> fileProcessor) {
       myProject = project;
       myQueue = queue;
       myProgressUpdater = progressUpdater;
@@ -236,7 +236,7 @@ final class CacheUpdateRunner {
         try {
           mySuspendableIndicator.checkCanceled();
 
-          final FileContent fileContent = myQueue.take(myInnerIndicator);
+          final CachedFileContent fileContent = myQueue.take(myInnerIndicator);
           if (fileContent == null) {
             myIsFinished.set(true);
             return;
