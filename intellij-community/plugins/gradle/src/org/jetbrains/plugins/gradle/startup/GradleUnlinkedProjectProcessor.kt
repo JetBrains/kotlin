@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.startup
 
+import com.intellij.CommonBundle
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
@@ -68,7 +69,7 @@ class GradleUnlinkedProjectProcessor : StartupActivity.DumbAware {
       })
 
       notification.contextHelpAction = object : DumbAwareAction(
-        "Help", GradleBundle.message("gradle.notifications.unlinked.project.found.help"), null) {
+        CommonBundle.getHelpButtonText(), GradleBundle.message("gradle.notifications.unlinked.project.found.help"), null) {
         override fun actionPerformed(e: AnActionEvent) {}
       }
 

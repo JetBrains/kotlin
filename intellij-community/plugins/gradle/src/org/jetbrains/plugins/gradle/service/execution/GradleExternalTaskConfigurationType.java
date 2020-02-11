@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.swing.*;
@@ -61,7 +62,7 @@ class GradleDebugSettingsEditor extends SettingsEditor<GradleRunConfiguration> {
   @Override
   protected JComponent createEditor() {
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    myCheckBox = new JCheckBox("Enable Gradle script debugging");
+    myCheckBox = new JCheckBox(GradleBundle.message("gradle.tasks.script.debugging"));
     panel.add(myCheckBox);
     return panel;
   }

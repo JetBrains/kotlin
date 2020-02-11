@@ -756,7 +756,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (myGradleDistributionHint != null && !dropUseWrapperButton) {
       final boolean isGradleDefaultWrapperFilesExist = GradleUtil.isGradleDefaultWrapperFilesExist(linkedProjectPath);
       boolean showError = !isGradleDefaultWrapperFilesExist && !isDefaultModuleCreation;
-      myGradleDistributionHint.setText(showError ? "'gradle-wrapper.properties' not found" : null);
+      myGradleDistributionHint.setText(showError ? GradleBundle.message("gradle.settings.wrapper.not.found") : null);
       myGradleDistributionHint.setIcon(showError ? AllIcons.General.Error : null);
     }
 

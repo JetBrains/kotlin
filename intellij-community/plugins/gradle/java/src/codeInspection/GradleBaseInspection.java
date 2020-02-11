@@ -16,6 +16,7 @@
 package org.jetbrains.plugins.gradle.codeInspection;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspection;
 
 /**
@@ -24,6 +25,6 @@ import org.jetbrains.plugins.groovy.codeInspection.BaseInspection;
 public abstract class GradleBaseInspection extends BaseInspection {
   @Override
   public String @NotNull [] getGroupPath() {
-    return new String[]{"Gradle", getGroupDisplayName()};
+    return new String[]{GradleConstants.GRADLE_NAME, getGroupDisplayName()};
   }
 }

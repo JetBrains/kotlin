@@ -22,6 +22,7 @@ import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.settings.CompositeDefinitionSource;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.swing.*;
@@ -57,7 +58,7 @@ public class GradleProjectCompositeSelectorDialog extends DialogWrapper {
     myExternalSystemUiAware = ExternalSystemUiUtil.getUiAware(GradleConstants.SYSTEM_ID);
     myTree = createTree();
 
-    setTitle("Composite Build Configuration");
+    setTitle(GradleBundle.message("gradle.settings.composite.build.title"));
     init();
   }
 
@@ -169,7 +170,7 @@ public class GradleProjectCompositeSelectorDialog extends DialogWrapper {
 
   private class SelectAllButton extends AnActionButton {
     SelectAllButton() {
-      super("Select All", AllIcons.Actions.Selectall);
+      super(GradleBundle.message("gradle.settings.composite.select.all"), AllIcons.Actions.Selectall);
     }
 
     @Override
@@ -181,7 +182,7 @@ public class GradleProjectCompositeSelectorDialog extends DialogWrapper {
 
   private class UnselectAllButton extends AnActionButton {
     UnselectAllButton() {
-      super("Unselect All", AllIcons.Actions.Unselectall);
+      super(GradleBundle.message("gradle.settings.composite.unselect.all"), AllIcons.Actions.Unselectall);
     }
 
     @Override

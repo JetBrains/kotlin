@@ -232,7 +232,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
   private void addVMOptionsControl(@NotNull PaintAwarePanel canvas, int indentLevel) {
     if (!dropVmOptions) {
-      JBLabel label = new JBLabel("Gradle VM options:");
+      JBLabel label = new JBLabel(GradleBundle.message("gradle.settings.text.vm.options"));
       canvas.add(label, ExternalSystemUiUtil.getLabelConstraints(indentLevel));
       myGradleVmOptionsComponents.add(label);
 
@@ -261,8 +261,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
         protected void textChanged(@NotNull DocumentEvent e) {
           boolean showMigration = e.getDocument().getLength() > 0;
           fixLabel.setHyperlinkText(
-            "This setting is deprecated, please use 'org.gradle.jvmargs’ property in 'gradle.properties’ file instead ",
-            showMigration ? "Migrate" : "  ", "");
+            GradleBundle.message("gradle.settings.text.vm.options.link.tooltip"),
+            showMigration ? GradleBundle.message("gradle.settings.text.vm.options.link.text") : "  ", "");
         }
       });
       myGradleVmOptionsField.setText(" "); // trigger listener
@@ -275,7 +275,7 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
           if (moveVMOptionsToGradleProperties(jvmArgs, myInitialSettings)) {
             myGradleVmOptionsField.setText(null);
-            myGradleVmOptionsField.getEmptyText().setText("VM options have been moved to gradle.properties");
+            myGradleVmOptionsField.getEmptyText().setText(GradleBundle.message("gradle.settings.text.vm.options.empty.text"));
           }
         }
       });
@@ -296,9 +296,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
 
     int result = Messages.showYesNoDialog(
       settings.getProject(),
-      "Would you like to move VM options to the '" + new File(gradleUserHomeDir, "gradle.properties") + "' file?\n" +
-      "Note that the existing 'org.gradle.jvmargs' property will be overwritten.\n\n" +
-      "You can do it manually any time later", "Gradle Settings",
+      GradleBundle.message("gradle.settings.text.vm.options.confirm.text", new File(gradleUserHomeDir, "gradle.properties")),
+      GradleBundle.message("gradle.title.gradle.settings"),
       getQuestionIcon());
     if (result != Messages.YES) return false;
 
@@ -322,8 +321,8 @@ public class IdeaGradleSystemSettingsControlBuilder implements GradleSystemSetti
     }
     catch (IOException e) {
       Messages.showErrorDialog(settings.getProject(),
-                               e.getMessage() + "\n\nPlease migrate settings manually",
-                               "Migration Error");
+                               GradleBundle.message("gradle.settings.text.vm.options.migration.error.text", e.getMessage()),
+                               GradleBundle.message("gradle.settings.text.vm.options.migration.error.title"));
       return false;
     }
 

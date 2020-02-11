@@ -6,6 +6,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.statistics.GradleActionsUsagesCollector;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class ShowGradleDaemonsAction extends DumbAwareAction {
   private DaemonsUi myUi;
 
   public ShowGradleDaemonsAction() {
-    super("Show Gradle Daemons");
+    super(GradleBundle.message("gradle.daemons.gradle.daemons.show"));
   }
 
   @Override

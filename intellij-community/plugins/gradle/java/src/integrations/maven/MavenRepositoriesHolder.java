@@ -17,9 +17,9 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.indices.MavenSearchIndex;
 import org.jetbrains.idea.maven.indices.MavenIndex;
 import org.jetbrains.idea.maven.indices.MavenIndicesManager;
+import org.jetbrains.idea.maven.indices.MavenSearchIndex;
 import org.jetbrains.idea.maven.model.MavenRemoteRepository;
 import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -103,12 +103,11 @@ public class MavenRepositoriesHolder {
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
         final int result =
           Messages.showYesNoDialog(myProject,
-                                   "Notification will be disabled for all projects.\n\n" +
-                                   "Settings | Appearance & Behavior | Notifications | " +
-                                   UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP +
-                                   "\ncan be used to configure the notification.",
-                                   "Unindexed Maven Repositories Gradle Detection",
-                                   "Disable Notification", CommonBundle.getCancelButtonText(),
+                                   GradleBundle.message("gradle.integrations.maven.notification.to.be.disabled",
+                                                        UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP),
+                                   GradleBundle.message("gradle.integrations.maven.notification.detection"),
+                                   GradleBundle.message("gradle.integrations.maven.notification.disable.text"),
+                                   CommonBundle.getCancelButtonText(),
                                    Messages.getWarningIcon());
         if (result == Messages.YES) {
           NotificationsConfigurationImpl.getInstanceImpl().changeSettings(UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP,

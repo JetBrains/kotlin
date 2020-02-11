@@ -32,7 +32,8 @@ public class GradleGroovyFrameworkSupportProvider extends GradleFrameworkSupport
       @NotNull
       @Override
       public String getPresentableName() {
-        return "Groovy";
+        //noinspection HardCodedStringLiteral
+        return "Groovy";//NON-NLS
       }
 
       @NotNull

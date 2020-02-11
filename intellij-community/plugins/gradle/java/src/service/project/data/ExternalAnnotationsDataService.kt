@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleBundle
 
 @Order(value = ExternalSystemConstants.UNORDERED)
 class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Library>() {
@@ -117,11 +118,11 @@ fun resolveProvidedAnnotations(providedAnnotations: Map<Library, Collection<Anno
 
   if (providedAnnotations.isNotEmpty()) {
     val total = providedAnnotations.map { it.value.size }.sum().toDouble()
-    runBackgroundableTask("Resolving known external annotations") { indicator ->
+    runBackgroundableTask(GradleBundle.message("gradle.tasks.annotations.title")) { indicator ->
       indicator.isIndeterminate = false
       var index = 0
       providedAnnotations.forEach { (lib, locations) ->
-        indicator.text = "Looking for annotations for '${lib.name}'"
+        indicator.text = GradleBundle.message("gradle.tasks.annotations.looking.for", lib.name)
         locations.forEach locations@ { location ->
           if (locationsToSkip.contains(location)) return@locations
           if (!resolvers.fold(false) { acc, res -> acc || res.resolve(project, lib, location) } ) {

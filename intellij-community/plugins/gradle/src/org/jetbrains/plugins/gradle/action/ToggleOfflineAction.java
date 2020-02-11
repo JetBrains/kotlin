@@ -23,6 +23,7 @@ import com.intellij.openapi.externalSystem.action.ExternalSystemToggleAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 /**
@@ -37,11 +38,7 @@ public class ToggleOfflineAction extends ExternalSystemToggleAction {
 
     if (ActionPlaces.ACTION_SEARCH.equals(e.getPlace())) {
       Presentation p = e.getPresentation();
-      String name = p.getText();
-      String prefix = "Toggle ";
-      if (name != null && LOG.assertTrue(name.startsWith(prefix))) {
-        p.setText(prefix + "Gradle " + name.substring(prefix.length()));
-      }
+      p.setText(GradleBundle.message("gradle.tasks.toggle.offline.search.title"));
     }
   }
 

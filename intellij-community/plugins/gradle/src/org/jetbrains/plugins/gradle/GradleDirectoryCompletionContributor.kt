@@ -15,11 +15,12 @@ import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleUtil.findGradleModuleData
 
 class GradleDirectoryCompletionContributor : CreateDirectoryCompletionContributor {
-  override fun getDescription() = "Gradle Source Sets"
+  override fun getDescription(): String = GradleBundle.message("gradle.tasks.directory.completion.description");
 
   override fun getVariants(directory: PsiDirectory): Collection<CreateDirectoryCompletionContributor.Variant> {
     val project = directory.project

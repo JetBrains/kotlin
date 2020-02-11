@@ -29,7 +29,8 @@ public class KotlinDslGradleJavaFrameworkSupportProvider extends KotlinDslGradle
       @NotNull
       @Override
       public String getPresentableName() {
-        return "Java";
+        //noinspection HardCodedStringLiteral
+        return "Java"; //NON-NLS
       }
 
       @NotNull

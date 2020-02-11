@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.jetbrains.plugins.gradle.util.GradleUtil;
 import org.jetbrains.plugins.groovy.config.GroovyLibraryPresentationProviderBase;
 import org.jetbrains.plugins.groovy.config.GroovyLibraryProperties;
 
@@ -74,7 +75,7 @@ final class GradleLibraryPresentationProvider extends GroovyLibraryPresentationP
   @NotNull
   @Override
   public String getLibraryCategoryName() {
-    return "Gradle";
+    return GradleConstants.GRADLE_NAME;
   }
 
   @Override

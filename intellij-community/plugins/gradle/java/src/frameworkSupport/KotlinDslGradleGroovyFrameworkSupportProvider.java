@@ -29,7 +29,8 @@ public class KotlinDslGradleGroovyFrameworkSupportProvider extends KotlinDslGrad
       @NotNull
       @Override
       public String getPresentableName() {
-        return "Groovy";
+        //noinspection HardCodedStringLiteral
+        return "Groovy"; //NON-NLS
       }
 
       @NotNull
