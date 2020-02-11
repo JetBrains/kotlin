@@ -1,0 +1,20 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.util.indexing.roots
+
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ContentIterator
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.openapi.vfs.VirtualFileWithId
+import com.intellij.util.containers.ConcurrentBitSet
+import com.intellij.util.indexing.IndexingBundle
+
+internal class ModuleIndexableFilesProvider(val module: Module) : IndexableFilesProvider {
+  override fun getPresentableName() = IndexingBundle.message("indexable.files.provider.module.roots", module.name)
+
+  override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
+    val filter = VirtualFileFilter { file -> file is VirtualFileWithId && file.id > 0 && !visitedFileSet.set(file.id) }
+    return ModuleRootManager.getInstance(module).fileIndex.iterateContent(fileIterator, filter)
+  }
+}

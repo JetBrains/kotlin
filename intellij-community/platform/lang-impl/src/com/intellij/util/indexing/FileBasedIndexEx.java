@@ -1,12 +1,17 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
+import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWithId;
@@ -16,7 +21,9 @@ import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
+import com.intellij.util.indexing.roots.*;
 import gnu.trove.THashSet;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.ApiStatus;
@@ -324,22 +331,70 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   }
 
   @Override
-  public void iterateIndexableFilesConcurrently(@NotNull ContentIterator processor, @NotNull Project project, @NotNull ProgressIndicator indicator) {
-    PushedFilePropertiesUpdaterImpl.invokeConcurrentlyIfPossible(collectScanRootRunnables(processor, project, indicator));
-  }
-
-  @Override
-  public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, ProgressIndicator indicator) {
-    for (Runnable r : collectScanRootRunnables(processor, project, indicator)) r.run();
+  public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, @Nullable ProgressIndicator indicator) {
+    final ProgressIndicator finalIndicator = indicator == null ? new EmptyProgressIndicator() : indicator;
+    Set<IndexableFilesProvider> providers = getIndexableFilesProviders(project, finalIndicator);
+    VisitedFileSet visitedFileSet = new VisitedFileSet();
+    for (IndexableFilesProvider provider : providers) {
+      if (!provider.iterateFiles(project, processor, visitedFileSet)) {
+        break;
+      }
+    }
   }
 
   @NotNull
-  private static List<Runnable> collectScanRootRunnables(@NotNull final ContentIterator processor,
-                                                         @NotNull final Project project,
-                                                         ProgressIndicator indicator) {
-    FileBasedIndexScanRunnableCollector collector = FileBasedIndexScanRunnableCollector.getInstance(project);
-    ProgressIndicator finalIndicator = indicator != null ? indicator : new EmptyProgressIndicator();
-    return collector.collectScanRootRunnables(processor, finalIndicator);
+  public Set<IndexableFilesProvider> getIndexableFilesProviders(@NotNull Project project,
+                                                                @NotNull ProgressIndicator indicator) {
+    if (LightEdit.owns(project)) {
+      return Collections.emptySet();
+    }
+    return ReadAction.compute(() -> {
+      if (project.isDisposed()) {
+        return Collections.emptySet();
+      }
+
+      Set<OrderEntry> allEntries = new THashSet<>();
+      Set<IndexableFilesProvider> providers = new HashSet<>();
+      Module[] modules = ModuleManager.getInstance(project).getModules();
+      for (Module module : modules) {
+        if (module.isDisposed()) continue;
+        providers.add(new ModuleIndexableFilesProvider(module));
+
+        // iterate associated libraries
+        OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
+        for (OrderEntry orderEntry : orderEntries) {
+          allEntries.add(orderEntry);
+          if (!orderEntry.isValid()) continue;
+          if (orderEntry instanceof LibraryOrderEntry) {
+            Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
+            if (library != null) {
+              providers.add(new LibraryIndexableFilesProvider(library));
+            }
+          }
+          if (orderEntry instanceof JdkOrderEntry) {
+            Sdk sdk = ((JdkOrderEntry)orderEntry).getJdk();
+            if (sdk != null) {
+              providers.add(new SdkIndexableFilesProvider(sdk));
+            }
+          }
+        }
+      }
+
+      for (IndexableSetContributor contributor : IndexableSetContributor.EP_NAME.getExtensionList()) {
+        providers.add(new IndexableSetContributorFilesProvider(contributor));
+      }
+
+      // iterate synthetic project libraries
+      for (AdditionalLibraryRootsProvider provider : AdditionalLibraryRootsProvider.EP_NAME.getExtensionList()) {
+        for (SyntheticLibrary library : provider.getAdditionalProjectLibraries(project)) {
+          providers.add(new SyntheticLibraryIndexableFilesProvider(library, project));
+        }
+      }
+
+      SharedIndexChunkConfiguration.getInstance().locateIndexes(project, allEntries, indicator);
+
+      return providers;
+    });
   }
 
   @Nullable
