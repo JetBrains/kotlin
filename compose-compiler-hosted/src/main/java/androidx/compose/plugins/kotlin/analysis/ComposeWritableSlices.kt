@@ -1,20 +1,13 @@
 package androidx.compose.plugins.kotlin.analysis
 
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
-import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.ComposableEmitMetadata
-import androidx.compose.plugins.kotlin.ComposableFunctionDescriptor
-import androidx.compose.plugins.kotlin.ComposablePropertyDescriptor
 import androidx.compose.plugins.kotlin.ComposerMetadata
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -38,5 +31,7 @@ object ComposeWritableSlices {
     val IS_COMPOSABLE_CALL: WritableSlice<IrAttributeContainer, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_INLINE_COMPOSABLE_CALL: WritableSlice<IrAttributeContainer, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val IS_SYNTHETIC_COMPOSABLE_CALL: WritableSlice<IrFunctionAccessExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
