@@ -552,13 +552,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
+        val code = expression.argument.interpret(data).also { if (it != Code.NEXT) return it }
+
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                // coercion to unit means that return value isn't used
-                expression.argument.interpret(data).apply { if (this == Code.NEXT) data.popReturnValue() }
-            }
+            // coercion to unit means that return value isn't used
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> code
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                val code = expression.argument.interpret(data)
                 if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
                     val convertibleClassName = data.popReturnValue().irClass.fqNameForIrSerialization
                     val castClassName = expression.type.classOrNull?.owner?.fqNameForIrSerialization
@@ -570,11 +569,20 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                val code = expression.argument.interpret(data)
                 if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
                     data.popReturnValue()
                     data.pushReturnValue(null.toState(irBuiltIns.nothingType))
                 }
+                code
+            }
+            IrTypeOperator.INSTANCEOF -> {
+                val isInstance = data.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
+                data.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
+                code
+            }
+            IrTypeOperator.NOT_INSTANCEOF -> {
+                val isInstance = data.popReturnValue().irClass.defaultType.isSubtypeOf(expression.typeOperand, irBuiltIns)
+                data.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
                 code
             }
             else -> TODO("${expression.operator} not implemented")
