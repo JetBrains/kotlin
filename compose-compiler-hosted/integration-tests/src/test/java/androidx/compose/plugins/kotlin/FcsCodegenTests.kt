@@ -2318,10 +2318,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
               }
             }
 
+            fun forceNewLambda(): () -> Unit = { }
+
             @Composable
             fun Main(unchanged: () -> Unit) {
               Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
-              TestSkipping(unchanged = unchanged, changed = { })
+              TestSkipping(unchanged = unchanged, changed = forceNewLambda())
             }
         """, {
             mapOf(

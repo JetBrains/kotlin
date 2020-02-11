@@ -20,6 +20,7 @@ import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
+import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
 import org.jetbrains.kotlin.backend.common.BackendContext
@@ -39,8 +40,11 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         // TODO: refactor transformers to work with just BackendContext
         val jvmContext = backendContext as JvmBackendContext
         val module = jvmContext.ir.irModule
-        val bindingTrace = DelegatingBindingTrace(bindingContext,
-            "trace in ComposeIrGenerationExtension")
+        val bindingTrace = DelegatingBindingTrace(
+            bindingContext,
+            "trace in ComposeIrGenerationExtension"
+        )
+
         // We transform the entire module all at once since we end up remapping symbols, we need to
         // ensure that everything in the module points to the right symbol. There is no extension
         // point that allows you to transform at the module level but we should communicate this
@@ -57,6 +61,9 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
 
             // transform @Model classes
             FrameIrTransformer(jvmContext).lower(module)
+
+            // Memoize normal lambdas and wrap composable lambdas
+            ComposerLambdaMemoization(jvmContext, symbolRemapper, bindingTrace).lower(module)
 
             // transform all composable functions to have an extra synthetic composer
             // parameter. this will also transform all types and calls to include the extra
