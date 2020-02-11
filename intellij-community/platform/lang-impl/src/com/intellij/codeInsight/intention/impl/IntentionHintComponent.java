@@ -306,7 +306,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     myPanel.setOpaque(false);
 
     boolean showRefactoringsBulb = ContainerUtil.exists(cachedIntentions.getInspectionFixes(),
-                                                        descriptor -> descriptor.getAction() instanceof BaseRefactoringIntentionAction);
+                                                        descriptor -> IntentionActionDelegate.unwrap(descriptor.getAction()) instanceof BaseRefactoringIntentionAction);
     boolean showFix = !showRefactoringsBulb && ContainerUtil.exists(cachedIntentions.getErrorFixes(),
                                                                     descriptor -> IntentionManagerSettings.getInstance().isShowLightBulb(descriptor.getAction()));
 
