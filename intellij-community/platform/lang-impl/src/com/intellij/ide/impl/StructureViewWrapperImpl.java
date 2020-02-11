@@ -42,6 +42,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
 import com.intellij.util.BitUtil;
+import com.intellij.util.messages.Topic;
 import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -62,6 +63,7 @@ import static com.intellij.openapi.application.ApplicationManager.getApplication
  * @author Eugene Belyaev
  */
 public class StructureViewWrapperImpl implements StructureViewWrapper, Disposable {
+  public static final Topic<Runnable> STRUCTURE_CHANGED = new Topic<>("structure view changed", Runnable.class);
   private static final Logger LOG = Logger.getInstance(StructureViewWrapperImpl.class);
   private static final DataKey<StructureViewWrapper> WRAPPER_DATA_KEY = DataKey.create("WRAPPER_DATA_KEY");
   private static final int REFRESH_TIME = 100; // time to check if a context file selection is changed or not
@@ -157,6 +159,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     PsiStructureViewFactory.EP_NAME.addExtensionPointListener(this::clearCaches, this);
 
     StructureViewBuilder.EP_NAME.addExtensionPointListener(this::clearCaches, this);
+    getApplication().getMessageBus().connect(this).subscribe(STRUCTURE_CHANGED, this::clearCaches);
   }
 
   private void clearCaches() {
