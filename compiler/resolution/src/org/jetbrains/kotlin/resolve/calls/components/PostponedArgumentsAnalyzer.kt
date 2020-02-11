@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
@@ -128,9 +130,18 @@ class PostponedArgumentsAnalyzer(
             stubsForPostponedVariables.cast()
         )
 
-        returnArgumentsInfo.nonErrorArguments.forEach { c.addSubsystemFromArgument(it) }
+        val returnArguments = returnArgumentsInfo.nonErrorArguments
+        returnArguments.forEach { c.addSubsystemFromArgument(it) }
 
-        val subResolvedKtPrimitives = returnArgumentsInfo.nonErrorArguments.map {
+        val lastExpression = returnArgumentsInfo.lastExpression
+        val allReturnArguments =
+            if (lastExpression != null && returnArgumentsInfo.lastExpressionCoercedToUnit && c.addSubsystemFromArgument(lastExpression)) {
+                returnArguments + lastExpression
+            } else {
+                returnArguments
+            }
+
+        val subResolvedKtPrimitives = allReturnArguments.map {
             resolveKtPrimitive(
                 c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, ReceiverInfo.notReceiver, convertedType = null
             )

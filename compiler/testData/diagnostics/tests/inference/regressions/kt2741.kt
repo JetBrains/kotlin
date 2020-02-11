@@ -9,5 +9,5 @@ fun <T> _arrayList(vararg <!UNUSED_PARAMETER!>values<!>: T) : List<T> = throw Ex
 class _Pair<A>(val a: A)
 
 fun test() {
-    _arrayList(_Pair(1)).<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>_sortBy<!> { <!UNUSED_ANONYMOUS_PARAMETER!>it<!> -> <!UNRESOLVED_REFERENCE!>xxx<!> }
+    _arrayList(_Pair(1))._sortBy <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{ <!UNUSED_ANONYMOUS_PARAMETER!>it<!> -> <!UNRESOLVED_REFERENCE!>xxx<!> }<!>
 }

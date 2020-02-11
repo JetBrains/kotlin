@@ -10,7 +10,7 @@ class Foo {
 }
 
 fun main() {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>("", {
+    with("", {
         Foo.<!UNRESOLVED_REFERENCE!>findByName<!>("")
     })
     with(Foo) {

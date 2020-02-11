@@ -37,7 +37,7 @@ fun test2(a: A) {
     a.forEach() checkType { _<String>() }
     a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
 
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
+    with(a) {
         forEach() checkType { _<String>() }
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
     }

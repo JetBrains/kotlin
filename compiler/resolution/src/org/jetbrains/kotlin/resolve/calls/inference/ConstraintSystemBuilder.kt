@@ -68,11 +68,17 @@ fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
     }
 
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?) {
-    when (argument) {
-        is SubKotlinCallArgument -> addOtherSystem(argument.callResult.constraintSystem)
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
+    return when (argument) {
+        is SubKotlinCallArgument -> {
+            addOtherSystem(argument.callResult.constraintSystem)
+            true
+        }
+
         is CallableReferenceKotlinCallArgument -> {
             addSubsystemFromArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
         }
+
+        else -> false
     }
 }

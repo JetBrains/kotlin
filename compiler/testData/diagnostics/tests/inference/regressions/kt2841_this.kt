@@ -13,7 +13,7 @@ public inline fun <T: Closeable, R> T.use(block: T.()-> R) : R {
 }
 
 fun test() {
-    C().<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>use<!> {
+    C().use {
         this.close()
         <!UNRESOLVED_REFERENCE!>x<!>
     }

@@ -47,6 +47,8 @@ interface KotlinResolutionStatelessCallbacks {
 
 data class ReturnArgumentsInfo(
     val nonErrorArguments: List<KotlinCallArgument>,
+    val lastExpression: KotlinCallArgument?,
+    val lastExpressionCoercedToUnit: Boolean,
     val returnArgumentsExist: Boolean
 )
 
