@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.Variance
 
 interface FirSamResolver : FirSessionComponent {
     fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType?
-    fun shouldRunSamConversionForFunction(firNamedFunction: FirSimpleFunction): Boolean
+    fun shouldRunSamConversionForFunction(firFunction: FirFunction<*>): Boolean
     fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction?
 }
 
@@ -202,7 +202,7 @@ class FirSamResolverImpl(
         } as? ConeKotlinType
     }
 
-    override fun shouldRunSamConversionForFunction(firNamedFunction: FirSimpleFunction): Boolean {
+    override fun shouldRunSamConversionForFunction(firFunction: FirFunction<*>): Boolean {
         // TODO: properly support, see org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer.shouldRunSamConversionForFunction
         return true
     }

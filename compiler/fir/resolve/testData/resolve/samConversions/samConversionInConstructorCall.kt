@@ -13,5 +13,5 @@ public class Foo {
 // FILE: main.kt
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>Foo<!> { <!UNRESOLVED_REFERENCE!>it<!> }
+    Foo { it }
 }

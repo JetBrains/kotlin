@@ -10,5 +10,5 @@ public class A<E> {
 // FILE: main.kt
 
 fun foo() {
-    val result: A<String> = <!INAPPLICABLE_CANDIDATE!>A<!><String> { x, y -> 1 }
+    val result: A<String> = A<String> { x, y -> 1 }
 }

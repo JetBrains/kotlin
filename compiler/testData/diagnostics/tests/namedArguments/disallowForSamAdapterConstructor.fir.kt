@@ -13,5 +13,5 @@ public class J {
 package test
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>J<!>("", r = { }, z = false)
+    J("", r = { }, z = false)
 }

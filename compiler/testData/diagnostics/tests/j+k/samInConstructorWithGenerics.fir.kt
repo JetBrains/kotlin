@@ -18,6 +18,6 @@ public class Observable<T> {
 
 import j.*
 
-class K : <!INAPPLICABLE_CANDIDATE!>Observable<String><!>({})
+class K : Observable<String>({})
 
 class J : Observable<String>(null)
