@@ -254,10 +254,7 @@ class KotlinCodeBlockModificationListener(
                                         (element !is KtAnnotated || element.annotationEntries.isEmpty())
                             }
                                 ?.let { expression ->
-                                    val declaration = if (blockDeclaration.initializer != null)
-                                        blockDeclaration
-                                    else
-                                    // property could be initialized on a class level
+                                    val declaration =
                                         KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClass::class.java) as? KtElement ?:
                                         // ktFile to check top level property declarations
                                         return null
