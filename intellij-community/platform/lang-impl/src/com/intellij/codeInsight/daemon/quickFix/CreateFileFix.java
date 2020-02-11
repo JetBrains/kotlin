@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.io.IOException;
 
@@ -37,7 +38,7 @@ public class CreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
   private final boolean myIsDirectory;
   private final String myNewFileName;
   private final String myText;
-  @NotNull private final String myKey;
+  @PropertyKey(resourceBundle = CodeInsightBundle.BUNDLE) @NotNull private final String myKey;
   private boolean myIsAvailable;
   private long myIsAvailableTimeStamp;
 
@@ -47,7 +48,7 @@ public class CreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
                        @NotNull String newFileName,
                        @NotNull PsiDirectory directory,
                        @Nullable String text,
-                       @NotNull String key) {
+                       @PropertyKey(resourceBundle = CodeInsightBundle.BUNDLE) @NotNull String key) {
     super(directory);
 
     myIsDirectory = isDirectory;
