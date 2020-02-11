@@ -48,11 +48,10 @@ abstract class AbstractDiagnosticBasedMigrationInspection<T : KtElement>(
                         .singleOrNull()
                         ?: error("Must have one diagnostic")
 
-                    val intentionAction = (if (customIntentionFactory != null)
-                        customIntentionFactory.invoke(diagnostic)
+                    val intentionAction = if (customIntentionFactory != null)
+                        customIntentionFactory.invoke(diagnostic) ?: return
                     else
-                        actionsFactory.createActions(diagnostic).singleOrNull())
-                        ?: error("Must have one fix")
+                        actionsFactory.createActions(diagnostic).ifEmpty { return }.singleOrNull() ?: error("Must have one fix")
 
                     val text = descriptionMessage() ?: DefaultErrorMessages.render(diagnostic)
                     problemDescriptors.add(
