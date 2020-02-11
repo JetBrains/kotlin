@@ -3170,7 +3170,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitRepeatedUseSiteTargetAnnotationsMigrationInspection"
-                     displayName="This annotation is not repeatable since 1.4"
+                     displayName="Repeatable annotation without `@Repeatable` are not allowed since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
