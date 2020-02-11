@@ -6,6 +6,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.statistics.ExternalSystemActionsCollector;
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.externalSystem.view.ExternalSystemNode;
 import com.intellij.openapi.externalSystem.view.RunConfigurationNode;
 import com.intellij.openapi.project.Project;
@@ -39,7 +40,8 @@ public class RemoveExternalSystemRunConfigurationAction extends ExternalSystemAc
 
     ExternalSystemActionsCollector.trigger(project, getSystemId(e), this, e);
 
-    int res = Messages.showYesNoDialog(project, "Delete \"" + settings.getName() + "\"?", "Confirmation", Messages.getQuestionIcon());
+    int res = Messages.showYesNoDialog(project, ExternalSystemBundle.message("delete.0", settings.getName()),
+                                       ExternalSystemBundle.message("confirmation"), Messages.getQuestionIcon());
     if (res == Messages.YES) {
       RunManager.getInstance(project).removeConfiguration(settings);
     }

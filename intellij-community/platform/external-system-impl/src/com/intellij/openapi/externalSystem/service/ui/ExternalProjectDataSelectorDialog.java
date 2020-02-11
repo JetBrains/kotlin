@@ -582,7 +582,8 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
       if (!deps.isEmpty() && !selectedModules.isEmpty()) {
         final String message = checked ? getEnableMessage(selectedModules, deps) : getDisableMessage(deps);
-        if (Messages.showOkCancelDialog(message, checked ? "Enable Dependant Modules" : "Disable Modules with Dependency on this",
+        if (Messages.showOkCancelDialog(message, checked ? ExternalSystemBundle.message("enable.dependant.modules")
+                                                         : ExternalSystemBundle.message("disable.modules.with.dependency.on.this"),
                                         Messages.getQuestionIcon()) == Messages.OK) {
           List<DataNodeCheckedTreeNode> nodes =
             ContainerUtil.mapNotNull(deps, node -> node.getUserData(CONNECTED_UI_NODE_KEY));
@@ -691,7 +692,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
   private class SelectAllButton extends AnActionButton {
     SelectAllButton() {
-      super("Select All", AllIcons.Actions.Selectall);
+      super(ExternalSystemBundle.message("action.text.select.all"), AllIcons.Actions.Selectall);
     }
 
     @Override
@@ -714,7 +715,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
   private class UnselectAllButton extends AnActionButton {
     UnselectAllButton() {
-      super("Unselect All", AllIcons.Actions.Unselectall);
+      super(ExternalSystemBundle.message("action.text.unselect.all"), AllIcons.Actions.Unselectall);
     }
 
     @Override
@@ -739,7 +740,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
   private class ShowSelectedOnlyButton extends ToggleActionButton {
 
     ShowSelectedOnlyButton() {
-      super("Show Selected Only", AllIcons.Actions.ShowHiddens);
+      super(ExternalSystemBundle.message("show.selected.only"), AllIcons.Actions.ShowHiddens);
     }
 
     @Override
@@ -756,7 +757,8 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
   private class SelectRequiredButton extends AnActionButton {
     SelectRequiredButton() {
-      super("Select Required", "select modules depended on currently selected modules", AllIcons.Actions.IntentionBulb);
+      super(ExternalSystemBundle.message("select.required"),
+            ExternalSystemBundle.message("select.modules.depended.on.currently.selected.modules"), AllIcons.Actions.IntentionBulb);
 
       addCustomUpdater(e -> selectionState.getValue().isRequiredSelectionEnabled);
     }

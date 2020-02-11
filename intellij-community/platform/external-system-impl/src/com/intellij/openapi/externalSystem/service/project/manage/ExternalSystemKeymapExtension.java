@@ -289,7 +289,7 @@ public class ExternalSystemKeymapExtension implements KeymapExtension {
 
       Presentation template = getTemplatePresentation();
       template.setText(myTaskData.getName() + " (" + group + ")", false);
-      template.setDescription(myTaskData.getOwner().getReadableName() + " task action");
+      template.setDescription(ExternalSystemBundle.message("0.task.action", myTaskData.getOwner().getReadableName()));
       template.setIcon(ExternalSystemIcons.Task);
     }
 

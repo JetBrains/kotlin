@@ -4,6 +4,7 @@ package com.intellij.openapi.externalSystem.service.task.ui;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl;
+import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.externalSystem.view.ExternalProjectsViewImpl;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -45,7 +46,7 @@ public abstract class AbstractExternalSystemToolWindowFactory implements ToolWin
 
   @NotNull
   private JLabel createInitializingLabel() {
-    JLabel label = new JLabel("Initializing " + myExternalSystemId.getReadableName() + " projects data...", SwingConstants.CENTER);
+    JLabel label = new JLabel(ExternalSystemBundle.message("initializing.0.projects.data", myExternalSystemId.getReadableName()), SwingConstants.CENTER);
     label.setOpaque(true);
     return label;
   }
