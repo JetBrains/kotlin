@@ -51,8 +51,8 @@ import com.intellij.util.SmartFMap;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
-import com.intellij.util.indexing.caches.CacheUpdateRunner;
 import com.intellij.util.indexing.caches.CachedFileContent;
+import com.intellij.util.indexing.caches.IndexUpdateRunner;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
@@ -1122,7 +1122,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   public void indexFiles(@NotNull Project project,
                          @NotNull Collection<VirtualFile> files,
                          @NotNull ProgressIndicator indicator) {
-    CacheUpdateRunner.processFiles(indicator, files, project, (fileContent) -> indexFileContent(project, fileContent));
+    IndexUpdateRunner.processFiles(indicator, files, project, (fileContent) -> indexFileContent(project, fileContent));
   }
 
   private void indexFileContent(@Nullable Project project, @NotNull CachedFileContent content) {

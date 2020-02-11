@@ -32,24 +32,23 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class CacheUpdateRunner {
-  private static final Logger LOG = Logger.getInstance(CacheUpdateRunner.class);
+public final class IndexUpdateRunner {
+  private static final Logger LOG = Logger.getInstance(IndexUpdateRunner.class);
   private static final Key<Boolean> FAILED_TO_INDEX = Key.create("FAILED_TO_INDEX");
 
-  private CacheUpdateRunner() {
+  private IndexUpdateRunner() {
   }
 
   public static void processFiles(@NotNull ProgressIndicator indicator,
                                   @NotNull Collection<VirtualFile> files,
                                   @NotNull Project project,
                                   @NotNull Consumer<? super CachedFileContent> processor) {
-    ProgressIndicator updaterProgressIndicator = PoweredProgressIndicator.apply(indicator);
-    updaterProgressIndicator.checkCanceled();
-    final CachedFileContentQueue queue = new CachedFileContentQueue(project, files, updaterProgressIndicator);
+    indicator.checkCanceled();
+    final CachedFileContentQueue queue = new CachedFileContentQueue(project, files, indicator);
     final double total = files.size();
     queue.startLoading();
 
-    updaterProgressIndicator.setIndeterminate(false);
+    indicator.setIndeterminate(false);
 
     ProgressUpdater progressUpdater = new ProgressUpdater() {
       final Set<VirtualFile> myFilesBeingProcessed = new THashSet<>();
@@ -57,16 +56,13 @@ public final class CacheUpdateRunner {
 
       @Override
       public void processingStarted(@NotNull VirtualFile virtualFile) {
-        updaterProgressIndicator.checkCanceled();
+        indicator.checkCanceled();
         boolean added;
         synchronized (myFilesBeingProcessed) {
           added = myFilesBeingProcessed.add(virtualFile);
         }
         if (added) {
-          updaterProgressIndicator.setFraction(myNumberOfFilesProcessed.incrementAndGet() / total);
-
-          VirtualFile parent = virtualFile.getParent();
-          if (parent != null) updaterProgressIndicator.setText2(parent.getPresentableUrl());
+          indicator.setFraction(myNumberOfFilesProcessed.incrementAndGet() / total);
         }
       }
 
@@ -80,15 +76,15 @@ public final class CacheUpdateRunner {
     };
 
     while (!project.isDisposed()) {
-      updaterProgressIndicator.checkCanceled();
-      if (processSomeFilesWhileUserIsInactive(queue, progressUpdater, updaterProgressIndicator, project, processor)) {
+      indicator.checkCanceled();
+      if (processSomeFilesWhileUserIsInactive(queue, progressUpdater, indicator, project, processor)) {
         break;
       }
     }
 
     if (project.isDisposed()) {
-      updaterProgressIndicator.cancel();
-      updaterProgressIndicator.checkCanceled();
+      indicator.cancel();
+      indicator.checkCanceled();
     }
   }
 
@@ -132,7 +128,7 @@ public final class CacheUpdateRunner {
 
     final AtomicBoolean isFinished = new AtomicBoolean();
     try {
-      int threadsCount = UnindexedFilesUpdater.getIndexingThreadsNumber();
+      int threadsCount = UnindexedFilesUpdater.getNumberOfIndexingThreads();
       if (threadsCount == 1 || application.isWriteAccessAllowed()) {
         Runnable process = createRunnable(project, queue, progressUpdater, suspendableIndicator, innerIndicator, isFinished, fileProcessor);
         ProgressManager.getInstance().runProcess(process, innerIndicator);
@@ -191,66 +187,31 @@ public final class CacheUpdateRunner {
                                          @NotNull ProgressIndicatorBase innerIndicator,
                                          @NotNull AtomicBoolean isFinished,
                                          @NotNull Consumer<? super CachedFileContent> fileProcessor) {
-    Runnable runnable = new UpdateWorker(project, queue, progressUpdater, suspendableIndicator, innerIndicator, isFinished, fileProcessor);
-    return ConcurrencyUtil.underThreadNameRunnable("Indexing", runnable);
-  }
-
-  private static void handleIndexingException(@NotNull VirtualFile file, @NotNull Throwable e) {
-    file.putUserData(FAILED_TO_INDEX, Boolean.TRUE);
-    LOG.error("Error while indexing " + file.getPresentableUrl() + "\n" + "To reindex this file IDEA has to be restarted", e);
-  }
-
-  private static class UpdateWorker implements Runnable {
-    private final Project myProject;
-    private final CachedFileContentQueue myQueue;
-    private final ProgressUpdater myProgressUpdater;
-    private final ProgressIndicator mySuspendableIndicator;
-    private final ProgressIndicatorBase myInnerIndicator;
-    private final AtomicBoolean myIsFinished;
-    private final Consumer<? super CachedFileContent> myFileProcessor;
-
-    UpdateWorker(@NotNull Project project,
-                 @NotNull CachedFileContentQueue queue,
-                 @NotNull ProgressUpdater progressUpdater,
-                 @NotNull ProgressIndicator suspendableIndicator,
-                 @NotNull ProgressIndicatorBase innerIndicator,
-                 @NotNull AtomicBoolean isFinished,
-                 @NotNull Consumer<? super CachedFileContent> fileProcessor) {
-      myProject = project;
-      myQueue = queue;
-      myProgressUpdater = progressUpdater;
-      mySuspendableIndicator = suspendableIndicator;
-      myInnerIndicator = innerIndicator;
-      myIsFinished = isFinished;
-      myFileProcessor = fileProcessor;
-    }
-
-    @Override
-    public void run() {
+    return ConcurrencyUtil.underThreadNameRunnable("Indexing", () -> {
       while (true) {
-        if (myProject.isDisposed() || myInnerIndicator.isCanceled()) {
+        if (project.isDisposed() || innerIndicator.isCanceled()) {
           return;
         }
 
         try {
-          mySuspendableIndicator.checkCanceled();
+          suspendableIndicator.checkCanceled();
 
-          final CachedFileContent fileContent = myQueue.take(myInnerIndicator);
+          final CachedFileContent fileContent = queue.take(innerIndicator);
           if (fileContent == null) {
-            myIsFinished.set(true);
+            isFinished.set(true);
             return;
           }
 
           final Runnable action = () -> {
-            myInnerIndicator.checkCanceled();
-            if (!myProject.isDisposed()) {
+            innerIndicator.checkCanceled();
+            if (!project.isDisposed()) {
               final VirtualFile file = fileContent.getVirtualFile();
               try {
-                myProgressUpdater.processingStarted(file);
+                progressUpdater.processingStarted(file);
                 if (!file.isDirectory() && !Boolean.TRUE.equals(file.getUserData(FAILED_TO_INDEX))) {
-                  myFileProcessor.consume(fileContent);
+                  fileProcessor.consume(fileContent);
                 }
-                myProgressUpdater.processingSuccessfullyFinished(file);
+                progressUpdater.processingSuccessfullyFinished(file);
               }
               catch (ProcessCanceledException e) {
                 throw e;
@@ -267,20 +228,25 @@ public final class CacheUpdateRunner {
               if (app.isDisposed() || !app.tryRunReadAction(action)) {
                 throw new ProcessCanceledException();
               }
-            }, ProgressWrapper.wrap(myInnerIndicator));
+            }, ProgressWrapper.wrap(innerIndicator));
           }
           catch (ProcessCanceledException e) {
-            myQueue.pushBack(fileContent);
+            queue.pushBack(fileContent);
             return;
           }
           finally {
-            myQueue.release(fileContent);
+            queue.release(fileContent);
           }
         }
         catch (ProcessCanceledException e) {
           return;
         }
       }
-    }
+    });
+  }
+
+  private static void handleIndexingException(@NotNull VirtualFile file, @NotNull Throwable e) {
+    file.putUserData(FAILED_TO_INDEX, Boolean.TRUE);
+    LOG.error("Error while indexing " + file.getPresentableUrl() + "\n" + "To reindex this file IDEA has to be restarted", e);
   }
 }
