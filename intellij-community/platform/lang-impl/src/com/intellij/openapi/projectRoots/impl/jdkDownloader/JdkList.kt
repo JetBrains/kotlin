@@ -139,12 +139,12 @@ data class JdkItem(
 enum class JdkPackageType(@NonNls val type: String) {
   @Suppress("unused")
   ZIP("zip") {
-    override fun openDecompressor(archiveFile: File) = Decompressor.Zip(archiveFile)
+    override fun openDecompressor(archiveFile: File) = Decompressor.Zip(archiveFile).withUnixPermissionsAndSymlinks()
   },
 
   @Suppress("SpellCheckingInspection", "unused")
   TAR_GZ("targz") {
-    override fun openDecompressor(archiveFile: File) = Decompressor.Tar(archiveFile)
+    override fun openDecompressor(archiveFile: File) = Decompressor.Tar(archiveFile).withSymlinks()
   };
 
   abstract fun openDecompressor(archiveFile: File): Decompressor
