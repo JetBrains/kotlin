@@ -5,5 +5,5 @@ class Foo(val a: Int, b: Int) {
         get() = a
 
     val e: Int
-        get() = b
+        get() = <!UNRESOLVED_REFERENCE!>b<!>
 }

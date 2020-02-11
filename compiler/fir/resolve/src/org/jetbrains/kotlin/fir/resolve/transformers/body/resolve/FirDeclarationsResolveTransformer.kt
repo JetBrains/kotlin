@@ -100,10 +100,13 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             dataFlowAnalyzer.enterProperty(property)
             withFullBodyResolve {
                 withScopeCleanup(localScopes) {
-                    localScopes.addIfNotNull(primaryConstructorParametersScope)
+
                     components.withContainer(property) {
-                        property.transformChildrenWithoutAccessors(returnTypeRef)
-                        property.transformInitializer(integerLiteralTypeApproximator, null)
+                        withScopeCleanup(localScopes) {
+                            localScopes.addIfNotNull(primaryConstructorParametersScope)
+                            property.transformChildrenWithoutAccessors(returnTypeRef)
+                            property.transformInitializer(integerLiteralTypeApproximator, null)
+                        }
                         if (property.initializer != null) {
                             storeVariableReturnType(property)
                         }
