@@ -139,7 +139,13 @@ data class JdkItem(
 enum class JdkPackageType(@NonNls val type: String) {
   @Suppress("unused")
   ZIP("zip") {
-    override fun openDecompressor(archiveFile: File) = Decompressor.Zip(archiveFile).withUnixPermissionsAndSymlinks()
+    override fun openDecompressor(archiveFile: File): Decompressor {
+      val decompressor = Decompressor.Zip(archiveFile)
+      return when {
+        SystemInfo.isWindows -> decompressor
+        else -> decompressor.withUnixPermissionsAndSymlinks()
+      }
+    }
   },
 
   @Suppress("SpellCheckingInspection", "unused")
