@@ -22,7 +22,7 @@ val strList: List<String> = null!!
 fun main() {
     val rawA = Test.rawAField
     rawA.first = Test.rawAField.second
-    Test.rawAField.second = rawA.first.<!INAPPLICABLE_CANDIDATE!>second<!>
+    Test.rawAField.second = rawA.first.second
 
     rawA.listOfDoubles = strList
     rawA.listOfDoubles = "" // first should be List

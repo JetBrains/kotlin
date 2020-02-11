@@ -182,7 +182,7 @@ private fun FirTypeParameter.getErasedUpperBound(
     return getErasedVersionOfFirstUpperBound(firstUpperBound, mutableSetOf(this, potentiallyRecursiveTypeParameter), defaultValue)
 }
 
-private tailrec fun getErasedVersionOfFirstUpperBound(
+private fun getErasedVersionOfFirstUpperBound(
     firstUpperBound: ConeKotlinType,
     alreadyVisitedParameters: MutableSet<FirTypeParameter?>,
     defaultValue: () -> ConeKotlinType
@@ -191,6 +191,23 @@ private tailrec fun getErasedVersionOfFirstUpperBound(
         is ConeClassLikeType ->
             firstUpperBound.withArguments(firstUpperBound.typeArguments.map { ConeStarProjection }.toTypedArray())
 
+        is ConeFlexibleType -> {
+            val lowerBound =
+                getErasedVersionOfFirstUpperBound(firstUpperBound.lowerBound, alreadyVisitedParameters, defaultValue)
+                    .lowerBoundIfFlexible()
+            if (firstUpperBound.upperBound is ConeTypeParameterType) {
+                // Avoid exponential complexity
+                ConeFlexibleType(
+                    lowerBound,
+                    lowerBound.withNullability(ConeNullability.NULLABLE)
+                )
+            } else {
+                ConeFlexibleType(
+                    lowerBound,
+                    getErasedVersionOfFirstUpperBound(firstUpperBound.upperBound, alreadyVisitedParameters, defaultValue)
+                )
+            }
+        }
         is ConeTypeParameterType -> {
             val current = firstUpperBound.lookupTag.typeParameterSymbol.fir
 
