@@ -18379,6 +18379,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/resolve/newLineLambda.kt");
             }
 
+            @TestMetadata("noStopOnReceiverUnstableSmartCast.kt")
+            public void testNoStopOnReceiverUnstableSmartCast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/noStopOnReceiverUnstableSmartCast.kt");
+            }
+
             @TestMetadata("objectLiteralAsArgument.kt")
             public void testObjectLiteralAsArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/objectLiteralAsArgument.kt");
