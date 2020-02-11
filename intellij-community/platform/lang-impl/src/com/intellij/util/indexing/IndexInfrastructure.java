@@ -198,4 +198,8 @@ public class IndexInfrastructure {
   public static boolean hasIndices() {
     return !SystemProperties.is("idea.skip.indices.initialization");
   }
+
+  public static boolean isIndexesInitializationSuspended() {
+    return SystemProperties.is("idea.suspend.indexes.initialization");
+  }
 }
