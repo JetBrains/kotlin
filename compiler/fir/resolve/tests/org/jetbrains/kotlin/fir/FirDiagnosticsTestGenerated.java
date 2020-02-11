@@ -924,6 +924,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/inference/callableReferenceOnInstance.kt");
         }
 
+        @TestMetadata("capturedTypeForJavaTypeParameter.kt")
+        public void testCapturedTypeForJavaTypeParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
+        }
+
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/nestedLambdas.kt");

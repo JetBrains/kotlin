@@ -92,7 +92,7 @@ class JavaSymbolProvider(
         stack: JavaTypeParameterStack,
     ) {
         for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, nullability = ConeNullability.NULLABLE)
+            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, nullability = ConeNullability.UNKNOWN)
         }
         addDefaultBoundIfNecessary()
     }
