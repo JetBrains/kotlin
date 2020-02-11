@@ -3,8 +3,8 @@ package com.intellij.compiler.inspection;
 
 import com.intellij.CommonBundle;
 import com.intellij.codeInsight.FileModificationService;
-import com.intellij.codeInsight.daemon.GroupNames;
 import com.intellij.codeInsight.intention.HighPriorityAction;
+import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
@@ -75,7 +75,7 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
   @NotNull
   @Override
   public String getFamilyName() {
-    return GroupNames.INHERITANCE_GROUP_NAME;
+    return InspectionsBundle.message("group.names.inheritance.issues");
   }
 
   @Override
