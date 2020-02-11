@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -78,13 +77,12 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
 
     T component = createComponent();
 
-    ToolWindowManagerEx toolWindowManagerEx = ToolWindowManagerEx.getInstanceEx(myProject);
-    ToolWindow toolWindow = toolWindowManagerEx.getToolWindow(getToolwindowId());
+    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
+    ToolWindow toolWindow = toolWindowManager.getToolWindow(getToolwindowId());
     if (toolWindow == null) {
-      toolWindow = toolWindowManagerEx.registerToolWindow(RegisterToolWindowTask.closable(getToolwindowId(), ToolWindowAnchor.RIGHT));
+      toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(getToolwindowId(), AllIcons.Toolwindows.Documentation, ToolWindowAnchor.RIGHT));
     }
     myToolWindow = toolWindow;
-    toolWindow.setIcon(AllIcons.Toolwindows.Documentation);
 
     toolWindow.setAvailable(true, null);
     toolWindow.setToHideOnEmptyContent(false);
@@ -125,7 +123,7 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
   }
 
   protected void setToolwindowDefaultState() {
-    final Rectangle rectangle = WindowManager.getInstance().getIdeFrame(myProject).suggestChildFrameBounds();
+    Rectangle rectangle = WindowManager.getInstance().getIdeFrame(myProject).suggestChildFrameBounds();
     myToolWindow.setDefaultState(ToolWindowAnchor.RIGHT, ToolWindowType.FLOATING, rectangle);
   }
 

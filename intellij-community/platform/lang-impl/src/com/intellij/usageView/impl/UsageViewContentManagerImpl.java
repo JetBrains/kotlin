@@ -44,10 +44,9 @@ public final class UsageViewContentManagerImpl extends UsageViewContentManager {
 
   @NonInjectable
   public UsageViewContentManagerImpl(@NotNull Project project, @NotNull ToolWindowManager toolWindowManager) {
-    ToolWindow toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(ToolWindowId.FIND));
+    ToolWindow toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(ToolWindowId.FIND, AllIcons.Toolwindows.ToolWindowFind));
     toolWindow.setHelpId(UsageViewImpl.HELP_ID);
     toolWindow.setToHideOnEmptyContent(true);
-    toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowFind);
 
     DumbAwareToggleAction toggleNewTabAction = new DumbAwareToggleAction(FindBundle.message("find.open.in.new.tab.action")) {
       @Override

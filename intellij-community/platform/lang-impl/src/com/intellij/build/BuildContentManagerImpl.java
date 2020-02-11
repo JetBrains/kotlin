@@ -67,8 +67,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
       return toolWindow;
     }
 
-    toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(TOOL_WINDOW_ID));
-    toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
+    toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(TOOL_WINDOW_ID, AllIcons.Toolwindows.ToolWindowBuild));
     ContentManager contentManager = toolWindow.getContentManager();
     contentManager.addDataProvider(new DataProvider() {
       private int myInsideGetData = 0;
