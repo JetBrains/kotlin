@@ -9,7 +9,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.util.WrapUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -20,8 +19,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -51,7 +53,17 @@ constructor(
         project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             this,
-            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+            WrapUtil.toDomainObjectSet(JsBinary::class.java).apply {
+                all {
+                    whenBrowserConfigured {
+                        (this as KotlinJsIrSubTarget).produceExecutable()
+                    }
+
+                    whenNodejsConfigured {
+                        (this as KotlinJsIrSubTarget).produceExecutable()
+                    }
+                }
+            }
         )
 
     private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
@@ -104,32 +116,11 @@ constructor(
     }
 
     override fun produceKotlinLibrary() {
-        produce(KotlinJsProducingType.KOTLIN_LIBRARY)
+        // do nothing
     }
 
     override fun produceExecutable() {
-        produce(KotlinJsProducingType.EXECUTABLE) {
-            (this as KotlinJsIrSubTarget).produceExecutable()
-        }
-    }
-
-    private fun produce(
-        producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTargetDsl.() -> Unit = {}
-    ) {
-        check(this.producingType == null || this.producingType == producingType) {
-            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
-        }
-
-        this.producingType = producingType
-
-        whenBrowserConfigured {
-            producer()
-        }
-
-        whenNodejsConfigured {
-            producer()
-        }
+        // do nothing
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {

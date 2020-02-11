@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
@@ -145,6 +146,9 @@ constructor(
             (this as KotlinJsSubTarget).produceExecutable()
         }
     }
+
+    override val binaries: KotlinJsBinaryContainer
+        get() = TODO("Not yet implemented")
 
     private fun produce(
         producingType: KotlinJsProducingType,
