@@ -373,10 +373,7 @@ fun writeIvyXml(
 
                     sourcesJar.forEach { jarFile ->
                         emptyElement("artifact") {
-                            val sourcesArtifactName = jarFile.name
-                                .substringBeforeLast("-")
-                                .substringBeforeLast("-")
-
+                            val sourcesArtifactName = jarFile.name.substringBefore("-$version")
                             attributes(
                                 "name" to sourcesArtifactName,
                                 "type" to "jar",
