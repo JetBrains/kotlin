@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.idea.configuration.klib
 
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_SOURCES_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.idea.configuration.klib.KlibInfoProvider.Origin.*
+import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -22,10 +19,7 @@ import java.nio.file.Files.*
 import java.nio.file.Path
 import java.util.*
 
-class KlibInfoProvider(
-    kotlinNativeHome: File,
-    nativeDistributionCommonizedLibsDir: File? = null
-) {
+class KlibInfoProvider(kotlinNativeHome: File) {
     private enum class Origin {
         NATIVE_DISTRIBUTION,
         NATIVE_DISTRIBUTION_COMMONIZED,
@@ -34,8 +28,7 @@ class KlibInfoProvider(
 
     private class ResultWrapper<T>(val result: T)
 
-    private val kotlinNativePath = kotlinNativeHome.toPath()
-    private val nativeDistributionCommonizedLibsPath = nativeDistributionCommonizedLibsDir?.toPath()
+    private val nativeDistributionLibrariesPath = kotlinNativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR).toPath()
 
     private val hostManager by lazy {
         HostManager(
@@ -80,11 +73,15 @@ class KlibInfoProvider(
         }
     }
 
-    private fun detectOrigin(libraryPath: Path): Origin? = when {
-        libraryPath.startsWith(kotlinNativePath) -> NATIVE_DISTRIBUTION
-        nativeDistributionCommonizedLibsPath?.let { libraryPath.startsWith(it) } == true -> NATIVE_DISTRIBUTION_COMMONIZED
-        else -> null
-    }
+    private fun detectOrigin(libraryPath: Path): Origin? =
+        if (!libraryPath.startsWith(nativeDistributionLibrariesPath)) {
+            null
+        } else {
+            if (libraryPath.getNameOrNull(nativeDistributionLibrariesPath.nameCount) == KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
+                NATIVE_DISTRIBUTION_COMMONIZED
+            else
+                NATIVE_DISTRIBUTION
+        }
 
     private fun findManifestFile(libraryPath: Path): Path? {
         libraryPath.resolve(KLIB_MANIFEST_FILE_NAME).let { propertiesPath ->
@@ -131,7 +128,7 @@ class KlibInfoProvider(
         if (parentDirName == KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
             return ResultWrapper(/* common */ null)
         else {
-            val target = parentDirName.safeToTarget() ?: return null
+            val target = parentDirName.toTargetOrNull() ?: return null
             val grandParentDirName = libraryPath.getName(libraryPath.nameCount - 3).toString()
             return if (grandParentDirName == KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
                 ResultWrapper(target)
@@ -144,13 +141,17 @@ class KlibInfoProvider(
         if (libraryPath.nameCount < 4) return null
 
         val additionalOffset = if (ownTarget == null) /* common */ 0 else 1
-        val basePath = libraryPath.subpath(0, libraryPath.nameCount - 2 - additionalOffset)
+        val commonizedLibsDirName = libraryPath.getName(libraryPath.nameCount - 3 - additionalOffset).toString()
 
-        val props = loadProperties(basePath.resolve(COMMONIZED_PROPERTIES_FILE_NAME))
-        val rawTargets = props.getProperty(COMMONIZED_TARGETS)?.split(' ') ?: return null
+        val rawTargets = commonizedLibsDirName.split('-').dropLast(1)
+        val targets = rawTargets.mapNotNullTo(mutableSetOf()) { it.toTargetOrNull() }
 
-        val targets = rawTargets.mapNotNullTo(mutableSetOf()) { it.safeToTarget() }
-        if (targets.isEmpty() || targets.size != rawTargets.size || ownTarget !in targets) return null
+        if (targets.isEmpty()
+            || targets.size != rawTargets.size
+            || (ownTarget != null && ownTarget !in targets)
+        ) {
+            return null
+        }
 
         return ResultWrapper(targets)
     }
@@ -166,14 +167,12 @@ class KlibInfoProvider(
         return nativeDistributionLibrarySourceFiles.filter { nameFilter(it.name) }
     }
 
-    private fun String.safeToTarget(): KonanTarget? = try {
+    private fun String.toTargetOrNull(): KonanTarget? = try {
         hostManager.targetByName(this)
     } catch (_: TargetSupportException) {
         null
     }
 
-    private companion object {
-        const val COMMONIZED_PROPERTIES_FILE_NAME = ".commonized"
-        const val COMMONIZED_TARGETS = "targets"
-    }
+    private fun Path.getNameOrNull(index: Int): String? =
+        if (index < 0 || index >= nameCount) null else getName(index).toString()
 }
