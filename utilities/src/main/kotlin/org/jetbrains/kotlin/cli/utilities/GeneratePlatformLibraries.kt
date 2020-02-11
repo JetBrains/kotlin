@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.DEFAULT_MODE
+import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_METADATA
+import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_SOURCECODE
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.atomic.AtomicInteger
@@ -101,6 +104,13 @@ fun generatePlatformLibraries(args: Array<String>) {
     val cacheDirectoryPath by argParser.option(
             ArgType.String, "cache-directory", "c", "Cache output directory")
 
+    val mode by argParser.option(
+            ArgType.Choice(listOf(MODE_METADATA, MODE_SOURCECODE)),
+            fullName = "mode",
+            shortName = "m",
+            description = "The way interop library is generated."
+    ).default(DEFAULT_MODE)
+
     val verbose by argParser.option(
             ArgType.Boolean,
             "verbose", "v",
@@ -138,7 +148,8 @@ fun generatePlatformLibraries(args: Array<String>) {
     val logger = Logger(if (verbose) Logger.Level.VERBOSE else Logger.Level.NORMAL)
 
     generatePlatformLibraries(
-            target, inputDirectory, outputDirectory,
+            target, mode,
+            inputDirectory, outputDirectory,
             saveTemps, cacheDirectory, stdlibFile,
             cacheKind, cacheArgs, logger
     )
@@ -175,6 +186,7 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
 
 private fun generateLibrary(
         target: KonanTarget,
+        mode: String,
         def: DefFile,
         inputDirectory: File,
         outputDirectory: File,
@@ -199,6 +211,7 @@ private fun generateLibrary(
                 "-compiler-option", "-fmodules-cache-path=${tmpDirectory.child("clangModulesCache").absolutePath}",
                 "-repo", outputDirectory.absolutePath,
                 "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
+                "-mode", mode,
                 *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.name}") }.toTypedArray()
         )
         logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")
@@ -277,7 +290,8 @@ private fun buildStdlibCache(
     K2Native.mainNoExit(compilerArgs)
 }
 
-private fun generatePlatformLibraries(target: KonanTarget, inputDirectory: File, outputDirectory: File,
+private fun generatePlatformLibraries(target: KonanTarget, mode: String,
+                                      inputDirectory: File, outputDirectory: File,
                                       saveTemps: Boolean, cacheDirectory: File?, stdlibFile: File,
                                       cacheKind: String, cacheArgs: List<String>,
                                       logger: Logger) {
@@ -345,7 +359,7 @@ private fun generatePlatformLibraries(target: KonanTarget, inputDirectory: File,
                     }
 
                     logger.log("Processing ${def.name} (${countProcessed.incrementAndGet()}/$countTotal)...")
-                    generateLibrary(target, def, inputDirectory, outputDirectory, tmpDirectory, logger)
+                    generateLibrary(target, mode, def, inputDirectory, outputDirectory, tmpDirectory, logger)
                     if (cacheDirectory != null) {
                         buildCache(target, def, outputDirectory, cacheDirectory, cacheKind, cacheArgs, logger)
                     }

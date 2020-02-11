@@ -50,7 +50,7 @@ open class CommonInteropArguments(val argParser: ArgParser) {
     val repo by argParser.option(ArgType.String, shortName = "r", description = "repository to resolve dependencies")
             .multiple()
     val mode by argParser.option(ArgType.Choice(listOf(MODE_METADATA, MODE_SOURCECODE)), description = "the way interop library is generated")
-            .default(MODE_SOURCECODE)
+            .default(DEFAULT_MODE)
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,
@@ -70,6 +70,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
     companion object {
         const val MODE_SOURCECODE = "sourcecode"
         const val MODE_METADATA = "metadata"
+
+        const val DEFAULT_MODE = MODE_SOURCECODE
     }
 }
 
