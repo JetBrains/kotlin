@@ -500,7 +500,10 @@ targetList.each { target ->
     }
 
     task("${target}CrossDist") {
-        dependsOn "${target}CrossDistRuntime", 'distCompiler', 'commonDistRuntime', "${target}CrossDistEndorsedLibraries"
+        dependsOn "${target}CrossDistRuntime", "distCompiler", "commonDistRuntime", "${target}CrossDistEndorsedLibraries"
+        if (target in cacheableTargetNames) {
+            dependsOn "${target}StdlibCache", "${target}EndorsedCache"
+        }
     }
 
     task("${target}CrossDistEndorsedLibraries", type: Copy) {
@@ -520,11 +523,21 @@ task distPlatformLibs {
 }
 
 task dist {
-    dependsOn 'distCompiler', 'distRuntime', 'distEndorsedLibraries', 'distDef'
+    dependsOn "distCompiler",
+            "distRuntime",
+            "distEndorsedLibraries",
+            "distDef",
+            "distStdlibCache",
+            "distEndorsedCache"
 }
 
 task crossDist {
-    dependsOn 'crossDistRuntime', 'distCompiler', 'crossDistEndorsedLibraries'
+    dependsOn "distCompiler",
+            "crossDistRuntime",
+            "crossDistEndorsedLibraries",
+            "distDef",
+            "crossDistStdlibCache",
+            "crossDistEndorsedCache"
 }
 
 task bundle {

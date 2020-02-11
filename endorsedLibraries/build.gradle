@@ -58,7 +58,7 @@ targetList.each { target ->
                 compilerDistributionPath.set(distDir)
 
                 dependsOn "${target}EndorsedLibraries"
-                dependsOn ":${target}CrossDist"
+                dependsOn ":${target}CrossDistRuntime"
                 dependsOn ":${target}StdlibCache"
 
                 cacheTask.dependsOn it
