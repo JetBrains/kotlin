@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/intersectionType1_OI.kt
   CLASS CLASS name:In modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.In
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.In<I of <root>.In>
     TYPE_PARAMETER name:I index:0 variance:in superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:<root>.In<I of <root>.In> [primary]
       BLOCK_BODY

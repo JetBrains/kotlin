@@ -48,67 +48,67 @@ FILE fqName:<root> fileName:/propertyAccessors.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host<T of <root>.Host>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:<root>.Host<T of <root>.Host> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testMem1 visibility:public modality:FINAL [val]
-      FUN name:<get-testMem1> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+      FUN name:<get-testMem1> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:testMem1 visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMem1> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:testMem2 visibility:public modality:FINAL [var]
-      FUN name:<get-testMem2> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+      FUN name:<get-testMem2> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:testMem2 visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMem2> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
-      FUN name:<set-testMem2> visibility:public modality:FINAL <> ($this:<root>.Host, value:kotlin.Int) returnType:kotlin.Unit
+      FUN name:<set-testMem2> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:testMem2 visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
     PROPERTY name:testMemExt1 visibility:public modality:FINAL [val]
-      FUN name:<get-testMemExt1> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+      FUN name:<get-testMemExt1> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:testMemExt1 visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMemExt1> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:testMemExt2 visibility:public modality:FINAL [var]
-      FUN name:<get-testMemExt2> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+      FUN name:<get-testMemExt2> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:testMemExt2 visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMemExt2> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
-      FUN name:<set-testMemExt2> visibility:public modality:FINAL <> ($this:<root>.Host, value:kotlin.Int) returnType:kotlin.Unit
+      FUN name:<set-testMemExt2> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:testMemExt2 visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
     PROPERTY name:testMemExt3 visibility:public modality:FINAL [val]
-      FUN name:<get-testMemExt3> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+      FUN name:<get-testMemExt3> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:testMemExt3 visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMemExt3> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
     PROPERTY name:testMemExt4 visibility:public modality:FINAL [var]
-      FUN name:<get-testMemExt4> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
+      FUN name:<get-testMemExt4> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:testMemExt4 visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMemExt4> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
-      FUN name:<set-testMemExt4> visibility:public modality:FINAL <> ($this:<root>.Host, value:kotlin.Int) returnType:kotlin.Unit
+      FUN name:<set-testMemExt4> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:testMemExt4 visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

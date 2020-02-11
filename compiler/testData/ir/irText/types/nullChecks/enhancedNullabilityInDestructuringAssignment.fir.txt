@@ -59,9 +59,9 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T1 of <root>.Q, y:T2 of <root>.Q) returnType:<root>.Q<T1 of <root>.Q, T2 of <root>.Q> [primary]
       VALUE_PARAMETER name:x index:0 type:T1 of <root>.Q
       VALUE_PARAMETER name:y index:1 type:T2 of <root>.Q
@@ -72,36 +72,36 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
       FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Q visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: T1 of <root>.Q declared in <root>.Q.<init>' type=T1 of <root>.Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Q) returnType:T1 of <root>.Q
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T1 of <root>.Q
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Q
+        $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T1 of <root>.Q visibility:private [final]' type=T1 of <root>.Q origin=null
-              receiver: GET_VAR '<this>: <root>.Q declared in <root>.Q.<get-x>' type=<root>.Q origin=null
+              receiver: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.<get-x>' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
     PROPERTY name:y visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:y type:T2 of <root>.Q visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'y: T2 of <root>.Q declared in <root>.Q.<init>' type=T2 of <root>.Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Q) returnType:T2 of <root>.Q
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q
         correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Q
+        $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:T2 of <root>.Q visibility:private [final]' type=T2 of <root>.Q origin=null
-              receiver: GET_VAR '<this>: <root>.Q declared in <root>.Q.<get-y>' type=<root>.Q origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Q) returnType:T1 of <root>.Q [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Q
+              receiver: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.<get-y>' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T1 of <root>.Q [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T1 of <root>.Q [operator] declared in <root>.Q'
           CALL 'public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q' type=T1 of <root>.Q origin=null
-            $this: GET_VAR '<this>: <root>.Q declared in <root>.Q.component1' type=<root>.Q origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Q) returnType:T2 of <root>.Q [operator]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Q
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component1' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q'
           CALL 'public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q' type=T2 of <root>.Q origin=null
-            $this: GET_VAR '<this>: <root>.Q declared in <root>.Q.component2' type=<root>.Q origin=null
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component2' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

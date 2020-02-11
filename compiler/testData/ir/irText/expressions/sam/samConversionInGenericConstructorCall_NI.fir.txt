@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
         ERROR_CALL 'Unresolved reference: <Unresolved name: D>#' type=IrErrorType
           GET_VAR 'f2: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<T1 of <root>.Outer>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (j11:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) returnType:<root>.Outer<T1 of <root>.Outer> [primary]
       VALUE_PARAMETER name:j11 index:0 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
@@ -18,15 +18,15 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
       FIELD PROPERTY_BACKING_FIELD name:j11 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'j11: <root>.J<T1 of <root>.Outer, T1 of <root>.Outer> declared in <root>.Outer.<init>' type=<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j11> visibility:public modality:FINAL <> ($this:<root>.Outer) returnType:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j11> visibility:public modality:FINAL <> ($this:<root>.Outer<T1 of <root>.Outer>) returnType:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
         correspondingProperty: PROPERTY name:j11 visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Outer
+        $this: VALUE_PARAMETER name:<this> type:<root>.Outer<T1 of <root>.Outer>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-j11> (): <root>.J<T1 of <root>.Outer, T1 of <root>.Outer> declared in <root>.Outer'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j11 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> visibility:private [final]' type=<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> origin=null
-              receiver: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.<get-j11>' type=<root>.Outer origin=null
+              receiver: GET_VAR '<this>: <root>.Outer<T1 of <root>.Outer> declared in <root>.Outer.<get-j11>' type=<root>.Outer<T1 of <root>.Outer> origin=null
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
       CONSTRUCTOR visibility:public <> (j12:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner> [primary]
         VALUE_PARAMETER name:j12 index:0 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
@@ -37,13 +37,13 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
         FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'j12: <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner.<init>' type=<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j12> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner) returnType:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j12> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner>) returnType:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
           correspondingProperty: PROPERTY name:j12 visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-j12> (): <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:private [final]' type=<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> origin=null
-                receiver: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner.<get-j12>' type=<root>.Outer.Inner origin=null
+                receiver: GET_VAR '<this>: <root>.Outer.Inner<T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner.<get-j12>' type=<root>.Outer.Inner<T2 of <root>.Outer.Inner> origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

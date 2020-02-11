@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       RETURN type=kotlin.Nothing from='public final fun reinterpret <T> (): T of <root>.reinterpret [inline] declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
   CLASS CLASS name:CInt32VarX modality:FINAL visibility:public superTypes:[<root>.CPointed]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CInt32VarX
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CInt32VarX<T of <root>.CInt32VarX>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:<root>.CInt32VarX<T of <root>.CInt32VarX> [primary]
       BLOCK_BODY

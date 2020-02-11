@@ -220,7 +220,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2<T of <root>.Test2>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T of <root>.Test2>) returnType:<root>.Test2<T of <root>.Test2> [primary]
       VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T of <root>.Test2>
@@ -231,25 +231,25 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'genericArray: kotlin.Array<T of <root>.Test2> declared in <root>.Test2.<init>' type=kotlin.Array<T of <root>.Test2> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-genericArray> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<T of <root>.Test2>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-genericArray> visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:kotlin.Array<T of <root>.Test2>
         correspondingProperty: PROPERTY name:genericArray visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:private [final]' type=kotlin.Array<T of <root>.Test2> origin=null
-              receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-genericArray>' type=<root>.Test2 origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<T of <root>.Test2>
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+              receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.<get-genericArray>' type=<root>.Test2<T of <root>.Test2> origin=null
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:kotlin.Array<T of <root>.Test2>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2'
           CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=kotlin.Array<T of <root>.Test2> origin=null
-            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.component1' type=<root>.Test2 origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, genericArray:kotlin.Array<T of <root>.Test2>) returnType:<root>.Test2<T of <root>.Test2>
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+            $this: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.component1' type=<root>.Test2<T of <root>.Test2> origin=null
+    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>, genericArray:kotlin.Array<T of <root>.Test2>) returnType:<root>.Test2<T of <root>.Test2>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
       VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T of <root>.Test2>
         EXPRESSION_BODY
           CALL 'public final fun <get-genericArray> (): kotlin.Array<T of <root>.Test2> declared in <root>.Test2' type=kotlin.Array<T of <root>.Test2> origin=null
-            $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.copy' type=<root>.Test2 origin=null
+            $this: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.copy' type=<root>.Test2<T of <root>.Test2> origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

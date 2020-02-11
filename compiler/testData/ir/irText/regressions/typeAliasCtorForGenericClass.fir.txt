@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<Q of <root>.A>
     TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (q:Q of <root>.A) returnType:<root>.A<Q of <root>.A> [primary]
       VALUE_PARAMETER name:q index:0 type:Q of <root>.A
@@ -11,13 +11,13 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
       FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'q: Q of <root>.A declared in <root>.A.<init>' type=Q of <root>.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:<root>.A) returnType:Q of <root>.A
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:<root>.A<Q of <root>.A>) returnType:Q of <root>.A
         correspondingProperty: PROPERTY name:q visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.A<Q of <root>.A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-q> (): Q of <root>.A declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]' type=Q of <root>.A origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-q>' type=<root>.A origin=null
+              receiver: GET_VAR '<this>: <root>.A<Q of <root>.A> declared in <root>.A.<get-q>' type=<root>.A<Q of <root>.A> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
