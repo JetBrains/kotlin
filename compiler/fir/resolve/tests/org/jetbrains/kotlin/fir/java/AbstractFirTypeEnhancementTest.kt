@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 import java.io.IOException
+import kotlin.reflect.jvm.javaField
 
 abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
     private lateinit var javaFilesDir: File
@@ -64,6 +65,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
     override fun tearDown() {
         FileUtil.delete(javaFilesDir)
+        this::environment.javaField!![this] = null
         super.tearDown()
     }
 
