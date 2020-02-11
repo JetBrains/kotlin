@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
+import org.jetbrains.kotlin.util.EA
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.*
 
@@ -304,7 +305,9 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
     }
 
     if (this is CallableDescriptor) {
-        val returnType = fuzzyReturnType() ?: return emptyList()
+        val returnType =
+            EA.ea141456(this, this.returnType)
+                .invoke { fuzzyReturnType() } ?: return emptyList()
 
         // skip declarations of types Nothing, Nothing?, dynamic or of generic parameter type which has no real bounds
         if (returnType.type.isNothing() ||

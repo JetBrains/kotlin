@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.EA
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
@@ -242,14 +243,23 @@ class KotlinIndicesHelper(
     ): Collection<CallableDescriptor> {
         val result = LinkedHashSet<CallableDescriptor>()
 
-        fun processDescriptor(descriptor: CallableDescriptor) {
+        fun processDescriptor(callableDeclaration: KtCallableDeclaration, descriptor: CallableDescriptor) {
             if (descriptor.extensionReceiverParameter != null && descriptorFilter(descriptor)) {
-                result.addAll(descriptor.substituteExtensionIfCallable(receiverTypes, callType))
+                EA.ea141456(
+                    callableDeclaration.text,
+                    descriptor,
+                    descriptor.extensionReceiverParameter,
+                    descriptor.extensionReceiverParameter?.type,
+                ).invoke {
+                    result.addAll(descriptor.substituteExtensionIfCallable(receiverTypes, callType))
+                }
             }
         }
 
-        declarations.forEach { it.resolveToDescriptors<CallableDescriptor>().forEach(::processDescriptor) }
-
+        declarations.forEach {
+            for (callableDescriptor in it.resolveToDescriptors<CallableDescriptor>())
+                processDescriptor(it, callableDescriptor)
+        }
         return result
     }
 
@@ -455,7 +465,7 @@ class KotlinIndicesHelper(
         shortNamesCache.processAllMethodNames(
             { name -> if (nameFilter(name)) allMethodNames.add(name); true },
             scopeWithoutKotlin,
-            idFilter
+            idFilter,
         )
         for (name in allMethodNames) {
             ProgressManager.checkCanceled()

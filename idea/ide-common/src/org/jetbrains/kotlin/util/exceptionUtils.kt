@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import java.lang.IllegalStateException
 import kotlin.reflect.KClass
 
-class ExceptionWithAttachmentWrapper(val ref: String, vararg val vars: Any? = emptyArray()) {
+class ExceptionWithAttachmentWrapper(val ref: String, val varsProvider: () -> Array<Any?>?) {
     var catch: KClass<out Throwable> = Throwable::class
 
     fun <T> invoke(block: () -> T) =
@@ -28,10 +28,12 @@ class ExceptionWithAttachmentWrapper(val ref: String, vararg val vars: Any? = em
         } catch (t: Throwable) {
             if (catch.java.isAssignableFrom(t.javaClass)) {
                 val exception = KotlinExceptionWithAttachments(ref + t.message, t)
-                for (arg in vars.withIndex())
+                val vars = varsProvider.invoke() ?: emptyArray()
+                for (arg in vars.withIndex()) {
                     arg.value?.let {
                         exception.withAttachment("arg" + arg.index, arg.value.toString())
                     }
+                }
                 throw exception
             }
             throw t;
@@ -40,11 +42,22 @@ class ExceptionWithAttachmentWrapper(val ref: String, vararg val vars: Any? = em
 }
 
 object EA {
-    fun ea141456(vararg vars: Any?) =
-        ExceptionWithAttachmentWrapper("EA-141456", vars).catch<IllegalStateException>()
+    inline fun <T> vars(vararg elements: T): () -> Array<Any?>? =
+        { arrayOf(elements) }
 
-    fun ea219323(vararg vars: Any?) =
-        ExceptionWithAttachmentWrapper("EA-219323", vars).catch<IllegalStateException>()
+    fun ea141456(f: (EA) -> () -> Array<Any?>?) =
+        ExceptionWithAttachmentWrapper("EA-141456", f(EA)).catch<IllegalStateException>()
+
+    fun ea219323(f: (EA) -> () -> Array<Any?>?) =
+        ExceptionWithAttachmentWrapper("EA-219323", f(EA)).catch<IllegalStateException>()
 }
 
 
+fun main() {
+    EA.ea141456 {
+        it.vars("1", "2")
+    }.invoke {
+        System.out.println("1");
+        throw IllegalStateException()
+    }
+}
