@@ -127,4 +127,6 @@ private fun safeDelete(directory: File) {
 }
 
 private val String.base64
-    get() = Base64.getEncoder().encodeToString(toByteArray(StandardCharsets.UTF_8))
+    get() = base64Encoder.encodeToString(toByteArray(StandardCharsets.UTF_8))
+
+private val base64Encoder = Base64.getEncoder().withoutPadding()
