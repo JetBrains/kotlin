@@ -136,7 +136,8 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         val signature: Method,
         val specializedReturnType: IrType? = null,
         val methodInfo: SpecialMethodWithDefaultInfo? = null,
-        val superQualifierSymbol: IrClassSymbol? = null
+        val superQualifierSymbol: IrClassSymbol? = null,
+        val isFinal: Boolean = true,
     )
 
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
@@ -229,7 +230,8 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                             val superTarget = irFunction.overriddenSymbols.first { !it.owner.parentAsClass.isInterface }.owner
                             val superBridge = SpecialBridge(
                                 irFunction, irFunction.jvmMethod, superQualifierSymbol = superTarget.parentAsClass.symbol,
-                                methodInfo = specialBridge.methodInfo?.copy(argumentsToCheck = 0) // For potential argument boxing
+                                methodInfo = specialBridge.methodInfo?.copy(argumentsToCheck = 0), // For potential argument boxing
+                                isFinal = false,
                             )
                             irClass.declarations.remove(irFunction)
                             irClass.addSpecialBridge(superBridge, superTarget)
@@ -366,8 +368,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
-            // FIXME: This seems to be a work-around for superfluous specialized collection stubs
-            modality = if (!target.isCollectionStub()) Modality.FINAL else Modality.OPEN
+            modality = if (specialBridge.isFinal) Modality.FINAL else Modality.OPEN
             origin = IrDeclarationOrigin.BRIDGE_SPECIAL
             name = Name.identifier(specialBridge.signature.name)
             returnType = specialBridge.specializedReturnType ?: specialBridge.overridden.returnType.eraseTypeParameters()
@@ -489,8 +490,5 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
     private val IrFunction.jvmMethod: Method
         get() = context.methodSignatureMapper.mapAsmMethod(this)
 }
-
-private fun IrSimpleFunction.isCollectionStub(): Boolean =
-    origin == IrDeclarationOrigin.IR_BUILTINS_STUB
 
 private fun IrDeclaration.comesFromJava() = parentAsClass.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
