@@ -562,6 +562,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     int definitionTopPadding = newLayout ? 4 : 3;
     int htmlBottomPadding = newLayout ? 8 : 5;
     String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
+    editorKit.getStyleSheet().addRule("tt {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule(".pre {font-family:\"" + editorFontName + "\"}");
