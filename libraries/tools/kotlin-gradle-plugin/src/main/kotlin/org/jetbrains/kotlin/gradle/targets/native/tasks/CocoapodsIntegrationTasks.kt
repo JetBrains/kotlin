@@ -12,7 +12,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.newProperty
@@ -140,7 +139,7 @@ open class PodBuildSettingsTask : DefaultTask() {
         val buildSettingsProcess = ProcessBuilder(
             "xcodebuild", "-showBuildSettings",
             "-workspace", xcWorkspaceDirProvider.get().name,
-            "-scheme", xcWorkspaceDirProvider.get().nameWithoutExtension
+            "-scheme", project.name.asValidFrameworkName()
         ).apply {
             directory(xcWorkspaceDir)
         }.start()
@@ -149,7 +148,7 @@ open class PodBuildSettingsTask : DefaultTask() {
         if (buildSettingsRetCode != 0) throw GradleException(
             "Unable to run 'xcodebuild -showBuildSettings " +
                     "-workspace ${xcWorkspaceDirProvider.get().name} " +
-                    "-scheme ${xcWorkspaceDirProvider.get().nameWithoutExtension} " +
+                    "-scheme ${project.name.asValidFrameworkName()} " +
                     "return code $buildSettingsRetCode"
         )
 
@@ -162,70 +161,65 @@ open class PodBuildSettingsTask : DefaultTask() {
             .map { it.first.trim() to it.second.trim() }
             .toMap()
 
-        val platform = buildParameters[PodBuildDependencyTask.PLATFORM_NAME] ?: ""
-        val entry = PodBuildDependencyTask.KOTLIN_TARGET.entries.find { platform.startsWith(it.key) }
         with(buildSettings) {
-            target = entry?.value
-            configuration = buildParameters[PodBuildDependencyTask.CONFIGURATION]
-            cflags = buildParameters[PodBuildDependencyTask.OTHER_CFLAGS]
-            headerPaths = buildParameters[PodBuildDependencyTask.HEADER_SEARCH_PATHS]
-            frameworkPaths = buildParameters[PodBuildDependencyTask.FRAMEWORK_SEARCH_PATHS]
+            target = buildParameters[PLATFORM_NAME]
+            configuration = buildParameters[CONFIGURATION]
+            cflags = buildParameters[OTHER_CFLAGS]
+            headerPaths = buildParameters[HEADER_SEARCH_PATHS]
+            frameworkPaths = buildParameters[FRAMEWORK_SEARCH_PATHS]
         }
     }
+
+    companion object {
+        const val PODS_SRC_DIR: String = "PODS_TARGET_SRCROOT"
+        const val PLATFORM_NAME: String = "PLATFORM_NAME"
+        const val CONFIGURATION: String = "CONFIGURATION"
+        const val OTHER_CFLAGS: String = "OTHER_CFLAGS"
+        const val HEADER_SEARCH_PATHS: String = "HEADER_SEARCH_PATHS"
+        const val FRAMEWORK_SEARCH_PATHS: String = "FRAMEWORK_SEARCH_PATHS"
+
+    }
+
 }
 
 
 /**
  * The task compile pod sources and cinterop there artifacts.
  */
-open class PodBuildDependencyTask : DefaultTask() {
-    @get:Input
-    internal lateinit var podNameProvider: Provider<String>
-
+open class PodBuildDependenciesTask : DefaultTask() {
     @get:InputDirectory
-    internal lateinit var podsXcprojFileProvider: Provider<File>
+    internal lateinit var xcWorkspaceDirProvider: Provider<File>
+
+    @get:Nested
+    internal lateinit var buildSettings: PodBuildSettings
 
     @TaskAction
     fun invoke() {
 
-        val xcprojFileDirectory = podsXcprojFileProvider.get().parentFile
+        val xcWorkspaceDir = xcWorkspaceDirProvider.get().parentFile
 
-        val podBuildDependencyProcess = ProcessBuilder(
-            "xcodebuild", "-project", podsXcprojFileProvider.get().name,
-            "-target", podNameProvider.get()
+        //TODO replace hardcode configuration and sdk to extracting from build settings
+        val podBuildProcess = ProcessBuilder(
+            "xcodebuild", "-workspace", xcWorkspaceDirProvider.get().name,
+            "-scheme", project.name.asValidFrameworkName(),
+            "-configuration", buildSettings.configuration,
+            "-sdk", buildSettings.target
         ).apply {
-            directory(xcprojFileDirectory)
+            directory(xcWorkspaceDir)
             inheritIO()
         }.start()
 
-        val podBuildDependencyRetCode = podBuildDependencyProcess.waitFor()
-        if (podBuildDependencyRetCode != 0) throw GradleException(
+        val podBuildRetCode = podBuildProcess.waitFor()
+        if (podBuildRetCode != 0) throw GradleException(
             "Unable to run 'xcodebuild " +
-                    "-project ${podsXcprojFileProvider.get().name} " +
-                    "-target ${podNameProvider.get()}', " +
-                    "return code $podBuildDependencyRetCode"
+                    "-workspace ${xcWorkspaceDirProvider.get().name} " +
+                    "-scheme ${project.name.asValidFrameworkName()}' " +
+                    "-configuration ${buildSettings.configuration}" +
+                    "-sdk ${buildSettings.target}' " +
+                    "return code $podBuildRetCode"
         )
-
     }
 
-    companion object {
-        const val PODS_SRC_DIR: String = "PODS_TARGET_SRCROOT"
-        const val PLATFORM_NAME: String = "CORRESPONDING_SIMULATOR_PLATFORM_NAME"
-        const val CONFIGURATION: String = "CONFIGURATION"
-        const val OTHER_CFLAGS: String = "OTHER_CFLAGS"
-        const val HEADER_SEARCH_PATHS: String = "HEADER_SEARCH_PATHS"
-        const val FRAMEWORK_SEARCH_PATHS: String = "FRAMEWORK_SEARCH_PATHS"
-        val KOTLIN_TARGET: Map<String, String> = mapOf(
-            "iphonesimulator" to "ios_x64",
-            "iphoneos" to KotlinCocoapodsPlugin.KOTLIN_TARGET_FOR_IOS_DEVICE,
-            "watchsimulator" to "watchos_x86",
-            "watchos" to KotlinCocoapodsPlugin.KOTLIN_TARGET_FOR_WATCHOS_DEVICE,
-            "appletvsimulator" to "tvos_x64",
-            "appletvos" to "tvos_arm64",
-            "macosx" to "macos_x64"
-        )
-
-    }
 }
 
 /**
