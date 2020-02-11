@@ -25,7 +25,7 @@ import java.lang.RuntimeException
 
 /** describes vendor + product part of the UI **/
 data class JdkProduct(
-  private val vendor: String,
+  val vendor: String,
   private val product: String?,
   private val flavour: String?
 ) : Comparable<JdkProduct> {
@@ -89,7 +89,7 @@ data class JdkItem(
 
   val isDefaultItem: Boolean = false,
 
-  private val jdkMajorVersion: Int,
+  val jdkMajorVersion: Int,
   val jdkVersion: String,
   private val jdkVendorVersion: String?,
   private val vendorVersion: String?,
