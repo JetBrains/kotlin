@@ -101,5 +101,3 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
         CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         CONST Long type=kotlin.Long value=42
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeLong]>#' type=IrErrorType
-        CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
