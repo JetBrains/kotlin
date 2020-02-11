@@ -31,13 +31,13 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter;
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent;
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemTaskExecutionEvent;
-import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper;
 import com.intellij.openapi.externalSystem.service.internal.ExternalSystemExecuteTaskTask;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -45,6 +45,7 @@ import com.intellij.util.net.NetUtils;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,12 +53,15 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 
-import static com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.DEBUG_FORK_SOCKET_PARAM;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.convert;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.getConsoleManagerFor;
 import static com.intellij.openapi.util.text.StringUtil.nullize;
 
 public class ExternalSystemRunnableState extends UserDataHolderBase implements RunProfileState {
+  @ApiStatus.Internal
+  public static final Key<Integer> DEBUGGER_DISPATCH_PORT_KEY = Key.create("DEBUGGER_DISPATCH_PORT");
+  @ApiStatus.Internal
+  public static final Key<Integer> BUILD_PROCESS_DEBUGGER_PORT_KEY = Key.create("GRADLE_SCRIPT_DEBUGGER_PORT");
 
   @NotNull private final ExternalSystemTaskExecutionSettings mySettings;
   @NotNull private final Project myProject;
@@ -123,6 +127,7 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
 
     final ExternalSystemExecuteTaskTask task = new ExternalSystemExecuteTaskTask(myProject, mySettings, jvmParametersSetup);
     copyUserDataTo(task);
+    addDebugUserDataTo(task);
 
     final String executionName = StringUtil.isNotEmpty(mySettings.getExecutionName())
                                  ? mySettings.getExecutionName()
@@ -263,19 +268,22 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
     return executionResult;
   }
 
+  private void addDebugUserDataTo(UserDataHolderBase holder) {
+    if (myDebugPort > 0) {
+      holder.putUserData(BUILD_PROCESS_DEBUGGER_PORT_KEY, myDebugPort);
+      if (getForkSocket() != null) {
+        holder.putUserData(DEBUGGER_DISPATCH_PORT_KEY, getForkSocket().getLocalPort());
+      }
+    }
+  }
+
   @Nullable
   private String getJvmParametersSetup() throws ExecutionException {
     final SimpleJavaParameters extensionsJP = new SimpleJavaParameters();
     ExternalSystemRunConfiguration.EP_NAME.forEachExtensionSafe(
       extension -> extension.updateVMParameters(myConfiguration, extensionsJP, myEnv.getRunnerSettings(), myEnv.getExecutor()));
-    String jvmParametersSetup;
-    if (myDebugPort > 0) {
-      jvmParametersSetup = ForkedDebuggerHelper.JVM_DEBUG_SETUP_PREFIX + myDebugPort;
-      if (getForkSocket() != null) {
-        jvmParametersSetup += (" " + DEBUG_FORK_SOCKET_PARAM + getForkSocket().getLocalPort());
-      }
-    }
-    else {
+    String jvmParametersSetup = "";
+    if (myDebugPort <= 0) {
       final ParametersList allVMParameters = new ParametersList();
       final ParametersList data = myEnv.getUserData(ExternalSystemTaskExecutionSettings.JVM_AGENT_SETUP_KEY);
       if (data != null) {

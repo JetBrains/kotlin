@@ -28,8 +28,6 @@ public class GradleRunConfiguration extends ExternalSystemRunConfiguration imple
   public static final Key<Boolean> DEBUG_FLAG_KEY = Key.create("DEBUG_GRADLE_SCRIPT");
 
   @ApiStatus.Internal
-  public static final Key<Integer> DEBUGGER_DISPATCH_PORT_KEY = Key.create("DEBUGGER_DISPATCH_PORT");
-  @ApiStatus.Internal
   public static final Key<String> DEBUGGER_PARAMETERS_KEY = Key.create("DEBUGGER_PARAMETERS");
 
   private boolean isScriptDebugEnabled = true;

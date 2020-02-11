@@ -9,7 +9,7 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.project.dependencies.ProjectDependencies;
-import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerConfiguration;
+import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
@@ -221,27 +221,27 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
                                     @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer) {
     if (!StringUtil.isEmpty(jvmParametersSetup)) {
-      ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmParametersSetup);
-      if (forkedDebuggerSetup == null) {
-        final String names = "[" + toStringListLiteral(taskNames, ", ") + "]";
-        List<String> argv = ParametersListUtil.parse(jvmParametersSetup);
-        if (SystemInfo.isWindows) {
-          argv = ContainerUtil.map(argv, s -> CommandLineUtil.escapeParameterOnWindows(s, false));
-        }
-        final String jvmArgs = toStringListLiteral(argv, " << ");
+      LOG.assertTrue(!jvmParametersSetup.contains(ForkedDebuggerHelper.JVM_DEBUG_SETUP_PREFIX),
+                     "Please use org.jetbrains.plugins.gradle.service.debugger.GradleJvmDebuggerBackend to setup debugger");
 
-        final String[] lines = {
-          "gradle.taskGraph.beforeTask { Task task ->",
-          "    if (task instanceof JavaForkOptions && (" + names + ".contains(task.name) || " + names + ".contains(task.path))) {",
-          "        def jvmArgs = task.jvmArgs.findAll{!it?.startsWith('-agentlib:jdwp') && !it?.startsWith('-Xrunjdwp')}",
-          "        jvmArgs << " + jvmArgs,
-          "        task.jvmArgs = jvmArgs",
-          "    }",
-          "}",
-        };
-        final String script = StringUtil.join(lines, SystemProperties.getLineSeparator());
-        initScriptConsumer.consume(script);
+      final String names = "[" + toStringListLiteral(taskNames, ", ") + "]";
+      List<String> argv = ParametersListUtil.parse(jvmParametersSetup);
+      if (SystemInfo.isWindows) {
+        argv = ContainerUtil.map(argv, s -> CommandLineUtil.escapeParameterOnWindows(s, false));
       }
+      final String jvmArgs = toStringListLiteral(argv, " << ");
+
+      final String[] lines = {
+        "gradle.taskGraph.beforeTask { Task task ->",
+        "    if (task instanceof JavaForkOptions && (" + names + ".contains(task.name) || " + names + ".contains(task.path))) {",
+        "        def jvmArgs = task.jvmArgs.findAll{!it?.startsWith('-agentlib:jdwp') && !it?.startsWith('-Xrunjdwp')}",
+        "        jvmArgs << " + jvmArgs,
+        "        task.jvmArgs = jvmArgs",
+        "    }",
+        "}",
+      };
+      final String script = StringUtil.join(lines, SystemProperties.getLineSeparator());
+      initScriptConsumer.consume(script);
     }
 
     final String testEventListenerDefinition = loadTestEventListenerDefinition();

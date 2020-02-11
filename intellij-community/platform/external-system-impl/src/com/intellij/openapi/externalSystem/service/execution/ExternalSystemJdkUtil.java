@@ -18,6 +18,7 @@ import com.intellij.util.EnvironmentUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JdkVersionDetector;
 
 import java.io.File;
 import java.util.Arrays;
@@ -210,5 +211,12 @@ public class ExternalSystemJdkUtil {
   @NotNull
   private static Sdk getInternalJdk() {
     return ExternalSystemJdkProvider.getInstance().getInternalJdk();
+  }
+
+  @Contract("null -> false")
+  public static boolean isJdk9orLater(@Nullable String javaHome) {
+    JdkVersionDetector.JdkVersionInfo jdkVersionInfo =
+      javaHome == null ? null : JdkVersionDetector.getInstance().detectJdkVersionInfo(javaHome);
+    return jdkVersionInfo != null && jdkVersionInfo.version.isAtLeast(9);
   }
 }
