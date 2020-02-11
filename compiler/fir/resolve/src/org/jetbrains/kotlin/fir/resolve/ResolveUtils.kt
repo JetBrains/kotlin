@@ -467,5 +467,5 @@ fun CallableId.isInvoke() =
             && className?.asString()?.startsWith("Function") == true
             && callableName.asString() == "invoke"
 
-fun CallableId.isArrayOperator() =
+fun CallableId.isIteratorNext() =
     callableName.asString() == "next" && className?.asString()?.equals("Iterator") == true && packageName.asString() == "kotlin.collections"

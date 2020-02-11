@@ -904,7 +904,7 @@ class Fir2IrVisitor(
         }
         val calleeReference = (functionCall.calleeReference as? FirResolvedNamedReference) ?: return functionCall
         val resolvedSymbol = (calleeReference.resolvedSymbol as? FirNamedFunctionSymbol) ?: return functionCall
-        if (resolvedSymbol.callableId.isInvoke() || resolvedSymbol.callableId.isArrayOperator()) {
+        if (resolvedSymbol.callableId.isInvoke() || resolvedSymbol.callableId.isIteratorNext()) {
             functionCall.calleeReference =
                 buildResolvedNamedReference {
                     source = calleeReference.source
