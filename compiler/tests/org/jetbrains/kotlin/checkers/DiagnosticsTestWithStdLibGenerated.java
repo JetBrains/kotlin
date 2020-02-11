@@ -1962,6 +1962,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt32271.kt");
             }
 
+            @TestMetadata("kt33542.kt")
+            public void testKt33542() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt33542.kt");
+            }
+
             @TestMetadata("kt35684.kt")
             public void testKt35684() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt35684.kt");

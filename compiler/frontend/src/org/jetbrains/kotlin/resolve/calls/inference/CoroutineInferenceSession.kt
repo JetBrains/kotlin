@@ -242,7 +242,10 @@ class CoroutineInferenceSession(
         val resultingSubstitutor =
             NewTypeSubstitutorByConstructorMap((resultingCallSubstitutor + nonFixedTypesToResult).cast()) // TODO: SUB
 
-        val atomCompleter = createResolvedAtomCompleter(resultingSubstitutor, completedCall.context)
+        val atomCompleter = createResolvedAtomCompleter(
+            resultingSubstitutor,
+            completedCall.context.replaceBindingTrace(topLevelCallContext.trace)
+        )
 
         completeCall(completedCall, atomCompleter)
     }
