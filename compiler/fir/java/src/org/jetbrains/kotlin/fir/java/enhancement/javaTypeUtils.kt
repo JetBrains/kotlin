@@ -179,26 +179,30 @@ private fun FirTypeParameter.getErasedUpperBound(
 
     val firstUpperBound = this.bounds.first().coneTypeUnsafe<ConeKotlinType>()
 
-    if (firstUpperBound is ConeClassLikeType) {
-        return firstUpperBound.withArguments(firstUpperBound.typeArguments.map { ConeStarProjection }.toTypedArray())
-    }
-
-    val alreadyVisited = mutableSetOf(potentiallyRecursiveTypeParameter, this)
-    var current = (firstUpperBound as ConeTypeParameterType).lookupTag.typeParameterSymbol.fir
-
-    while (current !in alreadyVisited) {
-        alreadyVisited += current
-
-        val nextUpperBound = current.bounds.first().coneTypeUnsafe<ConeKotlinType>()
-        if (nextUpperBound is ConeClassLikeType) {
-            return nextUpperBound.withArguments(nextUpperBound.typeArguments.map { ConeStarProjection }.toTypedArray())
-        }
-
-        current = (nextUpperBound as ConeTypeParameterType).lookupTag.typeParameterSymbol.fir
-    }
-
-    return defaultValue()
+    return getErasedVersionOfFirstUpperBound(firstUpperBound, mutableSetOf(this, potentiallyRecursiveTypeParameter), defaultValue)
 }
+
+private tailrec fun getErasedVersionOfFirstUpperBound(
+    firstUpperBound: ConeKotlinType,
+    alreadyVisitedParameters: MutableSet<FirTypeParameter?>,
+    defaultValue: () -> ConeKotlinType
+): ConeKotlinType =
+    when (firstUpperBound) {
+        is ConeClassLikeType ->
+            firstUpperBound.withArguments(firstUpperBound.typeArguments.map { ConeStarProjection }.toTypedArray())
+
+        is ConeTypeParameterType -> {
+            val current = firstUpperBound.lookupTag.typeParameterSymbol.fir
+
+            if (alreadyVisitedParameters.add(current)) {
+                val nextUpperBound = current.bounds.first().coneTypeUnsafe<ConeKotlinType>()
+                getErasedVersionOfFirstUpperBound(nextUpperBound, alreadyVisitedParameters, defaultValue)
+            } else {
+                defaultValue()
+            }
+        }
+        else -> error("Unexpected kind of firstUpperBound: $firstUpperBound [${firstUpperBound::class}]")
+    }
 
 
 fun computeProjection(
