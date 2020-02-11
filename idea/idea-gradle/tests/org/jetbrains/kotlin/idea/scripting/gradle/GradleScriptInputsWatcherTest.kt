@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.components.service
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
@@ -194,8 +195,8 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
         changeSettingsKtsOutsideSections()
 
         val ts = System.currentTimeMillis()
-        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.buildKts.virtualFile, ts)
-        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.settings.virtualFile, ts)
+        markFileChanged(testFiles.buildKts.virtualFile, ts)
+        markFileChanged(testFiles.settings.virtualFile, ts)
 
         assertConfigurationUpdateWasDone(testFiles.settings)
         assertConfigurationUpdateWasDone(testFiles.buildKts)
@@ -206,13 +207,17 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
         assertAndLoadInitialConfiguration(testFiles.settings)
 
         val ts = System.currentTimeMillis()
-        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.buildKts.virtualFile, ts)
-        project.service<GradleScriptInputsWatcher>().fileChanged(testFiles.settings.virtualFile, ts)
+        markFileChanged(testFiles.buildKts.virtualFile, ts)
+        markFileChanged(testFiles.settings.virtualFile, ts)
 
         changePropertiesFile()
 
         assertConfigurationUpdateWasDone(testFiles.settings)
         assertConfigurationUpdateWasDone(testFiles.buildKts)
+    }
+
+    private fun markFileChanged(virtualFile: VirtualFile, ts: Long) {
+        project.service<GradleScriptInputsWatcher>().fileChanged(virtualFile.path, ts)
     }
 
     fun testLoadedConfigurationWhenExternalFileChanged() {
