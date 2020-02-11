@@ -46,4 +46,8 @@ class PathFieldComponent(
     }
 
     override fun getUiValue(): Path = Paths.get(uiComponent.text.trim())
+
+    override fun focusOn() {
+        uiComponent.textField.requestFocus()
+    }
 }

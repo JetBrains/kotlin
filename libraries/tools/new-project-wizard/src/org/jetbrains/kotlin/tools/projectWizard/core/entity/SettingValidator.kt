@@ -55,8 +55,8 @@ sealed class ValidationResult {
         override val isOk = true
     }
 
-    class ValidationError(val messages: List<String>) : ValidationResult() {
-        constructor(message: String) : this(listOf(message))
+    data class ValidationError(val messages: List<String>, val target: Any? = null) : ValidationResult() {
+        constructor(message: String, target: Any? = null) : this(listOf(message), target)
 
         override val isOk = false
     }
@@ -73,6 +73,19 @@ sealed class ValidationResult {
     }
 }
 
+infix fun ValidationResult.isSpecificError(error: ValidationResult.ValidationError) =
+    this is ValidationResult.ValidationError && messages.firstOrNull() == error.messages.firstOrNull()
+
+fun ValidationResult.withTarget(target: Any) = when (this) {
+    ValidationResult.OK -> this
+    is ValidationResult.ValidationError -> copy(target = target)
+}
+
+fun ValidationResult.withTargetIfNull(target: Any) = when (this) {
+    ValidationResult.OK -> this
+    is ValidationResult.ValidationError -> if (this.target == null) copy(target = target) else this
+}
+
 fun ValidationResult.toResult() = when (this) {
     ValidationResult.OK -> UNIT_SUCCESS
     is ValidationResult.ValidationError -> Failure(messages.map { ValidationError(it) })
@@ -85,7 +98,7 @@ interface Validatable<out V> {
 
 fun <V, Q : Validatable<Q>> ValuesReadingContext.validateList(list: List<Q>) = settingValidator<V> {
     list.fold(ValidationResult.OK as ValidationResult) { result, value ->
-        result and value.validator.validate(this, value)
+        result and value.validator.validate(this, value).withTarget(value)
     }
 }
 

@@ -4,6 +4,7 @@ import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ListSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
@@ -20,7 +21,8 @@ import javax.swing.JComponent
 class ModulesEditorComponent(
     valuesReadingContext: ValuesReadingContext,
     uiEditorUsagesStats: UiEditorUsageStats,
-    oneEntrySelected: (data: DisplayableSettingItem?) -> Unit
+    oneEntrySelected: (data: DisplayableSettingItem?) -> Unit,
+    selectSettingWithError: (ValidationResult.ValidationError) -> Unit
 ) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, valuesReadingContext) {
     private val tree: ModulesEditorTree =
         ModulesEditorTree(
@@ -64,7 +66,11 @@ class ModulesEditorComponent(
         }
     }
 
-    override val validationIndicator = ValidationIndicator(showText = true).apply {
+    override val validationIndicator = ValidationIndicator(showText = true) { error ->
+        val module = error.target as? Module ?: return@ValidationIndicator
+        tree.selectModule(module)
+        selectSettingWithError(error)
+    }.apply {
         background = tree.background
     }
 }

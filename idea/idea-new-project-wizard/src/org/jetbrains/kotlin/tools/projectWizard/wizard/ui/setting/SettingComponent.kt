@@ -4,11 +4,12 @@ import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Displayable
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 
 abstract class SettingComponent<V : Any, T: SettingType<V>>(
     val reference: SettingReference<V, T>,
     val valuesReadingContext: ValuesReadingContext
-) : DynamicComponent(valuesReadingContext), Displayable {
+) : DynamicComponent(valuesReadingContext), Displayable, FocusableComponent {
     var value: V?
         get() = reference.value
         set(value) {

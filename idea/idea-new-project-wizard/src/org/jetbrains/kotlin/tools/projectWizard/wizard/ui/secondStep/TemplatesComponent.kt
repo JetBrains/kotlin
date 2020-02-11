@@ -10,6 +10,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ErrorAwareComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
 import java.awt.*
 import javax.swing.JComponent
@@ -25,7 +28,7 @@ import javax.swing.JPanel
 class TemplatesComponent(
     valuesReadingContext: ValuesReadingContext,
     uiEditorUsagesStats: UiEditorUsageStats
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(valuesReadingContext), ErrorAwareComponent {
     private val chooseTemplateComponent: ChooseTemplateComponent =
         ChooseTemplateComponent(valuesReadingContext) { template ->
             uiEditorUsagesStats.moduleTemplatesSet++
@@ -48,6 +51,9 @@ class TemplatesComponent(
             switchState(null)
         }
     }
+
+    override fun findComponentWithError(error: ValidationResult.ValidationError): SettingComponent<*, *>? =
+        templateSettingsComponent.findComponentWithError(error)
 
     private fun switchState(selectedTemplate: Template?) {
         panel.removeAll()
@@ -243,7 +249,7 @@ class TemplateDescriptionComponent(
 private class TemplateSettingsComponent(
     valuesReadingContext: ValuesReadingContext,
     removeTemplate: () -> Unit
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(valuesReadingContext), ErrorAwareComponent {
     private val templateDescriptionComponent = TemplateDescriptionComponent(
         needRemoveButton = true,
         nonDefaultBackgroundColor = UIUtil.getEditorPaneBackground(),
@@ -255,6 +261,10 @@ private class TemplateSettingsComponent(
     private val settings = SettingsList(emptyList(), valuesReadingContext).apply {
         component.bordered()
     }
+
+    override fun findComponentWithError(error: ValidationResult.ValidationError): SettingComponent<*, *>? =
+        settings.findComponentWithError(error)
+
 
     fun setTemplate(module: Module, selectedTemplate: Template) {
         settings.setSettings(selectedTemplate.settings(module))

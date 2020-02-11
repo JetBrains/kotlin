@@ -48,3 +48,7 @@ abstract class DynamicComponent(private val valuesReadingContext: ValuesReadingC
 
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }
+
+interface FocusableComponent {
+    fun focusOn() {}
+}

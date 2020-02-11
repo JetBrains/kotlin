@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
@@ -17,7 +18,9 @@ class SecondStepWizardComponent(
     uiEditorUsagesStats: UiEditorUsageStats
 ) : WizardStepComponent(wizard.valuesReadingContext) {
     private val moduleEditorSubStep =
-        ModulesEditorSubStep(wizard.valuesReadingContext, uiEditorUsagesStats, ::onNodeSelected).asSubComponent()
+        ModulesEditorSubStep(wizard.valuesReadingContext, uiEditorUsagesStats, ::onNodeSelected) {
+            templatesSubStep.selectSettingWithError(it)
+        }.asSubComponent()
     private val templatesSubStep = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
     override val component = splitterFor(
@@ -34,12 +37,14 @@ class SecondStepWizardComponent(
 class ModulesEditorSubStep(
     valuesReadingContext: ValuesReadingContext,
     uiEditorUsagesStats: UiEditorUsageStats,
-    onNodeSelected: (data: DisplayableSettingItem?) -> Unit
+    onNodeSelected: (data: DisplayableSettingItem?) -> Unit,
+    selectSettingWithError: (ValidationResult.ValidationError) -> Unit
 ) : SubStep(valuesReadingContext) {
     private val moduleSettingComponent = ModulesEditorComponent(
         valuesReadingContext,
         uiEditorUsagesStats,
-        onNodeSelected
+        onNodeSelected,
+        selectSettingWithError
     ).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
@@ -73,6 +78,10 @@ class ModuleSettingsSubStep(
             moduleSettingsComponent.module = value as? Module
             changeComponent()
         }
+
+    fun selectSettingWithError(error: ValidationResult.ValidationError) {
+        moduleSettingsComponent.selectSettingWithError(error)
+    }
 
     private fun changeComponent() {
         panel.removeAll()

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.Setting
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ErrorAwareComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -20,7 +21,7 @@ abstract class UIComponent<V : Any>(
     labelText: String? = null,
     private val validator: SettingValidator<V>? = null,
     private val onValueUpdate: (V) -> Unit = {}
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(valuesReadingContext), ErrorAwareComponent, FocusableComponent {
     private val validationIndicator = if (validator != null)
         ValidationIndicator(defaultText = labelText, showText = true)
     else null
@@ -62,6 +63,14 @@ abstract class UIComponent<V : Any>(
         if (validator == null) return
         if (validationIndicator == null) return
         validationIndicator.validationState = validator.validate(valuesReadingContext, value)
+    }
+
+    override fun focusOn() {
+        uiComponent.requestFocus()
+    }
+
+    override fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent? = takeIf {
+        getUiValue()?.let { validator?.validate?.invoke(valuesReadingContext, it)?.isSpecificError(error) } == true
     }
 }
 

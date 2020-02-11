@@ -354,7 +354,7 @@ class ListSettingType<V : Any>(private val parser: Parser<V>) : SettingType<List
             validate { values ->
                 values.fold(ValidationResult.OK as ValidationResult) { result, value ->
                     result and when (value) {
-                        is Validatable<*> -> (value.validator as SettingValidator<Any>).validate(this, value)
+                        is Validatable<*> -> (value.validator as SettingValidator<Any>).validate(this, value).withTargetIfNull(value)
                         else -> ValidationResult.OK
                     }
                 }

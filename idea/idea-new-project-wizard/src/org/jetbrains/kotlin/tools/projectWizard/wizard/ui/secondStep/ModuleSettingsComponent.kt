@@ -4,6 +4,7 @@ import com.intellij.ui.components.JBTabbedPane
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.configuratorSettings
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -11,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
@@ -31,6 +33,13 @@ class ModuleSettingsComponent(
     private val tabPanel = JBTabbedPane().apply {
         add("Template", templateComponent.component)
         add("Module Settings", moduleConfiguratorSettingsList.component)
+    }
+
+    fun selectSettingWithError(error: ValidationResult.ValidationError) {
+        val componentWithError = nameField.findComponentWithError(error)
+            ?: moduleConfiguratorSettingsList.findComponentWithError(error)?.also { tabPanel.selectedIndex = 1 }
+            ?: templateComponent.findComponentWithError(error)?.also { tabPanel.selectedIndex = 0 }
+        componentWithError?.focusOn()
     }
 
     private val nameField = TextFieldComponent(

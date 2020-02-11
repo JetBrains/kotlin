@@ -29,5 +29,9 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
         value?.let(uiComponent::updateUiValue)
     }
 
+    override fun focusOn() {
+        uiComponent.focusOn()
+    }
+
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) { uiComponent.component }
 }
