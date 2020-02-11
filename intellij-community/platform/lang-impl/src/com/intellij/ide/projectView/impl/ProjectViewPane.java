@@ -245,7 +245,7 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
 
   private class ConfigureFilesNestingAction extends DumbAwareAction {
     private ConfigureFilesNestingAction() {
-      super(IdeBundle.message("action.file.nesting.in.project.view"));
+      super(IdeBundle.lazyMessage("action.file.nesting.in.project.view"));
     }
 
     @Override

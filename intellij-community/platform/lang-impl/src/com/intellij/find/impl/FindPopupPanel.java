@@ -1563,7 +1563,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
   private static class MyOpenResultsInNewTabAction extends ToggleAction {
     private MyOpenResultsInNewTabAction() {
-      super(FindBundle.message("find.open.in.new.tab.action"));
+      super(FindBundle.lazyMessage("find.open.in.new.tab.action"));
     }
 
     @Override
@@ -1636,7 +1636,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     private final DefaultActionGroup mySwitchContextGroup;
 
     MyShowFilterPopupAction() {
-      super(FindBundle.message("find.popup.show.filter.popup"), null, AllIcons.General.Filter);
+      super(FindBundle.lazyMessage("find.popup.show.filter.popup"), Presentation.NULL_STRING, AllIcons.General.Filter);
       LayeredIcon icon = JBUI.scale(new LayeredIcon(2));
       icon.setIcon(AllIcons.General.Filter, 0);
       icon.setIcon(AllIcons.General.Dropdown, 1, 3, 0);
@@ -1784,7 +1784,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
   private class MySkipTabWithOneUsageAction extends ToggleAction {
     private MySkipTabWithOneUsageAction() {
-      super(FindBundle.message("find.options.skip.results.tab.with.one.usage.action"));
+      super(FindBundle.lazyMessage("find.options.skip.results.tab.with.one.usage.action"));
     }
 
     @Override

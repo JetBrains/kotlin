@@ -18,7 +18,7 @@ public class ShowGradleDaemonsAction extends DumbAwareAction {
   private DaemonsUi myUi;
 
   public ShowGradleDaemonsAction() {
-    super(GradleBundle.message("gradle.daemons.gradle.daemons.show"));
+    super(GradleBundle.lazyMessage("gradle.daemons.gradle.daemons.show"));
   }
 
   @Override

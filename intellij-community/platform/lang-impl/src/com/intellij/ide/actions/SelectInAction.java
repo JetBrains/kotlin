@@ -161,7 +161,7 @@ public final class SelectInAction extends AnAction implements DumbAware {
 
   private static final class NoTargetsAction extends AnAction {
     NoTargetsAction() {
-      super(IdeBundle.message("message.no.targets.available"));
+      super(IdeBundle.lazyMessage("message.no.targets.available"));
     }
 
     @Override

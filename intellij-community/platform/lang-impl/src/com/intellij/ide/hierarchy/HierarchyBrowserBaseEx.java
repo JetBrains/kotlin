@@ -57,6 +57,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx} instead
@@ -636,6 +637,12 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     protected BaseOnThisElementAction(@NotNull String text,
                                       @NotNull String browserDataKey,
                                       @NotNull LanguageExtension<HierarchyProvider> providerLanguageExtension) {
+      this(() -> text, browserDataKey, providerLanguageExtension);
+    }
+
+    protected BaseOnThisElementAction(@NotNull Supplier<String> text,
+                                      @NotNull String browserDataKey,
+                                      @NotNull LanguageExtension<HierarchyProvider> providerLanguageExtension) {
       super(text);
       myBrowserDataKey = browserDataKey;
       myProviderLanguageExtension = providerLanguageExtension;
@@ -698,7 +705,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   private class RefreshAction extends com.intellij.ide.actions.RefreshAction {
     RefreshAction() {
-      super(IdeBundle.message("action.refresh"), IdeBundle.message("action.refresh"), AllIcons.Actions.Refresh);
+      super(IdeBundle.lazyMessage("action.refresh"), IdeBundle.lazyMessage("action.refresh"), AllIcons.Actions.Refresh);
     }
 
     @Override

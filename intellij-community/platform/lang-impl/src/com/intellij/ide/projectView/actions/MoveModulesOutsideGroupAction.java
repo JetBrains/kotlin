@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class MoveModulesOutsideGroupAction extends AnAction {
 
   public MoveModulesOutsideGroupAction() {
-    super(IdeBundle.message("action.move.module.outside.any.group"));
+    super(IdeBundle.lazyMessage("action.move.module.outside.any.group"));
   }
 
   @Override

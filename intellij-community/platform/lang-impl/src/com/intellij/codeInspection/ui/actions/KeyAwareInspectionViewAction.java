@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author Dmitry Batkovich
@@ -34,6 +35,10 @@ public abstract class KeyAwareInspectionViewAction extends InspectionViewActionB
   private static final Logger LOG = Logger.getInstance(KeyAwareInspectionViewAction.class);
 
   public KeyAwareInspectionViewAction(String name) {
+    this(() -> name);
+  }
+
+  public KeyAwareInspectionViewAction(@NotNull Supplier<String> name) {
     super(name);
   }
 
@@ -97,7 +102,7 @@ public abstract class KeyAwareInspectionViewAction extends InspectionViewActionB
 
   public static class RunInspectionOn extends KeyAwareInspectionViewAction {
     public RunInspectionOn() {
-      super(InspectionsBundle.message("run.inspection.on.file.intention.text"));
+      super(InspectionsBundle.lazyMessage("run.inspection.on.file.intention.text"));
     }
 
     @Override

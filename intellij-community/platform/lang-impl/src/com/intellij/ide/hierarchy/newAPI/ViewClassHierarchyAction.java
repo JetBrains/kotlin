@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ViewClassHierarchyAction extends ChangeViewTypeActionBase {
   public ViewClassHierarchyAction() {
-    super(IdeBundle.message("action.view.class.hierarchy"),
-          IdeBundle.message("action.description.view.class.hierarchy"), AllIcons.Hierarchy.Class);
+    super(IdeBundle.lazyMessage("action.view.class.hierarchy"),
+          IdeBundle.lazyMessage("action.description.view.class.hierarchy"), AllIcons.Hierarchy.Class);
   }
 
   @Override

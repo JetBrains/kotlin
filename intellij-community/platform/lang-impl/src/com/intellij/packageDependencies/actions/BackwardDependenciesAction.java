@@ -34,7 +34,7 @@ public class BackwardDependenciesAction extends BaseAnalysisAction {
 
 
   public BackwardDependenciesAction() {
-    super(AnalysisScopeBundle.message("action.backward.dependency.analysis"), AnalysisScopeBundle.message("action.analysis.noun"));
+    super(AnalysisScopeBundle.lazyMessage("action.backward.dependency.analysis"), AnalysisScopeBundle.lazyMessage("action.analysis.noun"));
   }
 
   @Override

@@ -692,7 +692,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
   private class SelectAllButton extends AnActionButton {
     SelectAllButton() {
-      super(ExternalSystemBundle.message("action.text.select.all"), AllIcons.Actions.Selectall);
+      super(ExternalSystemBundle.lazyMessage("action.text.select.all"), AllIcons.Actions.Selectall);
     }
 
     @Override
@@ -715,7 +715,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
   private class UnselectAllButton extends AnActionButton {
     UnselectAllButton() {
-      super(ExternalSystemBundle.message("action.text.unselect.all"), AllIcons.Actions.Unselectall);
+      super(ExternalSystemBundle.lazyMessage("action.text.unselect.all"), AllIcons.Actions.Unselectall);
     }
 
     @Override
@@ -740,7 +740,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
   private class ShowSelectedOnlyButton extends ToggleActionButton {
 
     ShowSelectedOnlyButton() {
-      super(ExternalSystemBundle.message("show.selected.only"), AllIcons.Actions.ShowHiddens);
+      super(ExternalSystemBundle.lazyMessage("show.selected.only"), AllIcons.Actions.ShowHiddens);
     }
 
     @Override

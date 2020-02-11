@@ -26,7 +26,7 @@ public class DeleteFromFavoritesAction extends AnActionButton implements DumbAwa
   private static final Logger LOG = Logger.getInstance(DeleteFromFavoritesAction.class);
 
   public DeleteFromFavoritesAction() {
-    super(IdeBundle.message("action.remove.from.current.favorites"), IconUtil.getRemoveIcon());
+    super(IdeBundle.lazyMessage("action.remove.from.current.favorites"), IconUtil.getRemoveIcon());
   }
 
   @Override

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author Eugene.Kudelevsky
@@ -33,6 +34,10 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
   public CreateFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
                                   @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {
     super(text, description, icon);
+  }
+
+  public CreateFromTemplateAction(@NotNull Supplier<String> dynamicText, @NotNull Supplier<String> dynamicDescription, Icon icon) {
+    super(dynamicText, dynamicDescription, icon);
   }
 
   @Override

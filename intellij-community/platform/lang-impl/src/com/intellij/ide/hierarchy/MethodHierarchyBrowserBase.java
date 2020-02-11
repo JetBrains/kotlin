@@ -132,7 +132,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
 
   public static class BaseOnThisMethodAction extends BaseOnThisElementAction {
     public BaseOnThisMethodAction() {
-      super(IdeBundle.message("action.base.on.this.method"), DATA_KEY.getName(), LanguageMethodHierarchy.INSTANCE);
+      super(IdeBundle.lazyMessage("action.base.on.this.method"), DATA_KEY.getName(), LanguageMethodHierarchy.INSTANCE);
     }
   }
 

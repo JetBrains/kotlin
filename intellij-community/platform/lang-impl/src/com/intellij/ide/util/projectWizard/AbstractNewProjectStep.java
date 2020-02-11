@@ -8,6 +8,7 @@ import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
@@ -44,7 +45,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
   private final Customization<T> myCustomization;
 
   protected AbstractNewProjectStep(@NotNull Customization<T> customization) {
-    super(null, true);
+    super(Presentation.NULL_STRING, true);
     myCustomization = customization;
     updateActions();
     DirectoryProjectGenerator.EP_NAME.addExtensionPointListener(() -> updateActions(), null);

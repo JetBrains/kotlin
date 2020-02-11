@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static com.intellij.util.ObjectUtils.notNull;
 
@@ -47,6 +48,10 @@ public abstract class CreateFromTemplateActionBase extends AnAction {
                                       @Nls(capitalization = Nls.Capitalization.Sentence) String description,
                                       Icon icon) {
     super(title, description, icon);
+  }
+
+  public CreateFromTemplateActionBase(@NotNull Supplier<String> dynamicTitle, @NotNull Supplier<String> dynamicDescription, Icon icon) {
+    super(dynamicTitle, dynamicDescription, icon);
   }
 
   @Override

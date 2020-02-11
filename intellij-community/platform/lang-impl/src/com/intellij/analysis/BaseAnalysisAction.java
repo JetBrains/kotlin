@@ -15,14 +15,21 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class BaseAnalysisAction extends AnAction {
   private static final String DIMENSION_KEY_PREFIX = "ANALYSIS_DLG_";
 
-  private final String myTitle;
-  private final String myAnalysisNoon;
+  private final Supplier<String> myTitle;
+  private final Supplier<String> myAnalysisNoon;
 
-  protected BaseAnalysisAction(@Nls(capitalization = Nls.Capitalization.Title) String title, String analysisNoon) {
+  protected BaseAnalysisAction(@Nls(capitalization = Nls.Capitalization.Title) String title,
+                               @Nls(capitalization = Nls.Capitalization.Title) String analysisNoon) {
+    myTitle = () -> title;
+    myAnalysisNoon = () -> analysisNoon;
+  }
+
+  protected BaseAnalysisAction(Supplier<String> title, Supplier<String> analysisNoon) {
     myTitle = title;
     myAnalysisNoon = analysisNoon;
   }

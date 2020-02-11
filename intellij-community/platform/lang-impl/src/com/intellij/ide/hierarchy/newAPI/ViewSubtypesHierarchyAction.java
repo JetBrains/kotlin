@@ -10,8 +10,8 @@ import com.intellij.ide.IdeBundle;
  */
 public final class ViewSubtypesHierarchyAction extends ChangeViewTypeActionBase {
   public ViewSubtypesHierarchyAction() {
-    super(IdeBundle.message("action.view.subtypes.hierarchy"),
-          IdeBundle.message("action.description.view.subtypes.hierarchy"), AllIcons.Hierarchy.Subtypes);
+    super(IdeBundle.lazyMessage("action.view.subtypes.hierarchy"),
+          IdeBundle.lazyMessage("action.description.view.subtypes.hierarchy"), AllIcons.Hierarchy.Subtypes);
   }
 
   @Override

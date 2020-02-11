@@ -387,7 +387,7 @@ class DocRenderItem {
 
   static class ChangeFontSize extends DumbAwareAction {
     ChangeFontSize() {
-      super(CodeInsightBundle.message("javadoc.adjust.font.size"));
+      super(CodeInsightBundle.lazyMessage("javadoc.adjust.font.size"));
     }
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {

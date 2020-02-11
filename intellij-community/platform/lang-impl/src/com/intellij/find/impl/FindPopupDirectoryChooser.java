@@ -7,6 +7,7 @@ import com.intellij.find.FindModel;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -151,7 +152,7 @@ public class FindPopupDirectoryChooser extends JPanel {
 
   private class MyRecursiveDirectoryAction extends DumbAwareToggleAction {
     MyRecursiveDirectoryAction() {
-      super(FindBundle.message("find.recursively.hint"), null, AllIcons.Actions.ShowAsTree);
+      super(FindBundle.lazyMessage("find.recursively.hint"), Presentation.NULL_STRING, AllIcons.Actions.ShowAsTree);
     }
 
     @Override

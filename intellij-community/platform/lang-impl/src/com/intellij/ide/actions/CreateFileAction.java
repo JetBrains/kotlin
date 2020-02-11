@@ -36,17 +36,22 @@ import java.io.File;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class CreateFileAction extends CreateElementActionBase implements DumbAware {
 
   public CreateFileAction() {
-    super(ActionsBundle.message("action.NewFile.text"), IdeBundle.message("action.create.new.file.description"), AllIcons.FileTypes.Text);
+    super(ActionsBundle.lazyMessage("action.NewFile.text"), IdeBundle.lazyMessage("action.create.new.file.description"), AllIcons.FileTypes.Text);
   }
 
   public CreateFileAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
                           @Nls(capitalization = Nls.Capitalization.Sentence) String description,
                           final Icon icon) {
     super(text, description, icon);
+  }
+
+  public CreateFileAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription, final Icon icon) {
+    super(dynamicText, dynamicDescription, icon);
   }
 
   @Override

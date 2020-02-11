@@ -12,20 +12,18 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.function.Supplier;
 
 public abstract class InspectionViewActionBase extends AnAction {
-
-  public InspectionViewActionBase(@Nullable @Nls(capitalization = Nls.Capitalization.Title) String text,
-                                  @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String description, @Nullable Icon icon) {
+  public InspectionViewActionBase(@NotNull Supplier<String> text, @NotNull Supplier<String> description, @Nullable Icon icon) {
     super(text, description, icon);
   }
 
-  public InspectionViewActionBase(String name) {
+  public InspectionViewActionBase(@NotNull Supplier<String> name) {
     super(name);
   }
 

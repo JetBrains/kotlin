@@ -112,7 +112,7 @@ public class AutomaticRenamingDialog extends DialogWrapper {
   protected JComponent createNorthPanel() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(new JLabel(myRenamer.getDialogDescription()), BorderLayout.CENTER);
-    final DefaultActionGroup actionGroup = new DefaultActionGroup(null, false);
+    final DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.addAction(createRenameSelectedAction()).setAsSecondary(true);
     panel.add(ActionManager.getInstance().createActionToolbar("AutoRenaming", actionGroup, true).getComponent(), BorderLayout.EAST);
     final Box box = Box.createHorizontalBox();

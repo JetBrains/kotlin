@@ -46,7 +46,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CodeInspectionAction extends BaseAnalysisAction {
   private static final Logger LOG = Logger.getInstance(CodeInspectionAction.class);
@@ -57,7 +56,7 @@ public class CodeInspectionAction extends BaseAnalysisAction {
   protected InspectionProfileImpl myExternalProfile;
 
   public CodeInspectionAction() {
-    super(InspectionsBundle.message("inspection.action.title"), InspectionsBundle.message("inspection.action.noun"));
+    super(InspectionsBundle.lazyMessage("inspection.action.title"), InspectionsBundle.lazyMessage("inspection.action.noun"));
   }
 
   public CodeInspectionAction(String title, String analysisNoon) {

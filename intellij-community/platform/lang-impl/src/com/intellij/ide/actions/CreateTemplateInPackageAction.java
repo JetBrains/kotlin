@@ -35,6 +35,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import javax.swing.*;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * @author peter
@@ -44,7 +45,12 @@ public abstract class CreateTemplateInPackageAction<T extends PsiElement> extend
 
   protected CreateTemplateInPackageAction(String text, String description, Icon icon,
                                           final Set<? extends JpsModuleSourceRootType<?>> rootTypes) {
-    super(text, description, icon);
+    this(() -> text, () -> description, icon, rootTypes);
+  }
+
+  protected CreateTemplateInPackageAction(@NotNull Supplier<String> dynamicText, @NotNull Supplier<String> dynamicDescription, Icon icon,
+                                          final Set<? extends JpsModuleSourceRootType<?>> rootTypes) {
+    super(dynamicText, dynamicDescription, icon);
     mySourceRootTypes = rootTypes;
   }
 

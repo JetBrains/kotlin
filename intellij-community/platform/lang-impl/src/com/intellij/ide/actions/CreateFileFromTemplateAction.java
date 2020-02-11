@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author Dmitry Avdeev
@@ -45,6 +46,10 @@ public abstract class CreateFileFromTemplateAction extends CreateFromTemplateAct
   public CreateFileFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
                                       @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {
     super(text, description, icon);
+  }
+
+  public CreateFileFromTemplateAction(@NotNull Supplier<String> dynamicText, @NotNull Supplier<String> dynamicDescription, Icon icon) {
+    super(dynamicText, dynamicDescription, icon);
   }
 
   protected PsiFile createFileFromTemplate(final String name, final FileTemplate template, final PsiDirectory dir) {

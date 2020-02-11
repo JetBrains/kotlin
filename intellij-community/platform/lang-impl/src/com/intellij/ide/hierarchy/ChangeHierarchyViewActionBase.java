@@ -9,13 +9,18 @@ import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.function.Supplier;
 
 /**
  * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ChangeHierarchyViewActionBase} instead
  */
 @Deprecated
 public abstract class ChangeHierarchyViewActionBase extends ToggleAction {
-  public ChangeHierarchyViewActionBase(String text, String description, Icon icon) {super(text, description, icon);}
+  public ChangeHierarchyViewActionBase(String text, String description, Icon icon) {this(() -> text, () -> description, icon);}
+
+  public ChangeHierarchyViewActionBase(@NotNull Supplier<String> text, @NotNull Supplier<String> description, Icon icon) {
+    super(text, description, icon);
+  }
 
   @Override
   public final boolean isSelected(@NotNull final AnActionEvent event) {

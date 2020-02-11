@@ -170,7 +170,7 @@ public class GradleProjectCompositeSelectorDialog extends DialogWrapper {
 
   private class SelectAllButton extends AnActionButton {
     SelectAllButton() {
-      super(GradleBundle.message("gradle.settings.composite.select.all"), AllIcons.Actions.Selectall);
+      super(GradleBundle.lazyMessage("gradle.settings.composite.select.all"), AllIcons.Actions.Selectall);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class GradleProjectCompositeSelectorDialog extends DialogWrapper {
 
   private class UnselectAllButton extends AnActionButton {
     UnselectAllButton() {
-      super(GradleBundle.message("gradle.settings.composite.unselect.all"), AllIcons.Actions.Unselectall);
+      super(GradleBundle.lazyMessage("gradle.settings.composite.unselect.all"), AllIcons.Actions.Unselectall);
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ui.InspectionResultsView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -25,9 +26,7 @@ public class EditSettingsAction extends InspectionViewActionBase {
   private static final Logger LOG = Logger.getInstance(EditSettingsAction.class);
 
   public EditSettingsAction() {
-    super(InspectionsBundle.message("inspection.action.edit.settings"),
-          null,
-          AllIcons.General.Settings);
+    super(InspectionsBundle.lazyMessage("inspection.action.edit.settings"), Presentation.NULL_STRING, AllIcons.General.Settings);
   }
 
   @Override

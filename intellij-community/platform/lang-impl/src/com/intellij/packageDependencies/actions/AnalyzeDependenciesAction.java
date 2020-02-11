@@ -32,8 +32,7 @@ public class AnalyzeDependenciesAction extends BaseAnalysisAction {
   private AnalyzeDependenciesSettingPanel myPanel;
 
   public AnalyzeDependenciesAction() {
-    super(AnalysisScopeBundle.message("action.forward.dependency.analysis"), AnalysisScopeBundle.message("action.analysis.noun"));
-
+    super(AnalysisScopeBundle.lazyMessage("action.forward.dependency.analysis"), AnalysisScopeBundle.lazyMessage("action.analysis.noun"));
   }
 
   @Override
