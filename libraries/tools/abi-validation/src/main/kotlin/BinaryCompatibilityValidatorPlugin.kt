@@ -43,22 +43,29 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
             }
         }
 
+        project.pluginManager.withPlugin("kotlin-android") {
+            val extension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
+            extension.target.compilations.matching {
+                it.compilationName == "release"
+            }.all {
+                project.configureKotlinCompilation(it)
+            }
+        }
+
         project.pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
             kotlin.targets.matching {
                 it.platformType == KotlinPlatformType.jvm
-                        || it.platformType == KotlinPlatformType.androidJvm
             }.all { target ->
                 target.compilations.matching { it.name == "main" }.all {
-                    project.configureMultiplatformProject(it)
-
+                    project.configureKotlinCompilation(it)
                 }
             }
         }
     }
 }
 
-private fun Project.configureMultiplatformProject(compilation: KotlinCompilation<KotlinCommonOptions>) {
+private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<KotlinCommonOptions>) {
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
 
