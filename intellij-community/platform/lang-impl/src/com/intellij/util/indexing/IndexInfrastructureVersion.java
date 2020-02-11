@@ -58,6 +58,7 @@ public final class IndexInfrastructureVersion {
   }
 
   @NotNull
+  @SuppressWarnings("HardCodedStringLiteral")
   private static SortedMap<String, String> globalIndexesVersion() {
     ImmutableSortedMap.Builder<String, String> builder = ImmutableSortedMap.naturalOrder();
     builder.put("shared_indexes_format", SHARED_INDEXES_VERSIONS_FORMAT_VERSION);
