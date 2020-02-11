@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.intention.impl;
 
 import com.intellij.injected.editor.InjectedFileChangesHandler;
@@ -42,7 +42,6 @@ import com.intellij.psi.impl.source.tree.injected.Place;
 import com.intellij.psi.impl.source.tree.injected.changesHandler.CommonInjectedFileChangesHandler;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +50,7 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.FocusManager;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 /**
 * @author Gregory Shrago
@@ -92,7 +92,7 @@ public class QuickEditHandler implements Disposable, DocumentListener {
 
     // preserve \r\n as it is done in MultiHostRegistrarImpl
     myNewFile = factory.createFileFromText(newFileName, language, text, true, false);
-    myNewVirtualFile = ObjectUtils.assertNotNull((LightVirtualFile)myNewFile.getVirtualFile());
+    myNewVirtualFile = Objects.requireNonNull((LightVirtualFile)myNewFile.getVirtualFile());
     myNewVirtualFile.setOriginalFile(injectedFile.getVirtualFile());
 
     assert myNewFile != null : "PSI file is null";
@@ -109,7 +109,7 @@ public class QuickEditHandler implements Disposable, DocumentListener {
     myOrigCreationStamp = myOrigDocument.getModificationStamp(); // store creation stamp for UNDO tracking
     myOrigDocument.addDocumentListener(this, this);
     myNewDocument.addDocumentListener(this, this);
-    EditorFactory editorFactory = ObjectUtils.assertNotNull(EditorFactory.getInstance());
+    EditorFactory editorFactory = Objects.requireNonNull(EditorFactory.getInstance());
     // not FileEditorManager listener because of RegExp checker and alike
     editorFactory.addEditorFactoryListener(new EditorFactoryListener() {
       int useCount;

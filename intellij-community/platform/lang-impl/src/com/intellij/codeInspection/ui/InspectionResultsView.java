@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ui;
 
@@ -37,7 +37,10 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -51,7 +54,6 @@ import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.SideBorder;
 import com.intellij.util.Alarm;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.ui.EdtInvocationManager;
 import com.intellij.util.ui.JBUI;
@@ -180,8 +182,8 @@ public class InspectionResultsView extends JPanel implements Disposable, DataPro
       mySettingsEnabled = true;
     } else {
       InspectionProfileImpl profile = getCurrentProfile();
-      String toolId = ObjectUtils.notNull(profile.getSingleTool());
-      InspectionToolWrapper tool = ObjectUtils.notNull(profile.getInspectionTool(toolId, getProject()));
+      String toolId = Objects.requireNonNull(profile.getSingleTool());
+      InspectionToolWrapper tool = Objects.requireNonNull(profile.getInspectionTool(toolId, getProject()));
       JComponent toolPanel = tool.getTool().createOptionsPanel();
       mySettingsEnabled = toolPanel != null;
     }

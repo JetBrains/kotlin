@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -25,7 +25,6 @@ import com.intellij.ui.*;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
 import com.intellij.util.Alarm;
 import com.intellij.util.NullableFunction;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.util.ui.update.UiNotifyConnector;
@@ -536,7 +535,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
         public void drop(DnDEvent event) {
           //noinspection unchecked
           moveTemplates((Map<TemplateImpl, DefaultMutableTreeNode>)event.getAttachedObject(),
-                        ObjectUtils.assertNotNull(getDropGroup(event)).getName());
+                        Objects.requireNonNull(getDropGroup(event)).getName());
         }
       })
       .setImageProvider((NullableFunction<DnDActionInfo, DnDImage>)dnDActionInfo -> {
@@ -927,7 +926,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   }
 
   void selectNode(@NotNull String searchQuery) {
-    ObjectUtils.assertNotNull(SpeedSearchSupply.getSupply(myTree, true)).findAndSelectElement(searchQuery);
+    Objects.requireNonNull(SpeedSearchSupply.getSupply(myTree, true)).findAndSelectElement(searchQuery);
   }
 
   private void selectTemplate(@Nullable final String groupName, @Nullable final String templateKey) {

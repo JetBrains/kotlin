@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.inspection;
 
 import com.intellij.CommonBundle;
@@ -32,7 +18,6 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.refactoring.ui.MemberSelectionPanel;
 import com.intellij.refactoring.util.classMembers.MemberInfo;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -40,6 +25,7 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,7 +47,7 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
                              final int percent,
                              final boolean isImplements) {
     final SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(newSuperClass.getProject());
-    myNewSuperName = ObjectUtils.notNull(newSuperClass.getQualifiedName());
+    myNewSuperName = Objects.requireNonNull(newSuperClass.getQualifiedName());
     myTargetClass = smartPointerManager.createSmartPsiElementPointer(targetClass);
     myNewSuperClass = smartPointerManager.createSmartPsiElementPointer(newSuperClass);
     myOldSuperClass = smartPointerManager.createSmartPsiElementPointer(oldSuperClass);
@@ -72,7 +58,7 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
   @NotNull
   @TestOnly
   public PsiClass getNewSuperClass() {
-    return ObjectUtils.notNull(myNewSuperClass.getElement());
+    return Objects.requireNonNull(myNewSuperClass.getElement());
   }
 
   @TestOnly
@@ -134,7 +120,7 @@ public class ChangeSuperClassFix implements LocalQuickFix, HighPriorityAction {
         ref = ((PsiAnonymousClass)aClass).getBaseClassReference().replace(factory.createClassReferenceElement(newSuperClass));
       }
       else {
-        PsiReferenceList extendsList = ObjectUtils.notNull(aClass.getExtendsList());
+        PsiReferenceList extendsList = Objects.requireNonNull(aClass.getExtendsList());
         PsiJavaCodeReferenceElement[] refElements =
           ArrayUtil.mergeArrays(getReferences(extendsList), getReferences(aClass.getImplementsList()));
         for (PsiJavaCodeReferenceElement refElement : refElements) {

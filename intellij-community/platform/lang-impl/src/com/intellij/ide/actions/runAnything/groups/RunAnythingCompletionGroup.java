@@ -1,10 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.Matcher;
 import one.util.streamex.StreamEx;
@@ -30,7 +29,7 @@ public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> ext
   @NotNull
   @Override
   public String getTitle() {
-    return ObjectUtils.assertNotNull(getProvider().getCompletionGroupTitle());
+    return Objects.requireNonNull(getProvider().getCompletionGroupTitle());
   }
 
   @NotNull

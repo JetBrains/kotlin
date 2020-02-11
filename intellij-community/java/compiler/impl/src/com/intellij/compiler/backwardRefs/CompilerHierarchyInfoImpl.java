@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs;
 
 import com.intellij.compiler.CompilerDirectHierarchyInfo;
@@ -12,10 +12,10 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.impl.source.PsiFileWithStubSupport;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 class CompilerHierarchyInfoImpl implements CompilerDirectHierarchyInfo {
@@ -49,7 +49,7 @@ class CompilerHierarchyInfoImpl implements CompilerDirectHierarchyInfo {
   @NotNull
   public Stream<PsiElement> getHierarchyChildren() {
     PsiManager psiManager = PsiManager.getInstance(myProject);
-    final LanguageCompilerRefAdapter adapter = ObjectUtils.notNull(LanguageCompilerRefAdapter.findAdapter(mySearchFileType));
+    final LanguageCompilerRefAdapter adapter = Objects.requireNonNull(LanguageCompilerRefAdapter.findAdapter(mySearchFileType));
     return myCandidatePerFile
       .entrySet()
       .stream()

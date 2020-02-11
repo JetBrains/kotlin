@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs;
 
 import com.intellij.ide.highlighter.JavaClassFileType;
@@ -11,17 +11,18 @@ import com.intellij.psi.impl.source.PsiFileWithStubSupport;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.util.ClassUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.backwardRefs.CompilerRef;
 import org.jetbrains.jps.backwardRefs.NameEnumerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -81,7 +82,9 @@ public class JavaCompilerRefAdapter implements LanguageCompilerRefAdapter {
                                                                 @NotNull PsiElement basePsi,
                                                                 @NotNull NameEnumerator names, @NotNull GlobalSearchScope libraryScope)
     throws IOException {
-    final PsiClass baseClass = ObjectUtils.notNull(basePsi instanceof PsiClass ? (PsiClass)basePsi : ReadAction.compute(() -> (PsiMember)basePsi).getContainingClass());
+    com.intellij.psi.@Nullable PsiClass value =
+      basePsi instanceof PsiClass ? (PsiClass)basePsi : ReadAction.compute(() -> (PsiMember)basePsi).getContainingClass();
+    final PsiClass baseClass = Objects.requireNonNull(value);
 
     final List<CompilerRef> overridden = new ArrayList<>();
     final IOException[] exception = new IOException[]{null};

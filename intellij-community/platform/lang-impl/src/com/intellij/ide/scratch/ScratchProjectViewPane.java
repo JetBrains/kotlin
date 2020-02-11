@@ -37,7 +37,6 @@ import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
 import com.intellij.psi.*;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.NonUrgentExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
@@ -281,7 +280,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
     @Override
     public Collection<? extends AbstractTreeNode<?>> getChildren() {
       List<AbstractTreeNode<?>> list = new ArrayList<>();
-      Project project = ObjectUtils.notNull(getProject());
+      Project project = Objects.requireNonNull(getProject());
       for (RootType rootType : RootType.getAllRootTypes()) {
         ContainerUtil.addIfNotNull(list, createRootNode(project, rootType, getSettings()));
       }
@@ -310,7 +309,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
 
     @NotNull
     public RootType getRootType() {
-      return ObjectUtils.notNull(getValue());
+      return Objects.requireNonNull(getValue());
     }
 
     @Override
@@ -357,7 +356,7 @@ public class ScratchProjectViewPane extends ProjectViewPane {
       VirtualFile root = getVirtualFile();
       if (root == null) return true;
       RootType rootType = getRootType();
-      Project project = ObjectUtils.notNull(getProject());
+      Project project = Objects.requireNonNull(getProject());
       for (VirtualFile f : root.getChildren()) {
         if (!rootType.isIgnored(project, f)) return false;
       }
@@ -427,8 +426,8 @@ public class ScratchProjectViewPane extends ProjectViewPane {
   }
 
   private static void customizePresentation(@NotNull BasePsiNode node, @NotNull PresentationData data) {
-    VirtualFile file = ObjectUtils.notNull(node.getVirtualFile());
-    Project project = ObjectUtils.notNull(node.getProject());
+    VirtualFile file = Objects.requireNonNull(node.getVirtualFile());
+    Project project = Objects.requireNonNull(node.getProject());
     AbstractTreeNode parent = node.getParent();
     MyRootNode rootNode = parent instanceof MyRootNode ? (MyRootNode)parent :
                           parent instanceof PsiDirectoryNode ? (MyRootNode)((PsiDirectoryNode)parent).getFilter() : null;

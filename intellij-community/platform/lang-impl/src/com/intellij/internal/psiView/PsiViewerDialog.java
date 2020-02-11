@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.psiView;
 
 import com.intellij.ide.util.treeView.NodeRenderer;
@@ -664,7 +664,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
 
   @NotNull
   private ViewerTreeStructure getTreeStructure() {
-    return ObjectUtils.notNull((ViewerTreeStructure)myPsiTreeBuilder.getTreeStructure());
+    return Objects.requireNonNull((ViewerTreeStructure)myPsiTreeBuilder.getTreeStructure());
   }
 
   private PsiElement parseText(String text) {

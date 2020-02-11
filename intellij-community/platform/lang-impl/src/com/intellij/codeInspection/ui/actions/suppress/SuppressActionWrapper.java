@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ui.actions.suppress;
 
@@ -20,20 +20,17 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.SequentialModalProgressTask;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashSet;
+
+import java.util.*;
+
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Set;
 
 import static com.intellij.codeInspection.ui.actions.InspectionViewActionBase.getView;
 
@@ -105,7 +102,7 @@ public class SuppressActionWrapper extends ActionGroup implements CompactActionG
       final Set<SuppressableInspectionTreeNode> nodesToSuppress = getNodesToSuppress(view);
       if (nodesToSuppress.isEmpty()) return false;
       if (nodesToSuppress.size() == 1) {
-        final PsiElement element = ObjectUtils.notNull(ContainerUtil.getFirstItem(nodesToSuppress)).getSuppressContent().getFirst();
+        final PsiElement element = Objects.requireNonNull(ContainerUtil.getFirstItem(nodesToSuppress)).getSuppressContent().getFirst();
         String text = mySuppressAction.getFamilyName();
         if (element != null) {
           mySuppressAction.isAvailable(view.getProject(), null, element);

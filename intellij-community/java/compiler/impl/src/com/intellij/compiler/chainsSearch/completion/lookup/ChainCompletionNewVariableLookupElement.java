@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.chainsSearch.completion.lookup;
 
 import com.intellij.codeInsight.completion.InsertionContext;
@@ -12,10 +12,10 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.codeStyle.VariableKind;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtil;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class ChainCompletionNewVariableLookupElement extends LookupElement {
@@ -48,13 +48,13 @@ public class ChainCompletionNewVariableLookupElement extends LookupElement {
   @Override
   public void handleInsert(@NotNull final InsertionContext context) {
     final PsiFile file = context.getFile();
-    final PsiElement caretElement = ObjectUtils.notNull(file.findElementAt(context.getEditor().getCaretModel().getOffset()));
+    final PsiElement caretElement = Objects.requireNonNull(file.findElementAt(context.getEditor().getCaretModel().getOffset()));
     final PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(context.getProject());
 
     PsiElement newVariablePlacementAnchor;
     PsiElement newVarDeclarationTemplate;
     if (myField) {
-      PsiField field = ObjectUtils.notNull(PsiTreeUtil.getParentOfType(caretElement.getPrevSibling(), PsiField.class, false));
+      PsiField field = Objects.requireNonNull(PsiTreeUtil.getParentOfType(caretElement.getPrevSibling(), PsiField.class, false));
       newVariablePlacementAnchor = field;
       PsiField newField = elementFactory.createField(myNewVarName, elementFactory.createType(myQualifierClass));
       if (field.hasModifierProperty(PsiModifier.STATIC)) {
@@ -62,7 +62,8 @@ public class ChainCompletionNewVariableLookupElement extends LookupElement {
       }
       newVarDeclarationTemplate = newField;
     } else {
-      newVariablePlacementAnchor = ObjectUtils.notNull(PsiTreeUtil.getParentOfType(caretElement.getPrevSibling(), PsiStatement.class, false));
+      newVariablePlacementAnchor =
+        Objects.requireNonNull(PsiTreeUtil.getParentOfType(caretElement.getPrevSibling(), PsiStatement.class, false));
       newVarDeclarationTemplate = elementFactory.createVariableDeclarationStatement(myNewVarName,
                                                                                     elementFactory.createType(myQualifierClass),
                                                                                     elementFactory.createExpressionFromText(PsiKeyword.NULL, null));

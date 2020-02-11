@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.extensionResources;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -16,7 +16,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.DigestUtil;
@@ -244,7 +243,7 @@ public final class ExtensionsRootType extends RootType {
       }
 
       Result visitImpl(@NotNull VirtualFile file) throws IOException {
-        File child = new File(to, FileUtil.toSystemDependentName(ObjectUtils.notNull(VfsUtilCore.getRelativePath(file, from))));
+        File child = new File(to, FileUtil.toSystemDependentName(Objects.requireNonNull(VfsUtilCore.getRelativePath(file, from))));
         if (child.exists() && child.isDirectory() != file.isDirectory()) {
           renameToBackupCopy(child);
         }

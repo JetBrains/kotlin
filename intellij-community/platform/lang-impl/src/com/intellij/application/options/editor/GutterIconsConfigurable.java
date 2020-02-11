@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.daemon.*;
@@ -25,7 +25,6 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
 import com.intellij.util.Function;
 import com.intellij.util.NullableFunction;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.EmptyIcon;
@@ -228,7 +227,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
   @Nullable
   @Override
   public Runnable enableSearch(String option) {
-    return () -> ObjectUtils.assertNotNull(SpeedSearchSupply.getSupply(myList, true)).findAndSelectElement(option);
+    return () -> Objects.requireNonNull(SpeedSearchSupply.getSupply(myList, true)).findAndSelectElement(option);
   }
 
   @TestOnly

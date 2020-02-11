@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.extensionResources;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -8,7 +8,6 @@ import com.intellij.openapi.components.*;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.util.BuildNumber;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @State(name = "ExtensionsRootType", storages = @Storage(value = "extensionsRootType.xml", roamingType = RoamingType.DISABLED))
 class ResourceVersions implements PersistentStateComponent<ResourceVersions.State> {
@@ -93,7 +93,7 @@ class ResourceVersions implements PersistentStateComponent<ResourceVersions.Stat
 
     @NotNull
     private static String getVersion(@NotNull IdeaPluginDescriptor plugin) {
-      if (!plugin.isBundled()) return ObjectUtils.assertNotNull(plugin.getVersion());
+      if (!plugin.isBundled()) return Objects.requireNonNull(plugin.getVersion());
 
       ApplicationInfo appInfo = ApplicationInfo.getInstance();
       BuildNumber build = appInfo.getBuild();

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.structureView.impl;
 
 import com.intellij.ide.structureView.StructureView;
@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author peter
@@ -81,7 +82,7 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
     PsiFile psiFile = file == null || !file.isValid()? null : PsiManager.getInstance(project).findFile(file);
     List<Language> languages = getLanguages(psiFile).toList();
     for (Language language : languages) {
-      StructureViewBuilder builder = getBuilder(ObjectUtils.notNull(psiFile), language);
+      StructureViewBuilder builder = getBuilder(Objects.requireNonNull(psiFile), language);
       if (builder == null) continue;
       StructureView structureView = builder.createStructureView(fileEditor, project);
       String title = language.getDisplayName();
@@ -105,7 +106,7 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
   @NotNull
   public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
     List<StructureViewComposite.StructureViewDescriptor> viewDescriptors = new ArrayList<>();
-    PsiFile psiFile = ObjectUtils.notNull(PsiManager.getInstance(myProject).findFile(myVirtualFile));
+    PsiFile psiFile = Objects.requireNonNull(PsiManager.getInstance(myProject).findFile(myVirtualFile));
     for (Language language : getLanguages(psiFile)) {
       StructureViewBuilder builder = getBuilder(psiFile, language);
       if (!(builder instanceof TreeBasedStructureViewBuilder)) continue;

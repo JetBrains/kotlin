@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.settings;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -27,7 +27,6 @@ import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.DialogUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UI;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public abstract class PostfixTemplateEditorBase<Condition extends PostfixTemplateExpressionCondition> implements PostfixTemplateEditor {
 
@@ -65,7 +65,7 @@ public abstract class PostfixTemplateEditorBase<Condition extends PostfixTemplat
   public PostfixTemplateEditorBase(@NotNull PostfixTemplateProvider provider, boolean showExpressionTypes) {
     this(provider, createSimpleEditor(), showExpressionTypes);
   }
-  
+
 
   public PostfixTemplateEditorBase(@NotNull PostfixTemplateProvider provider,
                                    @NotNull Editor templateEditor,
@@ -118,7 +118,7 @@ public abstract class PostfixTemplateEditorBase<Condition extends PostfixTemplat
     DataContext context = DataManager.getInstance().getDataContext(button.getContextComponent());
     ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(null, group, context,
                                                                           JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING, true, null);
-    popup.show(ObjectUtils.assertNotNull(button.getPreferredPopupPoint()));
+    popup.show(Objects.requireNonNull(button.getPreferredPopupPoint()));
   }
 
   protected abstract void fillConditions(@NotNull DefaultActionGroup group);

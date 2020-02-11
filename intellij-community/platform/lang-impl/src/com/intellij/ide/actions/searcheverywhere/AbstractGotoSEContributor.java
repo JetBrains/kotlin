@@ -45,7 +45,6 @@ import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
@@ -237,7 +236,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
       try {
         ChooseByNameItemProvider provider = popup.getProvider();
         GlobalSearchScope scope = Registry.is("search.everywhere.show.scopes")
-                                  ? (GlobalSearchScope)ObjectUtils.notNull(myScopeDescriptor.getScope())
+                                  ? (GlobalSearchScope)Objects.requireNonNull(myScopeDescriptor.getScope())
                                   : null;
 
         boolean everywhere = scope == null ? myEverywhere : scope.isSearchInLibraries();

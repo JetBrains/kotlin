@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.hint;
 
@@ -19,7 +19,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.IntroduceTargetChooser;
 import com.intellij.ui.LightweightHint;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
@@ -53,7 +52,7 @@ public class ShowExpressionTypeHandler implements CodeInsightActionHandler {
     Pass<PsiElement> callback = new Pass<PsiElement>() {
       @Override
       public void pass(@NotNull PsiElement expression) {
-        ExpressionTypeProvider provider = ObjectUtils.assertNotNull(map.get(expression));
+        ExpressionTypeProvider provider = Objects.requireNonNull(map.get(expression));
         //noinspection unchecked
         final String informationHint = provider.getInformationHint(expression);
         TextRange range = expression.getTextRange();
@@ -63,7 +62,7 @@ public class ShowExpressionTypeHandler implements CodeInsightActionHandler {
     };
     if (map.isEmpty()) {
       ApplicationManager.getApplication().invokeLater(() -> {
-        String errorHint = ObjectUtils.assertNotNull(ContainerUtil.getFirstItem(handlers)).getErrorHint();
+        String errorHint = Objects.requireNonNull(ContainerUtil.getFirstItem(handlers)).getErrorHint();
         HintManager.getInstance().showErrorHint(editor, errorHint);
       });
     }

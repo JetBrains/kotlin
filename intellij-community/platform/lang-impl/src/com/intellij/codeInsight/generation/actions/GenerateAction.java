@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.generation.actions;
 
@@ -11,7 +11,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +21,7 @@ public class GenerateAction extends DumbAwareAction {
   public void actionPerformed(@NotNull final AnActionEvent e) {
     DataContext dataContext = e.getDataContext();
 
-    Project project = ObjectUtils.assertNotNull(getEventProject(e));
+    Project project = Objects.requireNonNull(getEventProject(e));
     final ListPopup popup =
       JBPopupFactory.getInstance().createActionGroupPopup(
           CodeInsightBundle.message("generate.list.popup.title"),
@@ -70,7 +69,7 @@ public class GenerateAction extends DumbAwareAction {
       if (DumbService.isDumb(project) && !action.isDumbAware()) {
         continue;
       }
-      
+
       if (action instanceof GenerateActionPopupTemplateInjector) {
         final AnAction editTemplateAction = ((GenerateActionPopupTemplateInjector)action).createEditTemplateAction(dataContext);
         if (editTemplateAction != null) {

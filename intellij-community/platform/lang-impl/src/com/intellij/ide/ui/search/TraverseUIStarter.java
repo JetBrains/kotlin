@@ -27,7 +27,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.URLUtil;
 import org.jdom.Document;
@@ -252,7 +251,7 @@ public final class TraverseUIStarter implements ApplicationStarter {
     final SearchableOptionsRegistrar searchableOptionsRegistrar = SearchableOptionsRegistrar.getInstance();
     final Set<String> ids = ((ActionManagerImpl)actionManager).getActionIds();
     for (String id : ids) {
-      final AnAction anAction = ObjectUtils.notNull(actionManager.getAction(id));
+      final AnAction anAction = Objects.requireNonNull(actionManager.getAction(id));
       final String module = splitByResourcePath ? getModuleByAction(anAction, actionToPluginId) : "";
       final Set<OptionDescription> options = map.computeIfAbsent(module, __ -> new TreeSet<>());
       final String text = anAction.getTemplatePresentation().getText();
