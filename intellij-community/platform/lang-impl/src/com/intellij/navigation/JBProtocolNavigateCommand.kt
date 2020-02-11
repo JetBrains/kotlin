@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.navigation
 
 import com.intellij.ide.IdeBundle
@@ -7,6 +7,7 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.ide.actions.searcheverywhere.SymbolSearchEverywhereContributor
 import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
@@ -23,7 +24,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.util.StatusBarProgress
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -59,18 +59,22 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       return
     }
 
-    for (recentProjectAction in RecentProjectListActionProvider.getInstance().getActions(false)) {
+    for (recentProjectAction in RecentProjectListActionProvider.getInstance().getActions()) {
       if (recentProjectAction !is ReopenProjectAction || recentProjectAction.projectName != projectName) {
         continue
       }
 
-      val project1 = ProjectManager.getInstance().openProjects.find { project -> project.name == projectName } ?: continue
-      findAndNavigateToReference(project1, parameters)
+      val project = ProjectUtil.getOpenProjects().find { project -> project.name == projectName }
+      if (project != null) {
+        findAndNavigateToReference(project, parameters)
+        return
+      }
+
       ApplicationManager.getApplication().invokeLater(Runnable {
         RecentProjectsManagerBase.instanceEx.openProject(Paths.get(recentProjectAction.projectPath), OpenProjectTask())?.let {
           StartupManager.getInstance(it).registerPostStartupActivity { findAndNavigateToReference(it, parameters) }
         }
-      }, ModalityState.NON_MODAL, project1.disposed)
+      }, ModalityState.NON_MODAL)
     }
   }
 
@@ -89,12 +93,16 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
     private val PATH_WITH_LOCATION = Pattern.compile("(?<$PATH_GROUP>[^:]*)(:(?<$LINE_GROUP>[\\d]+))?(:(?<$COLUMN_GROUP>[\\d]+))?")
 
     private fun findAndNavigateToReference(project: Project, parameters: Map<String, String>) {
-      parameters.filter { it.key.startsWith(FQN_KEY) }.forEach {
-        navigateByFqn(project, parameters, it.value)
+      for (it in parameters) {
+        if (it.key.startsWith(FQN_KEY)) {
+          navigateByFqn(project, parameters, it.value)
+        }
       }
 
-      parameters.filter { it.key.startsWith(PATH_KEY) }.forEach {
-        navigateByPath(project, parameters, it.value)
+      for (it in parameters) {
+        if (it.key.startsWith(PATH_KEY)) {
+          navigateByPath(project, parameters, it.value)
+        }
       }
     }
 
