@@ -41,9 +41,9 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
 }
 
 @Suppress("FunctionName", "unused", "PropertyName")
-class TowerGroup private constructor(private val list: List<TowerGroupKind>) : Comparable<TowerGroup> {
+class TowerGroup private constructor(private val kinds: Array<TowerGroupKind>) : Comparable<TowerGroup> {
     companion object {
-        private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(listOf(kind))
+        private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(arrayOf(kind))
 
         val Start = kindOf(TowerGroupKind.Start)
 
@@ -64,7 +64,7 @@ class TowerGroup private constructor(private val list: List<TowerGroupKind>) : C
         val Last = kindOf(TowerGroupKind.Last)
     }
 
-    private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(list + kind)
+    private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(kinds + kind)
 
     fun Weakened(depth: Int) = kindOf(TowerGroupKind.Weakened(depth))
 
@@ -82,15 +82,15 @@ class TowerGroup private constructor(private val list: List<TowerGroupKind>) : C
 
     override fun compareTo(other: TowerGroup): Int {
         var index = 0
-        while (index < list.size) {
-            if (index >= other.list.size) return 1
+        while (index < kinds.size) {
+            if (index >= other.kinds.size) return 1
             when {
-                list[index] < other.list[index] -> return -1
-                list[index] > other.list[index] -> return 1
+                kinds[index] < other.kinds[index] -> return -1
+                kinds[index] > other.kinds[index] -> return 1
             }
             index++
         }
-        if (index < other.list.size) return -1
+        if (index < other.kinds.size) return -1
         return 0
     }
 }
