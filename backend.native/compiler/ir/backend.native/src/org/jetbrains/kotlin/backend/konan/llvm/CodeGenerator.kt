@@ -124,8 +124,9 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
 
 
 internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMValueRef,
+                                        startLocation: LocationInfo? = null, endLocation: LocationInfo? = null,
                                         code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
-    val functionGenerationContext = FunctionGenerationContext(function, codegen, null, null)
+    val functionGenerationContext = FunctionGenerationContext(function, codegen, startLocation, endLocation)
     try {
         generateFunctionBody(functionGenerationContext, code)
     } finally {
@@ -140,7 +141,7 @@ internal inline fun generateFunction(
         block: FunctionGenerationContext.(FunctionGenerationContext) -> Unit
 ): LLVMValueRef {
     val function = LLVMAddFunction(codegen.context.llvmModule, name, functionType)!!
-    generateFunction(codegen, function, block)
+    generateFunction(codegen, function, startLocation = null, endLocation = null, code = block)
     return function
 }
 
@@ -153,11 +154,6 @@ private inline fun <R> generateFunctionBody(
         functionGenerationContext.unreachable()
     functionGenerationContext.epilogue()
     functionGenerationContext.resetDebugLocation()
-}
-
-internal fun FunctionGenerationContext.initBridgeDebugInfo() {
-    val location = setupBridgeDebugInfo(context, function) ?: return
-    debugLocation(location, location)
 }
 
 /**
@@ -672,7 +668,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun kotlinExceptionHandler(
             block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit
     ): ExceptionHandler {
-        val lpBlock = basicBlock("kotlinExceptionHandler", null)
+        val lpBlock = basicBlock("kotlinExceptionHandler", position()?.end)
 
         appendingTo(lpBlock) {
             val exception = catchKotlinException()
@@ -1127,8 +1123,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
                 LLVMAddClause(landingpad, clause.llvm)
 
-                val bbCleanup = basicBlock("forwardException", null)
-                val bbUnexpected = basicBlock("unexpectedException", null)
+                val bbCleanup = basicBlock("forwardException", position()?.end)
+                val bbUnexpected = basicBlock("unexpectedException", position()?.end)
 
                 val selector = extractValue(landingpad, 1)
                 condBr(

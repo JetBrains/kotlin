@@ -684,11 +684,18 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
 
 private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         methodBridge: MethodBridge,
+        debugInfo: Boolean = false,
         genBody: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
     val result = LLVMAddFunction(context.llvmModule, "objc2kotlin", objCFunctionType(context, methodBridge))!!
 
-    generateFunction(codegen, result) {
+    val location = if (debugInfo) {
+        setupBridgeDebugInfo(context, result)
+    } else {
+        null
+    }
+
+    generateFunction(codegen, result, startLocation = location, endLocation = location) {
         genBody()
     }
 
@@ -737,13 +744,11 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 resultLifetime: Lifetime,
                 exceptionHandler: ExceptionHandler
         ) -> LLVMValueRef?
-): LLVMValueRef = generateObjCImpBy(methodBridge) {
-    if (isDirect) {
-        // Consider this call inlinable. If it is inlined into a bridge with no debug information,
-        // lldb will not decode the inlined frame even if the callee has debug information.
-        initBridgeDebugInfo()
-        // TODO: consider adding debug info to other bridges.
-    }
+): LLVMValueRef = generateObjCImpBy(methodBridge, debugInfo = isDirect /* see below */) {
+    // Considering direct calls inlinable above. If such a call is inlined into a bridge with no debug information,
+    // lldb will not decode the inlined frame even if the callee has debug information.
+    // So generate dummy debug information for bridge in this case.
+    // TODO: consider adding debug info to other bridges.
 
     val returnType = methodBridge.returnBridge
 
