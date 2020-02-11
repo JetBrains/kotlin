@@ -144,6 +144,7 @@ class SimpleCandidateFactory(
         if (ErrorUtils.isError(descriptor)) {
             return KotlinResolutionCandidate(
                 callComponents,
+                resolutionCallbacks,
                 callableReferenceResolver,
                 scopeTower,
                 baseSystem,
@@ -154,7 +155,7 @@ class SimpleCandidateFactory(
         }
 
         val candidate = KotlinResolutionCandidate(
-            callComponents, callableReferenceResolver, scopeTower, baseSystem, resolvedKtCall, knownSubstitutor
+            callComponents, resolutionCallbacks, callableReferenceResolver, scopeTower, baseSystem, resolvedKtCall, knownSubstitutor
         )
 
         initialDiagnostics.forEach(candidate::addDiagnostic)

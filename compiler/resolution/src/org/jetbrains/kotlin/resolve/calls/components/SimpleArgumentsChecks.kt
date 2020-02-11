@@ -37,9 +37,10 @@ fun checkSimpleArgument(
     argument: SimpleKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
+    isReceiver: Boolean,
+    convertedType: UnwrappedType?
 ): ResolvedAtom = when (argument) {
-    is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
+    is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver, convertedType)
     is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
     else -> unexpectedArgument(argument)
 }
@@ -49,13 +50,14 @@ private fun checkExpressionArgument(
     expressionArgument: ExpressionKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
+    isReceiver: Boolean,
+    convertedType: UnwrappedType?
 ): ResolvedAtom {
     val resolvedExpression = ResolvedExpressionAtom(expressionArgument)
     if (expectedType == null) return resolvedExpression
 
     // todo run this approximation only once for call
-    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
+    val argumentType = convertedType ?: captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
 
     fun unstableSmartCastOrSubtypeError(
         unstableType: UnwrappedType?, actualExpectedType: UnwrappedType, position: ConstraintPosition

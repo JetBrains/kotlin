@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -286,5 +289,23 @@ class KotlinResolutionCallbacksImpl(
         val atom = resolvedAtom.atom as? PSIKotlinCall ?: return
         val context = topLevelCallContext ?: return
         disableContractsInsideContractsBlock(atom.psiCall, resolvedAtom.candidateDescriptor, context.scope, trace)
+    }
+
+    override fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant? {
+        val argumentExpression = argument.psiExpression ?: return null
+        return convertSignedConstantToUnsigned(argumentExpression)
+    }
+
+    private fun convertSignedConstantToUnsigned(expression: KtExpression): IntegerValueTypeConstant? {
+        val constant = trace[BindingContext.COMPILE_TIME_VALUE, expression]
+        if (constant !is IntegerValueTypeConstant || !constantCanBeConvertedToUnsigned(constant)) return null
+
+        return with(IntegerValueTypeConstant) {
+            constant.convertToUnsignedConstant(moduleDescriptor)
+        }
+    }
+
+    private fun constantCanBeConvertedToUnsigned(constant: CompileTimeConstant<*>): Boolean {
+        return !constant.isError && constant.parameters.isPure
     }
 }

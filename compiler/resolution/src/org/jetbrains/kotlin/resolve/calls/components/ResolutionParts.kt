@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -288,7 +290,40 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     isReceiver: Boolean
 ) {
     val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
-    addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
+    val convertedArgument = if (expectedType != null && shouldRunConversionForConstants(expectedType)) {
+        val convertedConstant = resolutionCallbacks.convertSignedConstantToUnsigned(argument)
+        if (convertedConstant != null) {
+            resolvedCall.registerArgumentWithConstantConversion(argument, convertedConstant)
+        }
+
+        convertedConstant
+    } else null
+
+    addResolvedKtPrimitive(
+        resolveKtPrimitive(
+            csBuilder,
+            argument,
+            expectedType,
+            this,
+            isReceiver,
+            convertedArgument?.unknownIntegerType?.unwrap()
+        )
+    )
+}
+
+private fun KotlinResolutionCandidate.shouldRunConversionForConstants(expectedType: UnwrappedType): Boolean {
+    if (UnsignedTypes.isUnsignedType(expectedType)) return true
+    if (csBuilder.isTypeVariable(expectedType)) {
+        val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.constructor] ?: return false
+        return variableWithConstraints.constraints.any {
+            it.kind == ConstraintKind.EQUALITY &&
+                    it.position.from is ExplicitTypeParameterConstraintPosition &&
+                    UnsignedTypes.isUnsignedType(it.type as UnwrappedType)
+
+        }
+    }
+
+    return false
 }
 
 private fun KotlinResolutionCandidate.prepareExpectedType(
