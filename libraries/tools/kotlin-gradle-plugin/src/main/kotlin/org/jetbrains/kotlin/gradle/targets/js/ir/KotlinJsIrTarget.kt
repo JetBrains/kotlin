@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.util.WrapUtil
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
@@ -29,7 +34,7 @@ constructor(
     platformType: KotlinPlatformType,
     internal val mixedMode: Boolean
 ) :
-    KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
+    KotlinBinaryContainer<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {
@@ -40,6 +45,14 @@ constructor(
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
 
     var producingType: KotlinJsProducingType? = null
+
+    override val binaries: KotlinJsBinaryContainer =
+        // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
+        project.objects.newInstance(
+            KotlinJsBinaryContainer::class.java,
+            this,
+            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+        )
 
     private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask: Task
