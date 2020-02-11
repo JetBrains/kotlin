@@ -163,9 +163,8 @@ class Fir2IrVisitor(
                 declarations += irDeclaration
             }
 
-            file.annotations.forEach {
-                val irCall = it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall ?: return@forEach
-                annotations += irCall
+            annotations = file.annotations.mapNotNull {
+                it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
             }
         }
     }
@@ -305,9 +304,8 @@ class Fir2IrVisitor(
                 }
             }
             addFakeOverrides(klass, processedCallableNames)
-            klass.annotations.forEach {
-                val irCall = it.accept(this@Fir2IrVisitor, null) as? IrConstructorCall ?: return@forEach
-                annotations += irCall
+            annotations = klass.annotations.mapNotNull {
+                it.accept(this@Fir2IrVisitor, null) as? IrConstructorCall
             }
         }
         if (irPrimaryConstructor != null) {
@@ -377,7 +375,7 @@ class Fir2IrVisitor(
             if (firOverriddenSymbol != null && this is IrSimpleFunction && firFunctionSymbol != null) {
                 val overriddenSymbol = declarationStorage.getIrFunctionSymbol(firOverriddenSymbol)
                 if (overriddenSymbol is IrSimpleFunctionSymbol) {
-                    overriddenSymbols += overriddenSymbol
+                    overriddenSymbols = listOf(overriddenSymbol)
                 }
             }
             var body = firFunction?.body?.convertToIrBlockBody()
@@ -581,18 +579,18 @@ class Fir2IrVisitor(
             property.getter, this, propertyType, property.getter is FirDefaultPropertyGetter, property.getter == null
         )
         getter?.apply {
-            overriddenProperty?.owner?.getter?.symbol?.let { overriddenSymbols += it }
+            overriddenProperty?.owner?.getter?.symbol?.let { overriddenSymbols = listOf(it) }
         }
         if (property.isVar) {
             setter?.setPropertyAccessorContent(
                 property.setter, this, propertyType, property.setter is FirDefaultPropertySetter, property.setter == null
             )
             setter?.apply {
-                overriddenProperty?.owner?.setter?.symbol?.let { overriddenSymbols += it }
+                overriddenProperty?.owner?.setter?.symbol?.let { overriddenSymbols = listOf(it) }
             }
         }
-        property.annotations.forEach {
-            annotations += it.accept(this@Fir2IrVisitor, null) as IrConstructorCall
+        annotations = property.annotations.mapNotNull {
+            it.accept(this@Fir2IrVisitor, null) as? IrConstructorCall
         }
         declarationStorage.leaveScope(descriptor)
         return this

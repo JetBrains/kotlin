@@ -140,16 +140,18 @@ class Fir2IrDeclarationStorage(
         leaveScope(descriptor)
     }
 
+    private fun IrTypeParametersContainer.setTypeParameters(owner: FirTypeParametersOwner) {
+        typeParameters = owner.typeParameters.mapIndexed { index, typeParameter ->
+            getIrTypeParameter(typeParameter, index).apply { parent = this@setTypeParameters }
+        }
+    }
+
     private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
-        for (superTypeRef in klass.superTypeRefs) {
-            superTypes += superTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
+        superTypes = klass.superTypeRefs.map { superTypeRef ->
+            superTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
         }
         if (klass is FirRegularClass) {
-            for ((index, typeParameter) in klass.typeParameters.withIndex()) {
-                typeParameters += getIrTypeParameter(typeParameter, index).apply {
-                    parent = this@declareSupertypesAndTypeParameters
-                }
-            }
+            setTypeParameters(klass)
         }
         return this
     }
@@ -320,19 +322,21 @@ class Fir2IrDeclarationStorage(
     private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType): T {
         val parent = this
         val descriptor = WrappedValueParameterDescriptor()
-        valueParameters += irSymbolTable.declareValueParameter(
-            startOffset, endOffset, origin, descriptor, type
-        ) { symbol ->
-            IrValueParameterImpl(
-                startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
-                Name.special("<set-?>"), 0, type,
-                varargElementType = null,
-                isCrossinline = false, isNoinline = false
-            ).apply {
-                this.parent = parent
-                descriptor.bind(this)
+        valueParameters = listOf(
+            irSymbolTable.declareValueParameter(
+                startOffset, endOffset, origin, descriptor, type
+            ) { symbol ->
+                IrValueParameterImpl(
+                    startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
+                    Name.special("<set-?>"), 0, type,
+                    varargElementType = null,
+                    isCrossinline = false, isNoinline = false
+                ).apply {
+                    this.parent = parent
+                    descriptor.bind(this)
+                }
             }
-        }
+        )
         return this
     }
 
@@ -342,16 +346,14 @@ class Fir2IrDeclarationStorage(
             val type = function.valueParameters.first().returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
             declareDefaultSetterParameter(type)
         } else if (function != null) {
-            for ((index, valueParameter) in function.valueParameters.withIndex()) {
-                valueParameters += createAndSaveIrParameter(valueParameter, index).apply { this.parent = parent }
+            valueParameters = function.valueParameters.mapIndexed { index, valueParameter ->
+                createAndSaveIrParameter(valueParameter, index).apply { this.parent = parent }
             }
         }
         if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
             if (function is FirSimpleFunction) {
-                for ((index, typeParameter) in function.typeParameters.withIndex()) {
-                    typeParameters += getIrTypeParameter(typeParameter, index).apply { this.parent = parent }
-                }
+                setTypeParameters(function)
             }
             val receiverTypeRef = function?.receiverTypeRef
             if (receiverTypeRef != null) {
