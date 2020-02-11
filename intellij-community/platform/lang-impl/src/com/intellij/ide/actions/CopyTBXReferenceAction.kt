@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions
 
 import com.intellij.ide.actions.CopyReferenceUtil.*
@@ -40,7 +40,7 @@ object CopyTBXReferenceAction {
                                GOIDE_PREFIX to "goland",
                                DBE_PREFIX to "dbe")
 
-  fun createJetbrainsLink(project: Project, elements: List<PsiElement>, editor: Editor?): String? {
+  fun createJetBrainsLink(project: Project, elements: List<PsiElement>, editor: Editor?): String? {
     val entries = IntArray(elements.size) { i -> i }
       .associateBy({ it }, { elementToFqn(elements[it], editor) })
       .filter { it.value != null }
