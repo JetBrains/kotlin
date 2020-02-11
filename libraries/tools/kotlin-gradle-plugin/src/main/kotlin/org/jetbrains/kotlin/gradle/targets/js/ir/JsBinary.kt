@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
-
 sealed class JsBinary(
-    internal val name: String,
-    private val buildKind: BuildVariantKind
+    internal val name: String
 )
 
 class Executable(
-    name: String,
-    buildKind: BuildVariantKind,
-    compilation: KotlinJsIrCompilation
+    name: String
 ) : JsBinary(
-    name,
-    buildKind
+    name
 )

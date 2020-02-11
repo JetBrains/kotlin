@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.*
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.util.WrapUtil
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -20,47 +17,35 @@ open class KotlinJsBinaryContainer
 constructor(
     val target: KotlinJsIrTarget,
     backingContainer: DomainObjectSet<JsBinary>
-) : DomainObjectSet<JsBinary> by backingContainer
-{
+) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project
         get() = target.project
 
-    private val defaultCompilation: KotlinJsIrCompilation
-        get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-
     private val nameToBinary = mutableMapOf<String, JsBinary>()
 
-    fun executable(
-        buildTypes: Collection<BuildVariantKind> = listOf(BuildVariantKind.PRODUCTION, BuildVariantKind.DEVELOPMENT),
-        configure: Executable.() -> Unit = {}
-    ) = createBinaries(project.name, buildTypes, ::Executable, configure)
+    fun executable() = createBinaries(project.name, ::Executable)
 
     private fun <T : JsBinary> createBinaries(
         baseName: String,
-        buildKinds: Collection<BuildVariantKind>,
-        create: (name: String, buildType: BuildVariantKind, compilation: KotlinJsIrCompilation) -> T,
-        configure: T.() -> Unit
+        create: (name: String) -> T
     ) {
-        buildKinds.forEach { buildKind ->
-            val name = generateBinaryName(baseName, buildKind)
+        val name = generateBinaryName(baseName)
 
-            require(name !in nameToBinary) {
-                "Cannot create binary $name: binary with such a name already exists"
-            }
+        require(name !in nameToBinary) {
+            "Cannot create binary $name: binary with such a name already exists"
+        }
 
-            val binary = create(baseName, buildKind, defaultCompilation)
-            add(binary)
-            nameToBinary[binary.name] = binary
-            // Allow accessing binaries as properties of the container in Groovy DSL.
-            if (this is ExtensionAware) {
-                extensions.add(binary.name, binary)
-            }
-            binary.configure()
+        val binary = create(baseName)
+        add(binary)
+        nameToBinary[binary.name] = binary
+        // Allow accessing binaries as properties of the container in Groovy DSL.
+        if (this is ExtensionAware) {
+            extensions.add(binary.name, binary)
         }
     }
 
     companion object {
-        internal fun generateBinaryName(name: String, buildKind: BuildVariantKind) =
-            lowerCamelCaseName(name, buildKind.name)
+        internal fun generateBinaryName(name: String) =
+            lowerCamelCaseName(name)
     }
 }
