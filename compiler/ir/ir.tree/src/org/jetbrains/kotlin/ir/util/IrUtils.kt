@@ -260,8 +260,8 @@ fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
     return this.hasAncestorInSuperTypes()
 }
 
-fun IrSimpleFunction.collectRealOverrides(): Set<IrSimpleFunction> {
-    if (isReal) return setOf(this)
+fun IrSimpleFunction.collectRealOverrides(toSkip: (IrSimpleFunction) -> Boolean = { false }): Set<IrSimpleFunction> {
+    if (isReal && !toSkip(this)) return setOf(this)
 
     val visited = mutableSetOf<IrSimpleFunction>()
     val realOverrides = mutableSetOf<IrSimpleFunction>()
@@ -269,7 +269,7 @@ fun IrSimpleFunction.collectRealOverrides(): Set<IrSimpleFunction> {
     fun collectRealOverrides(func: IrSimpleFunction) {
         if (!visited.add(func)) return
 
-        if (func.isReal) {
+        if (func.isReal && !toSkip(func)) {
             realOverrides += func
         } else {
             func.overriddenSymbols.forEach { collectRealOverrides(it.owner) }
@@ -295,8 +295,8 @@ fun IrSimpleFunction.collectRealOverrides(): Set<IrSimpleFunction> {
 
 // This implementation is from kotlin-native
 // TODO: use this implementation instead of any other
-fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
-    return collectRealOverrides().singleOrNull { it.modality != Modality.ABSTRACT }
+fun IrSimpleFunction.resolveFakeOverride(toSkip: (IrSimpleFunction) -> Boolean = { false }): IrSimpleFunction? {
+    return collectRealOverrides(toSkip).singleOrNull { it.modality != Modality.ABSTRACT }
 }
 
 fun IrSimpleFunction.isOrOverridesSynthesized(): Boolean {

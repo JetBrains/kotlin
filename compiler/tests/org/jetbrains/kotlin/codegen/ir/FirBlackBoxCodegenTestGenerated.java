@@ -26556,6 +26556,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/traits/diamondPropertyAccessors.kt");
         }
 
+        @TestMetadata("doubleDiamond.kt")
+        public void testDoubleDiamond() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/doubleDiamond.kt");
+        }
+
         @TestMetadata("genericMethod.kt")
         public void testGenericMethod() throws Exception {
             runTest("compiler/testData/codegen/box/traits/genericMethod.kt");
