@@ -70,8 +70,11 @@ class SuggestedRefactoringIntentionContributor : IntentionMenuContributor {
         }
 
         val intention = MyIntention(text, showReviewBalloon = refactoringData is SuggestedChangeSignatureData)
-        // we put it into 'errorFixesToShow' to always be at the top of the list
-        intentions.errorFixesToShow.add(0, HighlightInfo.IntentionActionDescriptor(intention, icon))
+        // we add it into 'errorFixesToShow' if it's not empty to always be at the top of the list
+        // we don't add into it if it's empty to keep the color of the bulb
+        val collectionToAdd = intentions.errorFixesToShow.takeIf { it.isNotEmpty() }
+                              ?: intentions.inspectionFixesToShow
+        collectionToAdd.add(0, HighlightInfo.IntentionActionDescriptor(intention, icon))
     }
 
     private class MyIntention(
