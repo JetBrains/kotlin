@@ -295,6 +295,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/callableReferences/extensionReceiverInference.kt");
         }
 
+        @TestMetadata("ifWithCR.kt")
+        public void testIfWithCR() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/callableReferences/ifWithCR.kt");
+        }
+
         @TestMetadata("implicitTypes.kt")
         public void testImplicitTypes() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/callableReferences/implicitTypes.kt");

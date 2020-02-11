@@ -18,8 +18,8 @@ class Foo(val a: String, val b: String)
 
 fun test2() {
     val prop : Foo.() -> String = if (true) {
-        <!UNRESOLVED_REFERENCE!>Foo::a<!>
+        Foo::a
     } else {
-        <!UNRESOLVED_REFERENCE!>Foo::b<!>
+        Foo::b
     }
 }

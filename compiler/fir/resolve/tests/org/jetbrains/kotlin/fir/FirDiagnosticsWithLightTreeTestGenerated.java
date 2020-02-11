@@ -919,6 +919,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("callableReferenceOnInstance.kt")
+        public void testCallableReferenceOnInstance() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/callableReferenceOnInstance.kt");
+        }
+
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/nestedLambdas.kt");
@@ -1104,11 +1109,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("bareTypes.kt")
         public void testBareTypes() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/bareTypes.kt");
-        }
-
-        @TestMetadata("callableReferenceOnInstance.kt")
-        public void testCallableReferenceOnInstance() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferenceOnInstance.kt");
         }
 
         @TestMetadata("covariantArrayAsReceiver.kt")

@@ -7,7 +7,7 @@ interface KaptLogger {
 
 fun test(logger: KaptLogger) {
     val func = if (logger.isVerbose)
-        <!UNRESOLVED_REFERENCE!>logger::warn<!>
+        logger::warn
     else
-        <!UNRESOLVED_REFERENCE!>logger::error<!>
+        logger::error
 }

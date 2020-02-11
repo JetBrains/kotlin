@@ -9,12 +9,12 @@ FILE: callableReferenceOnInstance.kt
 
     }
     public final fun test(logger: R|KaptLogger|): R|kotlin/Unit| {
-        lval func: R|kotlin/Nothing| = when () {
+        lval func: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>| = when () {
             R|<local>/logger|.R|/KaptLogger.isVerbose| ->  {
-                R|<local>/logger|::<Unresolved reference: warn>#
+                R|<local>/logger|::R|/KaptLogger.warn|
             }
             else ->  {
-                R|<local>/logger|::<Unresolved reference: error>#
+                R|<local>/logger|::R|/KaptLogger.error|
             }
         }
 

@@ -2,10 +2,10 @@
 
 fun test() {
     data class Pair<F, S>(val first: F, val second: S)
-    val (x, y) =
-            Pair(1,
+    val (<!UNRESOLVED_REFERENCE!>x<!>, <!UNRESOLVED_REFERENCE!>y<!>) =
+            <!INAPPLICABLE_CANDIDATE!>Pair<!>(1,
                  if (1 == 1)
-                     <!UNRESOLVED_REFERENCE!>Pair<String, String>::first<!>
+                     Pair<String, String>::first
                  else
-                     <!UNRESOLVED_REFERENCE!>Pair<String, String>::second<!>)
+                     Pair<String, String>::second)
 }

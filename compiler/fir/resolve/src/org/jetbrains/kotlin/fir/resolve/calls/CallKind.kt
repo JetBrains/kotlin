@@ -17,7 +17,8 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
     SyntheticSelect(
         MapArguments,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckArguments
+        CheckArguments,
+        EagerResolveOfCallableReferences
     ),
     Function(
         CheckVisibility,

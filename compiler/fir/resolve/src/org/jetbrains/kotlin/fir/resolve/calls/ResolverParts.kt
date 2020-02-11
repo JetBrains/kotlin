@@ -185,6 +185,7 @@ internal object CheckArguments : CheckerStage() {
 
 internal object EagerResolveOfCallableReferences : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms.filterIsInstance<ResolvedCallableReferenceAtom>()) {
             if (!candidate.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)) {
                 sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
