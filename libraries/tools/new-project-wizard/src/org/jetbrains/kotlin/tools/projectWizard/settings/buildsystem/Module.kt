@@ -78,6 +78,7 @@ class Module(
             configurator == MppModuleConfigurator -> "MPP Module"
             configurator == AndroidSinglePlatformModuleConfigurator -> "Android Module"
             configurator == IOSSinglePlatformModuleConfigurator -> "IOS Module"
+            configurator == JsSingleplatformModuleConfigurator -> "JS Module"
             else -> "Module"
         }
 

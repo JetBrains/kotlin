@@ -200,7 +200,7 @@ object AndroidApplication : ProjectTemplate() {
        Simple <b>Android</b> application with single activity 
         """.trimIndent()
     override val suggestedProjectName = "myAndroidApplication"
-    override val projectKind = ProjectKind.Multiplatform
+    override val projectKind = ProjectKind.Android
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
@@ -248,7 +248,7 @@ object JsBrowserApplication : ProjectTemplate() {
     override val title = "Kotlin/JS Frontend Application"
     override val htmlDescription = "Gradle project for a Kotlin/JS frontend web application"
     override val suggestedProjectName = "myKotlinJsApplication"
-    override val projectKind = ProjectKind.Multiplatform
+    override val projectKind = ProjectKind.Js
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(

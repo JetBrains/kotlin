@@ -1,15 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.ImmutableSingleSelectableListWithIcon
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.bordered
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
@@ -28,7 +24,7 @@ class ProjectTemplateSettingComponent(
     private val list = ImmutableSingleSelectableListWithIcon(
         setting.type.values,
         renderValue = { value ->
-            icon = KotlinIcons.SMALL_LOGO
+            icon = value.projectKind.icon
             append(value.title)
         },
         onValueSelected = {

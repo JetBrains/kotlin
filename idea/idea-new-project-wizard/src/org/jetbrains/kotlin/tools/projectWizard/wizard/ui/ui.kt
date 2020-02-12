@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTarget
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -93,6 +94,14 @@ val Module.icon: Icon
         ModuleKind.multiplatform -> AllIcons.Nodes.Module
         ModuleKind.singleplatformJs -> KotlinIcons.JS
         ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
+    }
+
+val ProjectKind.icon: Icon
+    get() = when (this) {
+        ProjectKind.Singleplatform -> KotlinIcons.SMALL_LOGO
+        ProjectKind.Multiplatform -> KotlinIcons.MPP
+        ProjectKind.Android -> KotlinIcons.SMALL_LOGO
+        ProjectKind.Js -> KotlinIcons.JS
     }
 
 

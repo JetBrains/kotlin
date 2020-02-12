@@ -28,7 +28,7 @@ class ModulesEditorComponent(
         ModulesEditorTree(
             onSelected = { oneEntrySelected(it) },
             addModule = { component ->
-                val isMppProject = KotlinPlugin::projectKind.value == ProjectKind.Multiplatform
+                val isMppProject = KotlinPlugin::projectKind.value == ProjectKind.Singleplatform
                 moduleCreator.create(
                     target = null, // The empty tree case
                     allowMultiplatform = isMppProject,
@@ -55,7 +55,7 @@ class ModulesEditorComponent(
         moduleCreator = moduleCreator,
         model = model,
         getModules = { value ?: emptyList() },
-        isMultiplatformProject = { KotlinPlugin::projectKind.value == ProjectKind.Multiplatform }
+        isMultiplatformProject = { KotlinPlugin::projectKind.value != ProjectKind.Singleplatform }
     )
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {

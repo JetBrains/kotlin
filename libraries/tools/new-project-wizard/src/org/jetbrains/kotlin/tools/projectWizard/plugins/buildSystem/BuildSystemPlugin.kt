@@ -31,9 +31,10 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
 
         validate { buildSystemType ->
             if (!buildSystemType.isGradle
-                && KotlinPlugin::projectKind.reference.notRequiredSettingValue == ProjectKind.Multiplatform
+                && KotlinPlugin::projectKind.reference.notRequiredSettingValue != ProjectKind.Singleplatform
             ) {
-                ValidationResult.ValidationError("Multiplatform project cannot be generated using ${buildSystemType.text}")
+                val projectKind = KotlinPlugin::projectKind.reference.notRequiredSettingValue?.text?.capitalize() ?: "Project"
+                ValidationResult.ValidationError("$projectKind cannot be generated using ${buildSystemType.text}")
             } else ValidationResult.OK
         }
     }
