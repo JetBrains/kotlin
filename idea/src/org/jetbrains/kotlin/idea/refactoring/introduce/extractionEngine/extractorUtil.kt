@@ -16,6 +16,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.isMultiLine
@@ -29,11 +30,15 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -681,10 +686,19 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
-    if (declaration is KtProperty && declaration.isExtensionDeclaration() && !declaration.isTopLevel) {
-        val receiverTypeReference = (declaration as? KtCallableDeclaration)?.receiverTypeReference
-        receiverTypeReference?.siblings(withItself = false)?.firstOrNull { it.node.elementType == KtTokens.DOT }?.delete()
-        receiverTypeReference?.delete()
+    if (declaration is KtProperty) {
+        if (declaration.isExtensionDeclaration() && !declaration.isTopLevel) {
+            val receiverTypeReference = (declaration as? KtCallableDeclaration)?.receiverTypeReference
+            receiverTypeReference?.siblings(withItself = false)?.firstOrNull { it.node.elementType == KtTokens.DOT }?.delete()
+            receiverTypeReference?.delete()
+        }
+        if ((declaration.descriptor as? PropertyDescriptor)?.let { DescriptorUtils.isOverride(it) } == true) {
+            val scope = declaration.getResolutionScope()
+            val newName = KotlinNameSuggester.suggestNameByName(descriptor.name) {
+                it != descriptor.name && scope.getAllAccessibleVariables(Name.identifier(it)).isEmpty()
+            }
+            declaration.setName(newName)
+        }
     }
 
     CodeStyleManager.getInstance(descriptor.extractionData.project).reformat(declaration)
