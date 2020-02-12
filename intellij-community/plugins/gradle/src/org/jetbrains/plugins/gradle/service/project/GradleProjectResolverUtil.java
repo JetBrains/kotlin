@@ -33,6 +33,7 @@ import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
@@ -57,7 +58,9 @@ import java.util.stream.Stream;
  */
 public class GradleProjectResolverUtil {
   private static final Logger LOG = Logger.getInstance(GradleProjectResolverUtil.class);
-  public static final String BUILD_SRC_NAME = "buildSrc";
+  @NonNls public static final String BUILD_SRC_NAME = "buildSrc";
+  @NonNls private static final String SOURCE_JAR_SUFFIX = "-sources.jar";
+  @NonNls private static final String JAVADOC_JAR_SUFFIX = "-javadoc.jar";
 
   @NotNull
   public static DataNode<ModuleData> createMainModule(@NotNull ProjectResolverContext resolverCtx,
@@ -367,7 +370,9 @@ public class GradleProjectResolverUtil {
   public static void attachSourcesAndJavadocFromGradleCacheIfNeeded(ProjectResolverContext context,
                                                                     File gradleUserHomeDir,
                                                                     LibraryData libraryData) {
-    if (!libraryData.getPaths(LibraryPathType.SOURCE).isEmpty() && !libraryData.getPaths(LibraryPathType.DOC).isEmpty()) {
+    boolean sourceResolved = !libraryData.getPaths(LibraryPathType.SOURCE).isEmpty();
+    boolean docResolved = !libraryData.getPaths(LibraryPathType.DOC).isEmpty();
+    if (sourceResolved && docResolved) {
       return;
     }
 
@@ -384,7 +389,7 @@ public class GradleProjectResolverUtil {
       if (pathsCache == null) pathsCache = context.putUserDataIfAbsent(PATHS_CACHE, new THashMap<>());
     }
 
-    for (String path: libraryData.getPaths(LibraryPathType.BINARY)) {
+    for (String path : libraryData.getPaths(LibraryPathType.BINARY)) {
       if (!FileUtil.isAncestor(gradleUserHomeDir.getPath(), path, true)) continue;
 
       // take already processed paths from cache
@@ -394,7 +399,7 @@ public class GradleProjectResolverUtil {
         if (pathsCache != null) {
           pathsCache.put(path, collectedPaths);
         }
-        collectSourcesAndJavadocsFor(path, collectedPaths);
+        collectSourcesAndJavadocsFor(path, collectedPaths, sourceResolved, docResolved);
       }
 
       for (Map.Entry<LibraryPathType, List<String>> each : collectedPaths.entrySet()) {
@@ -405,50 +410,95 @@ public class GradleProjectResolverUtil {
     }
   }
 
-  private static void collectSourcesAndJavadocsFor(@NotNull String binaryPath, @NotNull Map<LibraryPathType, List<String>> collect) {
+  private static void collectSourcesAndJavadocsFor(@NonNls @NotNull String binaryPath,
+                                                   @NotNull Map<LibraryPathType, List<String>> collect,
+                                                   boolean sourceResolved, boolean docResolved) {
+    if (sourceResolved && docResolved) {
+      return;
+    }
     try {
-      final Path file = Paths.get(binaryPath);
-      Path binaryFileParent = file.getParent();
-      Path grandParentFile = binaryFileParent.getParent();
-
-      final boolean[] sourceFound = {false};
-      final boolean[] docFound = {false};
-
-      Files.walkFileTree(grandParentFile, EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-          if (binaryFileParent.equals(dir)) {
-            return FileVisitResult.SKIP_SUBTREE;
-          }
-          return super.preVisitDirectory(dir, attrs);
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path sourceCandidate, BasicFileAttributes attrs) throws IOException {
-          if (!sourceCandidate.getParent().getParent().equals(grandParentFile)) {
-            return FileVisitResult.SKIP_SIBLINGS;
-          }
-          if (attrs.isRegularFile()) {
-            if (StringUtil.endsWith(sourceCandidate.getFileName().toString(), "-sources.jar")) {
-              collect.computeIfAbsent(LibraryPathType.SOURCE, type -> new SmartList<>())
-                .add(sourceCandidate.toFile().getAbsolutePath());
-              sourceFound[0] = true;
-            }
-            else if (StringUtil.endsWith(sourceCandidate.getFileName().toString(), "-javadoc.jar")) {
-              collect.computeIfAbsent(LibraryPathType.DOC, type -> new SmartList<>())
-                .add(sourceCandidate.toFile().getAbsolutePath());
-              docFound[0] = true;
-            }
-          }
-          if (sourceFound[0] && docFound[0]) {
-            return FileVisitResult.TERMINATE;
-          }
-          return super.visitFile(file, attrs);
-        }
-      });
+      if (binaryPath.contains("/.gradle/caches/modules-2/files-2.1/")) {
+        collectSourcesAndJavadocsFromGradleCache(binaryPath, collect, sourceResolved, docResolved);
+      }
+      else {
+        collectSourcesAndJavadocsFromTheSameFolder(binaryPath, collect, sourceResolved, docResolved);
+      }
     }
     catch (IOException | InvalidPathException e) {
       LOG.debug(e);
+    }
+  }
+
+  private static void collectSourcesAndJavadocsFromGradleCache(@NotNull String binaryPath,
+                                                               @NotNull Map<LibraryPathType, List<String>> collect,
+                                                               boolean sourceResolved,
+                                                               boolean docResolved) throws IOException {
+    final Path file = Paths.get(binaryPath);
+    Path binaryFileParent = file.getParent();
+    Path grandParentFile = binaryFileParent.getParent();
+
+    final boolean[] sourceFound = {sourceResolved};
+    final boolean[] docFound = {docResolved};
+
+    Files.walkFileTree(grandParentFile, EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        if (binaryFileParent.equals(dir)) {
+          return FileVisitResult.SKIP_SUBTREE;
+        }
+        return super.preVisitDirectory(dir, attrs);
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path sourceCandidate, BasicFileAttributes attrs) throws IOException {
+        if (!sourceCandidate.getParent().getParent().equals(grandParentFile)) {
+          return FileVisitResult.SKIP_SIBLINGS;
+        }
+        if (attrs.isRegularFile()) {
+          String candidateFileName = sourceCandidate.getFileName().toString();
+          if (!sourceFound[0] && StringUtil.endsWith(candidateFileName, SOURCE_JAR_SUFFIX)) {
+            collect.computeIfAbsent(LibraryPathType.SOURCE, type -> new SmartList<>())
+              .add(sourceCandidate.toFile().getAbsolutePath());
+            sourceFound[0] = true;
+          }
+          else if (!docFound[0] && StringUtil.endsWith(candidateFileName, JAVADOC_JAR_SUFFIX)) {
+            collect.computeIfAbsent(LibraryPathType.DOC, type -> new SmartList<>())
+              .add(sourceCandidate.toFile().getAbsolutePath());
+            docFound[0] = true;
+          }
+        }
+        if (sourceFound[0] && docFound[0]) {
+          return FileVisitResult.TERMINATE;
+        }
+        return super.visitFile(file, attrs);
+      }
+    });
+  }
+
+  private static void collectSourcesAndJavadocsFromTheSameFolder(@NotNull String binaryPath,
+                                                                 @NotNull Map<LibraryPathType, List<String>> collect,
+                                                                 boolean sourceResolved,
+                                                                 boolean docResolved) throws IOException {
+    final Path file = Paths.get(binaryPath);
+    Path binaryFileParent = file.getParent();
+    if (!Files.isDirectory(binaryFileParent)) return;
+    try (Stream<Path> list = Files.list(binaryFileParent)) {
+      for (Iterator<Path> it = list.iterator(); it.hasNext();) {
+        Path p = it.next();
+        if (!Files.isRegularFile(p)) continue;
+
+        String name = p.getFileName().toString();
+        if (!sourceResolved && name.endsWith(SOURCE_JAR_SUFFIX)) {
+          collect.computeIfAbsent(LibraryPathType.SOURCE, type -> new SmartList<>()).add(p.toFile().getAbsolutePath());
+          sourceResolved = true;
+        } else if (!docResolved && name.endsWith(JAVADOC_JAR_SUFFIX)) {
+          collect.computeIfAbsent(LibraryPathType.DOC, type -> new SmartList<>()).add(p.toFile().getAbsolutePath());
+          docResolved = true;
+        }
+        if (sourceResolved && docResolved) {
+          return;
+        }
+      }
     }
   }
 

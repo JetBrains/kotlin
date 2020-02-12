@@ -2,6 +2,8 @@
 package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
 import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.ar;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.getSourceSetName;
 
 /**
@@ -1664,7 +1667,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertModuleModuleDeps("project.main", "project.lib-1.main", "project.lib-2.main");
 
-    runBuildTask();
+    runTask("build");
     importProject();
 
     assertModules("project", "project.main", "project.test",
@@ -1682,11 +1685,141 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     }, "project.main", "lib-1.jar", "lib-2.jar");
   }
 
+  @Test
+  public void testSourcesJavadocAttachmentFromGradleCache() throws Exception {
+    importProject(new GradleBuildScriptBuilderEx()
+                    .withJavaPlugin()
+                    .withJUnit("4.12") // download classes and sources - the default import settings
+                    .generate());
+    assertModules("project", "project.main", "project.test");
 
-  private void runBuildTask() {
+    WriteAction.runAndWait(() -> {
+      LibraryOrderEntry regularLibFromGradleCache = assertSingleLibraryOrderEntry("project.test", "Gradle: junit:junit:4.12");
+      Library library = regularLibFromGradleCache.getLibrary();
+      ApplicationManager.getApplication().runWriteAction(() -> library.getTable().removeLibrary(library));
+    });
+
+    importProject(new GradleBuildScriptBuilderEx()
+                    .withJavaPlugin()
+                    .withIdeaPlugin()
+                    .withJUnit("4.12")
+                    .addPrefix("idea.module {\n" +
+                               "  downloadJavadoc = true\n" +
+                               "  downloadSources = false\n" + // should be already available in Gradle cache
+                               "}")
+                    .generate());
+
+    assertModules("project", "project.main", "project.test");
+
+    LibraryOrderEntry regularLibFromGradleCache = assertSingleLibraryOrderEntry("project.test", "Gradle: junit:junit:4.12");
+    assertThat(regularLibFromGradleCache.getRootFiles(OrderRootType.CLASSES))
+      .hasSize(1)
+      .allSatisfy(file -> assertEquals("junit-4.12.jar", file.getName()));
+    assertThat(regularLibFromGradleCache.getRootFiles(OrderRootType.SOURCES))
+      .hasSize(1)
+      .allSatisfy(file -> assertEquals("junit-4.12-sources.jar", file.getName()));
+    assertThat(regularLibFromGradleCache.getRootFiles(JavadocOrderRootType.getInstance()))
+      .hasSize(1)
+      .allSatisfy(file -> assertEquals("junit-4.12-javadoc.jar", file.getName()));
+  }
+
+
+  @Test
+  @TargetVersions("6.1+")
+  public void testSourcesJavadocAttachmentFromClassesFolder() throws Exception {
+    createSettingsFile("include 'aLib'");
+    createProjectSubFile("aLib/build.gradle",
+                         "plugins {\n" +
+                         "    id 'java-library'\n" +
+                         "    id 'maven-publish'\n" +
+                         "}\n" +
+                         "java {\n" +
+                         "    withJavadocJar()\n" +
+                         "    withSourcesJar()\n" +
+                         "}\n" +
+                         "publishing {\n" +
+                         "    publications {\n" +
+                         "        mavenJava(MavenPublication) {\n" +
+                         "            artifactId = 'aLib'\n" +
+                         "            groupId = 'test'\n" +
+                         "            version = '1.0-SNAPSHOT'\n" +
+                         "            from components.java\n" +
+                         "        }\n" +
+                         "        mavenJava1(MavenPublication) {\n" +
+                         "            artifactId = 'aLib'\n" +
+                         "            groupId = 'test'\n" +
+                         "            version = '1.0-SNAPSHOT-1'\n" +
+                         "            from components.java\n" +
+                         "        }\n" +
+                         "        mavenJava2(MavenPublication) {\n" +
+                         "            artifactId = 'aLib'\n" +
+                         "            groupId = 'test'\n" +
+                         "            version = '1.0-SNAPSHOT-2'\n" +
+                         "            from components.java\n" +
+                         "        }\n" +
+                         "    }\n" +
+                         "}\n" +
+                         "configurations {\n" +
+                         "    libConf\n" +
+                         "}\n" +
+                         "dependencies {\n" +
+                         "    libConf 'test:aLib:1.0-SNAPSHOT'\n" +
+                         "}\n" +
+                         "task copyALibToGradleUserHome() {\n" +
+                         "    dependsOn publishToMavenLocal\n" +
+                         "    doLast {\n" +
+                         "        repositories.add(repositories.mavenLocal())\n" +
+                         "        def libArtifact = configurations.libConf.singleFile\n" +
+                         "        def libRepoFolder = libArtifact.parentFile.parentFile.parentFile\n" +
+                         "        copy {\n" +
+                         "            from libRepoFolder\n" +
+                         "            into new File(gradle.gradleUserHomeDir, 'caches/ij_test_repo/test')\n" +
+                         "        }\n" +
+                         "    }\n" +
+                         "}");
+    importProject(new GradleBuildScriptBuilderEx()
+                    .generate());
+    assertModules("project",
+                  "project.aLib", "project.aLib.main", "project.aLib.test");
+
+    runTask(":aLib:copyALibToGradleUserHome");
+    importProject(new GradleBuildScriptBuilderEx()
+                    .withJavaPlugin()
+                    .withIdeaPlugin()
+                    .addRepository(" maven { url new File(gradle.gradleUserHomeDir, 'caches/ij_test_repo')} ")
+                    .addDependency("implementation 'test:aLib:1.0-SNAPSHOT-1'")
+                    .addPrefix("idea.module {\n" +
+                               "  downloadJavadoc = true\n" +
+                               "  downloadSources = false\n" +
+                               "}")
+                    .generate());
+
+    assertModules("project", "project.main", "project.test",
+                  "project.aLib", "project.aLib.main", "project.aLib.test");
+
+    LibraryOrderEntry aLib = assertSingleLibraryOrderEntry("project.test", "Gradle: test:aLib:1.0-SNAPSHOT-1");
+    assertThat(aLib.getRootFiles(OrderRootType.CLASSES))
+      .hasSize(1)
+      .allSatisfy(file -> assertEquals("aLib-1.0-SNAPSHOT-1.jar", file.getName()));
+    assertThat(aLib.getRootFiles(OrderRootType.SOURCES))
+      .hasSize(1)
+      .allSatisfy(file -> assertEquals("aLib-1.0-SNAPSHOT-1-sources.jar", file.getName()));
+    assertThat(aLib.getRootFiles(JavadocOrderRootType.getInstance()))
+      .hasSize(1)
+      .allSatisfy(file -> assertEquals("aLib-1.0-SNAPSHOT-1-javadoc.jar", file.getName()));
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private LibraryOrderEntry assertSingleLibraryOrderEntry(String moduleName, String depName) {
+    List<LibraryOrderEntry> moduleLibDeps = getModuleLibDeps(moduleName, depName);
+    assertThat(moduleLibDeps).hasSize(1);
+    return moduleLibDeps.iterator().next();
+  }
+
+  private void runTask(String task) {
     ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
     settings.setExternalProjectPath(getProjectPath());
-    settings.setTaskNames(Collections.singletonList("build"));
+    settings.setTaskNames(Collections.singletonList(task));
     settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.getId());
     ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, myProject, GradleConstants.SYSTEM_ID, null,
                                ProgressExecutionMode.NO_PROGRESS_SYNC);
