@@ -183,7 +183,7 @@
 
       <registryKey key="kotlin.uast.force.uinjectionhost"
                    description="Whether to convert `KtStringTemplateExpression` to `KotlinStringTemplateUPolyadicExpression` in all cases"
-                   defaultValue="false"
+                   defaultValue="true"
                    restartRequired="false"/>
 
       <registryKey key="kotlin.jps.instrument.bytecode"
