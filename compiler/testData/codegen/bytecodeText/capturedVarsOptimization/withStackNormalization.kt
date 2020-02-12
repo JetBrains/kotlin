@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36648 Captured variables not optimized in JVM_IR
+
 fun add(x: Int, y: Int) = x + y
 
 fun test() {

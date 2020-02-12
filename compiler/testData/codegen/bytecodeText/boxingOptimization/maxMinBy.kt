@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36645 Don't box primitive values in string template and string concatenation in JVM_IR
 
 // FILE: list.kt
 

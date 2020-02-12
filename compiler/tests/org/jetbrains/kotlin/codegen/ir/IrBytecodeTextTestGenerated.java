@@ -391,16 +391,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("argumentReorder.kt")
-        public void testArgumentReorder() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/argumentOrder/argumentReorder.kt");
-        }
-
-        @TestMetadata("argumentReorderWithDefault.kt")
-        public void testArgumentReorderWithDefault() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/argumentOrder/argumentReorderWithDefault.kt");
-        }
-
         @TestMetadata("sameOrder.kt")
         public void testSameOrder() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/argumentOrder/sameOrder.kt");
