@@ -387,7 +387,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
         UpdatableIndex<K, V, FileContent> index = createIndex(extension, new MemoryIndexStorage<>(storage, name));
 
-        if (SharedIndexExtensions.areSharedIndexesEnabled()) {
+        if (SharedIndexExtensions.areSharedIndexesEnabled() && extension.dependsOnFileContent()) {
           FileContentHashIndex contentHashIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex();
           index = new MergedInvertedIndex<>(extension.getName(), contentHashIndex, index);
         }
