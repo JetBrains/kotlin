@@ -72,7 +72,7 @@ public final class UncompressedZipFileSystemProvider extends FileSystemProvider 
     if (node.isDirectory()) {
       throw new IllegalArgumentException(path.toString());
     }
-    JBZipEntry entry = node.getEntry();
+    UncompressedZipFileSystem.@NotNull LightZipEntry entry = node.getEntry();
     return ((UncompressedZipFileSystem)path.getFileSystem()).openChannel(entry);
   }
 

@@ -51,7 +51,7 @@ public final class UncompressedZipEntryFileAttributes implements BasicFileAttrib
 
   @Override
   public long size() {
-    return myNode.getEntry().getCompressedSize();
+    return myNode.getEntry().size;
   }
 
   @Override

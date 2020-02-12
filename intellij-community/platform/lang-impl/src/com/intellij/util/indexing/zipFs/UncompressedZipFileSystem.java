@@ -7,6 +7,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,11 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.zip.ZipEntry;
 
 public final class UncompressedZipFileSystem extends FileSystem {
   private static final Logger LOG = Logger.getInstance(UncompressedZipFileSystem.class);
 
-  private volatile JBZipFile myUncompressedZip;
   private volatile ZipTreeNode myRoot;
 
   @NotNull
@@ -49,12 +50,12 @@ public final class UncompressedZipFileSystem extends FileSystem {
   }
 
   @NotNull
-  FileBlockReadOnlyFileChannel openChannel(@NotNull JBZipEntry entry) throws IOException {
+  FileBlockReadOnlyFileChannel openChannel(@NotNull LightZipEntry entry) throws IOException {
     Lock lock = myOpenFilePoolLock.readLock();
     lock.lock();
     try {
       final FileChannel zipChannel = myCurrentZipChannel;
-      FileBlockReadOnlyFileChannel channel = new FileBlockReadOnlyFileChannel(zipChannel, entry.calcDataOffset(), entry.getSize()) {
+      FileBlockReadOnlyFileChannel channel = new FileBlockReadOnlyFileChannel(zipChannel, entry.offset, entry.size) {
         @Override
         protected void implCloseChannel() throws IOException {
           Set<FileBlockReadOnlyFileChannel> channels = myOpenFilePool.get(zipChannel);
@@ -74,20 +75,8 @@ public final class UncompressedZipFileSystem extends FileSystem {
   }
 
   public void sync() throws IOException {
-    try {
-      if (myUncompressedZip != null) {
-        try {
-          myUncompressedZip.close();
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
-    } finally {
-      myUncompressedZip = new JBZipFile(myUncompressedZipPath.toFile());
-      reopenZipChannel();
-      buildTree();
-    }
+    reopenZipChannel();
+    buildTree();
   }
 
   @Override
@@ -97,11 +86,7 @@ public final class UncompressedZipFileSystem extends FileSystem {
 
   @Override
   public void close() throws IOException {
-    try {
-      closeOpenFiles();
-    } finally {
-      myUncompressedZip.close();
-    }
+    closeOpenFiles();
   }
 
   @NotNull
@@ -171,29 +156,41 @@ public final class UncompressedZipFileSystem extends FileSystem {
     return myRoot;
   }
 
-  static class ZipTreeNode {
+  // use a separate class to don't hold references for a file tree
+  final static class LightZipEntry {
+    final long size;
+    final long offset;
+    LightZipEntry(JBZipEntry entry) throws IOException {
+      size = entry.getCompressedSize();
+      offset = entry.calcDataOffset();
+    }
+  }
+
+  final static class ZipTreeNode {
     @Nullable
     private final Map<String, ZipTreeNode> myChildren;
     @Nullable
-    private final JBZipEntry myEntry;
+    private final LightZipEntry myEntry;
 
     public boolean isDirectory() {
       return myChildren != null;
     }
 
     @NotNull
-    JBZipEntry getEntry() {
+    LightZipEntry getEntry() {
       assert myEntry != null;
       return myEntry;
     }
 
+    @NotNull
+    @Contract(pure = true)
     Set<String> getChildNames() {
       assert myChildren != null;
       return myChildren.keySet();
     }
 
-    ZipTreeNode(@NotNull JBZipEntry entry) {
-      myEntry = entry;
+    ZipTreeNode(@NotNull JBZipEntry entry) throws IOException {
+      myEntry = new LightZipEntry(entry);
       myChildren = null;
     }
 
@@ -214,7 +211,7 @@ public final class UncompressedZipFileSystem extends FileSystem {
       return myChildren.computeIfAbsent(childName, __ -> new ZipTreeNode());
     }
 
-    void createEntryChild(@NotNull String childName, @NotNull JBZipEntry entry) {
+    void createEntryChild(@NotNull String childName, @NotNull JBZipEntry entry) throws IOException {
       assert myChildren != null;
       ZipTreeNode previous = myChildren.put(childName, new ZipTreeNode(entry));
       assert previous == null;
@@ -257,17 +254,20 @@ public final class UncompressedZipFileSystem extends FileSystem {
     }
   }
 
-  private void buildTree() {
+  private void buildTree() throws IOException {
     ZipTreeNode root = new ZipTreeNode();
-    for (JBZipEntry entry : myUncompressedZip.getEntries()) {
-      if (entry.isDirectory()) continue;
-      List<String> names = StringUtil.split(entry.getName(), getSeparator());
-      ZipTreeNode current = root;
-      for (int i = 0; i < names.size(); i++) {
-        if (i == names.size() - 1) {
-          current.createEntryChild(names.get(i), entry);
-        } else {
-          current = current.createDirChild(names.get(i));
+    try (JBZipFile zip = new JBZipFile(myUncompressedZipPath.toFile())) {
+      for (JBZipEntry entry : zip.getEntries()) {
+        if (entry.isDirectory()) continue;
+        List<String> names = StringUtil.split(entry.getName(), getSeparator());
+        ZipTreeNode current = root;
+        for (int i = 0; i < names.size(); i++) {
+          if (i == names.size() - 1) {
+            current.createEntryChild(names.get(i), entry);
+          }
+          else {
+            current = current.createDirChild(names.get(i));
+          }
         }
       }
     }
