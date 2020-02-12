@@ -55,7 +55,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
     }
 
     private fun searchTextOccurrences(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Boolean {
-        if (!options.isSearchForTextOccurrences) return false
+        if (!options.isSearchForTextOccurrences) return true
 
         val scope = options.searchScope
 
