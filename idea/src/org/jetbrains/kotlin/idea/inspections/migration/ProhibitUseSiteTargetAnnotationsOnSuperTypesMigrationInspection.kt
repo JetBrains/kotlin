@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.migration
 
 import com.intellij.codeInspection.CleanupLocalInspectionTool
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.configuration.isLanguageVersionUpdate
@@ -15,11 +16,14 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 
 
 class ProhibitUseSiteTargetAnnotationsOnSuperTypesMigrationInspection :
-    AbstractDiagnosticBasedMigrationInspection<KtAnnotationEntry>(Errors.ANNOTATION_ON_SUPERCLASS, KtAnnotationEntry::class.java),
+    AbstractDiagnosticBasedMigrationInspection<KtAnnotationEntry>(KtAnnotationEntry::class.java),
     MigrationFix,
     CleanupLocalInspectionTool {
     override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
         return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
     }
+
+    override val diagnosticFactory: DiagnosticFactoryWithPsiElement<KtAnnotationEntry, *>
+        get() = Errors.ANNOTATION_ON_SUPERCLASS
 }
 

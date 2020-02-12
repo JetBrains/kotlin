@@ -10,6 +10,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
@@ -23,22 +24,21 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 
 class WarningOnMainUnusedParameterMigrationInspection :
-    AbstractDiagnosticBasedMigrationInspection<KtParameter>(
-        Errors.UNUSED_PARAMETER,
-        KtParameter::class.java,
-        ::createIntentionActionForMainFunction,
-    ),
+    AbstractDiagnosticBasedMigrationInspection<KtParameter>(KtParameter::class.java),
     MigrationFix,
     CleanupLocalInspectionTool {
     override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
         return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
     }
-}
 
-private fun createIntentionActionForMainFunction(diagnostic: Diagnostic): IntentionAction? {
-    val parameter = diagnostic.psiElement as? KtParameter ?: return null
-    val ownerFunction = parameter.ownerFunction as? KtNamedFunction ?: return null
-    val mainFunctionDetector = MainFunctionDetector(parameter.languageVersionSettings) { it.descriptor as? FunctionDescriptor }
-    if (!mainFunctionDetector.isMain(ownerFunction)) return null
-    return RemoveUnusedFunctionParameterFix(parameter, false)
+    override val diagnosticFactory: DiagnosticFactoryWithPsiElement<KtParameter, *>
+        get() = Errors.UNUSED_PARAMETER
+
+    override fun getCustomIntentionFactory(): ((Diagnostic) -> IntentionAction?)? = fun(diagnostic: Diagnostic): IntentionAction? {
+        val parameter = diagnostic.psiElement as? KtParameter ?: return null
+        val ownerFunction = parameter.ownerFunction as? KtNamedFunction ?: return null
+        val mainFunctionDetector = MainFunctionDetector(parameter.languageVersionSettings) { it.descriptor as? FunctionDescriptor }
+        if (!mainFunctionDetector.isMain(ownerFunction)) return null
+        return RemoveUnusedFunctionParameterFix(parameter, false)
+    }
 }

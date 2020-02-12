@@ -23,10 +23,11 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
 
 abstract class AbstractDiagnosticBasedMigrationInspection<T : KtElement>(
-    private val diagnosticFactory: DiagnosticFactoryWithPsiElement<T, *>,
-    private val elementType: Class<T>,
-    private val customIntentionFactory: ((Diagnostic) -> IntentionAction?)? = null,
+    val elementType: Class<T>,
 ) : AbstractKotlinInspection() {
+    abstract val diagnosticFactory: DiagnosticFactoryWithPsiElement<T, *>
+    open fun getCustomIntentionFactory(): ((Diagnostic) -> IntentionAction?)? = null
+
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (file !is KtFile) return null
         val diagnostics by lazy {
@@ -48,8 +49,9 @@ abstract class AbstractDiagnosticBasedMigrationInspection<T : KtElement>(
                         .singleOrNull()
                         ?: error("Must have one diagnostic")
 
+                    val customIntentionFactory = getCustomIntentionFactory()
                     val intentionAction = if (customIntentionFactory != null)
-                        customIntentionFactory.invoke(diagnostic) ?: return
+                        customIntentionFactory(diagnostic) ?: return
                     else
                         actionsFactory.createActions(diagnostic).ifEmpty { return }.singleOrNull() ?: error("Must have one fix")
 
