@@ -9,5 +9,6 @@
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage"/>
 
     <trafficLightRendererContributor implementation="org.jetbrains.kotlin.idea.core.script.ScriptTrafficLightRendererContributor"/>
+    <fileBasedIndex implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesClassRootsIndex"/>
   </extensions>
 </idea-plugin>
