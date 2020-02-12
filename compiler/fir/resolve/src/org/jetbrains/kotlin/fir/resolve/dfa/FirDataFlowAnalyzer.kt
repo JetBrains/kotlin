@@ -619,7 +619,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                         lastNode.flow,
                         argumentVariable,
                         functionCallVariable,
-                        filter = { it.condition.operation == value.toOperation() }
+                        filter = { it.condition.operation == Operation.EqTrue },
+                        transform = {
+                            when (value) {
+                                ConeBooleanConstantReference.TRUE -> it
+                                ConeBooleanConstantReference.FALSE -> it.invertCondition()
+                                else -> throw IllegalStateException()
+                            }
+                        }
                     )
                 }
 

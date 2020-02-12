@@ -1,12 +1,4 @@
 FILE: complexSmartCasts.kt
-    public final fun test_1(s: R|kotlin/String?|): R|kotlin/Unit| {
-        when () {
-            R|<local>/s|.R|kotlin/text/isNullOrEmpty|().R|kotlin/Boolean.not|() ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
-            }
-        }
-
-    }
     public final fun test_2(s: R|kotlin/String?|): R|kotlin/Unit| {
         R|<local>/s|?.R|kotlin/let|<R|kotlin/String|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             R|/takeString|(R|<local>/it|)

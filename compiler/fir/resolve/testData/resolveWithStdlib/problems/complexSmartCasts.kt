@@ -1,10 +1,3 @@
-fun test_1(s: String?) {
-    // contracts related
-    when {
-        !s.isNullOrEmpty() -> s.<!INAPPLICABLE_CANDIDATE!>length<!> // Should be OK
-    }
-}
-
 fun test_2(s: String?) {
     s?.let {
         takeString(it) // Should be OK

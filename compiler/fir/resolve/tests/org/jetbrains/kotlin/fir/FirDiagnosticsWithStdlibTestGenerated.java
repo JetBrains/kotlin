@@ -475,6 +475,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testConditionalEffects() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/contracts/conditionalEffects.kt");
         }
+
+        @TestMetadata("notIsNullOrEmpty.kt")
+        public void testNotIsNullOrEmpty() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/contracts/notIsNullOrEmpty.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/inference")
