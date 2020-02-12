@@ -10,9 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
@@ -47,7 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class InflowSlicer(
     element: KtExpression,
-    processor: Processor<SliceUsage>,
+    processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 

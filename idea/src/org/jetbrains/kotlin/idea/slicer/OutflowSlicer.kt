@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
-import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
-import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.*
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.light.LightMemberReference
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
+import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -25,7 +23,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 class OutflowSlicer(
     element: KtExpression,
-    processor: Processor<SliceUsage>,
+    processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 

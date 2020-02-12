@@ -9,9 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.slicer.JavaSliceUsage
-import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
@@ -23,6 +21,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.psi.*
@@ -33,7 +32,7 @@ import java.util.*
 
 abstract class Slicer(
     protected val element: KtExpression,
-    protected val processor: Processor<SliceUsage>,
+    protected val processor: SliceUsageProcessor,
     protected val parentUsage: KotlinSliceUsage
 ) {
     abstract fun processChildren()
