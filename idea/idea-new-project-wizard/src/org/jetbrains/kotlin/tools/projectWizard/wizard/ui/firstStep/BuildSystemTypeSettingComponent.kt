@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 import com.intellij.icons.AllIcons
 import icons.GradleIcons
 import icons.OpenapiIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
@@ -48,7 +49,7 @@ class BuildSystemTypeSettingComponent(
 @Suppress("DEPRECATION")
 private val BuildSystemType.icon
     get() = when (this) {
-        BuildSystemType.GradleKotlinDsl -> GradleIcons.Gradle
+        BuildSystemType.GradleKotlinDsl -> KotlinIcons.GRADLE_SCRIPT
         BuildSystemType.GradleGroovyDsl -> GradleIcons.Gradle
         BuildSystemType.Maven -> OpenapiIcons.RepositoryLibraryLogo
         BuildSystemType.Jps -> AllIcons.Nodes.Module
