@@ -32,8 +32,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter;
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
+import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
@@ -50,6 +55,7 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
         }
 
         registerPathVariable();
+        initializeDiagnostics();
 
         try {
             // API added in 15.0.2
@@ -86,6 +92,23 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
             eventMulticaster.removeDocumentListener(documentListener);
             indexPatternSearch.unregisterExecutor(kotlinTodoSearcher);
         });
+    }
+
+    /*
+        Concurrent access to Errors may lead to the class loading dead lock because of non-trivial initialization in Errors.
+        As a work-around, all Error classes are initialized beforehand.
+        It doesn't matter what exact diagnostic factories are used here.
+     */
+    private static void initializeDiagnostics() {
+        consumeFactory(Errors.DEPRECATION);
+        consumeFactory(ErrorsJvm.ACCIDENTAL_OVERRIDE);
+        consumeFactory(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE);
+        consumeFactory(ErrorsNative.INCOMPATIBLE_THROWS_INHERITED);
+    }
+
+    private static void consumeFactory(DiagnosticFactory<?> factory) {
+        //noinspection ResultOfMethodCallIgnored
+        factory.getClass();
     }
 
     private static void registerPathVariable() {
