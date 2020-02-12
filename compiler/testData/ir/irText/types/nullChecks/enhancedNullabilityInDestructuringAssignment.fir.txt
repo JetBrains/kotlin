@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
   CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T1 of <root>.Q, y:T2 of <root>.Q) returnType:<root>.Q<T1 of <root>.Q, T2 of <root>.Q> [primary]
       VALUE_PARAMETER name:x index:0 type:T1 of <root>.Q
       VALUE_PARAMETER name:y index:1 type:T2 of <root>.Q

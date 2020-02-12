@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/partialSam.kt
   CLASS INTERFACE name:Fn modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?]
     FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.Fn<T of <root>.Fn, R of <root>.Fn>, s:kotlin.String, i:kotlin.Int, t:T of <root>.Fn) returnType:R of <root>.Fn
       $this: VALUE_PARAMETER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
       VALUE_PARAMETER name:s index:0 type:kotlin.String

@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
   CLASS CLASS name:GB modality:FINAL visibility:public superTypes:[<root>.GA<T of <root>.GB>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.GB<T of <root>.GB, S of <root>.GB>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:<root>.GB<T of <root>.GB, S of <root>.GB> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.GA'

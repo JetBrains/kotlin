@@ -14,8 +14,10 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
           GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+          $this: TYPE_OP type=IrErrorType origin=IMPLICIT_CAST typeOperand=IrErrorType
+            GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      TYPE_OP type=IrErrorType origin=IMPLICIT_CAST typeOperand=IrErrorType
+        GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=kotlin.Int origin=null

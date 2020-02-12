@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/constructor.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
-    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (x:T1 of <root>.Test1, y:T2 of <root>.Test1) returnType:<root>.Test1<T1 of <root>.Test1, T2 of <root>.Test1> [primary]
       VALUE_PARAMETER name:x index:0 type:T1 of <root>.Test1
       VALUE_PARAMETER name:y index:1 type:T2 of <root>.Test1

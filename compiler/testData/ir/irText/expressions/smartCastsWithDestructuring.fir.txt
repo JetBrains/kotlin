@@ -53,7 +53,9 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
           GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I1 origin=null
       VAR name:c1 type:kotlin.Int [val]
         CALL 'public final fun component1 (): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
-          $receiver: GET_VAR 'val tmp_0: <root>.I2 [val] declared in <root>.test' type=<root>.I2 origin=null
+          $receiver: TYPE_OP type=<root>.I1 origin=IMPLICIT_CAST typeOperand=<root>.I1
+            GET_VAR 'val tmp_0: <root>.I2 [val] declared in <root>.test' type=<root>.I2 origin=null
       VAR name:c2 type:kotlin.String [val]
         CALL 'public final fun component2 (): kotlin.String [operator] declared in <root>' type=kotlin.String origin=null
-          $receiver: GET_VAR 'val tmp_0: <root>.I2 [val] declared in <root>.test' type=<root>.I2 origin=null
+          $receiver: TYPE_OP type=<root>.I1 origin=IMPLICIT_CAST typeOperand=<root>.I1
+            GET_VAR 'val tmp_0: <root>.I2 [val] declared in <root>.test' type=<root>.I2 origin=null

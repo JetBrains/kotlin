@@ -130,15 +130,11 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameter>? = null) {
+    private fun IrClass.setThisReceiver() {
         enterScope(descriptor)
-        val typeArguments = typeParameters?.map {
-            IrSimpleTypeImpl(
-                it.symbol.toTypeParameterSymbol(this@Fir2IrDeclarationStorage),
-                false,
-                emptyList(),
-                emptyList())
-        } ?: emptyList()
+        val typeArguments = this.typeParameters.map {
+            IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
+        }
         thisReceiver = declareThisReceiverParameter(
             parent = this,
             thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
@@ -204,7 +200,6 @@ class Fir2IrDeclarationStorage(
                                 parent = getIrExternalPackageFragment(packageFqName)
                             }
                         }
-                        setThisReceiver((klass as? FirRegularClass)?.typeParameters)
                     }
                 }
             }
@@ -216,11 +211,13 @@ class Fir2IrDeclarationStorage(
             val created = create()
             localStorage.putLocalClass(klass, created)
             created.declareSupertypesAndTypeParameters(klass)
+            created.setThisReceiver()
             return created
         }
         // NB: klass can be either FirRegularClass or FirAnonymousObject
         return classCache.getOrPut(klass as FirRegularClass, { create() }) {
             it.declareSupertypesAndTypeParameters(klass)
+            it.setThisReceiver()
         }
     }
 
