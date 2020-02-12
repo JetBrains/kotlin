@@ -141,7 +141,14 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    protected abstract fun configureMain(compilation: KotlinJsIrCompilation)
+    private fun configureMain(compilation: KotlinJsIrCompilation) {
+        configureRun(compilation)
+        configureBuild(compilation)
+    }
+
+    protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
+
+    protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
     companion object {
         const val RUN_TASK_NAME = "run"

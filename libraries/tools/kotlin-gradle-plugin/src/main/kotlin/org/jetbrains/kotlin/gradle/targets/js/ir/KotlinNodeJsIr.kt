@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -26,17 +27,20 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         it.useMocha { }
     }
 
-    override fun configureMain(compilation: KotlinJsIrCompilation) {
-        configureRun(compilation)
-    }
-
-    private fun configureRun(
+    override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
             inputFileProperty.set(compilation.developmentLinkTask.map { it.outputFileProperty.get() })
         }
         target.runTask.dependsOn(runTaskHolder)
+    }
+
+    override fun configureBuild(
+        compilation: KotlinJsIrCompilation
+    ) {
+        val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        assembleTask.dependsOn(compilation.productionLinkTask)
     }
 
     override fun configureBuildVariants() {

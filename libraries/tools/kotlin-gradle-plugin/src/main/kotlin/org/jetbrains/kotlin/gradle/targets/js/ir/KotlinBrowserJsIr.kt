@@ -60,12 +60,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         project.logger.warn("dceTask configuration is useless with IR compiler. Use @JsExport on declarations instead.")
     }
 
-    override fun configureMain(compilation: KotlinJsIrCompilation) {
-        configureRun(compilation)
-        configureBuild(compilation)
-    }
-
-    private fun configureRun(
+    override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
 
@@ -122,7 +117,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
     }
 
-    private fun configureBuild(
+    override fun configureBuild(
         compilation: KotlinJsIrCompilation
     ) {
         val project = compilation.target.project
