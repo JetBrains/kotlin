@@ -22,6 +22,8 @@ interface CompilerMessageSourceLocation : Serializable {
     val path: String
     val line: Int
     val column: Int
+    val lineEnd: Int get() = -1
+    val columnEnd: Int get() = -1
     val lineContent: String?
 }
 
@@ -46,3 +48,31 @@ data class CompilerMessageLocation private constructor(
         private val serialVersionUID: Long = 8228357578L
     }
 }
+
+data class CompilerMessageLocationWithRange private constructor(
+    override val path: String,
+    override val line: Int,
+    override val column: Int,
+    override val lineEnd: Int,
+    override val columnEnd: Int,
+    override val lineContent: String?
+) : CompilerMessageSourceLocation {
+    override fun toString(): String =
+        path + (if (line != -1 || column != -1) " ($line:$column)" else "")
+
+    companion object {
+        @JvmStatic
+        fun create(
+            path: String?,
+            lineStart: Int,
+            columnStart: Int,
+            lineEnd: Int?,
+            columnEnd: Int?,
+            lineContent: String?
+        ): CompilerMessageLocationWithRange? =
+            if (path == null) null else CompilerMessageLocationWithRange(path, lineStart, columnStart, lineEnd ?: -1, columnEnd ?: -1, lineContent)
+
+        private val serialVersionUID: Long = 8228357578L
+    }
+}
+
