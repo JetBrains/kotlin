@@ -31,7 +31,7 @@ interface SingleCoexistenceTargetConfigurator : TargetConfigurator {
         other.none { it == this }
 }
 
-interface SimpleTargetConfigurator : TargetConfigurator, SingleCoexistenceTargetConfigurator {
+interface SimpleTargetConfigurator : TargetConfigurator {
     val moduleSubType: ModuleSubType
     override val moduleType get() = moduleSubType.moduleType
     override val id get() = "${moduleSubType.name}Target"
@@ -102,8 +102,7 @@ object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetCon
 
 object JvmTargetConfigurator : JvmModuleConfigurator(),
     TargetConfigurator,
-    SimpleTargetConfigurator,
-    SingleCoexistenceTargetConfigurator {
+    SimpleTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
 
     override val text: String
