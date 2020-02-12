@@ -644,14 +644,27 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
                                       final int offset,
                                       final boolean includeFixRange,
                                       @NotNull HighlightSeverity minSeverity) {
-    return findHighlightsByOffset(document, offset, includeFixRange, true,minSeverity);
+    return findHighlightsByOffset(document, offset, includeFixRange, true, minSeverity);
   }
 
+  /**
+   * Collects HighlightInfos intersecting with a certain offset.
+   * If there's several infos they're combined into HighlightInfoComposite and returned as a single object.
+   * Several options are available to adjust the collecting strategy
+   *
+   * @param document document in which the collecting is performed
+   * @param offset offset which infos should intersect with to be collected
+   * @param includeFixRange states whether the rage of a fix associated with an info should be taken into account during the range checking
+   * @param highestPriorityOnly states whether to include all infos or only the ones with the highest HighlightSeverity
+   * @param minSeverity the minimum HighlightSeverity starting from which infos are considered for collection
+   * @return
+   */
+  @Nullable
   public HighlightInfo findHighlightsByOffset(@NotNull Document document,
-                                      final int offset,
-                                      final boolean includeFixRange,
-                                      final boolean highestPriorityOnly,
-                                      @NotNull HighlightSeverity minSeverity) {
+                                              final int offset,
+                                              final boolean includeFixRange,
+                                              final boolean highestPriorityOnly,
+                                              @NotNull HighlightSeverity minSeverity) {
     final List<HighlightInfo> foundInfoList = new SmartList<>();
     processHighlightsNearOffset(document, myProject, minSeverity, offset, includeFixRange,
         info -> {
