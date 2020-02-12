@@ -75,7 +75,9 @@ public final class UncompressedZipFileSystem extends FileSystem {
   }
 
   public void sync() throws IOException {
+    // reopen channel
     reopenZipChannel();
+    // open
     buildTree();
   }
 
@@ -222,6 +224,7 @@ public final class UncompressedZipFileSystem extends FileSystem {
     Lock lock = myOpenFilePoolLock.writeLock();
     lock.lock();
     try {
+      if (!Files.exists(myUncompressedZipPath)) return;
       FileChannel previousZipChannel = myCurrentZipChannel;
       myCurrentZipChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
       if (previousZipChannel != null && ContainerUtil.isEmpty(myOpenFilePool.get(previousZipChannel))) {
