@@ -23,7 +23,8 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object ArrayGet : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        val receiver = expression.dispatchReceiver!!.accept(codegen, data).materialized
+        val dispatchReceiver = expression.dispatchReceiver!!
+        val receiver = dispatchReceiver.accept(codegen, data).coerce(dispatchReceiver.type).materialized
         val elementType = AsmUtil.correctElementType(receiver.type)
         expression.getValueArgument(0)!!.accept(codegen, data)
             .coerce(Type.INT_TYPE, codegen.context.irBuiltIns.intType)
