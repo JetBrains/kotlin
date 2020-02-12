@@ -5,7 +5,6 @@
 
 package org.jetbrains.uast.test.kotlin
 
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightProjectDescriptor
@@ -20,11 +19,6 @@ abstract class AbstractKotlinUastLightCodeInsightFixtureTest : KotlinLightCodeIn
 
     override fun getProjectDescriptor(): LightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
-
-    override fun setUp() {
-        super.setUp()
-        Registry.get("kotlin.uast.multiresolve.enabled").setValue(true, testRootDisposable)
-    }
 
     fun getVirtualFile(testName: String): VirtualFile {
         val testFile = TEST_KOTLIN_MODEL_DIR.listFiles { pathname -> pathname.nameWithoutExtension == testName }.first()

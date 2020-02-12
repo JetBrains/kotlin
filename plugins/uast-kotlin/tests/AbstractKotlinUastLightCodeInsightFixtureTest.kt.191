@@ -21,11 +21,6 @@ abstract class AbstractKotlinUastLightCodeInsightFixtureTest : KotlinLightCodeIn
     override fun getProjectDescriptor(): LightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
-    override fun setUp() {
-        super.setUp()
-        Registry.get("kotlin.uast.multiresolve.enabled").setValue(true, testRootDisposable)
-    }
-
     fun getVirtualFile(testName: String): VirtualFile {
         val testFile = TEST_KOTLIN_MODEL_DIR.listFiles { pathname -> pathname.nameWithoutExtension == testName }.first()
         val vfs = VirtualFileManager.getInstance().getFileSystem(URLUtil.FILE_PROTOCOL)
