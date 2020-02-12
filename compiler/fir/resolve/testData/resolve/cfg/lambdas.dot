@@ -23,7 +23,7 @@ digraph lambdas_kt {
                 color=blue
                 5 [label="Enter when branch condition "];
                 6 [label="Access variable R|<local>/x|"];
-                7 [label="Type operator: x is Int"];
+                7 [label="Type operator: (R|<local>/x| is R|kotlin/Int|)"];
                 8 [label="Exit when branch condition"];
             }
             9 [label="Synthetic else branch"];
@@ -84,7 +84,7 @@ digraph lambdas_kt {
                 color=blue
                 25 [label="Enter when branch condition "];
                 26 [label="Access variable R|<local>/x|"];
-                27 [label="Type operator: x is Int"];
+                27 [label="Type operator: (R|<local>/x| is R|kotlin/Int|)"];
                 28 [label="Exit when branch condition"];
             }
             29 [label="Synthetic else branch"];

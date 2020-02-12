@@ -13,7 +13,7 @@ digraph simpleIf_kt {
                 color=blue
                 2 [label="Enter when branch condition "];
                 3 [label="Access variable R|<local>/x|"];
-                4 [label="Type operator: x is String"];
+                4 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 5 [label="Exit when branch condition"];
             }
             6 [label="Synthetic else branch"];
@@ -54,7 +54,7 @@ digraph simpleIf_kt {
         color=red
         17 [label="Enter function test_2" style="filled" fillcolor=red];
         18 [label="Access variable R|<local>/x|"];
-        19 [label="Type operator: x is String"];
+        19 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
         20 [label="Variable declaration: lval b: R|kotlin/Boolean|"];
         subgraph cluster_5 {
             color=blue
@@ -111,14 +111,14 @@ digraph simpleIf_kt {
                 color=blue
                 38 [label="Enter when branch condition "];
                 39 [label="Access variable R|<local>/x|"];
-                40 [label="Type operator: x !is String"];
+                40 [label="Type operator: (R|<local>/x| !is R|kotlin/String|)"];
                 41 [label="Exit when branch condition"];
             }
             subgraph cluster_11 {
                 color=blue
                 42 [label="Enter when branch condition "];
                 43 [label="Access variable R|<local>/x|"];
-                44 [label="Type operator: x !is Int"];
+                44 [label="Type operator: (R|<local>/x| !is R|kotlin/Int|)"];
                 45 [label="Exit when branch condition"];
             }
             subgraph cluster_12 {

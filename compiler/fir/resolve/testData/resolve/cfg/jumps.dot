@@ -165,7 +165,7 @@ digraph jumps_kt {
                     color=blue
                     58 [label="Enter block"];
                     59 [label="Access variable R|<local>/x|"];
-                    60 [label="Type operator: x as Int"];
+                    60 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
                     61 [label="Jump: break@@@[Boolean(true)] "];
                     62 [label="Stub" style="filled" fillcolor=gray];
                     63 [label="Exit block" style="filled" fillcolor=gray];
@@ -211,7 +211,7 @@ digraph jumps_kt {
                     color=blue
                     72 [label="Enter block"];
                     73 [label="Access variable R|<local>/x|"];
-                    74 [label="Type operator: x as Int"];
+                    74 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
                     75 [label="Jump: break@@@[Boolean(true)] "];
                     76 [label="Stub" style="filled" fillcolor=gray];
                     77 [label="Exit block" style="filled" fillcolor=gray];

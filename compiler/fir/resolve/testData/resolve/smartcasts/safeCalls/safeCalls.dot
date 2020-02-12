@@ -82,7 +82,7 @@ digraph safeCalls_kt {
         color=red
         25 [label="Enter function test_2" style="filled" fillcolor=red];
         26 [label="Access variable R|<local>/x|"];
-        27 [label="Type operator: x as? A"];
+        27 [label="Type operator: (R|<local>/x| as? R|A|)"];
         28 [label="Enter safe call"];
         29 [label="Access variable R|<local>/x|"];
         30 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)"];
@@ -102,7 +102,7 @@ digraph safeCalls_kt {
         color=red
         33 [label="Enter function test_3" style="filled" fillcolor=red];
         34 [label="Access variable R|<local>/x|"];
-        35 [label="Type operator: x as? A"];
+        35 [label="Type operator: (R|<local>/x| as? R|A|)"];
         36 [label="Enter safe call"];
         37 [label="Access variable R|<local>/x|"];
         38 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)"];

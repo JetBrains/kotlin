@@ -22,7 +22,7 @@ digraph loops_kt {
                     color=blue
                     6 [label="Enter block"];
                     7 [label="Access variable R|<local>/x|"];
-                    8 [label="Type operator: x is String"];
+                    8 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                     9 [label="Variable declaration: lval y: R|kotlin/Boolean|"];
                     10 [label="Exit block"];
                 }
@@ -31,7 +31,7 @@ digraph loops_kt {
             12 [label="Exit whileloop"];
         }
         13 [label="Access variable R|<local>/x|"];
-        14 [label="Type operator: x is String"];
+        14 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
         15 [label="Exit function testWhile" style="filled" fillcolor=red];
     }
 
@@ -64,7 +64,7 @@ digraph loops_kt {
                     color=blue
                     19 [label="Enter block"];
                     20 [label="Access variable R|<local>/x|"];
-                    21 [label="Type operator: x is String"];
+                    21 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                     22 [label="Variable declaration: lval y: R|kotlin/Boolean|"];
                     23 [label="Exit block"];
                 }
@@ -79,7 +79,7 @@ digraph loops_kt {
             28 [label="Exit do-whileloop"];
         }
         29 [label="Access variable R|<local>/x|"];
-        30 [label="Type operator: x is String"];
+        30 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
         31 [label="Exit function testDoWhile" style="filled" fillcolor=red];
     }
 
@@ -129,7 +129,7 @@ digraph loops_kt {
                     48 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()"];
                     49 [label="Variable declaration: lval i: R|kotlin/Int|"];
                     50 [label="Access variable R|<local>/x|"];
-                    51 [label="Type operator: x is String"];
+                    51 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                     52 [label="Variable declaration: lval y: R|kotlin/Boolean|"];
                     53 [label="Exit block"];
                 }
@@ -138,7 +138,7 @@ digraph loops_kt {
             55 [label="Exit whileloop"];
         }
         56 [label="Access variable R|<local>/x|"];
-        57 [label="Type operator: x is String"];
+        57 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
         58 [label="Exit function testFor" style="filled" fillcolor=red];
     }
 

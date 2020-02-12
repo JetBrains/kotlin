@@ -7,13 +7,13 @@ digraph conditionalEffects_kt {
         color=red
         0 [label="Enter function test_1" style="filled" fillcolor=red];
         1 [label="Access variable R|<local>/x|"];
-        2 [label="Type operator: x is Int"];
+        2 [label="Type operator: (R|<local>/x| is R|kotlin/Int|)"];
         3 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/Int|))"];
         subgraph cluster_1 {
             color=blue
             4 [label="Enter contract"];
             5 [label="Access variable R|<local>/x|"];
-            6 [label="Type operator: x is Int"];
+            6 [label="Type operator: (R|<local>/x| is R|kotlin/Int|)"];
             7 [label="Exit contract"];
         }
         8 [label="Access variable R|<local>/x|"];
@@ -101,7 +101,7 @@ digraph conditionalEffects_kt {
             color=blue
             36 [label="Enter &&"];
             37 [label="Access variable R|<local>/x|"];
-            38 [label="Type operator: x is String"];
+            38 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
             39 [label="Exit left part of &&"];
             40 [label="Enter right part of &&"];
             41 [label="Access variable R|<local>/y|"];
@@ -117,7 +117,7 @@ digraph conditionalEffects_kt {
                 color=blue
                 47 [label="Enter &&"];
                 48 [label="Access variable R|<local>/x|"];
-                49 [label="Type operator: x is String"];
+                49 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 50 [label="Exit left part of &&"];
                 51 [label="Enter right part of &&"];
                 52 [label="Access variable R|<local>/y|"];
@@ -192,13 +192,13 @@ digraph conditionalEffects_kt {
                 color=blue
                 76 [label="Enter block"];
                 77 [label="Access variable R|<local>/x|"];
-                78 [label="Type operator: x is String"];
+                78 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 79 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|))"];
                 subgraph cluster_16 {
                     color=blue
                     80 [label="Enter contract"];
                     81 [label="Access variable R|<local>/x|"];
-                    82 [label="Type operator: x is String"];
+                    82 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                     83 [label="Exit contract"];
                 }
                 84 [label="Access variable R|<local>/x|"];
@@ -265,13 +265,13 @@ digraph conditionalEffects_kt {
                 color=blue
                 100 [label="Enter block"];
                 101 [label="Access variable R|<local>/x|"];
-                102 [label="Type operator: x is String"];
+                102 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 103 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|))"];
                 subgraph cluster_22 {
                     color=blue
                     104 [label="Enter contract"];
                     105 [label="Access variable R|<local>/x|"];
-                    106 [label="Type operator: x is String"];
+                    106 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                     107 [label="Exit contract"];
                 }
                 108 [label="Access variable R|<local>/x|"];
@@ -284,13 +284,13 @@ digraph conditionalEffects_kt {
                 color=blue
                 113 [label="Enter block"];
                 114 [label="Access variable R|<local>/x|"];
-                115 [label="Type operator: x is String"];
+                115 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 116 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|))"];
                 subgraph cluster_24 {
                     color=blue
                     117 [label="Enter contract"];
                     118 [label="Access variable R|<local>/x|"];
-                    119 [label="Type operator: x is String"];
+                    119 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                     120 [label="Exit contract"];
                 }
                 121 [label="Access variable R|<local>/x|"];

@@ -39,7 +39,7 @@ digraph inPlaceLambdas_kt {
                 color=blue
                 9 [label="Enter when branch condition "];
                 10 [label="Access variable R|<local>/x|"];
-                11 [label="Type operator: x is A"];
+                11 [label="Type operator: (R|<local>/x| is R|A|)"];
                 12 [label="Exit when branch condition"];
             }
             13 [label="Synthetic else branch"];
@@ -98,7 +98,7 @@ digraph inPlaceLambdas_kt {
             color=blue
             29 [label="Enter function anonymousFunction"];
             30 [label="Access variable R|<local>/x|"];
-            31 [label="Type operator: x as B"];
+            31 [label="Type operator: (R|<local>/x| as R|B|)"];
             32 [label="Exit function anonymousFunction"];
         }
         33 [label="Postponed exit from lambda"];
@@ -134,7 +134,7 @@ digraph inPlaceLambdas_kt {
                 color=blue
                 40 [label="Enter when branch condition "];
                 41 [label="Access variable R|<local>/x|"];
-                42 [label="Type operator: x is A"];
+                42 [label="Type operator: (R|<local>/x| is R|A|)"];
                 43 [label="Exit when branch condition"];
             }
             44 [label="Synthetic else branch"];
@@ -149,7 +149,7 @@ digraph inPlaceLambdas_kt {
                     49 [label="Access variable R|<local>/x|"];
                     50 [label="Function call: R|<local>/x|.R|/A.foo|()"];
                     51 [label="Access variable R|<local>/x|"];
-                    52 [label="Type operator: x as B"];
+                    52 [label="Type operator: (R|<local>/x| as R|B|)"];
                     53 [label="Exit function anonymousFunction"];
                 }
                 54 [label="Postponed exit from lambda"];

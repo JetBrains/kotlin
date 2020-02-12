@@ -26,7 +26,7 @@ digraph thisOfExtensionProperty_kt {
             color=blue
             5 [label="Enter &&"];
             6 [label="Access variable this@R|/check_1|"];
-            7 [label="Type operator: this is B"];
+            7 [label="Type operator: (this@R|/check_1| is R|B|)"];
             8 [label="Exit left part of &&"];
             9 [label="Enter right part of &&"];
             10 [label="Access variable R|/B.b|"];
@@ -64,7 +64,7 @@ digraph thisOfExtensionProperty_kt {
             color=blue
             18 [label="Enter &&"];
             19 [label="Access variable this@R|/check_2|"];
-            20 [label="Type operator: this is B"];
+            20 [label="Type operator: (this@R|/check_2| is R|B|)"];
             21 [label="Exit left part of &&"];
             22 [label="Enter right part of &&"];
             23 [label="Access variable this@R|/check_2|"];

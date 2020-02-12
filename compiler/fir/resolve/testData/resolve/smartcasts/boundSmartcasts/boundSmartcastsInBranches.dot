@@ -227,7 +227,7 @@ digraph boundSmartcastsInBranches_kt {
                 81 [label="Access variable R|<local>/a|"];
                 82 [label="Assignmenet: R|<local>/x|"];
                 83 [label="Access variable R|<local>/a|"];
-                84 [label="Type operator: a as A"];
+                84 [label="Type operator: (R|<local>/a| as R|A|)"];
                 85 [label="Exit block"];
             }
             86 [label="Exit when branch result"];
@@ -296,7 +296,7 @@ digraph boundSmartcastsInBranches_kt {
                 color=blue
                 106 [label="Enter block"];
                 107 [label="Access variable R|<local>/a|"];
-                108 [label="Type operator: a as A"];
+                108 [label="Type operator: (R|<local>/a| as R|A|)"];
                 109 [label="Access variable R|<local>/a|"];
                 110 [label="Assignmenet: R|<local>/x|"];
                 111 [label="Exit block"];
@@ -383,7 +383,7 @@ digraph boundSmartcastsInBranches_kt {
             143 [label="Exit when"];
         }
         144 [label="Access variable R|<local>/x|"];
-        145 [label="Type operator: x as A"];
+        145 [label="Type operator: (R|<local>/x| as R|A|)"];
         146 [label="Access variable R|<local>/x|"];
         147 [label="Access variable R|/A.s|"];
         148 [label="Access variable R|<local>/a|"];
@@ -458,7 +458,7 @@ digraph boundSmartcastsInBranches_kt {
             171 [label="Exit when"];
         }
         172 [label="Access variable R|<local>/a|"];
-        173 [label="Type operator: a as A"];
+        173 [label="Type operator: (R|<local>/a| as R|A|)"];
         174 [label="Access variable R|<local>/x|"];
         175 [label="Access variable R|/A.s|"];
         176 [label="Access variable R|<local>/a|"];

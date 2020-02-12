@@ -200,7 +200,7 @@ digraph complex_kt {
                             color=blue
                             66 [label="Enter when branch condition "];
                             67 [label="Access variable R|<local>/element|"];
-                            68 [label="Type operator: element is T"];
+                            68 [label="Type operator: (R|<local>/element| is R|T|)"];
                             69 [label="Exit when branch condition"];
                         }
                         70 [label="Synthetic else branch"];

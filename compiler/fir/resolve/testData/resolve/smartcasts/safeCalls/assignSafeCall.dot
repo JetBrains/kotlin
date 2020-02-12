@@ -169,7 +169,7 @@ digraph assignSafeCall_kt {
             color=blue
             57 [label="Enter when"];
             58 [label="Access variable R|<local>/x|"];
-            59 [label="Type operator: x as? A"];
+            59 [label="Type operator: (R|<local>/x| as? R|A|)"];
             60 [label="Variable declaration: lval <elvis>: R|A?|"];
             subgraph cluster_15 {
                 color=blue
@@ -389,7 +389,7 @@ digraph assignSafeCall_kt {
             color=blue
             136 [label="Enter when"];
             137 [label="Access variable R|<local>/x|"];
-            138 [label="Type operator: x as? B"];
+            138 [label="Type operator: (R|<local>/x| as? R|B|)"];
             139 [label="Variable declaration: lval <elvis>: R|B?|"];
             subgraph cluster_33 {
                 color=blue

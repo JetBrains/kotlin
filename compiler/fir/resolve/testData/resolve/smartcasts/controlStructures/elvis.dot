@@ -140,7 +140,7 @@ digraph elvis_kt {
                 color=blue
                 45 [label="Enter when branch condition "];
                 46 [label="Access variable R|<local>/b|"];
-                47 [label="Type operator: b !is String"];
+                47 [label="Type operator: (R|<local>/b| !is R|kotlin/String|)"];
                 48 [label="Exit when branch condition"];
             }
             49 [label="Synthetic else branch"];
@@ -163,7 +163,7 @@ digraph elvis_kt {
                 color=blue
                 59 [label="Enter when branch condition "];
                 60 [label="Access variable R|<local>/a|"];
-                61 [label="Type operator: a !is String?"];
+                61 [label="Type operator: (R|<local>/a| !is R|kotlin/String?|)"];
                 62 [label="Exit when branch condition"];
             }
             63 [label="Synthetic else branch"];

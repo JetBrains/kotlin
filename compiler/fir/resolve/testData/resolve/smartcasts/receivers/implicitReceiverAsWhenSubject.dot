@@ -13,13 +13,13 @@ digraph implicitReceiverAsWhenSubject_kt {
             subgraph cluster_2 {
                 color=blue
                 3 [label="Enter when branch condition "];
-                4 [label="Type operator: List<*>"];
+                4 [label="Type operator: ($subj$ is R|kotlin/collections/List<*>|)"];
                 5 [label="Exit when branch condition"];
             }
             subgraph cluster_3 {
                 color=blue
                 6 [label="Enter when branch condition "];
-                7 [label="Type operator: String"];
+                7 [label="Type operator: ($subj$ is R|kotlin/String|)"];
                 8 [label="Exit when branch condition"];
             }
             subgraph cluster_4 {
@@ -113,13 +113,13 @@ digraph implicitReceiverAsWhenSubject_kt {
             subgraph cluster_10 {
                 color=blue
                 35 [label="Enter when branch condition "];
-                36 [label="Type operator: List<*>"];
+                36 [label="Type operator: ($subj$ is R|kotlin/collections/List<*>|)"];
                 37 [label="Exit when branch condition"];
             }
             subgraph cluster_11 {
                 color=blue
                 38 [label="Enter when branch condition "];
-                39 [label="Type operator: String"];
+                39 [label="Type operator: ($subj$ is R|kotlin/String|)"];
                 40 [label="Exit when branch condition"];
             }
             subgraph cluster_12 {

@@ -49,7 +49,7 @@ digraph overridenOpenVal_kt {
                 color=blue
                 12 [label="Enter when branch condition "];
                 13 [label="Access variable R|/A.x|"];
-                14 [label="Type operator: x is String"];
+                14 [label="Type operator: (this@R|/B|.R|/A.x| is R|kotlin/String|)"];
                 15 [label="Exit when branch condition"];
             }
             16 [label="Synthetic else branch"];
@@ -93,7 +93,7 @@ digraph overridenOpenVal_kt {
                 27 [label="Enter when branch condition "];
                 28 [label="Access variable R|<local>/b|"];
                 29 [label="Access variable R|/A.x|"];
-                30 [label="Type operator: b.x is String"];
+                30 [label="Type operator: (R|<local>/b|.R|/A.x| is R|kotlin/String|)"];
                 31 [label="Exit when branch condition"];
             }
             32 [label="Synthetic else branch"];

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
@@ -160,7 +159,7 @@ private fun CFGNode<*>.render(): String =
 
                 is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render()}"
                 is OperatorCallNode -> "Operator ${fir.operation.operator}"
-                is TypeOperatorCallNode -> "Type operator: \"${fir.psi?.text?.toString() ?: fir.render()}\""
+                is TypeOperatorCallNode -> "Type operator: \"${fir.render()}\""
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"
                 is CheckNotNullCallNode -> "Check not null: ${fir.render()}"

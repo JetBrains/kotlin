@@ -53,7 +53,7 @@ digraph implicitReceivers_kt {
                 color=blue
                 12 [label="Enter when branch condition "];
                 13 [label="Access variable this@R|/test_1|"];
-                14 [label="Type operator: this is A"];
+                14 [label="Type operator: (this@R|/test_1| is R|A|)"];
                 15 [label="Exit when branch condition"];
             }
             subgraph cluster_8 {
@@ -126,7 +126,7 @@ digraph implicitReceivers_kt {
                 color=blue
                 39 [label="Enter when branch condition "];
                 40 [label="Access variable this@R|/test_2|"];
-                41 [label="Type operator: this !is A"];
+                41 [label="Type operator: (this@R|/test_2| !is R|A|)"];
                 42 [label="Exit when branch condition"];
             }
             subgraph cluster_14 {
@@ -208,7 +208,7 @@ digraph implicitReceivers_kt {
                     color=blue
                     73 [label="Enter function anonymousFunction"];
                     74 [label="Access variable this@R|special/anonymous|"];
-                    75 [label="Type operator: this@wb as A"];
+                    75 [label="Type operator: (this@R|special/anonymous| as R|A|)"];
                     76 [label="Access variable this@R|special/anonymous|"];
                     77 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
                     78 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
@@ -299,7 +299,7 @@ digraph implicitReceivers_kt {
                 color=blue
                 94 [label="Enter when branch condition "];
                 95 [label="Access variable this@R|/test_4|"];
-                96 [label="Type operator: this !is A"];
+                96 [label="Type operator: (this@R|/test_4| !is R|A|)"];
                 97 [label="Exit when branch condition"];
             }
             subgraph cluster_24 {
@@ -318,7 +318,7 @@ digraph implicitReceivers_kt {
                         color=blue
                         103 [label="Enter when branch condition "];
                         104 [label="Access variable this@R|/test_4|"];
-                        105 [label="Type operator: this !is B"];
+                        105 [label="Type operator: (this@R|/test_4| !is R|B|)"];
                         106 [label="Exit when branch condition"];
                     }
                     subgraph cluster_28 {
@@ -449,14 +449,14 @@ digraph implicitReceivers_kt {
                 color=blue
                 152 [label="Enter when branch condition "];
                 153 [label="Access variable this@R|/test_5|"];
-                154 [label="Type operator: this is List<*>"];
+                154 [label="Type operator: (this@R|/test_5| is R|kotlin/collections/List<*>|)"];
                 155 [label="Exit when branch condition"];
             }
             subgraph cluster_35 {
                 color=blue
                 156 [label="Enter when branch condition "];
                 157 [label="Access variable this@R|/test_5|"];
-                158 [label="Type operator: this is String"];
+                158 [label="Type operator: (this@R|/test_5| is R|kotlin/String|)"];
                 159 [label="Exit when branch condition"];
             }
             subgraph cluster_36 {
@@ -542,10 +542,10 @@ digraph implicitReceivers_kt {
         color=red
         181 [label="Enter function test_6" style="filled" fillcolor=red];
         182 [label="Access variable this@R|/test_6|"];
-        183 [label="Type operator: this as List<*>"];
+        183 [label="Type operator: (this@R|/test_6| as R|kotlin/collections/List<*>|)"];
         184 [label="Access variable R|kotlin/collections/List.size|"];
         185 [label="Access variable this@R|/test_6|"];
-        186 [label="Type operator: this as String"];
+        186 [label="Type operator: (this@R|/test_6| as R|kotlin/String|)"];
         187 [label="Access variable R|kotlin/String.length|"];
         188 [label="Exit function test_6" style="filled" fillcolor=red];
     }

@@ -30,7 +30,7 @@ digraph endlessLoops_kt {
                     color=blue
                     8 [label="Enter block"];
                     9 [label="Access variable R|<local>/x|"];
-                    10 [label="Type operator: x as A"];
+                    10 [label="Type operator: (R|<local>/x| as R|A|)"];
                     subgraph cluster_6 {
                         color=blue
                         11 [label="Enter when"];
@@ -125,7 +125,7 @@ digraph endlessLoops_kt {
                             color=blue
                             42 [label="Enter block"];
                             43 [label="Access variable R|<local>/x|"];
-                            44 [label="Type operator: x as A"];
+                            44 [label="Type operator: (R|<local>/x| as R|A|)"];
                             45 [label="Jump: break@@@[Boolean(true)] "];
                             46 [label="Stub" style="filled" fillcolor=gray];
                             47 [label="Exit block" style="filled" fillcolor=gray];
@@ -192,7 +192,7 @@ digraph endlessLoops_kt {
                     color=blue
                     62 [label="Enter block"];
                     63 [label="Access variable R|<local>/x|"];
-                    64 [label="Type operator: x as A"];
+                    64 [label="Type operator: (R|<local>/x| as R|A|)"];
                     subgraph cluster_22 {
                         color=blue
                         65 [label="Enter when"];
@@ -321,7 +321,7 @@ digraph endlessLoops_kt {
                             color=blue
                             108 [label="Enter block"];
                             109 [label="Access variable R|<local>/x|"];
-                            110 [label="Type operator: x as A"];
+                            110 [label="Type operator: (R|<local>/x| as R|A|)"];
                             111 [label="Jump: break@@@[Boolean(true)] "];
                             112 [label="Stub" style="filled" fillcolor=gray];
                             113 [label="Exit block" style="filled" fillcolor=gray];
@@ -401,7 +401,7 @@ digraph endlessLoops_kt {
                             color=blue
                             134 [label="Enter block"];
                             135 [label="Access variable R|<local>/x|"];
-                            136 [label="Type operator: x as A"];
+                            136 [label="Type operator: (R|<local>/x| as R|A|)"];
                             137 [label="Jump: break@@@[Boolean(true)] "];
                             138 [label="Stub" style="filled" fillcolor=gray];
                             139 [label="Exit block" style="filled" fillcolor=gray];
@@ -468,7 +468,7 @@ digraph endlessLoops_kt {
                     color=blue
                     154 [label="Enter block"];
                     155 [label="Access variable R|<local>/x|"];
-                    156 [label="Type operator: x as A"];
+                    156 [label="Type operator: (R|<local>/x| as R|A|)"];
                     subgraph cluster_48 {
                         color=blue
                         157 [label="Enter when"];
@@ -549,7 +549,7 @@ digraph endlessLoops_kt {
                     color=blue
                     181 [label="Enter block"];
                     182 [label="Access variable R|<local>/x|"];
-                    183 [label="Type operator: x as A"];
+                    183 [label="Type operator: (R|<local>/x| as R|A|)"];
                     184 [label="Exit block"];
                 }
                 185 [label="Exit loop block"];

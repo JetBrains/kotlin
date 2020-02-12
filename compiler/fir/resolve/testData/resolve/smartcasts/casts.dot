@@ -7,7 +7,7 @@ digraph casts_kt {
         color=red
         0 [label="Enter function test_1" style="filled" fillcolor=red];
         1 [label="Access variable R|<local>/x|"];
-        2 [label="Type operator: x as String"];
+        2 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
         3 [label="Access variable R|<local>/x|"];
         4 [label="Access variable R|kotlin/String.length|"];
         5 [label="Exit function test_1" style="filled" fillcolor=red];
@@ -29,7 +29,7 @@ digraph casts_kt {
                 color=blue
                 8 [label="Enter when branch condition "];
                 9 [label="Access variable R|<local>/x|"];
-                10 [label="Type operator: x as Boolean"];
+                10 [label="Type operator: (R|<local>/x| as R|kotlin/Boolean|)"];
                 11 [label="Exit when branch condition"];
             }
             12 [label="Synthetic else branch"];
@@ -82,7 +82,7 @@ digraph casts_kt {
                     28 [label="Exit left part of &&"];
                     29 [label="Enter right part of &&"];
                     30 [label="Access variable R|<local>/x|"];
-                    31 [label="Type operator: x as Boolean"];
+                    31 [label="Type operator: (R|<local>/x| as R|kotlin/Boolean|)"];
                     32 [label="Exit &&"];
                 }
                 33 [label="Exit when branch condition"];
@@ -114,7 +114,7 @@ digraph casts_kt {
                     48 [label="Exit left part of &&"];
                     49 [label="Enter right part of &&"];
                     50 [label="Access variable R|<local>/x|"];
-                    51 [label="Type operator: x as Boolean"];
+                    51 [label="Type operator: (R|<local>/x| as R|kotlin/Boolean|)"];
                     52 [label="Const: Boolean(true)"];
                     53 [label="Operator =="];
                     54 [label="Exit &&"];
@@ -148,7 +148,7 @@ digraph casts_kt {
                     70 [label="Exit left part of ||"];
                     71 [label="Enter right part of ||"];
                     72 [label="Access variable R|<local>/x|"];
-                    73 [label="Type operator: x as Boolean"];
+                    73 [label="Type operator: (R|<local>/x| as R|kotlin/Boolean|)"];
                     74 [label="Exit ||"];
                 }
                 75 [label="Exit when branch condition"];
@@ -244,7 +244,7 @@ digraph casts_kt {
                 color=blue
                 89 [label="Enter when branch condition "];
                 90 [label="Access variable R|<local>/b|"];
-                91 [label="Type operator: b as? Boolean"];
+                91 [label="Type operator: (R|<local>/b| as? R|kotlin/Boolean|)"];
                 92 [label="Const: Null(null)"];
                 93 [label="Operator !="];
                 94 [label="Exit when branch condition"];
@@ -283,7 +283,7 @@ digraph casts_kt {
                 color=blue
                 113 [label="Enter when branch condition "];
                 114 [label="Access variable R|<local>/b|"];
-                115 [label="Type operator: b as? Boolean"];
+                115 [label="Type operator: (R|<local>/b| as? R|kotlin/Boolean|)"];
                 116 [label="Const: Null(null)"];
                 117 [label="Operator =="];
                 118 [label="Exit when branch condition"];

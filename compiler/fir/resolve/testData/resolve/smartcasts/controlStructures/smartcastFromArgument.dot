@@ -39,7 +39,7 @@ digraph smartcastFromArgument_kt {
                     color=blue
                     10 [label="Enter when"];
                     11 [label="Access variable R|<local>/a|"];
-                    12 [label="Type operator: a as? A"];
+                    12 [label="Type operator: (R|<local>/a| as? R|A|)"];
                     13 [label="Variable declaration: lval <elvis>: R|A?|"];
                     subgraph cluster_6 {
                         color=blue

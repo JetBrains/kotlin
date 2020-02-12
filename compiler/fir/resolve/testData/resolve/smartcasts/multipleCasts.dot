@@ -42,11 +42,11 @@ digraph multipleCasts_kt {
         12 [label="Function call: R|/getAny|()"];
         13 [label="Variable declaration: lval b: R|kotlin/Any?|"];
         14 [label="Access variable R|<local>/a|"];
-        15 [label="Type operator: a as A"];
+        15 [label="Type operator: (R|<local>/a| as R|A|)"];
         16 [label="Access variable R|<local>/a|"];
         17 [label="Function call: R|<local>/a|.R|/A.foo|()"];
         18 [label="Access variable R|<local>/b|"];
-        19 [label="Type operator: b as B"];
+        19 [label="Type operator: (R|<local>/b| as R|B|)"];
         20 [label="Access variable R|<local>/b|"];
         21 [label="Function call: R|<local>/b|.R|/B.foo|()"];
         22 [label="Exit function test_0" style="filled" fillcolor=red];
@@ -83,11 +83,11 @@ digraph multipleCasts_kt {
                     color=blue
                     30 [label="Enter &&"];
                     31 [label="Access variable R|<local>/a|"];
-                    32 [label="Type operator: a is A"];
+                    32 [label="Type operator: (R|<local>/a| is R|A|)"];
                     33 [label="Exit left part of &&"];
                     34 [label="Enter right part of &&"];
                     35 [label="Access variable R|<local>/b|"];
-                    36 [label="Type operator: b is B"];
+                    36 [label="Type operator: (R|<local>/b| is R|B|)"];
                     37 [label="Exit &&"];
                 }
                 38 [label="Exit when branch condition"];

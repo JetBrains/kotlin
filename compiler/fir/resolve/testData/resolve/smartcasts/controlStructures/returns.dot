@@ -13,7 +13,7 @@ digraph returns_kt {
                 color=blue
                 2 [label="Enter when branch condition "];
                 3 [label="Access variable R|<local>/x|"];
-                4 [label="Type operator: x is String"];
+                4 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 5 [label="Exit when branch condition"];
             }
             subgraph cluster_3 {
@@ -76,7 +76,7 @@ digraph returns_kt {
                 color=blue
                 24 [label="Enter when branch condition "];
                 25 [label="Access variable R|<local>/x|"];
-                26 [label="Type operator: x is String"];
+                26 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
                 27 [label="Exit when branch condition"];
             }
             subgraph cluster_9 {
@@ -168,14 +168,14 @@ digraph returns_kt {
                 color=blue
                 54 [label="Enter when branch condition "];
                 55 [label="Access variable R|<local>/x|"];
-                56 [label="Type operator: x is B"];
+                56 [label="Type operator: (R|<local>/x| is R|B|)"];
                 57 [label="Exit when branch condition"];
             }
             subgraph cluster_18 {
                 color=blue
                 58 [label="Enter when branch condition "];
                 59 [label="Access variable R|<local>/x|"];
-                60 [label="Type operator: x is C"];
+                60 [label="Type operator: (R|<local>/x| is R|C|)"];
                 61 [label="Exit when branch condition"];
             }
             subgraph cluster_19 {
@@ -270,14 +270,14 @@ digraph returns_kt {
                 color=blue
                 92 [label="Enter when branch condition "];
                 93 [label="Access variable R|<local>/x|"];
-                94 [label="Type operator: x is B"];
+                94 [label="Type operator: (R|<local>/x| is R|B|)"];
                 95 [label="Exit when branch condition"];
             }
             subgraph cluster_26 {
                 color=blue
                 96 [label="Enter when branch condition "];
                 97 [label="Access variable R|<local>/x|"];
-                98 [label="Type operator: x is C"];
+                98 [label="Type operator: (R|<local>/x| is R|C|)"];
                 99 [label="Exit when branch condition"];
             }
             100 [label="Synthetic else branch"];
@@ -383,7 +383,7 @@ digraph returns_kt {
         color=red
         133 [label="Enter function test_4" style="filled" fillcolor=red];
         134 [label="Access variable R|<local>/a|"];
-        135 [label="Type operator: a as? String"];
+        135 [label="Type operator: (R|<local>/a| as? R|kotlin/String|)"];
         136 [label="Variable declaration: lval s: R|kotlin/String?|"];
         subgraph cluster_33 {
             color=blue

@@ -31,7 +31,7 @@ digraph boundSmartcasts_kt {
                 color=blue
                 8 [label="Enter when branch condition "];
                 9 [label="Access variable R|<local>/x|"];
-                10 [label="Type operator: x is A"];
+                10 [label="Type operator: (R|<local>/x| is R|A|)"];
                 11 [label="Exit when branch condition"];
             }
             12 [label="Synthetic else branch"];
@@ -82,7 +82,7 @@ digraph boundSmartcasts_kt {
                 color=blue
                 27 [label="Enter when branch condition "];
                 28 [label="Access variable R|<local>/y|"];
-                29 [label="Type operator: y is A"];
+                29 [label="Type operator: (R|<local>/y| is R|A|)"];
                 30 [label="Exit when branch condition"];
             }
             31 [label="Synthetic else branch"];
@@ -133,7 +133,7 @@ digraph boundSmartcasts_kt {
                 color=blue
                 46 [label="Enter when branch condition "];
                 47 [label="Access variable R|<local>/x|"];
-                48 [label="Type operator: x is A"];
+                48 [label="Type operator: (R|<local>/x| is R|A|)"];
                 49 [label="Exit when branch condition"];
             }
             50 [label="Synthetic else branch"];
@@ -157,7 +157,7 @@ digraph boundSmartcasts_kt {
                 color=blue
                 61 [label="Enter when branch condition "];
                 62 [label="Access variable R|<local>/y|"];
-                63 [label="Type operator: y is B"];
+                63 [label="Type operator: (R|<local>/y| is R|B|)"];
                 64 [label="Exit when branch condition"];
             }
             65 [label="Synthetic else branch"];
@@ -217,7 +217,7 @@ digraph boundSmartcasts_kt {
         77 [label="Const: Int(1)"];
         78 [label="Variable declaration: lvar x: R|kotlin/Any|"];
         79 [label="Access variable R|<local>/x|"];
-        80 [label="Type operator: x as Int"];
+        80 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
         81 [label="Access variable R|<local>/x|"];
         82 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
         83 [label="Access variable R|<local>/y|"];
@@ -231,7 +231,7 @@ digraph boundSmartcasts_kt {
                 color=blue
                 88 [label="Enter when branch condition "];
                 89 [label="Access variable R|<local>/y|"];
-                90 [label="Type operator: y is A"];
+                90 [label="Type operator: (R|<local>/y| is R|A|)"];
                 91 [label="Exit when branch condition"];
             }
             92 [label="Synthetic else branch"];
@@ -359,7 +359,7 @@ digraph boundSmartcasts_kt {
         139 [label="Access variable R|/D.any|"];
         140 [label="Function call: R|<local>/d|.R|/D.any|.R|/baz|()"];
         141 [label="Access variable R|<local>/a|"];
-        142 [label="Type operator: a as A"];
+        142 [label="Type operator: (R|<local>/a| as R|A|)"];
         143 [label="Access variable R|<local>/a|"];
         144 [label="Function call: R|<local>/a|.R|/A.foo|()"];
         145 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -407,7 +407,7 @@ digraph boundSmartcasts_kt {
         148 [label="Access variable R|/D.any|"];
         149 [label="Variable declaration: lval a: R|kotlin/Any?|"];
         150 [label="Access variable R|<local>/a|"];
-        151 [label="Type operator: a as A"];
+        151 [label="Type operator: (R|<local>/a| as R|A|)"];
         152 [label="Access variable R|<local>/a|"];
         153 [label="Function call: R|<local>/a|.R|/A.foo|()"];
         154 [label="Access variable R|<local>/d1|"];
@@ -448,11 +448,11 @@ digraph boundSmartcasts_kt {
         170 [label="Exit safe call"];
         171 [label="Variable declaration: lval b: R|kotlin/Any?|"];
         172 [label="Access variable R|<local>/a|"];
-        173 [label="Type operator: a as A"];
+        173 [label="Type operator: (R|<local>/a| as R|A|)"];
         174 [label="Access variable R|<local>/a|"];
         175 [label="Function call: R|<local>/a|.R|/A.foo|()"];
         176 [label="Access variable R|<local>/b|"];
-        177 [label="Type operator: b as B"];
+        177 [label="Type operator: (R|<local>/b| as R|B|)"];
         178 [label="Access variable R|<local>/b|"];
         179 [label="Function call: R|<local>/b|.R|/B.bar|()"];
         180 [label="Exit function test_7" style="filled" fillcolor=red];

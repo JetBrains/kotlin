@@ -142,11 +142,11 @@ digraph when_kt {
                     color=blue
                     50 [label="Enter &&"];
                     51 [label="Access variable R|<local>/x|"];
-                    52 [label="Type operator: x is A"];
+                    52 [label="Type operator: (R|<local>/x| is R|A|)"];
                     53 [label="Exit left part of &&"];
                     54 [label="Enter right part of &&"];
                     55 [label="Access variable R|<local>/x|"];
-                    56 [label="Type operator: x is B"];
+                    56 [label="Type operator: (R|<local>/x| is R|B|)"];
                     57 [label="Exit &&"];
                 }
                 58 [label="Exit when branch condition"];
@@ -157,7 +157,7 @@ digraph when_kt {
                 color=blue
                 61 [label="Enter block"];
                 62 [label="Access variable R|<local>/x|"];
-                63 [label="Type operator: x is A"];
+                63 [label="Type operator: (R|<local>/x| is R|A|)"];
                 64 [label="Exit block"];
             }
             65 [label="Exit when branch result"];
