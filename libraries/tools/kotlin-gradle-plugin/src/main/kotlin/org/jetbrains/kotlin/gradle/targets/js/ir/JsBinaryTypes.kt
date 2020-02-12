@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-sealed class JsBinary(
-    internal val name: String
-)
-
-class Executable(
-    name: String
-) : JsBinary(
-    name
-)
+enum class JsBinaryType {
+    EXECUTABLE,
+    TEST
+}
