@@ -7,10 +7,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.impl.IndexStorage;
-import com.intellij.util.indexing.impl.InputData;
-import com.intellij.util.indexing.impl.MapIndexStorage;
-import com.intellij.util.indexing.impl.MapReduceIndex;
+import com.intellij.util.indexing.impl.*;
 import com.intellij.util.indexing.impl.forward.ForwardIndex;
 import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
@@ -124,6 +121,12 @@ public class HashBasedIndexGenerator<K, V> {
       }
 
       @Override
+      public void updateWithMap(@NotNull AbstractUpdateData<K, V> updateData) throws StorageException {
+        super.updateWithMap(updateData);
+        myIndexedFilesNumber.incrementAndGet();
+      }
+
+      @Override
       public void checkCanceled() {
         //ignore
       }
@@ -149,7 +152,6 @@ public class HashBasedIndexGenerator<K, V> {
     if (!myInputFilter.acceptInput(fileContent.getFile())) {
       return;
     }
-    myIndexedFilesNumber.incrementAndGet();
     if (!myIndex.update(hashId, fileContent).compute()) {
       throw new RuntimeException("Index computation returned false for hashId = " + hashId + ", " +
                                  "file = " + fileContent.getFile().getPath() + ", " +
