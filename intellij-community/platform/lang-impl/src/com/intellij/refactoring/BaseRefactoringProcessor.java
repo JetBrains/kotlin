@@ -42,6 +42,7 @@ import com.intellij.refactoring.listeners.RefactoringEventListener;
 import com.intellij.refactoring.listeners.RefactoringListenerManager;
 import com.intellij.refactoring.listeners.impl.RefactoringListenerManagerImpl;
 import com.intellij.refactoring.listeners.impl.RefactoringTransaction;
+import com.intellij.refactoring.suggested.SuggestedRefactoringProvider;
 import com.intellij.refactoring.ui.ConflictsDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.GuiUtils;
@@ -308,6 +309,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
       Collection<UsageInfo> usageInfos = new LinkedHashSet<>(Arrays.asList(usages));
       doRefactoring(usageInfos);
       if (isGlobalUndoAction()) CommandProcessor.getInstance().markCurrentCommandAsGlobal(myProject);
+      SuggestedRefactoringProvider.getInstance(myProject).reset();
     }, getCommandName(), null, getUndoConfirmationPolicy());
   }
 
