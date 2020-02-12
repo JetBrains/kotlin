@@ -189,42 +189,42 @@ fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndire
 
 // TESTCASE NUMBER: 13
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>case_13<!>(x: <!UNRESOLVED_REFERENCE!>otherpackage<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Case13<!>?) =
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>if (<!DEPRECATED_IDENTITY_EQUALS!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> null !is Boolean) !== true<!>) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>if (<!DEPRECATED_IDENTITY_EQUALS!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> null !is Boolean) !== true<!>) {
         throw Exception()
     } else {
         <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case13]?")!>x<!>
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case13]?")!>x<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>equals<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case13]?")!>x<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>equals<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
     }<!>
 
 // TESTCASE NUMBER: 14
 class Case14 {
     val x: <!UNRESOLVED_REFERENCE!>otherpackage<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Case14<!>?
     init {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> = <!UNRESOLVED_REFERENCE!>otherpackage<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Case14<!>()
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> = <!UNRESOLVED_REFERENCE!>otherpackage<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Case14<!>()
     }
 }
 
 fun case_14() {
     val a = Case14()
 
-    if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> <!USELESS_IS_CHECK!>null !is Boolean !is Boolean<!>) {
-        if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null == true) {
+    if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> <!USELESS_IS_CHECK!>null !is Boolean !is Boolean<!>) {
+        if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null == true) {
             if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== null == false) {
-                if (<!SENSELESS_COMPARISON!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null == null<!>) {
-                    if (<!SENSELESS_COMPARISON!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null !== null<!>) {
-                        if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null === true<!>) {
+                if (<!SENSELESS_COMPARISON!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null == null<!>) {
+                    if (<!SENSELESS_COMPARISON!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null !== null<!>) {
+                        if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null === true<!>) {
                             if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== null === <!USELESS_IS_CHECK!>true !is Boolean<!><!> == true) {
-                                if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null !== false<!>) {
-                                    if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null === false<!>) {
+                                if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null !== false<!>) {
+                                    if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null === false<!>) {
                                         if (<!DEPRECATED_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== null === true<!>) {
-                                            if (<!USELESS_IS_CHECK!>(a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null != true) !is Boolean<!>) {
-                                                if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null is Boolean) {
-                                                    if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> <!USELESS_IS_CHECK!>null is Boolean is Boolean<!>) {
+                                            if (<!USELESS_IS_CHECK!>(a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null != true) !is Boolean<!>) {
+                                                if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null is Boolean) {
+                                                    if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> <!USELESS_IS_CHECK!>null is Boolean is Boolean<!>) {
                                                         if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== null is Boolean<!>) {
-                                                            if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>!=<!> null is Boolean) {
+                                                            if (a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>!=<!> null is Boolean) {
                                                                 if ((<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> !== null !is Boolean<!>) == false) {
                                                                     <!DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>
-                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>equals<!>(a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("[ERROR : otherpackage.Case14]?")!>a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!><!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>equals<!>(a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
                                                                 }
                                                             }
                                                         }

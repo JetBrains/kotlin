@@ -17,7 +17,7 @@
 fun case_1(x: Any?) {
     if (x!! is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -32,7 +32,7 @@ fun case_2(x: Any?) {
 fun case_3(x: Any?) {
     if (x as Number? is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 

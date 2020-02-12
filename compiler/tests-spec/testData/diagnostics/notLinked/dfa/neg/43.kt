@@ -72,7 +72,7 @@ fun case_5(x: SealedClass) {
     when (x) {
         is SealedChild1 -> <!DEBUG_INFO_SMARTCAST!>x<!>.number
         is SealedChild2 -> <!DEBUG_INFO_SMARTCAST!>x<!>.e1 + <!DEBUG_INFO_SMARTCAST!>x<!>.e2
-        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> x.<!UNRESOLVED_REFERENCE!>m1<!>
+        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> x.<!UNRESOLVED_REFERENCE!>m1<!>
     }
 }
 
@@ -85,6 +85,6 @@ fun case_6(x: SealedClass?) {
         is SealedChild1 -> <!DEBUG_INFO_SMARTCAST!>x<!>.number
         is SealedChild2 -> <!DEBUG_INFO_SMARTCAST!>x<!>.e1 + <!DEBUG_INFO_SMARTCAST!>x<!>.e2
         null -> {}
-        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> x.<!UNRESOLVED_REFERENCE!>m1<!>
+        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> x.<!UNRESOLVED_REFERENCE!>m1<!>
     }
 }

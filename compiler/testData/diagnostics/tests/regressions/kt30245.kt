@@ -78,8 +78,8 @@ fun test2() { // to extension lambda 1
 //    val w27 = W2 { i, s: String -> i + s.length } // overload oi- ni-
 //    val i27: E1 = id { i, s: String -> i + s.length } // overload oi- ni-
 
-    val w28 = W2 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, <!CANNOT_INFER_PARAMETER_TYPE!>s<!><!> -> i + <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>s<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!> }<!> // oi- ni-
-    val i28: E1 = id <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, <!CANNOT_INFER_PARAMETER_TYPE!>s<!><!> -> i + <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>s<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!> }<!> // oi- ni-
+    val w28 = W2 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, <!CANNOT_INFER_PARAMETER_TYPE!>s<!><!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>s<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>length<!> }<!> // oi- ni-
+    val i28: E1 = id <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, <!CANNOT_INFER_PARAMETER_TYPE!>s<!><!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>s<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>length<!> }<!> // oi- ni-
     val w29 = W2 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!>, s: String<!> -> i + s.length }<!> // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 

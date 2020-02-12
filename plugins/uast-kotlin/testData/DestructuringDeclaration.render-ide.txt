@@ -1,0 +1,10 @@
+public final class DestructuringDeclarationKt {
+    public static final fun foo(@org.jetbrains.annotations.NotNull data: java.lang.Object) : void {
+        @null var var268d41a5: <ErrorType> = "foo" <other> 1
+        @null var a: java.lang.String = var268d41a5.<ERROR FUNCTION>()
+        @null var b: int = var268d41a5.<ERROR FUNCTION>()
+        @null @kotlin.Suppress(names = "UNCHECKED_CAST") var var465978a0: <ErrorType> = data as kotlin.Pair<? extends java.lang.String,? extends java.lang.String>
+        @null var k: java.lang.String = var465978a0.<ERROR FUNCTION>()
+        @null var v: java.lang.String = var465978a0.<ERROR FUNCTION>()
+    }
+}

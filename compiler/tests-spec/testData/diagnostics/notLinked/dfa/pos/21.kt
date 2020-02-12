@@ -27,7 +27,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Any) {
     if (<!DEPRECATED_IDENTITY_EQUALS!>x is Int === true<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -83,7 +83,7 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (<!DEPRECATED_IDENTITY_EQUALS!><!DEPRECATED_IDENTITY_EQUALS!><!DEPRECATED_IDENTITY_EQUALS!>!(x is Int?) !== false<!> !== false<!> !== false<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
 
@@ -95,7 +95,7 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (<!DEPRECATED_IDENTITY_EQUALS!><!DEPRECATED_IDENTITY_EQUALS!>!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>) !== false<!> === true<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>get<!>(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>get<!>(0)
     }
 }
 
