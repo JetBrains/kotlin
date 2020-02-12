@@ -2,4 +2,4 @@
 9 	val y = <bold>b.foo()</bold>
 4 		override fun <bold>foo() = 2</bold>
 4 			override fun foo() = <bold>2</bold>
-13 		return <bold>4</bold>;
+11 		return <bold>4</bold>;

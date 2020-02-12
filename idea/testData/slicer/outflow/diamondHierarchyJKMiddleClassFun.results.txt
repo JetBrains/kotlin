@@ -1,6 +1,6 @@
 4 override fun foo() = <bold>2</bold>
 4 	override fun <bold>foo() = 2</bold>
-4 		public int <bold>foo();</bold>
+2 		public int <bold>foo();</bold>
 8 			val x = a.<bold>foo()</bold>
 8 				val <bold>x = a.foo()</bold>
 9 			val y = b.<bold>foo()</bold>
