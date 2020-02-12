@@ -1,10 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.testIntegration;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -42,11 +43,12 @@ public class GotoTestOrCodeAction extends BaseCodeInsightAction {
     if (TestFinderHelper.findSourceElement(element) == null) return;
 
     presentation.setEnabledAndVisible(true);
+    boolean useShortName = ActionPlaces.MAIN_MENU.equals(e.getPlace()) || ActionPlaces.isPopupPlace(e.getPlace());
     if (TestFinderHelper.isTest(element)) {
-      presentation.setText(ActionsBundle.lazyMessage("action.GotoTestSubject.text"));
+      presentation.setText(useShortName ? ActionsBundle.lazyMessage("action.GotoTestSubject.MainMenu.text") : ActionsBundle.lazyMessage("action.GotoTestSubject.text"));
       presentation.setDescription(ActionsBundle.lazyMessage("action.GotoTestSubject.description"));
     } else {
-      presentation.setText(ActionsBundle.lazyMessage("action.GotoTest.text"));
+      presentation.setText(useShortName ? ActionsBundle.lazyMessage("action.GotoTest.MainMenu.text") : ActionsBundle.lazyMessage("action.GotoTest.text"));
       presentation.setDescription(ActionsBundle.lazyMessage("action.GotoTest.description"));
     }
   }
