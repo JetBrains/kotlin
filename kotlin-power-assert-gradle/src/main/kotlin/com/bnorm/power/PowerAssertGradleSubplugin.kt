@@ -51,8 +51,8 @@ class PowerAssertGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     val extension = project.extensions.findByType(PowerAssertGradleExtension::class.java)
       ?: PowerAssertGradleExtension()
 
-    return listOf(
-      SubpluginOption(key = "enabled", value = extension.enabled.toString())
-    )
+    return extension.functions.map {
+      SubpluginOption(key = "function", value = it)
+    }
   }
 }

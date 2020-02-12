@@ -28,9 +28,10 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
 
   override val pluginOptions: Collection<CliOption> = listOf(
     CliOption(
-      optionName = "enabled",
-      valueDescription = "<true|false>",
-      description = "whether to enable the kotlin-power-assert plugin or not"
+      optionName = "function",
+      valueDescription = "function full-qualified name",
+      description = "fully qualified path of function to intercept",
+      allowMultipleOccurrences = true
     )
   )
 
@@ -40,7 +41,7 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
     configuration: CompilerConfiguration
   ) {
     return when (option.optionName) {
-      "enabled" -> configuration.put(KEY_ENABLED, value.toBoolean())
+      "function" -> configuration.add(KEY_FUNCTIONS, value)
       else -> error("Unexpected config option ${option.optionName}")
     }
   }

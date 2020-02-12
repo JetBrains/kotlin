@@ -19,6 +19,8 @@ package com.bnorm.power
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.name.FqName
 import org.junit.Test
 import java.lang.reflect.InvocationTargetException
 import kotlin.test.assertEquals
@@ -326,14 +328,72 @@ assert(
 """.trimIndent()
     )
   }
+
+  @Test
+  fun assertTrueCustomMessage() {
+    assertMessage(
+      """
+import kotlin.test.assertTrue
+
+fun main() {
+  val text: String? = "Hello"
+  assertTrue(1 == 2, message = "${"$"}text, the world is broken")
+}""",
+      """
+Hello, the world is broken
+assertTrue(1 == 2, message = "${"$"}text, the world is broken")
+             |
+             false
+""".trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.AssertionsKt.assertTrue")))
+    )
+  }
+
+  @Test
+  fun requireCustomMessage() {
+    assertMessage(
+      """
+fun main() {
+  require(1 == 2) { "the world is broken" }
+}""",
+      """
+the world is broken
+require(1 == 2) { "the world is broken" }
+          |
+          false
+""".trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.PreconditionsKt.require")))
+    )
+  }
+
+  @Test
+  fun checkCustomMessage() {
+    assertMessage(
+      """
+fun main() {
+  check(1 == 2) { "the world is broken" }
+}""",
+      """
+the world is broken
+check(1 == 2) { "the world is broken" }
+        |
+        false
+""".trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.PreconditionsKt.check")))
+    )
+  }
 }
 
-fun assertMessage(@Language("kotlin") source: String, message: String) {
+fun assertMessage(
+  @Language("kotlin") source: String,
+  message: String,
+  vararg plugins: ComponentRegistrar = arrayOf(PowerAssertComponentRegistrar(setOf(FqName("kotlin.PreconditionsKt.assert"))))
+) {
   val result = KotlinCompilation().apply {
     sources = listOf(SourceFile.kotlin("main.kt", source))
     useIR = true
     messageOutputStream = System.out
-    compilerPlugins = listOf(PowerAssertComponentRegistrar())
+    compilerPlugins = plugins.toList()
     inheritClassPath = true
   }.compile()
 
@@ -348,7 +408,7 @@ fun assertMessage(@Language("kotlin") source: String, message: String) {
       throw t.cause!!
     }
     fail("should have thrown assertion")
-  } catch (t: AssertionError) {
+  } catch (t: Throwable) {
     assertEquals(message, t.message)
   }
 }

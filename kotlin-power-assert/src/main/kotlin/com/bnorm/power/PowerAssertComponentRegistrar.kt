@@ -22,19 +22,23 @@ import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.name.FqName
 
-val KEY_ENABLED = CompilerConfigurationKey<Boolean>("whether the plugin is enabled")
+val KEY_FUNCTIONS = CompilerConfigurationKey<List<String>>("fully-qualified function names")
 
 @AutoService(ComponentRegistrar::class)
-class PowerAssertComponentRegistrar : ComponentRegistrar {
+class PowerAssertComponentRegistrar(
+  private val functions: Set<FqName>
+) : ComponentRegistrar {
+  @Suppress("unused") constructor() : this(emptySet()) // Used by service loader
+
   override fun registerProjectComponents(
     project: MockProject,
     configuration: CompilerConfiguration
   ) {
-    if (configuration[KEY_ENABLED] == false) {
-      return
-    }
-    IrGenerationExtension.registerExtension(project, PowerAssertIrGenerationExtension())
+    val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
+    if (functions.isEmpty()) return
+    IrGenerationExtension.registerExtension(project, PowerAssertIrGenerationExtension(functions.toSet()))
   }
 }
 

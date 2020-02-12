@@ -17,5 +17,5 @@
 package com.bnorm.power
 
 open class PowerAssertGradleExtension {
-  var enabled: Boolean = true
+  var functions: List<String> = listOf("kotlin.AssertionKt.assert")
 }

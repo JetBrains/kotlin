@@ -18,14 +18,14 @@ package com.bnorm.power
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class PowerAssertIrGenerationExtension : IrGenerationExtension {
+class PowerAssertIrGenerationExtension(
+  private val functions: Set<FqName>
+) : IrGenerationExtension {
   override fun generate(file: IrFile, backendContext: BackendContext, bindingContext: BindingContext) {
-    if (backendContext is JvmBackendContext) {
-      PowerAssertCallTransformer(backendContext).runOnFileInOrder(file)
-    }
+    PowerAssertCallTransformer(backendContext, functions).runOnFileInOrder(file)
   }
 }
