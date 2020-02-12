@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.slicer.SliceUsage
@@ -57,7 +58,7 @@ class OutflowSlicer(
             if (withDereferences) {
                 refExpression.processDereferences()
             }
-            if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == ReadWriteAccessDetector.Access.Read) {
+            if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == Access.Read) {
                 refExpression.passToProcessor()
             }
         }
@@ -118,7 +119,7 @@ class OutflowSlicer(
 
         val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
         val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
-        if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, true)) return parentCall
+        if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, strict = true)) return parentCall
 
         return null
     }

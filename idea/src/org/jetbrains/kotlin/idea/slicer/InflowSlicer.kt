@@ -53,7 +53,8 @@ class InflowSlicer(
 
     override fun processChildren() {
         if (parentUsage.forcedExpressionMode) {
-            return processExpression(element)
+            processExpression(element)
+            return
         }
 
         when (element) {
@@ -67,11 +68,9 @@ class InflowSlicer(
 
     private fun processProperty(property: KtProperty) {
         if (property.hasDelegateExpression()) {
-            val getter = (property.unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
-            val delegateGetterResolvedCall = getter?.let {
-                val bindingContext = property.analyzeWithContent()
-                bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it]
-            }
+            val getter = (property.unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter ?: return
+            val bindingContext = property.analyzeWithContent()
+            val delegateGetterResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getter]
             delegateGetterResolvedCall?.resultingDescriptor?.originalSource?.getPsi()?.passToProcessor()
             return
         }
@@ -108,36 +107,39 @@ class InflowSlicer(
 
             ReferencesSearch.search(function, analysisScope)
                 .filterIsInstance<KtPropertyDelegationMethodsReference>()
-                .forEach { (it.element.parent as? KtProperty)?.processPropertyAssignments() }
+                .mapNotNull { it.element.parent as? KtProperty }
+                .forEach { it.processPropertyAssignments() }
         }
 
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
-        fun processCall(usageInfo: UsageInfo) {
-            val refElement = usageInfo.element ?: return
-            val refParent = refElement.parent
-
-            val argumentExpression = when {
-                refElement is KtExpression -> {
-                    val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return
-                    val resolvedCall = callElement.resolveToCall() ?: return
-                    val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
-                    val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return
-                    when (resolvedArgument) {
-                        is DefaultValueArgument -> parameter.defaultValue
-                        is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
-                        else -> null
-                    }
-                }
-
-                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameter.parameterIndex())
-
-                else -> null
-            }
-            argumentExpression?.passToProcessorAsValue()
-        }
-
         if (function is KtFunction) {
+            fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
+                val refParent = refElement.parent
+                return when {
+                    refElement is KtExpression -> {
+                        val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
+                        val resolvedCall = callElement.resolveToCall() ?: return null
+                        val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
+                        val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return null
+                        when (resolvedArgument) {
+                            is DefaultValueArgument -> parameter.defaultValue
+                            is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
+                            else -> null
+                        }
+                    }
+
+                    refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameter.parameterIndex())
+
+                    else -> null
+                }
+            }
+
+            fun processCall(usageInfo: UsageInfo) {
+                val refElement = usageInfo.element ?: return
+                extractArgumentExpression(refElement)?.passToProcessorAsValue()
+            }
+
             processCalls(function, analysisScope, includeOverriders, ::processCall)
         }
 
@@ -149,7 +151,7 @@ class InflowSlicer(
     private fun processExpression(expression: KtExpression) {
         val lambda = when (expression) {
             is KtLambdaExpression -> expression.functionLiteral
-            is KtNamedFunction -> if (expression.name == null) expression else null
+            is KtNamedFunction -> expression.takeIf { expression.name == null }
             else -> null
         }
         if (lambda != null) {
@@ -188,13 +190,16 @@ class InflowSlicer(
 
             is MagicInstruction -> when (createdAt.kind) {
                 MagicKind.NOT_NULL_ASSERTION, MagicKind.CAST -> createdAt.passInputsToProcessor()
+
                 MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
-                    val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression
+                    val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
+                    val bindingContext = expression.analyze()
+                    val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
+                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
                         ?: return
-                    val referencedDescriptor = expression.analyze()[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
-                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi() ?: return
                     referencedDeclaration.passToProcessor(parentUsage.lambdaLevel - 1)
                 }
+
                 else -> return
             }
 
