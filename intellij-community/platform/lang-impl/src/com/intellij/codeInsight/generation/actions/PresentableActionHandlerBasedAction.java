@@ -51,7 +51,7 @@ public abstract class PresentableActionHandlerBasedAction extends BaseCodeInsigh
     }
 
     if (presentation.isVisible() && handler instanceof PresentableCodeInsightActionHandler) {
-      ((PresentableCodeInsightActionHandler)handler).update(editor, file, presentation);
+      ((PresentableCodeInsightActionHandler)handler).update(editor, file, presentation, actionPlace);
     }
   }
 
