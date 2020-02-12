@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.runWithCancellationCheck
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -58,27 +59,32 @@ internal class ModuleResolutionFacadeImpl(
 
         if (elements.isEmpty()) return BindingContext.EMPTY
         val resolveElementCache = getFrontendService(elements.first(), ResolveElementCache::class.java)
-        return resolveElementCache.resolveToElements(elements, bodyResolveMode)
+        return runWithCancellationCheck {
+            resolveElementCache.resolveToElements(elements, bodyResolveMode)
+        }
     }
 
     override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult {
         ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
 
-        return projectFacade.getAnalysisResultsForElements(elements)
-    }
-
-    override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
-        return if (KtPsiUtil.isLocal(declaration)) {
-            val bindingContext = analyze(declaration, bodyResolveMode)
-            bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-                ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
-        } else {
-            ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
-
-            val resolveSession = projectFacade.resolverForElement(declaration).componentProvider.get<ResolveSession>()
-            resolveSession.resolveToDescriptor(declaration)
+        return runWithCancellationCheck {
+            projectFacade.getAnalysisResultsForElements(elements)
         }
     }
+
+    override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor =
+        runWithCancellationCheck {
+            if (KtPsiUtil.isLocal(declaration)) {
+                val bindingContext = analyze(declaration, bodyResolveMode)
+                bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+                    ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
+            } else {
+                ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
+
+                val resolveSession = projectFacade.resolverForElement(declaration).componentProvider.get<ResolveSession>()
+                resolveSession.resolveToDescriptor(declaration)
+            }
+        }
 
     override fun <T : Any> getFrontendService(serviceClass: Class<T>): T = getFrontendService(moduleInfo, serviceClass)
 
