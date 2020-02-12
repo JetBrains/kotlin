@@ -9,11 +9,12 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 sealed class JsBinary(
     internal val name: String,
-    internal val type: KotlinJsIrType,
+    internal val type: BuildVariantKind,
     internal val compilation: KotlinJsCompilation
 ) {
     val linkTaskName: String = linkTaskName(type)
@@ -21,7 +22,7 @@ sealed class JsBinary(
     val linkTask: TaskProvider<KotlinJsIrLink>
         get() = target.project.tasks.named(linkTaskName) as TaskProvider<KotlinJsIrLink>
 
-    private fun linkTaskName(type: KotlinJsIrType): String =
+    private fun linkTaskName(type: BuildVariantKind): String =
         lowerCamelCaseName(
             "compile",
             type.name.toLowerCase(),
@@ -39,7 +40,7 @@ sealed class JsBinary(
 
 class Executable(
     name: String,
-    type: KotlinJsIrType,
+    type: BuildVariantKind,
     compilation: KotlinJsCompilation
 ) : JsBinary(
     name,
@@ -49,7 +50,7 @@ class Executable(
 
 class TestExecutable(
     name: String,
-    type: KotlinJsIrType,
+    type: BuildVariantKind,
     compilation: KotlinJsCompilation
 ) : JsBinary(
     name,

@@ -11,8 +11,9 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
@@ -20,7 +21,7 @@ import java.io.File
 @CacheableTask
 open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
-    lateinit var type: KotlinJsIrType
+    lateinit var type: BuildVariantKind
 
     // Not check sources, only klib module
     @Internal
@@ -71,9 +72,4 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
                 PRODUCE_JS +
                 "$ENTRY_IR_MODULE=${entryModule.canonicalPath}"
     }
-}
-
-enum class KotlinJsIrType {
-    PRODUCTION,
-    DEVELOPMENT
 }

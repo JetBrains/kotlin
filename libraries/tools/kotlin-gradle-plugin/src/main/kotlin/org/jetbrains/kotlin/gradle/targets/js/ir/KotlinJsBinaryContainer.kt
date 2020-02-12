@@ -11,8 +11,9 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -48,9 +49,9 @@ constructor(
 
     private fun <T : JsBinary> createBinaries(
         baseName: String,
-        buildVariantKinds: Collection<KotlinJsIrType> = listOf(PRODUCTION, DEVELOPMENT),
+        buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
-        create: (name: String, buildVariantKind: KotlinJsIrType, compilation: KotlinJsCompilation) -> T
+        create: (name: String, buildVariantKind: BuildVariantKind, compilation: KotlinJsCompilation) -> T
     ) {
         buildVariantKinds.forEach { buildVariantKind ->
             val name = generateBinaryName(
@@ -83,7 +84,7 @@ constructor(
     companion object {
         internal fun generateBinaryName(
             name: String,
-            buildVariantKind: KotlinJsIrType,
+            buildVariantKind: BuildVariantKind,
             jsBinaryType: JsBinaryType
         ) =
             lowerCamelCaseName(
