@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
-import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
@@ -55,10 +54,6 @@ open class KotlinMultiplatformExtension :
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
         KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
     }
-
-    @Suppress("unused")
-    fun getAndroidSourceSetDependencies(project: Project) =
-        AndroidDependencyResolver.getAndroidSourceSetDependencies(project)
 }
 
 internal fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =

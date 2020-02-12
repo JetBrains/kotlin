@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.dsl
+package org.jetbrains.kotlin.gradle.targets.android.internal
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
@@ -34,6 +34,7 @@ data class AndroidDependency(
     val collection: Set<File>? = null
 )
 
+@Suppress("unused")
 object AndroidDependencyResolver {
     private fun getAndroidSdkJar(project: Project): AndroidDependency? {
         val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
