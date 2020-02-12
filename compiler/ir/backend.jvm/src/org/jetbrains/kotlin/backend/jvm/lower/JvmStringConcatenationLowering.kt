@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irImplicitCast
-import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -79,16 +78,23 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
     private fun typeToAppendFunction(type: IrType): IrSimpleFunction =
         appendFunctions[type] ?: defaultAppendFunction
 
-    // There is no special append or valueOf function for byte and short on the JVM.
-    private fun IrBuilderWithScope.widenIntegerType(expression: IrExpression): IrExpression =
+    private fun IrBuilderWithScope.normalizeArgument(expression: IrExpression): IrExpression =
         if (expression.type.isByte() || expression.type.isShort()) {
+            // There is no special append or valueOf function for byte and short on the JVM.
             irImplicitCast(expression, context.irBuiltIns.intType)
+        } else if (expression is IrConst<*> && expression.kind == IrConstKind.String && (expression.value as String).length == 1) {
+            // PSI2IR generates const Strings for 1-length literals in string templates (e.g., the space between x and y in "$x $y").
+            // We want to use the more efficient `append(Char)` function in such cases. This mirrors the behavior of the non-IR backend.
+            //
+            // In addition, this also means `append(Char)` will be used for the space in the following case: `x + " " + y`. The non-IR
+            // backend will still use `append(String)` in this case.
+            irChar((expression.value as String)[0])
         } else {
             expression
         }
 
     private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
-        val argument = widenIntegerType(expression)
+        val argument = normalizeArgument(expression)
         val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
 
         return irCall(backendContext.ir.symbols.typeToStringValueOfFunction(argumentType)).apply {
@@ -146,7 +152,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                 else -> {
                     var stringBuilder = irCall(constructor)
                     for (arg in arguments) {
-                        val argument = widenIntegerType(arg)
+                        val argument = normalizeArgument(arg)
                         val appendFunction = typeToAppendFunction(argument.type)
                         stringBuilder = irCall(appendFunction).apply {
                             dispatchReceiver = stringBuilder

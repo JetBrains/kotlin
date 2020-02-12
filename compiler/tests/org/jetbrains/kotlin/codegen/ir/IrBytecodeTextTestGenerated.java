@@ -4167,6 +4167,21 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testStringPlus() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/stringPlus.kt");
         }
+
+        @TestMetadata("useAppendCharForOneCharStringInTemplate.kt")
+        public void testUseAppendCharForOneCharStringInTemplate() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/useAppendCharForOneCharStringInTemplate.kt");
+        }
+
+        @TestMetadata("useAppendCharForOneCharStringInTemplate_2.kt")
+        public void testUseAppendCharForOneCharStringInTemplate_2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/useAppendCharForOneCharStringInTemplate_2.kt");
+        }
+
+        @TestMetadata("useAppendCharForOneCharStringUsingPlus.kt")
+        public void testUseAppendCharForOneCharStringUsingPlus() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/useAppendCharForOneCharStringUsingPlus.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/toArray")
