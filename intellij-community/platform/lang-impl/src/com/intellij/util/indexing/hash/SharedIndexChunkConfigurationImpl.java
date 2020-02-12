@@ -161,7 +161,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     Path tempChunk = null;
     try {
       ensureSharedIndexConfigurationRootExist();
-      tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId());
+      tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
 
       if (chunkIsNotRegistered(descriptor)) {
         descriptor.downloadChunk(tempChunk, indicator);
@@ -231,7 +231,10 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
         for (ChunkDescriptor descriptor : descriptors) {
           if (ideVersion.getBaseIndexes().equals(descriptor.getSupportedInfrastructureVersion().getBaseIndexes())) {
+            LOG.info("Found shared index " + descriptor.getChunkUniqueId() + " for " + descriptor.getOrderEntries());
             loadSharedIndex(project, descriptor, indicator, ideVersion);
+          } else {
+            LOG.info("Shared index " + descriptor.getChunkUniqueId() + " is unsuported");
           }
         }
       }
