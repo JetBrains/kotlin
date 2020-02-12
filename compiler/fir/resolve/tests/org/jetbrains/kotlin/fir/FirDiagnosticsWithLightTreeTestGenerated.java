@@ -28,6 +28,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "stdlib", "cfg", "smartcasts");
     }
 
+    @TestMetadata("asImports.kt")
+    public void testAsImports() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/asImports.kt");
+    }
+
+    @TestMetadata("bareTypes.kt")
+    public void testBareTypes() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/bareTypes.kt");
+    }
+
     @TestMetadata("cast.kt")
     public void testCast() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/cast.kt");
@@ -46,6 +56,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     @TestMetadata("copy.kt")
     public void testCopy() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");
+    }
+
+    @TestMetadata("defaultJavaImportHiding.kt")
+    public void testDefaultJavaImportHiding() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/defaultJavaImportHiding.kt");
+    }
+
+    @TestMetadata("definitelyNotNullAmbiguity.kt")
+    public void testDefinitelyNotNullAmbiguity() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/definitelyNotNullAmbiguity.kt");
     }
 
     @TestMetadata("delegatedSuperType.kt")
@@ -148,6 +168,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/genericFunctions.kt");
     }
 
+    @TestMetadata("incorrectSuperCall.kt")
+    public void testIncorrectSuperCall() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/incorrectSuperCall.kt");
+    }
+
     @TestMetadata("intersectionScope.kt")
     public void testIntersectionScope() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/intersectionScope.kt");
@@ -158,6 +183,26 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/intersectionTypes.kt");
     }
 
+    @TestMetadata("invokeOfLambdaWithReceiver.kt")
+    public void testInvokeOfLambdaWithReceiver() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/invokeOfLambdaWithReceiver.kt");
+    }
+
+    @TestMetadata("javaFieldVsAccessor.kt")
+    public void testJavaFieldVsAccessor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/javaFieldVsAccessor.kt");
+    }
+
+    @TestMetadata("javaStaticScopeInheritance.kt")
+    public void testJavaStaticScopeInheritance() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/javaStaticScopeInheritance.kt");
+    }
+
+    @TestMetadata("localFunctionsHiding.kt")
+    public void testLocalFunctionsHiding() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/localFunctionsHiding.kt");
+    }
+
     @TestMetadata("localObject.kt")
     public void testLocalObject() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/localObject.kt");
@@ -166,6 +211,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/nestedClass.kt");
+    }
+
+    @TestMetadata("nestedClassContructor.kt")
+    public void testNestedClassContructor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/nestedClassContructor.kt");
     }
 
     @TestMetadata("nestedClassNameClash.kt")
@@ -193,6 +243,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/problems2.kt");
     }
 
+    @TestMetadata("propertyFromJavaPlusAssign.kt")
+    public void testPropertyFromJavaPlusAssign() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/propertyFromJavaPlusAssign.kt");
+    }
+
     @TestMetadata("qualifierWithCompanion.kt")
     public void testQualifierWithCompanion() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/qualifierWithCompanion.kt");
@@ -211,6 +266,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     @TestMetadata("simpleTypeAlias.kt")
     public void testSimpleTypeAlias() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/simpleTypeAlias.kt");
+    }
+
+    @TestMetadata("syntheticsVsNormalProperties.kt")
+    public void testSyntheticsVsNormalProperties() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/syntheticsVsNormalProperties.kt");
     }
 
     @TestMetadata("treeSet.kt")
@@ -1106,24 +1166,9 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("asImports.kt")
-        public void testAsImports() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
-        }
-
-        @TestMetadata("bareTypes.kt")
-        public void testBareTypes() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/bareTypes.kt");
-        }
-
         @TestMetadata("covariantArrayAsReceiver.kt")
         public void testCovariantArrayAsReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/covariantArrayAsReceiver.kt");
-        }
-
-        @TestMetadata("defaultJavaImportHiding.kt")
-        public void testDefaultJavaImportHiding() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/defaultJavaImportHiding.kt");
         }
 
         @TestMetadata("definetelyNotNullForTypeParameter.kt")
@@ -1131,54 +1176,9 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/problems/definetelyNotNullForTypeParameter.kt");
         }
 
-        @TestMetadata("definitelyNotNullAmbiguity.kt")
-        public void testDefinitelyNotNullAmbiguity() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
-        }
-
-        @TestMetadata("incorrectSuperCall.kt")
-        public void testIncorrectSuperCall() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/incorrectSuperCall.kt");
-        }
-
-        @TestMetadata("invokeOfLambdaWithReceiver.kt")
-        public void testInvokeOfLambdaWithReceiver() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/invokeOfLambdaWithReceiver.kt");
-        }
-
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
-        }
-
-        @TestMetadata("javaFieldVsAccessor.kt")
-        public void testJavaFieldVsAccessor() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/javaFieldVsAccessor.kt");
-        }
-
-        @TestMetadata("javaStaticScopeInheritance.kt")
-        public void testJavaStaticScopeInheritance() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/javaStaticScopeInheritance.kt");
-        }
-
-        @TestMetadata("localFunctionsHiding.kt")
-        public void testLocalFunctionsHiding() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/localFunctionsHiding.kt");
-        }
-
-        @TestMetadata("nestedClassContructor.kt")
-        public void testNestedClassContructor() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
-        }
-
-        @TestMetadata("propertyFromJavaPlusAssign.kt")
-        public void testPropertyFromJavaPlusAssign() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/propertyFromJavaPlusAssign.kt");
-        }
-
-        @TestMetadata("syntheticsVsNormalProperties.kt")
-        public void testSyntheticsVsNormalProperties() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/syntheticsVsNormalProperties.kt");
         }
     }
 
