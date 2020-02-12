@@ -141,7 +141,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         @Suppress("UNCHECKED_CAST")
         val sourceSets =
             (getSourceSets(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        val androidDeps = buildAndroidDeps(kotlinExt, project)
+        val androidDeps = buildAndroidDeps(kotlinExt.javaClass.classLoader, project)
 
         // Some performance optimisation: do not build metadata dependencies if source set is not common
         val doBuildMetadataDependencies =
@@ -171,16 +171,20 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
-    private fun buildAndroidDeps(kotlinExt: Any, project: Project): Map<String, List<Any>>? {
+    private fun buildAndroidDeps(classLoader: ClassLoader, project: Project): Map<String, List<Any>>? {
         val includeAndroidDeps = project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
         if (includeAndroidDeps) {
-            val getAndroidSourceSetDependencies =
-                kotlinExt.javaClass.getMethodOrNull("getAndroidSourceSetDependencies", Project::class.java)
-            @Suppress("UNCHECKED_CAST")
-            return getAndroidSourceSetDependencies?.let { it(kotlinExt, project) } as Map<String, List<Any>>?
-        } else {
-            return emptyMap()
+            try {
+                val resolverClass = classLoader.loadClass("org.jetbrains.kotlin.gradle.targets.android.internal.AndroidDependencyResolver")
+                val getAndroidSourceSetDependencies = resolverClass.getMethodOrNull("getAndroidSourceSetDependencies", Project::class.java)
+                val resolver = resolverClass.getField("INSTANCE").get(null)
+                @Suppress("UNCHECKED_CAST")
+                return getAndroidSourceSetDependencies?.let { it(resolver, project) } as Map<String, List<Any>>?
+            } catch (e: Exception) {
+                logger.info("Unexpected exception", e)
+            }
         }
+        return null
     }
 
     private fun buildSourceSet(
