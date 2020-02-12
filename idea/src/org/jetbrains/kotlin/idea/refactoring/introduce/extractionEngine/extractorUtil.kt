@@ -29,10 +29,13 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -669,6 +672,14 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     }
 
     if (declaration is KtProperty && declaration.isExtensionDeclaration() && !declaration.isTopLevel) {
+        val propertyName = declaration.name
+        if (propertyName != null) {
+            val scope = declaration.getResolutionScope()
+            val newName = KotlinNameSuggester.suggestNameByName(propertyName) {
+                it != propertyName && scope.getAllAccessibleVariables(Name.identifier(it)).isEmpty()
+            }
+            declaration.setName(newName)
+        }
         val receiverTypeReference = (declaration as? KtCallableDeclaration)?.receiverTypeReference
         receiverTypeReference?.siblings(withItself = false)?.firstOrNull { it.node.elementType == KtTokens.DOT }?.delete()
         receiverTypeReference?.delete()
