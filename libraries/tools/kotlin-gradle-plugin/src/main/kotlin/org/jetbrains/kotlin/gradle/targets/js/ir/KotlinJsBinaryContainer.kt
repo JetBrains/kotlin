@@ -70,8 +70,7 @@ constructor(
                 defaultCompilation
             }
 
-
-            val binary = create(baseName, buildVariantKind, compilation)
+            val binary = create(name, buildVariantKind, compilation)
             add(binary)
             nameToBinary[binary.name] = binary
             // Allow accessing binaries as properties of the container in Groovy DSL.
