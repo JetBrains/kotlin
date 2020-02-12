@@ -84,6 +84,24 @@ public class DiagnosticUtils {
         return PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getStartOffset());
     }
 
+    @NotNull
+    public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRange(@NotNull Diagnostic diagnostic) {
+        PsiFile file = diagnostic.getPsiFile();
+        List<TextRange> textRanges = diagnostic.getTextRanges();
+        if (textRanges.isEmpty()) return PsiDiagnosticUtils.LineAndColumnRange.NONE;
+        TextRange firstRange = firstRange(textRanges);
+        return getLineAndColumnRangeInPsiFile(file, firstRange);
+    }
+
+    @NotNull
+    public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRangeInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return new PsiDiagnosticUtils.LineAndColumnRange(
+                PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getStartOffset()),
+                PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getEndOffset())
+        );
+    }
+
     public static void throwIfRunningOnServer(Throwable e) {
         // This is needed for the Web Demo server to log the exceptions coming from the analyzer instead of showing them in the editor.
         if (System.getProperty("kotlin.running.in.server.mode", "false").equals("true") || ApplicationManager.getApplication().isUnitTestMode()) {
