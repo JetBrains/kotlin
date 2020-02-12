@@ -55,7 +55,6 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     }
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
         when (type) {
             PRODUCTION -> {
                 kotlinOptions.configureOptions(ENABLE_DCE, GENERATE_D_TS)
@@ -64,6 +63,7 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
                 kotlinOptions.configureOptions(GENERATE_D_TS)
             }
         }
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
 
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
