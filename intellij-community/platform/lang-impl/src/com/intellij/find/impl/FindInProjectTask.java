@@ -440,8 +440,8 @@ class FindInProjectTask {
       return resultFiles;
     }
 
-    PsiSearchHelperImpl helper = (PsiSearchHelperImpl)PsiSearchHelper.getInstance(myProject);
-    helper.processFilesWithText(scope, UsageSearchContext.ANY, myFindModel.isCaseSensitive(), stringToFind, file -> {
+    PsiSearchHelper helper = PsiSearchHelper.getInstance(myProject);
+    helper.processCandidateFilesForText(scope, UsageSearchContext.ANY, myFindModel.isCaseSensitive(), stringToFind, file -> {
       if (myFileMask.value(file)) {
         ContainerUtil.addIfNotNull(resultFiles, file);
       }
