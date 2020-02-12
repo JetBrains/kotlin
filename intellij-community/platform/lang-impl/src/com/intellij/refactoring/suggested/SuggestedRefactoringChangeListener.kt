@@ -16,6 +16,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.util.hasErrorElementInRange
 
 class SuggestedRefactoringChangeListener(
     private val project: Project,
