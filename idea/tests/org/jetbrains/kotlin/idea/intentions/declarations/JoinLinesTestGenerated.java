@@ -415,6 +415,16 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclarationInLambda.kt");
         }
 
+        @TestMetadata("functionArguments.kt")
+        public void testFunctionArguments() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/functionArguments.kt");
+        }
+
+        @TestMetadata("indices.kt")
+        public void testIndices() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/indices.kt");
+        }
+
         @TestMetadata("inner.kt")
         public void testInner() throws Exception {
             runTest("idea/testData/joinLines/removeTrailingComma/inner.kt");
@@ -425,9 +435,19 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             runTest("idea/testData/joinLines/removeTrailingComma/lambda.kt");
         }
 
+        @TestMetadata("literal.kt")
+        public void testLiteral() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/literal.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/joinLines/removeTrailingComma/simple.kt");
+        }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/typeArguments.kt");
         }
 
         @TestMetadata("typeParameters.kt")
