@@ -8,10 +8,23 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
@@ -32,7 +45,7 @@ constructor(
     project: Project,
     platformType: KotlinPlatformType
 ) :
-    KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
+    KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {
@@ -77,7 +90,23 @@ constructor(
         }
     }
 
-    var producingType: KotlinJsProducingType? = null
+    override val binaries: KotlinJsBinaryContainer =
+        // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
+        project.objects.newInstance(
+            KotlinJsBinaryContainer::class.java,
+            this,
+            WrapUtil.toDomainObjectSet(JsBinary::class.java).apply {
+                all {
+                    whenBrowserConfigured {
+                        (this as KotlinJsSubTarget).produceExecutable()
+                    }
+
+                    whenNodejsConfigured {
+                        (this as KotlinJsSubTarget).produceExecutable()
+                    }
+                }
+            }
+        )
 
     var irTarget: KotlinJsIrTarget? = null
 
@@ -135,46 +164,6 @@ constructor(
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
         irTarget?.nodejs(body)
-    }
-
-    override fun produceKotlinLibrary() {
-        produce(KotlinJsProducingType.KOTLIN_LIBRARY)
-    }
-
-    override fun produceExecutable() {
-        produce(KotlinJsProducingType.EXECUTABLE) {
-            (this as KotlinJsSubTarget).produceExecutable()
-        }
-    }
-
-    override val binaries: KotlinJsBinaryContainer
-        get() = TODO("Not yet implemented")
-
-    private fun produce(
-        producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTargetDsl.() -> Unit = {}
-    ) {
-        check(this.producingType == null || this.producingType == producingType) {
-            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
-        }
-
-        if (this.producingType != null) {
-            return
-        }
-
-        this.producingType = producingType
-
-        whenBrowserConfigured {
-            if (this is KotlinBrowserJs) {
-                producer()
-            }
-        }
-
-        whenNodejsConfigured {
-            if (this is KotlinNodeJs) {
-                producer()
-            }
-        }
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {

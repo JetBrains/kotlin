@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -15,7 +17,7 @@ import javax.inject.Inject
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
-    val target: KotlinJsIrTarget,
+    val target: KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>,
     backingContainer: DomainObjectSet<JsBinary>
 ) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project
