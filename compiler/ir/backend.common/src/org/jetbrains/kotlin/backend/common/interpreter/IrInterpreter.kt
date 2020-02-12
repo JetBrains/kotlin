@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.isSubtypeOf
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import java.lang.invoke.MethodHandle
 
@@ -36,8 +33,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
     private val classCastException = irExceptions.first { it.name.asString() == ClassCastException::class.java.simpleName }
+    private val illegalArgumentException = irExceptions.first { it.name.asString() == IllegalArgumentException::class.java.simpleName }
 
     private val stackTrace = mutableListOf<String>()
+
+    private val mapOfEnums = mutableMapOf<Pair<IrClass, String>, Common>()
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -83,6 +83,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrGetField -> interpretGetField(this, data)
                 is IrGetValue -> interpretGetValue(this, data)
                 is IrGetObjectValue -> interpretGetObjectValue(this, data)
+                is IrGetEnumValue -> interpretGetEnumValue(this, data)
+                is IrEnumEntry -> interpretEnumEntry(this, data)
                 is IrConst<*> -> interpretConst(this, data)
                 is IrVariable -> interpretVariable(this, data)
                 is IrSetVariable -> interpretSetVariable(this, data)
@@ -178,7 +180,36 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 throw StackOverflowError("")
             }
 
-            irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+            when (val kind = (irFunction.body as? IrSyntheticBody)?.kind) {
+                IrSyntheticBodyKind.ENUM_VALUES -> {
+                    val enumClass = irFunction.parentAsClass
+                    val enumEntries = enumClass.declarations
+                        .filterIsInstance<IrEnumEntry>()
+                        .map { entry ->
+                            entry.interpret(data).also { if (it != Code.NEXT) return it }
+                            data.popReturnValue() as Common
+                        }
+                    data.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
+                    Code.NEXT
+                }
+                IrSyntheticBodyKind.ENUM_VALUEOF -> {
+                    val enumClass = irFunction.parentAsClass
+                    val enumEntryName = (data.getAll().single().state as Primitive<*>).value.toString()
+                    val enumEntry = enumClass.declarations
+                        .filterIsInstance<IrEnumEntry>()
+                        .singleOrNull { it.name.asString() == enumEntryName }
+                    if (enumEntry == null) {
+                        val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
+                        data.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
+                        Code.EXCEPTION
+                    } else {
+                        enumEntry.interpret(data).also { if (it != Code.NEXT) return it }
+                        Code.NEXT
+                    }
+                }
+                null -> irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+                else -> throw AssertionError("Unsupported IrSyntheticBodyKind $kind")
+            }
         } finally {
             if (irFunction.fileOrNull != null) stackTrace.removeAt(stackTrace.lastIndex)
         }
@@ -228,6 +259,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val overriddenOwner = overridden.owner as IrFunctionImpl
         return when {
+            superQualifier.irClassFqName() == "kotlin.Enum" && owner.name.asString() == "hashCode" -> calculateOverridden(overriddenOwner, newStates)
             overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
             superQualifier.superType == null -> calculateBuiltIns(overriddenOwner, newStates)
             else -> calculateOverridden(overriddenOwner, newStates)
@@ -549,6 +581,23 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         data.pushReturnValue(objectState)
         return Code.NEXT
+    }
+
+    private suspend fun interpretGetEnumValue(expression: IrGetEnumValue, data: Frame): Code {
+        return interpretEnumEntry(expression.symbol.owner, data)
+    }
+
+    private suspend fun interpretEnumEntry(enumEntry: IrEnumEntry, data: Frame): Code {
+        val enumSignature = Pair(enumEntry.parentAsClass, enumEntry.name.asString())
+        mapOfEnums[enumSignature]?.let {
+            data.pushReturnValue(it)
+            return Code.NEXT
+        }
+
+        val code = enumEntry.initializerExpression?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        code ?: throw AssertionError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+        mapOfEnums[enumSignature] = data.peekReturnValue() as Common
+        return code
     }
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {

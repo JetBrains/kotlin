@@ -118,6 +118,10 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
         return irClass.thisReceiver!!.descriptor
     }
 
+    fun irClassFqName(): String {
+        return irClass.fqNameForIrSerialization.toString()
+    }
+
     override fun setState(newVar: Variable) {
         when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
             null -> fields.add(newVar)                          // newVar isn't present in value list
