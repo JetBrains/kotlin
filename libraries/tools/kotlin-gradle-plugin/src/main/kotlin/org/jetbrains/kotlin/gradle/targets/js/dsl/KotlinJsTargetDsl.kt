@@ -49,6 +49,8 @@ interface KotlinJsTargetDsl : KotlinTarget {
         }
     }
 
+    fun produceExecutable()
+
     fun useCommonJs()
 
     val binaries: KotlinJsBinaryContainer
