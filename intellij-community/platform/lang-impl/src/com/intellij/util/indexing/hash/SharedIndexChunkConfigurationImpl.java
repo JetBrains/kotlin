@@ -164,8 +164,13 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
 
       if (chunkIsNotRegistered(descriptor)) {
-        descriptor.downloadChunk(tempChunk, indicator);
-        SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getStorageToAppend(), descriptor, ideVersion);
+        long ms = System.currentTimeMillis();
+        try {
+          descriptor.downloadChunk(tempChunk, indicator);
+          SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getStorageToAppend(), descriptor, ideVersion);
+        } finally {
+          LOG.info("Chunk " + descriptor.getChunkUniqueId() + " is downloaded in " + (System.currentTimeMillis() - ms) + " ms");
+        }
       }
     } catch (Exception e) {
       //noinspection InstanceofCatchParameter
@@ -261,7 +266,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       enumerator = myChunkEnumerators.get(chunkId);
       if (enumerator == null) {
         //TODO: let's add "readOnly = true" parameter to ContentHashEnumerator to make it clear that we are not going to write to it.
-        myChunkEnumerators.put(chunkId, enumerator = new ContentHashEnumerator(chunkRoot.resolve("hashes")));
+        myChunkEnumerators.put(chunkId, new ContentHashEnumerator(chunkRoot.resolve("hashes")));
       }
     }
     long timestamp;
