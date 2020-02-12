@@ -3,12 +3,13 @@ package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.externalSystem.autoimport.NonBlockingReadActionBuilder.Companion.nonBlockingReadAction
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
@@ -135,9 +136,14 @@ class ProjectSettingsTracker(
   }
 
   private fun submitSettingsFilesCRCCalculation(action: (Map<String, Long>) -> Unit) {
-    nonBlockingReadAction { calculateSettingsFilesCRC() }
-      .finishOnUiThread { action(it) }
-      .submit(parentDisposable)
+    if (ApplicationManager.getApplication().isHeadlessEnvironment) {
+      action(calculateSettingsFilesCRC())
+      return
+    }
+    ReadAction.nonBlocking<Map<String, Long>> { calculateSettingsFilesCRC() }
+      .expireWith(parentDisposable)
+      .finishOnUiThread(ModalityState.defaultModalityState(), action)
+      .submit(projectTracker.backgroundExecutor)
   }
 
   private fun invokeLater(action: () -> Unit) {

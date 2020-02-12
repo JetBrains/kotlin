@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.LocalTimeCounter.currentTime
+import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import org.jetbrains.annotations.TestOnly
@@ -43,6 +44,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private val projectChangeOperation = AnonymousParallelOperationTrace(debugName = "Project change operation")
   private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
   private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, null, project)
+  val backgroundExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("project tracker", 1)
 
   override var isAutoReloadExternalChanges by autoReloadExternalChangesProperty
 
