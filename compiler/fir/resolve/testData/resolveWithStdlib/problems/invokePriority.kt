@@ -18,3 +18,17 @@ class B {
         }
     }
 }
+
+class E {
+    object f {
+        operator fun invoke() = Unit // (1)
+    }
+    companion object {
+        val f: () -> Unit = {} // (2)
+    }
+}
+
+fun main() {
+    E.f() // Resolves to (2)
+    E.f.invoke() // Resolves to (1)
+}

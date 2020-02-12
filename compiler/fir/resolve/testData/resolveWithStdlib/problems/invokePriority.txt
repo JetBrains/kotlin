@@ -43,3 +43,37 @@ FILE: invokePriority.kt
         }
 
     }
+    public final class E : R|kotlin/Any| {
+        public constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object f : R|kotlin/Any| {
+            private constructor(): R|E.f| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+                ^invoke Q|kotlin/Unit|
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|E.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val f: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
+                Unit
+            }
+
+                public get(): R|() -> kotlin/Unit|
+
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        Q|E|.R|/E.Companion.f|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        Q|E.f|.R|/E.f.invoke|()
+    }
