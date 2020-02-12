@@ -17242,11 +17242,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/platformTypes/primitives/equalsNull.kt");
             }
 
-            @TestMetadata("equalsNull_withExplicitFlag.kt")
-            public void testEqualsNull_withExplicitFlag() throws Exception {
-                runTest("compiler/testData/codegen/box/platformTypes/primitives/equalsNull_withExplicitFlag.kt");
-            }
-
             @TestMetadata("hashCode.kt")
             public void testHashCode() throws Exception {
                 runTest("compiler/testData/codegen/box/platformTypes/primitives/hashCode.kt");
