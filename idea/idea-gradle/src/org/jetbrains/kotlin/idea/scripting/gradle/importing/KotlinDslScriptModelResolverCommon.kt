@@ -24,7 +24,7 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
     override fun getExtraJvmArgs(): List<Pair<String, String>> {
         return listOf(
             Pair(
-                "-D$PROVIDER_MODE_SYSTEM_PROPERTY_NAME",
+                PROVIDER_MODE_SYSTEM_PROPERTY_NAME,
                 STRICT_CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
             )
         )
