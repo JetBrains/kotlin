@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: -NewInference
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 

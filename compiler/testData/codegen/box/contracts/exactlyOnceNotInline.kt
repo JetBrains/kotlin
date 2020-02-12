@@ -1,3 +1,4 @@
+// !LANGUAGE: -NewInference
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: NATIVE
