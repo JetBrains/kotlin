@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.AlwaysShownValidationIndicator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JComponent
@@ -66,11 +66,9 @@ class ModulesEditorComponent(
         }
     }
 
-    override val validationIndicator = ValidationIndicator(showText = true) { error ->
-        val module = error.target as? Module ?: return@ValidationIndicator
+    override val validationIndicator = AlwaysShownValidationIndicator(showText = true) { error ->
+        val module = error.target as? Module ?: return@AlwaysShownValidationIndicator
         tree.selectModule(module)
         selectSettingWithError(error)
-    }.apply {
-        background = tree.background
     }
 }

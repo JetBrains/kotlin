@@ -41,7 +41,9 @@ class PathFieldComponent(
         )
     }
 
-    override fun updateUiValue(newValue: Path)= safeUpdateUi {
+    override fun getValidatorTarget(): JComponent = uiComponent.textField
+
+    override fun updateUiValue(newValue: Path) = safeUpdateUi {
         uiComponent.text = newValue.toString()
     }
 

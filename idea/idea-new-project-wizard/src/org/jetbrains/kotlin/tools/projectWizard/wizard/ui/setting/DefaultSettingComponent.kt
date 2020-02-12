@@ -73,12 +73,11 @@ class VersionSettingComponent(
         }
     }
 
-    override val validationIndicator = ValidationIndicator(showText = false)
+    override val validationIndicator = null
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
         panel {
             add(
                 panel {
-                    add(validationIndicator, BorderLayout.WEST)
                     add(settingLabel, BorderLayout.CENTER)
                 },
                 BorderLayout.WEST

@@ -36,7 +36,7 @@ abstract class SettingComponent<V : Any, T: SettingType<V>>(
     private fun updateValidationState() {
         val value = value
         if (validationIndicator != null && value != null) {
-            validationIndicator!!.validationState = setting.validator.validate(valuesReadingContext, value)
+            validationIndicator!!.updateValidationState(setting.validator.validate(valuesReadingContext, value))
         }
     }
 }

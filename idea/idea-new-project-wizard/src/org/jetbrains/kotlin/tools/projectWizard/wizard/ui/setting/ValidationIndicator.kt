@@ -1,35 +1,57 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
 import com.intellij.icons.AllIcons
-import com.intellij.ui.JBColor
-import com.intellij.util.ui.EmptyIcon
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.ui.ComponentValidator
+import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.BorderLayout
 import java.awt.Cursor
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.BorderFactory
-import javax.swing.Icon
+import javax.swing.JComponent
 import javax.swing.JPanel
 
-class ValidationIndicator(
-    defaultText: String? = null,
+interface ValidationIndicator {
+    fun updateValidationState(newState: ValidationResult)
+}
+
+class IdeaBasedComponentValidator(
+    parentDisposable: Disposable,
+    private val jComponent: JComponent
+) : ValidationIndicator {
+    private val validator = ComponentValidator(parentDisposable).installOn(jComponent)
+
+    override fun updateValidationState(newState: ValidationResult) {
+        validator.updateInfo(
+            newState.safeAs<ValidationResult.ValidationError>()
+                ?.messages
+                ?.firstOrNull()
+                ?.let { ValidationInfo(it, jComponent) }
+        )
+    }
+}
+
+class AlwaysShownValidationIndicator(
     private val showText: Boolean,
     private val onClickAction: ((ValidationResult.ValidationError) -> Unit)? = null
-) : JPanel(BorderLayout()) {
-    private val textLabel = defaultText?.let { label("$it: ") }
-    private val errorLabel = label(" ").apply {
-        foreground = JBColor.red
-    }
+) : JPanel(BorderLayout()), ValidationIndicator {
+    private val errorLabel = label(" ")
 
     private var currentError: ValidationResult.ValidationError? = null
 
-
     init {
-        border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
-        textLabel?.let { add(it, BorderLayout.WEST) }
+        errorLabel.icon = AllIcons.General.Error
+        background = JBUI.CurrentTheme.Validator.errorBackgroundColor()
+        border =
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JBUI.CurrentTheme.Validator.errorBorderColor()),
+                JBUI.Borders.empty(4, 8)
+            )
         add(errorLabel, BorderLayout.CENTER)
 
         if (onClickAction != null) {
@@ -47,32 +69,17 @@ class ValidationIndicator(
         }
     }
 
-    private fun setIcon(icon: Icon?) {
-        if (textLabel != null) textLabel.icon = icon
-        else errorLabel.icon = icon ?: EmptyIcon.ICON_16
-    }
-
-    private fun String.linkifyErrorText() =
-        if (onClickAction == null) this
-        else "<u>$this</u>".asHtml()
-
-    var validationState: ValidationResult = ValidationResult.OK
-        set(value) {
-            field = value
-            when (value) {
-                ValidationResult.OK -> {
-                    setIcon(null)
-                    errorLabel.text = " "
-                    toolTipText = null
-                    currentError = null
-                }
-                is ValidationResult.ValidationError -> {
-                    setIcon(AllIcons.General.Error)
-                    val errors = value.messages.firstOrNull().orEmpty()
-                    toolTipText = errors
-                    if (showText) errorLabel.text = errors.linkifyErrorText()
-                    currentError = value
-                }
+    override fun updateValidationState(newState: ValidationResult) {
+        isVisible = !newState.isOk
+        when (newState) {
+            ValidationResult.OK -> {
+                currentError = null
+            }
+            is ValidationResult.ValidationError -> {
+                val errors = newState.messages.firstOrNull().orEmpty()
+                if (showText) errorLabel.text = errors
+                currentError = newState
             }
         }
+    }
 }
