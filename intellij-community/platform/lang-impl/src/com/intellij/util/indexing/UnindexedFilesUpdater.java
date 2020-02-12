@@ -29,7 +29,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
   private final FileBasedIndexImpl myIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
   private final Project myProject;
-  private boolean myStartSuspended;
+  private final boolean myStartSuspended;
   private final PushedFilePropertiesUpdater myPusher;
 
   public UnindexedFilesUpdater(@NotNull Project project, boolean startSuspended) {
