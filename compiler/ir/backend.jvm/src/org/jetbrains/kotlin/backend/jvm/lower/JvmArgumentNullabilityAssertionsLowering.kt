@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
+import org.jetbrains.kotlin.backend.common.lower.flattenStringConcatenationPhase
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.config.ApiVersion
@@ -22,7 +24,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 val jvmArgumentNullabilityAssertions = makeIrFilePhase(
     ::JvmArgumentNullabilityAssertionsLowering,
     name = "ArgumentNullabilityAssertions",
-    description = "Transform nullability assertions on arguments according to the compiler settings"
+    description = "Transform nullability assertions on arguments according to the compiler settings",
+    // jvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
+    prerequisite = setOf(jvmStringConcatenationLowering)
 )
 
 private enum class AssertionScope {

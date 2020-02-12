@@ -25999,6 +25999,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/strings/stringBuilderAppend.kt");
         }
 
+        @TestMetadata("stringFromJavaPlus.kt")
+        public void testStringFromJavaPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/stringFromJavaPlus.kt");
+        }
+
         @TestMetadata("stringPlusOnlyWorksOnString.kt")
         public void testStringPlusOnlyWorksOnString() throws Exception {
             runTest("compiler/testData/codegen/box/strings/stringPlusOnlyWorksOnString.kt");
