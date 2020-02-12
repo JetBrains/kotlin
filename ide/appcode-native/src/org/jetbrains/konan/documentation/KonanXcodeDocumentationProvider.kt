@@ -11,8 +11,9 @@ import com.intellij.util.Function
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.CocoaDocumentationManagerImpl
 import com.jetbrains.cidr.CocoaDocumentationManagerImpl.DocTokenType.*
-import com.jetbrains.cidr.documentation.XcodeDocumentationCandidateInfo
-import com.jetbrains.cidr.documentation.XcodeDocumentationProvider
+import com.jetbrains.cidr.doc.XcodeDocumentationCandidateInfo
+import com.jetbrains.cidr.documentation.AppCodeDocumentationProvider
+import com.jetbrains.cidr.lang.settings.OCExternalDocSettings
 import org.jetbrains.kotlin.asJava.finder.KtLightPackage
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 // TODO: doc for modules, correct mapping of some parent class names from api notes (e.x. Swift specific bool getters)
-class KonanXcodeDocumentationProvider : XcodeDocumentationProvider() {
+class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
   private companion object {
     const val META_SUFFIX = "Meta"
     const val PROTOCOL_SUFFIX = "Protocol"
