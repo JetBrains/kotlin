@@ -35,7 +35,7 @@ abstract class AbstractDiagnosticBasedMigrationInspection<T : KtElement>(
         }
 
         val actionsFactory = QuickFixes.getInstance().getActionFactories(diagnosticFactory).singleOrNull() ?: error("Must have one factory")
-        val problemDescriptors = arrayListOf<ProblemDescriptor>()
+        val problemDescriptors = mutableListOf<ProblemDescriptor>()
 
         file.accept(
             object : KtTreeVisitorVoid() {
