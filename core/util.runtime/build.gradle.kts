@@ -1,3 +1,4 @@
+import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     java
@@ -7,6 +8,8 @@ plugins {
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
+
+val kotlinVersion: String by rootProject.extra
 
 dependencies {
     compileOnly(kotlinStdlib())
@@ -22,5 +25,9 @@ tasks.withType<JavaCompile> {
     targetCompatibility = "1.6"
 }
 
-if (project.hasProperty("teamcity"))
-tasks["compileJava"].dependsOn(":prepare:build.version:writeCompilerVersion")
+tasks.named<ProcessResources>("processResources") {
+    inputs.property("compilerVersion", kotlinVersion)
+    filesMatching("META-INF/compiler.version") {
+        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to kotlinVersion))
+    }
+}
