@@ -211,7 +211,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     private fun ConeKotlinType.makeDefinitelyNotNullOrNotNull(): ConeKotlinType {
-        // TODO: add intersection types, see fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull() in SpecialTypes.kt
+        if (this is ConeIntersectionType) {
+            return ConeIntersectionType(intersectedTypes.map { it.makeDefinitelyNotNullOrNotNull() })
+        }
         return ConeDefinitelyNotNullType.create(this) ?: this.withNullability(false) as ConeKotlinType
     }
 

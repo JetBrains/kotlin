@@ -1,8 +1,8 @@
-FILE: smartcastOnBangBang.kt
+FILE: definitelyNotNullIntersectionType.kt
     public final fun <X> test_1(a: R|X|): R|kotlin/Unit| {
         when () {
             (R|<local>/a| is R|kotlin/String?|) ->  {
-                <Inapplicable(INAPPLICABLE): [/takeString]>#(R|<local>/a|!!)
+                R|/takeString|(R|<local>/a|!!)
             }
         }
 
