@@ -117,28 +117,11 @@ fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
         }
     }
 
-    return when {
-        // All unsafe coercions between irTypes should use the UnsafeCoerce intrinsic
-        type == target -> this
-        type == AsmTypes.JAVA_CLASS_TYPE && target == AsmTypes.K_CLASS_TYPE && irType.isKClass() ->
-            object : PromisedValue(codegen, target, irTarget) {
-                override fun materialize() {
-                    this@coerce.materialize()
-                    AsmUtil.wrapJavaClassIntoKClass(mv)
-                }
-            }
-        type == AsmTypes.JAVA_CLASS_ARRAY_TYPE && target == AsmTypes.K_CLASS_ARRAY_TYPE && irType.isArrayOfKClass() ->
-            object : PromisedValue(codegen, target, irTarget) {
-                override fun materialize() {
-                    this@coerce.materialize()
-                    AsmUtil.wrapJavaClassesIntoKClasses(mv)
-                }
-            }
-        else -> object : PromisedValue(codegen, target, irTarget) {
-            override fun materialize() {
-                val value = this@coerce.materialized
-                StackValue.coerce(value.type, type, mv)
-            }
+    // All unsafe coercions between irTypes should use the UnsafeCoerce intrinsic
+    return if (type == target) this else object : PromisedValue(codegen, target, irTarget) {
+        override fun materialize() {
+            val value = this@coerce.materialized
+            StackValue.coerce(value.type, type, mv)
         }
     }
 }
@@ -148,10 +131,6 @@ fun PromisedValue.coerce(irTarget: IrType) =
 
 fun PromisedValue.coerceToBoxed(irTarget: IrType) =
     coerce(typeMapper.boxType(irTarget), irTarget)
-
-fun PromisedValue.boxInlineClasses(irTarget: IrType) =
-    if (irTarget.classOrNull?.owner?.isInline == true)
-        coerceToBoxed(irTarget) else this
 
 // Same as above, but with a return type that allows conditional jumping.
 fun PromisedValue.coerceToBoolean() =
