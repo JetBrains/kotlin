@@ -116,6 +116,7 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.Vector;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -169,7 +170,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
   private int myHistoryIndex;
   private boolean mySkipFocusGain;
 
-  public static final Key<JBPopup> SEARCH_EVERYWHERE_POPUP = new Key<>("SearchEverywherePopup");
+  public static final Key<ConcurrentHashMap<ClientId, JBPopup>> SEARCH_EVERYWHERE_POPUP = new Key<>("SearchEverywherePopup");
 
   static {
     ModifierKeyDoubleClickHandler.getInstance().registerAction(IdeActions.ACTION_SEARCH_EVERYWHERE, KeyEvent.VK_SHIFT, -1, false);
@@ -2047,11 +2048,16 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
               .setShowShadow(false)
               .setShowBorder(false)
               .createPopup();
-            project.putUserData(SEARCH_EVERYWHERE_POPUP, myPopup);
+            ConcurrentHashMap<ClientId, JBPopup> map = project.getUserData(SEARCH_EVERYWHERE_POPUP);
+            if (map == null) {
+              map = new ConcurrentHashMap<>();
+              project.putUserData(SEARCH_EVERYWHERE_POPUP, map);
+            }
+            map.put(ClientId.getCurrent(), myPopup);
             //myPopup.setMinimumSize(new Dimension(myBalloon.getSize().width, 30));
             myPopup.getContent().setBorder(null);
             Disposer.register(myPopup, () -> {
-              project.putUserData(SEARCH_EVERYWHERE_POPUP, null);
+              Objects.requireNonNull(project.getUserData(SEARCH_EVERYWHERE_POPUP)).remove(ClientId.getCurrent());
               ApplicationManager.getApplication().executeOnPooledThread(() -> {
                 resetFields();
                 myNonProjectCheckBox.setSelected(false);

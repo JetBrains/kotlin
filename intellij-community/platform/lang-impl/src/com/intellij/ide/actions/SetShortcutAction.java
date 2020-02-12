@@ -13,6 +13,7 @@ import com.intellij.codeWithMe.ClientId;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SetShortcutAction extends AnAction implements DumbAware {
 
@@ -25,10 +26,12 @@ public class SetShortcutAction extends AnAction implements DumbAware {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
-    JBPopup seDialog = project == null ? null : project.getUserData(SearchEverywhereAction.SEARCH_EVERYWHERE_POPUP);
-    if (seDialog == null) {
-      return;
-    }
+
+    if (project == null) return;
+    ConcurrentHashMap<ClientId, JBPopup> map = project.getUserData(SearchEverywhereAction.SEARCH_EVERYWHERE_POPUP);
+    if(map == null) return;
+    JBPopup seDialog = map.get(ClientId.getCurrent());
+    if (seDialog == null) return;
 
     KeymapManager km = KeymapManager.getInstance();
     Keymap activeKeymap = km != null ? km.getActiveKeymap() : null;
@@ -52,7 +55,11 @@ public class SetShortcutAction extends AnAction implements DumbAware {
     Presentation presentation = e.getPresentation();
 
     Project project = e.getProject();
-    JBPopup seDialog = project == null ? null : project.getUserData(SearchEverywhereAction.SEARCH_EVERYWHERE_POPUP);
+    JBPopup seDialog;
+    if (project == null) seDialog = null; else {
+      ConcurrentHashMap<ClientId, JBPopup> map = project.getUserData(SearchEverywhereAction.SEARCH_EVERYWHERE_POPUP);
+      seDialog = map == null ? null : map.get(ClientId.getCurrent());
+    }
     if (seDialog == null) {
       presentation.setEnabled(false);
       return;
