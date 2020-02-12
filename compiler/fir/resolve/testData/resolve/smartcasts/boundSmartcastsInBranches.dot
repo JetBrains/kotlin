@@ -1,4 +1,4 @@
-digraph noBoundSmartcastAfterContinue_kt {
+digraph boundSmartcastsInBranches_kt {
     graph [splines=ortho nodesep=3]
     node [shape=box penwidth=2]
     edge [penwidth=2]
