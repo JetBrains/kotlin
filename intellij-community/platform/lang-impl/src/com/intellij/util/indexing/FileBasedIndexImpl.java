@@ -1656,6 +1656,18 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return fileId -> !getChangedFilesCollector().containsFileId(fileId);
   }
 
+  @ApiStatus.Internal
+  public void flushIndexes() {
+    for (ID<?, ?> id : getRegisteredIndexes().getState().getIndexIDs()) {
+      try {
+        getIndex(id).flush();
+      }
+      catch (StorageException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
   public synchronized FileContentHashIndex getOrCreateFileContentHashIndex() {
     if (myFileContentHashIndex == null) {
       try {
