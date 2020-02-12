@@ -11,20 +11,20 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
-class RemoveReturnLabelFix(element: KtReturnExpression) : KotlinQuickFixAction<KtReturnExpression>(element) {
+class RemoveReturnLabelFix(element: KtReturnExpression, private val labelName: String) : KotlinQuickFixAction<KtReturnExpression>(element) {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element?.labeledExpression?.delete()
     }
 
     override fun getFamilyName(): String = "Remove redundant label"
 
-    override fun getText(): String = "Remove redundant ${element?.getLabelName()?.let { "'@$it'" } ?: "label"}"
+    override fun getText(): String = "Remove redundant '@$labelName'"
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtReturnExpression>? {
             val returnExpression = diagnostic.psiElement as? KtReturnExpression ?: return null
-            return if (returnExpression.labeledExpression == null) null
-            else RemoveReturnLabelFix(returnExpression)
+            val labelName = returnExpression.getLabelName() ?: return null
+            return RemoveReturnLabelFix(returnExpression, labelName)
         }
     }
 }

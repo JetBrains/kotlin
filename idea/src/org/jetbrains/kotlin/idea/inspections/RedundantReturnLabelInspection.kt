@@ -26,7 +26,7 @@ class RedundantReturnLabelInspection : AbstractKotlinInspection() {
                 label,
                 "Redundant '@$labelName'",
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                IntentionWrapper(RemoveReturnLabelFix(returnExpression), returnExpression.containingKtFile),
+                IntentionWrapper(RemoveReturnLabelFix(returnExpression, labelName), returnExpression.containingKtFile),
             )
         },
     )
