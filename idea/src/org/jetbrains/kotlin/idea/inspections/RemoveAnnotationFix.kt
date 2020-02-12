@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 
-class RemoveAnnotationFix(private val text: String = "Remove annotation", annotationEntry: KtAnnotationEntry) :
+class RemoveAnnotationFix(private val text: String, annotationEntry: KtAnnotationEntry) :
     KotlinQuickFixAction<KtAnnotationEntry>(annotationEntry) {
 
     override fun getText() = text
@@ -34,7 +34,7 @@ class RemoveAnnotationFix(private val text: String = "Remove annotation", annota
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): RemoveAnnotationFix? {
             val annotationEntry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
-            return RemoveAnnotationFix(annotationEntry = annotationEntry)
+            return RemoveAnnotationFix("Remove annotation", annotationEntry = annotationEntry)
         }
     }
 }
