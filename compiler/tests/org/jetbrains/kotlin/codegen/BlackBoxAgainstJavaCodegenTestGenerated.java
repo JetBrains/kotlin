@@ -349,11 +349,6 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall.kt");
         }
 
-        @TestMetadata("explicitEqualsCallNull.kt")
-        public void testExplicitEqualsCallNull() throws Exception {
-            runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCallNull.kt");
-        }
-
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/ieee754/float.kt");
@@ -487,6 +482,37 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         @TestMetadata("rightElvisOperand.kt")
         public void testRightElvisOperand() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/notNullAssertions/rightElvisOperand.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OldLanguageVersions extends AbstractBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOldLanguageVersions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions/ieee754")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Ieee754 extends AbstractBlackBoxAgainstJavaCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIeee754() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("explicitEqualsCallNull.kt")
+            public void testExplicitEqualsCallNull() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions/ieee754/explicitEqualsCallNull.kt");
+            }
         }
     }
 

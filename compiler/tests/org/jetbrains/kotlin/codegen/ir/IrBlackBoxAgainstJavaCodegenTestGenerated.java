@@ -26,7 +26,7 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
     }
 
     public void testAllFilesPresentInBoxAgainstJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "oldLanguageVersions");
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/annotations")
@@ -348,11 +348,6 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
         @TestMetadata("explicitEqualsCall.kt")
         public void testExplicitEqualsCall() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall.kt");
-        }
-
-        @TestMetadata("explicitEqualsCallNull.kt")
-        public void testExplicitEqualsCallNull() throws Exception {
-            runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCallNull.kt");
         }
 
         @TestMetadata("float.kt")

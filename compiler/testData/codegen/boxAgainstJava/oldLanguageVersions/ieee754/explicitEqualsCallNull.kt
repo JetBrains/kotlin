@@ -29,4 +29,3 @@ fun box(): String {
     if (jClass.minus0().equals(jClass.null0())) return "fail 7"
     return "OK"
 }
-
