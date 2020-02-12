@@ -1,0 +1,59 @@
+digraph smartcastOnBangBang_kt {
+    graph [splines=ortho nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function test_1" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            1 [label="Enter when"];
+            subgraph cluster_2 {
+                color=blue
+                2 [label="Enter when branch condition "];
+                3 [label="Access variable R|<local>/a|"];
+                4 [label="Type operator: a is String?"];
+                5 [label="Exit when branch condition"];
+            }
+            6 [label="Synthetic else branch"];
+            7 [label="Enter when branch result"];
+            subgraph cluster_3 {
+                color=blue
+                8 [label="Enter block"];
+                9 [label="Access variable R|<local>/a|"];
+                10 [label="Check not null: R|<local>/a|!!"];
+                11 [label="Function call: <Inapplicable(INAPPLICABLE): [/takeString]>#(R|<local>/a|!!)"];
+                12 [label="Exit block"];
+            }
+            13 [label="Exit when branch result"];
+            14 [label="Exit when"];
+        }
+        15 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
+
+    0 -> {1};
+    1 -> {2};
+    2 -> {3};
+    3 -> {4};
+    4 -> {5};
+    5 -> {7 6};
+    6 -> {14};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+
+    subgraph cluster_4 {
+        color=red
+        16 [label="Enter function takeString" style="filled" fillcolor=red];
+        17 [label="Exit function takeString" style="filled" fillcolor=red];
+    }
+
+    16 -> {17};
+
+}

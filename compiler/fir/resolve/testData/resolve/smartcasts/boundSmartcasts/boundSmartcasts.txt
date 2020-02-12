@@ -58,3 +58,44 @@ FILE: boundSmartcasts.kt
         }
 
     }
+    public final class D : R|kotlin/Any| {
+        public constructor(any: R|kotlin/Any?|): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val any: R|kotlin/Any?| = R|<local>/any|
+            public get(): R|kotlin/Any?|
+
+    }
+    public final fun R|kotlin/Any|.baz(): R|kotlin/Unit| {
+    }
+    public final fun test_5(d: R|D|): R|kotlin/Unit| {
+        lval a: R|kotlin/Any| = when (lval <elvis>: R|kotlin/Any?| = R|<local>/d|.R|/D.any|) {
+            ==($subj$, Null(null)) ->  {
+                ^test_5 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+        R|<local>/a|.R|/baz|()
+        R|<local>/d|.R|/D.any|.R|/baz|()
+        (R|<local>/a| as R|A|)
+        R|<local>/a|.R|/A.foo|()
+    }
+    public final fun test_6(d1: R|D|): R|kotlin/Unit| {
+        lval a: R|kotlin/Any?| = R|<local>/d1|.R|/D.any|
+        (R|<local>/a| as R|A|)
+        R|<local>/a|.R|/A.foo|()
+        R|<local>/d1|.R|/D.any|.R|/A.foo|()
+        R|<local>/d1|.R|/D.any|.R|/baz|()
+    }
+    public final fun test_7(d1: R|D|, d2: R|D|): R|kotlin/Unit| {
+        lval a: R|kotlin/Any?| = R|<local>/d1|?.R|/D.any|
+        lval b: R|kotlin/Any?| = R|<local>/d2|?.R|/D.any|
+        (R|<local>/a| as R|A|)
+        R|<local>/a|.R|/A.foo|()
+        (R|<local>/b| as R|B|)
+        R|<local>/b|.R|/B.bar|()
+    }

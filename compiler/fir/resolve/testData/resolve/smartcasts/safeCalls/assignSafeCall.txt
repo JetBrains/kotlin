@@ -1,4 +1,4 @@
-FILE: anotherBoundSmartcasts.kt
+FILE: assignSafeCall.kt
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()

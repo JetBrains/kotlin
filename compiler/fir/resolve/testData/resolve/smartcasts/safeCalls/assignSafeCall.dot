@@ -1,4 +1,4 @@
-digraph anotherBoundSmartcasts_kt {
+digraph assignSafeCall_kt {
     graph [splines=ortho nodesep=3]
     node [shape=box penwidth=2]
     edge [penwidth=2]

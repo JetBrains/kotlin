@@ -1,0 +1,139 @@
+digraph multipleCasts_kt {
+    graph [splines=ortho nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+
+    0 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function foo" style="filled" fillcolor=red];
+        3 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+
+    2 -> {3};
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter function getAny" style="filled" fillcolor=red];
+        5 [label="Const: Null(null)"];
+        6 [label="Jump: ^getAny Null(null)"];
+        7 [label="Stub" style="filled" fillcolor=gray];
+        8 [label="Exit function getAny" style="filled" fillcolor=red];
+    }
+
+    4 -> {5};
+    5 -> {6};
+    6 -> {8};
+    6 -> {7} [style=dotted];
+    7 -> {8} [style=dotted];
+
+    subgraph cluster_3 {
+        color=red
+        9 [label="Enter function test_0" style="filled" fillcolor=red];
+        10 [label="Function call: R|/getAny|()"];
+        11 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+        12 [label="Function call: R|/getAny|()"];
+        13 [label="Variable declaration: lval b: R|kotlin/Any?|"];
+        14 [label="Access variable R|<local>/a|"];
+        15 [label="Type operator: a as A"];
+        16 [label="Access variable R|<local>/a|"];
+        17 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+        18 [label="Access variable R|<local>/b|"];
+        19 [label="Type operator: b as B"];
+        20 [label="Access variable R|<local>/b|"];
+        21 [label="Function call: R|<local>/b|.R|/B.foo|()"];
+        22 [label="Exit function test_0" style="filled" fillcolor=red];
+    }
+
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+
+    subgraph cluster_4 {
+        color=red
+        23 [label="Enter function test_1" style="filled" fillcolor=red];
+        24 [label="Function call: R|/getAny|()"];
+        25 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+        26 [label="Function call: R|/getAny|()"];
+        27 [label="Variable declaration: lval b: R|kotlin/Any?|"];
+        subgraph cluster_5 {
+            color=blue
+            28 [label="Enter when"];
+            subgraph cluster_6 {
+                color=blue
+                29 [label="Enter when branch condition "];
+                subgraph cluster_7 {
+                    color=blue
+                    30 [label="Enter &&"];
+                    31 [label="Access variable R|<local>/a|"];
+                    32 [label="Type operator: a is A"];
+                    33 [label="Exit left part of &&"];
+                    34 [label="Enter right part of &&"];
+                    35 [label="Access variable R|<local>/b|"];
+                    36 [label="Type operator: b is B"];
+                    37 [label="Exit &&"];
+                }
+                38 [label="Exit when branch condition"];
+            }
+            39 [label="Synthetic else branch"];
+            40 [label="Enter when branch result"];
+            subgraph cluster_8 {
+                color=blue
+                41 [label="Enter block"];
+                42 [label="Access variable R|<local>/a|"];
+                43 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                44 [label="Access variable R|<local>/b|"];
+                45 [label="Function call: R|<local>/b|.R|/B.foo|()"];
+                46 [label="Exit block"];
+            }
+            47 [label="Exit when branch result"];
+            48 [label="Exit when"];
+        }
+        49 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
+
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {37 34};
+    34 -> {35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {40 39};
+    39 -> {48};
+    40 -> {41};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+
+}

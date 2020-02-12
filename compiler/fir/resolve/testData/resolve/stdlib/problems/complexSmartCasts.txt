@@ -1,72 +1,5 @@
 FILE: complexSmartCasts.kt
-    public final fun <T> runHigherOrder(f: R|() -> T|): R|T| {
-        ^runHigherOrder R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
-    }
-    public final val R|kotlin/String|.ext: R|kotlin/Int|
-        public get(): R|kotlin/Int| {
-            ^ this@R|/ext|.R|kotlin/String.length|
-        }
-    public final fun foo(a: R|kotlin/Any?|): R|kotlin/Unit| {
-        lval s: R|kotlin/String?| = (R|<local>/a| as? R|kotlin/String|)
-        lval length: R|kotlin/Int| = when (lval <elvis>: R|kotlin/Int?| = R|<local>/s|?.R|/ext|) {
-            ==($subj$, Null(null)) ->  {
-                ^foo Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
-        R|/runHigherOrder|<R|kotlin/Boolean|>(<L> = runHigherOrder@fun <anonymous>(): R|kotlin/Boolean| {
-            ^ R|<local>/s|.R|kotlin/text/isNotEmpty|()
-        }
-        )
-    }
-    public final fun bar(s: R|kotlin/String?|): R|kotlin/Unit| {
-        when () {
-            ==(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(true)) ->  {
-                R|<local>/s|.R|kotlin/String.length|
-            }
-            else ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
-            }
-        }
-
-    }
-    public final fun bar_2(s: R|kotlin/String?|): R|kotlin/Unit| {
-        when () {
-            ==(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(false)) ->  {
-                R|<local>/s|.R|kotlin/String.length|
-            }
-            else ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
-            }
-        }
-
-    }
-    public final fun bar_3(s: R|kotlin/String?|): R|kotlin/Unit| {
-        when () {
-            !=(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(true)) ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
-            }
-            else ->  {
-                R|<local>/s|.R|kotlin/String.length|
-            }
-        }
-
-    }
-    public final fun bar_4(s: R|kotlin/String?|): R|kotlin/Unit| {
-        when () {
-            !=(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(false)) ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
-            }
-            else ->  {
-                R|<local>/s|.R|kotlin/String.length|
-            }
-        }
-
-    }
-    public final fun baz(s: R|kotlin/String?|): R|kotlin/Unit| {
+    public final fun test_1(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
             R|<local>/s|.R|kotlin/text/isNullOrEmpty|().R|kotlin/Boolean.not|() ->  {
                 R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
@@ -74,9 +7,10 @@ FILE: complexSmartCasts.kt
         }
 
     }
-    public final fun bazz(s: R|kotlin/String?|): R|kotlin/Unit| {
+    public final fun test_2(s: R|kotlin/String?|): R|kotlin/Unit| {
         R|<local>/s|?.R|kotlin/let|<R|kotlin/String|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            R|/use|(R|<local>/it|)
+            R|/takeString|(R|<local>/it|)
+            R|/takeString|(R|<local>/s|)
         }
         )
     }
@@ -91,13 +25,13 @@ FILE: complexSmartCasts.kt
         public final fun withThis(): R|kotlin/Unit| {
             when () {
                 !=(this@R|/Wrapper|.R|/Wrapper.s|, Null(null)) ->  {
-                    R|/use|(this@R|/Wrapper|.R|/Wrapper.s|)
+                    R|/takeString|(this@R|/Wrapper|.R|/Wrapper.s|)
                 }
             }
 
             when () {
                 !=(this@R|/Wrapper|.R|/Wrapper.s|, Null(null)) ->  {
-                    R|/use|(this@R|/Wrapper|.R|/Wrapper.s|)
+                    R|/takeString|(this@R|/Wrapper|.R|/Wrapper.s|)
                 }
             }
 
@@ -115,13 +49,5 @@ FILE: complexSmartCasts.kt
     public final fun R|kotlin/String|.withInvoke(f: R|kotlin/String.() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/withInvoke|)
     }
-    public final fun <X> withBangBang(a: R|X|): R|kotlin/Unit| {
-        when () {
-            (R|<local>/a| is R|kotlin/String?|) ->  {
-                <Inapplicable(INAPPLICABLE): [/use]>#(R|<local>/a|!!)
-            }
-        }
-
-    }
-    public final fun use(s: R|kotlin/String|): R|kotlin/Unit| {
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
     }

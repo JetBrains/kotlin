@@ -45,3 +45,33 @@ fun test_4(y: Any) {
         y.foo()
     }
 }
+
+class D(val any: Any?)
+
+fun Any.baz() {}
+
+fun test_5(d: D) {
+    // Elvis operator is converted into == function call
+    val a = d.any ?: return
+    a.baz() // should be OK
+    d.any.baz() // should be OK
+    a as A
+    a.foo() // should be OK
+}
+
+fun test_6(d1: D) {
+    val a = d1.any
+    a as A
+    a.foo() // should be OK
+    d1.any.foo() // should be OK
+    d1.any.baz() // should be OK
+}
+
+fun test_7(d1: D, d2: D) {
+    val a = d1?.any
+    val b = d2?.any
+    a as A
+    a.foo() // should be OK
+    b as B
+    b.bar() // should be OK
+}

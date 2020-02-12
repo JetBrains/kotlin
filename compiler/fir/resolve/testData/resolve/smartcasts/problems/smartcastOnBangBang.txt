@@ -1,0 +1,11 @@
+FILE: smartcastOnBangBang.kt
+    public final fun <X> test_1(a: R|X|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/String?|) ->  {
+                <Inapplicable(INAPPLICABLE): [/takeString]>#(R|<local>/a|!!)
+            }
+        }
+
+    }
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }

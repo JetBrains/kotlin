@@ -278,4 +278,204 @@ digraph boundSmartcasts_kt {
     100 -> {101};
     101 -> {102};
 
+    subgraph cluster_21 {
+        color=red
+        103 [label="Enter function <init>" style="filled" fillcolor=red];
+        104 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+
+    103 -> {104};
+
+    subgraph cluster_22 {
+        color=red
+        105 [label="Enter function getter" style="filled" fillcolor=red];
+        106 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+
+    105 -> {106};
+
+    subgraph cluster_23 {
+        color=red
+        107 [label="Enter property" style="filled" fillcolor=red];
+        108 [label="Access variable R|<local>/any|"];
+        109 [label="Exit property" style="filled" fillcolor=red];
+    }
+
+    107 -> {108};
+    108 -> {109};
+
+    subgraph cluster_24 {
+        color=red
+        110 [label="Enter function baz" style="filled" fillcolor=red];
+        111 [label="Exit function baz" style="filled" fillcolor=red];
+    }
+
+    110 -> {111};
+
+    subgraph cluster_25 {
+        color=red
+        112 [label="Enter function test_5" style="filled" fillcolor=red];
+        subgraph cluster_26 {
+            color=blue
+            113 [label="Enter when"];
+            114 [label="Access variable R|<local>/d|"];
+            115 [label="Access variable R|/D.any|"];
+            116 [label="Variable declaration: lval <elvis>: R|kotlin/Any?|"];
+            subgraph cluster_27 {
+                color=blue
+                117 [label="Enter when branch condition "];
+                118 [label="Const: Null(null)"];
+                119 [label="Operator =="];
+                120 [label="Exit when branch condition"];
+            }
+            subgraph cluster_28 {
+                color=blue
+                121 [label="Enter when branch condition else"];
+                122 [label="Exit when branch condition"];
+            }
+            123 [label="Enter when branch result"];
+            subgraph cluster_29 {
+                color=blue
+                124 [label="Enter block"];
+                125 [label="Access variable R|<local>/<elvis>|"];
+                126 [label="Exit block"];
+            }
+            127 [label="Exit when branch result"];
+            128 [label="Enter when branch result"];
+            subgraph cluster_30 {
+                color=blue
+                129 [label="Enter block"];
+                130 [label="Jump: ^test_5 Unit"];
+                131 [label="Stub" style="filled" fillcolor=gray];
+                132 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            133 [label="Exit when branch result" style="filled" fillcolor=gray];
+            134 [label="Exit when"];
+        }
+        135 [label="Variable declaration: lval a: R|kotlin/Any|"];
+        136 [label="Access variable R|<local>/a|"];
+        137 [label="Function call: R|<local>/a|.R|/baz|()"];
+        138 [label="Access variable R|<local>/d|"];
+        139 [label="Access variable R|/D.any|"];
+        140 [label="Function call: R|<local>/d|.R|/D.any|.R|/baz|()"];
+        141 [label="Access variable R|<local>/a|"];
+        142 [label="Type operator: a as A"];
+        143 [label="Access variable R|<local>/a|"];
+        144 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+        145 [label="Exit function test_5" style="filled" fillcolor=red];
+    }
+
+    112 -> {113};
+    113 -> {114};
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
+    117 -> {118};
+    118 -> {119};
+    119 -> {120};
+    120 -> {128 121};
+    121 -> {122};
+    122 -> {123};
+    123 -> {124};
+    124 -> {125};
+    125 -> {126};
+    126 -> {127};
+    127 -> {134};
+    128 -> {129};
+    129 -> {130};
+    130 -> {145};
+    130 -> {131} [style=dotted];
+    131 -> {132} [style=dotted];
+    132 -> {133} [style=dotted];
+    133 -> {134} [style=dotted];
+    134 -> {135};
+    135 -> {136};
+    136 -> {137};
+    137 -> {138};
+    138 -> {139};
+    139 -> {140};
+    140 -> {141};
+    141 -> {142};
+    142 -> {143};
+    143 -> {144};
+    144 -> {145};
+
+    subgraph cluster_31 {
+        color=red
+        146 [label="Enter function test_6" style="filled" fillcolor=red];
+        147 [label="Access variable R|<local>/d1|"];
+        148 [label="Access variable R|/D.any|"];
+        149 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+        150 [label="Access variable R|<local>/a|"];
+        151 [label="Type operator: a as A"];
+        152 [label="Access variable R|<local>/a|"];
+        153 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+        154 [label="Access variable R|<local>/d1|"];
+        155 [label="Access variable R|/D.any|"];
+        156 [label="Function call: R|<local>/d1|.R|/D.any|.R|/A.foo|()"];
+        157 [label="Access variable R|<local>/d1|"];
+        158 [label="Access variable R|/D.any|"];
+        159 [label="Function call: R|<local>/d1|.R|/D.any|.R|/baz|()"];
+        160 [label="Exit function test_6" style="filled" fillcolor=red];
+    }
+
+    146 -> {147};
+    147 -> {148};
+    148 -> {149};
+    149 -> {150};
+    150 -> {151};
+    151 -> {152};
+    152 -> {153};
+    153 -> {154};
+    154 -> {155};
+    155 -> {156};
+    156 -> {157};
+    157 -> {158};
+    158 -> {159};
+    159 -> {160};
+
+    subgraph cluster_32 {
+        color=red
+        161 [label="Enter function test_7" style="filled" fillcolor=red];
+        162 [label="Access variable R|<local>/d1|"];
+        163 [label="Enter safe call"];
+        164 [label="Access variable R|/D.any|"];
+        165 [label="Exit safe call"];
+        166 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+        167 [label="Access variable R|<local>/d2|"];
+        168 [label="Enter safe call"];
+        169 [label="Access variable R|/D.any|"];
+        170 [label="Exit safe call"];
+        171 [label="Variable declaration: lval b: R|kotlin/Any?|"];
+        172 [label="Access variable R|<local>/a|"];
+        173 [label="Type operator: a as A"];
+        174 [label="Access variable R|<local>/a|"];
+        175 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+        176 [label="Access variable R|<local>/b|"];
+        177 [label="Type operator: b as B"];
+        178 [label="Access variable R|<local>/b|"];
+        179 [label="Function call: R|<local>/b|.R|/B.bar|()"];
+        180 [label="Exit function test_7" style="filled" fillcolor=red];
+    }
+
+    161 -> {162};
+    162 -> {163 165};
+    163 -> {164};
+    164 -> {165};
+    165 -> {166};
+    166 -> {167};
+    167 -> {168 170};
+    168 -> {169};
+    169 -> {170};
+    170 -> {171};
+    171 -> {172};
+    172 -> {173};
+    173 -> {174};
+    174 -> {175};
+    175 -> {176};
+    176 -> {177};
+    177 -> {178};
+    178 -> {179};
+    179 -> {180};
+
 }
