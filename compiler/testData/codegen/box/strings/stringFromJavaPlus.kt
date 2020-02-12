@@ -36,13 +36,14 @@ public class J {
     }
 }
 
-// FILE: main.kt
+// FILE: stringFromJavaPlus.kt
 import kotlin.test.assertEquals
 
 fun box(): String {
     val n = 123
 
-    // Due to KT-36625, certain concatenation calls below (marked with a comment) SHOULD fail a nullability check but do not.
+    // Null check behavior in string concatenation might change depending on language design decision for KT-36625.
+    // Cases below that could be affected by KT-36625 are marked with a comment.
 
     assertEquals("null", "${J.platformStringIsNull()}")
     assertEquals("nullBAR", J.platformStringIsNull() + "BAR")  // KT-36625

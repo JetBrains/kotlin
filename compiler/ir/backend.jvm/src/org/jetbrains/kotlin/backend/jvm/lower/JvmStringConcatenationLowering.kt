@@ -114,10 +114,10 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
         return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
-            // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this SHOULD
-            // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend has a bug (KT-36625) where this
-            // check is not inserted (see KT-36625). To maintain bug compatibility with the non-IR backend, we remove IMPLICIT_NOTNULL casts
-            // (which generate the nullability checks in JvmArgumentNullabilityAssertionsLowering) from all arguments.
+            // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
+            // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
+            // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove
+            // IMPLICIT_NOTNULL casts from all arguments (nullability checks are generated in JvmArgumentNullabilityAssertionsLowering).
 
             fun IrExpression.unwrapImplicitNotNull() =
                 if (this is IrTypeOperatorCall && operator == IrTypeOperator.IMPLICIT_NOTNULL)
