@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform
 
 import com.intellij.CommonBundle
 import com.intellij.configurationStore.StoreUtil
+import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollector
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.logger
@@ -107,6 +108,8 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
       Messages.showErrorDialog(project, "Cannot attach project: ${e.message}", CommonBundle.getErrorTitle())
       return false
     }
+
+    LifecycleUsageTriggerCollector.onProjectModuleAttached(project)
 
     if (newModule != null) {
       callback?.projectOpened(project, newModule)
