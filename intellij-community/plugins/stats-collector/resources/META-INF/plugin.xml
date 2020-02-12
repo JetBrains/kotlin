@@ -21,7 +21,9 @@
   <depends>com.intellij.modules.platform</depends>
 
   <extensionPoints>
-    <extensionPoint name="tracker.disabler" interface="com.intellij.stats.completion.CompletionTrackerDisabler" />
+    <extensionPoint name="policy" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.stats.CompletionStatsPolicy"/>
+    </extensionPoint>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -2,7 +2,8 @@
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.Lookup
-import com.intellij.openapi.extensions.Extensions
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.stats.CompletionStatsPolicy
 import junit.framework.TestCase
 
 class TrackerDisablerTest : CompletionLoggingTestBase() {
@@ -25,15 +26,17 @@ class TrackerDisablerTest : CompletionLoggingTestBase() {
 
   private fun registerDisabler(disabled: Boolean): TestDisabler {
     val disabler = TestDisabler(disabled)
-    Extensions.getRootArea().getExtensionPoint(CompletionTrackerDisabler.EpName).registerExtension(disabler, testRootDisposable)
+    CompletionStatsPolicy.Instance.addExplicitExtension(JavaLanguage.INSTANCE, disabler, testRootDisposable)
     return disabler
   }
 
-  private class TestDisabler(private val disabled: Boolean) : CompletionTrackerDisabler {
+  private class TestDisabler(private val disabled: Boolean) : CompletionStatsPolicy {
     var checked: Boolean = false
-    override fun isDisabled(): Boolean {
+    override fun isStatsLogDisabled(): Boolean {
       checked = true
       return disabled
     }
+
+    override fun useNgramModel(): Boolean = true
   }
 }

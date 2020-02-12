@@ -7,7 +7,7 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.completion.sorting.RankingSupport
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.extensions.Extensions
+import com.intellij.stats.CompletionStatsPolicy
 import com.intellij.stats.storage.factors.MutableLookupStorage
 import junit.framework.TestCase
 
@@ -44,8 +44,9 @@ class MLFeaturesComputingTest : CompletionLoggingTestBase() {
 
   private fun setLoggingEnabled(value: Boolean) {
     if (!value) {
-      Extensions.getRootArea().getExtensionPoint(CompletionTrackerDisabler.EpName).registerExtension(object : CompletionTrackerDisabler {
-        override fun isDisabled(): Boolean = true
+      CompletionStatsPolicy.Instance.addExplicitExtension(JavaLanguage.INSTANCE, object : CompletionStatsPolicy {
+        override fun isStatsLogDisabled(): Boolean = true
+        override fun useNgramModel(): Boolean = true
       }, testRootDisposable)
     }
   }

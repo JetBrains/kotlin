@@ -13,11 +13,13 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
+import com.intellij.stats.CompletionStatsPolicy
 import kotlin.math.max
 
 
 object NGram {
   internal val NGRAM_SCORER_KEY: Key<ScoringFunction> = Key.create("NGRAM_SCORER")
+  @Deprecated("Use CompletionStatsPolicy instead")
   private val SUPPORTED_LANGUAGES = setOf(
     "ecmascript 6",
     "go",
@@ -32,6 +34,7 @@ object NGram {
     )
 
   private fun isSupported(language: Language): Boolean = language.id.toLowerCase() in SUPPORTED_LANGUAGES
+                                                         || CompletionStatsPolicy.useNgramModel(language)
 
   fun getNGramPrefix(parameters: CompletionParameters, order: Int): Array<String> {
     val precedingTokens = SyntaxTraverser.revPsiTraverser()
