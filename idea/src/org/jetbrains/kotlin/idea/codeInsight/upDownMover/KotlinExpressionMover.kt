@@ -1,680 +1,581 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.idea.codeInsight.upDownMover
 
-package org.jetbrains.kotlin.idea.codeInsight.upDownMover;
+import com.intellij.codeInsight.editorActions.moveUpDown.LineRange
+import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.*
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.core.util.isMultiLine
+import org.jetbrains.kotlin.idea.formatter.isComma
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
+import java.util.function.Predicate
 
-import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.util.PsiLinesUtilsKt;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
-
-import java.util.List;
-import java.util.function.Predicate;
-
-public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
-
-    private static final Predicate<KtElement> IS_CALL_EXPRESSION = input -> input instanceof KtCallExpression;
-
-    public KotlinExpressionMover() {
+class KotlinExpressionMover : AbstractKotlinUpDownMover() {
+    private enum class BraceStatus {
+        NOT_FOUND, MOVABLE, NOT_MOVABLE
     }
 
-    private final static Class[] MOVABLE_ELEMENT_CLASSES = {
-            KtExpression.class,
-            KtWhenEntry.class,
-            KtValueArgument.class,
-            PsiComment.class
-    };
-
-    private static final Function1<PsiElement, Boolean> MOVABLE_ELEMENT_CONSTRAINT = new Function1<PsiElement, Boolean>() {
-        @NotNull
-        @Override
-        public Boolean invoke(PsiElement element) {
-            return (!(element instanceof KtExpression)
-                    || element instanceof KtDeclaration
-                    || element instanceof KtBlockExpression
-                    || element.getParent() instanceof KtBlockExpression);
-        }
-    };
-
-    private final static Class[] BLOCKLIKE_ELEMENT_CLASSES =
-            {KtBlockExpression.class, KtWhenExpression.class, KtClassBody.class, KtFile.class};
-
-    private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
-            {KtFunction.class, KtPropertyAccessor.class, KtAnonymousInitializer.class};
-
-    private static final Predicate<KtElement> CHECK_BLOCK_LIKE_ELEMENT =
-            input -> (input instanceof KtBlockExpression || input instanceof KtClassBody)
-                     && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
-
-    private static final Predicate<KtElement> CHECK_BLOCK =
-            input -> input instanceof KtBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
-
-    @Nullable
-    private static PsiElement getStandaloneClosingBrace(@NotNull PsiFile file, @NotNull Editor editor) {
-        LineRange range = getLineRangeFromSelection(editor);
-        if (range.endLine - range.startLine != 1) return null;
-        int offset = editor.getCaretModel().getOffset();
-        Document document = editor.getDocument();
-        int line = document.getLineNumber(offset);
-        int lineStartOffset = document.getLineStartOffset(line);
-        String lineText = document.getText().substring(lineStartOffset, document.getLineEndOffset(line));
-        if (!lineText.trim().equals("}")) return null;
-
-        return file.findElementAt(lineStartOffset + lineText.indexOf('}'));
-    }
-
-    private static BraceStatus checkForMovableDownClosingBrace(
-            @NotNull PsiElement closingBrace,
-            @NotNull PsiElement block,
-            @NotNull Editor editor,
-            @NotNull MoveInfo info
-    ) {
-        PsiElement current = block;
-        PsiElement nextElement = null;
-        PsiElement nextExpression = null;
-        do {
-            PsiElement sibling = firstNonWhiteElement(current.getNextSibling(), true);
-            if (sibling != null && nextElement == null) {
-                nextElement = sibling;
-            }
-
-            if (sibling instanceof KtExpression) {
-                nextExpression = sibling;
-                break;
-            }
-
-            current = current.getParent();
-        }
-        while (current != null && !(PsiTreeUtil.instanceOf(current, BLOCKLIKE_ELEMENT_CLASSES)));
-
-        if (nextExpression == null) return BraceStatus.NOT_MOVABLE;
-
-        Document doc = editor.getDocument();
-
-        info.toMove = new LineRange(closingBrace, closingBrace, doc);
-        info.toMove2 = new LineRange(nextElement, nextExpression);
-        info.indentSource = true;
-
-        return BraceStatus.MOVABLE;
-    }
-
-    private static BraceStatus checkForMovableUpClosingBrace(
-            @NotNull PsiElement closingBrace,
-            PsiElement block,
-            @NotNull Editor editor,
-            @NotNull MoveInfo info
-    ) {
-        //noinspection unchecked
-        PsiElement prev = KtPsiUtil.getLastChildByType(block, KtExpression.class);
-        if (prev == null) return BraceStatus.NOT_MOVABLE;
-
-        Document doc = editor.getDocument();
-
-        info.toMove = new LineRange(closingBrace, closingBrace, doc);
-        info.toMove2 = new LineRange(prev, prev, doc);
-        info.indentSource = true;
-
-        return BraceStatus.MOVABLE;
-    }
-
-    private static enum BraceStatus {
-        NOT_FOUND,
-        MOVABLE,
-        NOT_MOVABLE
-    }
-
-    // Returns null if standalone closing brace is not found
-    private static BraceStatus checkForMovableClosingBrace(
-            @NotNull Editor editor,
-            @NotNull PsiFile file,
-            @NotNull MoveInfo info,
-            boolean down
-    ) {
-        PsiElement closingBrace = getStandaloneClosingBrace(file, editor);
-        if (closingBrace == null) return BraceStatus.NOT_FOUND;
-
-        PsiElement blockLikeElement = closingBrace.getParent();
-        if (!(blockLikeElement instanceof KtBlockExpression)) return BraceStatus.NOT_MOVABLE;
-
-        PsiElement blockParent = blockLikeElement.getParent();
-        if (blockParent instanceof KtWhenEntry) return BraceStatus.NOT_FOUND;
-        if (PsiTreeUtil.instanceOf(blockParent, FUNCTIONLIKE_ELEMENT_CLASSES)) return BraceStatus.NOT_FOUND;
-
-        PsiElement enclosingExpression = PsiTreeUtil.getParentOfType(blockLikeElement, KtExpression.class);
-
-        if (enclosingExpression instanceof KtDoWhileExpression) return BraceStatus.NOT_MOVABLE;
-
-        if (enclosingExpression instanceof KtIfExpression) {
-            KtIfExpression ifExpression = (KtIfExpression) enclosingExpression;
-
-            if (blockLikeElement == ifExpression.getThen() && ifExpression.getElse() != null) return BraceStatus.NOT_MOVABLE;
+    private fun getValueParamOrArgTargetRange(
+        editor: Editor,
+        elementToCheck: PsiElement,
+        sibling: PsiElement,
+        down: Boolean
+    ): LineRange? {
+        val next = if (sibling.node.elementType === KtTokens.COMMA) {
+            firstNonWhiteSibling(sibling, down)
+        } else {
+            sibling
         }
 
-        return down
-               ? checkForMovableDownClosingBrace(closingBrace, blockLikeElement, editor, info)
-               : checkForMovableUpClosingBrace(closingBrace, blockLikeElement, editor, info);
+        return next?.takeIf { it is KtParameter || it is KtValueArgument }?.let { LineRange(it, it, editor.document) }?.also {
+            parametersOrArgsToMove = elementToCheck to next
+        }
     }
 
-    @Nullable
-    private static KtBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down, boolean strict) {
-        PsiElement current = PsiTreeUtil.getParentOfType(anchor, KtBlockExpression.class, strict);
-        while (current != null) {
-            PsiElement parent = current.getParent();
-            if (parent instanceof KtClassBody ||
-                (parent instanceof KtAnonymousInitializer && !(parent instanceof KtScriptInitializer)) ||
-                parent instanceof KtNamedFunction ||
-                (parent instanceof KtProperty && !((KtProperty) parent).isLocal())) {
-                return null;
+    private fun getTargetRange(
+        editor: Editor,
+        elementToCheck: PsiElement?,
+        sibling: PsiElement,
+        down: Boolean
+    ): LineRange? = when (elementToCheck) {
+        is KtParameter, is KtValueArgument -> getValueParamOrArgTargetRange(editor, elementToCheck, sibling, down)
+        is KtExpression, is PsiComment -> getExpressionTargetRange(editor, elementToCheck, sibling, down)
+        is KtWhenEntry -> getWhenEntryTargetRange(editor, sibling, down)
+        else -> null
+    }
+
+    override fun checkSourceElement(element: PsiElement): Boolean =
+        PsiTreeUtil.instanceOf(element, *MOVABLE_ELEMENT_CLASSES) || element.node.elementType === KtTokens.SEMICOLON
+
+    override fun getElementSourceLineRange(
+        element: PsiElement,
+        editor: Editor,
+        oldRange: LineRange
+    ): LineRange? {
+        val textRange = element.textRange
+        if (editor.document.textLength < textRange.endOffset) return null
+        val startLine = editor.offsetToLogicalPosition(textRange.startOffset).line
+        val endLine = editor.offsetToLogicalPosition(textRange.endOffset).line + 1
+        return LineRange(startLine, endLine)
+    }
+
+    override fun checkAvailable(
+        editor: Editor,
+        file: PsiFile,
+        info: MoveInfo,
+        down: Boolean
+    ): Boolean {
+        parametersOrArgsToMove = null
+        if (!super.checkAvailable(editor, file, info, down)) return false
+
+        when (checkForMovableClosingBrace(editor, file, info, down)) {
+            BraceStatus.NOT_MOVABLE -> {
+                info.toMove2 = null
+                return true
             }
-
-            if (parent instanceof KtBlockExpression) return (KtBlockExpression) parent;
-
-            PsiElement sibling = down ? current.getNextSibling() : current.getPrevSibling();
-            if (sibling != null) {
-                //noinspection unchecked
-                KtBlockExpression block = (KtBlockExpression) KtPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK);
-                if (block != null) return block;
-
-                current = sibling;
-            }
-            else {
-                current = parent;
+            BraceStatus.MOVABLE -> return true
+            else -> {
             }
         }
 
-        return null;
+        val oldRange = info.toMove
+        val psiRange = StatementUpDownMover.getElementRange(editor, file, oldRange) ?: return false
+        val firstElement = getMovableElement(psiRange.getFirst(), false) ?: return false
+        var lastElement = getMovableElement(psiRange.getSecond(), true) ?: return false
+        if (isForbiddenMove(firstElement, down) || isForbiddenMove(lastElement, down)) {
+            info.toMove2 = null
+            return true
+        }
+
+        if ((firstElement is KtParameter || firstElement is KtValueArgument) &&
+            PsiTreeUtil.isAncestor(lastElement, firstElement, false)
+        ) {
+            lastElement = firstElement
+        }
+        val sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange) ?: return false
+        val sibling = getLastNonWhiteSiblingInLine(adjustSibling(editor, sourceRange, info, down), editor, down) ?: return true
+
+        // Either reached last sibling, or jumped over multi-line whitespace
+        info.toMove = sourceRange
+        info.toMove2 = getTargetRange(editor, sourceRange.firstElement, sibling, down)
+        return true
     }
 
-    @Nullable
-    private static KtBlockExpression getDSLLambdaBlock(@NotNull Editor editor, @NotNull PsiElement element, boolean down) {
-        KtCallExpression callExpression =
-                (KtCallExpression) KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
-        if (callExpression == null) return null;
-
-        List<KtLambdaArgument> functionLiterals = callExpression.getLambdaArguments();
-        if (functionLiterals.isEmpty()) return null;
-
-        KtLambdaExpression lambdaExpression = functionLiterals.get(0).getLambdaExpression();
-        if (lambdaExpression == null) return null;
-
-        Document document = editor.getDocument();
-        TextRange range = lambdaExpression.getTextRange();
-        if (document.getLineNumber(range.getStartOffset()) == document.getLineNumber(range.getEndOffset())) return null;
-
-        return lambdaExpression.getBodyExpression();
-    }
-
-    @Nullable
-    private static LineRange getExpressionTargetRange(
-            @NotNull Editor editor,
-            @NotNull PsiElement elementToCheck,
-            @NotNull PsiElement sibling,
-            boolean down
+    private var parametersOrArgsToMove: Pair<PsiElement, PsiElement>? = null
+    override fun beforeMove(
+        editor: Editor,
+        info: MoveInfo,
+        down: Boolean
     ) {
-        @Nullable PsiElement start = sibling;
-        @Nullable PsiElement end = sibling;
+        if (parametersOrArgsToMove != null) {
+            val (first, second) = parametersOrArgsToMove ?: return
+            val lastElementOnFirstLine = getLastSiblingOfSameTypeInLine(first, editor)
+            val lastElementOnSecondLine = getLastSiblingOfSameTypeInLine(second, editor)
 
-        if (!down) {
-            if (sibling instanceof KtIfExpression) {
-                KtIfExpression ifExpression = (KtIfExpression) sibling;
-                KtExpression elseExpression = ifExpression.getElse();
-                while (elseExpression instanceof KtIfExpression) {
-                    KtIfExpression elseIfExpression = (KtIfExpression) elseExpression;
-                    KtExpression next = elseIfExpression.getElse();
-                    if (next == null) {
-                        elseExpression = elseIfExpression.getThen();
-                        break;
-                    }
-                    elseExpression = next;
-                }
-                if (elseExpression instanceof KtBlockExpression) {
-                    sibling = elseExpression;
-                    start = sibling;
+            fixCommaIfNeeded(lastElementOnFirstLine, down && isLastOfItsKind(lastElementOnSecondLine, true))
+            fixCommaIfNeeded(lastElementOnSecondLine, !down && isLastOfItsKind(lastElementOnFirstLine, true))
+            editor.project?.let { PsiDocumentManager.getInstance(it).doPostponedOperationsAndUnblockDocument(editor.document) }
+        }
+    }
+
+    companion object {
+        private val IS_CALL_EXPRESSION = Predicate { input: KtElement? -> input is KtCallExpression }
+        private val MOVABLE_ELEMENT_CLASSES: Array<Class<out PsiElement>> = arrayOf(
+            KtExpression::class.java,
+            KtWhenEntry::class.java,
+            KtValueArgument::class.java,
+            PsiComment::class.java
+        )
+
+        private val MOVABLE_ELEMENT_CONSTRAINT = { element: PsiElement ->
+            (element !is KtExpression || element is KtDeclaration || element is KtBlockExpression || element.getParent() is KtBlockExpression)
+        }
+
+        private val BLOCKLIKE_ELEMENT_CLASSES: Array<Class<out PsiElement>> = arrayOf(
+            KtBlockExpression::class.java,
+            KtWhenExpression::class.java,
+            KtClassBody::class.java,
+            KtFile::class.java
+        )
+
+        private val FUNCTIONLIKE_ELEMENT_CLASSES: Array<Class<out PsiElement>> = arrayOf(
+            KtFunction::class.java,
+            KtPropertyAccessor::class.java,
+            KtAnonymousInitializer::class.java
+        )
+
+        private val CHECK_BLOCK_LIKE_ELEMENT = Predicate { input: KtElement ->
+            (input is KtBlockExpression || input is KtClassBody) && !PsiTreeUtil.instanceOf(input.parent, *FUNCTIONLIKE_ELEMENT_CLASSES)
+        }
+
+        private val CHECK_BLOCK = Predicate { input: KtElement ->
+            input is KtBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), *FUNCTIONLIKE_ELEMENT_CLASSES)
+        }
+
+        private fun getStandaloneClosingBrace(
+            file: PsiFile,
+            editor: Editor
+        ): PsiElement? {
+            val range = StatementUpDownMover.getLineRangeFromSelection(editor)
+            if (range.endLine - range.startLine != 1) return null
+            val offset = editor.caretModel.offset
+            val document = editor.document
+            val line = document.getLineNumber(offset)
+            val lineStartOffset = document.getLineStartOffset(line)
+            val lineText = document.text.substring(lineStartOffset, document.getLineEndOffset(line))
+            return if (lineText.trim { it <= ' ' } != "}") null else file.findElementAt(lineStartOffset + lineText.indexOf('}'))
+        }
+
+        private fun checkForMovableDownClosingBrace(
+            closingBrace: PsiElement,
+            block: PsiElement,
+            editor: Editor,
+            info: MoveInfo
+        ): BraceStatus {
+            var current: PsiElement? = block
+            var nextElement: PsiElement? = null
+            var nextExpression: PsiElement? = null
+            do {
+                val sibling = StatementUpDownMover.firstNonWhiteElement(current?.nextSibling, true)
+                if (sibling != null && nextElement == null) {
+                    nextElement = sibling
                 }
 
-            } else if (sibling instanceof KtWhenExpression) {
-                List<KtWhenEntry> entries = ((KtWhenExpression) sibling).getEntries();
-                if (!entries.isEmpty()) {
-                    KtWhenEntry lastEntry = null;
-                    for (KtWhenEntry entry : entries) {
-                        if (entry.getExpression() instanceof KtBlockExpression) lastEntry = entry;
-                    }
-                    if (lastEntry != null) {
-                        sibling = lastEntry;
-                        start = sibling;
-                    }
+                if (sibling is KtExpression) {
+                    nextExpression = sibling
+                    break
                 }
 
-            } else if (sibling instanceof KtTryExpression) {
-                KtTryExpression tryExpression = (KtTryExpression) sibling;
-                KtFinallySection finallyBlock = tryExpression.getFinallyBlock();
-                if (finallyBlock != null) {
-                    sibling = finallyBlock;
-                    start = sibling;
+                current = current?.parent
+            } while (current != null && !PsiTreeUtil.instanceOf(current, *BLOCKLIKE_ELEMENT_CLASSES))
+
+            if (nextExpression == null) return BraceStatus.NOT_MOVABLE
+            val doc = editor.document
+            info.toMove = LineRange(closingBrace, closingBrace, doc)
+            info.toMove2 = nextElement?.let { LineRange(it, nextExpression) }
+            info.indentSource = true
+            return BraceStatus.MOVABLE
+        }
+
+        private fun checkForMovableUpClosingBrace(
+            closingBrace: PsiElement,
+            block: PsiElement,
+            editor: Editor,
+            info: MoveInfo
+        ): BraceStatus {
+            val prev = KtPsiUtil.getLastChildByType(block, KtExpression::class.java) ?: return BraceStatus.NOT_MOVABLE
+            val doc = editor.document
+            info.toMove = LineRange(closingBrace, closingBrace, doc)
+            info.toMove2 = LineRange(prev, prev, doc)
+            info.indentSource = true
+            return BraceStatus.MOVABLE
+        }
+
+        // Returns null if standalone closing brace is not found
+        private fun checkForMovableClosingBrace(
+            editor: Editor,
+            file: PsiFile,
+            info: MoveInfo,
+            down: Boolean
+        ): BraceStatus {
+            val closingBrace = getStandaloneClosingBrace(file, editor) ?: return BraceStatus.NOT_FOUND
+            val blockLikeElement = closingBrace.parent as? KtBlockExpression ?: return BraceStatus.NOT_MOVABLE
+            val blockParent = blockLikeElement.parent
+            if (blockParent is KtWhenEntry) return BraceStatus.NOT_FOUND
+            if (PsiTreeUtil.instanceOf(blockParent, *FUNCTIONLIKE_ELEMENT_CLASSES)) return BraceStatus.NOT_FOUND
+
+            val enclosingExpression: PsiElement? = PsiTreeUtil.getParentOfType(blockLikeElement, KtExpression::class.java)
+            return when {
+                enclosingExpression is KtDoWhileExpression -> BraceStatus.NOT_MOVABLE
+                enclosingExpression is KtIfExpression && blockLikeElement === enclosingExpression.then && enclosingExpression.getElse() != null -> BraceStatus.NOT_MOVABLE
+                down -> checkForMovableDownClosingBrace(closingBrace, blockLikeElement, editor, info)
+                else -> checkForMovableUpClosingBrace(closingBrace, blockLikeElement, editor, info)
+            }
+        }
+
+        private fun findClosestBlock(
+            anchor: PsiElement,
+            down: Boolean,
+            strict: Boolean
+        ): KtBlockExpression? {
+            var current: PsiElement? = PsiTreeUtil.getParentOfType(anchor, KtBlockExpression::class.java, strict)
+            while (current != null) {
+                val parent = current.parent
+                if (parent is KtClassBody ||
+                    parent is KtAnonymousInitializer && parent !is KtScriptInitializer ||
+                    parent is KtNamedFunction ||
+                    parent is KtProperty && !parent.isLocal
+                ) {
+                    return null
+                }
+
+                if (parent is KtBlockExpression) return parent
+                val sibling = if (down) current.nextSibling else current.prevSibling
+                current = if (sibling != null) {
+                    val block = KtPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK) as? KtBlockExpression
+                    if (block != null) return block
+                    sibling
                 } else {
-                    List<KtCatchClause> clauses = tryExpression.getCatchClauses();
-                    if (!clauses.isEmpty()) {
-                        sibling = clauses.get(clauses.size() - 1);
-                        start = sibling;
-                    }
+                    parent
                 }
             }
+
+            return null
         }
 
-        // moving out of code block
-        if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE)) {
-            PsiElement parent = sibling.getParent();
-            if (!(parent instanceof KtBlockExpression || parent instanceof KtFunctionLiteral)) return null;
-
-            KtBlockExpression newBlock;
-            if (parent instanceof KtFunctionLiteral) {
-                //noinspection ConstantConditions
-                newBlock = findClosestBlock(((KtFunctionLiteral) parent).getBodyExpression(), down, false);
-
-                if (!down) {
-                    PsiElement arrow = ((KtFunctionLiteral) parent).getArrow();
-                    if (arrow != null) {
-                        end = arrow;
-                    }
-                }
-            } else {
-                newBlock = findClosestBlock(sibling, down, true);
-            }
-
-            if (newBlock == null) return null;
-
-            if (PsiTreeUtil.isAncestor(newBlock, parent, true)) {
-                PsiElement outermostParent = KtPsiUtil.getOutermostParent(parent, newBlock, true);
-
-                if (down) {
-                    end = outermostParent;
-                }
-                else {
-                    start = outermostParent;
-                }
-            }
-            else {
-                if (down) {
-                    end = newBlock.getLBrace();
-                }
-                else {
-                    start = newBlock.getRBrace();
-                }
-            }
+        private fun getDSLLambdaBlock(
+            editor: Editor,
+            element: PsiElement,
+            down: Boolean
+        ): KtBlockExpression? {
+            val callExpression =
+                KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION) as KtCallExpression? ?: return null
+            val functionLiterals = callExpression.lambdaArguments
+            if (functionLiterals.isEmpty()) return null
+            val lambdaExpression = functionLiterals.firstOrNull()?.getLambdaExpression() ?: return null
+            val document = editor.document
+            val range = lambdaExpression.textRange
+            return if (document.getLineNumber(range.startOffset) == document.getLineNumber(range.endOffset)) null else lambdaExpression.bodyExpression
         }
-        // moving into code block
-        else {
-            PsiElement blockLikeElement;
 
-            KtBlockExpression dslBlock = getDSLLambdaBlock(editor, sibling, down);
-            if (dslBlock != null) {
-                // Use JetFunctionLiteral (since it contains braces)
-                blockLikeElement = dslBlock.getParent();
-            } else {
-                // JetBlockExpression and other block-like elements
-                blockLikeElement = KtPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
-            }
+        private fun getExpressionTargetRange(
+            editor: Editor,
+            elementToCheck: PsiElement,
+            sibling: PsiElement,
+            down: Boolean
+        ): LineRange? {
+            var currentSibling = sibling
+            var start: PsiElement? = currentSibling
+            var end: PsiElement? = currentSibling
+            if (!down) {
+                when (currentSibling) {
+                    is KtIfExpression -> {
+                        var elseExpression = currentSibling.getElse()
+                        while (elseExpression is KtIfExpression) {
+                            val elseIfExpression = elseExpression
+                            val next = elseIfExpression.getElse()
+                            if (next == null) {
+                                elseExpression = elseIfExpression.then
+                                break
+                            }
 
-            if (blockLikeElement != null) {
-                if (down) {
-                    end = KtPsiUtil.findChildByType(blockLikeElement, KtTokens.LBRACE);
-                    if (blockLikeElement instanceof KtFunctionLiteral) {
-                        PsiElement arrow = ((KtFunctionLiteral) blockLikeElement).getArrow();
-                        if (arrow != null) {
-                            end = arrow;
+                            elseExpression = next
+                        }
+
+                        if (elseExpression is KtBlockExpression) {
+                            currentSibling = elseExpression
+                            start = currentSibling
+                        }
+                    }
+                    is KtWhenExpression -> {
+                        val entries = currentSibling.entries
+                        if (entries.isNotEmpty()) {
+                            var lastEntry: KtWhenEntry? = null
+                            for (entry in entries) {
+                                if (entry.expression is KtBlockExpression) lastEntry = entry
+                            }
+
+                            if (lastEntry != null) {
+                                currentSibling = lastEntry
+                                start = currentSibling
+                            }
+                        }
+                    }
+                    is KtTryExpression -> {
+                        val tryExpression = currentSibling
+                        val finallyBlock = tryExpression.finallyBlock
+                        if (finallyBlock != null) {
+                            currentSibling = finallyBlock
+                            start = currentSibling
+                        } else {
+                            val clauses = tryExpression.catchClauses
+                            if (clauses.isNotEmpty()) {
+                                currentSibling = clauses[clauses.size - 1]
+                                start = currentSibling
+                            }
                         }
                     }
                 }
-                else {
-                    start = KtPsiUtil.findChildByType(blockLikeElement, KtTokens.RBRACE);
+            }
+
+            // moving out of code block
+            if (currentSibling.node.elementType === (if (down) KtTokens.RBRACE else KtTokens.LBRACE)) {
+                val parent = currentSibling.parent
+                if (!(parent is KtBlockExpression || parent is KtFunctionLiteral)) return null
+                val newBlock: KtBlockExpression?
+                if (parent is KtFunctionLiteral) {
+                    newBlock = parent.bodyExpression?.let { findClosestBlock(it, down, false) }
+                    if (!down) {
+                        val arrow = parent.arrow
+                        if (arrow != null) {
+                            end = arrow
+                        }
+                    }
+                } else {
+                    newBlock = findClosestBlock(currentSibling, down, true)
+                }
+                if (newBlock == null) return null
+                if (PsiTreeUtil.isAncestor(newBlock, parent, true)) {
+                    val outermostParent = KtPsiUtil.getOutermostParent(parent, newBlock, true)
+                    if (down) {
+                        end = outermostParent
+                    } else {
+                        start = outermostParent
+                    }
+                } else {
+                    if (down) {
+                        end = newBlock.lBrace
+                    } else {
+                        start = newBlock.rBrace
+                    }
+                }
+            } else {
+                val blockLikeElement: PsiElement?
+                val dslBlock = getDSLLambdaBlock(editor, currentSibling, down)
+                blockLikeElement = if (dslBlock != null) {
+                    // Use JetFunctionLiteral (since it contains braces)
+                    dslBlock.parent
+                } else {
+                    // JetBlockExpression and other block-like elements
+                    KtPsiUtil.getOutermostDescendantElement(currentSibling, down, CHECK_BLOCK_LIKE_ELEMENT)
+                }
+
+                if (blockLikeElement != null) {
+                    if (down) {
+                        end = KtPsiUtil.findChildByType(blockLikeElement, KtTokens.LBRACE)
+                        if (blockLikeElement is KtFunctionLiteral) {
+                            val arrow = blockLikeElement.arrow
+                            if (arrow != null) {
+                                end = arrow
+                            }
+                        }
+                    } else {
+                        start = KtPsiUtil.findChildByType(blockLikeElement, KtTokens.RBRACE)
+                    }
                 }
             }
+            if (elementToCheck !is PsiComment) {
+                val extended = extendForSiblingComments(start, end, currentSibling, editor, down)
+                if (extended != null) {
+                    start = extended.first
+                    end = extended.second
+                }
+            }
+            return if (start != null && end != null) LineRange(start, end, editor.document) else null
         }
 
-        if (!(elementToCheck instanceof PsiComment)) {
-            Pair<PsiElement, PsiElement> extended = extendForSiblingComments(start, end, sibling, editor, down);
-            if (extended != null) {
-                start = extended.first;
-                end = extended.second;
+        private fun extendForSiblingComments(
+            start: PsiElement?, end: PsiElement?, sibling: PsiElement,
+            editor: Editor, down: Boolean
+        ): Pair<PsiElement, PsiElement>? {
+            var currentStart = start
+            var currentEnd = end
+            if (!(currentStart === currentEnd && currentStart === sibling)) return null
+
+            var hasUpdate = false
+            var current: PsiElement? = sibling
+            while (true) {
+                val nextLine = getElementLine(current, editor, !down) + if (down) 1 else -1
+                current = current?.let { firstNonWhiteSibling(it, down) }
+                if (current !is PsiComment) {
+                    break
+                }
+
+                if (getElementLine(current, editor, down) != nextLine) {
+                    // An empty line is between current element and next sibling
+                    break
+                }
+
+                hasUpdate = true
+                if (down) {
+                    currentEnd = current
+                } else {
+                    currentStart = current
+                }
+            }
+
+            if (down && currentEnd is PsiComment) {
+                val next = firstNonWhiteSibling(currentEnd, true)
+                if (getElementLine(next, editor, true) == getElementLine(currentEnd, editor, false) + 1) {
+                    hasUpdate = true
+                    currentEnd = next
+                }
+            }
+
+            val resultStart = currentStart ?: return null
+            val resultEnd = currentEnd ?: return null
+            return if (hasUpdate) resultStart to resultEnd else null
+        }
+
+        private fun getWhenEntryTargetRange(
+            editor: Editor,
+            sibling: PsiElement,
+            down: Boolean
+        ): LineRange? =
+            if (sibling.node.elementType === (if (down) KtTokens.RBRACE else KtTokens.LBRACE) &&
+                PsiTreeUtil.getParentOfType(sibling, KtWhenEntry::class.java) == null
+            )
+                null
+            else
+                LineRange(sibling, sibling, editor.document)
+
+        private fun getMovableElement(element: PsiElement, lookRight: Boolean): PsiElement? {
+            if (element.node.elementType === KtTokens.SEMICOLON) {
+                return element
+            }
+
+            val movableElement = element.getParentOfTypesAndPredicate(
+                strict = false,
+                parentClasses = *MOVABLE_ELEMENT_CLASSES,
+                predicate = MOVABLE_ELEMENT_CONSTRAINT
+            ) ?: return null
+
+            if (isBracelessBlock(movableElement)) {
+                return StatementUpDownMover.firstNonWhiteElement(
+                    if (lookRight)
+                        movableElement.lastChild
+                    else
+                        movableElement.firstChild, !lookRight
+                )
+            } else {
+                return movableElement
             }
         }
 
-        return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
-    }
+        private fun isLastOfItsKind(element: PsiElement, down: Boolean): Boolean =
+            getSiblingOfType(element, down, element.javaClass) == null
 
-    private static @Nullable Pair<PsiElement, PsiElement> extendForSiblingComments(
-            @Nullable PsiElement start, @Nullable PsiElement end, @NotNull PsiElement sibling,
-            @NotNull Editor editor, boolean down
-    ) {
-        if (!(start == end && start == sibling)) {
-            return null;
-        }
+        private fun isForbiddenMove(element: PsiElement, down: Boolean): Boolean =
+            if (element is KtParameter || element is KtValueArgument)
+                isLastOfItsKind(element, down)
+            else
+                false
 
-        boolean hasUpdate = false;
+        private fun isBracelessBlock(element: PsiElement): Boolean =
+            if (element !is KtBlockExpression)
+                false
+            else
+                element.lBrace == null && element.rBrace == null
 
-        PsiElement current = sibling;
-        while (true) {
-            int nextLine = getElementLine(current, editor, !down) + (down ? 1 : -1);
+        private fun adjustSibling(
+            editor: Editor,
+            sourceRange: LineRange,
+            info: MoveInfo,
+            down: Boolean
+        ): PsiElement? {
+            val element = if (down) sourceRange.lastElement else sourceRange.firstElement
+            var sibling = if (down) element.nextSibling else element.prevSibling
+            val whiteSpaceTestSubject = sibling ?: kotlin.run {
+                val parent = element.parent
+                if (parent == null || !isBracelessBlock(parent)) return@run null
 
-            current = firstNonWhiteSibling(current, down);
-            if (!(current instanceof PsiComment)) {
-                break;
+                if (down) parent.nextSibling else parent.prevSibling
             }
 
-            if (getElementLine(current, editor, down) != nextLine) {
-                // An empty line is between current element and next sibling
-                break;
+            if (whiteSpaceTestSubject is PsiWhiteSpace) {
+                if (whiteSpaceTestSubject.isMultiLine()) {
+                    val nearLine = if (down) sourceRange.endLine else sourceRange.startLine - 1
+                    info.toMove = sourceRange
+                    info.toMove2 = LineRange(nearLine, nearLine + 1)
+                    info.indentTarget = false
+                    return null
+                }
+
+                if (sibling != null) sibling = StatementUpDownMover.firstNonWhiteElement(sibling, down)
             }
 
-            hasUpdate = true;
-            if (down) {
-                end = current;
-            }
-            else {
-                start = current;
-            }
-        }
-
-        if (down && end instanceof PsiComment) {
-            PsiElement next = firstNonWhiteSibling(end, true);
-            if (getElementLine(next, editor, true) == getElementLine(end, editor, false) + 1) {
-                hasUpdate = true;
-                end = next;
-            }
-        }
-
-        return hasUpdate ? Pair.create(start, end) : null;
-    }
-
-    @Nullable
-    private static LineRange getWhenEntryTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
-        if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE) &&
-            PsiTreeUtil.getParentOfType(sibling, KtWhenEntry.class) == null) {
-            return null;
-        }
-
-        return new LineRange(sibling, sibling, editor.getDocument());
-    }
-
-    @Nullable
-    private LineRange getValueParamOrArgTargetRange(
-            @NotNull Editor editor,
-            @NotNull PsiElement elementToCheck,
-            @NotNull PsiElement sibling,
-            boolean down
-    ) {
-        PsiElement next = sibling;
-
-        if (next.getNode().getElementType() == KtTokens.COMMA) {
-            next = firstNonWhiteSibling(next, down);
-        }
-
-        LineRange range = (next instanceof KtParameter || next instanceof KtValueArgument)
-                          ? new LineRange(next, next, editor.getDocument())
-                          : null;
-
-        if (range != null) {
-            parametersOrArgsToMove = new Pair<PsiElement, PsiElement>(elementToCheck, next);
-        }
-
-        return range;
-    }
-
-    @Nullable
-    private LineRange getTargetRange(
-            @NotNull Editor editor,
-            @Nullable PsiElement elementToCheck,
-            @NotNull PsiElement sibling,
-            boolean down
-    ) {
-        if (elementToCheck instanceof KtParameter || elementToCheck instanceof KtValueArgument) {
-            return getValueParamOrArgTargetRange(editor, elementToCheck, sibling, down);
-        }
-
-        if (elementToCheck instanceof KtExpression || elementToCheck instanceof PsiComment) {
-            return getExpressionTargetRange(editor, elementToCheck, sibling, down);
-        }
-
-        if (elementToCheck instanceof KtWhenEntry) {
-            return getWhenEntryTargetRange(editor, sibling, down);
-        }
-
-        return null;
-    }
-
-    @Override
-    protected boolean checkSourceElement(@NotNull PsiElement element) {
-        return PsiTreeUtil.instanceOf(element, MOVABLE_ELEMENT_CLASSES) || element.getNode().getElementType() == KtTokens.SEMICOLON;
-    }
-
-    @Override
-    protected LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange) {
-        TextRange textRange = element.getTextRange();
-        if (editor.getDocument().getTextLength() < textRange.getEndOffset()) return null;
-
-        int startLine = editor.offsetToLogicalPosition(textRange.getStartOffset()).line;
-        int endLine = editor.offsetToLogicalPosition(textRange.getEndOffset()).line + 1;
-
-        return new LineRange(startLine, endLine);
-    }
-
-    @Nullable
-    private static PsiElement getMovableElement(@NotNull PsiElement element, boolean lookRight) {
-        if (element.getNode().getElementType() == KtTokens.SEMICOLON) {
-            return element;
-        }
-
-        //noinspection unchecked
-        PsiElement movableElement = PsiUtilsKt.getParentOfTypesAndPredicate(
-                element,
-                false,
-                MOVABLE_ELEMENT_CLASSES,
-                MOVABLE_ELEMENT_CONSTRAINT
-        );
-        if (movableElement == null) return null;
-
-        if (isBracelessBlock(movableElement)) {
-            movableElement = firstNonWhiteElement(lookRight ? movableElement.getLastChild() : movableElement.getFirstChild(), !lookRight);
-        }
-
-        return movableElement;
-    }
-
-    private static boolean isLastOfItsKind(@NotNull PsiElement element, boolean down) {
-        return getSiblingOfType(element, down, element.getClass()) == null;
-    }
-
-    private static boolean isForbiddenMove(@NotNull PsiElement element, boolean down) {
-        if (element instanceof KtParameter || element instanceof KtValueArgument) {
-            return isLastOfItsKind(element, down);
-        }
-
-        return false;
-    }
-
-    private static boolean isBracelessBlock(@NotNull PsiElement element) {
-        if (!(element instanceof KtBlockExpression)) return false;
-
-        KtBlockExpression block = (KtBlockExpression) element;
-
-        return block.getLBrace() == null && block.getRBrace() == null;
-    }
-
-    private static PsiElement adjustSibling(
-            @NotNull Editor editor,
-            @NotNull LineRange sourceRange,
-            @NotNull MoveInfo info,
-            boolean down
-    ) {
-        PsiElement element = down ? sourceRange.lastElement : sourceRange.firstElement;
-        PsiElement sibling = down ? element.getNextSibling() : element.getPrevSibling();
-
-        PsiElement whiteSpaceTestSubject = sibling;
-        if (sibling == null) {
-            PsiElement parent = element.getParent();
-            if (parent != null && isBracelessBlock(parent)) {
-                whiteSpaceTestSubject = down ? parent.getNextSibling() : parent.getPrevSibling();
-            }
-        }
-
-        if (whiteSpaceTestSubject instanceof PsiWhiteSpace) {
-            if (PsiLinesUtilsKt.isMultiLine(whiteSpaceTestSubject)) {
-                int nearLine = down ? sourceRange.endLine : sourceRange.startLine - 1;
-
-                info.toMove = sourceRange;
-                info.toMove2 = new LineRange(nearLine, nearLine + 1);
-                info.indentTarget = false;
-
-                return null;
-            }
-
-            if (sibling != null) {
-                sibling = firstNonWhiteElement(sibling, down);
-            }
-        }
-
-        if (sibling == null) {
-            KtCallExpression callExpression = PsiTreeUtil.getParentOfType(element, KtCallExpression.class);
+            if (sibling != null) return sibling
+            val callExpression = PsiTreeUtil.getParentOfType(element, KtCallExpression::class.java)
             if (callExpression != null) {
-                KtBlockExpression dslBlock = getDSLLambdaBlock(editor, callExpression, down);
+                val dslBlock = getDSLLambdaBlock(editor, callExpression, down)
                 if (PsiTreeUtil.isAncestor(dslBlock, element, false)) {
-                    //noinspection ConstantConditions
-                    PsiElement blockParent = dslBlock.getParent();
-                    return down
-                           ? KtPsiUtil.findChildByType(blockParent, KtTokens.RBRACE)
-                           : KtPsiUtil.findChildByType(blockParent, KtTokens.LBRACE);
+                    dslBlock?.parent?.let { blockParent ->
+                        return if (down)
+                            KtPsiUtil.findChildByType(blockParent, KtTokens.RBRACE)
+                        else
+                            KtPsiUtil.findChildByType(blockParent, KtTokens.LBRACE)
+                    }
                 }
             }
 
-            info.toMove2 = null;
-            return null;
+            info.toMove2 = null
+            return null
         }
 
-        return sibling;
-    }
+        private fun getComma(element: PsiElement): PsiElement? = firstNonWhiteSibling(element, true)?.takeIf(PsiElement::isComma)
 
-    @Override
-    public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
-        parametersOrArgsToMove = null;
-
-        if (!super.checkAvailable(editor, file, info, down)) return false;
-
-        switch (checkForMovableClosingBrace(editor, file, info, down)) {
-            case NOT_MOVABLE: {
-                info.toMove2 = null;
-                return true;
-            }
-            case MOVABLE:
-                return true;
-            default:
-                break;
-        }
-
-        LineRange oldRange = info.toMove;
-
-        Pair<PsiElement, PsiElement> psiRange = getElementRange(editor, file, oldRange);
-        if (psiRange == null) return false;
-
-        //noinspection unchecked
-        PsiElement firstElement = getMovableElement(psiRange.getFirst(), false);
-        PsiElement lastElement = getMovableElement(psiRange.getSecond(), true);
-
-        if (firstElement == null || lastElement == null) return false;
-
-        if (isForbiddenMove(firstElement, down) || isForbiddenMove(lastElement, down)) {
-            info.toMove2 = null;
-            return true;
-        }
-
-        if ((firstElement instanceof KtParameter || firstElement instanceof KtValueArgument) &&
-            PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
-            lastElement = firstElement;
-        }
-
-        LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
-        if (sourceRange == null) return false;
-
-        PsiElement sibling = getLastNonWhiteSiblingInLine(adjustSibling(editor, sourceRange, info, down), editor, down);
-
-        // Either reached last sibling, or jumped over multi-line whitespace
-        if (sibling == null) return true;
-
-        info.toMove = sourceRange;
-        info.toMove2 = getTargetRange(editor, sourceRange.firstElement, sibling, down);
-        return true;
-    }
-
-    @Nullable
-    private Pair<PsiElement, PsiElement> parametersOrArgsToMove;
-
-    private static PsiElement getComma(@NotNull PsiElement element) {
-        PsiElement sibling = firstNonWhiteSibling(element, true);
-        return sibling != null && (sibling.getNode().getElementType() == KtTokens.COMMA) ? sibling : null;
-    }
-
-    private static void fixCommaIfNeeded(@NotNull PsiElement element, boolean willBeLast) {
-        PsiElement comma = getComma(element);
-        if (willBeLast && comma != null) {
-            comma.delete();
-        }
-        else if (!willBeLast && comma == null) {
-            PsiElement parent = element.getParent();
-            assert parent != null;
-
-            parent.addAfter(KtPsiFactoryKt.KtPsiFactory(parent.getProject()).createComma(), element);
-        }
-    }
-
-    @Override
-    public void beforeMove(@NotNull Editor editor, @NotNull MoveInfo info, boolean down) {
-        if (parametersOrArgsToMove != null) {
-            PsiElement element1 = getLastSiblingOfSameTypeInLine(parametersOrArgsToMove.first, editor);
-            PsiElement element2 = getLastSiblingOfSameTypeInLine(parametersOrArgsToMove.second, editor);
-
-            fixCommaIfNeeded(element1, down && isLastOfItsKind(element2, true));
-            fixCommaIfNeeded(element2, !down && isLastOfItsKind(element1, true));
-
-            //noinspection ConstantConditions
-            PsiDocumentManager.getInstance(editor.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
-        }
-    }
-
-    @NotNull
-    private static PsiElement getLastSiblingOfSameTypeInLine(@NotNull PsiElement element, @NotNull Editor editor) {
-        PsiElement lastElement = element;
-        int lineNumber = getElementLine(element, editor, true);
-        while (true) {
-            PsiElement nextElement = PsiTreeUtil.getNextSiblingOfType(lastElement, lastElement.getClass());
-            if (nextElement != null && getElementLine(nextElement, editor, true) == lineNumber) {
-                lastElement = nextElement;
-            }
-            else {
-                break;
+        private fun fixCommaIfNeeded(element: PsiElement, willBeLast: Boolean) {
+            val comma = getComma(element)
+            if (willBeLast && comma != null) {
+                comma.delete()
+            } else if (!willBeLast && comma == null) {
+                val parent = element.parent
+                parent.addAfter(KtPsiFactory(parent.project).createComma(), element)
             }
         }
-        return lastElement;
+
+        private fun getLastSiblingOfSameTypeInLine(
+            element: PsiElement,
+            editor: Editor
+        ): PsiElement {
+            var lastElement = element
+            val lineNumber = getElementLine(element, editor, true)
+            while (true) {
+                val nextElement = PsiTreeUtil.getNextSiblingOfType(lastElement, lastElement.javaClass)
+                lastElement = if (nextElement != null && getElementLine(nextElement, editor, true) == lineNumber) {
+                    nextElement
+                } else {
+                    break
+                }
+            }
+
+            return lastElement
+        }
     }
 }
