@@ -181,32 +181,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
 
             when (val kind = (irFunction.body as? IrSyntheticBody)?.kind) {
-                IrSyntheticBodyKind.ENUM_VALUES -> {
-                    val enumClass = irFunction.parentAsClass
-                    val enumEntries = enumClass.declarations
-                        .filterIsInstance<IrEnumEntry>()
-                        .map { entry ->
-                            entry.interpret(data).also { if (it != Code.NEXT) return it }
-                            data.popReturnValue() as Common
-                        }
-                    data.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
-                    Code.NEXT
-                }
-                IrSyntheticBodyKind.ENUM_VALUEOF -> {
-                    val enumClass = irFunction.parentAsClass
-                    val enumEntryName = (data.getAll().single().state as Primitive<*>).value.toString()
-                    val enumEntry = enumClass.declarations
-                        .filterIsInstance<IrEnumEntry>()
-                        .singleOrNull { it.name.asString() == enumEntryName }
-                    if (enumEntry == null) {
-                        val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
-                        data.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
-                        Code.EXCEPTION
-                    } else {
-                        enumEntry.interpret(data).also { if (it != Code.NEXT) return it }
-                        Code.NEXT
-                    }
-                }
+                IrSyntheticBodyKind.ENUM_VALUES -> handleIntrinsicMethods(irFunction, data)
+                IrSyntheticBodyKind.ENUM_VALUEOF -> handleIntrinsicMethods(irFunction, data)
                 null -> irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
                 else -> throw AssertionError("Unsupported IrSyntheticBodyKind $kind")
             }
@@ -215,9 +191,53 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
     }
 
-    private suspend fun MethodHandle.invokeMethod(irFunction: IrFunction, data: Frame): Code {
+    private suspend fun MethodHandle?.invokeMethod(irFunction: IrFunction, data: Frame): Code {
+        this ?: return handleIntrinsicMethods(irFunction, data)
         val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data))
         data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+
+        return Code.NEXT
+    }
+
+    private suspend fun handleIntrinsicMethods(irFunction: IrFunction, data: Frame): Code {
+        when (irFunction.name.asString()) {
+            "emptyArray" -> {
+                val result = emptyArray<Any?>()
+                data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+            }
+            "arrayOf" -> {
+                val result = irFunction.getArgsForMethodInvocation(data).toTypedArray()
+                data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+            }
+            "arrayOfNulls" -> {
+                val result = arrayOfNulls<Any?>(irFunction.getArgsForMethodInvocation(data).first() as Int)
+                data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+            }
+            "values", "enumValues" -> {
+                val enumClass = irFunction.parentAsClass
+                val enumEntries = enumClass.declarations
+                    .filterIsInstance<IrEnumEntry>()
+                    .map { entry ->
+                        entry.interpret(data).also { if (it != Code.NEXT) return it }
+                        data.popReturnValue() as Common
+                    }
+                data.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
+            }
+            "valueOf", "enumValueOf" -> {
+                val enumClass = irFunction.parentAsClass
+                val enumEntryName = (data.getAll().single().state as Primitive<*>).value.toString()
+                val enumEntry = enumClass.declarations
+                    .filterIsInstance<IrEnumEntry>()
+                    .singleOrNull { it.name.asString() == enumEntryName }
+                if (enumEntry == null) {
+                    val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
+                    data.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
+                } else {
+                    enumEntry.interpret(data).also { if (it != Code.NEXT) return it }
+                }
+            }
+            else -> throw AssertionError("Unsupported intrinsic ${irFunction.name}")
+        }
 
         return Code.NEXT
     }
@@ -259,6 +279,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val overriddenOwner = overridden.owner as IrFunctionImpl
         return when {
+            // TODO figure something better
             superQualifier.irClassFqName() == "kotlin.Enum" && owner.name.asString() == "hashCode" -> calculateOverridden(overriddenOwner, newStates)
             overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
             superQualifier.superType == null -> calculateBuiltIns(overriddenOwner, newStates)
@@ -461,7 +482,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
 
             val originalVarToInline = ParallelVisitorForInlineFun()
-                .apply { this.visitElement(inlineFun.body!!.statements.first(), block.statements.last()) }
+                .apply { this.visitElement(inlineFun.body!!.statements.first(), block.removeBlocks()!!) }
                 .originalVarToInline
 
             val frameForWrapper = InterpreterFrame()

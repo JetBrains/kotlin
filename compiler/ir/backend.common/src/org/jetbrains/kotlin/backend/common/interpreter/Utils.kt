@@ -143,11 +143,9 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
         ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
 }
 
-const val defaultIntrinsicLocation = "org.jetbrains.kotlin.backend.common.interpreter.intrinsic.InterpreterIntrinsicsKt"
 fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    val value = (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
-    return if (value.isEmpty()) defaultIntrinsicLocation else value
+    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
 }
 
 fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
