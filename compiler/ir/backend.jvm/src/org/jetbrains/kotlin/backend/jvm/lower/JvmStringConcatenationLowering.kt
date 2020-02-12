@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -86,9 +88,6 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
         }
 
     private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
-        if (expression.type.isString())
-            return expression
-
         val argument = widenIntegerType(expression)
         val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
 
@@ -115,6 +114,18 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
         return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+            // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this SHOULD
+            // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend has a bug (KT-36625) where this
+            // check is not inserted (see KT-36625). To maintain bug compatibility with the non-IR backend, we remove IMPLICIT_NOTNULL casts
+            // (which generate the nullability checks in JvmArgumentNullabilityAssertionsLowering) from all arguments.
+
+            fun IrExpression.unwrapImplicitNotNull() =
+                if (this is IrTypeOperatorCall && operator == IrTypeOperator.IMPLICIT_NOTNULL)
+                    argument
+                else
+                    this
+
+
             val arguments = expression.arguments.map { lowerInlineClassArgument(it) }
 
             when {
@@ -122,11 +133,13 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                     irString("")
 
                 arguments.size == 1 ->
-                    callToString(arguments.single())
+                    callToString(arguments.single().unwrapImplicitNotNull())
 
                 arguments.size == 2 && arguments[0].type.isStringClassType() ->
                     irCall(backendContext.ir.symbols.intrinsicStringPlus).apply {
-                        putValueArgument(0, arguments[0])
+                        putValueArgument(0, arguments[0].unwrapImplicitNotNull())
+
+                        // Unwrapping IMPLICIT_NOTNULL is not strictly necessary on 2nd argument (parameter type is `Any?`)
                         putValueArgument(1, arguments[1])
                     }
 
@@ -137,7 +150,10 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                         val appendFunction = typeToAppendFunction(argument.type)
                         stringBuilder = irCall(appendFunction).apply {
                             dispatchReceiver = stringBuilder
-                            putValueArgument(0, argument)
+
+                            // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
+                            // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.
+                            putValueArgument(0, argument.unwrapImplicitNotNull())
                         }
                     }
                     irCall(toStringFunction).apply {
