@@ -93,14 +93,8 @@ public class PersistentSubIndexerVersionEnumerator<SubIndexerVersion> implements
   }
 
   public void clear() throws IOException {
-    try {
-      close();
-    } catch (IOException e) {
-      LOG.error(e);
-    } finally {
-      PersistentHashMap.deleteFilesStartingWith(myFile);
-      init();
-    }
+    PersistentHashMap.deleteMap(myMap);
+    init();
   }
 
   public void flush() throws IOException {

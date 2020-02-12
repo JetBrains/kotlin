@@ -99,14 +99,7 @@ public class SharedIntMapForwardIndex implements IntForwardIndex {
 
   @Override
   public void clear() throws IOException {
-    File baseFile = myPersistentMap.getBaseFile().toFile();
-    try {
-      myPersistentMap.close();
-    }
-    catch (IOException e) {
-      LOG.info(e);
-    }
-    PersistentHashMap.deleteFilesStartingWith(baseFile);
+    PersistentHashMap.deleteMap(myPersistentMap);
     createMap();
   }
 

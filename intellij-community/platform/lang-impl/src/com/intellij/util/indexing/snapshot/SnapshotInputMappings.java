@@ -192,14 +192,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
         }
       }
       if (myIndexingTrace != null) {
-        File baseFile = myIndexingTrace.getBaseFile().toFile();
-        try {
-          myIndexingTrace.close();
-        }
-        catch (Exception e) {
-          LOG.info(e);
-        }
-        PersistentHashMap.deleteFilesStartingWith(baseFile);
+        PersistentHashMap.deleteMap(myIndexingTrace);
         myIndexingTrace = createIndexingTrace();
       }
     } finally {
