@@ -12702,11 +12702,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
         }
 
-        @TestMetadata("coercionToUnitWithNestedLambda.kt")
-        public void testCoercionToUnitWithNestedLambda() throws Exception {
-            runTest("compiler/testData/codegen/box/inference/coercionToUnitWithNestedLambda.kt");
-        }
-
         @TestMetadata("integerLiteralTypeInLamdaReturnType.kt")
         public void testIntegerLiteralTypeInLamdaReturnType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/integerLiteralTypeInLamdaReturnType.kt");
