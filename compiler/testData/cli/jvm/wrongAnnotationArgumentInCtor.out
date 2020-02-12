@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:6:25: error: no value passed for parameter 'message'
+class WithoutArguments(@Deprecated val s: Int)
+                        ^
+COMPILATION_ERROR

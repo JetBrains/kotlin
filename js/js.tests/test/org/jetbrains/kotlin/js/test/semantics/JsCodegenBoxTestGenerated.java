@@ -61,11 +61,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
         }
 
-        @TestMetadata("wrongAnnotationArgumentInCtor.kt")
-        public void testWrongAnnotationArgumentInCtor() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/wrongAnnotationArgumentInCtor.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

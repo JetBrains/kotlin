@@ -33,11 +33,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractLightAnalysisModeTest {
-        @TestMetadata("wrongAnnotationArgumentInCtor.kt")
-        public void ignoreWrongAnnotationArgumentInCtor() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/wrongAnnotationArgumentInCtor.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }

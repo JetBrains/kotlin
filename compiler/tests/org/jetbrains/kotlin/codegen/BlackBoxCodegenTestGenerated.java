@@ -216,11 +216,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/annotations/varargInAnnotationParameter.kt");
         }
 
-        @TestMetadata("wrongAnnotationArgumentInCtor.kt")
-        public void testWrongAnnotationArgumentInCtor() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/wrongAnnotationArgumentInCtor.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
