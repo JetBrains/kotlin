@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.util.EA
 import org.jetbrains.kotlin.utils.Printer
 
 class CodeFragmentCompiler(private val executionContext: ExecutionContext, private val status: EvaluationStatus) {
@@ -53,7 +54,10 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
     )
 
     fun compile(codeFragment: KtCodeFragment, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): CompilationResult {
-        return runReadAction { doCompile(codeFragment, bindingContext, moduleDescriptor) }
+        return runReadAction {
+            EA.ea219323(codeFragment, codeFragment.text)
+                .invoke { doCompile(codeFragment, bindingContext, moduleDescriptor) }
+        }
     }
 
     private fun doCompile(
