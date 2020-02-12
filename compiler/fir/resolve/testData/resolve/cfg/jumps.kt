@@ -1,6 +1,7 @@
+// !DUMP_CFG
 fun test_1(x: Int?) {
     val y = if (x == null) {
-        throw KotlinNullPointerException()
+        throw Exception()
     } else {
         x
     }
@@ -14,7 +15,7 @@ fun test_2(x: Int?) {
     } else {
         x
     }
-    y.<!AMBIGUITY!>inc<!>()
+    y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
 }
 
 fun test_3(x: Int?) {

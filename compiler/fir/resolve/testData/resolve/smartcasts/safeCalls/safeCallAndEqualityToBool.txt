@@ -1,7 +1,10 @@
 FILE: safeCallAndEqualityToBool.kt
+    public final fun R|kotlin/String|.check(): R|kotlin/Boolean| {
+        ^check Boolean(true)
+    }
     public final fun test_1(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
-            ==(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(true)) ->  {
+            ==(R|<local>/s|?.R|/check|(), Boolean(true)) ->  {
                 R|<local>/s|.R|kotlin/String.length|
             }
             else ->  {
@@ -12,7 +15,7 @@ FILE: safeCallAndEqualityToBool.kt
     }
     public final fun test_2(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
-            ==(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(false)) ->  {
+            ==(R|<local>/s|?.R|/check|(), Boolean(false)) ->  {
                 R|<local>/s|.R|kotlin/String.length|
             }
             else ->  {
@@ -23,7 +26,7 @@ FILE: safeCallAndEqualityToBool.kt
     }
     public final fun test_3(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(true)) ->  {
+            !=(R|<local>/s|?.R|/check|(), Boolean(true)) ->  {
                 R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
             }
             else ->  {
@@ -34,7 +37,7 @@ FILE: safeCallAndEqualityToBool.kt
     }
     public final fun test_4(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/s|?.R|kotlin/text/isNotEmpty|(), Boolean(false)) ->  {
+            !=(R|<local>/s|?.R|/check|(), Boolean(false)) ->  {
                 R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
             }
             else ->  {

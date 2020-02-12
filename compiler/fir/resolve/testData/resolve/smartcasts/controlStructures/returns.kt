@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun test_0(x: Any) {
     if (x is String) {
         x.length
@@ -57,6 +58,6 @@ fun test_4(a: Any?) {
     val s = a as? String
     val length = s?.ext ?: return
     runHigherOrder {
-        s.isNotEmpty() // Should be OK
+        s.length // Should be OK
     }
 }

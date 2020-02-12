@@ -1,3 +1,4 @@
+// !DUMP_CFG
 class A {
     fun foo() {}
 }

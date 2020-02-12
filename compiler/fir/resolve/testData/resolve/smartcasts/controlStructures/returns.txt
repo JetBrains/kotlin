@@ -83,8 +83,8 @@ FILE: returns.kt
             }
         }
 
-        R|/runHigherOrder|<R|kotlin/Boolean|>(<L> = runHigherOrder@fun <anonymous>(): R|kotlin/Boolean| {
-            ^ R|<local>/s|.R|kotlin/text/isNotEmpty|()
+        R|/runHigherOrder|<R|kotlin/Int|>(<L> = runHigherOrder@fun <anonymous>(): R|kotlin/Int| {
+            ^ R|<local>/s|.R|kotlin/String.length|
         }
         )
     }

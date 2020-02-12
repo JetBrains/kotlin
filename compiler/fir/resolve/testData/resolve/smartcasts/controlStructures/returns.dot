@@ -427,8 +427,8 @@ digraph returns_kt {
         161 [label="Variable declaration: lval length: R|kotlin/Int|"];
         162 [label="Postponed enter to lambda"];
         163 [label="Postponed exit from lambda"];
-        164 [label="Function call: R|/runHigherOrder|<R|kotlin/Boolean|>(<L> = runHigherOrder@fun <anonymous>(): R|kotlin/Boolean| {
-    ^ R|<local>/s|.R|kotlin/text/isNotEmpty|()
+        164 [label="Function call: R|/runHigherOrder|<R|kotlin/Int|>(<L> = runHigherOrder@fun <anonymous>(): R|kotlin/Int| {
+    ^ R|<local>/s|.R|kotlin/String.length|
 }
 )"];
         165 [label="Exit function test_4" style="filled" fillcolor=red];
@@ -472,7 +472,7 @@ digraph returns_kt {
         color=red
         166 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
         167 [label="Access variable R|<local>/s|"];
-        168 [label="Function call: R|<local>/s|.R|kotlin/text/isNotEmpty|()"];
+        168 [label="Access variable R|kotlin/String.length|"];
         169 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
     }
 

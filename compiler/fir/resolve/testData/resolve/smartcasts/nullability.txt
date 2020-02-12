@@ -111,7 +111,7 @@ FILE: nullability.kt
             !=(R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/Q.data|
                 R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
-                R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
             }
         }
 
@@ -128,14 +128,14 @@ FILE: nullability.kt
 
         R|<local>/q|.R|/Q.data|
         R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
-        R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
     }
     public final fun test_7(q: R|Q?|): R|kotlin/Unit| {
         when () {
             !=(R|<local>/q|?.R|/Q.fdata|()?.R|/MyData.fs|()?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/Q.fdata|()
                 R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#()
-                R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Unresolved name: inc>#()
             }
         }
 
@@ -155,58 +155,58 @@ FILE: nullability.kt
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
         when () {
             ===(R|<local>/a|, R|<local>/b|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
         when () {
             ==(R|<local>/b|, R|<local>/a|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
         when () {
             ===(R|<local>/b|, R|<local>/a|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
     }
     public final fun test_10(a: R|kotlin/Int?|, b: R|kotlin/Int?|): R|kotlin/Unit| {
         when () {
             ==(R|<local>/a|, R|<local>/b|) ->  {
-                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
         when () {
             ===(R|<local>/a|, R|<local>/b|) ->  {
-                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
         when () {
             ==(R|<local>/b|, R|<local>/a|) ->  {
-                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
         when () {
             ===(R|<local>/b|, R|<local>/a|) ->  {
-                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
             }
         }
 
-        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
     }
     public final fun test_11(q: R|QImpl?|, q2: R|QImpl|): R|kotlin/Unit| {
         when () {
@@ -216,7 +216,7 @@ FILE: nullability.kt
                 R|<local>/q|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
                 R|<local>/q2|.R|/QImpl.data|
                 R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
-                R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
                 when () {
                     !=(R|<local>/q2|.R|/QImpl.data|, Null(null)) ->  {
                         R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|
@@ -233,7 +233,7 @@ FILE: nullability.kt
             !=(R|<local>/q|?.R|/QImplWithCustomGetter.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/QImplWithCustomGetter.data|
                 R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
-                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
             }
         }
 
@@ -243,7 +243,7 @@ FILE: nullability.kt
             !=(R|<local>/q|?.R|/QImplMutable.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
                 R|<local>/q|.R|/QImplMutable.data|
                 R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
-                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
             }
         }
 

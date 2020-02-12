@@ -1,21 +1,9 @@
-@Throws(<!UNRESOLVED_REFERENCE!>IOException<!>::class, <!UNRESOLVED_REFERENCE!>ResponseParseException<!>::class)
-fun fetchPluginReleaseDate(pluginId: PluginId, version: String, channel: String?): LocalDate? {
-    val url = "https://plugins.jetbrains.com/api/plugins/${pluginId.<!UNRESOLVED_REFERENCE!>idString<!>}/updates?version=$version"
-
-    val pluginDTOs: Array<PluginDTO> = try {
-        <!UNRESOLVED_REFERENCE!>HttpRequests<!>.<!UNRESOLVED_REFERENCE!>request<!>(url).<!UNRESOLVED_REFERENCE!>connect<!> {
-            <!UNRESOLVED_REFERENCE!>GsonBuilder<!>().<!UNRESOLVED_REFERENCE!>create<!>().<!UNRESOLVED_REFERENCE!>fromJson<!>(<!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inputStream<!>.<!AMBIGUITY!>reader<!>(), Array<PluginDTO>::class.java)
-        }
-    } catch (ioException: JsonIOException) {
-        throw <!UNRESOLVED_REFERENCE!>IOException<!>(ioException)
-    } catch (syntaxException: JsonSyntaxException) {
-        throw <!UNRESOLVED_REFERENCE!>ResponseParseException<!>("Can't parse json response", syntaxException)
-    }
-}
-
+// !DUMP_CFG
 interface AutoCloseable {
     fun close()
 }
+
+fun Throwable.addSuppressed(other: Throwable) {}
 
 internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
     this == null -> {}
@@ -28,7 +16,7 @@ internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
         }
 }
 
-inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
+inline fun <reified T : Any> List<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }

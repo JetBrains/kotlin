@@ -223,7 +223,7 @@ digraph boundSmartcasts_kt {
         83 [label="Access variable R|<local>/y|"];
         84 [label="Assignmenet: R|<local>/x|"];
         85 [label="Access variable R|<local>/x|"];
-        86 [label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        86 [label="Function call: R|<local>/x|.<Unresolved name: inc>#()"];
         subgraph cluster_18 {
             color=blue
             87 [label="Enter when"];

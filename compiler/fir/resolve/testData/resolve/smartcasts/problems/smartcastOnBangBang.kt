@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun <X> test_1(a: X) {
     if (a is String?) {
         <!INAPPLICABLE_CANDIDATE!>takeString<!>(a!!)

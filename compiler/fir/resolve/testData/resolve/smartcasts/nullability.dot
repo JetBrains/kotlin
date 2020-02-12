@@ -503,7 +503,7 @@ digraph nullability_kt {
                 176 [label="Access variable R|<local>/q|"];
                 177 [label="Access variable R|/Q.data|"];
                 178 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
-                179 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                179 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()"];
                 180 [label="Exit block"];
             }
             181 [label="Exit when branch result"];
@@ -600,7 +600,7 @@ digraph nullability_kt {
         220 [label="Access variable R|<local>/q|"];
         221 [label="Access variable R|/Q.data|"];
         222 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
-        223 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        223 [label="Function call: R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()"];
         224 [label="Exit function test_6" style="filled" fillcolor=red];
     }
 
@@ -682,7 +682,7 @@ digraph nullability_kt {
                 249 [label="Access variable R|<local>/q|"];
                 250 [label="Function call: R|<local>/q|.R|/Q.fdata|()"];
                 251 [label="Function call: R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#()"];
-                252 [label="Function call: R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                252 [label="Function call: R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Unresolved name: inc>#()"];
                 253 [label="Exit block"];
             }
             254 [label="Exit when branch result"];
@@ -795,7 +795,7 @@ digraph nullability_kt {
             287 [label="Exit when"];
         }
         288 [label="Access variable R|<local>/b|"];
-        289 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        289 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         subgraph cluster_65 {
             color=blue
             290 [label="Enter when"];
@@ -820,7 +820,7 @@ digraph nullability_kt {
             303 [label="Exit when"];
         }
         304 [label="Access variable R|<local>/b|"];
-        305 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        305 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         subgraph cluster_68 {
             color=blue
             306 [label="Enter when"];
@@ -845,7 +845,7 @@ digraph nullability_kt {
             319 [label="Exit when"];
         }
         320 [label="Access variable R|<local>/b|"];
-        321 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        321 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         subgraph cluster_71 {
             color=blue
             322 [label="Enter when"];
@@ -870,7 +870,7 @@ digraph nullability_kt {
             335 [label="Exit when"];
         }
         336 [label="Access variable R|<local>/b|"];
-        337 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        337 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         338 [label="Exit function test_9" style="filled" fillcolor=red];
     }
 
@@ -960,14 +960,14 @@ digraph nullability_kt {
                 color=blue
                 348 [label="Enter block"];
                 349 [label="Access variable R|<local>/b|"];
-                350 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                350 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
                 351 [label="Exit block"];
             }
             352 [label="Exit when branch result"];
             353 [label="Exit when"];
         }
         354 [label="Access variable R|<local>/b|"];
-        355 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        355 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         subgraph cluster_78 {
             color=blue
             356 [label="Enter when"];
@@ -985,14 +985,14 @@ digraph nullability_kt {
                 color=blue
                 364 [label="Enter block"];
                 365 [label="Access variable R|<local>/b|"];
-                366 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                366 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
                 367 [label="Exit block"];
             }
             368 [label="Exit when branch result"];
             369 [label="Exit when"];
         }
         370 [label="Access variable R|<local>/b|"];
-        371 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        371 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         subgraph cluster_81 {
             color=blue
             372 [label="Enter when"];
@@ -1010,14 +1010,14 @@ digraph nullability_kt {
                 color=blue
                 380 [label="Enter block"];
                 381 [label="Access variable R|<local>/b|"];
-                382 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                382 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
                 383 [label="Exit block"];
             }
             384 [label="Exit when branch result"];
             385 [label="Exit when"];
         }
         386 [label="Access variable R|<local>/b|"];
-        387 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        387 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         subgraph cluster_84 {
             color=blue
             388 [label="Enter when"];
@@ -1035,14 +1035,14 @@ digraph nullability_kt {
                 color=blue
                 396 [label="Enter block"];
                 397 [label="Access variable R|<local>/b|"];
-                398 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                398 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
                 399 [label="Exit block"];
             }
             400 [label="Exit when branch result"];
             401 [label="Exit when"];
         }
         402 [label="Access variable R|<local>/b|"];
-        403 [label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        403 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         404 [label="Exit function test_10" style="filled" fillcolor=red];
     }
 
@@ -1157,7 +1157,7 @@ digraph nullability_kt {
                 438 [label="Access variable R|<local>/q2|"];
                 439 [label="Access variable R|/QImpl.data|"];
                 440 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
-                441 [label="Function call: R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                441 [label="Function call: R|<local>/q2|.R|/QImpl.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()"];
                 subgraph cluster_91 {
                     color=blue
                     442 [label="Enter when"];
@@ -1292,7 +1292,7 @@ digraph nullability_kt {
                 490 [label="Access variable R|<local>/q|"];
                 491 [label="Access variable R|/QImplWithCustomGetter.data|"];
                 492 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
-                493 [label="Function call: R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                493 [label="Function call: R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()"];
                 494 [label="Exit block"];
             }
             495 [label="Exit when branch result"];
@@ -1369,7 +1369,7 @@ digraph nullability_kt {
                 522 [label="Access variable R|<local>/q|"];
                 523 [label="Access variable R|/QImplMutable.data|"];
                 524 [label="Access variable <Inapplicable(WRONG_RECEIVER): [/MyData.s]>#"];
-                525 [label="Function call: R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+                525 [label="Function call: R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()"];
                 526 [label="Exit block"];
             }
             527 [label="Exit when branch result"];

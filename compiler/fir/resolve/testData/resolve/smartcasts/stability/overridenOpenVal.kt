@@ -1,3 +1,4 @@
+// !DUMP_CFG
 open class A(open val x: Any)
 
 class B(x: Any) : A(x) {

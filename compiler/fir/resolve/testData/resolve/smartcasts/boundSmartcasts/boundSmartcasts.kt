@@ -1,3 +1,4 @@
+// !DUMP_CFG
 interface A {
     fun foo()
 }
@@ -39,7 +40,7 @@ fun test_4(y: Any) {
     x as Int
     x.inc()
     x = y
-    x.<!AMBIGUITY!>inc<!>()
+    x.<!UNRESOLVED_REFERENCE!>inc<!>()
     if (y is A) {
         x.foo()
         y.foo()

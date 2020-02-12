@@ -1,3 +1,4 @@
+// !DUMP_CFG
 interface A
 
 interface B {
@@ -9,4 +10,3 @@ val A.check_1: Boolean
 
 val A.check_2: Boolean
     get() = this is B && this.b
-// 1713

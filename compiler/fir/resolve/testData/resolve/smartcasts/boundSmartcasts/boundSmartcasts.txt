@@ -49,7 +49,7 @@ FILE: boundSmartcasts.kt
         (R|<local>/x| as R|kotlin/Int|)
         R|<local>/x|.R|kotlin/Int.inc|()
         R|<local>/x| = R|<local>/y|
-        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/x|.<Unresolved name: inc>#()
         when () {
             (R|<local>/y| is R|A|) ->  {
                 R|<local>/x|.R|/A.foo|()

@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun test_1(x: Any?) {
     x as String
     x.length

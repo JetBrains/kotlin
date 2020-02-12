@@ -34,8 +34,8 @@ digraph jumps_kt {
             subgraph cluster_5 {
                 color=blue
                 15 [label="Enter block"];
-                16 [label="Function call: R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()"];
-                17 [label="Throw: throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()"];
+                16 [label="Function call: R|java/lang/Exception.Exception|()"];
+                17 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                 18 [label="Stub" style="filled" fillcolor=gray];
                 19 [label="Exit block" style="filled" fillcolor=gray];
             }
@@ -118,7 +118,7 @@ digraph jumps_kt {
         }
         48 [label="Variable declaration: lval y: R|kotlin/Int?|"];
         49 [label="Access variable R|<local>/y|"];
-        50 [label="Function call: R|<local>/y|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+        50 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
         51 [label="Exit function test_2" style="filled" fillcolor=red];
     }
 

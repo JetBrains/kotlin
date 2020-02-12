@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun test_1(b1: Boolean, b2: Boolean) {
     if (b1 || b2) {
         1

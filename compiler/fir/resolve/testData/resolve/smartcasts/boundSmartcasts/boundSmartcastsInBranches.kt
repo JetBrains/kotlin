@@ -1,3 +1,4 @@
+// !DUMP_CFG
 class A {
     val s: String = ""
 }

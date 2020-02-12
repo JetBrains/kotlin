@@ -30,7 +30,7 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     }
 
     public void testAllFilesPresentInResolveWithStdlib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "contracts", "smartcasts");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("anonymousInDelegate.kt")
@@ -454,6 +454,29 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Contracts extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInContracts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("callsInPlace.kt")
+        public void testCallsInPlace() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/contracts/callsInPlace.kt");
+        }
+
+        @TestMetadata("conditionalEffects.kt")
+        public void testConditionalEffects() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/contracts/conditionalEffects.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/inference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -665,6 +688,24 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("weakHashMap.kt")
         public void testWeakHashMap() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/weakHashMap.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Smartcasts extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSmartcasts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("tryWithLambdaInside.kt")
+        public void testTryWithLambdaInside() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");
         }
     }
 }

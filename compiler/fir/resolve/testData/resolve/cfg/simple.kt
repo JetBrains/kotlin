@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun foo() {}
 
 fun test() {

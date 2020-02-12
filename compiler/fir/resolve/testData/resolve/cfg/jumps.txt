@@ -2,7 +2,7 @@ FILE: jumps.kt
     public final fun test_1(x: R|kotlin/Int?|): R|kotlin/Unit| {
         lval y: R|kotlin/Int| = when () {
             ==(R|<local>/x|, Null(null)) ->  {
-                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
+                throw R|java/lang/Exception.Exception|()
             }
             else ->  {
                 R|<local>/x|
@@ -22,7 +22,7 @@ FILE: jumps.kt
             }
         }
 
-        R|<local>/y|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()
     }
     public final fun test_3(x: R|kotlin/Int?|): R|kotlin/Unit| {
         while(Boolean(true)) {

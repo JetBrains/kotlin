@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun test_1(x: Int) {
     val y = when {
         x == 1 -> 10

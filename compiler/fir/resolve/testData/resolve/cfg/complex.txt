@@ -1,23 +1,9 @@
 FILE: complex.kt
-    @R|kotlin/jvm/Throws|(<getClass>(<Unresolved name: IOException>#), <getClass>(<Unresolved name: ResponseParseException>#)) public final fun fetchPluginReleaseDate(pluginId: R|ERROR CLASS: Symbol not found, for `PluginId`|, version: R|kotlin/String|, channel: R|kotlin/String?|): R|ERROR CLASS: Symbol not found, for `LocalDate?`| {
-        lval url: R|kotlin/String| = <strcat>(String(https://plugins.jetbrains.com/api/plugins/), R|<local>/pluginId|.<Unresolved name: idString>#.R|kotlin/toString|(), String(/updates?version=), R|<local>/version|.R|kotlin/Any.toString|())
-        lval pluginDTOs: R|kotlin/Array<ERROR CLASS: Symbol not found, for `PluginDTO`>| = try {
-            <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <anonymous>(): R|ERROR CLASS: Unresolved name: fromJson| {
-                ^ <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|)
-            }
-            )
-        }
-        catch (ioException: R|ERROR CLASS: Symbol not found, for `JsonIOException`|) {
-            throw <Unresolved name: IOException>#(R|<local>/ioException|)
-        }
-        catch (syntaxException: R|ERROR CLASS: Symbol not found, for `JsonSyntaxException`|) {
-            throw <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)
-        }
-
-    }
     public abstract interface AutoCloseable : R|kotlin/Any| {
         public abstract fun close(): R|kotlin/Unit|
 
+    }
+    public final fun R|kotlin/Throwable|.addSuppressed(other: R|kotlin/Throwable|): R|kotlin/Unit| {
     }
     internal final fun R|AutoCloseable?|.closeFinally(cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
         ^closeFinally when () {
@@ -31,16 +17,16 @@ FILE: complex.kt
                     this@R|/closeFinally|.R|/AutoCloseable.close|()
                 }
                 catch (closeException: R|kotlin/Throwable|) {
-                    R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)
+                    R|<local>/cause|.R|/addSuppressed|(R|<local>/closeException|)
                 }
 
             }
         }
 
     }
-    public final inline fun <reified T : R|kotlin/Any|> R|kotlin/sequences/Sequence<*>|.firstIsInstanceOrNull(): R|T?| {
-        lval <range>: R|kotlin/sequences/Sequence<*>| = this@R|/firstIsInstanceOrNull|
-        lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = R|<local>/<range>|.R|FakeOverride<kotlin/sequences/Sequence.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()
+    public final inline fun <reified T : R|kotlin/Any|> R|kotlin/collections/List<*>|.firstIsInstanceOrNull(): R|T?| {
+        lval <range>: R|kotlin/collections/List<*>| = this@R|/firstIsInstanceOrNull|
+        lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = R|<local>/<range>|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()
         while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
             lval element: R|kotlin/Any?| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()
             when () {

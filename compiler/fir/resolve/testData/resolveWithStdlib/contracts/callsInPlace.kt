@@ -1,3 +1,4 @@
+// !DUMP_CFG
 fun test() {
     val x: Int
     run {
