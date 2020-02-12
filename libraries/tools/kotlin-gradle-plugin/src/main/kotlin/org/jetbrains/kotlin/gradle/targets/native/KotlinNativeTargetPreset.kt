@@ -13,7 +13,6 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType
 import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType.REGULAR
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
 
 abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     private val name: String,
@@ -46,12 +44,21 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             extensions.extraProperties.set(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY, konanHome)
     }
 
+    private val propertiesProvider = PropertiesProvider(project)
+
     private val isKonanHomeOverridden: Boolean
-        get() = PropertiesProvider(project).nativeHome != null
+        get() = propertiesProvider.nativeHome != null
 
     private fun setupNativeCompiler() = with(project) {
         if (!isKonanHomeOverridden) {
-            NativeCompilerDownloader(this).downloadIfNeeded()
+            val downloader = NativeCompilerDownloader(this)
+
+            if (propertiesProvider.nativeReinstall) {
+                logger.info("Reinstall Kotlin/Native distribution")
+                downloader.compilerDirectory.deleteRecursively()
+            }
+
+            downloader.downloadIfNeeded()
             logger.info("Kotlin/Native distribution: $konanHome")
         } else {
             logger.info("User-provided Kotlin/Native distribution: $konanHome")

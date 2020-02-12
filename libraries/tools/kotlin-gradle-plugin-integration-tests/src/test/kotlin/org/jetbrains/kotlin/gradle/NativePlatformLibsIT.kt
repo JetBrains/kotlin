@@ -138,4 +138,22 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertContainsRegex("Run tool: \"generatePlatformLibraries\" with args: .* -mode metadata".toRegex())
         }
     }
+
+    @Test
+    fun testCompilerReinstallation() = with(platformLibrariesProject("linuxX64")) {
+        deleteInstalledCompilers()
+
+        // Install the compiler at the first time. Don't build to reduce execution time.
+        build("tasks") {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        // Reinstall the compiler.
+        build("tasks", "-Pkotlin.native.reinstall=true") {
+            assertSuccessful()
+            assertContains("Unpack Kotlin/Native compiler to ")
+            assertContains("Generate platform libraries for linux_x64")
+        }
+    }
 }
