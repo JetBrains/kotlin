@@ -116,4 +116,35 @@ public class PsiDiagnosticUtils {
             return "(" + line + "," + column + ")";
         }
     }
+
+    public static final class LineAndColumnRange {
+
+        public static final LineAndColumnRange NONE = new LineAndColumnRange(LineAndColumn.NONE, LineAndColumn.NONE);
+
+        private final LineAndColumn start;
+        private final LineAndColumn end;
+
+        public LineAndColumnRange(LineAndColumn start, LineAndColumn end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public LineAndColumn getStart() {
+            return start;
+        }
+
+        public LineAndColumn getEnd() {
+            return end;
+        }
+
+        // NOTE: This method is used for presenting positions to the user
+        @Override
+        public String toString() {
+            if (start.line == end.line) {
+                return "(" + start.line + "," + start.column + "-" + end.column + ")";
+            }
+
+            return start.toString() + " - " + end.toString();
+        }
+    }
 }
