@@ -10,6 +10,7 @@
    * Object subgraph freezing
    * Object subgraph detachment
    * Raw shared memory using C globals
+   * Atomic primitives and references
    * Coroutines for blocking operations (not covered in this document)
 
 ### Workers
@@ -64,7 +65,9 @@ future.consume {
 ### Object transfer and freezing
 
    An important invariant that Kotlin/Native runtime maintains is that the object is either owned by a single
-  thread/worker, or it is immutable (_shared XOR mutable_). This ensures that the same data has a single mutator, and so there is no need for locking to exist. To achieve such an invariant, we use the concept of not externally referred object subgraphs.
+  thread/worker, or it is immutable (_shared XOR mutable_). This ensures that the same data has a single mutator,
+  and so there is no need for locking to exist. To achieve such an invariant, we use the concept of not externally
+  referred object subgraphs.
   This is a subgraph which has no external references from outside of the subgraph, which could be checked
   algorithmically with O(N) complexity (in ARC systems), where N is the number of elements in such a subgraph.
   Such subgraphs are usually produced as a result of a lambda expression, for example some builder, and may not
@@ -88,8 +91,34 @@ future.consume {
   a `COpaquePointer` value, which could be stored in `void*` data, so the disconnected object subgraphs
   can be stored in a C data structure, and later attached back with `DetachedObjectGraph<T>.attach()` in an arbitrary thread
   or a worker. Combining it with [raw memory sharing](#shared) it allows side channel object transfer between
-  concurrent threads, if the worker mechanisms are insufficient for a particular task.
-
+  concurrent threads, if the worker mechanisms are insufficient for a particular task. Note, that object detachment
+  may require explicit leaving function holding object references and then performing cyclic garbage collection.
+  For example, code like:
+```$kotlin
+val graph = DetachedObjectGraph {
+    val map = mutableMapOf<String, String>()
+    for (entry in map.entries) {
+        // ...
+    }
+    map
+}
+```
+  will not work as expected and will throw runtime exception, as there are uncollected cycles in the detached graph, while:
+```$kotlin
+val graph = DetachedObjectGraph {
+    {
+     val map = mutableMapOf<String, String>()
+     for (entry in map.entries) {
+         // ...
+     }
+     map
+    }().also {
+      kotlin.native.internal.GC.collect()
+    }
+ }
+```
+ will work properly, as holding references will be released, and then cyclic garbage affecting reference counter is
+ collected.
 
 <a name="shared"></a>
 ### Raw shared memory
@@ -149,3 +178,33 @@ the following mechanisms to prevent the unintended sharing of state via global o
    * enums are always frozen
 
  Combined, these mechanisms allow natural race-freeze programming with code reuse across platforms in MPP projects.
+
+<a name="atomic_references"></a>
+### Atomic primitives and references
+
+ Kotlin/Native standard library provides primitives for safe working with concurrently mutable data, namely
+`AtomicInt`, `AtomicLong`, `AtomicNativePtr`, `AtomicReference` and `FreezableAtomicReference` in the package
+`kotlin.native.concurrent`.
+Atomic primitives allows concurrency-safe update operations, such as increment, decrement and compare-and-swap,
+along with value setters and getters. Atomic primitives are considered always frozen by the runtime, and
+while their fields can be updated with the regular `field.value += 1`, it is not concurrency safe.
+Value must be be changed using dedicated operations, so it is possible to perform concurrent-safe
+global counters and similar data structures.
+
+  Some algorithms require shared mutable references across the multiple workers, for example global mutable
+configuration could be implemented as an immutable instance of properties list atomically replaced with the
+new version on configuration update as the whole in a single transaction. This way no inconsistent configuration
+could be seen, and at the same time configuration could be updated as needed.
+To achieve such functionality Kotlin/Native runtime provides two related classes:
+`kotlin.native.concurrent.AtomicReference` and `kotlin.native.concurrent.FreezableAtomicReference`.
+Atomic reference holds reference to a frozen or immutable object, and its value could be updated by set
+or compare-and-swap operation. Thus, dedicated set of objects could be used to create mutable shared object graphs
+(of immutable objects). Cycles in the shared memory could be created using atomic references, and to collect them
+Kotlin/Native runtime has special concurrent cycle collector, concurrently analyzing cyclic data rooted in atomic references.
+When cycle of no longer used objects is detected, collector zeroes out reference stored in atomic reference and thus
+allows cycle to be collected.
+
+ If atomic reference value is attempted to be set to non-frozen value runtime exception is thrown.
+
+ Freezable atomic reference is similar to the regular atomic reference, but until frozen behaves like regular box
+for a reference. After freezing it behaves like an atomic reference, and can only hold a reference to a frozen object.
