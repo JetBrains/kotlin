@@ -17,6 +17,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
@@ -37,6 +38,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -63,13 +65,13 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.getSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.setSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSETS;
+import static com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.createUniqueSdkName;
 import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createJdkComboBoxModel;
 
 /**
@@ -319,9 +321,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       }
 
       if (!dropResolveExternalAnnotationsCheckBox) {
-      panel.add(
-        myResolveExternalAnnotationsCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.download.annotations")),
-        ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+        panel.add(
+          myResolveExternalAnnotationsCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.download.annotations")),
+          ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
       }
     });
   }
@@ -535,12 +537,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     }
 
     if (myGradleJdkComboBox != null) {
-      try {
-        myGradleJdkComboBox.getModel().getSdksModel().apply();
-      }
-      catch (ConfigurationException e) {
-        throw new IllegalStateException(e);
-      }
+      wrapExceptions(() -> myGradleJdkComboBox.getModel().getSdksModel().apply());
       final String gradleJvm = FileUtil.toCanonicalPath(getSelectedJdkReference(myGradleJdkComboBox));
       settings.setGradleJvm(StringUtil.isEmpty(gradleJvm) ? null : gradleJvm);
     }
@@ -715,6 +712,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
   private static void setupProjectSdksModel(@NotNull ProjectSdksModel sdksModel, @NotNull Project project, @Nullable Sdk projectSdk) {
     sdksModel.reset(project);
+    deduplicateSdkNames(sdksModel);
     if (projectSdk == null) {
       projectSdk = sdksModel.getProjectSdk();
       // Find real sdk
@@ -877,6 +875,32 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       Disposer.register(project, myProjectRefDisposable);
     }
     myProjectRef.set(project);
+  }
+
+  private static void wrapExceptions(ThrowableRunnable<Throwable> runnable) {
+    try {
+      runnable.run();
+    }
+    catch (Throwable ex) {
+      throw new IllegalStateException(ex);
+    }
+  }
+
+  /**
+   * Deduplicates sdks name in corrupted sdks model
+   */
+  private static void deduplicateSdkNames(@NotNull ProjectSdksModel projectSdksModel) {
+    Set<String> processedNames = new HashSet<>();
+    Collection<Sdk> editableSdks = projectSdksModel.getProjectSdks().values();
+    for (Sdk sdk : editableSdks) {
+      if (processedNames.contains(sdk.getName())) {
+        SdkModificator sdkModificator = sdk.getSdkModificator();
+        String name = createUniqueSdkName(sdk.getName(), editableSdks);
+        sdkModificator.setName(name);
+        sdkModificator.commitChanges();
+      }
+      processedNames.add(sdk.getName());
+    }
   }
 
   private class DelayedBalloonInfo implements Runnable {
