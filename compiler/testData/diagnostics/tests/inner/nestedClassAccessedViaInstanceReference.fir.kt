@@ -30,7 +30,7 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     with.NestedWithClassObject.foo()
     with.NestedEnum.A
     with.NestedObj
-    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    with.NestedObj()
     with.NestedObj.foo()
 
     without.<!UNRESOLVED_REFERENCE!>Nested<!>()
@@ -39,7 +39,7 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     without.NestedWithClassObject.foo()
     without.NestedEnum.A
     without.NestedObj
-    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    without.NestedObj()
     without.NestedObj.foo()
 
     obj.<!UNRESOLVED_REFERENCE!>Nested<!>()
@@ -48,6 +48,6 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     obj.NestedWithClassObject.foo()
     obj.NestedEnum.A
     obj.NestedObj
-    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    obj.NestedObj()
     obj.NestedObj.foo()
 }

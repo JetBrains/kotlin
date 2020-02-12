@@ -3,5 +3,5 @@ object Foo {
 }
 
 fun main() {
-    <!INAPPLICABLE_CANDIDATE!>Foo<!><Int>()
+    Foo<Int>()
 }

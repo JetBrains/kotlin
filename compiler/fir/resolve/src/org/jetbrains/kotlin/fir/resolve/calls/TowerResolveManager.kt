@@ -9,13 +9,16 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.constructClassType
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -106,15 +109,25 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
         val group: TowerGroup
     ) {
         private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
-            val symbol = candidate.symbol as FirCallableSymbol<*>
+            val (name, typeRef) = when (val symbol = candidate.symbol) {
+                is FirCallableSymbol<*> -> {
+                    symbol.callableId.callableName to towerResolver.typeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+                }
+                is FirRegularClassSymbol -> {
+                    symbol.classId.shortClassName to buildResolvedTypeRef {
+                        type = symbol.constructType(emptyArray(), isNullable = false)
+                    }
+                }
+                else -> throw AssertionError()
+            }
             return FirQualifiedAccessExpressionBuilder().apply {
                 calleeReference = FirNamedReferenceWithCandidate(
                     null,
-                    symbol.callableId.callableName,
+                    name,
                     candidate
                 )
                 dispatchReceiver = candidate.dispatchReceiverExpression()
-                typeRef = towerResolver.typeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+                this.typeRef = typeRef
             }
         }
 
@@ -163,12 +176,16 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
                     )
                     invokeReceiverCollector.newDataSet()
                     result += processElementsByName(TowerScopeLevel.Token.Properties, info.name, invokeReceiverProcessor)
+                    if (this !is ScopeTowerLevel || this.extensionReceiver == null) {
+                        result += processElementsByName(TowerScopeLevel.Token.Objects, info.name, invokeReceiverProcessor)
+                    }
 
                     if (invokeReceiverCollector.isSuccess()) {
                         for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {
 
-                            val symbol = invokeReceiverCandidate.symbol as FirCallableSymbol<*>
-                            val isExtensionFunctionType = symbol.fir.returnTypeRef.isExtensionFunctionType(towerResolver.components.session)
+                            val symbol = invokeReceiverCandidate.symbol
+                            if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
+                            val isExtensionFunctionType = (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(towerResolver.components.session) == true
                             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                                 continue
                             }

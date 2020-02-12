@@ -85,15 +85,16 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
       RETURN type=kotlin.Nothing from='public final fun invoke (i: kotlin.Int): kotlin.Int [operator] declared in <root>'
         GET_VAR 'i: kotlin.Int declared in <root>.invoke' type=kotlin.Int origin=null
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Inapplicable(HIDDEN): [/A.A]>#' type=IrErrorType
-          CONST Int type=kotlin.Int value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType
+        CALL 'public final fun invoke (i: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+          $receiver: ERROR_CALL 'Unresolved reference: R|/A|' type=IrErrorType
+          i: CONST Int type=kotlin.Int value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
