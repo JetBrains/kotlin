@@ -30,18 +30,9 @@ abstract class J2kConverterExtension : AbstractExtensionPointBean() {
     ): WithProgressProcessor
 
     companion object {
-        private const val newJ2kByDefault = true
-        private const val optionName = "kotlin.use.new.j2k"
-
-        var isNewJ2k
-            get() = PropertiesComponent.getInstance().getBoolean(optionName, newJ2kByDefault)
-            set(value) {
-                PropertiesComponent.getInstance().setValue(optionName, value, newJ2kByDefault)
-            }
-
         val EP_NAME = ExtensionPointName.create<J2kConverterExtension>("org.jetbrains.kotlin.j2kConverterExtension")
 
-        fun extension(useNewJ2k: Boolean = isNewJ2k): J2kConverterExtension =
+        fun extension(useNewJ2k: Boolean): J2kConverterExtension =
             EP_NAME.extensions.first { it.isNewJ2k == useNewJ2k }
     }
 }

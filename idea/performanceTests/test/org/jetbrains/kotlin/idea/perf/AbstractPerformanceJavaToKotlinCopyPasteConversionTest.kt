@@ -11,11 +11,11 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
-import org.jetbrains.kotlin.j2k.J2kConverterExtension
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -38,7 +38,7 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
     override fun setUp() {
         super.setUp()
 
-        J2kConverterExtension.isNewJ2k = newJ2K
+        ExperimentalFeatures.NewJ2k.isEnabled = newJ2K
         val index = j2kIndex()
 
         if (!warmedUp[index]) {

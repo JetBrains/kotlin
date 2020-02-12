@@ -10,6 +10,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.PlatformVersion;
+import org.jetbrains.kotlin.idea.configuration.ExperimentalFeaturesPanel;
 import org.jetbrains.kotlin.idea.util.VersioningKt;
 
 import javax.swing.*;
@@ -28,14 +29,12 @@ public class KotlinLanguageConfigurationForm {
     private JTextPane currentVersion;
     private JPanel bundledCompilerVersionPanel;
     private JTextPane compilerVersion;
-    public JCheckBox useNewJ2kCheckBox;
-    public JCheckBox useNewProjectWizardCheckBox;
+    public ExperimentalFeaturesPanel experimentalFeaturesPanel;
+    private JPanel experimentalFeaturesPanelContainer;
 
     public KotlinLanguageConfigurationForm() {
         showVerifierDisabledStatus();
-
-        useNewProjectWizardCheckBox.setVisible(!isAndroidStudio());
-
+        experimentalFeaturesPanelContainer.setVisible(ExperimentalFeaturesPanel.Companion.shouldBeShown());
         String pluginVersion = KotlinPluginUtil.getPluginVersion();
 
         if (KotlinPluginUtil.isPatched()) {
