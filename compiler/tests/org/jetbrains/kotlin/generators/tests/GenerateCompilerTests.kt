@@ -558,14 +558,16 @@ fun main(args: Array<String>) {
             model("resolve/cfg", pattern = KT_WITHOUT_DOTS_IN_NAME)
             model("resolve/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
+    }
 
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
         testClass<AbstractFirDiagnosticsWithStdlibTest> {
-            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("contracts", "smartcasts"))
+            model("resolveWithStdlib", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("contracts", "smartcasts"))
         }
 
         testClass<AbstractFirDiagnosticsWithCfgAndStdlibTest> {
-            model("resolve/stdlib/contracts", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            model("resolve/stdlib/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("resolveWithStdlib/contracts", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("resolveWithStdlib/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 

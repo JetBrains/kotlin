@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class FirDiagnosticsWithCfgAndStdlibTestGenerated extends AbstractFirDiagnosticsWithCfgAndStdlibTest {
-    @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/contracts")
+    @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/contracts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Contracts extends AbstractFirDiagnosticsWithCfgAndStdlibTest {
@@ -27,21 +27,21 @@ public class FirDiagnosticsWithCfgAndStdlibTestGenerated extends AbstractFirDiag
         }
 
         public void testAllFilesPresentInContracts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("callsInPlace.kt")
         public void testCallsInPlace() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/contracts/callsInPlace.kt");
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/contracts/callsInPlace.kt");
         }
 
         @TestMetadata("conditionalEffects.kt")
         public void testConditionalEffects() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/contracts/conditionalEffects.kt");
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/contracts/conditionalEffects.kt");
         }
     }
 
-    @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/smartcasts")
+    @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Smartcasts extends AbstractFirDiagnosticsWithCfgAndStdlibTest {
@@ -50,12 +50,12 @@ public class FirDiagnosticsWithCfgAndStdlibTestGenerated extends AbstractFirDiag
         }
 
         public void testAllFilesPresentInSmartcasts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("tryWithLambdaInside.kt")
         public void testTryWithLambdaInside() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/stdlib/smartcasts/tryWithLambdaInside.kt");
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");
         }
     }
 }
