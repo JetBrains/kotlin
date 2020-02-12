@@ -296,7 +296,12 @@ fun IrSimpleFunction.collectRealOverrides(toSkip: (IrSimpleFunction) -> Boolean 
 // This implementation is from kotlin-native
 // TODO: use this implementation instead of any other
 fun IrSimpleFunction.resolveFakeOverride(toSkip: (IrSimpleFunction) -> Boolean = { false }): IrSimpleFunction? {
-    return collectRealOverrides(toSkip).singleOrNull { it.modality != Modality.ABSTRACT }
+    return collectRealOverrides(toSkip)
+        .filter { it.modality != Modality.ABSTRACT }
+        .let { realOverrides ->
+            // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
+            realOverrides.singleOrNull { it.parent.safeAs<IrClass>()?.isInterface != true } ?: realOverrides.singleOrNull()
+        }
 }
 
 fun IrSimpleFunction.isOrOverridesSynthesized(): Boolean {
