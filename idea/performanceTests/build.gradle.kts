@@ -76,3 +76,5 @@ projectTest(taskName = "performanceTest") {
         }
     }
 }
+
+testsJar()
