@@ -173,7 +173,6 @@ object LightClassUtil {
         val classesWithMatchingFqName = JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
         return classesWithMatchingFqName.singleOrNull() ?:
                classesWithMatchingFqName.find {
-                   // NOTE: for multipart facades this works via FakeLightClassForFileOfPackage
                    it.containingFile?.virtualFile == ktFile.virtualFile
                }
     }
