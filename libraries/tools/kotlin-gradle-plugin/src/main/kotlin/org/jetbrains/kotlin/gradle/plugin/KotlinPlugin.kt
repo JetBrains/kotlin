@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -101,18 +102,21 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                 }
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
-        registerKotlinCompileTask().also { task ->
+        registerKotlinCompileTask(register = ::doRegisterTask).also { task ->
             kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
         }
 
-    protected fun registerKotlinCompileTask(name: String = kotlinCompilation.compileKotlinTaskName): TaskProvider<out T> {
+    protected fun registerKotlinCompileTask(
+        name: String = kotlinCompilation.compileKotlinTaskName,
+        register: (Project, String, (T) -> Unit) -> TaskProvider<out T>
+    ): TaskProvider<out T> {
         logger.kotlinDebug("Creating kotlin compile task $name")
 
         KotlinCompileTaskData.register(name, kotlinCompilation).apply {
             destinationDir.set(project.provider { defaultKotlinDestinationDir })
         }
 
-        return doRegisterTask(project, name) {
+        return register(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
         }
@@ -321,29 +325,8 @@ internal class KotlinJsIrSourceSetProcessor(
         project: Project,
         taskName: String,
         configureAction: (Kotlin2JsCompile) -> (Unit)
-    ): TaskProvider<out Kotlin2JsCompile> {
-        val compilation = kotlinCompilation as KotlinJsIrCompilation
-
-        if (taskName == compilation.productionLinkTaskName) {
-            return registerJsLink(
-                project,
-                taskName,
-                BuildVariantKind.PRODUCTION,
-                configureAction
-            )
-        }
-
-        if (taskName == compilation.developmentLinkTaskName) {
-            return registerJsLink(
-                project,
-                taskName,
-                BuildVariantKind.DEVELOPMENT,
-                configureAction
-            )
-        }
-
-        return tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
-    }
+    ): TaskProvider<out Kotlin2JsCompile> =
+        tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
 
     private fun registerJsLink(
         project: Project,
@@ -368,16 +351,11 @@ internal class KotlinJsIrSourceSetProcessor(
 
         val compilation = kotlinCompilation as KotlinJsIrCompilation
 
-        listOf(
-            compilation.productionLinkTaskName,
-            compilation.developmentLinkTaskName
-        ).onEach { taskName ->
+        (compilation.target as KotlinJsIrTarget).binaries.all { binary ->
             registerKotlinCompileTask(
-                taskName
-            )
-        }.forEach { taskName ->
-            project.tasks.named(taskName).configure {
-                it.dependsOn(kotlinTask)
+                binary.linkTaskName
+            ) { project, name, action ->
+                registerJsLink(project, name, binary.type, action)
             }
         }
 
