@@ -68,6 +68,7 @@ import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.AbstractProgressIndicatorExBase;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -433,7 +434,7 @@ public final class ExternalSystemUtil {
             @Override
             public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
               long eventTime = System.currentTimeMillis();
-              AnAction rerunImportAction = new AnAction() {
+              AnAction rerunImportAction = new DumbAwareAction() {
                 @Override
                 public void update(@NotNull AnActionEvent e) {
                   Presentation p = e.getPresentation();
