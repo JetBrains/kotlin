@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
-import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
@@ -20,7 +18,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class ScratchAdditionalIdeaDependenciesProvider : ScriptAdditionalIdeaDependenciesProvider() {
 
     override fun getRelatedModules(file: VirtualFile, project: Project): List<Module> {
-        if (!isInScratchRoot(file)) return emptyList()
+        if (!file.isKotlinScratch) return emptyList()
 
         val scratchModule = file.scriptRelatedModuleName?.let {
             ModuleManager.getInstance(project).findModuleByName(it)
@@ -38,7 +36,7 @@ class ScratchAdditionalIdeaDependenciesProvider : ScriptAdditionalIdeaDependenci
     }
 
     override fun getRelatedLibraries(file: VirtualFile, project: Project): List<Library> {
-        if (!isInScratchRoot(file)) return emptyList()
+        if (!file.isKotlinScratch) return emptyList()
 
         val result = linkedSetOf<Library>()
         getRelatedModules(file, project).forEach {
@@ -51,8 +49,6 @@ class ScratchAdditionalIdeaDependenciesProvider : ScriptAdditionalIdeaDependenci
         }
         return result.toList()
     }
-
-    private inline fun isInScratchRoot(file: VirtualFile) = ScratchFileService.findRootType(file) == ScratchRootType.getInstance()
 
     private fun moduleDependencyEnumerator(it: Module): OrderEnumerator {
         return ModuleRootManager.getInstance(it).orderEntries()

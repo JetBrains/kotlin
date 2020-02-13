@@ -81,11 +81,10 @@ fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): Modu
         return moduleRelatedModuleInfo
     }
 
-    return if (ScratchFileService.findRootType(virtualFile) != ScratchRootType.getInstance()) null
-    else {
+    return if (ScratchFileService.getInstance().getRootType(virtualFile) is ScratchRootType) {
         val scratchModule = virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
         scratchModule?.testSourceInfo() ?: scratchModule?.productionSourceInfo()
-    }
+    } else null
 }
 
 private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
