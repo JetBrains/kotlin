@@ -96,11 +96,14 @@ constructor(
 
     @Deprecated("Use produceExecutable instead", ReplaceWith("produceExecutable()"))
     override val binaries: KotlinJsBinaryContainer
-        get() = project.objects.newInstance(
-            KotlinJsBinaryContainer::class.java,
-            this,
-            WrapUtil.toDomainObjectSet(JsBinary::class.java)
-        )
+        get() {
+            return irTarget?.binaries
+                ?: project.objects.newInstance(
+                    KotlinJsBinaryContainer::class.java,
+                    this,
+                    WrapUtil.toDomainObjectSet(JsBinary::class.java)
+                )
+        }
 
     var irTarget: KotlinJsIrTarget? = null
 
