@@ -15,7 +15,10 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -50,9 +53,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
         val file = myFixture.file as KtFile
 
-        val configured = configureCompilerOptions(file.text, project, myFixture.module)
-
-        try {
+        withCustomCompilerOptions(file.text, project, myFixture.module) {
             val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
             val expectedResultText = when (lastChild.node.elementType) {
                 KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length - 2).trim()
@@ -64,7 +65,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
             val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
             val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
-                ?: error("Could not find parameter info handler")
+                          ?: error("Could not find parameter info handler")
 
             val mockCreateParameterInfoContext = MockCreateParameterInfoContext(file, myFixture)
             val parameterOwner = handler.findElementForParameterInfo(mockCreateParameterInfoContext) as PsiElement
@@ -89,10 +90,6 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
             }
 
             Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
-        } finally {
-            if (configured) {
-                rollbackCompilerOptions(project, myFixture.module)
-            }
         }
     }
 }

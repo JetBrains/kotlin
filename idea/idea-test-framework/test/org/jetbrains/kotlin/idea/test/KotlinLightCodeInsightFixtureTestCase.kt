@@ -227,13 +227,23 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
 }
 
-
 object CompilerTestDirectives {
     const val LANGUAGE_VERSION_DIRECTIVE = "LANGUAGE_VERSION:"
     const val JVM_TARGET_DIRECTIVE = "JVM_TARGET:"
     const val COMPILER_ARGUMENTS_DIRECTIVE = "COMPILER_ARGUMENTS:"
 
     val ALL_COMPILER_TEST_DIRECTIVES = listOf(LANGUAGE_VERSION_DIRECTIVE, JVM_TARGET_DIRECTIVE, COMPILER_ARGUMENTS_DIRECTIVE)
+}
+
+fun <T> withCustomCompilerOptions(fileText: String, project: Project, module: Module, body: () -> T): T {
+    val configured = configureCompilerOptions(fileText, project, module)
+    try {
+        return body()
+    } finally {
+        if (configured) {
+            rollbackCompilerOptions(project, module)
+        }
+    }
 }
 
 fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
@@ -269,7 +279,23 @@ fun configureCompilerOptions(fileText: String, project: Project, module: Module)
     return false
 }
 
-fun rollbackCompilerOptions(project: Project, module: Module) {
+fun <T> configureRegistryAndRun(fileText: String, body: () -> T) {
+    val registers = InTextDirectivesUtils.findListWithPrefixes(fileText, "// REGISTRY:")
+        .map { it.split(' ') }
+        .map { Registry.get(it.first()) to it.last() }
+    try {
+        for ((register, value) in registers) {
+            register.setValue(value)
+        }
+        body()
+    } finally {
+        for ((register, _) in registers) {
+            register.resetToDefault()
+        }
+    }
+}
+
+private fun rollbackCompilerOptions(project: Project, module: Module) {
     configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString)
 
     val facetSettings = KotlinFacet.get(module)!!.configuration.settings
