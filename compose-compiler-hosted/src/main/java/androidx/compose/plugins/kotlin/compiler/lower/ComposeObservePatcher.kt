@@ -20,6 +20,7 @@ import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.KtxNameConventions.UPDATE_SCOPE
 import androidx.compose.plugins.kotlin.isEmitInline
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -80,13 +81,16 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopySymbolRemapper) :
-    AbstractComposeLowering(context, symbolRemapper),
+class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopySymbolRemapper,
+                            bindingTrace: BindingTrace
+) :
+    AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     FileLoweringPass,
     ModuleLoweringPass {
 
@@ -175,7 +179,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
         // Create call to get the composer
         val unitType = context.irBuiltIns.unitType
 
-        val irBuilder = context.createIrBuilder(original.symbol)
+        val irBuilder = DeclarationIrBuilder(context, original.symbol)
 
         // Create call to startRestartGroup
         val startRestartGroup = irMethodCall(
@@ -185,7 +189,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
             putValueArgument(
                 0,
                 keyExpression(
-                    descriptor,
+                    symbol.descriptor,
                     original.startOffset,
                     context.builtIns.intType.toIrType()
                 )
@@ -258,7 +262,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                     context.irBuiltIns.unitType
                 ).also { fn ->
                     fn.parent = original
-                    val localIrBuilder = context.createIrBuilder(fn.symbol)
+                    val localIrBuilder = DeclarationIrBuilder(context, fn.symbol)
                     fn.addValueParameter(
                         KtxNameConventions.COMPOSER_PARAMETER.identifier,
                         composerTypeDescriptor.defaultType.toIrType()
@@ -266,7 +270,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                     fn.body = localIrBuilder.irBlockBody {
                         // Call the function again with the same parameters
                         +irReturn(irCall(selfSymbol).apply {
-                            descriptor
+                            symbol.descriptor
                                 .valueParameters
                                 .filter { !it.isComposerParam() }
                                 .forEachIndexed {
@@ -290,7 +294,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                                     fn.valueParameters[0].symbol
                                 )
                             )
-                            descriptor.dispatchReceiverParameter?.let {
+                            symbol.descriptor.dispatchReceiverParameter?.let {
                                 // Ensure we get the correct type by trying to avoid
                                 // going through a KotlinType if possible.
                                 val parameter = original.dispatchReceiverParameter
@@ -311,7 +315,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                                 )
                                 dispatchReceiver = irGet(tmp)
                             }
-                            descriptor.extensionReceiverParameter?.let {
+                            symbol.descriptor.extensionReceiverParameter?.let {
                                     receiverDescriptor ->
                                 extensionReceiver = irGet(
                                     receiverDescriptor.type.toIrType(),
@@ -321,7 +325,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                                         )
                                 )
                             }
-                            descriptor.typeParameters.forEachIndexed { index, descriptor ->
+                            symbol.descriptor.typeParameters.forEachIndexed { index, descriptor ->
                                 putTypeArgument(index, descriptor.defaultType.toIrType())
                             }
                         })
@@ -334,7 +338,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                         UNDEFINED_OFFSET,
                         blockParameterType.toIrType(),
                         fn.symbol,
-                        fn.descriptor,
+                        fn.symbol.descriptor,
                         0,
                         IrStatementOrigin.LAMBDA
                     )

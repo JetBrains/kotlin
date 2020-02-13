@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -121,6 +119,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -135,9 +134,10 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ComposableCallTransformer(
     context: JvmBackendContext,
-    symbolRemapper: DeepCopySymbolRemapper
+    symbolRemapper: DeepCopySymbolRemapper,
+    bindingTrace: BindingTrace
 ) :
-    AbstractComposeLowering(context, symbolRemapper),
+    AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     FileLoweringPass,
     ModuleLoweringPass {
 
@@ -148,13 +148,10 @@ class ComposableCallTransformer(
     private val orFunctionDescriptor = builtIns.builtIns.booleanType.memberScope
         .findFirstFunction("or") { it is FunctionDescriptor && it.isInfix }
 
-    private val jvmContext get() = context
-
     private fun KotlinType?.isStable(): Boolean {
         if (this == null) return false
 
-        val trace = jvmContext.state.bindingTrace
-        val calculated = trace.get(ComposeWritableSlices.STABLE_TYPE, this)
+        val calculated = bindingTrace.get(ComposeWritableSlices.STABLE_TYPE, this)
         return if (calculated == null) {
             val isStable = !isError &&
                     !isTypeParameter() &&
@@ -174,7 +171,7 @@ class ComposableCallTransformer(
                                                     unsubstitutedUnderlyingType().isStable()
                                             )
                             )
-            trace.record(ComposeWritableSlices.STABLE_TYPE, this, isStable)
+            bindingTrace.record(ComposeWritableSlices.STABLE_TYPE, this, isStable)
             isStable
         } else calculated
     }
@@ -201,15 +198,15 @@ class ComposableCallTransformer(
 
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.isTransformedComposableCall()) {
-            val descriptor = expression.descriptor
+            val descriptor = expression.symbol.descriptor
             val returnType = descriptor.returnType
             val isUnit = returnType == null || returnType.isUnit() || expression.type.isUnit()
-            val isInline = descriptor.isInline || context.state.irTrace[
+            val isInline = descriptor.isInline || context.irTrace[
                     ComposeWritableSlices.IS_INLINE_COMPOSABLE_CALL,
                     expression
             ] == true
             return if (isUnit && !isInline) {
-                context.createIrBuilder(declarationStack.last().symbol).irBlock {
+                DeclarationIrBuilder(context, declarationStack.last().symbol).irBlock {
                     +irComposableCall(expression.transformChildren())
                 }
             } else {
@@ -217,18 +214,17 @@ class ComposableCallTransformer(
                     expression.transformChildrenWithoutConvertingLambdas()
                 else
                     expression.transformChildren()
-                context
-                    .createIrBuilder(declarationStack.last().symbol)
+                DeclarationIrBuilder(context, declarationStack.last().symbol)
                     .irComposableExpr(call)
             }
         }
 
-        val emitMetadata = context.state.irTrace[
+        val emitMetadata = context.irTrace[
                 ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,
                 expression
         ]
         if (emitMetadata != null) {
-            return context.createIrBuilder(declarationStack.last().symbol).irBlock {
+            return DeclarationIrBuilder(context, declarationStack.last().symbol).irBlock {
                 +irComposableEmit(expression.transformChildren(), emitMetadata)
             }
         }
@@ -254,7 +250,7 @@ class ComposableCallTransformer(
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         if (expression.origin == IrStatementOrigin.LAMBDA) {
             if (expression.function.valueParameters.lastOrNull()?.isComposerParam() == true) {
-                return context.createIrBuilder(declarationStack.last().symbol).irBlock {
+                return DeclarationIrBuilder(context, declarationStack.last().symbol).irBlock {
                     +covertLambdaIfNecessary(expression.transformChildren())
                 }
             }
@@ -297,6 +293,7 @@ class ComposableCallTransformer(
         // causing larger stack space than needed in our generated code.
 
         val irGetArguments = original
+            .symbol
             .descriptor
             .valueParameters
             .map {
@@ -371,7 +368,7 @@ class ComposableCallTransformer(
                     original.endOffset,
                     descriptor = createFunctionDescriptor(
                         type = invalidParameter.type,
-                        owner = descriptor.containingDeclaration
+                        owner = symbol.descriptor.containingDeclaration
                     ),
                     type = invalidParameter.type.toIrType()
                 ) { fn ->
@@ -414,12 +411,12 @@ class ComposableCallTransformer(
                     original.endOffset,
                     descriptor = createFunctionDescriptor(
                         type = blockParameter.type,
-                        owner = descriptor.containingDeclaration
+                        owner = symbol.descriptor.containingDeclaration
                     ),
                     type = blockParameter.type.toIrType()
                 ) {
                     +irCall(
-                        callee = IrSimpleFunctionSymbolImpl(original.descriptor).also {
+                        callee = IrSimpleFunctionSymbolImpl(original.symbol.descriptor).also {
                             it.bind(original.symbol.owner as IrSimpleFunction)
                         },
                         type = original.type
@@ -441,7 +438,7 @@ class ComposableCallTransformer(
     private fun DeclarationIrBuilder.irComposableExpr(
         original: IrCall
     ): IrExpression {
-        return irBlock(resultType = original.descriptor.returnType?.toIrType()) {
+        return irBlock(resultType = original.symbol.descriptor.returnType?.toIrType()) {
             val composerParam = nearestComposer()
             val getComposer = { irGet(composerParam) }
             irComposableExprBase(
@@ -473,6 +470,7 @@ class ComposableCallTransformer(
 
         // for composableExpr, we only need to create temporaries if there are any pivotals
         val hasPivotals = original
+            .symbol
             .descriptor
             .valueParameters
             .any { it.hasPivotalAnnotation() }
@@ -480,6 +478,7 @@ class ComposableCallTransformer(
         // if we don't have any pivotal parameters, we don't use the parameters more than once,
         // so we can just use the original call itself.
         val irGetArguments = original
+            .symbol
             .descriptor
             .valueParameters
             .map {
@@ -529,7 +528,7 @@ class ComposableCallTransformer(
         }
 
         val newCall = if (hasPivotals) irCall(
-            callee = IrSimpleFunctionSymbolImpl(original.descriptor).also {
+            callee = IrSimpleFunctionSymbolImpl(original.symbol.descriptor).also {
                 it.bind(original.symbol.owner as IrSimpleFunction)
             },
             type = original.type
@@ -635,6 +634,7 @@ class ComposableCallTransformer(
         )
          */
         val parametersByName = original
+            .symbol
             .descriptor
             .valueParameters
             .mapNotNull { desc ->
@@ -799,7 +799,7 @@ class ComposableCallTransformer(
     }
 
     private fun IrCall.sourceLocationHash(): Int {
-        return descriptor.fqNameSafe.toString().hashCode() xor startOffset
+        return symbol.descriptor.fqNameSafe.toString().hashCode() xor startOffset
     }
 
     private fun IrBuilderWithScope.irChangedCall(
@@ -950,8 +950,7 @@ class ComposableCallTransformer(
         ).also {
             it.parent = scope.getLocalDeclarationParent()
             it.createParameterDeclarations()
-            it.body = jvmContext
-                .createIrBuilder(symbol)
+            it.body = DeclarationIrBuilder(this@ComposableCallTransformer.context, symbol)
                 .irBlockBody { body(it) }
         }
 
@@ -1031,11 +1030,12 @@ class ComposableCallTransformer(
         )
 
         val context = this@ComposableCallTransformer.context
-        val superType = context.ir.symbols.lambdaClass.typeWith()
+        val superType = FakeJvmSymbols(context.state.module, context.irBuiltIns).lambdaClass.typeWith()
         val parameterTypes = (functionExpression.type as IrSimpleType).arguments.map {
             (it as IrTypeProjection).type
         }
-        val functionSuperClass = context.ir.symbols.getJvmFunctionClass(
+        val functionSuperClass = FakeJvmSymbols(context.state.module, context.irBuiltIns)
+            .getJvmFunctionClass(
             parameterTypes.size - 1
         )
         val jvmClass = functionSuperClass.typeWith(parameterTypes)
@@ -1071,7 +1071,7 @@ class ComposableCallTransformer(
                         type = param.type.substitute(typeArgumentsMap)
                     )
                 }
-                body = context.createJvmIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
+                body = DeclarationIrBuilder(context, symbol).irBlockBody(startOffset, endOffset) {
                     +irDelegatingConstructorCall(superConstructor).apply {
                         putValueArgument(0, irInt(parameterTypes.size - 1))
                         if (boundReceiver != null)
@@ -1108,7 +1108,7 @@ class ComposableCallTransformer(
                         param to param.copyTo(this, index = index)
                     }
                 valueParameters += valueParameterMap.values
-                body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
+                body = DeclarationIrBuilder(context, symbol).irBlockBody(startOffset, endOffset) {
                     callee.body?.statements?.forEach { statement ->
                         +statement.transform(object : IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {

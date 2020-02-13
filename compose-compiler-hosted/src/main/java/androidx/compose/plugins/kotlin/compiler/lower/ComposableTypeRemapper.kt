@@ -159,7 +159,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
 
     override fun visitCall(expression: IrCall): IrCall {
         val ownerFn = expression.symbol.owner as? IrSimpleFunction
-        val containingClass = expression.descriptor.containingDeclaration as? ClassDescriptor
+        val containingClass = expression.symbol.descriptor.containingDeclaration as? ClassDescriptor
 
         // Any virtual calls on composable functions we want to make sure we update the call to
         // the right function base class (of n+1 arity). The most often virtual call to make on
@@ -174,7 +174,8 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             expression.dispatchReceiver?.type?.isComposable() == true
         ) {
             val typeArguments = containingClass.defaultType.arguments
-            val newFnClass = context.irIntrinsics.symbols.getFunction(typeArguments.size)
+            val newFnClass = context.irIntrinsics.symbols.externalSymbolTable.referenceClass(context.builtIns
+                .getFunction(typeArguments.size))
             val newDescriptor = newFnClass
                 .descriptor
                 .unsubstitutedMemberScope

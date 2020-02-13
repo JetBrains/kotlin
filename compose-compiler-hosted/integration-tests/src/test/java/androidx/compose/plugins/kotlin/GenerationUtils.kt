@@ -89,7 +89,8 @@ object GenerationUtils {
             else DefaultCodegenFactory
         ).build()
         if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler
+                .THROW_EXCEPTION)
         }
 
         // For JVM-specific errors
