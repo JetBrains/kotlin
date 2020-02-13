@@ -441,7 +441,7 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         val newElements = elements.map {
-            ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, shortenFilter)
+            ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, elementFilter = shortenFilter)
         }
 
         newElements.forEach { element ->
