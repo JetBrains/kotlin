@@ -1,15 +1,20 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:Suppress("PropertyName")
 
 package com.intellij.configurationStore.xml
 
+import com.intellij.configurationStore.deserialize
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser.PluginSet
+import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.assertions.Assertions.assertThat
+import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XMap
 import org.junit.Test
 import java.util.*
 
+@Suppress("UsePropertyAccessSyntax")
 internal class XmlSerializerMapTest {
   @Test
   fun `empty map`() {
@@ -267,5 +272,23 @@ internal class XmlSerializerMapTest {
       </option>
     </bean>
     """, bean)
+  }
+
+  @Suppress("SpellCheckingInspection")
+  @Test
+  fun `no nullize of empty data`() {
+    @Tag("exts")
+    class KnownExtensions {
+      @JvmField
+      @OptionTag
+      @XMap
+      val myExtensions: MutableMap<String, PluginSet> = HashMap()
+    }
+
+    val element = JDOMUtil.load("""<exts>
+      <option name="myExtensions" />
+    </exts>""")
+    val result = element.deserialize(KnownExtensions::class.java)
+    assertThat(result.myExtensions).isNotNull()
   }
 }
