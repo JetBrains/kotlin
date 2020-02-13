@@ -132,10 +132,12 @@ public class GradleExecuteTaskAction extends ExternalSystemAction {
     }, " "));
 
     final List<String> tasks = new ArrayList<>();
+    boolean isTaskArgument = false;
     for (String argument : parsedCommandLine.getExtraArguments()) {
-      if (argument.startsWith("-")) {
+      if (!isTaskArgument && argument.startsWith("-")) {
         scriptParameters.append(" ").append(argument);
       } else {
+        isTaskArgument = true;
         tasks.add(argument);
       }
     }
