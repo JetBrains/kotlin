@@ -11,6 +11,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
@@ -22,7 +23,7 @@ import javax.inject.Inject
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
-    val target: KotlinBinaryContainer<KotlinJsIrCompilation, KotlinJsBinaryContainer>,
+    val target: KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>,
     backingContainer: DomainObjectSet<JsBinary>
 ) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project
@@ -30,12 +31,18 @@ constructor(
 
     private val binaryNames = mutableSetOf<String>()
 
-    private val defaultCompilation: KotlinJsIrCompilation
+    private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     fun executable(
-        compilation: KotlinJsIrCompilation = defaultCompilation
+        compilation: KotlinJsCompilation = defaultCompilation
     ) {
+        if (compilation !is KotlinJsIrCompilation) {
+            throw IllegalArgumentException(
+                "Unable to create executable for $compilation. Use IR compiler (kotlin.js.compiler=true) instead."
+            )
+        }
+
         (target as KotlinJsSubTargetContainerDsl).whenBrowserConfigured {
             (this as KotlinJsIrSubTarget).produceExecutable()
         }
@@ -47,7 +54,7 @@ constructor(
         compilation.binaries.executableInternal(compilation)
     }
 
-    internal fun executableInternal(compilation: KotlinJsIrCompilation) = createBinaries(
+    internal fun executableInternal(compilation: KotlinJsCompilation) = createBinaries(
         compilation = compilation,
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = ::Executable
@@ -60,7 +67,7 @@ constructor(
             .single()
 
     private fun <T : JsBinary> createBinaries(
-        compilation: KotlinJsIrCompilation,
+        compilation: KotlinJsCompilation,
         buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
         create: (target: KotlinTarget, name: String, buildVariantKind: BuildVariantKind) -> T
@@ -87,7 +94,7 @@ constructor(
 
     companion object {
         internal fun generateBinaryName(
-            compilation: KotlinJsIrCompilation,
+            compilation: KotlinJsCompilation,
             buildVariantKind: BuildVariantKind,
             jsBinaryType: JsBinaryType
         ) =

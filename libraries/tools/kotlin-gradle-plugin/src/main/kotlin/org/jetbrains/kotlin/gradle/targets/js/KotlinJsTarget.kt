@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -16,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
@@ -45,7 +47,7 @@ constructor(
     project: Project,
     platformType: KotlinPlatformType
 ) :
-    KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
+    KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {
@@ -93,8 +95,12 @@ constructor(
     var producingType: KotlinJsProducingType? = null
 
     @Deprecated("Use produceExecutable instead", ReplaceWith("produceExecutable()"))
-    override val binaries: KotlinJsBinaryContainer =
-        throw IllegalStateException("binaries is useless for legacy compiler. Use produceExecutable instead")
+    override val binaries: KotlinJsBinaryContainer
+        get() = project.objects.newInstance(
+            KotlinJsBinaryContainer::class.java,
+            this,
+            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+        )
 
     var irTarget: KotlinJsIrTarget? = null
 
