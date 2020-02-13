@@ -308,6 +308,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("testData/evaluation/singleBreakpoint/kt31709.kt");
         }
 
+        @TestMetadata("kt36404.kt")
+        public void testKt36404() throws Exception {
+            runTest("jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt36404.kt");
+        }
+
         @TestMetadata("kt5554OnlyIntsShouldBeCoerced.kt")
         public void testKt5554OnlyIntsShouldBeCoerced() throws Exception {
             runTest("testData/evaluation/singleBreakpoint/kt5554OnlyIntsShouldBeCoerced.kt");
