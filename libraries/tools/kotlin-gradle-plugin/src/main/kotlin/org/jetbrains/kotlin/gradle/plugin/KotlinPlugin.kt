@@ -356,7 +356,10 @@ internal class KotlinJsIrSourceSetProcessor(
             registerKotlinCompileTask(
                 binary.linkTaskName
             ) { project, name, action ->
-                registerJsLink(project, name, binary.type, action)
+                registerJsLink(project, name, binary.type) { compileTask ->
+                    action(compileTask)
+                    compileTask.dependsOn(kotlinTask)
+                }
             }
         }
 
