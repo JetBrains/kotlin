@@ -25,6 +25,7 @@ abstract class ImportInsertHelper {
     abstract fun importDescriptor(
         file: KtFile,
         descriptor: DeclarationDescriptor,
+        actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD,
         forceAllUnderImport: Boolean = false
     ): ImportDescriptorResult
 

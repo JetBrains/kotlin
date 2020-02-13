@@ -256,7 +256,8 @@ private class ObsoleteExtensionFunctionUsage(
                         .map { it.resolveToDescriptorIfAny() }
                         .find { it != null && it.importableFqName?.asString() == fqName } ?: return
 
-                ImportInsertHelper.getInstance(element.project).importDescriptor(element.containingKtFile, importFun, false)
+                ImportInsertHelper.getInstance(element.project)
+                    .importDescriptor(element.containingKtFile, importFun, forceAllUnderImport =  false)
             }
         }
     }
