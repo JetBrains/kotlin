@@ -64,7 +64,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
     val value_4: Int
     when (value_1.case_2(value_2, value_3) { value_4 = 10 }) {
         true -> {
-            <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3?.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>xor<!>(true))
+            println(value_3?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>inv())
             println(<!OI;DEBUG_INFO_CONSTANT!>value_2<!><!UNSAFE_CALL!>.<!>inv())
@@ -75,7 +75,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
             println(value_2)
         }
         null -> {
-            <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3?.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>xor<!>(true))
+            println(value_3?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>xor<!>(true))
             println(value_4)
             println(value_1)
             println(value_2)

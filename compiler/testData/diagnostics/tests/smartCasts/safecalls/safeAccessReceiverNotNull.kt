@@ -60,11 +60,11 @@ fun kt4565_1(a: SomeClass?) {
 fun kt4565_2(a: SomeClass?) {
     // To be supported
     if (a as? SubClass != null) {
-        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
+        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
     }
     val extra = (a as? SubClass)?.extra
     if (extra != null) {
-        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
+        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
     }
 }
 

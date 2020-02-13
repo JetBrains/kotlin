@@ -87,7 +87,7 @@ fun test() {
                 this@with.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>yield<!>("")
 
                 yield2("")
-                this@with.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>yield2<!>("")
+                this@with.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>yield2<!>("")
             }
         }
     }

@@ -61,7 +61,7 @@ fun test() {
     takeNotNull(J.getNAny() ?: J())
 
     val x = <!UNRESOLVED_REFERENCE!>unresolved<!> ?: null
-    <!UNREACHABLE_CODE!>val y =<!> <!UNRESOLVED_REFERENCE!>unresolved<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!> ?: return
+    <!UNREACHABLE_CODE!>val y =<!> <!UNRESOLVED_REFERENCE!>unresolved<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!> ?: return
 }
 
 fun takeNotNull(s: J) {}

@@ -91,7 +91,7 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (true && true && !!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>) && true && true && true && true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>get<!>(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>get<!>(0)
     }
 }
 

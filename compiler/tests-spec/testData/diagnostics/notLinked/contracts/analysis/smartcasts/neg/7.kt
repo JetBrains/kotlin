@@ -230,7 +230,7 @@ fun case_2(value_1: Number?) {
     case_2_1(value_1)
     value_1<!UNSAFE_CALL!>.<!>toByte()
     case_2_2(value_1)
-    value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+    value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
 }
 
 // TESTCASE NUMBER: 3
@@ -292,25 +292,25 @@ fun case_6(value_1: Number?) {
     when {
         case_6_1(value_1) -> {
             value_1<!UNSAFE_CALL!>.<!>toByte()
-            when { case_6_2(value_1) -> value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
+            when { case_6_2(value_1) -> value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
         }
     }
     when {
         !case_6_3(value_1) -> {
             value_1<!UNSAFE_CALL!>.<!>toByte()
-            when { !case_6_4(value_1) -> value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
+            when { !case_6_4(value_1) -> value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
         }
     }
     when {
         case_6_5(value_1) != null -> {
             value_1<!UNSAFE_CALL!>.<!>toByte()
-            when { case_6_6(value_1) != null -> value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
+            when { case_6_6(value_1) != null -> value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
         }
     }
     when {
         case_6_7(value_1) == null -> {
             value_1<!UNSAFE_CALL!>.<!>toByte()
-            when { case_6_8(value_1) == null -> value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
+            when { case_6_8(value_1) == null -> value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>() }
         }
     }
 }

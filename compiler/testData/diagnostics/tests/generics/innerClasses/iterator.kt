@@ -33,5 +33,5 @@ fun foo() {
 
     val csIt: Iterator<CharSequence> = A<String>().iterator()
 
-    commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<out Any>.MyIt>() }
+    commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<out Any>.MyIt>() }
 }

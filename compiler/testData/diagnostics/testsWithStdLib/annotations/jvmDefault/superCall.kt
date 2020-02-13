@@ -41,7 +41,7 @@ class ManySupers: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>test<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>test<!>()
     }
 }
 
@@ -49,7 +49,7 @@ class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers2<!>: Foo2(), C {
     fun foo() {
         super<Foo2>.test()
         super<C>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>test<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>test<!>()
     }
 }
 
@@ -57,6 +57,6 @@ class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers2<!>: Foo2(), C {
     fun foo() {
         super<Bar2>.test()
         super<C>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>test<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>test<!>()
     }
 }

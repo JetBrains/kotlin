@@ -8,5 +8,5 @@ fun Array<String>.length() : Int {
 }
 
 fun test(array : Array<String?>?) {
-    <!OI;TYPE_MISMATCH!>array?.sure<Array<String?>>()<!>.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>length<!>()
+    <!OI;TYPE_MISMATCH!>array?.sure<Array<String?>>()<!>.<!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>length<!>()
 }

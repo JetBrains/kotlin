@@ -154,7 +154,7 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number) {
     value_1.case_2()
-    <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -183,10 +183,10 @@ fun case_5(value_1: Any?) {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Number) {
-    when { value_1.case_6_1() -> <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
-    when { !value_1.case_6_2() -> <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
-    when { value_1.case_6_3() != null -> <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
-    when { value_1.case_6_4() != null -> <!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
+    when { value_1.case_6_1() -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
+    when { !value_1.case_6_2() -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
+    when { value_1.case_6_3() != null -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
+    when { value_1.case_6_4() != null -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
 }
 
 // TESTCASE NUMBER: 7

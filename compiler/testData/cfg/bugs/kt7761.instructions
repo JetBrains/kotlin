@@ -57,25 +57,22 @@ L0:
     mark(<warning>)
     magic[UNRESOLVED_CALL](<warning>) -> <v1>
     mark(<warning>x<)
-    call(<warning>x<, <ERROR FUNCTION>|<v1>) -> <v2>
-    magic[VALUE_CONSUMER](>++|!<v3>) -> <v4>
+    magic[UNRESOLVED_CALL](<warning>x<|<v1>) -> <v2>
     mark(<warning>x<error>++)
-    call(<warning>x<error>++, <ERROR FUNCTION>|<v2>) -> <v5>
+    magic[UNRESOLVED_CALL](<warning>x<error>++|<v2>, !<v3>) -> <v4>
     mark(/error>)
-    magic[UNRESOLVED_CALL](/error>) -> <v6>
-    magic[VALUE_CONSUMER](/error>|<v6>) -> <v7>
+    magic[UNRESOLVED_CALL](/error>) -> <v5>
     mark(<warning>x<error>++</error>)
-    call(<warning>x<error>++</error>, <ERROR FUNCTION>|<v5>) -> <v8>
+    magic[UNRESOLVED_CALL](<warning>x<error>++</error>|<v4>, <v5>) -> <v6>
     mark(/warning>)
-    magic[UNRESOLVED_CALL](/warning>) -> <v9>
-    magic[VALUE_CONSUMER](/warning>|<v9>) -> <v10>
+    magic[UNRESOLVED_CALL](/warning>) -> <v7>
     mark(<warning>x<error>++</error></warning>)
-    call(<warning>x<error>++</error></warning>, <ERROR FUNCTION>|<v8>) -> <v11>
-    w(x|<v11>)
+    magic[UNRESOLVED_CALL](<warning>x<error>++</error></warning>|<v6>, <v7>) -> <v8>
+    w(x|<v8>)
 L1:
-  1 <END>                                                                          NEXT:[<SINK>]
+  1 <END>                                                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                                                        PREV:[]
+    <ERROR>                                                                             PREV:[]
 sink:
-    <SINK>                                                                         PREV:[<ERROR>, <END>]
+    <SINK>                                                                              PREV:[<ERROR>, <END>]
 =====================

@@ -158,7 +158,12 @@ class KotlinCallCompleter(
 
         // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
         candidate?.resolvedCall?.let {
-            resolutionCallbacks.bindStubResolvedCallForCandidate(it)
+            val mayNeedDescriptor = it.argumentToCandidateParameter.keys.any { arg ->
+                arg is LambdaKotlinCallArgument
+            }
+            if (mayNeedDescriptor) {
+                resolutionCallbacks.bindStubResolvedCallForCandidate(it)
+            }
             resolutionCallbacks.disableContractsIfNecessary(it)
         }
 
