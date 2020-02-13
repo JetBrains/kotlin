@@ -35,11 +35,13 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -61,7 +63,6 @@ import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -82,6 +83,7 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopySymbolRemapper) :
     AbstractComposeLowering(context, symbolRemapper),
@@ -197,11 +199,11 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
             endRestartGroupDescriptor.returnType?.memberScope?.getContributedFunctions(
                 UPDATE_SCOPE,
                 NoLookupLocation.FROM_BACKEND
-            )?.singleOrNull()
-                ?: error("updateScope not found in result type of endRestartGroup")
+            )?.singleOrNull { it.valueParameters.first().type.arguments.size == 2 }
+                ?: error("new updateScope not found in result type of endRestartGroup")
         val updateScopeArgument:
                     (outerBuilder: IrBlockBuilder) -> IrExpression =
-            if (original.isZeroParameterUnitLambda()) { _ ->
+            if (original.isZeroParameterComposableUnitLambda()) { _ ->
                 // If we are in an invoke function for a callable class with no
                 // parameters then the `this` parameter can be used for the endRestartGroup.
                 // If isUnitInvoke() returns true then dispatchReceiverParameter is not
@@ -221,12 +223,28 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                     CallableMemberDescriptor.Kind.DECLARATION,
                     SourceElement.NO_SOURCE,
                     false
-                ).apply {
+                )
+
+                val passedInComposerParameter = ValueParameterDescriptorImpl(
+                    containingDeclaration = lambdaDescriptor,
+                    original = null,
+                    index = 0,
+                    annotations = Annotations.EMPTY,
+                    name = KtxNameConventions.COMPOSER_PARAMETER,
+                    outType = composerTypeDescriptor.defaultType,
+                    declaresDefaultValue = false,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    varargElementType = null,
+                    source = SourceElement.NO_SOURCE
+                )
+
+                lambdaDescriptor.apply {
                     initialize(
                         null,
                         null,
                         emptyList(),
-                        emptyList(),
+                        listOf(passedInComposerParameter),
                         blockParameterType,
                         Modality.FINAL,
                         Visibilities.LOCAL
@@ -238,13 +256,20 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                     IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
                     IrSimpleFunctionSymbolImpl(lambdaDescriptor),
                     context.irBuiltIns.unitType
-                ).also {
-                    it.parent = original
-                    val localIrBuilder = context.createIrBuilder(it.symbol)
-                    it.body = localIrBuilder.irBlockBody {
+                ).also { fn ->
+                    fn.parent = original
+                    val localIrBuilder = context.createIrBuilder(fn.symbol)
+                    fn.addValueParameter(
+                        KtxNameConventions.COMPOSER_PARAMETER.identifier,
+                        composerTypeDescriptor.defaultType.toIrType()
+                    )
+                    fn.body = localIrBuilder.irBlockBody {
                         // Call the function again with the same parameters
                         +irReturn(irCall(selfSymbol).apply {
-                            descriptor.valueParameters.forEachIndexed {
+                            descriptor
+                                .valueParameters
+                                .filter { !it.isComposerParam() }
+                                .forEachIndexed {
                                     index, valueParameter ->
                                 val value = original.valueParameters[index].symbol
                                 putValueArgument(
@@ -256,6 +281,15 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                                     )
                                 )
                             }
+                            putValueArgument(
+                                descriptor.valueParameters.size - 1,
+                                IrGetValueImpl(
+                                    UNDEFINED_OFFSET,
+                                    UNDEFINED_OFFSET,
+                                    composerTypeDescriptor.defaultType.toIrType(),
+                                    fn.valueParameters[0].symbol
+                                )
+                            )
                             descriptor.dispatchReceiverParameter?.let {
                                 // Ensure we get the correct type by trying to avoid
                                 // going through a KotlinType if possible.
@@ -423,14 +457,16 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
         )
     }
 
-    private fun IrFunction.isZeroParameterUnitLambda(): Boolean {
-        return !name.isSpecial && name.identifier == "invoke" && valueParameters.isEmpty() &&
-                returnType.isUnit() &&
-                dispatchReceiverParameter?.let { receiver ->
-                    receiver.type.getClass()?.superTypes?.any {
-                        it.classifierOrNull?.descriptor?.fqNameSafe == ComposeFqNames.Function0
-                    }
-                } ?: false
+    private fun IrFunction.isZeroParameterComposableUnitLambda(): Boolean {
+        if (name.isSpecial || name != OperatorNameConventions.INVOKE || !returnType.isUnit())
+            return false
+        val type = dispatchReceiverParameter?.type ?: return false
+        return valueParameters.size == 1 &&
+                    type.getClass()?.superTypes?.any {
+                        val fqName = it.classifierOrNull?.descriptor?.fqNameSafe
+                        fqName == ComposeFqNames.Function1
+                    } == true &&
+                    valueParameters[0].isComposerParam()
     }
 }
 
@@ -463,6 +499,3 @@ private fun findPotentialEarly(block: IrBlockBody): IrExpression? {
 
 internal fun getKeyValue(descriptor: DeclarationDescriptor, startOffset: Int): Int =
     descriptor.fqNameSafe.toString().hashCode() xor startOffset
-
-internal val COMPOSABLE_EMIT_OR_CALL =
-    object : IrStatementOriginImpl("Composable Emit Or Call") {}

@@ -41,6 +41,7 @@ object ComposeFqNames {
     val Composer = ComposeUtils.composeFqName("Composer")
     val Package = FqName.fromSegments(listOf("androidx", "compose"))
     val Function0 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function0"))
+    val Function1 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function1"))
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
         object : AnnotationDescriptor {
             override val type: KotlinType
