@@ -27,6 +27,9 @@ object Not : IntrinsicMethod() {
     class BooleanNegation(val value: BooleanValue) : BooleanValue(value.codegen) {
         override fun jumpIfFalse(target: Label) = value.jumpIfTrue(target)
         override fun jumpIfTrue(target: Label) = value.jumpIfFalse(target)
+        override fun discard() {
+            value.discard()
+        }
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) =

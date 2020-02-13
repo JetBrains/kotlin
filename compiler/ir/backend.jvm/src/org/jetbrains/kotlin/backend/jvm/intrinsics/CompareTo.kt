@@ -84,6 +84,11 @@ class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: Mater
             NumberCompare.patchOpcode(BranchedValue.negatedOperations[NumberCompare.getNumberCompareOpcode(op)]!!, mv, op, a.type)
         mv.visitJumpInsn(opcode, target)
     }
+
+    override fun discard() {
+        b.discard()
+        a.discard()
+    }
 }
 
 
@@ -107,6 +112,11 @@ class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val 
         invokeStaticComparison(a.type)
         mv.visitJumpInsn(BranchedValue.negatedOperations[numberCompareOpcode]!!, target)
     }
+
+    override fun discard() {
+        b.discard()
+        a.discard()
+    }
 }
 
 class PrimitiveComparison(
@@ -116,8 +126,8 @@ class PrimitiveComparison(
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val parameterType = Type.getType(JvmPrimitiveType.get(KotlinBuiltIns.getPrimitiveType(primitiveNumberType)!!).desc)
         val (left, right) = expression.receiverAndArgs()
-        val a = left.accept(codegen, data).coerce(parameterType, left.type).materialized
-        val b = right.accept(codegen, data).coerce(parameterType, right.type).materialized
+        val a = left.accept(codegen, data).materializedAt(parameterType, left.type)
+        val b = right.accept(codegen, data).materializedAt(parameterType, right.type)
 
         val useNonIEEE754Comparison =
             !codegen.context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)

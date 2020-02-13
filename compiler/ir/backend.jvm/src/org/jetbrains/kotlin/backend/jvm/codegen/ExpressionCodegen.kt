@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.*
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.CallGenerator
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
@@ -168,7 +171,7 @@ class ExpressionCodegen(
         if (expression.attributeOwnerId === context.fakeContinuation) {
             addFakeContinuationMarker(mv)
         } else {
-            expression.accept(this, data).coerce(type, irType).materialize()
+            expression.accept(this, data).materializeAt(type, irType)
         }
         return StackValue.onStack(type, irType.toKotlinType())
     }
@@ -209,7 +212,7 @@ class ExpressionCodegen(
             }
             val returnType = signature.returnType
             val returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
-            result.coerce(returnType, returnIrType).materialize()
+            result.materializeAt(returnType, returnIrType)
             mv.areturn(returnType)
         }
         val endLabel = markNewLabel()
@@ -315,7 +318,7 @@ class ExpressionCodegen(
             return super.visitBlock(expression, data)
         val info = BlockInfo(data)
         // Force materialization to avoid reading from out-of-scope variables.
-        return super.visitBlock(expression, info).materialized.also {
+        return super.visitBlock(expression, info).materialized().also {
             if (info.variables.isNotEmpty()) {
                 writeLocalVariablesInTable(info, markNewLabel())
             }
@@ -339,13 +342,15 @@ class ExpressionCodegen(
     }
 
     private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo) =
-        container.statements.fold(immaterialUnitValue as PromisedValue) { prev, exp ->
+        container.statements.fold(unitValue) { prev, exp ->
             prev.discard()
             exp.accept(this, data).also { (exp as? IrExpression)?.markEndOfStatementIfNeeded() }
         }
 
-    override fun visitBlockBody(body: IrBlockBody, data: BlockInfo) =
+    override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): PromisedValue {
         visitStatementContainer(body, data).discard()
+        return unitValue
+    }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
         visitStatementContainer(expression, data)
@@ -435,7 +440,7 @@ class ExpressionCodegen(
             expression.type.isNothing() -> {
                 mv.aconst(null)
                 mv.athrow()
-                immaterialUnitValue
+                unitValue
             }
             expression is IrConstructorCall ->
                 MaterialValue(this, asmType, expression.type)
@@ -448,7 +453,7 @@ class ExpressionCodegen(
                 if (callable.asmMethod.returnType != Type.VOID_TYPE)
                     MaterialValue(this, callable.asmMethod.returnType, callee.returnType).discard()
                 // don't generate redundant UNIT/pop instructions
-                immaterialUnitValue
+                unitValue
             }
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_TYPE -> {
                 wrapJavaClassIntoKClass(mv)
@@ -483,7 +488,7 @@ class ExpressionCodegen(
 
         val initializer = declaration.initializer
         if (initializer != null) {
-            initializer.accept(this, data).coerce(varType, declaration.type).materialize()
+            initializer.accept(this, data).materializeAt(varType, declaration.type)
             initializer.markLineNumber(startOffset = true)
             mv.store(index, varType)
         } else if (declaration.isVisibleInLVT) {
@@ -492,7 +497,7 @@ class ExpressionCodegen(
         }
 
         data.variables.add(VariableInfo(declaration, index, varType, markNewLabel()))
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): PromisedValue {
@@ -519,17 +524,17 @@ class ExpressionCodegen(
         expression.markLineNumber(startOffset = true)
         val ownerName = expression.receiver?.let { receiver ->
             val ownerType = typeMapper.mapTypeAsDeclaration(receiver.type)
-            receiver.accept(this, data).coerce(ownerType, receiver.type).materialize()
+            receiver.accept(this, data).materializeAt(ownerType, receiver.type)
             ownerType.internalName
         } ?: typeMapper.mapClass(callee.parentAsClass).internalName
         return if (expression is IrSetField) {
-            expression.value.accept(this, data).coerce(fieldType, callee.type).materialize()
+            expression.value.accept(this, data).materializeAt(fieldType, callee.type)
             when {
                 isStatic -> mv.putstatic(ownerName, fieldName, fieldType.descriptor)
                 else -> mv.putfield(ownerName, fieldName, fieldType.descriptor)
             }
             assert(expression.type.isUnit())
-            immaterialUnitValue
+            unitValue
         } else {
             when {
                 isStatic -> mv.getstatic(ownerName, fieldName, fieldType.descriptor)
@@ -547,7 +552,7 @@ class ExpressionCodegen(
         val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
         val skip = (inPrimaryConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst<*> &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
-        return if (skip) defaultValue(expression.type) else super.visitSetField(expression, data)
+        return if (skip) unitValue else super.visitSetField(expression, data)
     }
 
     /**
@@ -576,22 +581,22 @@ class ExpressionCodegen(
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         setVariable(expression.symbol, expression.value, data)
-        return immaterialUnitValue
+        return unitValue
     }
 
     fun setVariable(symbol: IrValueSymbol, value: IrExpression, data: BlockInfo) {
         value.markLineNumber(startOffset = true)
-        value.accept(this, data).coerce(symbol.owner.type).materialize()
+        value.accept(this, data).materializeAt(symbol.owner.type)
         mv.store(findLocalIndex(symbol), symbol.owner.asmType)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         when (val value = expression.value) {
-            is Boolean -> return object : BooleanValue(this) {
-                override fun jumpIfFalse(target: Label) = if (value) Unit else mv.goTo(target)
-                override fun jumpIfTrue(target: Label) = if (value) mv.goTo(target) else Unit
-                override fun materialize() = mv.iconst(if (value) 1 else 0)
+            is Boolean -> {
+                // BooleanConstants _may not_ be materialized, so we ensure an instruction for the line number.
+                mv.nop()
+                return BooleanConstant(this, value)
             }
             is Char -> mv.iconst(value.toInt())
             is Long -> mv.lconst(value)
@@ -618,7 +623,7 @@ class ExpressionCodegen(
                 closureReifiedMarkers[declaration] = it
             }
         }
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
@@ -636,12 +641,12 @@ class ExpressionCodegen(
                 mv, "java/lang/UnsupportedOperationException",
                 "Non-local returns are not allowed with inlining disabled"
             )
-            return immaterialUnitValue
+            return unitValue
         }
 
         val returnType = if (owner == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(owner)
         val afterReturnLabel = Label()
-        expression.value.accept(this, data).coerce(returnType, owner.returnType).materialize()
+        expression.value.accept(this, data).materializeAt(returnType, owner.returnType)
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
         expression.markLineNumber(startOffset = true)
         if (isNonLocalReturn) {
@@ -650,7 +655,7 @@ class ExpressionCodegen(
         mv.areturn(returnType)
         mv.mark(afterReturnLabel)
         mv.nop()/*TODO check RESTORE_STACK_IN_TRY_CATCH processor*/
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): PromisedValue {
@@ -681,7 +686,7 @@ class ExpressionCodegen(
             if (!exhaustive) {
                 result.discard()
             } else {
-                val materializedResult = result.coerce(expression.type).materialized
+                val materializedResult = result.materializedAt(expression.type)
                 if (branch.condition.isTrueConst()) {
                     // The rest of the expression is dead code.
                     mv.mark(endLabel)
@@ -695,7 +700,7 @@ class ExpressionCodegen(
             mv.mark(elseLabel)
         }
         mv.mark(endLabel)
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
@@ -708,7 +713,7 @@ class ExpressionCodegen(
             IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST -> {
                 val result = expression.argument.accept(this, data)
                 val boxedLeftType = typeMapper.boxType(result.irType)
-                result.coerce(boxedLeftType, expression.argument.type).materialize()
+                result.materializeAt(boxedLeftType, expression.argument.type)
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
                 if (typeOperand.isReifiedTypeParameter) {
@@ -723,7 +728,7 @@ class ExpressionCodegen(
             }
 
             IrTypeOperator.INSTANCEOF -> {
-                expression.argument.accept(this, data).coerce(context.irBuiltIns.anyNType).materialize()
+                expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
@@ -763,7 +768,7 @@ class ExpressionCodegen(
         }
         mv.goTo(continueLabel)
         mv.mark(endLabel)
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): PromisedValue {
@@ -780,7 +785,7 @@ class ExpressionCodegen(
         loop.condition.markLineNumber(true)
         loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
         mv.mark(endLabel)
-        return immaterialUnitValue
+        return unitValue
     }
 
     private fun unwindBlockStack(
@@ -807,7 +812,7 @@ class ExpressionCodegen(
             ?: throw AssertionError("Target label for break/continue not found")
         mv.fixStackAndJump(if (jump is IrBreak) stackElement.breakLabel else stackElement.continueLabel)
         mv.mark(endLabel)
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitTry(aTry: IrTry, data: BlockInfo): PromisedValue {
@@ -826,7 +831,7 @@ class ExpressionCodegen(
         val isExpression = !aTry.type.isUnit()
         var savedValue: Int? = null
         if (isExpression) {
-            tryResult.coerce(tryAsmType, aTry.type).materialize()
+            tryResult.materializeAt(tryAsmType, aTry.type)
             savedValue = frameMap.enterTemp(tryAsmType)
             mv.store(savedValue, tryAsmType)
         } else {
@@ -855,7 +860,7 @@ class ExpressionCodegen(
             val catchBody = clause.result
             val catchResult = catchBody.accept(this, data)
             if (savedValue != null) {
-                catchResult.coerce(tryAsmType, aTry.type).materialize()
+                catchResult.materializeAt(tryAsmType, aTry.type)
                 mv.store(savedValue, tryAsmType)
             } else {
                 catchResult.discard()
@@ -903,7 +908,7 @@ class ExpressionCodegen(
             frameMap.leaveTemp(tryAsmType)
             return aTry.onStack
         }
-        return immaterialUnitValue
+        return unitValue
     }
 
     private fun genTryCatchCover(catchStart: Label, tryStart: Label, tryEnd: Label, tryGaps: List<Pair<Label, Label>>, type: String?) {
@@ -964,11 +969,11 @@ class ExpressionCodegen(
         // Avoid unecessary CHECKCASTs to java/lang/Throwable. If the exception is not of type Object
         // then it must be some subtype of throwable and we don't need to coerce it.
         if (exception.type == OBJECT_TYPE)
-            exception.coerce(context.irBuiltIns.throwableType).materialize()
+            exception.materializeAt(context.irBuiltIns.throwableType)
         else
             exception.materialize()
         mv.athrow()
-        return immaterialUnitValue
+        return unitValue
     }
 
     override fun visitGetClass(expression: IrGetClass, data: BlockInfo) =
