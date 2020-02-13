@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.execution.cmd.GradleCommandLineOptionsConverter;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class GradleExecuteTaskAction extends ExternalSystemAction {
     final List<String> systemProperties = optionsMap.remove("system-prop");
     final String vmOptions = systemProperties == null ? "" : StringUtil.join(systemProperties, entry -> "-D" + entry, " ");
 
-    final String scriptParameters = StringUtil.join(optionsMap.entrySet(), entry -> {
+    final StringBuilder scriptParameters = new StringBuilder(StringUtil.join(optionsMap.entrySet(), entry -> {
       final List<String> values = entry.getValue();
       final String longOptionName = entry.getKey();
       if (values != null && !values.isEmpty()) {
@@ -128,14 +129,21 @@ public class GradleExecuteTaskAction extends ExternalSystemAction {
       else {
         return "--" + longOptionName;
       }
-    }, " ");
+    }, " "));
 
-    final List<String> tasks = parsedCommandLine.getExtraArguments();
+    final List<String> tasks = new ArrayList<>();
+    for (String argument : parsedCommandLine.getExtraArguments()) {
+      if (argument.startsWith("-")) {
+        scriptParameters.append(" ").append(argument);
+      } else {
+        tasks.add(argument);
+      }
+    }
 
     ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
     settings.setExternalProjectPath(projectPath);
     settings.setTaskNames(tasks);
-    settings.setScriptParameters(scriptParameters);
+    settings.setScriptParameters(scriptParameters.toString().trim());
     settings.setVmOptions(vmOptions);
     settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.toString());
     return new ExternalTaskExecutionInfo(settings, executor == null ? DefaultRunExecutor.EXECUTOR_ID : executor.getId());
