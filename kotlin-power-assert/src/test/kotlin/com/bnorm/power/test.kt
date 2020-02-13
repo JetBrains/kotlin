@@ -228,10 +228,12 @@ assert(text == null || (text.length == 5 && text.toLowerCase() == text))
   @Test
   fun booleanMixOrLast() {
     assertMessage(
-      """
-fun main() {
-    val text = "Hello"
-    assert((text.length == 5 && text.toLowerCase() == text) || text.length == 1)
+      """fun main() {
+  val text: String? = null
+  assert(
+    (text != null && text.toLowerCase() == text) ||
+        text == "Hello"
+  )
 }""",
       """
 Assertion failed

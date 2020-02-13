@@ -51,16 +51,43 @@ assert(hello.length == "World".substring(1, 4).length)
 	at <stacktrace>
 ```
 
+Complex, multi-line, boolean expression are also supported:
+
+```text
+Assertion failed
+assert(
+  (text != null && text.toLowerCase() == text) ||
+   |    |
+   |    false
+   null
+      text == "Hello"
+      |    |
+      |    false
+      null
+)
+```
+
 ## Gradle Plugin
 
 Builds of the Gradle plugin are available through the
 [Gradle Plugin Portal][kotlin-power-assert-gradle].
 
-```groovy
+```kotlin
 plugins {
-  id "com.bnorm.power.kotlin-power-assert" version "0.1.0"
+  id("com.bnorm.power.kotlin-power-assert") version "0.2.0"
 }
 ```
+
+The plugin by default will transform `assert` function call but can also
+transform other functions like `require`, `check`, and/or `assertTrue`. The
+function needs to validate the Boolean expression evaluates to `true` and has a
+form which also takes a String or String producing lambda.
+
+```kotlin
+configure<com.bnorm.power.PowerAssertGradleExtension> {
+  functions = listOf("kotlin.test.AssertionsKt.assertTrue", "kotlin.PreconditionsKt.require")
+}
+``` 
 
 ## Kotlin IR
 
@@ -68,7 +95,7 @@ Using this compiler plugin only works if the code is compiled using IR. This can
 be enabled only when compiling the test SourceSet if desired. As Kotlin IR is
 still experimental, mileage may vary.
 
-```groovy
+```kotlin
 compileTestKotlin {
     kotlinOptions {
         useIR = true
