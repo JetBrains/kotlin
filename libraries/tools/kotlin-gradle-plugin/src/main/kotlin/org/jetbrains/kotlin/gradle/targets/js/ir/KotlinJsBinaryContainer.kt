@@ -28,7 +28,6 @@ constructor(
         get() = target.project
 
     private val binaryNames = mutableSetOf<String>()
-    private val compilationToBinaries = mutableMapOf<KotlinJsCompilation, MutableSet<JsBinary>>()
 
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -50,13 +49,19 @@ constructor(
         create = ::TestExecutable
     )
 
+    internal fun getBinaries(
+        compilation: KotlinJsCompilation
+    ): DomainObjectSet<JsBinary> =
+        matching { it.compilation == compilation }
+
     internal fun getBinary(
         compilation: KotlinJsCompilation,
         buildVariantKind: BuildVariantKind
     ): JsBinary =
-        compilationToBinaries.getValue(
+        getBinaries(
             compilation
-        ).single { it.type == buildVariantKind }
+        ).matching { it.type == buildVariantKind }
+            .single()
 
 
     private fun <T : JsBinary> createBinaries(
@@ -77,13 +82,6 @@ constructor(
 
             val binary = create(name, buildVariantKind, compilation)
             add(binary)
-            with(compilationToBinaries[compilation]) {
-                if (this != null) {
-                    add(binary)
-                } else {
-                    compilationToBinaries[compilation] = mutableSetOf<JsBinary>(binary)
-                }
-            }
             // Allow accessing binaries as properties of the container in Groovy DSL.
             if (this is ExtensionAware) {
                 extensions.add(binary.name, binary)

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinNodeJsIr
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import javax.inject.Inject
@@ -20,14 +19,6 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
     private val runTaskName = disambiguateCamelCased("run")
-
-    private val irNodejs: KotlinNodeJsIr?
-        get() = target.irTarget?.nodejs
-
-    override fun produceExecutable() {
-        super.produceExecutable()
-        irNodejs?.produceExecutable()
-    }
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()

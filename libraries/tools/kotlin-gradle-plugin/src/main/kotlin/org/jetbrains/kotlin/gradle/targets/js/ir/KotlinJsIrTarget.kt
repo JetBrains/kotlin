@@ -54,7 +54,7 @@ constructor(
             KotlinJsBinaryContainer::class.java,
             this,
             WrapUtil.toDomainObjectSet(JsBinary::class.java).apply {
-                all {
+                matching { it is Executable }.all {
                     whenBrowserConfigured {
                         (this as KotlinJsIrSubTarget).produceExecutable()
                     }

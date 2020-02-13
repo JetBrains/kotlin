@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -67,34 +66,29 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        buildVariants.all { buildVariant ->
-            val kind = buildVariant.kind
+        val commonRunTask = project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
+
+        binaries.getBinaries(compilation).all { binary ->
+            val type = binary.type
+
             val runTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
-                    buildVariant.name,
+                    binary.name,
                     RUN_TASK_NAME
                 )
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    getByKind(
-                        kind,
-                        compilation.productionLinkTask,
-                        compilation.developmentLinkTask
-                    ),
+                    binary.linkTask,
                     target.project.tasks.getByName(compilation.processResourcesTaskName)
                 )
 
-                it.configureOptimization(kind)
+                it.configureOptimization(type)
 
                 it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
                 it.compilation = compilation
-                it.entry = getByKind(
-                    kind,
-                    compilation.productionLinkTask.map { it.outputFile },
-                    compilation.developmentLinkTask.map { it.outputFile }
-                ).get()
-                it.description = "start ${kind.name.toLowerCase()} webpack dev server"
+                it.entry = binary.linkTask.map { it.outputFile }.get()
+                it.description = "start ${type.name.toLowerCase()} webpack dev server"
 
                 it.devServer = KotlinWebpackConfig.DevServer(
                     open = true,
@@ -108,9 +102,9 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 }
             }
 
-            if (kind == BuildVariantKind.DEVELOPMENT) {
+            if (type == BuildVariantKind.DEVELOPMENT) {
                 target.runTask.dependsOn(runTask)
-                project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {
+                commonRunTask.configure {
                     it.dependsOn(runTask)
                 }
             }
@@ -142,48 +136,44 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         assembleTask.dependsOn(distributeResourcesTask)
 
-        buildVariants.all { buildVariant ->
-            val kind = buildVariant.kind
+        val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+        }
+
+        project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+            it.dependsOn(webpackCommonTask)
+            it.dependsOn(distributeResourcesTask)
+        }
+
+        binaries.getBinaries(compilation).all { binary ->
+            val type = binary.type
             val webpackTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
-                    buildVariant.name,
+                    binary.name,
                     WEBPACK_TASK_NAME
                 )
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    getByKind(
-                        kind,
-                        compilation.productionLinkTask,
-                        compilation.developmentLinkTask
-                    ),
+                    binary.linkTask,
                     distributeResourcesTask
                 )
 
-                it.configureOptimization(kind)
+                it.configureOptimization(type)
 
                 it.compilation = compilation
-                it.entry = getByKind(
-                    kind,
-                    compilation.productionLinkTask.map { it.outputFile },
-                    compilation.developmentLinkTask.map { it.outputFile }
-                ).get()
-                it.description = "build webpack ${kind.name.toLowerCase()} bundle"
-                it.destinationDirectory = distribution.directory!!
+                it.entry = binary.linkTask.map { it.outputFile }.get()
+                it.description = "build webpack ${type.name.toLowerCase()} bundle"
+                it.destinationDirectory = distribution.directory
 
                 commonWebpackConfigurations.forEach { configure ->
                     it.configure()
                 }
             }
 
-            if (kind == BuildVariantKind.PRODUCTION) {
+            if (type == BuildVariantKind.PRODUCTION) {
                 assembleTask.dependsOn(webpackTask)
-                val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                webpackCommonTask.configure {
                     it.dependsOn(webpackTask)
-                }
-                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
-                    it.dependsOn(webpackCommonTask)
-                    it.dependsOn(distributeResourcesTask)
                 }
             }
         }
@@ -208,15 +198,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
-        BuildVariantKind.PRODUCTION -> releaseValue
-        BuildVariantKind.DEVELOPMENT -> debugValue
-    }
-
-    private fun <T> getByKind(
-        kind: BuildVariantKind,
-        releaseValue: Provider<T>,
-        debugValue: Provider<T>
-    ): Provider<T> = when (kind) {
         BuildVariantKind.PRODUCTION -> releaseValue
         BuildVariantKind.DEVELOPMENT -> debugValue
     }
