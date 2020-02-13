@@ -132,7 +132,10 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
 
             else -> JKClassType(
                 symbolProvider.provideClassSymbol(type.getJetTypeFqName(false)),//TODO constructor fqName
-                type.arguments.map { fromKotlinType(it.type) },
+                type.arguments.map { typeArgument ->
+                    if (typeArgument.isStarProjection) JKStarProjectionTypeImpl
+                    else fromKotlinType(typeArgument.type)
+                },
                 if (type.isNullable()) Nullability.Nullable else Nullability.NotNull
             )
         }
