@@ -45,6 +45,7 @@ public class GradleCommandLineOptionsConverter extends AbstractCommandLineConver
   public void configure(CommandLineParser parser) {
     systemPropertiesCommandLineConverter.configure(parser);
     parser.allowMixedSubcommandsAndOptions();
+    parser.allowUnknownOptions();
 
     //noinspection unchecked
     final Collection<Option> supportedOptions = GradleCommandLineOptionsProvider.getSupportedOptions().getOptions();
