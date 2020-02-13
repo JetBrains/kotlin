@@ -38,21 +38,30 @@ constructor(
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) = createBinaries(
-        baseName = project.name,
         compilation = compilation,
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = ::Executable
     )
 
     internal fun testExecutable() = createBinaries(
-        baseName = project.name,
         compilation = defaultTestCompilation,
         jsBinaryType = JsBinaryType.TEST,
         create = ::TestExecutable
     )
 
+    internal fun getBinary(
+        buildVariantKind: BuildVariantKind,
+        jsBinaryType: JsBinaryType
+    ): JsBinary =
+        nameToBinary.getValue(
+            generateBinaryName(
+                buildVariantKind,
+                jsBinaryType
+            )
+        )
+
+
     private fun <T : JsBinary> createBinaries(
-        baseName: String,
         compilation: KotlinJsCompilation,
         buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
@@ -60,7 +69,6 @@ constructor(
     ) {
         buildVariantKinds.forEach { buildVariantKind ->
             val name = generateBinaryName(
-                baseName,
                 buildVariantKind,
                 jsBinaryType
             )
@@ -81,12 +89,10 @@ constructor(
 
     companion object {
         internal fun generateBinaryName(
-            name: String,
             buildVariantKind: BuildVariantKind,
             jsBinaryType: JsBinaryType
         ) =
             lowerCamelCaseName(
-                name,
                 buildVariantKind.name,
                 jsBinaryType.name
             )
