@@ -383,6 +383,13 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (referenceUsed) return true
         }
 
+        if (declaration is KtSecondaryConstructor) {
+            val containingClass = declaration.containingClass()
+            if (containingClass != null && ReferencesSearch.search(KotlinReferencesSearchParameters(containingClass, useScope)).any {
+                    it.element.getStrictParentOfType<KtTypeAlias>() != null
+                }) return true
+        }
+
         if (declaration is KtCallableDeclaration && declaration.canBeHandledByLightMethods(descriptor)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
@@ -396,13 +403,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         if (declaration is KtEnumEntry) {
             val enumClass = declaration.containingClass()?.takeIf { it.isEnum() }
-            if (enumClass != null && ReferencesSearch.search(
-                    KotlinReferencesSearchParameters(
-                        enumClass,
-                        useScope,
-                        kotlinOptions = searchOptions
-                    )
-                ).any(::hasBuiltInEnumFunctionReference)
+            if (enumClass != null
+                && ReferencesSearch.search(KotlinReferencesSearchParameters(enumClass, useScope)).any(::hasBuiltInEnumFunctionReference)
             ) return true
         }
 
