@@ -111,7 +111,8 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       }
 
       Rectangle oldRectangle = e.getOldRectangle();
-      if (oldRectangle != null && !oldRectangle.getLocation().equals(e.getNewRectangle().getLocation())) {
+      if (e.getEditor() == SoftReference.dereference(myCurrentEditor) &&
+          oldRectangle != null && !oldRectangle.getLocation().equals(e.getNewRectangle().getLocation())) {
         cancelProcessingAndCloseHint();
       }
     }, this);
