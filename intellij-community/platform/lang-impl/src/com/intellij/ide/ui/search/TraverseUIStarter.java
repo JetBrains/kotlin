@@ -243,22 +243,26 @@ public final class TraverseUIStarter implements ApplicationStarter {
     return result;
   }
 
-  private static Map<String, Set<OptionDescription>> processKeymap(final boolean splitByResourcePath) {
-    final Map<String, Set<OptionDescription>> map = new HashMap<>();
-    final ActionManager actionManager = ActionManager.getInstance();
-    final Map<String, PluginId> actionToPluginId = splitByResourcePath ? getActionToPluginId() : Collections.emptyMap();
-    final String componentName = "ActionManager";
-    final SearchableOptionsRegistrar searchableOptionsRegistrar = SearchableOptionsRegistrar.getInstance();
-    final Set<String> ids = ((ActionManagerImpl)actionManager).getActionIds();
-    for (String id : ids) {
-      final AnAction anAction = Objects.requireNonNull(actionManager.getAction(id));
-      final String module = splitByResourcePath ? getModuleByAction(anAction, actionToPluginId) : "";
-      final Set<OptionDescription> options = map.computeIfAbsent(module, __ -> new TreeSet<>());
-      final String text = anAction.getTemplatePresentation().getText();
+  private static @NotNull Map<String, Set<OptionDescription>> processKeymap(boolean splitByResourcePath) {
+    Map<String, Set<OptionDescription>> map = new HashMap<>();
+    ActionManagerImpl actionManager = (ActionManagerImpl)ActionManager.getInstance();
+    Map<String, PluginId> actionToPluginId = splitByResourcePath ? getActionToPluginId() : Collections.emptyMap();
+    String componentName = "ActionManager";
+    SearchableOptionsRegistrar searchableOptionsRegistrar = SearchableOptionsRegistrar.getInstance();
+    for (String id : actionManager.getActionIds()) {
+      AnAction action = actionManager.getAction(id);
+      if (action == null) {
+        throw new IllegalStateException("Cannot find action by id " + id);
+      }
+
+      String module = splitByResourcePath ? getModuleByAction(action, actionToPluginId) : "";
+      Set<OptionDescription> options = map.computeIfAbsent(module, __ -> new TreeSet<>());
+      String text = action.getTemplatePresentation().getText();
       if (text != null) {
         collectOptions(searchableOptionsRegistrar, options, text, componentName);
       }
-      final String description = anAction.getTemplatePresentation().getDescription();
+
+      String description = action.getTemplatePresentation().getDescription();
       if (description != null) {
         collectOptions(searchableOptionsRegistrar, options, description, componentName);
       }
