@@ -1,8 +1,5 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
-import androidx.compose.plugins.kotlin.COMPOSABLE_EMIT_OR_CALL
-import androidx.compose.plugins.kotlin.ComposableCallableDescriptor
-import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.ComposableEmitMetadata
 import androidx.compose.plugins.kotlin.ComposeFlags
 import androidx.compose.plugins.kotlin.ComposeFqNames
@@ -11,9 +8,6 @@ import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.ValidatedAssignment
 import androidx.compose.plugins.kotlin.ValidationType
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_EMIT_DESCRIPTOR
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_FUNCTION_DESCRIPTOR
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.COMPOSABLE_PROPERTY_DESCRIPTOR
 import androidx.compose.plugins.kotlin.hasPivotalAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isMarkedStable
@@ -86,7 +80,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -94,8 +87,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -197,7 +188,7 @@ class ComposableCallTransformer(
         irFile.transformChildrenVoid(this)
     }
 
-    val declarationStack = mutableListOf<IrFunction>()
+    private val declarationStack = mutableListOf<IrFunction>()
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         try {
@@ -208,25 +199,7 @@ class ComposableCallTransformer(
         }
     }
 
-    private fun findIrCall(expr: IrStatement): IrCall {
-        return when (expr) {
-            is IrCall -> expr
-            is IrTypeOperatorCall -> when (expr.operator) {
-                IrTypeOperator.IMPLICIT_CAST -> findIrCall(expr.argument)
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> findIrCall(expr.argument)
-                else -> error("Unhandled IrTypeOperatorCall: ${expr.operator}")
-            }
-            is IrBlock -> when (expr.origin) {
-                IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL ->
-                    findIrCall(expr.statements.last())
-                else -> error("Unhandled IrBlock origin: ${expr.origin}")
-            }
-            else -> error("Unhandled IrExpression: ${expr::class.java.simpleName}")
-        }
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
-        if (!ComposeFlags.COMPOSER_PARAM) return super.visitCall(expression)
         if (expression.isTransformedComposableCall()) {
             val descriptor = expression.descriptor
             val returnType = descriptor.returnType
@@ -281,72 +254,6 @@ class ComposableCallTransformer(
         }
     }
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        if (ComposeFlags.COMPOSER_PARAM) return super.visitBlock(expression)
-        if (expression.origin != COMPOSABLE_EMIT_OR_CALL) {
-            return super.visitBlock(expression)
-        }
-
-        val descriptor = context.state.irTrace[COMPOSABLE_FUNCTION_DESCRIPTOR, expression]
-
-        if (descriptor != null) {
-            val (composerCall, emitOrCall) = deconstructComposeBlock(expression)
-
-            val transformedComposerCall = composerCall.transformChildren()
-            val transformed = emitOrCall.transformChildren()
-
-            val returnType = descriptor.returnType
-            return if ((returnType == null || returnType.isUnit()) && !descriptor.isInline) {
-                context.createIrBuilder(declarationStack.last().symbol).irBlock {
-                    +irComposableCall(transformedComposerCall, transformed)
-                }
-            } else {
-                context
-                    .createIrBuilder(declarationStack.last().symbol)
-                    .irComposableExpr(transformedComposerCall, transformed, descriptor)
-            }
-        }
-
-        val emitDescriptor = context.state.irTrace[COMPOSABLE_EMIT_DESCRIPTOR, expression]
-
-        if (emitDescriptor != null) {
-            val (composerCall, emitOrCall) = deconstructComposeBlock(expression)
-            val transformedComposerCall = composerCall.transformChildren()
-            val transformed = emitOrCall.transformChildren()
-            return context.createIrBuilder(declarationStack.last().symbol).irBlock {
-                +irComposableEmit(transformedComposerCall, transformed, emitDescriptor)
-            }
-        }
-
-        val property = context.state.irTrace[COMPOSABLE_PROPERTY_DESCRIPTOR, expression]
-
-        if (property != null) {
-            val (composerCall, emitOrCall) = deconstructComposeBlock(expression)
-
-            val transformedComposerCall = composerCall.transformChildren()
-            val transformed = emitOrCall.transformChildren()
-
-            return context
-                .createIrBuilder(declarationStack.last().symbol)
-                .irComposableExpr(transformedComposerCall, transformed, property)
-        }
-
-        error(
-            "Expected ComposableFunctionDescriptor or ComposableEmitDescriptor\n" +
-            "Found: $descriptor"
-        )
-    }
-
-    private fun deconstructComposeBlock(expression: IrBlock): Pair<IrCall, IrCall> {
-        assert(expression.statements.size == 2)
-        // the first statement should represent the call to get the composer
-        // the second statement should represent the composable call or emit
-        val (first, second) = expression.statements
-        val composerCall = findIrCall(first)
-        val emitOrCall = findIrCall(second)
-        return composerCall to emitOrCall
-    }
-
     private fun IrExpression.isReorderTemporaryVariable(): Boolean {
         return this is IrGetValue &&
                 symbol.owner.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
@@ -361,25 +268,12 @@ class ComposableCallTransformer(
     private fun IrBlockBuilder.irComposableCall(
         original: IrCall
     ): IrExpression {
-        assert(ComposeFlags.COMPOSER_PARAM)
         val composerArg = original.getValueArgument(original.valueArgumentsCount - 1)!!
         // TODO(lmr): we may want to rewrite this in a way that doesn't do a deepCopy...
         val getComposer = { composerArg.deepCopyWithVariables() }
         return irComposableCallBase(
             original,
             getComposer
-        )
-    }
-
-    private fun IrBlockBuilder.irComposableCall(
-        composerCall: IrCall,
-        original: IrCall
-    ): IrExpression {
-        assert(!ComposeFlags.COMPOSER_PARAM)
-        val composerTemp = irTemporary(composerCall)
-        return irComposableCallBase(
-            original,
-            { irGet(composerTemp) }
         )
     }
 
@@ -410,7 +304,7 @@ class ComposableCallTransformer(
             .valueParameters
             .map {
                 val arg = original.getValueArgument(it)
-                it to getParameterExpression(it, arg, unwrapTemp = !ComposeFlags.COMPOSER_PARAM)
+                it to getParameterExpression(it, arg)
             }
 
         val tmpDispatchReceiver = original.dispatchReceiver?.let { irTemporary(it) }
@@ -463,21 +357,13 @@ class ComposableCallTransformer(
                 .memberScope
                 .findFirstFunction("changed") { it.typeParametersCount == 1 }
 
-            val validatedArguments = if (ComposeFlags.COMPOSER_PARAM)
-                irGetArguments
-                    .take(irGetArguments.size - 1)
-                    .mapNotNull { (_, getExpr) -> getExpr() } +
-                        listOfNotNull(
-                            tmpDispatchReceiver?.let { irGet(it) },
-                            tmpExtensionReceiver?.let { irGet(it) }
-                        )
-            else
-                irGetArguments
-                    .mapNotNull { (_, getExpr) -> getExpr() } +
-                        listOfNotNull(
-                            tmpDispatchReceiver?.let { irGet(it) },
-                            tmpExtensionReceiver?.let { irGet(it) }
-                        )
+            val validatedArguments = irGetArguments
+                .take(irGetArguments.size - 1)
+                .mapNotNull { (_, getExpr) -> getExpr() } +
+                    listOfNotNull(
+                        tmpDispatchReceiver?.let { irGet(it) },
+                        tmpExtensionReceiver?.let { irGet(it) }
+                    )
 
             val isSkippable = validatedArguments.all { it.type.toKotlinType().isStable() }
 
@@ -558,28 +444,12 @@ class ComposableCallTransformer(
     private fun DeclarationIrBuilder.irComposableExpr(
         original: IrCall
     ): IrExpression {
-        assert(ComposeFlags.COMPOSER_PARAM)
         return irBlock(resultType = original.descriptor.returnType?.toIrType()) {
             val composerParam = nearestComposer()
             val getComposer = { irGet(composerParam) }
             irComposableExprBase(
                 original,
                 getComposer
-            )
-        }
-    }
-
-    private fun DeclarationIrBuilder.irComposableExpr(
-        composerCall: IrCall,
-        original: IrCall,
-        descriptor: ComposableCallableDescriptor
-    ): IrExpression {
-        assert(!ComposeFlags.COMPOSER_PARAM)
-        return irBlock(resultType = descriptor.returnType?.toIrType()) {
-            val composerTemp = irTemporary(composerCall)
-            irComposableExprBase(
-                original,
-                { irGet(composerTemp) }
             )
         }
     }
@@ -611,21 +481,14 @@ class ComposableCallTransformer(
             .any { it.hasPivotalAnnotation() }
 
         // if we don't have any pivotal parameters, we don't use the parameters more than once,
-        // so we can just use the original call itself. This only works with the new composer param
-        // code gen though since the old codegen produced IrBlocks around the calls that break this
-        val shouldCreateNewCall = hasPivotals || !ComposeFlags.COMPOSER_PARAM
-
+        // so we can just use the original call itself.
         val irGetArguments = original
             .descriptor
             .valueParameters
             .map {
                 val arg = original.getValueArgument(it)
-                val expr = if (shouldCreateNewCall)
-                    // if the composer param flag is turned off, we end up removing all of the
-                    // temporaries created by reordering and creating new ones. if the flag is
-                    // turned on, then we end up using the temporaries that were already created,
-                    // so we don't want to unwrap them
-                    getParameterExpression(it, arg, unwrapTemp = !ComposeFlags.COMPOSER_PARAM)
+                val expr = if (hasPivotals)
+                    getParameterExpression(it, arg)
                 else
                     ({ arg })
                 it to expr
@@ -668,7 +531,7 @@ class ComposableCallTransformer(
             )
         }
 
-        val newCall = if (shouldCreateNewCall) irCall(
+        val newCall = if (hasPivotals) irCall(
             callee = IrSimpleFunctionSymbolImpl(original.descriptor).also {
                 it.bind(original.symbol.owner as IrSimpleFunction)
             },
@@ -713,14 +576,10 @@ class ComposableCallTransformer(
 
     private fun IrBlockBuilder.getParameterExpression(
         desc: ValueParameterDescriptor,
-        expr: IrExpression?,
-        unwrapTemp: Boolean = true
+        expr: IrExpression?
     ): () -> IrExpression? {
         if (expr == null)
             return { null }
-        if (unwrapTemp && expr.isReorderTemporaryVariable()) {
-            return getParameterExpression(desc, expr.unwrapReorderTemporaryVariable())
-        }
         return when {
             expr is IrConst<*> ->
                 ({ expr.copy() })
@@ -750,26 +609,11 @@ class ComposableCallTransformer(
         original: IrCall,
         emitMetadata: ComposableEmitMetadata
     ): IrExpression {
-        assert(ComposeFlags.COMPOSER_PARAM)
         val composerParam = nearestComposer()
         return irComposableEmitBase(
             original,
             { irGet(composerParam) },
             emitMetadata
-        )
-    }
-
-    private fun IrBlockBuilder.irComposableEmit(
-        composerCall: IrCall,
-        original: IrCall,
-        descriptor: ComposableEmitDescriptor
-    ): IrExpression {
-        assert(!ComposeFlags.COMPOSER_PARAM)
-        val composerTemp = irTemporary(composerCall)
-        return irComposableEmitBase(
-            original,
-            { irGet(composerTemp) },
-            descriptor
         )
     }
 
@@ -798,11 +642,7 @@ class ComposableCallTransformer(
                 original.getValueArgument(desc)?.let { desc to it }
             }
             .map { (desc, expr) ->
-                desc.name.asString() to getParameterExpression(
-                    desc,
-                    expr,
-                    unwrapTemp = !ComposeFlags.COMPOSER_PARAM
-                )
+                desc.name.asString() to getParameterExpression(desc, expr)
             }
             .toMap()
 

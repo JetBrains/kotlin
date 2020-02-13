@@ -43,7 +43,7 @@ import kotlin.reflect.KClass
 class ComposeCallLoweringTests : AbstractCodegenTest() {
 
     @Test
-    fun testInlineGroups(): Unit = forComposerParam(true, false) {
+    fun testInlineGroups(): Unit = ensureSetup {
         compose("""
 
             @Composable
@@ -65,7 +65,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleInlining(): Unit = forComposerParam(true, false) {
+    fun testSimpleInlining(): Unit = ensureSetup {
         compose("""
             @Composable
             inline fun foo(block: @Composable() () -> Unit) {
@@ -82,7 +82,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposableLambdaCall(): Unit = forComposerParam(true, false) {
+    fun testComposableLambdaCall(): Unit = ensureSetup {
         codegen(
             """
                 import androidx.compose.*
@@ -96,7 +96,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testProperties(): Unit = forComposerParam(true, false) {
+    fun testProperties(): Unit = ensureSetup {
         codegen(
             """
             import androidx.compose.*
@@ -125,7 +125,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testPropertyValues(): Unit = forComposerParam(true, false) {
+    fun testPropertyValues(): Unit = ensureSetup {
         compose("""
             @Composable val foo get() = "123"
 
@@ -156,7 +156,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposableLambdaCallWithGenerics(): Unit = forComposerParam(true, false) {
+    fun testComposableLambdaCallWithGenerics(): Unit = ensureSetup {
         codegen(
             """
                 import androidx.compose.*
@@ -186,7 +186,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testMethodInvocations(): Unit = forComposerParam(true, false) {
+    fun testMethodInvocations(): Unit = ensureSetup {
         codegen(
             """
                 import androidx.compose.*
@@ -204,7 +204,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testReceiverLambdaInvocation(): Unit = forComposerParam(true, false) {
+    fun testReceiverLambdaInvocation(): Unit = ensureSetup {
         codegen(
             """
                 import androidx.compose.*
@@ -219,7 +219,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testReceiverLambda2(): Unit = forComposerParam(true, false) {
+    fun testReceiverLambda2(): Unit = ensureSetup {
         codegen(
             """
                 class DensityScope(val density: Density)
@@ -240,7 +240,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineChildren(): Unit = forComposerParam(true, false) {
+    fun testInlineChildren(): Unit = ensureSetup {
         codegen(
             """
                 import androidx.compose.*
@@ -260,7 +260,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNoComposerImport(): Unit = forComposerParam(true, false) {
+    fun testNoComposerImport(): Unit = ensureSetup {
         codegenNoImports(
             """
         import androidx.compose.Composable
@@ -285,7 +285,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineNoinline(): Unit = forComposerParam(true, false) {
+    fun testInlineNoinline(): Unit = ensureSetup {
         codegen(
             """
         @Composable
@@ -308,7 +308,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlinedComposable(): Unit = forComposerParam(true, false) {
+    fun testInlinedComposable(): Unit = ensureSetup {
         codegen(
             """
         @Composable
@@ -327,7 +327,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testGenericEmittables(): Unit = forComposerParam(true, false) {
+    fun testGenericEmittables(): Unit = ensureSetup {
         codegen(
             """
         class FooKey<T>(val name: String)
@@ -357,7 +357,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSetViewContentIssue(): Unit = forComposerParam(true, false) {
+    fun testSetViewContentIssue(): Unit = ensureSetup {
         codegen(
             """
                 import android.app.Activity
@@ -397,7 +397,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testGenericParameterOrderIssue(): Unit = forComposerParam(true, false) {
+    fun testGenericParameterOrderIssue(): Unit = ensureSetup {
         codegen(
             """
 @Composable
@@ -415,7 +415,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
-    fun testArgumentOrderIssue(): Unit = forComposerParam(true, false) {
+    fun testArgumentOrderIssue(): Unit = ensureSetup {
         codegen(
             """
                 class A
@@ -437,7 +437,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
-    fun testObjectName(): Unit = forComposerParam(true, false) {
+    fun testObjectName(): Unit = ensureSetup {
         codegen(
             """
 
@@ -454,7 +454,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
-    fun testWebViewBug(): Unit = forComposerParam(true, false) {
+    fun testWebViewBug(): Unit = ensureSetup {
         codegen(
             """
 import android.webkit.WebView
@@ -486,7 +486,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testStuffThatIWantTo(): Unit = forComposerParam(true, false) {
+    fun testStuffThatIWantTo(): Unit = ensureSetup {
         codegen(
             """
 
@@ -504,7 +504,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testSimpleFunctionResolution(): Unit = forComposerParam(true, false) {
+    fun testSimpleFunctionResolution(): Unit = ensureSetup {
         compose(
             """
             import androidx.compose.*
@@ -523,7 +523,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testSimpleClassResolution(): Unit = forComposerParam(true, false) {
+    fun testSimpleClassResolution(): Unit = ensureSetup {
         compose(
             """
             import android.widget.TextView
@@ -540,7 +540,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testSetContent(): Unit = forComposerParam(true, false) {
+    fun testSetContent(): Unit = ensureSetup {
         codegen(
             """
                 fun fakeCompose(block: @Composable() ()->Unit) { }
@@ -557,7 +557,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testComposeWithResult(): Unit = forComposerParam(true, false) {
+    fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
                 @Composable fun <T> identity(block: @Composable() ()->T): T = block()
@@ -576,7 +576,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservable(): Unit = forComposerParam(true, false) {
+    fun testObservable(): Unit = ensureSetup {
         compose(
             """
                 import android.widget.Button
@@ -611,7 +611,7 @@ fun WebComponent(
     }
 
     @Test // java.lang.ClassNotFoundException: Z
-    fun testObservableLambda(): Unit = forComposerParam(true, false) {
+    fun testObservableLambda(): Unit = ensureSetup {
         compose(
             """
                 @Model
@@ -648,7 +648,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableGenericFunction(): Unit = forComposerParam(true, false) {
+    fun testObservableGenericFunction(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -677,7 +677,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableExtension(): Unit = forComposerParam(true, false) {
+    fun testObservableExtension(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -708,7 +708,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObserverableExpressionBody(): Unit = forComposerParam(true, false) {
+    fun testObserverableExpressionBody(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -741,7 +741,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableInlineWrapper(): Unit = forComposerParam(true, false) {
+    fun testObservableInlineWrapper(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -784,7 +784,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableDefaultParameter(): Unit = forComposerParam(true, false) {
+    fun testObservableDefaultParameter(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -815,7 +815,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testObservableEarlyReturn(): Unit = forComposerParam(true, false) {
+    fun testObservableEarlyReturn(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -858,7 +858,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testCGSimpleTextView(): Unit = forComposerParam(true, false) {
+    fun testCGSimpleTextView(): Unit = ensureSetup {
         compose(
             """
 
@@ -873,7 +873,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testCGLocallyScopedFunction(): Unit = forComposerParam(true, false) {
+    fun testCGLocallyScopedFunction(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -894,7 +894,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testCGLocallyScopedExtensionFunction(): Unit = forComposerParam(true, false) {
+    fun testCGLocallyScopedExtensionFunction(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -915,7 +915,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testImplicitReceiverScopeCall(): Unit = forComposerParam(true, false) {
+    fun testImplicitReceiverScopeCall(): Unit = ensureSetup {
         compose(
             """
                 import androidx.compose.*
@@ -943,7 +943,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testCGLocallyScopedInvokeOperator(): Unit = forComposerParam(true, false) {
+    fun testCGLocallyScopedInvokeOperator(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -965,7 +965,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testTrivialExtensionFunction(): Unit = forComposerParam(true, false) {
+    fun testTrivialExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
             """
@@ -977,7 +977,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testTrivialInvokeExtensionFunction(): Unit = forComposerParam(true, false) {
+    fun testTrivialInvokeExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
             """
@@ -989,7 +989,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testCGNSimpleTextView(): Unit = forComposerParam(true, false) {
+    fun testCGNSimpleTextView(): Unit = ensureSetup {
         compose(
             """
 
@@ -1004,7 +1004,7 @@ fun WebComponent(
     }
 
     @Test // java.lang.ClassNotFoundException: Z
-    fun testInliningTemp(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -1025,7 +1025,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInliningTemp2(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp2(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -1041,7 +1041,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInliningTemp3(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp3(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -1057,7 +1057,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInliningTemp4(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp4(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -1073,7 +1073,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInline_NonComposable_Identity(): Unit = forComposerParam(true, false) {
+    fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose("""
             @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
               children()
@@ -1089,7 +1089,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInline_Composable_Identity(): Unit = forComposerParam(true, false) {
+    fun testInline_Composable_Identity(): Unit = ensureSetup {
         compose("""
             """,
             """
@@ -1100,7 +1100,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInline_Composable_EmitChildren(): Unit = forComposerParam(true, false) {
+    fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
         compose("""
             @Composable
             inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {
@@ -1123,7 +1123,7 @@ fun WebComponent(
     }
 
     @Test // java.lang.ClassNotFoundException: Z
-    fun testCGNInlining(): Unit = forComposerParam(true, false) {
+    fun testCGNInlining(): Unit = ensureSetup {
         compose(
             """
 
@@ -1140,7 +1140,7 @@ fun WebComponent(
     }
 
     @Test
-    fun testInlineClassesAsComposableParameters(): Unit = forComposerParam(true, false) {
+    fun testInlineClassesAsComposableParameters(): Unit = ensureSetup {
         codegen(
             """
                 inline class WrappedInt(val int: Int)
@@ -1235,19 +1235,12 @@ fun WebComponent(
         }
 
         val instanceOfClass = instanceClass.newInstance()
-        val testMethod = if (ComposeFlags.COMPOSER_PARAM)
-            instanceClass.getMethod("test", *parameterTypes, Composer::class.java)
-        else
-            instanceClass.getMethod("test", *parameterTypes)
+        val testMethod = instanceClass.getMethod("test", *parameterTypes, Composer::class.java)
 
         return compose {
             val values = valuesFactory()
             val arguments = values.map { it.value as Any }.toTypedArray()
-            if (ComposeFlags.COMPOSER_PARAM) {
-                testMethod.invoke(instanceOfClass, *arguments, currentComposerNonNull)
-            } else {
-                testMethod.invoke(instanceOfClass, *arguments)
-            }
+            testMethod.invoke(instanceOfClass, *arguments, currentComposerNonNull)
         }
     }
 

@@ -16,81 +16,70 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
+import androidx.compose.plugins.kotlin.ComposeFqNames
+import androidx.compose.plugins.kotlin.KtxNameConventions
+import androidx.compose.plugins.kotlin.KtxNameConventions.UPDATE_SCOPE
+import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import androidx.compose.plugins.kotlin.ComposeFlags
-import androidx.compose.plugins.kotlin.ComposeFqNames
-import androidx.compose.plugins.kotlin.ComposeUtils.generateComposePackageName
-import androidx.compose.plugins.kotlin.KtxNameConventions
-import androidx.compose.plugins.kotlin.KtxNameConventions.UPDATE_SCOPE
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.getKeyValue
-import androidx.compose.plugins.kotlin.isEmitInline
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedReceiverParameterDescriptor
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irEqeqeq
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContinue
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -107,79 +96,12 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
         irFile.transformChildrenVoid(this)
     }
 
-    private fun ResolvedCall<*>.isParameterless(): Boolean {
-        return dispatchReceiver == null && extensionReceiver == null && valueArguments.isEmpty()
-    }
-
     override fun visitFunction(declaration: IrFunction): IrStatement {
-
         super.visitFunction(declaration)
-
-        if (ComposeFlags.COMPOSER_PARAM) return visitFunctionForComposerParam(declaration)
-
-        // Only insert observe scopes in non-empty composable function
-        if (declaration.body == null)
-            return declaration
-        if (!declaration.isComposable())
-            return declaration
-
-        val descriptor = declaration.descriptor
-
-        // Do not insert observe scope in an inline function
-        if (descriptor.isInline)
-            return declaration
-
-        // Do not insert an observe scope in an inline composable lambda
-        descriptor.findPsi()?.let { psi ->
-            (psi as? KtFunctionLiteral)?.let {
-                if (InlineUtil.isInlinedArgument(
-                        it,
-                        context.state.bindingContext,
-                        false
-                    )
-                )
-                    return declaration
-                if (it.isEmitInline(context.state.bindingContext)) {
-                    return declaration
-                }
-            }
-        }
-
-        // Do not insert an observe scope if the function has a return result
-        if (descriptor.returnType.let { it == null || !it.isUnit() })
-            return declaration
-
-        // Check if the descriptor has restart scope calls resolved
-        val bindingContext = context.state.bindingContext
-        if (descriptor is SimpleFunctionDescriptor &&
-            // Lambdas that make are not lowered earlier should be ignored.
-            // All composable lambdas are already lowered to a class with an invoke() method.
-            declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
-            declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE) {
-            val composerResolvedCall =
-                bindingContext.get(ComposeWritableSlices.RESTART_COMPOSER, descriptor)
-
-            val oldBody = declaration.body
-            if (
-                composerResolvedCall != null &&
-                oldBody != null &&
-                // if getting the composer requires a parameter (like `<this>`), this code will
-                // currently fail. We should fix this similar to how ComposeCallTransformer solves
-                // this
-                composerResolvedCall.isParameterless()
-            ) {
-                return functionWithRestartGroup(
-                    declaration,
-                    { irGetProperty(composerResolvedCall) }
-                )
-            }
-        }
-
-        // Otherwise, fallback to wrapping the code block in a call to Observe()
-        return functionWithObserve(declaration)
+        return visitFunctionForComposerParam(declaration)
     }
 
-    fun visitFunctionForComposerParam(declaration: IrFunction): IrStatement {
+    private fun visitFunctionForComposerParam(declaration: IrFunction): IrStatement {
         // Only insert observe scopes in non-empty composable function
         if (declaration.body == null)
             return declaration
@@ -223,15 +145,14 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
             declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE) {
 
             return functionWithRestartGroup(
-                declaration,
-                { irGet(param) }
-            )
+                declaration
+            ) { irGet(param) }
         }
 
         return declaration
     }
 
-    fun functionWithRestartGroup(
+    private fun functionWithRestartGroup(
         original: IrFunction,
         getComposer: DeclarationIrBuilder.() -> IrExpression
     ): IrStatement {
@@ -470,105 +391,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
         }
     }
 
-    fun functionWithObserve(original: IrFunction): IrStatement {
-        val descriptor = original.descriptor
-        val module = descriptor.module
-        val observeFunctionDescriptor = module
-            .getPackage(FqName(generateComposePackageName()))
-            .memberScope
-            .getContributedFunctions(
-                Name.identifier("Observe"),
-                NoLookupLocation.FROM_BACKEND
-            ).single()
-
-        val observeFunctionSymbol = referenceSimpleFunction(observeFunctionDescriptor)
-
-        val type = observeFunctionDescriptor.valueParameters[0].type
-
-        val lambdaDescriptor = AnonymousFunctionDescriptor(
-            original.descriptor,
-            Annotations.EMPTY,
-            CallableMemberDescriptor.Kind.DECLARATION,
-            SourceElement.NO_SOURCE,
-            false
-        ).apply {
-            initialize(
-                null,
-                null,
-                emptyList(),
-                emptyList(),
-                type,
-                Modality.FINAL,
-                Visibilities.LOCAL
-            )
-        }
-
-        val irBuilder = context.createIrBuilder(original.symbol)
-
-        return original.apply {
-            body = irBuilder.irBlockBody {
-                val fn = IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-                    IrSimpleFunctionSymbolImpl(lambdaDescriptor),
-                    context.irBuiltIns.unitType
-                ).also { fn ->
-                    fn.body = original.body.apply {
-                        // Move the target for the returns to avoid introducing a non-local return.
-                        // Update declaration parent that point to the old function to the new
-                        // function.
-                        val oldFunction = original
-                        this?.transformChildrenVoid(object : IrElementTransformerVoid() {
-                            override fun visitReturn(expression: IrReturn): IrExpression {
-                                val newExpression = if (
-                                    expression.returnTargetSymbol === original.symbol)
-                                    IrReturnImpl(
-                                        startOffset = expression.startOffset,
-                                        endOffset = expression.endOffset,
-                                        type = expression.type,
-                                        returnTargetSymbol = fn.symbol,
-                                        value = expression.value
-                                    )
-                                else expression
-                                return super.visitReturn(newExpression)
-                            }
-
-                            override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-                                if (declaration.parent == oldFunction) {
-                                    declaration.parent = fn
-                                }
-                                return super.visitDeclaration(declaration)
-                            }
-                        })
-                    }
-                    fn.parent = original
-                }
-                +irCall(
-                    observeFunctionSymbol,
-                    observeFunctionDescriptor,
-                    context.irBuiltIns.unitType
-                ).also {
-                    it.putValueArgument(
-                        0,
-                        irBlock(origin = IrStatementOrigin.LAMBDA) {
-                            +fn
-                            +IrFunctionReferenceImpl(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                type.toIrType(),
-                                fn.symbol,
-                                fn.descriptor,
-                                0,
-                                IrStatementOrigin.LAMBDA
-                            )
-                        }
-                    )
-                }
-            }
-        }
-    }
-
-    fun irCall(descriptor: FunctionDescriptor): IrCall {
+    private fun irCall(descriptor: FunctionDescriptor): IrCall {
         val type = descriptor.returnType?.toIrType() ?: error("Expected a return type")
         val symbol = referenceFunction(descriptor)
         return IrCallImpl(
@@ -580,19 +403,13 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
         )
     }
 
-    fun irGetProperty(resolvedCall: ResolvedCall<*>): IrCall {
-        val descriptor = (resolvedCall.resultingDescriptor as? PropertyDescriptor)?.getter
-            ?: error("Expected property")
-        return irCall(descriptor)
-    }
-
-    fun irMethodCall(target: IrExpression, descriptor: FunctionDescriptor): IrCall {
+    private fun irMethodCall(target: IrExpression, descriptor: FunctionDescriptor): IrCall {
         return irCall(descriptor).apply {
             dispatchReceiver = target
         }
     }
 
-    fun keyExpression(
+    private fun keyExpression(
         descriptor: CallableMemberDescriptor,
         sourceOffset: Int,
         intType: IrType
@@ -609,8 +426,8 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
     private fun IrFunction.isZeroParameterUnitLambda(): Boolean {
         return !name.isSpecial && name.identifier == "invoke" && valueParameters.isEmpty() &&
                 returnType.isUnit() &&
-                dispatchReceiverParameter?.let {
-                    it.type.getClass()?.superTypes?.any {
+                dispatchReceiverParameter?.let { receiver ->
+                    receiver.type.getClass()?.superTypes?.any {
                         it.classifierOrNull?.descriptor?.fqNameSafe == ComposeFqNames.Function0
                     }
                 } ?: false
@@ -643,3 +460,9 @@ private fun findPotentialEarly(block: IrBlockBody): IrExpression? {
     }, Unit)
     return result
 }
+
+internal fun getKeyValue(descriptor: DeclarationDescriptor, startOffset: Int): Int =
+    descriptor.fqNameSafe.toString().hashCode() xor startOffset
+
+internal val COMPOSABLE_EMIT_OR_CALL =
+    object : IrStatementOriginImpl("Composable Emit Or Call") {}
