@@ -9,6 +9,7 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
+@SuppressWarnings("rawtypes")
 public class FunctionReference extends CallableReference implements FunctionBase, KFunction {
     private final int arity;
 

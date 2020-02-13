@@ -9,7 +9,7 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty1;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes", "unused", "NullableProblems"})
 public abstract class PropertyReference1 extends PropertyReference implements KProperty1 {
     public PropertyReference1() {
     }
