@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin
 
 import com.intellij.util.keyFMap.KeyFMap
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -54,3 +55,5 @@ private val ComposeTemporaryGlobalBindingTrace = WeakBindingTrace()
 val GeneratorContext.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace
 @Suppress("unused")
 val GenerationState.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace
+@Suppress("unused")
+val BackendContext.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace

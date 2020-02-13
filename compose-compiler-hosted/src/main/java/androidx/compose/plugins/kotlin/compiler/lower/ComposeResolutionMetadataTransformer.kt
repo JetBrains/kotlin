@@ -20,6 +20,7 @@ import androidx.compose.plugins.kotlin.ComposableCallableDescriptor
 import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.irTrace
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -44,10 +45,10 @@ class ComposeResolutionMetadataTransformer(val context: JvmBackendContext) :
 
     override fun visitCall(expression: IrCall): IrExpression {
 
-        val descriptor = expression.descriptor
+        val descriptor = expression.symbol.descriptor
 
         if (descriptor is ComposableEmitDescriptor) {
-            context.state.irTrace.record(
+            context.irTrace.record(
                 ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,
                 expression,
                 descriptor

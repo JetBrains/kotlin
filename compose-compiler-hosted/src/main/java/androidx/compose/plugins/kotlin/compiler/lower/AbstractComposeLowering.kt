@@ -47,14 +47,14 @@ import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi2ir.findFirstFunction
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class AbstractComposeLowering(
     val context: JvmBackendContext,
-    val symbolRemapper: DeepCopySymbolRemapper
+    val symbolRemapper: DeepCopySymbolRemapper,
+    val bindingTrace: BindingTrace
 ): IrElementTransformerVoid() {
 
     protected val typeTranslator =
@@ -114,13 +114,13 @@ abstract class AbstractComposeLowering(
     }
 
     fun IrCall.isTransformedComposableCall(): Boolean {
-        return context.state.irTrace[ComposeWritableSlices.IS_COMPOSABLE_CALL, this] ?: false
+        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_CALL, this] ?: false
     }
 
     private val composableChecker = ComposableAnnotationChecker()
 
     fun FunctionDescriptor.isComposable(): Boolean {
-        val composability = composableChecker.analyze(context.state.bindingTrace, this)
+        val composability = composableChecker.analyze(bindingTrace, this)
         return when (composability) {
             ComposableAnnotationChecker.Composability.NOT_COMPOSABLE -> false
             ComposableAnnotationChecker.Composability.MARKED -> true

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 class ComposeIrGenerationExtension : IrGenerationExtension {
     override fun generate(
@@ -38,6 +39,7 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         // TODO: refactor transformers to work with just BackendContext
         val jvmContext = backendContext as JvmBackendContext
         val module = jvmContext.ir.irModule
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "trace in ComposeIrGenerationExtension")
         // We transform the entire module all at once since we end up remapping symbols, we need to
         // ensure that everything in the module points to the right symbol. There is no extension
         // point that allows you to transform at the module level but we should communicate this
@@ -58,7 +60,7 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             // transform all composable functions to have an extra synthetic composer
             // parameter. this will also transform all types and calls to include the extra
             // parameter.
-            ComposerParamTransformer(jvmContext, symbolRemapper).lower(module)
+            ComposerParamTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
 
             // transform calls to the currentComposerIntrinsic to just use the local
             // parameter from the previous transform
@@ -66,11 +68,11 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
 
             // transform composable calls and emits into their corresponding calls appealing
             // to the composer
-            ComposableCallTransformer(jvmContext, symbolRemapper).lower(module)
+            ComposableCallTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
 
             // transform composable functions to have restart groups so that they can be
             // recomposed
-            ComposeObservePatcher(jvmContext, symbolRemapper).lower(module)
+            ComposeObservePatcher(jvmContext, symbolRemapper, bindingTrace).lower(module)
         }
     }
 }
