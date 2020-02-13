@@ -139,7 +139,7 @@ class SmartCastDiagnostic(
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
-class UnstableSmartCast private constructor(
+sealed class UnstableSmartCast(
     val argument: ExpressionKotlinCallArgument,
     val targetType: UnwrappedType,
     applicability: ResolutionCandidateApplicability,
@@ -150,13 +150,24 @@ class UnstableSmartCast private constructor(
         operator fun invoke(
             argument: ExpressionKotlinCallArgument,
             targetType: UnwrappedType,
-            isReceiver: Boolean = false,
+            isReceiver: Boolean = false, // for reproducing OI behaviour
         ): UnstableSmartCast {
-            val applicability = if (isReceiver) MAY_THROW_RUNTIME_ERROR else RESOLVED_WITH_ERROR
-            return UnstableSmartCast(argument, targetType, applicability)
+            return if (isReceiver)
+                UnstableSmartCastResolutionError(argument, targetType)
+            else UnstableSmartCastDiagnosticError(argument, targetType)
         }
     }
 }
+
+class UnstableSmartCastResolutionError(
+    argument: ExpressionKotlinCallArgument,
+    targetType: UnwrappedType,
+) : UnstableSmartCast(argument, targetType, MAY_THROW_RUNTIME_ERROR)
+
+class UnstableSmartCastDiagnosticError(
+    argument: ExpressionKotlinCallArgument,
+    targetType: UnwrappedType,
+) : UnstableSmartCast(argument, targetType, RESOLVED_WITH_ERROR)
 
 class UnsafeCallError(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
