@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
@@ -36,6 +37,8 @@ abstract class KotlinJsIrSubTarget(
         private set
 
     internal fun configure() {
+        target.binaries.testExecutable()
+
         NpmResolverPlugin.apply(project)
 
         configureBuildVariants()
@@ -94,7 +97,14 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.inputFileProperty.set(compilation.developmentLinkTask.map { it.outputFileProperty.get() })
+            val testExecutableTask = target.binaries.getBinary(
+                BuildVariantKind.DEVELOPMENT,
+                JsBinaryType.TEST
+            ).linkTask
+
+            testJs.inputFileProperty.set(
+                testExecutableTask.map { it.outputFileProperty.get() }
+            )
 
             testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
 
