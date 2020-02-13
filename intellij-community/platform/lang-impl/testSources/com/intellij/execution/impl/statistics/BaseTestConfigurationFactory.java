@@ -52,7 +52,7 @@ public abstract class BaseTestConfigurationFactory extends ConfigurationFactory 
 
     @NotNull
     @Override
-    public String getName() {
+    public String getId() {
       return "Local";
     }
 
@@ -73,7 +73,7 @@ public abstract class BaseTestConfigurationFactory extends ConfigurationFactory 
 
     @NotNull
     @Override
-    public String getName() {
+    public String getId() {
       return "Remote";
     }
 
@@ -83,5 +83,10 @@ public abstract class BaseTestConfigurationFactory extends ConfigurationFactory 
       return new BaseTestRunConfiguration(project, this) {
       };
     }
+  }
+
+  @Override
+  public @NotNull String getId() {
+    return getType().getId();
   }
 }

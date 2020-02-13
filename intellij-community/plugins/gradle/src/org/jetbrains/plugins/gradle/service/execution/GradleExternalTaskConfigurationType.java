@@ -29,6 +29,11 @@ public final class GradleExternalTaskConfigurationType extends AbstractExternalS
     return (GradleExternalTaskConfigurationType)ExternalSystemUtil.findConfigurationType(GradleConstants.SYSTEM_ID);
   }
 
+  @Override
+  protected @NotNull String getConfigurationFactoryId() {
+    return "Gradle";
+  }
+
   @NotNull
   @Override
   protected ExternalSystemRunConfiguration doCreateConfiguration(@NotNull ProjectSystemId externalSystemId,

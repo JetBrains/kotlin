@@ -119,6 +119,11 @@ public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
 
   private static class TestTaskConfigurationType extends AbstractExternalSystemTaskConfigurationType {
     private TestTaskConfigurationType() {super(TEST_EXTERNAL_SYSTEM_ID);}
+
+    @Override
+    protected @NotNull String getConfigurationFactoryId() {
+      return "Test_external_system_id";
+    }
   }
 
   private class MyTestExternalSystemManager extends TestExternalSystemManager {

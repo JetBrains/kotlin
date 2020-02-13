@@ -33,6 +33,11 @@ public class FakeConfigurationFactory extends ConfigurationFactory {
   public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
     return new FakeRunConfiguration(project, true);
   }
+
+  @Override
+  public @NotNull String getId() {
+    return getType().getId();
+  }
 }
 
 
