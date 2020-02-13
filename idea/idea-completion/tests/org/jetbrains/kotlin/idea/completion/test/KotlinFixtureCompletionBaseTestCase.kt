@@ -11,8 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.configureCompilerOptions
-import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.io.File
 
@@ -30,27 +29,24 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
         setUpFixture(testPath)
 
         val fileText = FileUtil.loadFile(File(testPath), true)
-        val configured = configureCompilerOptions(fileText, project, module)
         try {
+            withCustomCompilerOptions(fileText, project, module) {
+                assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
 
-            assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
+                if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
+                    myFixture.doHighlighting()
+                }
 
-            if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
-                myFixture.doHighlighting()
+                testCompletion(
+                    fileText,
+                    getPlatform(),
+                    { completionType, count -> complete(completionType, count) },
+                    defaultCompletionType(),
+                    defaultInvocationCount(),
+                    additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
+                )
             }
-
-            testCompletion(
-                fileText,
-                getPlatform(),
-                { completionType, count -> complete(completionType, count) },
-                defaultCompletionType(),
-                defaultInvocationCount(),
-                additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
-            )
         } finally {
-            if (configured) {
-                rollbackCompilerOptions(project, module)
-            }
             tearDownFixture()
         }
     }
