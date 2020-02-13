@@ -35,9 +35,7 @@ import java.util.Set;
 
 /**
  * @author yole
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBase} instead
  */
-@Deprecated
 public abstract class HierarchyBrowserBase extends SimpleToolWindowPanel implements HierarchyBrowser, Disposable, DataProvider {
   private static final HierarchyNodeDescriptor[] EMPTY_DESCRIPTORS = new HierarchyNodeDescriptor[0];
 

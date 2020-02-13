@@ -23,10 +23,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.actions.BrowseCallHierarchyAction} instead
- */
-@Deprecated
 public final class BrowseCallHierarchyAction extends BrowseHierarchyActionBase {
   public BrowseCallHierarchyAction() {
     super(LanguageCallHierarchy.INSTANCE);

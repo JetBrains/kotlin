@@ -29,10 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase} instead
- */
-@Deprecated
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
    * @deprecated Use {@link #getMethodType()} instead

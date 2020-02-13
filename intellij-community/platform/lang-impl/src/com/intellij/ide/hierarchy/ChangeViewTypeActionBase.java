@@ -24,9 +24,7 @@ import java.util.function.Supplier;
 
 /**
  * @author cdr
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ChangeViewTypeActionBase} instead
  */
-@Deprecated
 abstract class ChangeViewTypeActionBase extends ChangeHierarchyViewActionBase {
   ChangeViewTypeActionBase(final String shortDescription, final String longDescription, final Icon icon) {
     this(() -> shortDescription, () -> longDescription, icon);

@@ -11,10 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.function.Supplier;
 
-/**
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ChangeHierarchyViewActionBase} instead
- */
-@Deprecated
 public abstract class ChangeHierarchyViewActionBase extends ToggleAction {
   public ChangeHierarchyViewActionBase(String text, String description, Icon icon) {this(() -> text, () -> description, icon);}
 

@@ -21,10 +21,7 @@ import com.intellij.ide.IdeBundle;
 
 /**
  * @author cdr
- *
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ViewSubtypesHierarchyAction} instead
  */
-@Deprecated
 public final class ViewSubtypesHierarchyAction extends ChangeViewTypeActionBase {
   public ViewSubtypesHierarchyAction() {
     super(IdeBundle.lazyMessage("action.view.subtypes.hierarchy"),

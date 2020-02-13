@@ -23,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author cdr
- *
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.ViewClassHierarchyAction} instead
  */
-@Deprecated
 public final class ViewClassHierarchyAction extends ChangeViewTypeActionBase {
   public ViewClassHierarchyAction() {
     super(IdeBundle.lazyMessage("action.view.class.hierarchy"),

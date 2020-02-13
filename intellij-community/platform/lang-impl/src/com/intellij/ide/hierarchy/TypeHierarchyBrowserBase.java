@@ -16,10 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Map;
 
-/**
- * @deprecated Use {@link com.intellij.ide.hierarchy.newAPI.TypeHierarchyBrowserBase} instead
- */
-@Deprecated
 public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   /**
    * @deprecated Use {@link #getTypeHierarchyType()} instead
