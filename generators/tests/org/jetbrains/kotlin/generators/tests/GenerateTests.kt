@@ -1380,7 +1380,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/performanceTests", "idea/testData") {
+    testGroup("idea/performanceTests/test", "idea/testData") {
         testClass<AbstractPerformanceJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste/conversion", testMethod = "doPerfTest", pattern = """^([^\.]+)\.java$""")
         }
@@ -1404,7 +1404,7 @@ fun main(args: Array<String>) {
 
     }
 
-    testGroup("idea/performanceTests", "idea/idea-completion/testData") {
+    testGroup("idea/performanceTests/test", "idea/idea-completion/testData") {
         testClass<AbstractPerformanceCompletionIncrementalResolveTest> {
             model("incrementalResolve", testMethod = "doPerfTest")
         }
