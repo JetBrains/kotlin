@@ -1581,6 +1581,24 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/problems")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Problems extends AbstractFirDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInProblems() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("invoke.kt")
+            public void testInvoke() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/problems/invoke.kt");
+            }
+        }
+
         @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/receivers")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1601,6 +1619,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             @TestMetadata("implicitReceivers.kt")
             public void testImplicitReceivers() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/smartcasts/receivers/implicitReceivers.kt");
+            }
+
+            @TestMetadata("mixingImplicitAndExplicitReceivers.kt")
+            public void testMixingImplicitAndExplicitReceivers() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/receivers/mixingImplicitAndExplicitReceivers.kt");
             }
 
             @TestMetadata("thisOfExtensionProperty.kt")
