@@ -3726,7 +3726,12 @@ task library_mismatch(type: KonanDriverTest) {
         "warning: skipping $dir/1.2/empty.klib. The library versions don't match. Expected '5.6', found '1.2'\n" +
         "warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
         "Hello, versioned world!\n"
-    goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    outputChecker = { out ->
+        goldValue.split("\n")
+                .collect { line -> out.contains(line) }
+                .every { it == true }
+    }
 }
 
 task library_ir_provider_mismatch(type: KonanDriverTest) {
@@ -3749,7 +3754,12 @@ task library_ir_provider_mismatch(type: KonanDriverTest) {
     def messages =
             "warning: skipping $dir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED.\n" +
                     "hello\n"
-    goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    outputChecker = { out ->
+        goldValue.split("\n")
+                .collect { line -> out.contains(line) }
+                .every { it == true }
+    }
 }
 
 if (isAppleTarget(project)) {
