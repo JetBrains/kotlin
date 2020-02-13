@@ -12,6 +12,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.tools.projectWizard.core.Failure
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
@@ -64,6 +65,14 @@ internal fun hyperlinkLabel(
 
 internal fun String.asHtml() = "<html><body>$this</body></html>"
 
+fun Failure.asHtml() = when (errors.size) {
+    0 -> ""
+    1 -> errors.single().message
+    else -> {
+        val errorsList = errors.joinToString(separator = "") { "<li>${it.message}</li>" }
+        "<ul>$errorsList</ul>".asHtml()
+    }
+}
 
 val DisplayableSettingItem.htmlText
     get() = (text + greyText?.let { " <i>($greyText)</i>" }.orEmpty()).asHtml()

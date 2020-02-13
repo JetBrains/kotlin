@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PomWizardStepComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -178,8 +179,7 @@ abstract class WizardStep(protected val wizard: IdeWizard, private val phase: Ge
         when (val result = with(wizard.valuesReadingContext) { with(wizard) { validate(setOf(phase)) } }) {
             is Success<*> -> true
             is Failure -> {
-                val messages = result.errors.joinToString(separator = "\n") { it.message }
-                throw ConfigurationException(messages, "Validation Error")
+                throw ConfigurationException(result.asHtml(), "Validation Error")
             }
         }
 }
