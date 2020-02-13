@@ -1,6 +1,6 @@
 // PROBLEM: none
 class B {
-    operator fun get(vararg args: String) {
+    operator fun get(i: Int, vararg args: String) {
         println(args.size)
     }
 
@@ -9,5 +9,5 @@ class B {
 
 fun main() {
     val args = arrayOf("a", "b")
-    B().<caret>get(*args)
+    B().<caret>get(1, *args)
 }
