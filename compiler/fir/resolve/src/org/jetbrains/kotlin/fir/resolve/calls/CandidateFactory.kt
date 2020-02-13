@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -46,10 +49,23 @@ class CandidateFactory private constructor(
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
+        val receiverExpression = builtInExtensionFunctionReceiverValue?.let {
+            val receiverExpression = builtInExtensionFunctionReceiverValue.receiverExpression
+            if (receiverExpression is FirQualifiedAccessExpression &&
+                it.type != builtInExtensionFunctionReceiverValue.receiverExpression.typeRef.coneTypeUnsafe()) {
+                buildExpressionWithSmartcast {
+                    originalExpression = receiverExpression
+                    typeRef = receiverExpression.typeRef.resolvedTypeFromPrototype(it.type)
+                    typesFromSmartCast = listOf(it.type)
+                }
+            } else {
+                receiverExpression
+            }
+        }
         return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
             explicitReceiverKind, bodyResolveComponents, baseSystem,
-            builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
+            receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
             } ?: callInfo
         )

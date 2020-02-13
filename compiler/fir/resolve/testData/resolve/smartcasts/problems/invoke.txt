@@ -2,7 +2,7 @@ FILE: invoke.kt
     public final fun R|kotlin/Any|.withInvoke(f: R|kotlin/String.() -> kotlin/Unit|): R|kotlin/Unit| {
         when () {
             (this@R|/withInvoke| is R|kotlin/String|) ->  {
-                <Inapplicable(INAPPLICABLE): [kotlin/Function1.invoke]>#()
+                R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/withInvoke|)
             }
         }
 
