@@ -62,13 +62,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
-
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
         val commonRunTask = project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
-        binaries.getBinaries(compilation).all { binary ->
+        compilation.binaries.all { binary ->
             val type = binary.type
 
             val runTask = project.registerTask<KotlinWebpack>(
@@ -136,15 +135,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         assembleTask.dependsOn(distributeResourcesTask)
 
-        val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
-        }
-
-        project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
-            it.dependsOn(webpackCommonTask)
-            it.dependsOn(distributeResourcesTask)
-        }
-
-        binaries.getBinaries(compilation).all { binary ->
+        compilation.binaries.all { binary ->
             val type = binary.type
             val webpackTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
@@ -172,8 +163,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
             if (type == BuildVariantKind.PRODUCTION) {
                 assembleTask.dependsOn(webpackTask)
-                webpackCommonTask.configure {
+                val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
                     it.dependsOn(webpackTask)
+                }
+                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                    it.dependsOn(webpackCommonTask)
+                    it.dependsOn(distributeResourcesTask)
                 }
             }
         }

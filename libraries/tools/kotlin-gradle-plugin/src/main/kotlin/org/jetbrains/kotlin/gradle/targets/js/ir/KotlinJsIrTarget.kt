@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
@@ -48,23 +48,11 @@ constructor(
 
     var producingType: KotlinJsProducingType? = null
 
-    override val binaries: KotlinJsBinaryContainer =
-        // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
-        project.objects.newInstance(
-            KotlinJsBinaryContainer::class.java,
-            this,
-            WrapUtil.toDomainObjectSet(JsBinary::class.java).apply {
-                matching { it is Executable }.all {
-                    whenBrowserConfigured {
-                        (this as KotlinJsIrSubTarget).produceExecutable()
-                    }
-
-                    whenNodejsConfigured {
-                        (this as KotlinJsIrSubTarget).produceExecutable()
-                    }
-                }
-            }
-        )
+    override val binaries: KotlinJsBinaryContainer
+        get() = compilations.withType(KotlinJsIrCompilation::class.java)
+            .named(MAIN_COMPILATION_NAME)
+            .map { it.binaries }
+            .get()
 
     private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask: Task

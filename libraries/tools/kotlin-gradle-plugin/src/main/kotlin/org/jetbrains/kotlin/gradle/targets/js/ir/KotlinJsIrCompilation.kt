@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -15,6 +16,13 @@ class KotlinJsIrCompilation(
     target: KotlinTarget,
     name: String
 ) : KotlinJsCompilation(target, name) {
+
+    internal val binaries: KotlinJsBinaryContainer =
+        target.project.objects.newInstance(
+            KotlinJsBinaryContainer::class.java,
+            this,
+            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+        )
 
     internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
 

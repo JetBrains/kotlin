@@ -9,8 +9,8 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
@@ -21,7 +21,7 @@ import javax.inject.Inject
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
-    val target: KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>,
+    val target: KotlinBinaryContainer<KotlinJsIrCompilation, KotlinJsBinaryContainer>,
     backingContainer: DomainObjectSet<JsBinary>
 ) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project
@@ -29,46 +29,28 @@ constructor(
 
     private val binaryNames = mutableSetOf<String>()
 
-    private val defaultCompilation: KotlinJsCompilation
+    private val defaultCompilation: KotlinJsIrCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-    private val defaultTestCompilation: KotlinJsCompilation
-        get() = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-
     fun executable(
-        compilation: KotlinJsCompilation = defaultCompilation
-    ) = createBinaries(
-        compilation = compilation,
+        compilation: KotlinJsIrCompilation = defaultCompilation
+    ) = compilation.binaries.executable()
+
+    internal fun executable() = createBinaries(
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = ::Executable
     )
 
-    internal fun testExecutable() = createBinaries(
-        compilation = defaultTestCompilation,
-        jsBinaryType = JsBinaryType.TEST,
-        create = ::TestExecutable
-    )
-
-    internal fun getBinaries(
-        compilation: KotlinJsCompilation
-    ): DomainObjectSet<JsBinary> =
-        matching { it.compilation == compilation }
-
     internal fun getBinary(
-        compilation: KotlinJsCompilation,
         buildVariantKind: BuildVariantKind
     ): JsBinary =
-        getBinaries(
-            compilation
-        ).matching { it.type == buildVariantKind }
+        matching { it.type == buildVariantKind }
             .single()
 
-
     private fun <T : JsBinary> createBinaries(
-        compilation: KotlinJsCompilation,
         buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
-        create: (name: String, buildVariantKind: BuildVariantKind, compilation: KotlinJsCompilation) -> T
+        create: (target: KotlinTarget, name: String, buildVariantKind: BuildVariantKind) -> T
     ) {
         buildVariantKinds.forEach { buildVariantKind ->
             val name = generateBinaryName(
@@ -80,7 +62,7 @@ constructor(
                 "Cannot create binary $name: binary with such a name already exists"
             }
 
-            val binary = create(name, buildVariantKind, compilation)
+            val binary = create(target, name, buildVariantKind)
             add(binary)
             // Allow accessing binaries as properties of the container in Groovy DSL.
             if (this is ExtensionAware) {

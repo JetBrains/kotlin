@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -350,15 +350,15 @@ internal class KotlinJsIrSourceSetProcessor(
             it.dependsOn(kotlinTask)
         }
 
-        (kotlinCompilation.target as KotlinJsIrTarget).binaries
-            .matching { it.compilation == kotlinCompilation }
-            .all { binary ->
-                registerKotlinCompileTask(
-                    binary.linkTaskName
-                ) { project, name, action ->
-                    registerJsLink(project, name, binary.type, action)
-                }
+        val compilation = kotlinCompilation as KotlinJsIrCompilation
+
+        compilation.binaries.all { binary ->
+            registerKotlinCompileTask(
+                binary.linkTaskName
+            ) { project, name, action ->
+                registerJsLink(project, name, binary.type, action)
             }
+        }
 
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.runOnceAfterEvaluated("KotlinJsIrSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {

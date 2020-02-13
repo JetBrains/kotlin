@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 sealed class JsBinary(
+    internal val target: KotlinTarget,
     internal val name: String,
-    internal val type: BuildVariantKind,
-    internal val compilation: KotlinJsCompilation
+    internal val type: BuildVariantKind
 ) {
     val linkTaskName: String = linkTaskName()
 
@@ -33,29 +32,26 @@ sealed class JsBinary(
             target.targetName
         )
 
-    val target: KotlinTarget
-        get() = compilation.target
-
     val project: Project
         get() = target.project
 }
 
 class Executable(
+    target: KotlinTarget,
     name: String,
-    type: BuildVariantKind,
-    compilation: KotlinJsCompilation
+    type: BuildVariantKind
 ) : JsBinary(
+    target,
     name,
-    type,
-    compilation
+    type
 )
 
 class TestExecutable(
+    target: KotlinTarget,
     name: String,
-    type: BuildVariantKind,
-    compilation: KotlinJsCompilation
+    type: BuildVariantKind
 ) : JsBinary(
+    target,
     name,
-    type,
-    compilation
+    type
 )
