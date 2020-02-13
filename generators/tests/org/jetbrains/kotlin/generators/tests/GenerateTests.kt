@@ -453,6 +453,7 @@ fun main(args: Array<String>) {
             model("codeInsight/moveUpDown/closingBraces", testMethod = "doTestExpression")
             model("codeInsight/moveUpDown/expressions", pattern = KT_OR_KTS, testMethod = "doTestExpression")
             model("codeInsight/moveUpDown/parametersAndArguments", testMethod = "doTestExpression")
+            model("codeInsight/moveUpDown/trailingComma", testMethod = "doTestExpressionWithTrailingComma")
         }
 
         testClass<AbstractMoveLeftRightTest> {

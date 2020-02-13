@@ -1366,4 +1366,137 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams8.kt");
         }
     }
+
+    @TestMetadata("idea/testData/codeInsight/moveUpDown/trailingComma")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TrailingComma extends AbstractMoveStatementTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestExpressionWithTrailingComma, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTrailingComma() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/trailingComma"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("callArgs1.kt")
+        public void testCallArgs1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs1.kt");
+        }
+
+        @TestMetadata("callArgs2.kt")
+        public void testCallArgs2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs2.kt");
+        }
+
+        @TestMetadata("callArgs3.kt")
+        public void testCallArgs3() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs3.kt");
+        }
+
+        @TestMetadata("callArgs4.kt")
+        public void testCallArgs4() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs4.kt");
+        }
+
+        @TestMetadata("callArgs5.kt")
+        public void testCallArgs5() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs5.kt");
+        }
+
+        @TestMetadata("callArgs6.kt")
+        public void testCallArgs6() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs6.kt");
+        }
+
+        @TestMetadata("callArgs7.kt")
+        public void testCallArgs7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs7.kt");
+        }
+
+        @TestMetadata("callArgs8.kt")
+        public void testCallArgs8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/callArgs8.kt");
+        }
+
+        @TestMetadata("classParams1.kt")
+        public void testClassParams1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams1.kt");
+        }
+
+        @TestMetadata("classParams2.kt")
+        public void testClassParams2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams2.kt");
+        }
+
+        @TestMetadata("classParams3.kt")
+        public void testClassParams3() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams3.kt");
+        }
+
+        @TestMetadata("classParams4.kt")
+        public void testClassParams4() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams4.kt");
+        }
+
+        @TestMetadata("classParams5.kt")
+        public void testClassParams5() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams5.kt");
+        }
+
+        @TestMetadata("classParams6.kt")
+        public void testClassParams6() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams6.kt");
+        }
+
+        @TestMetadata("classParams7.kt")
+        public void testClassParams7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams7.kt");
+        }
+
+        @TestMetadata("classParams8.kt")
+        public void testClassParams8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/classParams8.kt");
+        }
+
+        @TestMetadata("funParams1.kt")
+        public void testFunParams1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams1.kt");
+        }
+
+        @TestMetadata("funParams2.kt")
+        public void testFunParams2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams2.kt");
+        }
+
+        @TestMetadata("funParams3.kt")
+        public void testFunParams3() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams3.kt");
+        }
+
+        @TestMetadata("funParams4.kt")
+        public void testFunParams4() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams4.kt");
+        }
+
+        @TestMetadata("funParams5.kt")
+        public void testFunParams5() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams5.kt");
+        }
+
+        @TestMetadata("funParams6.kt")
+        public void testFunParams6() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams6.kt");
+        }
+
+        @TestMetadata("funParams7.kt")
+        public void testFunParams7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams7.kt");
+        }
+
+        @TestMetadata("funParams8.kt")
+        public void testFunParams8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/trailingComma/funParams8.kt");
+        }
+    }
 }

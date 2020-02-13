@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -36,8 +37,12 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
         doTest(path, KotlinExpressionMover::class.java)
     }
 
-    private fun doTest(path: String, defaultMoverClass: Class<out StatementUpDownMover>) {
-        doTest(path) { isApplicableExpected, direction ->
+    protected fun doTestExpressionWithTrailingComma(path: String) {
+        doTest(path, KotlinExpressionMover::class.java, true)
+    }
+
+    private fun doTest(path: String, defaultMoverClass: Class<out StatementUpDownMover>, trailingComma: Boolean = false) {
+        doTest(path, trailingComma) { isApplicableExpected, direction ->
             val movers = Extensions.getExtensions(StatementUpDownMover.STATEMENT_UP_DOWN_MOVER_EP)
             val info = StatementUpDownMover.MoveInfo()
             val actualMover = movers.firstOrNull {
@@ -68,7 +73,11 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
         super.tearDown()
     }
 
-    protected fun doTest(path: String, isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit) {
+    protected fun doTest(
+        path: String,
+        trailingComma: Boolean = false,
+        isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit
+    ) {
         configureByFile(path)
 
         val fileText = FileUtil.loadFile(File(path), true)
@@ -87,38 +96,37 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
 
         isApplicableChecker(isApplicableExpected, direction)
 
-        invokeAndCheck(fileText, path, action, isApplicableExpected)
-    }
-
-    private fun invokeAndCheck(fileText: String, path: String, action: EditorAction, isApplicableExpected: Boolean) {
-        val editor = editor_
-        val project = editor.project!!
-
         val codeStyleSettings = CodeStyle.getSettings(project)
-        val configurator = FormatSettingsUtil.createConfigurator(fileText, codeStyleSettings)
-        configurator.configureSettings()
-
         try {
-            val dataContext = currentEditorDataContext_
+            val configurator = FormatSettingsUtil.createConfigurator(fileText, codeStyleSettings)
+            configurator.configureSettings()
 
-            val before = editor.document.text
-            runWriteAction { action.actionPerformed(editor, dataContext) }
-
-            val after = editor.document.text
-            val actionDoesNothing = after == before
-
-            TestCase.assertEquals(isApplicableExpected, !actionDoesNothing)
-
-            if (isApplicableExpected) {
-                val afterFilePath = "$path.after"
-                try {
-                    checkResultByFile(afterFilePath)
-                } catch (e: ComparisonFailure) {
-                    KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
-                }
-            }
+            if (trailingComma) codeStyleSettings.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
+            invokeAndCheck(path, action, isApplicableExpected)
         } finally {
             codeStyleSettings.clearCodeStyleSettings()
+        }
+    }
+
+    private fun invokeAndCheck(path: String, action: EditorAction, isApplicableExpected: Boolean) {
+        val editor = editor_
+        val dataContext = currentEditorDataContext_
+
+        val before = editor.document.text
+        runWriteAction { action.actionPerformed(editor, dataContext) }
+
+        val after = editor.document.text
+        val actionDoesNothing = after == before
+
+        TestCase.assertEquals(isApplicableExpected, !actionDoesNothing)
+
+        if (isApplicableExpected) {
+            val afterFilePath = "$path.after"
+            try {
+                checkResultByFile(afterFilePath)
+            } catch (e: ComparisonFailure) {
+                KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
+            }
         }
     }
 

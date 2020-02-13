@@ -4,16 +4,19 @@
  */
 package org.jetbrains.kotlin.idea.codeInsight.upDownMover
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.util.isMultiLine
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper
 import org.jetbrains.kotlin.idea.formatter.isComma
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.function.Predicate
 
 class KotlinExpressionMover : AbstractKotlinUpDownMover() {
@@ -117,9 +120,14 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
             val (first, second) = parametersOrArgsToMove ?: return
             val lastElementOnFirstLine = getLastSiblingOfSameTypeInLine(first, editor)
             val lastElementOnSecondLine = getLastSiblingOfSameTypeInLine(second, editor)
+            val withTrailingComma = lastElementOnFirstLine.parent
+                ?.safeAs<KtElement>()
+                ?.let {
+                    TrailingCommaHelper.needComma(it, CodeStyle.getSettings(it.project), true)
+                } == true
 
-            fixCommaIfNeeded(lastElementOnFirstLine, down && isLastOfItsKind(lastElementOnSecondLine, true))
-            fixCommaIfNeeded(lastElementOnSecondLine, !down && isLastOfItsKind(lastElementOnFirstLine, true))
+            fixCommaIfNeeded(lastElementOnFirstLine, down && isLastOfItsKind(lastElementOnSecondLine, true), withTrailingComma)
+            fixCommaIfNeeded(lastElementOnSecondLine, !down && isLastOfItsKind(lastElementOnFirstLine, true),withTrailingComma)
             editor.project?.let { PsiDocumentManager.getInstance(it).doPostponedOperationsAndUnblockDocument(editor.document) }
         }
     }
@@ -476,15 +484,15 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
                 predicate = MOVABLE_ELEMENT_CONSTRAINT
             ) ?: return null
 
-            if (isBracelessBlock(movableElement)) {
-                return StatementUpDownMover.firstNonWhiteElement(
+            return if (isBracelessBlock(movableElement)) {
+                StatementUpDownMover.firstNonWhiteElement(
                     if (lookRight)
                         movableElement.lastChild
                     else
                         movableElement.firstChild, !lookRight
                 )
             } else {
-                return movableElement
+                movableElement
             }
         }
 
@@ -550,9 +558,9 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
 
         private fun getComma(element: PsiElement): PsiElement? = firstNonWhiteSibling(element, true)?.takeIf(PsiElement::isComma)
 
-        private fun fixCommaIfNeeded(element: PsiElement, willBeLast: Boolean) {
+        private fun fixCommaIfNeeded(element: PsiElement, willBeLast: Boolean, withTrailingComma: Boolean) {
             val comma = getComma(element)
-            if (willBeLast && comma != null) {
+            if (willBeLast && comma != null && !withTrailingComma) {
                 comma.delete()
             } else if (!willBeLast && comma == null) {
                 val parent = element.parent
