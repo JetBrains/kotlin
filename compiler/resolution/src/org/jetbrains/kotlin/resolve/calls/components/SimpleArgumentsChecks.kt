@@ -31,30 +31,17 @@ import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-class ReceiverInfo(
-    val isReceiver: Boolean,
-    val shouldReportUnsafeCall: Boolean, // should not report if unsafe implicit invoke has been reported already
-    val reportUnsafeCallAsUnsafeImplicitInvoke: Boolean,
-) {
-    init {
-        assert(!reportUnsafeCallAsUnsafeImplicitInvoke || shouldReportUnsafeCall) { "Inconsistent receiver info" }
-    }
-
-    companion object {
-        val notReceiver = ReceiverInfo(isReceiver = false, shouldReportUnsafeCall = true, reportUnsafeCallAsUnsafeImplicitInvoke = false)
-    }
-}
 
 fun checkSimpleArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: SimpleKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    receiverInfo: ReceiverInfo,
+    isReceiver: Boolean,
     convertedType: UnwrappedType?
 ): ResolvedAtom = when (argument) {
-    is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo.isReceiver, convertedType)
-    is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo)
+    is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver, convertedType)
+    is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
     else -> unexpectedArgument(argument)
 }
 
@@ -177,14 +164,14 @@ private fun checkSubCallArgument(
     subCallArgument: SubKotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    receiverInfo: ReceiverInfo,
+    isReceiver: Boolean
 ): ResolvedAtom {
     val subCallResult = subCallArgument.callResult
 
     if (expectedType == null) return subCallResult
 
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
-    val position = if (receiverInfo.isReceiver) ReceiverConstraintPosition(subCallArgument) else ArgumentConstraintPosition(subCallArgument)
+    val position = if (isReceiver) ReceiverConstraintPosition(subCallArgument) else ArgumentConstraintPosition(subCallArgument)
 
     // subArgument cannot has stable smartcast
     // return type can contains fixed type variables
@@ -196,15 +183,10 @@ private fun checkSubCallArgument(
         return subCallResult
     }
 
-    if (receiverInfo.isReceiver
-        && !csBuilder.addSubtypeConstraintIfCompatible(currentReturnType, expectedType, position)
-        && csBuilder.addSubtypeConstraintIfCompatible(currentReturnType, expectedNullableType, position)
+    if (isReceiver && !csBuilder.addSubtypeConstraintIfCompatible(currentReturnType, expectedType, position) &&
+        csBuilder.addSubtypeConstraintIfCompatible(currentReturnType, expectedNullableType, position)
     ) {
-        if (receiverInfo.shouldReportUnsafeCall) {
-            diagnosticsHolder.addDiagnostic(
-                UnsafeCallError(subCallArgument, isForImplicitInvoke = receiverInfo.reportUnsafeCallAsUnsafeImplicitInvoke)
-            )
-        }
+        diagnosticsHolder.addDiagnostic(UnsafeCallError(subCallArgument))
         return subCallResult
     }
 
