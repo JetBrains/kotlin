@@ -65,7 +65,7 @@ public abstract class ChooseByNameFilter<T> {
                             @NotNull ChooseByNameFilterConfiguration<T> filterConfiguration,
                             @NotNull Project project) {
     myParentPopup = popup;
-    DefaultActionGroup actionGroup = new DefaultActionGroup("go.to.file.filter", false);
+    DefaultActionGroup actionGroup = DefaultActionGroup.createFlatGroup(() -> "go.to.file.filter");
     ToggleAction action = new FilterAction() {
       @Override
       protected boolean isActive() {

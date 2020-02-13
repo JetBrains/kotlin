@@ -557,7 +557,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   @NotNull
   @Override
   public List<AnAction> getActions(boolean originalProvider) {
-    DefaultActionGroup views = new DefaultActionGroup("Change View", true);
+    DefaultActionGroup views = DefaultActionGroup.createPopupGroup(() -> "Change View");
 
     ChangeViewAction lastHeader = null;
     for (int i = 0; i < myContentManager.getContentCount(); i++) {

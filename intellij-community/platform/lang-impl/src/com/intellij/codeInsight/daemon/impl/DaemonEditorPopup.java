@@ -48,7 +48,7 @@ public class DaemonEditorPopup extends PopupHandler {
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     Shortcut shortcut = KeymapUtil.getPrimaryShortcut("GotoNextError");
     String shortcutText = shortcut != null ? " (" + KeymapUtil.getShortcutText(shortcut) + ")" : "";
-    DefaultActionGroup gotoGroup = new DefaultActionGroup("'Next Error' Action" + shortcutText + " Goes Through", true);
+    DefaultActionGroup gotoGroup = DefaultActionGroup.createPopupGroup(() -> "'Next Error' Action" + shortcutText + " Goes Through");
     gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.errors.first.radio")) {
                     @Override
                     public boolean isSelected(@NotNull AnActionEvent e) {

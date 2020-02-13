@@ -88,7 +88,7 @@ public final class UsageViewContentManagerImpl extends UsageViewContentManager {
       }
     };
 
-    DefaultActionGroup gearActions = new DefaultActionGroup(IdeBundle.message("group.view.options"), true);
+    DefaultActionGroup gearActions = DefaultActionGroup.createPopupGroup(() -> IdeBundle.message("group.view.options"));
     gearActions.addAll(toggleAutoscrollAction, toggleSortAction, toggleNewTabAction);
     ((ToolWindowEx)toolWindow).setAdditionalGearActions(gearActions);
 
