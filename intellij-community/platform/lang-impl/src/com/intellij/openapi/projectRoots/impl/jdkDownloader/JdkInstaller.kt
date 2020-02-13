@@ -82,7 +82,7 @@ object JdkInstaller {
   }
 
   fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?) {
-    ApplicationManager.getApplication()?.messageBus?.syncPublisher(TOPIC)?.onJdkDownloadFinished(request)
+    ApplicationManager.getApplication()?.messageBus?.syncPublisher(TOPIC)?.onJdkDownloadStarted(request)
 
     val item = request.item
     indicator?.text = "Installing ${item.fullPresentationText}..."

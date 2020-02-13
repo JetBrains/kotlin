@@ -36,6 +36,10 @@ import gnu.trove.TIntObjectIterator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.AsyncPromiseKt;
+import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -151,11 +155,32 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     }
   }
 
+  @NotNull
+  public Promise<Void> preloadIndex(@NotNull Project project,
+                                    @NotNull ChunkDescriptor descriptor,
+                                    @NotNull ProgressIndicator indicator) {
+    AsyncPromise<Void> p = new AsyncPromise<>();
+    Runnable runnable = () -> {
+      Promises.compute(p, () -> {
+        loadSharedIndex(project, descriptor, indicator, IndexInfrastructureVersion.getIdeVersion());
+        return null;
+      });
+    };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      runnable.run();
+    } else {
+      ProcessIOExecutorService.INSTANCE.execute(runnable);
+    }
+
+    return p;
+  }
+
   // for now called sequentially on a single background thread
-  public void loadSharedIndex(@NotNull Project project,
-                              @NotNull ChunkDescriptor descriptor,
-                              @NotNull ProgressIndicator indicator,
-                              @NotNull IndexInfrastructureVersion ideVersion) {
+  private void loadSharedIndex(@NotNull Project project,
+                               @NotNull ChunkDescriptor descriptor,
+                               @NotNull ProgressIndicator indicator,
+                               @NotNull IndexInfrastructureVersion ideVersion) {
     if (project.isDisposed()) return;
 
     Path tempChunk = null;
@@ -163,15 +188,18 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       ensureSharedIndexConfigurationRootExist();
       tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
 
-      if (chunkIsNotRegistered(descriptor)) {
-        long ms = System.currentTimeMillis();
-        try {
-          descriptor.downloadChunk(tempChunk, indicator);
-          SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getStorageToAppend(), descriptor, ideVersion);
-        } finally {
-          LOG.info("Chunk " + descriptor.getChunkUniqueId() + " is downloaded in " + (System.currentTimeMillis() - ms) + " ms");
-        }
+      if (!chunkIsNotRegistered(descriptor)) {
+        return;
       }
+
+      long ms = System.currentTimeMillis();
+      try {
+        descriptor.downloadChunk(tempChunk, indicator);
+        SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getStorageToAppend(), descriptor, ideVersion);
+      } finally {
+        LOG.info("Chunk " + descriptor.getChunkUniqueId() + " is downloaded in " + (System.currentTimeMillis() - ms) + " ms");
+      }
+
     } catch (Exception e) {
       //noinspection InstanceofCatchParameter
       if (e instanceof ProcessCanceledException) ExceptionUtil.rethrow(e);

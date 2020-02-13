@@ -116,9 +116,14 @@ public final class UncompressedZipFileSystem extends FileSystem {
     return "/";
   }
 
+  @NotNull
+  public Path getRootDirectory() {
+    return new UncompressedZipPath(this, ArrayUtil.EMPTY_STRING_ARRAY, true);
+  }
+
   @Override
   public Iterable<Path> getRootDirectories() {
-    return Collections.singleton(new UncompressedZipPath(this, ArrayUtil.EMPTY_STRING_ARRAY, true));
+    return Collections.singleton(getRootDirectory());
   }
 
   @Override

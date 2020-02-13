@@ -4,7 +4,6 @@ package com.intellij.util.indexing.zipFs;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -12,7 +11,6 @@ import java.net.URI;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class UncompressedZipPath implements Path {
@@ -71,6 +69,9 @@ public final class UncompressedZipPath implements Path {
   @NotNull
   @Override
   public Path getName(int index) {
+    if (index >= myNameElements.length) {
+      throw new IndexOutOfBoundsException("Invalid index " + index + " for " + this);
+    }
     return new UncompressedZipPath(myFileSystem, new String[] {myNameElements[index]}, false);
   }
 
