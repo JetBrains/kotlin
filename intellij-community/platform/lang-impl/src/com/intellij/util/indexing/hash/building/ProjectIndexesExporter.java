@@ -33,12 +33,13 @@ public class ProjectIndexesExporter {
 
   public @NotNull IndexInfrastructureVersion exportIndices(@NotNull Path outZipFile,
                                                            @NotNull ProgressIndicator indicator) {
-    List<IndexChunk> chunks = ReadAction.compute(() -> buildChunks());
-    return IndexesExporter.getInstance(myProject).exportIndices(chunks, outZipFile, indicator);
+    indicator.setText("Collecting source roots to index...");
+    IndexChunk chunks = ReadAction.compute(() -> buildChunks());
+    return IndexesExporter.getInstance(myProject).exportIndexesChunk(chunks, outZipFile, indicator);
   }
 
   @NotNull
-  private List<IndexChunk> buildChunks() {
+  private IndexChunk buildChunks() {
     Collection<IndexChunk> projectChunks = Arrays
       .stream(ModuleManager.getInstance(myProject).getModules())
       .flatMap(m -> generateIndexChunk(m))
@@ -63,9 +64,17 @@ public class ProjectIndexesExporter {
       }
     }
 
-    return Stream.concat(projectChunks.stream(),
-                         Stream.of(new IndexChunk(additionalRoots, "ADDITIONAL"),
-                                   new IndexChunk(synthRoots, "SYNTH"))).collect(Collectors.toList());
+    //return Stream.concat(projectChunks.stream(),
+    //                     Stream.of(new IndexChunk(additionalRoots, "ADDITIONAL"),
+    //                               new IndexChunk(synthRoots, "SYNTH"))).collect(Collectors.toList());
+
+
+    Set<VirtualFile> allRoots = Stream.concat(
+      projectChunks.stream().map(x -> x.getRoots()),
+      Stream.of(additionalRoots, synthRoots)
+    ).flatMap(x -> x.stream()).collect(Collectors.toSet());
+
+    return new IndexChunk(allRoots, myProject.getName());
   }
 
   @NotNull

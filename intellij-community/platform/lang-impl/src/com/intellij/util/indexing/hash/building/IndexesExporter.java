@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
@@ -52,36 +50,8 @@ public class IndexesExporter {
     return project.getService(IndexesExporter.class);
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
-  @NotNull
-  public IndexInfrastructureVersion exportIndices(@NotNull List<IndexChunk> chunks,
-                                                  @NotNull Path zipFile,
-                                                  @NotNull ProgressIndicator indicator) {
-    Path indexRoot = getUnpackedIndexRoot(zipFile);
-
-    indicator.setIndeterminate(false);
-    AtomicInteger idx = new AtomicInteger();
-    AtomicReference<IndexInfrastructureVersion> versionRef = new AtomicReference<>(null);
-    if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(chunks, indicator, chunk -> {
-      indicator.setText("Indexing chunk " + chunk.getName());
-      Path chunkRoot = indexRoot.resolve(chunk.getName());
-      IndexInfrastructureVersion infrastructureVersion = ReadAction.compute(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
-      //all the versions are similar, we need any
-      versionRef.set(infrastructureVersion);
-      indicator.setFraction(((double) idx.incrementAndGet()) / chunks.size());
-      return true;
-    })) {
-      throw new RuntimeException("Failed to execute indexing jobs");
-    }
-
-    zipIndexOut(indexRoot, zipFile, indicator);
-    return versionRef.get();
-  }
-
-  @NotNull
-  public IndexInfrastructureVersion exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile) {
+  public IndexInfrastructureVersion exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile, @NotNull ProgressIndicator indicator) {
     Path chunkRoot = getUnpackedIndexRoot(zipFile);
-    EmptyProgressIndicator indicator = new EmptyProgressIndicator();
     IndexInfrastructureVersion version = ReadAction.compute(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
     zipIndexOut(chunkRoot, zipFile, indicator);
     return version;

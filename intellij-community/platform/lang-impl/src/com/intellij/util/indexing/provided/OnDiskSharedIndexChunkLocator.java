@@ -4,23 +4,18 @@ package com.intellij.util.indexing.provided;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.indexing.IndexInfrastructureVersion;
 import com.intellij.util.io.PathKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jps.TimingLog.LOG;
-
 public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
-  public static final String ROOT_PROP = "on.disk.shared.index.root";
+  public static final String ROOT_PROP = "on.disk.shared.index.root"; //NON-NLS
 
   @Override
   public List<ChunkDescriptor> locateIndex(@NotNull Project project,
@@ -30,57 +25,27 @@ public class OnDiskSharedIndexChunkLocator implements SharedIndexChunkLocator {
     if (indexRoot == null) return Collections.emptyList();
     File indexZip = new File(indexRoot);
     if (!indexZip.exists() || !indexZip.isFile()) return Collections.emptyList();
-    URI uri = URI.create("jar:" + indexZip.toURI());
-    try {
-      String name;
-      try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
-        name = getUniqueChunk(fs);
+    String name = indexZip.getName();
+    return Collections.singletonList(new ChunkDescriptor() {
+      @Override
+      public @NotNull String getChunkUniqueId() {
+        return name;
       }
-      if (name == null) return Collections.emptyList();
 
-      return Collections.singletonList(new ChunkDescriptor() {
-        @Override
-        public @NotNull String getChunkUniqueId() {
-          return name;
-        }
-
-        @Override
-        public @NotNull IndexInfrastructureVersion getSupportedInfrastructureVersion() {
-          return IndexInfrastructureVersion.getIdeVersion();
-        }
-
-        @Override
-        public @NotNull Collection<? extends OrderEntry> getOrderEntries() {
-          return entries;
-        }
-
-        @Override
-        public void downloadChunk(@NotNull Path targetFile, @NotNull ProgressIndicator indicator) {
-          PathKt.copy(indexZip.toPath(), targetFile);
-        }
-      });
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
-
-    return Collections.emptyList();
-  }
-
-  private static String getUniqueChunk(@NotNull FileSystem fs) throws IOException {
-    Iterable<Path> directories = fs.getRootDirectories();
-    Path root = null;
-    for (Path directory : directories) {
-      if (root != null) {
-        throw new IOException("multiple roots root for " + fs);
+      @Override
+      public @NotNull IndexInfrastructureVersion getSupportedInfrastructureVersion() {
+        return IndexInfrastructureVersion.getIdeVersion();
       }
-      root = directory;
-    }
-    if (root == null) throw new IOException("no roots in " + fs);
-    DirectoryStream<Path> paths = Files.newDirectoryStream(root);
-    for (Path path : paths) {
-      return StringUtil.trimEnd(path.getFileName().toString(), "/");
-    }
-    return null;
+
+      @Override
+      public @NotNull Collection<? extends OrderEntry> getOrderEntries() {
+        return entries;
+      }
+
+      @Override
+      public void downloadChunk(@NotNull Path targetFile, @NotNull ProgressIndicator indicator) {
+        PathKt.copy(indexZip.toPath(), targetFile);
+      }
+    });
   }
 }
