@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
-import org.jetbrains.kotlin.backend.jvm.codegen.coerce
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.org.objectweb.asm.Type
 
 /**
  * Implicit coercion between IrTypes with the same underlying representation.
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
  * addition to the underlying asmType.
  */
 object UnsafeCoerce : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val from = expression.getTypeArgument(0)!!
         val to = expression.getTypeArgument(1)!!
         val fromType = codegen.typeMapper.mapType(from)
@@ -30,7 +29,14 @@ object UnsafeCoerce : IntrinsicMethod() {
         val arg = expression.getValueArgument(0)!!
         val result = arg.accept(codegen, data)
         return object : PromisedValue(codegen, toType, to) {
-            override fun materialize() = result.coerce(from).materialize()
+            override fun materializeAt(target: Type, irTarget: IrType) {
+                result.materializeAt(fromType, from)
+                super.materializeAt(target, irTarget)
+            }
+
+            override fun discard() {
+                result.discard()
+            }
         }
     }
 }

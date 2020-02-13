@@ -26,22 +26,21 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object JavaClassProperty : IntrinsicMethod() {
     private fun invokeGetClass(value: PromisedValue) {
-        value.materialize()
         value.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
     }
 
     fun invokeWith(value: PromisedValue) =
         when {
             value.type == Type.VOID_TYPE ->
-                invokeGetClass(value.coerce(AsmTypes.UNIT_TYPE, value.codegen.context.irBuiltIns.unitType))
+                invokeGetClass(value.materializedAt(AsmTypes.UNIT_TYPE, value.codegen.context.irBuiltIns.unitType))
             value.irType.classOrNull?.owner?.isInline == true ->
-                invokeGetClass(value.coerceToBoxed(value.irType))
+                invokeGetClass(value.materializedAtBoxed(value.irType))
             isPrimitive(value.type) -> {
                 value.discard()
                 value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
             }
             else ->
-                invokeGetClass(value)
+                invokeGetClass(value.materialized())
         }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {

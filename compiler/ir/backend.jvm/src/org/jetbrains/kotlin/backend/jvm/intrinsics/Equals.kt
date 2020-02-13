@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -39,8 +40,8 @@ class ExplicitEquals : IntrinsicMethod() {
         val (a, b) = expression.receiverAndArgs()
 
         // TODO use specialized boxed type - this might require types like 'java.lang.Integer' in IR
-        a.accept(codegen, data).coerce(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType).materialize()
-        b.accept(codegen, data).coerce(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType).materialize()
+        a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
+        b.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
         codegen.mv.visitMethodInsn(
             Opcodes.INVOKEVIRTUAL,
             AsmTypes.OBJECT_TYPE.internalName,
@@ -54,15 +55,13 @@ class ExplicitEquals : IntrinsicMethod() {
 }
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
-    private class BooleanConstantFalseCheck(val value: PromisedValue) : BooleanValue(value.codegen) {
-        override fun materialize() = value.discard().let { mv.iconst(0) }
-        override fun jumpIfFalse(target: Label) = value.discard().let { mv.fakeAlwaysTrueIfeq(target) }
-        override fun jumpIfTrue(target: Label) = value.discard().let { mv.fakeAlwaysFalseIfeq(target) }
-    }
 
     private class BooleanNullCheck(val value: PromisedValue) : BooleanValue(value.codegen) {
         override fun jumpIfFalse(target: Label) = value.materialize().also { mv.ifnonnull(target) }
         override fun jumpIfTrue(target: Label) = value.materialize().also { mv.ifnull(target) }
+        override fun discard() {
+            value.discard()
+        }
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
@@ -72,8 +71,10 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             val value = irValue.accept(codegen, data)
             return if (!isPrimitive(value.type) && (irValue.type.classOrNull?.owner?.isInline != true || irValue.type.isNullable()))
                 BooleanNullCheck(value)
-            else
-                BooleanConstantFalseCheck(value)
+            else {
+                value.discard()
+                BooleanConstant(codegen, false)
+            }
         }
 
         val leftType = with(codegen) { a.asmType }
@@ -84,14 +85,14 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
                 // is that `equals` is a total order (-0 < +0 and NaN == NaN) and `===` is IEEE754-compliant.
                 (!isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
         return if (useEquals) {
-            a.accept(codegen, data).coerce(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType).materialize()
-            b.accept(codegen, data).coerce(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType).materialize()
+            a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
+            b.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
             genAreEqualCall(codegen.mv)
             MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
         } else {
             val operandType = if (!isPrimitive(leftType)) AsmTypes.OBJECT_TYPE else leftType
-            val aValue = a.accept(codegen, data).coerce(operandType, a.type).materialized
-            val bValue = b.accept(codegen, data).coerce(operandType, b.type).materialized
+            val aValue = a.accept(codegen, data).materializedAt(operandType, a.type)
+            val bValue = b.accept(codegen, data).materializedAt(operandType, b.type)
             BooleanComparison(operator, aValue, bValue)
         }
     }
