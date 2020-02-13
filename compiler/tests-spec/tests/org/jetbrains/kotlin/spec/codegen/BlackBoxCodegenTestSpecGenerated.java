@@ -3388,6 +3388,70 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
                 }
             }
+
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Receivers extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInReceivers() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_5 extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_5() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("2.1.kt")
+                        public void test2_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/2.1.kt");
+                        }
+
+                        @TestMetadata("2.2.kt")
+                        public void test2_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/2.2.kt");
+                        }
+
+                        @TestMetadata("3.1.kt")
+                        public void test3_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/3.1.kt");
+                        }
+
+                        @TestMetadata("3.2.kt")
+                        public void test3_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/3.2.kt");
+                        }
+
+                        @TestMetadata("4.1.kt")
+                        public void test4_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/4.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+                    }
+                }
+            }
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements")
