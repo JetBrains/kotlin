@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.backend
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.psi
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.Variance
@@ -214,4 +218,39 @@ private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
     FirConstKind.Float -> IrConstKind.Float
     FirConstKind.Double -> IrConstKind.Double
     FirConstKind.IntegerLiteral -> throw IllegalArgumentException()
+}
+
+internal fun FirClass<*>.collectCallableNamesFromSupertypes(session: FirSession, result: MutableList<Name> = mutableListOf()): List<Name> {
+    for (superTypeRef in superTypeRefs) {
+        superTypeRef.collectCallableNamesFromThisAndSupertypes(session, result)
+    }
+    return result
+}
+
+private fun FirTypeRef.collectCallableNamesFromThisAndSupertypes(
+    session: FirSession,
+    result: MutableList<Name> = mutableListOf()
+): List<Name> {
+    if (this is FirResolvedTypeRef) {
+        val superType = type
+        if (superType is ConeClassLikeType) {
+            when (val superSymbol = superType.lookupTag.toSymbol(session)) {
+                is FirClassSymbol -> {
+                    val superClass = superSymbol.fir as FirClass<*>
+                    for (declaration in superClass.declarations) {
+                        when (declaration) {
+                            is FirSimpleFunction -> result += declaration.name
+                            is FirVariable<*> -> result += declaration.name
+                        }
+                    }
+                    superClass.collectCallableNamesFromSupertypes(session, result)
+                }
+                is FirTypeAliasSymbol -> {
+                    val superAlias = superSymbol.fir
+                    superAlias.expandedTypeRef.collectCallableNamesFromThisAndSupertypes(session, result)
+                }
+            }
+        }
+    }
+    return result
 }

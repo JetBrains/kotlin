@@ -183,44 +183,12 @@ class Fir2IrVisitor(
         return irEnumEntry.setParentByParentStack()
     }
 
-    private fun FirTypeRef.collectCallableNamesFromThisAndSupertypes(result: MutableList<Name> = mutableListOf()): List<Name> {
-        if (this is FirResolvedTypeRef) {
-            val superType = type
-            if (superType is ConeClassLikeType) {
-                when (val superSymbol = superType.lookupTag.toSymbol(this@Fir2IrVisitor.session)) {
-                    is FirClassSymbol -> {
-                        val superClass = superSymbol.fir as FirClass<*>
-                        for (declaration in superClass.declarations) {
-                            when (declaration) {
-                                is FirSimpleFunction -> result += declaration.name
-                                is FirVariable<*> -> result += declaration.name
-                            }
-                        }
-                        superClass.collectCallableNamesFromSupertypes(result)
-                    }
-                    is FirTypeAliasSymbol -> {
-                        val superAlias = superSymbol.fir
-                        superAlias.expandedTypeRef.collectCallableNamesFromThisAndSupertypes(result)
-                    }
-                }
-            }
-        }
-        return result
-    }
-
-    private fun FirClass<*>.collectCallableNamesFromSupertypes(result: MutableList<Name> = mutableListOf()): List<Name> {
-        for (superTypeRef in superTypeRefs) {
-            superTypeRef.collectCallableNamesFromThisAndSupertypes(result)
-        }
-        return result
-    }
-
     private fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
         declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
 
     private fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
-        val superTypesCallableNames = klass.collectCallableNamesFromSupertypes()
+        val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
         val useSiteMemberScope = (klass as? FirRegularClass)?.buildUseSiteMemberScope(session, ScopeSession()) ?: return
         for (name in superTypesCallableNames) {
             if (name in processedCallableNames) continue
@@ -315,7 +283,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement {
-        return declarationStorage.getIrClass(regularClass, setParent = false)
+        return declarationStorage.getIrClass(regularClass, setParentAndContent = false)
             .setParentByParentStack()
             .withParent {
                 setClassContent(regularClass)
@@ -360,7 +328,7 @@ class Fir2IrVisitor(
                         lastClass
                     } else {
                         val firClass = classLikeSymbol.fir as FirClass<*>
-                        declarationStorage.getIrClass(firClass, setParent = false)
+                        declarationStorage.getIrClass(firClass, setParentAndContent = false)
                     }
                 }
             }
@@ -850,7 +818,7 @@ class Fir2IrVisitor(
                     it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
                 }
                 firClass?.convertWithOffsets { startOffset, endOffset ->
-                    val irClass = declarationStorage.getIrClass(firClass, setParent = false)
+                    val irClass = declarationStorage.getIrClass(firClass, setParentAndContent = false)
                     IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
             }
@@ -928,7 +896,7 @@ class Fir2IrVisitor(
                 it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
             }
             if (firObject != null) {
-                val irObject = declarationStorage.getIrClass(firObject, setParent = false)
+                val irObject = declarationStorage.getIrClass(firObject, setParentAndContent = false)
                 if (irObject != classStack.lastOrNull()) {
                     return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                         IrGetObjectValueImpl(startOffset, endOffset, irObject.defaultType, irObject.symbol)
@@ -1360,7 +1328,8 @@ class Fir2IrVisitor(
             FirOperation.MINUS_ASSIGN, FirOperation.TIMES_ASSIGN,
             FirOperation.DIV_ASSIGN, FirOperation.REM_ASSIGN,
             FirOperation.IS, FirOperation.NOT_IS,
-            FirOperation.AS, FirOperation.SAFE_AS -> {
+            FirOperation.AS, FirOperation.SAFE_AS
+            -> {
                 TODO("Should not be here: incompatible operation in FirOperatorCall: $operation")
             }
         }

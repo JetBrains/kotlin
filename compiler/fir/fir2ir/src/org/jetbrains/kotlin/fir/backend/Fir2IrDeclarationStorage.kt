@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -159,7 +160,7 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    fun getIrClass(klass: FirClass<*>, setParent: Boolean = true): IrClass {
+    fun getIrClass(klass: FirClass<*>, setParentAndContent: Boolean = true): IrClass {
         val regularClass = klass as? FirRegularClass
 
         fun create(): IrClass {
@@ -187,7 +188,7 @@ class Fir2IrDeclarationStorage(
                         isFun = false // TODO FirRegularClass.isFun
                     ).apply {
                         descriptor.bind(this)
-                        if (setParent && regularClass != null) {
+                        if (setParentAndContent && regularClass != null) {
                             val classId = regularClass.classId
                             val parentId = classId.outerClassId
                             if (parentId != null) {
@@ -216,9 +217,57 @@ class Fir2IrDeclarationStorage(
             return created
         }
         // NB: klass can be either FirRegularClass or FirAnonymousObject
-        return classCache.getOrPut(klass as FirRegularClass, { create() }) {
-            it.declareSupertypesAndTypeParameters(klass)
-            it.setThisReceiver()
+        return classCache.getOrPut(klass as FirRegularClass, { create() }) { irClass ->
+            irClass.declareSupertypesAndTypeParameters(klass)
+            irClass.setThisReceiver()
+            if (setParentAndContent && regularClass != null &&
+                regularClass.symbol.classId.packageFqName.startsWith(Name.identifier("kotlin"))
+            ) {
+                // Note: yet this is necessary only for *Range / *Progression classes
+                // due to BE optimizations (for lowering) that use their first / last / step members
+                // TODO: think how to refactor this piece of code and/or merge it with similar Fir2IrVisitor fragment
+                val processedNames = mutableSetOf<Name>()
+                for (declaration in regularClass.declarations) {
+                    irClass.declarations += when (declaration) {
+                        is FirSimpleFunction -> {
+                            processedNames += declaration.name
+                            getIrFunction(declaration, irClass, shouldLeaveScope = true)
+                        }
+                        is FirProperty -> {
+                            processedNames += declaration.name
+                            getIrProperty(declaration, irClass)
+                        }
+                        is FirConstructor -> getIrConstructor(declaration, irClass, shouldLeaveScope = true)
+                        is FirRegularClass -> getIrClass(declaration)
+                        else -> continue
+                    }
+                }
+                val allNames = regularClass.collectCallableNamesFromSupertypes(session)
+                val scope = regularClass.buildUseSiteMemberScope(session, ScopeSession())
+                if (scope != null) {
+                    for (name in allNames) {
+                        if (name in processedNames) continue
+                        processedNames += name
+                        scope.processFunctionsByName(name) { functionSymbol ->
+                            if (functionSymbol is FirNamedFunctionSymbol) {
+                                val fakeOverrideSymbol =
+                                    FirClassSubstitutionScope.createFakeOverrideFunction(session, functionSymbol.fir, functionSymbol)
+                                irClass.declarations += getIrFunction(fakeOverrideSymbol.fir, irClass, shouldLeaveScope = true)
+                            }
+                        }
+                        scope.processPropertiesByName(name) { propertySymbol ->
+                            if (propertySymbol is FirPropertySymbol) {
+                                val fakeOverrideSymbol =
+                                    FirClassSubstitutionScope.createFakeOverrideProperty(session, propertySymbol.fir, propertySymbol)
+                                irClass.declarations += getIrProperty(fakeOverrideSymbol.fir, irClass)
+                            }
+                        }
+                    }
+                }
+                for (irDeclaration in irClass.declarations) {
+                    irDeclaration.parent = irClass
+                }
+            }
         }
     }
 
