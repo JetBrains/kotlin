@@ -10,6 +10,7 @@ import com.intellij.openapi.application.impl.LaterInvocator
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -56,7 +57,9 @@ internal fun performSuggestedRefactoring(
       fun doRefactor() {
         SuggestedRefactoringFeatureUsage.logEvent(SuggestedRefactoringFeatureUsage.REFACTORING_PERFORMED, refactoringData, state, actionPlace)
 
-        refactoringSupport.execution.rename(refactoringData, project, editor)
+        performWithDumbEditor(editor) {
+          refactoringSupport.execution.rename(refactoringData, project, editor)
+        }
 
         // no refactoring availability anymore even if no usages updated
         SuggestedRefactoringProvider.getInstance(project).reset()
@@ -91,7 +94,9 @@ internal fun performSuggestedRefactoring(
       fun doRefactor(newParameterValues: List<NewParameterValue>) {
         SuggestedRefactoringFeatureUsage.logEvent(SuggestedRefactoringFeatureUsage.REFACTORING_PERFORMED, refactoringData, state, actionPlace)
 
-        refactoringSupport.execution.changeSignature(refactoringData, newParameterValues, project, editor)
+        performWithDumbEditor(editor) {
+          refactoringSupport.execution.changeSignature(refactoringData, newParameterValues, project, editor)
+        }
 
         // no refactoring availability anymore even if no usages updated
         SuggestedRefactoringProvider.getInstance(project).reset()
@@ -278,6 +283,16 @@ private fun positionAndShowBalloon(
         Balloon.Position.below
       )
     }
+  }
+}
+
+private fun performWithDumbEditor(editor: Editor, action: () -> Unit) {
+  (editor as? EditorImpl)?.startDumb()
+  try {
+    action()
+  }
+  finally {
+    (editor as? EditorImpl)?.stopDumbLater()
   }
 }
 
