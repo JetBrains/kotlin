@@ -157,20 +157,25 @@ private fun CFGNode<*>.render(): String =
                 is LoopConditionExitNode -> "Exit loop condition"
                 is LoopExitNode -> "Exit ${fir.type()}loop"
 
-                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render()}"
+                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
                 is OperatorCallNode -> "Operator ${fir.operation.operator}"
-                is TypeOperatorCallNode -> "Type operator: \"${fir.render()}\""
+                is TypeOperatorCallNode -> "Type operator: \"${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}\""
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"
-                is CheckNotNullCallNode -> "Check not null: ${fir.render()}"
+                is CheckNotNullCallNode -> "Check not null: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
 
                 is ConstExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
-                    "Variable declaration: ${buildString { FirRenderer(this).visitCallableDeclaration(fir) }}"
+                    "Variable declaration: ${buildString {
+                        FirRenderer(
+                            this,
+                            FirRenderer.RenderMode.DontRenderLambdaBodies
+                        ).visitCallableDeclaration(fir)
+                    }}"
 
-                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render()}"
-                is FunctionCallNode -> "Function call: ${fir.render()}"
-                is ThrowExceptionNode -> "Throw: ${fir.render()}"
+                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is FunctionCallNode -> "Function call: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is ThrowExceptionNode -> "Throw: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
 
                 is TryExpressionEnterNode -> "Try expression enter"
                 is TryMainBlockEnterNode -> "Try main block enter"

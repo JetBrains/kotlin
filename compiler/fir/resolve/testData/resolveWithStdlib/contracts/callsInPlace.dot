@@ -16,10 +16,7 @@ digraph callsInPlace_kt {
             6 [label="Exit function anonymousFunction"];
         }
         7 [label="Postponed exit from lambda"];
-        8 [label="Function call: R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    R|<local>/x| = Int(1)
-}
-)"];
+        8 [label="Function call: R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE> )"];
         9 [label="Access variable R|<local>/x|"];
         10 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
         11 [label="Exit function test" style="filled" fillcolor=red];
@@ -50,10 +47,7 @@ digraph callsInPlace_kt {
             17 [label="Exit function anonymousFunction"];
         }
         18 [label="Postponed exit from lambda"];
-        19 [label="Function call: R|kotlin/repeat|(Int(10), <L> = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=UNKNOWN>  {
-    ^ String(test_2)
-}
-)"];
+        19 [label="Function call: R|kotlin/repeat|(Int(10), <L> = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=UNKNOWN> )"];
         20 [label="Exit function test_2" style="filled" fillcolor=red];
     }
 
@@ -80,10 +74,7 @@ digraph callsInPlace_kt {
         }
         26 [label="Postponed exit from lambda"];
         27 [label="Const: Int(10)"];
-        28 [label="Function call: R|kotlin/repeat|(action = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=UNKNOWN>  {
-    ^ String(test_3)
-}
-, times = Int(10))"];
+        28 [label="Function call: R|kotlin/repeat|(action = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=UNKNOWN> , times = Int(10))"];
         29 [label="Exit function test_3" style="filled" fillcolor=red];
     }
 
@@ -113,11 +104,7 @@ digraph callsInPlace_kt {
             38 [label="Exit function anonymousFunction"];
         }
         39 [label="Postponed exit from lambda"];
-        40 [label="Function call: Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(<L> = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
-    String(test_4)
-    ^ >(R|<local>/it|, Int(0))
-}
-)"];
+        40 [label="Function call: Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(<L> = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE> )"];
         41 [label="Exit function test_4" style="filled" fillcolor=red];
     }
 
@@ -149,11 +136,7 @@ digraph callsInPlace_kt {
             50 [label="Exit function anonymousFunction"];
         }
         51 [label="Postponed exit from lambda"];
-        52 [label="Function call: Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(predicate = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
-    String(test_5)
-    ^ >(R|<local>/it|, Int(0))
-}
-)"];
+        52 [label="Function call: Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(predicate = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE> )"];
         53 [label="Exit function test_5" style="filled" fillcolor=red];
     }
 
@@ -201,13 +184,7 @@ digraph callsInPlace_kt {
             67 [label="Exit function anonymousFunction"];
         }
         68 [label="Postponed exit from lambda"];
-        69 [label="Function call: R|/myRun|(myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    ^ String(test_6_1)
-}
-, <L> = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    ^ String(test_6_2)
-}
-)"];
+        69 [label="Function call: R|/myRun|(myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> , <L> = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
         70 [label="Exit function test_6" style="filled" fillcolor=red];
     }
 
@@ -247,13 +224,7 @@ digraph callsInPlace_kt {
             80 [label="Exit function anonymousFunction"];
         }
         81 [label="Postponed exit from lambda"];
-        82 [label="Function call: R|/myRun|(block2 = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    ^ String(test_7_2)
-}
-, block1 = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    ^ String(test_7_1)
-}
-)"];
+        82 [label="Function call: R|/myRun|(block2 = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> , block1 = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
         83 [label="Exit function test_7" style="filled" fillcolor=red];
     }
 
@@ -289,10 +260,7 @@ digraph callsInPlace_kt {
         87 [label="Enter function test_8" style="filled" fillcolor=red];
         88 [label="Postponed enter to lambda"];
         89 [label="Postponed exit from lambda"];
-        90 [label="Function call: R|/myDummyRun|(<L> = myDummyRun@fun <anonymous>(): R|kotlin/Unit| {
-    ^ String(test_8)
-}
-)"];
+        90 [label="Function call: R|/myDummyRun|(<L> = myDummyRun@fun <anonymous>(): R|kotlin/Unit|)"];
         91 [label="Exit function test_8" style="filled" fillcolor=red];
     }
 

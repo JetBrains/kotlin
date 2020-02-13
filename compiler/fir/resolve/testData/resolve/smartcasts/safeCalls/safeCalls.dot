@@ -115,10 +115,7 @@ digraph safeCalls_kt {
         45 [label="Enter safe call"];
         46 [label="Postponed enter to lambda"];
         47 [label="Postponed exit from lambda"];
-        48 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())?.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
-    ^ R|<local>/x|.R|/A.bool|()
-}
-)"];
+        48 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())?.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit|)"];
         49 [label="Exit safe call"];
         50 [label="Access variable R|<local>/x|"];
         51 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()"];
@@ -205,18 +202,12 @@ digraph safeCalls_kt {
             77 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
         }
         78 [label="Postponed exit from lambda"];
-        79 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
-    ^test_5 Unit
-}
-)"];
+        79 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE> )"];
         80 [label="Exit safe call"];
         81 [label="Enter safe call"];
         82 [label="Access variable R|<local>/x|"];
         83 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-        84 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
-    ^test_5 Unit
-}
-)?.R|/boo|(R|<local>/x|.R|/A.bool|())"];
+        84 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE> )?.R|/boo|(R|<local>/x|.R|/A.bool|())"];
         85 [label="Exit safe call"];
         86 [label="Access variable R|<local>/x|"];
         87 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];

@@ -25,21 +25,27 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun FirElement.renderWithType(): String = buildString {
+fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String = buildString {
     append(this@renderWithType)
     append(": ")
-    this@renderWithType.accept(FirRenderer(this))
+    this@renderWithType.accept(FirRenderer(this, mode))
 }
 
-fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(this)) }
+fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
+    buildString { this@render.accept(FirRenderer(this, mode)) }
 
-class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
+class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
+    enum class RenderMode {
+        Normal, DontRenderLambdaBodies
+    }
+
     private val printer = Printer(builder)
 
     private var lineBeginning = true
@@ -421,7 +427,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (anonymousFunction.invocationKind != null) {
             print(" <kind=${anonymousFunction.invocationKind}> ")
         }
-        anonymousFunction.body?.renderBody()
+        if (mode != RenderMode.DontRenderLambdaBodies) {
+            anonymousFunction.body?.renderBody()
+        }
     }
 
     override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>) {

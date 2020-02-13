@@ -128,27 +128,7 @@ digraph propertiesAndInitBlocks_kt {
             41 [label="Exit function anonymousFunction"];
         }
         42 [label="Postponed exit from lambda"];
-        43 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-    local final fun foo(): R|kotlin/Unit| {
-        lval c: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
-        throw R|java/lang/Exception.Exception|()
-    }
-
-    local final class LocalClass : R|kotlin/Any| {
-        public constructor(): R|LocalClass| {
-            super<R|kotlin/Any|>()
-        }
-
-        init {
-            throw R|java/lang/Exception.Exception|()
-            Int(1)
-        }
-
-    }
-
-    throw R|java/lang/Exception.Exception|()
-}
-)"];
+        43 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
         44 [label="Exit property" style="filled" fillcolor=red];
     }
 

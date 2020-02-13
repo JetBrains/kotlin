@@ -217,10 +217,7 @@ digraph smartcastToNothing_kt {
             89 [label="Exit function anonymousFunction"];
         }
         90 [label="Postponed exit from lambda"];
-        91 [label="Function call: R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-    ^ R|<local>/it|.R|/A.a|
-}
-)"];
+        91 [label="Function call: R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Int| <kind=EXACTLY_ONCE> )"];
         92 [label="Exit safe call"];
         93 [label="Exit function test_0" style="filled" fillcolor=red];
     }
