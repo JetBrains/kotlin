@@ -335,6 +335,18 @@ class Collections {
         }
 
         @Sample
+        fun setOfNotNull() {
+            val empty = setOfNotNull<Any>(null)
+            assertPrints(empty, "[]")
+
+            val singleton = setOfNotNull(42)
+            assertPrints(singleton, "[42]")
+
+            val set = setOfNotNull(1, null, 2, null, 3)
+            assertPrints(set, "[1, 2, 3]")
+        }
+
+        @Sample
         fun emptyLinkedHashSet() {
             val set: LinkedHashSet<Int> = linkedSetOf<Int>()
 

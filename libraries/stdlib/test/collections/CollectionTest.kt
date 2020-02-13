@@ -71,6 +71,18 @@ class CollectionTest {
         assertEquals(listOf("value1", "value2"), l3)
     }
 
+    @Test fun setOfNotNull() {
+        val l1: Set<Int> = setOfNotNull(null)
+        assertTrue(l1.isEmpty())
+
+        val s: String? = "value"
+        val l2: Set<String> = setOfNotNull(s)
+        assertEquals(s, l2.single())
+
+        val l3: Set<String> = setOfNotNull("value1", null, "value2")
+        assertEquals(setOf("value1", "value2"), l3)
+    }
+
     @Test fun filterIntoSet() {
         val data = listOf("foo", "bar")
         val foo = data.filterTo(hashSetOf<String>()) { it.startsWith("f") }

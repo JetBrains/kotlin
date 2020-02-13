@@ -2369,6 +2369,8 @@ public final class kotlin/collections/SetsKt {
 	public static final fun plus (Ljava/util/Set;[Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun setOf (Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun setOf ([Ljava/lang/Object;)Ljava/util/Set;
+	public static final fun setOfNotNull (Ljava/lang/Object;)Ljava/util/Set;
+	public static final fun setOfNotNull ([Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun sortedSetOf (Ljava/util/Comparator;[Ljava/lang/Object;)Ljava/util/TreeSet;
 	public static final fun sortedSetOf ([Ljava/lang/Object;)Ljava/util/TreeSet;
 }
