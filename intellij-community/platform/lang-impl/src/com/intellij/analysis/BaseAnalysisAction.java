@@ -88,7 +88,7 @@ public abstract class BaseAnalysisAction extends AnAction {
   }
 
   protected @NotNull String getDialogTitle() {
-    return AnalysisScopeBundle.message("specify.analysis.scope", myTitle);
+    return AnalysisScopeBundle.message("specify.analysis.scope", myTitle.get());
   }
 
   protected String getHelpTopic() {
