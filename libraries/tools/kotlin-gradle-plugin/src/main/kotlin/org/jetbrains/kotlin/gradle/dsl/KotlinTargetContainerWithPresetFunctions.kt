@@ -30,24 +30,35 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun jvm(configure: Closure<*>) = jvm { ConfigureUtil.configure(configure, this) }
 
     fun js(
-        compiler: JsCompilerType = JsCompilerType.legacy,
         name: String = "js",
+        compiler: JsCompilerType = JsCompilerType.legacy,
         configure: KotlinJsTargetDsl.() -> Unit = { }
     ): KotlinJsTargetDsl =
         configureOrCreate(
-            name,
+            lowerCamelCaseName(name, if (compiler == JsCompilerType.both) JsCompilerType.legacy.name else ""),
             presets.getByName(
                 lowerCamelCaseName(
                     "js",
-                    if (compiler == JsCompilerType.legacy) "" else compiler.name
+                    if (compiler == JsCompilerType.legacy) null else compiler.name
                 )
             ) as KotlinTargetPreset<KotlinJsTargetDsl>,
             configure
         )
 
+    fun js(
+        name: String = "js",
+        configure: KotlinJsTargetDsl.() -> Unit = { }
+    ) = js(name = "js", compiler = JsCompilerType.legacy, configure = configure)
+
+    fun js(
+        compiler: JsCompilerType,
+        configure: KotlinJsTargetDsl.() -> Unit = { }
+    ) = js(name = "js", compiler = compiler, configure = configure)
+
     fun js() = js(name = "js") { }
     fun js(name: String) = js(name = name) { }
     fun js(name: String, configure: Closure<*>) = js(name = name) { ConfigureUtil.configure(configure, this) }
+    fun js(compiler: JsCompilerType, configure: Closure<*>) = js(compiler = compiler) { ConfigureUtil.configure(configure, this) }
     fun js(configure: Closure<*>) = js { ConfigureUtil.configure(configure, this) }
 
     fun android(

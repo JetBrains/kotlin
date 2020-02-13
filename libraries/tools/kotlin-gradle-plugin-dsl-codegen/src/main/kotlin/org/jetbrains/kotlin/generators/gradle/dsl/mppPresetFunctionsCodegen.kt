@@ -21,7 +21,7 @@ private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
     val functions = allPresetEntries.map {
-        generatePresetFunctions(it, presetsProperty, "configureOrCreate")
+        it.generatePresetFunctions(presetsProperty, "configureOrCreate")
     }
 
     val parentInterfaceName =
@@ -54,28 +54,4 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"]
     val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
-}
-
-private fun generatePresetFunctions(
-    presetEntry: KotlinPresetEntry,
-    getPresetsExpression: String,
-    configureOrCreateFunctionName: String
-): String {
-    val presetName = presetEntry.presetName
-    return """
-    fun $presetName(
-        name: String = "$presetName",
-        configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
-    ): ${presetEntry.targetType.renderShort()} =
-        $configureOrCreateFunctionName(
-            name,
-            $getPresetsExpression.getByName("$presetName") as ${presetEntry.presetType.renderShort()},
-            configure
-        )
-
-    fun $presetName() = $presetName("$presetName") { }
-    fun $presetName(name: String) = $presetName(name) { }
-    fun $presetName(name: String, configure: Closure<*>) = $presetName(name) { ConfigureUtil.configure(configure, this) }
-    fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
-""".trimIndent()
 }
