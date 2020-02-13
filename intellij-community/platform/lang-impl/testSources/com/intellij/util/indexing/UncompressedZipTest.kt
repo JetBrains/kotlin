@@ -11,6 +11,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.StandardOpenOption
 
 class UncompressedZipTest : TestCase() {
@@ -146,5 +147,31 @@ class UncompressedZipTest : TestCase() {
     assertEquals(text, readText)
 
     fs.close()
+  }
+
+  fun testOpenNonExistingFile() {
+    val dir = FileUtil.createTempDirectory("zip0-fs-structure-dir", null)
+
+    val file = File(dir, "archive.zip")
+    JBZipFile(file).use {
+      it.getOrCreateEntry("existing/a.txt").data = "hello".toByteArray()
+      it.getOrCreateEntry("dirAsFile").data = "hello".toByteArray()
+    }
+
+    UncompressedZipFileSystem.create(file.toPath()).use { fs ->
+      assertNoSuchFileException(fs, "nonExisting.txt")
+      assertNoSuchFileException(fs, "existing/nonExisting.txt")
+      assertNoSuchFileException(fs, "dirAsFile/someFile.txt")
+    }
+  }
+
+  private fun assertNoSuchFileException(fs: UncompressedZipFileSystem, fileName: String) {
+    try {
+      FileChannel.open(fs.getPath(fileName))
+      fail()
+    }
+    catch (e: NoSuchFileException) {
+      assertEquals(fileName, e.message)
+    }
   }
 }

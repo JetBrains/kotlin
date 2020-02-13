@@ -2,7 +2,6 @@
 package com.intellij.util.indexing.zipFs;
 
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.io.zip.JBZipEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -177,16 +176,17 @@ public final class UncompressedZipFileSystemProvider extends FileSystemProvider 
   }
 
   @NotNull
-  static UncompressedZipFileSystem.ZipTreeNode find(@NotNull Path dir) throws IOException {
-    Path absoluteDir = dir.toAbsolutePath();
-    String[] elements = ((UncompressedZipPath)absoluteDir).getNameElements();
-    UncompressedZipFileSystem.ZipTreeNode currentElement = ((UncompressedZipFileSystem)absoluteDir.getFileSystem()).getRoot();
-    for (String element : elements) {
-      currentElement = currentElement.getChild(element);
-      if (currentElement == null) {
-        throw new NotDirectoryException(dir.toString());
+  static UncompressedZipFileSystem.ZipTreeNode find(@NotNull Path path) throws IOException {
+    UncompressedZipPath absoluteDir = ((UncompressedZipPath)path.toAbsolutePath());
+    String[] elements = absoluteDir.getNameElements();
+    UncompressedZipFileSystem.ZipTreeNode currentNode = absoluteDir.getFileSystem().getRoot();
+    for (int i = 0; i < elements.length; i++) {
+      String element = elements[i];
+      currentNode = currentNode.getChild(element);
+      if (currentNode == null || i < elements.length - 1 && !currentNode.isDirectory()) {
+        throw new NoSuchFileException(path.toString());
       }
     }
-    return currentElement;
+    return currentNode;
   }
 }

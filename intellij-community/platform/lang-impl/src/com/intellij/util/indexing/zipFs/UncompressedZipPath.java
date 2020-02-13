@@ -33,7 +33,7 @@ public final class UncompressedZipPath implements Path {
 
   @NotNull
   @Override
-  public FileSystem getFileSystem() {
+  public UncompressedZipFileSystem getFileSystem() {
     return myFileSystem;
   }
 

@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.zip.ZipEntry;
 
 public final class UncompressedZipFileSystem extends FileSystem {
   private static final Logger LOG = Logger.getInstance(UncompressedZipFileSystem.class);
