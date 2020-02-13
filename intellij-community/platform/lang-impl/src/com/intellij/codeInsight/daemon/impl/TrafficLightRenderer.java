@@ -70,7 +70,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    */
   protected int[] errorCount;
 
-  private static final JBValue ICON_GAP = new JBValue.Float(5);
+  private static final JBValue ICON_TEXT_GAP = new JBValue.Float(6);
   private static final int ICON_FONT = 11;
 
   /**
@@ -372,6 +372,10 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
   @Override
   public AnalyzerStatus getStatus(Editor editor) {
+    if (PowerSaveMode.isEnabled()) {
+      return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode, false);
+    }
+
     DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
     int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
     List<Icon> statusIcons = new ArrayList<>();
@@ -399,16 +403,25 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         icon = statusIcons.get(i + 1);
         yShift = (maxIconHeight - icon.getIconHeight()) / 2;
         statusIcon.setIcon(icon, i + 1, xShift, yShift);
-        xShift += icon.getIconWidth() + ICON_GAP.get();
+        xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
       }
       return new AnalyzerStatus(statusIcon, true);
     }
     else {
-      if (status.errorAnalyzingFinished) {
-        TextIcon icon = new TextIcon("Fine...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+      if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
+        TextIcon icon = new TextIcon("OFF", editor.getColorsScheme().getDefaultForeground(), null, 0);
         icon.setFont(font);
         return new AnalyzerStatus(new LayeredIcon(icon), false);
-        //return new AnalyzerStatus(AllIcons.General.InspectionsOK, false);
+      }
+
+      if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
+        TextIcon icon = new TextIcon("Indexing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+        icon.setFont(font);
+        return new AnalyzerStatus(new LayeredIcon(icon), false);
+      }
+
+      if (status.errorAnalyzingFinished) {
+        return new AnalyzerStatus(AllIcons.General.InspectionsOK, false);
       }
       else {
         TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
