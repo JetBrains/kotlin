@@ -23429,9 +23429,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/functionTypeAsUpperBound.kt");
             }
 
-            @TestMetadata("implicitNothingAsTypeParameter.kt")
-            public void testImplicitNothingAsTypeParameter() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingAsTypeParameter.kt");
+            @TestMetadata("implicitNothingAgainstNotNothingExpectedType.kt")
+            public void testImplicitNothingAgainstNotNothingExpectedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingAgainstNotNothingExpectedType.kt");
+            }
+
+            @TestMetadata("implicitNothingInReturnPosition.kt")
+            public void testImplicitNothingInReturnPosition() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingInReturnPosition.kt");
             }
 
             @TestMetadata("implicitNothingOnDelegates.kt")

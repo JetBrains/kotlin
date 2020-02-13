@@ -780,7 +780,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtExpression> TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT = DiagnosticFactory0.create(ERROR, SPECIAL_CONSTRUCT_TOKEN);
 
-    DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_AS_TYPE_PARAMETER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE = DiagnosticFactory0.create(WARNING);
 
     // Reflection
 

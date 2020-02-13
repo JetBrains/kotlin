@@ -117,6 +117,18 @@ fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
     report(diagnostic)
 }
 
+fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
+    diagnosticToReport: Diagnostic,
+    vararg diagnosticFactories: DiagnosticFactory<*>,
+) {
+    val hasAlreadyReportedDiagnosticFromListOrSameType = bindingContext.diagnostics.forElement(diagnosticToReport.psiElement)
+        .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
+
+    if (hasAlreadyReportedDiagnosticFromListOrSameType) return
+
+    report(diagnosticToReport)
+}
+
 class TypeMismatchDueToTypeProjectionsData(
     val expectedType: KotlinType,
     val expressionType: KotlinType,

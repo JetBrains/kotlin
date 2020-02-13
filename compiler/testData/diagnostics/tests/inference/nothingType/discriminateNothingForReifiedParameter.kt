@@ -14,7 +14,7 @@ inline fun <reified M> materializeReifiedUnbound(): M = TODO()
 fun <T> select(a: T, b: T): T = TODO()
 
 fun test1() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!><!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>take<!>(null)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!><!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>take<!>(null)<!>
 }
 
 fun test2() {
@@ -22,20 +22,20 @@ fun test2() {
 }
 
 fun test3() {
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>takeReifiedUnbound<!>(null)
+    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>takeReifiedUnbound<!>(null)
 }
 
 fun test4(): Bound = <!DEBUG_INFO_EXPRESSION_TYPE("Bound")!>takeReifiedUnbound(null)<!>
 
 fun test5(): Bound? = select(
     null,
-    <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>materialize<!>()
+    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>materialize<!>()
 )
 
 fun test6() {
     select(
         null,
-        <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, IMPLICIT_NOTHING_AS_TYPE_PARAMETER, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
     )
 }
 

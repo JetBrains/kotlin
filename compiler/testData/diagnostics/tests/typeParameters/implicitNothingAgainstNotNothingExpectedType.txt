@@ -1,0 +1,21 @@
+package
+
+public fun foo1(/*0*/ x: kotlin.String?): kotlin.Unit
+public fun </*0*/ K> id(/*0*/ x: K): K
+public fun </*0*/ K> materialize(): K
+public fun </*0*/ K, /*1*/ T> materializeWithGenericArg(/*0*/ x: T): K
+public fun </*0*/ S> select(/*0*/ x: S, /*1*/ y: S): S
+public fun test(): kotlin.Unit
+public fun kotlin.String?.foo2(): kotlin.Unit
+public fun </*0*/ K> K.idFromReceiver(): K
+public fun </*0*/ K> K.idFromReceiverWithArg(/*0*/ x: kotlin.String): K
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun idFromClassTypeArg(): T
+    public final fun </*0*/ K> idFromClassTypeArgWithAnotherTypeArg(): T
+    public final fun </*0*/ K> materialize(): K
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -40,7 +40,7 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut1(typeFrom: Context<out T>): T {
-    return <!NI;TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, NI;IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>decodeIn<!>(typeFrom) ?: <!OI;TYPE_MISMATCH!>kotlin.Unit<!><!>
+    return <!NI;TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: <!OI;TYPE_MISMATCH!>kotlin.Unit<!><!>
 }
 
 fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
@@ -48,11 +48,11 @@ fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
 }
 
 fun <T> Any.decodeOut3(typeFrom: Context<out T>): T {
-    <!UNREACHABLE_CODE!>val x =<!> this.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>decodeIn<!>(typeFrom)
+    <!UNREACHABLE_CODE!>val x =<!> this.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom)
 }
 
 fun <T> Any.decodeOut4(typeFrom: Context<out T>): T {
-    <!UNREACHABLE_CODE!>val x: Any =<!> this.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>decodeIn<!>(typeFrom)
+    <!UNREACHABLE_CODE!>val x: Any =<!> this.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom)
 }
 
 class TrieNode<out E> {
@@ -91,7 +91,7 @@ interface Worker<out T>
 interface RenderContext<StateT, in OutputT : Any>
 
 val emptyOrNull: List<Nothing>? = null
-val x = emptyOrNull?.<!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>get<!>(0)
+val x = emptyOrNull?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>get<!>(0)
 
 val errorCompletion = { <!UNUSED_ANONYMOUS_PARAMETER!>e<!>: Throwable -> throw Exception() }
 

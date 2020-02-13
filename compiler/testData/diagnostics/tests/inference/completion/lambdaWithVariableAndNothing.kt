@@ -13,7 +13,7 @@ fun <E4, F : E4> noSmartCast4(arg: E4?, fn: F): E4 = TODO()
 fun testSmartCast(s: String?) {
     id(
         if (s != null) ""
-        else <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>smartCast<!>(null) { "" }
+        else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>smartCast<!>(null) { "" }
     )
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }
@@ -46,7 +46,7 @@ fun testNoSmartCast3(s: String?) {
 fun testNoSmartCast4(s: String?) {
     id(
         if (s != null) ( {""} )
-        else <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER, IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>noSmartCast4<!>(null) <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>""<!> }<!>
+        else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>noSmartCast4<!>(null) <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>""<!> }<!>
     )
     s<!UNSAFE_CALL!>.<!>length
 }
