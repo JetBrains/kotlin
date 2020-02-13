@@ -34,6 +34,8 @@ open class KaptExtension {
     open var mapDiagnosticLocations: Boolean = false
 
     open var strictMode: Boolean = false
+
+    open var stripMetadata: Boolean = false
     
     open var showProcessorTimings: Boolean = false
 

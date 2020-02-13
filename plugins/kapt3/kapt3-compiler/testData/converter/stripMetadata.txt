@@ -1,0 +1,52 @@
+import java.lang.System;
+
+public abstract class BaseClass {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract Result doJob();
+
+    public BaseClass(@org.jetbrains.annotations.NotNull()
+    Context context, int num, boolean bool) {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+public abstract interface Context {
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+public final class Inheritor extends BaseClass {
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Override()
+    public Result doJob() {
+        return null;
+    }
+
+    public Inheritor(@org.jetbrains.annotations.NotNull()
+    Context context) {
+        super(null, 0, false);
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+public enum Result {
+    /*public static final*/ SUCCESS /* = new Result() */,
+    /*public static final*/ ERROR /* = new Result() */;
+
+    Result() {
+    }
+}

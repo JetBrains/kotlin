@@ -243,6 +243,22 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     fun testSuppressWarning() {}
 
     override fun doTest(filePath: String) {
+        val wholeFile = File(filePath)
+
+        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+
+        if (wholeFile.isOptionSet("CORRECT_ERROR_TYPES")) {
+            kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
+        }
+
+        if (wholeFile.isOptionSet("STRICT_MODE")) {
+            kaptFlags.add(KaptFlag.STRICT)
+        }
+
+        if (wholeFile.isOptionSet("STRIP_METADATA")) {
+            kaptFlags.add(KaptFlag.STRIP_METADATA)
+        }
+
         super.doTest(filePath)
         doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
         doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, filePath)

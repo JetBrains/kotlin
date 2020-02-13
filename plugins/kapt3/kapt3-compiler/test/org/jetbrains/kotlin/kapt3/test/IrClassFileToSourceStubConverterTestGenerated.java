@@ -419,6 +419,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/strangeNames.kt");
     }
 
+    @TestMetadata("stripMetadata.kt")
+    public void testStripMetadata() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/stripMetadata.kt");
+    }
+
     @TestMetadata("suspendErrorTypes.kt")
     public void testSuspendErrorTypes() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendErrorTypes.kt");
