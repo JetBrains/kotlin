@@ -122,8 +122,9 @@ class ExpressionsConverter(
                 BLOCK -> block = it
             }
         }
-        
-        val target = FirFunctionTarget(labelName = lambdaExpression.getLabelName(), isLambda = true)
+
+        val labelName = lambdaExpression.getLabelName() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.asString()
+        val target = FirFunctionTarget(labelName = labelName, isLambda = true)
         return buildAnonymousFunction {
             source = lambdaExpression.toFirSourceElement()
             session = baseSession
