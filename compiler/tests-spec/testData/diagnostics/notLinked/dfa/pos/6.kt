@@ -583,7 +583,7 @@ fun case_29(x: Boolean) {
     val y = if (x) z else null
 
     if (false || false || false || false || y !== <!DEBUG_INFO_CONSTANT!>v<!>) {
-        val t = <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val t = <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
         if (<!EQUALITY_NOT_APPLICABLE!>z !== t<!> || false) {
             <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!><!UNSAFE_CALL!>.<!>a

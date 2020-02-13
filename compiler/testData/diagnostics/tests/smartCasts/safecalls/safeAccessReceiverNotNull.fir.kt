@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: -SafeCastCheckBoundSmartCasts -BooleanElvisBoundSmartCasts
 // A set of examples for
 // "If the result of a safe call is not null, understand that its receiver is not null"

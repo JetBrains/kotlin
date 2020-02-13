@@ -288,7 +288,7 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
 private fun KotlinResolutionCandidate.resolveKotlinArgument(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor?,
-    isReceiver: Boolean
+    receiverInfo: ReceiverInfo
 ) {
     val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
     val convertedArgument = if (expectedType != null && shouldRunConversionForConstants(expectedType)) {
@@ -306,7 +306,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
             argument,
             expectedType,
             this,
-            isReceiver,
+            receiverInfo,
             convertedArgument?.unknownIntegerType?.unwrap()
         )
     )
@@ -325,6 +325,30 @@ private fun KotlinResolutionCandidate.shouldRunConversionForConstants(expectedTy
     }
 
     return false
+}
+
+internal enum class ImplicitInvokeCheckStatus {
+    NO_INVOKE, INVOKE_ON_NOT_NULL_VARIABLE, UNSAFE_INVOKE_REPORTED
+}
+
+private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(argument: SimpleKotlinCallArgument): ImplicitInvokeCheckStatus {
+    val variableForInvoke = variableCandidateIfInvoke ?: return ImplicitInvokeCheckStatus.NO_INVOKE
+
+    val receiverArgument = with(variableForInvoke.resolvedCall) {
+        when (explicitReceiverKind) {
+            DISPATCH_RECEIVER -> dispatchReceiverArgument
+            EXTENSION_RECEIVER,
+            BOTH_RECEIVERS -> extensionReceiverArgument
+            NO_EXPLICIT_RECEIVER -> return ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+        }
+    } ?: error("Receiver kind does not match receiver argument")
+
+    if (receiverArgument.receiver.stableType.isNullable()) {
+        addDiagnostic(UnsafeCallError(argument, isForImplicitInvoke = true))
+        return ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED
+    }
+
+    return ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
 }
 
 private fun KotlinResolutionCandidate.prepareExpectedType(
@@ -388,21 +412,40 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
 internal object CheckReceivers : ResolutionPart() {
     private fun KotlinResolutionCandidate.checkReceiver(
         receiverArgument: SimpleKotlinCallArgument?,
-        receiverParameter: ReceiverParameterDescriptor?
+        receiverParameter: ReceiverParameterDescriptor?,
+        shouldCheckImplicitInvoke: Boolean,
     ) {
         if ((receiverArgument == null) != (receiverParameter == null)) {
             error("Inconsistency receiver state for call $kotlinCall and candidate descriptor: $candidateDescriptor")
         }
         if (receiverArgument == null || receiverParameter == null) return
 
-        resolveKotlinArgument(receiverArgument, receiverParameter, isReceiver = true)
+        val implicitInvokeState = if (shouldCheckImplicitInvoke) {
+            checkUnsafeImplicitInvokeAfterSafeCall(receiverArgument)
+        } else ImplicitInvokeCheckStatus.NO_INVOKE
+
+        val receiverInfo = ReceiverInfo(
+            isReceiver = true,
+            shouldReportUnsafeCall = implicitInvokeState != ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED,
+            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+        )
+
+        resolveKotlinArgument(receiverArgument, receiverParameter, receiverInfo)
     }
 
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         if (workIndex == 0) {
-            checkReceiver(resolvedCall.dispatchReceiverArgument, candidateDescriptor.dispatchReceiverParameter)
+            checkReceiver(
+                resolvedCall.dispatchReceiverArgument,
+                candidateDescriptor.dispatchReceiverParameter,
+                shouldCheckImplicitInvoke = true,
+            )
         } else {
-            checkReceiver(resolvedCall.extensionReceiverArgument, candidateDescriptor.extensionReceiverParameter)
+            checkReceiver(
+                resolvedCall.extensionReceiverArgument,
+                candidateDescriptor.extensionReceiverParameter,
+                shouldCheckImplicitInvoke = false, // reproduce old inference behaviour
+            )
         }
     }
 
@@ -412,7 +455,7 @@ internal object CheckReceivers : ResolutionPart() {
 internal object CheckArgumentsInParenthesis : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.argumentsInParenthesis[workIndex]
-        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], ReceiverInfo.notReceiver)
     }
 
     override fun KotlinResolutionCandidate.workCount() = kotlinCall.argumentsInParenthesis.size
@@ -422,7 +465,7 @@ internal object CheckExternalArgument : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.externalArgument ?: return
 
-        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], ReceiverInfo.notReceiver)
     }
 }
 
@@ -485,14 +528,14 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         resolvedCall.argumentToCandidateParameter = emptyMap()
 
         kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {
-            resolveKotlinArgument(it, null, isReceiver = true)
+            resolveKotlinArgument(it, null, ReceiverInfo.notReceiver)
         }
         for (argument in kotlinCall.argumentsInParenthesis) {
-            resolveKotlinArgument(argument, null, isReceiver = true)
+            resolveKotlinArgument(argument, null, ReceiverInfo.notReceiver)
         }
 
         kotlinCall.externalArgument?.let {
-            resolveKotlinArgument(it, null, isReceiver = true)
+            resolveKotlinArgument(it, null, ReceiverInfo.notReceiver)
         }
     }
 }

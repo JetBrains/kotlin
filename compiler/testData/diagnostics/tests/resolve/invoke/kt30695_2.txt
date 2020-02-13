@@ -1,0 +1,22 @@
+package
+
+public val Cls.extensionProperty: MemberInvokeOwner
+public val Cls.nullableExtensionProperty: MemberInvokeOwner?
+public fun testNotNullableReceiver(/*0*/ notNullable: Cls): kotlin.Unit
+public fun testNullableReceiver(/*0*/ nullable: Cls?): kotlin.Unit
+
+public final class Cls {
+    public constructor Cls()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun testImplicitReceiver(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MemberInvokeOwner {
+    public constructor MemberInvokeOwner()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

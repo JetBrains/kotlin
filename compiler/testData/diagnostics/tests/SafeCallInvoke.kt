@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class Rule(val apply:() -> Unit)
 
 fun bar() {}
@@ -14,7 +13,7 @@ fun foo() {
     rule?.apply?.invoke()
 
     // this should be an error
-    rule?.<!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>apply<!>()
+    rule?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>apply<!>()
 
     // these both also ok (with smart cast / unnecessary safe call)
     if (rule != null) {
