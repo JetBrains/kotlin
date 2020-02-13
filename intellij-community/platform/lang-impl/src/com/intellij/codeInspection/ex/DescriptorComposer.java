@@ -2,6 +2,7 @@
 
 package com.intellij.codeInspection.ex;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
@@ -104,7 +105,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
     final QuickFix[] fixes = descriptor.getFixes();
     if (fixes != null && fixes.length > 0) {
       buf.append("<br><br>");
-      appendHeading(buf, InspectionsBundle.message("inspection.problem.resolution"));
+      appendHeading(buf, AnalysisBundle.message("inspection.problem.resolution"));
       buf.append("<br>");
       appendAfterHeaderIndention(buf);
 
@@ -159,7 +160,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
       Document doc = FileDocumentManager.getInstance().getDocument(vFile);
       if (doc != null && lineNumber < doc.getLineCount()) {
         lineNumber = Math.min(lineNumber, doc.getLineCount() - 1);
-        lineAnchor.append(InspectionsBundle.message("inspection.export.results.at.line")).append(" ");
+        lineAnchor.append(AnalysisBundle.message("inspection.export.results.at.line")).append(" ");
         lineAnchor.append("<a HREF=\"");
         int offset = doc.getLineStartOffset(lineNumber);
         offset = CharArrayUtil.shiftForward(doc.getCharsSequence(), offset, " \t");

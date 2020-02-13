@@ -16,6 +16,7 @@
 
 package com.intellij.codeInsight.daemon.impl.actions;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.SuppressIntentionAction;
@@ -129,6 +130,6 @@ public abstract class AbstractSuppressByNoInspectionCommentFix extends SuppressI
   @Override
   @NotNull
   public String getFamilyName() {
-    return InspectionsBundle.message("suppress.inspection.family");
+    return AnalysisBundle.message("suppress.inspection.family");
   }
 }

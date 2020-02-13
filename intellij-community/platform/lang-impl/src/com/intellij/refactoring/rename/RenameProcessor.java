@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.rename;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.core.CoreBundle;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
@@ -502,11 +503,11 @@ public class RenameProcessor extends BaseRefactoringProcessor {
       return "project";
     }
 
-    if (displayName.equals(PsiBundle.message("psi.search.scope.test.files"))) {
+    if (displayName.equals(AnalysisBundle.message("psi.search.scope.test.files"))) {
       return "tests";
     }
 
-    if (displayName.equals(PsiBundle.message("psi.search.scope.production.files"))) {
+    if (displayName.equals(AnalysisBundle.message("psi.search.scope.production.files"))) {
       return "production";
     }
 

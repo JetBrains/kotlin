@@ -2,8 +2,8 @@
 
 package com.intellij.codeInspection.ui;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.codeInspection.CommonProblemDescriptor;
-import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.reference.RefDirectory;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
@@ -47,7 +47,7 @@ public class RefElementNode extends SuppressableInspectionTreeNode {
   protected String calculatePresentableName() {
     final RefEntity element = getElement();
     if (element == null) {
-      return InspectionsBundle.message("inspection.reference.invalid");
+      return AnalysisBundle.message("inspection.reference.invalid");
     }
     return element.getRefManager().getRefinedElement(element).getName();
   }
