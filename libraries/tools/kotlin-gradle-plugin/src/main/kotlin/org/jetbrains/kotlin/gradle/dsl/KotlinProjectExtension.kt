@@ -90,7 +90,10 @@ open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
 open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
     override lateinit var target: KotlinJsTarget
 
-    open fun target(body: KotlinJsTarget.() -> Unit) = target.run(body)
+    open fun js(body: KotlinJsTarget.() -> Unit) = target.run(body)
+
+    @Deprecated("Use js instead", ReplaceWith("js(body)"))
+    open fun target(body: KotlinJsTarget.() -> Unit) = js(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
@@ -103,7 +106,7 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
 open class KotlinJsIrProjectExtension : KotlinSingleTargetExtension() {
     override lateinit var target: KotlinJsIrTarget
 
-    open fun target(body: KotlinJsIrTarget.() -> Unit) = target.run(body)
+    open fun js(body: KotlinJsIrTarget.() -> Unit) = target.run(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
