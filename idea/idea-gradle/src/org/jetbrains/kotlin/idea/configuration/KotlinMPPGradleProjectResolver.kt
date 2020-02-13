@@ -282,7 +282,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val sourceSetToCompilationData = LinkedHashMap<KotlinSourceSet, MutableSet<GradleSourceSetData>>()
             for (target in mppModel.targets) {
-                if (androidPluginPresent && target.platform == KotlinPlatform.ANDROID) continue
+                if (delegateToAndroidPlugin(target)) continue
                 if (target.name == KotlinTarget.METADATA_TARGET_NAME) continue
                 val targetData = KotlinTargetData(target.name).also {
                     it.archiveFile = target.jar?.archiveFile
@@ -356,7 +356,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val ignoreCommonSourceSets by lazy { externalProject.notImportedCommonSourceSets() }
             for (sourceSet in mppModel.sourceSets.values) {
-                if (androidPluginPresent && sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
+                if (delegateToAndroidPlugin(sourceSet)) continue
                 if (sourceSet.actualPlatforms.supports(KotlinPlatform.COMMON) && ignoreCommonSourceSets) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val existingSourceSetDataNode = sourceSetMap[moduleId]?.first
@@ -454,9 +454,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 .toMap()
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
-                if (dataNode == null || androidPluginPresent &&
-                    sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
-                ) return@processSourceSets
+                if (dataNode == null || delegateToAndroidPlugin(sourceSet)) return@processSourceSets
 
                 createContentRootData(
                     sourceSet.sourceDirs,
@@ -567,7 +565,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
             val closedSourceSetGraph = Graphs.transitiveClosure(sourceSetGraph)
             for (sourceSet in closedSourceSetGraph.nodes()) {
-                val isAndroid = androidPluginPresent && sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
+                val isAndroid = delegateToAndroidPlugin(sourceSet)
                 val fromDataNode = if (isAndroid) {
                     ideModule
                 } else {
@@ -587,7 +585,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetInfo.addSourceSets(dependeeSourceSets, selfName, gradleModule, resolverCtx)
                     }
                 }
-                if (androidPluginPresent && sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
+                if (delegateToAndroidPlugin(sourceSet)) continue
                 for (dependeeSourceSet in dependeeSourceSets) {
                     val toDataNode = getSiblingKotlinModuleData(dependeeSourceSet, gradleModule, ideModule, resolverCtx) ?: continue
                     addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
@@ -756,7 +754,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 }
             }
             for (target in mppModel.targets) {
-                if (androidPluginPresent && target.platform == KotlinPlatform.ANDROID) continue
+                if (delegateToAndroidPlugin(target)) continue
                 for (compilation in target.compilations) {
                     val moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                     val moduleDataNode = sourceSetsMap[moduleId] ?: continue
@@ -976,6 +974,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 "true",
                 ignoreCase = true
             ) ?: false
+
+        private fun delegateToAndroidPlugin(kotlinTarget: KotlinTarget): Boolean =
+            androidPluginPresent && kotlinTarget.platform == KotlinPlatform.ANDROID
+
+        private fun delegateToAndroidPlugin(kotlinSourceSet: KotlinSourceSet): Boolean =
+            androidPluginPresent && kotlinSourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
     }
 }
 
