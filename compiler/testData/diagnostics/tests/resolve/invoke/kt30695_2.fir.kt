@@ -1,3 +1,13 @@
+// FILE: JavaClass.java
+
+public class JavaClass {
+    public static Cls createFlexible() {
+        return new Cls();
+    }
+}
+
+// FILE: test.kt
+
 class MemberInvokeOwner {
     operator fun invoke() {}
 }
@@ -22,4 +32,12 @@ fun testNullableReceiver(nullable: Cls?) {
 fun testNotNullableReceiver(notNullable: Cls) {
     notNullable.<!INAPPLICABLE_CANDIDATE!>nullableExtensionProperty<!>()
     notNullable?.extensionProperty()
+}
+
+fun testFlexibleReceiver() {
+    val flexible = JavaClass.createFlexible()
+    flexible.extensionProperty()
+    flexible?.extensionProperty()
+    flexible.<!INAPPLICABLE_CANDIDATE!>nullableExtensionProperty<!>()
+    flexible?.nullableExtensionProperty()
 }
