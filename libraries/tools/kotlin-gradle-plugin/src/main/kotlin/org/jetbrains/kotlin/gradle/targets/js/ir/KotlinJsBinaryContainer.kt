@@ -35,20 +35,25 @@ constructor(
     private val defaultTestCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
 
-    fun executable() = createBinaries(
+    fun executable(
+        compilation: KotlinJsCompilation = defaultCompilation
+    ) = createBinaries(
         baseName = project.name,
+        compilation = compilation,
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = ::Executable
     )
 
     internal fun testExecutable() = createBinaries(
         baseName = project.name,
+        compilation = defaultTestCompilation,
         jsBinaryType = JsBinaryType.TEST,
         create = ::TestExecutable
     )
 
     private fun <T : JsBinary> createBinaries(
         baseName: String,
+        compilation: KotlinJsCompilation,
         buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
         create: (name: String, buildVariantKind: BuildVariantKind, compilation: KotlinJsCompilation) -> T
@@ -62,12 +67,6 @@ constructor(
 
             require(name !in nameToBinary) {
                 "Cannot create binary $name: binary with such a name already exists"
-            }
-
-            val compilation = if (jsBinaryType == JsBinaryType.TEST) {
-                defaultTestCompilation
-            } else {
-                defaultCompilation
             }
 
             val binary = create(name, buildVariantKind, compilation)

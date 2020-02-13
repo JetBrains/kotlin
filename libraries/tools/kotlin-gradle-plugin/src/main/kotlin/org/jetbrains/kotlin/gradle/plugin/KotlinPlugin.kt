@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -267,7 +266,9 @@ internal class Kotlin2JsSourceSetProcessor(
     kotlinCompilation: AbstractKotlinCompilation<*>,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
-    tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.", kotlinCompilation = kotlinCompilation
+    tasksProvider,
+    taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
+    kotlinCompilation = kotlinCompilation
 ) {
     override fun doRegisterTask(
         project: Project,
@@ -349,15 +350,15 @@ internal class KotlinJsIrSourceSetProcessor(
             it.dependsOn(kotlinTask)
         }
 
-        val compilation = kotlinCompilation as KotlinJsIrCompilation
-
-        (compilation.target as KotlinJsIrTarget).binaries.all { binary ->
-            registerKotlinCompileTask(
-                binary.linkTaskName
-            ) { project, name, action ->
-                registerJsLink(project, name, binary.type, action)
+        (kotlinCompilation.target as KotlinJsIrTarget).binaries
+            .matching { it.compilation == kotlinCompilation }
+            .all { binary ->
+                registerKotlinCompileTask(
+                    binary.linkTaskName
+                ) { project, name, action ->
+                    registerJsLink(project, name, binary.type, action)
+                }
             }
-        }
 
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.runOnceAfterEvaluated("KotlinJsIrSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
