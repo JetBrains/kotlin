@@ -535,4 +535,56 @@ class AutoImportTest : AutoImportTestCase() {
       assertState(refresh = 0, enabled = true, notified = false, event = "register project with correct cache")
     }
   }
+
+  @Test
+  fun `test activation of auto-import`() {
+    val systemId = ProjectSystemId("External System")
+    val projectId1 = ExternalSystemProjectId(systemId, projectPath)
+    val projectId2 = ExternalSystemProjectId(systemId, "$projectPath/sub-project")
+    val projectAware1 = MockProjectAware(projectId1)
+    val projectAware2 = MockProjectAware(projectId2)
+
+    initialize()
+
+    register(projectAware1, activate = false)
+    assertProjectAware(projectAware1, refresh = 0, event = "register project")
+    assertNotificationAware(projectId1, event = "register project")
+    assertActivationStatus(event = "register project")
+
+    activate(projectId1)
+    assertProjectAware(projectAware1, refresh = 1, event = "activate project")
+    assertNotificationAware(event = "activate project")
+    assertActivationStatus(projectId1, event = "activate project")
+
+    register(projectAware2, activate = false)
+    assertProjectAware(projectAware1, refresh = 1, event = "register project 2")
+    assertProjectAware(projectAware2, refresh = 0, event = "register project 2")
+    assertNotificationAware(projectId2, event = "register project 2")
+    assertActivationStatus(projectId1, event = "register project 2")
+
+    val settingsFile1 = createIoFile("settings.groovy")
+    val settingsFile2 = createIoFile("sub-project/settings.groovy")
+    projectAware1.settingsFiles.add(settingsFile1.path)
+    projectAware2.settingsFiles.add(settingsFile2.path)
+
+    settingsFile1.replaceContentInIoFile("println 'hello'")
+    settingsFile2.replaceContentInIoFile("println 'hello'")
+    assertProjectAware(projectAware1, refresh = 2, event = "externally modified both settings files, but project 2 is inactive")
+    assertProjectAware(projectAware2, refresh = 0, event = "externally modified both settings files, but project 2 is inactive")
+    assertNotificationAware(projectId2, event = "externally modified both settings files, but project 2 is inactive")
+    assertActivationStatus(projectId1, event = "externally modified both settings files, but project 2 is inactive")
+
+    settingsFile1.replaceString("hello", "Hello world!")
+    settingsFile2.replaceString("hello", "Hello world!")
+    assertProjectAware(projectAware1, refresh = 2, event = "internally modify settings")
+    assertProjectAware(projectAware2, refresh = 0, event = "internally modify settings")
+    assertNotificationAware(projectId1, projectId2, event = "internally modify settings")
+    assertActivationStatus(projectId1, event = "internally modify settings")
+
+    refreshProject()
+    assertProjectAware(projectAware1, refresh = 3, event = "refresh project")
+    assertProjectAware(projectAware2, refresh = 1, event = "refresh project")
+    assertNotificationAware(event = "refresh project")
+    assertActivationStatus(projectId1, projectId2, event = "refresh project")
+  }
 }

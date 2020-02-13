@@ -17,6 +17,7 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
+import com.intellij.openapi.observable.properties.BooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
@@ -64,6 +65,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
       override fun beforeProjectRefresh() {
         projectRefreshOperation.startTask(id)
         projectData.status.markSynchronized(currentTime())
+        projectData.isActivated = true
       }
 
       override fun afterProjectRefresh(status: ExternalSystemRefreshStatus) {
@@ -76,7 +78,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     LOG.debug("Schedule project refresh")
     dispatcher.queue(object : Update("update") {
       override fun run() {
-        refreshProject()
+        refreshProject(doImportDeactivatedProjects = true)
       }
     })
   }
@@ -95,7 +97,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     dispatcher.queue(object : Update("notify") {
       override fun run() {
         if (getModificationType() == EXTERNAL && isAutoReloadExternalChanges) {
-          refreshProject()
+          refreshProject(doImportDeactivatedProjects = false)
         }
         else {
           updateProjectNotification()
@@ -104,14 +106,15 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     })
   }
 
-  private fun refreshProject() {
+  private fun refreshProject(doImportDeactivatedProjects: Boolean) {
     LOG.debug("Incremental project refresh")
     if (isDisabled.get() || Registry.`is`("external.system.auto.import.disabled")) return
     if (!projectChangeOperation.isOperationCompleted()) return
     var isSkippedProjectRefresh = true
     for (projectData in projectDataMap.values) {
       val projectId = projectData.projectAware.projectId.readableName
-      if (!projectData.isUpToDate()) {
+      val isAllowAutoReload = doImportDeactivatedProjects || projectData.isActivated
+      if (isAllowAutoReload && !projectData.isUpToDate()) {
         isSkippedProjectRefresh = false
         LOG.debug("$projectId: Project refresh")
         projectData.projectAware.refreshProject()
@@ -148,10 +151,11 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
 
   override fun register(projectAware: ExternalSystemProjectAware) {
     val projectId = projectAware.projectId
+    val activationProperty = AtomicBooleanProperty(false)
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
     val parentDisposable = Disposer.newDisposable(projectId.readableName)
     val settingsTracker = ProjectSettingsTracker(project, this, projectAware, parentDisposable)
-    val projectData = ProjectData(projectStatus, projectAware, settingsTracker, parentDisposable)
+    val projectData = ProjectData(projectStatus, activationProperty, projectAware, settingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
     projectDataMap[projectId] = projectData
@@ -159,6 +163,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     val id = "ProjectSettingsTracker: ${projectData.projectAware.projectId.readableName}"
     settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
     settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
+    activationProperty.afterSet({ scheduleChangeProcessing() }, parentDisposable)
 
     Disposer.register(project, parentDisposable)
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
@@ -167,22 +172,30 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     loadState(projectId, projectData)
   }
 
+  override fun activate(id: ExternalSystemProjectId) {
+    val projectData = projectDataMap(id) { get(it) } ?: return
+    projectData.isActivated = true
+  }
+
   override fun remove(id: ExternalSystemProjectId) {
-    val projectData = projectDataMap.remove(id)
-    if (projectData == null) {
-      LOG.warn(String.format("Project isn't registered by id=%s", id))
-      return
-    }
+    val projectData = projectDataMap(id) { remove(it) } ?: return
     Disposer.dispose(projectData.parentDisposable)
   }
 
   override fun markDirty(id: ExternalSystemProjectId) {
-    val projectData = projectDataMap[id]
+    val projectData = projectDataMap(id) { get(it) } ?: return
+    projectData.status.markDirty(currentTime())
+  }
+
+  private fun projectDataMap(
+    id: ExternalSystemProjectId,
+    action: MutableMap<ExternalSystemProjectId, ProjectData>.(ExternalSystemProjectId) -> ProjectData?
+  ): ProjectData? {
+    val projectData = projectDataMap.action(id)
     if (projectData == null) {
       LOG.warn(String.format("Project isn't registered by id=%s", id))
-      return
     }
-    projectData.status.markDirty(currentTime())
+    return projectData
   }
 
   override fun getState(): State {
@@ -218,6 +231,13 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     dispatcher.activate()
   }
 
+  @TestOnly
+  fun getActivatedProjects() =
+    projectDataMap.values
+      .filter { it.isActivated }
+      .map { it.projectAware.projectId }
+      .toSet()
+
   /**
    * Enables auto-import in tests
    * Note: project tracker automatically enabled out of tests
@@ -248,10 +268,13 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
 
   private data class ProjectData(
     val status: ProjectStatus,
+    val activationProperty: BooleanProperty,
     val projectAware: ExternalSystemProjectAware,
     val settingsTracker: ProjectSettingsTracker,
     val parentDisposable: Disposable
   ) {
+    var isActivated by activationProperty
+
     fun isUpToDate() = status.isUpToDate() && settingsTracker.isUpToDate()
 
     fun getModificationType(): ModificationType? {

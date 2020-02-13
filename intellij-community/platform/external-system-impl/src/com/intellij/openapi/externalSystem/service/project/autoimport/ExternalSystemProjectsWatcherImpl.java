@@ -2,14 +2,11 @@
 package com.intellij.openapi.externalSystem.service.project.autoimport;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectId;
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
-import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
-import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -18,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjectsWatcher {
@@ -67,22 +63,6 @@ public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjects
     projectTracker.scheduleProjectRefresh();
   }
 
-  public synchronized void start() {
-    ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
-    for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
-      ProjectSystemId systemId = manager.getSystemId();
-      AbstractExternalSystemSettings<?, ?, ?> settings = manager.getSettingsProvider().fun(project);
-      if (!(manager instanceof ExternalSystemAutoImportAware)) continue;
-      ExternalSystemAutoImportAware autoImportAware = (ExternalSystemAutoImportAware)manager;
-      for (ExternalProjectSettings projectSettings : settings.getLinkedProjectsSettings()) {
-        ExternalSystemProjectId projectId = new ExternalSystemProjectId(systemId, projectSettings.getExternalProjectPath());
-        projectTracker.register(new ProjectAware(project, projectId, autoImportAware));
-      }
-      ProjectSettingsListener settingsListener = new ProjectSettingsListener(systemId, autoImportAware);
-      ExternalSystemApiUtil.subscribe(project, systemId, settingsListener);
-    }
-  }
-
   private List<ExternalSystemProjectId> findAllProjectSettings() {
     List<ExternalSystemProjectId> list = new ArrayList<>();
     ExternalSystemManager.EP_NAME.forEachExtensionSafe(manager -> {
@@ -105,34 +85,5 @@ public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjects
     void markDirty(@NotNull Module module);
 
     default void markDirty(@NotNull String projectPath) {}
-  }
-
-  private class ProjectSettingsListener extends ExternalSystemSettingsListenerAdapter<ExternalProjectSettings> {
-
-    private final ProjectSystemId systemId;
-    private final ExternalSystemAutoImportAware autoImportAware;
-
-    ProjectSettingsListener(ProjectSystemId systemId, ExternalSystemAutoImportAware autoImportAware) {
-      this.systemId = systemId;
-      this.autoImportAware = autoImportAware;
-    }
-
-    @Override
-    public void onProjectsLinked(Collection<ExternalProjectSettings> settings) {
-      ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
-      for (ExternalProjectSettings projectSettings : settings) {
-        String externalProjectPath = projectSettings.getExternalProjectPath();
-        ExternalSystemProjectId id = new ExternalSystemProjectId(systemId, externalProjectPath);
-        projectTracker.register(new ProjectAware(project, id, autoImportAware));
-      }
-    }
-
-    @Override
-    public void onProjectsUnlinked(Set<String> linkedProjectPaths) {
-      ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
-      for (String linkedProjectPath : linkedProjectPaths) {
-        projectTracker.remove(new ExternalSystemProjectId(systemId, linkedProjectPath));
-      }
-    }
   }
 }

@@ -154,7 +154,6 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
     if (isInitializationStarted.getAndSet(true)) {
       return;
     }
-    myWatcher.start();
 
     // load external projects data
     ExternalProjectsDataStorage.getInstance(myProject).load();

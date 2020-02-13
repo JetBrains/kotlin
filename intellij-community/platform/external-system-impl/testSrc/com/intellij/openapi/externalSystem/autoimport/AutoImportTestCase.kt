@@ -160,7 +160,14 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       replaceString(startOffset, endOffset, new)
     }
 
-  protected fun register(projectAware: ExternalSystemProjectAware) = projectTracker.register(projectAware)
+  protected fun register(projectAware: ExternalSystemProjectAware, activate: Boolean = true) {
+    projectTracker.register(projectAware)
+    if (activate) activate(projectAware.projectId)
+  }
+
+  protected fun activate(projectId: ExternalSystemProjectId) {
+    projectTracker.activate(projectId)
+  }
 
   protected fun remove(projectId: ExternalSystemProjectId) = projectTracker.remove(projectId)
 
@@ -210,6 +217,14 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       false -> "Auto reload must be disabled"
     }
     assertEquals("$message on $event", isAutoReload, projectTracker.isAutoReloadExternalChanges)
+  }
+
+  protected fun assertActivationStatus(vararg projects: ExternalSystemProjectId, event: String) {
+    val message = when (projects.isEmpty()) {
+      true -> "Auto reload must be activated"
+      false -> "Auto reload must be deactivated"
+    }
+    assertEquals("$message on $event", projects.toSet(), projectTracker.getActivatedProjects())
   }
 
   protected fun assertNotificationAware(vararg projects: ExternalSystemProjectId, event: String) {
