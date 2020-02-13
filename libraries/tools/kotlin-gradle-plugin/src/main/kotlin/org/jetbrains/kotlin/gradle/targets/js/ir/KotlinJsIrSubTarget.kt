@@ -36,6 +36,9 @@ abstract class KotlinJsIrSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
+    protected val binaries: KotlinJsBinaryContainer
+        get() = target.binaries
+
     internal fun configure() {
         target.binaries.testExecutable()
 
@@ -44,15 +47,10 @@ abstract class KotlinJsIrSubTarget(
         configureBuildVariants()
         configureTests()
 
-        target.compilations.all {
-            val npmProject = it.npmProject
-            listOf(
-                it.productionLinkTask,
-                it.developmentLinkTask
-            ).forEach { taskProvider ->
-                taskProvider.configure {
-                    it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
-                }
+        binaries.all { binary ->
+            val npmProject = binary.compilation.npmProject
+            binary.linkTask.configure {
+                it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
             }
         }
     }
@@ -97,9 +95,9 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            val testExecutableTask = target.binaries.getBinary(
-                BuildVariantKind.DEVELOPMENT,
-                JsBinaryType.TEST
+            val testExecutableTask = binaries.getBinary(
+                compilation,
+                BuildVariantKind.DEVELOPMENT
             ).linkTask
 
             testJs.inputFileProperty.set(

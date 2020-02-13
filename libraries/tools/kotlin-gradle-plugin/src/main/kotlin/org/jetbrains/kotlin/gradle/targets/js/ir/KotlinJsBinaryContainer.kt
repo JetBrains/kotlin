@@ -27,7 +27,8 @@ constructor(
     val project: Project
         get() = target.project
 
-    private val nameToBinary = mutableMapOf<String, JsBinary>()
+    private val binaryNames = mutableSetOf<String>()
+    private val compilationToBinaries = mutableMapOf<KotlinJsCompilation, MutableSet<JsBinary>>()
 
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -50,15 +51,12 @@ constructor(
     )
 
     internal fun getBinary(
-        buildVariantKind: BuildVariantKind,
-        jsBinaryType: JsBinaryType
+        compilation: KotlinJsCompilation,
+        buildVariantKind: BuildVariantKind
     ): JsBinary =
-        nameToBinary.getValue(
-            generateBinaryName(
-                buildVariantKind,
-                jsBinaryType
-            )
-        )
+        compilationToBinaries.getValue(
+            compilation
+        ).single { it.type == buildVariantKind }
 
 
     private fun <T : JsBinary> createBinaries(
@@ -73,13 +71,19 @@ constructor(
                 jsBinaryType
             )
 
-            require(name !in nameToBinary) {
+            require(name !in binaryNames) {
                 "Cannot create binary $name: binary with such a name already exists"
             }
 
             val binary = create(name, buildVariantKind, compilation)
             add(binary)
-            nameToBinary[binary.name] = binary
+            with(compilationToBinaries[compilation]) {
+                if (this != null) {
+                    add(binary)
+                } else {
+                    compilationToBinaries[compilation] = mutableSetOf<JsBinary>(binary)
+                }
+            }
             // Allow accessing binaries as properties of the container in Groovy DSL.
             if (this is ExtensionAware) {
                 extensions.add(binary.name, binary)

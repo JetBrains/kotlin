@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -30,8 +31,10 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
+        val developmentExecutable = binaries.getBinary(compilation, BuildVariantKind.DEVELOPMENT)
+
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
-            inputFileProperty.set(compilation.developmentLinkTask.map { it.outputFileProperty.get() })
+            inputFileProperty.set(developmentExecutable.linkTask.map { it.outputFileProperty.get() })
         }
         target.runTask.dependsOn(runTaskHolder)
     }
@@ -39,8 +42,10 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureBuild(
         compilation: KotlinJsIrCompilation
     ) {
+        val productionExecutable = binaries.getBinary(compilation, BuildVariantKind.PRODUCTION)
+
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(compilation.productionLinkTask)
+        assembleTask.dependsOn(productionExecutable.linkTask)
     }
 
     override fun configureBuildVariants() {
