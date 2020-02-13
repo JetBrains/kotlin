@@ -1489,6 +1489,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("arrayAsVarargAfterSamArgument_fi.kt")
+            public void testArrayAsVarargAfterSamArgument_fi() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/arrayAsVarargAfterSamArgument_fi.kt");
+            }
+
             @TestMetadata("basicFunInterfaceConversion.kt")
             public void testBasicFunInterfaceConversion() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/basicFunInterfaceConversion.kt");
@@ -1530,6 +1535,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
 
             public void testAllFilesPresentInSam() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("arrayAsVarargAfterSamArgument.kt")
+            public void testArrayAsVarargAfterSamArgument() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/arrayAsVarargAfterSamArgument.kt");
             }
 
             @TestMetadata("genericSamProjectedOut.kt")
