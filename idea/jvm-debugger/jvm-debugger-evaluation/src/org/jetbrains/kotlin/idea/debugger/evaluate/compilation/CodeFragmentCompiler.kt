@@ -52,12 +52,16 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         val mainMethodSignature: MethodSignature
     )
 
-    fun compile(codeFragment: KtCodeFragment, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): CompilationResult {
-        return runReadAction { doCompile(codeFragment, bindingContext, moduleDescriptor) }
+    fun compile(
+        codeFragment: KtCodeFragment, filesToCompile: List<KtFile>,
+        bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor
+    ): CompilationResult {
+        return runReadAction { doCompile(codeFragment, filesToCompile, bindingContext, moduleDescriptor) }
     }
 
     private fun doCompile(
-        codeFragment: KtCodeFragment, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor
+        codeFragment: KtCodeFragment, filesToCompile: List<KtFile>,
+        bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor
     ): CompilationResult {
         require(codeFragment is KtBlockCodeFragment || codeFragment is KtExpressionCodeFragment) {
             "Unsupported code fragment type: $codeFragment"
@@ -76,8 +80,8 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
 
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
-            bindingContext, listOf(codeFragment), compilerConfiguration
-        ).build()
+            bindingContext, filesToCompile, compilerConfiguration
+        ).generateDeclaredClassFilter(GeneratedClassFilterForCodeFragment(codeFragment)).build()
 
         val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext, status).analyze()
         val (classDescriptor, methodDescriptor) = createDescriptorsForCodeFragment(
@@ -103,6 +107,14 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         } finally {
             CodeFragmentCodegen.clearCodeFragmentInfo(codeFragment)
         }
+    }
+
+    private class GeneratedClassFilterForCodeFragment(private val codeFragment: KtCodeFragment) : GenerationState.GenerateClassFilter() {
+        override fun shouldGeneratePackagePart(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") file: KtFile) = file == codeFragment
+        override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
+        override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.containingFile == codeFragment
+        override fun shouldGenerateCodeFragment(codeFragment: KtCodeFragment) = codeFragment == this.codeFragment
+        override fun shouldGenerateScript(script: KtScript) = false
     }
 
     private fun getLocalFunctionSuffixes(

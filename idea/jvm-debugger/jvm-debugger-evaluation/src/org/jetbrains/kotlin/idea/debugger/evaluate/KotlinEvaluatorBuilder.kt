@@ -221,7 +221,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             analysisResult = analyze(codeFragment, status, debugProcess)
         }
 
-        val (bindingContext) = runReadAction {
+        val (bindingContext, filesToCompile) = runReadAction {
             val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
             DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, codeFragment, false, analysisResult.bindingContext)
         }
@@ -229,7 +229,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
         val moduleDescriptor = analysisResult.moduleDescriptor
 
         try {
-            val result = CodeFragmentCompiler(context, status).compile(codeFragment, bindingContext, moduleDescriptor)
+            val result = CodeFragmentCompiler(context, status).compile(codeFragment, filesToCompile, bindingContext, moduleDescriptor)
             return createCompiledDataDescriptor(result, sourcePosition)
         } catch (e: Throwable) {
             status.error(EvaluationError.BackendException)
