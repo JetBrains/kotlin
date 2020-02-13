@@ -288,7 +288,7 @@ public final class QuickDocOnMouseOverManager {
       try {
         targetElement = ReadAction.nonBlocking(() -> {
           return originalElement.isValid() ? docManager.findTargetElement(editor, offset, originalElement.getContainingFile(), originalElement) : null;
-        }).cancelWith(myProgressIndicator).executeSynchronously();
+        }).wrapProgress(myProgressIndicator).executeSynchronously();
       }
       catch (ProcessCanceledException e) {
         return;
