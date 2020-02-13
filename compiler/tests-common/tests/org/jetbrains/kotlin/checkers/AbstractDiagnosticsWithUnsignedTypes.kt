@@ -19,8 +19,8 @@ abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() 
     override fun defaultLanguageVersionSettings(): LanguageVersionSettings =
         CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-            ApiVersion.KOTLIN_1_3,
-            LanguageVersion.KOTLIN_1_3,
+            ApiVersion.LATEST_STABLE,
+            LanguageVersion.LATEST_STABLE,
             mapOf(AnalysisFlags.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes"))
         )
 }
