@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
@@ -498,6 +503,7 @@ internal abstract class AbstractKotlinPlugin(
         fun configureProjectGlobalSettings(project: Project, kotlinPluginVersion: String) {
             configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
             configureClassInspectionForIC(project)
+            project.setupGeneralKotlinExtensionParameters()
         }
 
         fun configureTarget(
