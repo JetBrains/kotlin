@@ -38,16 +38,9 @@ data class AndroidDependency(
 object AndroidDependencyResolver {
     private fun getAndroidSdkJar(project: Project): AndroidDependency? {
         val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
-        val sdkLocation = getClassOrNull("com.android.build.gradle.internal.SdkLocationSourceSet")?.let { sdkLocationSourceSetClass ->
-            val sdkLocationSourceSet = sdkLocationSourceSetClass.kotlin.constructors.firstOrNull()?.let { callable ->
-                callable.findParameterByName("projectRoot")?.let { param ->
-                    callable.callBy(mapOf(param to project.rootDir))
-                }
-            }
-
-            val sdkLocatorClass = getClassOrNull("com.android.build.gradle.internal.SdkLocator")
+        val sdkLocation = getClassOrNull("com.android.build.gradle.internal.SdkLocator")?.let { sdkLocatorClass ->
             val sdkLocation =
-                sdkLocatorClass?.getMethodOrNull("getSdkLocation", sdkLocationSourceSetClass)?.invoke(sdkLocatorClass, sdkLocationSourceSet)
+                sdkLocatorClass.getMethodOrNull("getSdkLocation", File::class.java)?.invoke(sdkLocatorClass, project.rootDir)
             sdkLocation?.javaClass?.getMethodOrNull("getDirectory")?.invoke(sdkLocation) as? File
         } ?: return null
         val sdkHandler = AndroidSdkHandler.getInstance(sdkLocation)
