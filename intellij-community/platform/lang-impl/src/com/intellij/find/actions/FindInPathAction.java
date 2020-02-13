@@ -18,6 +18,7 @@
 package com.intellij.find.actions;
 
 import com.intellij.find.findInProject.FindInProjectManager;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
@@ -59,7 +60,7 @@ public class FindInPathAction extends AnAction implements DumbAware {
   static void doUpdate(@NotNull AnActionEvent e) {
     Presentation presentation = e.getPresentation();
     Project project = e.getData(CommonDataKeys.PROJECT);
-    presentation.setEnabled(project != null);
+    presentation.setEnabled(project != null && !LightEdit.owns(project));
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
       presentation.setVisible(isValidSearchScope(e));
     }
