@@ -127,17 +127,18 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   }
 
   @Override
-  public synchronized long tryEnumerateContentHash(byte[] hash) throws IOException {
-    TIntObjectIterator<ContentHashEnumerator> iterator = myChunkEnumerators.iterator();
-    while (iterator.hasNext()) {
-      iterator.advance();
+  public long tryEnumerateContentHash(byte[] hash) throws IOException {
+    synchronized (myChunkEnumerators) {
+      TIntObjectIterator<ContentHashEnumerator> iterator = myChunkEnumerators.iterator();
+      while (iterator.hasNext()) {
+        iterator.advance();
 
-      ContentHashEnumerator enumerator = iterator.value();
-      int id = Math.abs(enumerator.tryEnumerate(hash));
-      if (id != 0) {
-        return FileContentHashIndexExtension.getHashId(id, iterator.key());
+        ContentHashEnumerator enumerator = iterator.value();
+        int id = Math.abs(enumerator.tryEnumerate(hash));
+        if (id != 0) {
+          return FileContentHashIndexExtension.getHashId(id, iterator.key());
+        }
       }
-
     }
     return FileContentHashIndexExtension.NULL_HASH_ID;
   }
