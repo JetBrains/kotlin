@@ -42,7 +42,7 @@ private val noParameters = { emptyMap<String, String>() }
 class FcsCodegenTests : AbstractCodegenTest() {
 
     @Test
-    fun testReturnValue(): Unit = forComposerParam(true, false) {
+    fun testReturnValue(): Unit = ensureSetup {
         compose("""
             var a = 0
             var b = 0
@@ -107,7 +107,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testReorderedArgsReturnValue(): Unit = forComposerParam(true, false) {
+    fun testReorderedArgsReturnValue(): Unit = ensureSetup {
         compose(
             """
             @Composable
@@ -128,7 +128,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testTrivialReturnValue(): Unit = forComposerParam(true, false) {
+    fun testTrivialReturnValue(): Unit = ensureSetup {
         compose("""
         @Composable
         fun <T> identity(value: T): T = value
@@ -151,7 +151,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testForDevelopment(): Unit = forComposerParam(true, false) {
+    fun testForDevelopment(): Unit = ensureSetup {
         codegen(
             """
             import androidx.compose.*
@@ -170,7 +170,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleFunctionResolution(): Unit = forComposerParam(true, false) {
+    fun testSimpleFunctionResolution(): Unit = ensureSetup {
         compose(
             """
             import androidx.compose.*
@@ -189,7 +189,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleClassResolution(): Unit = forComposerParam(true, false) {
+    fun testSimpleClassResolution(): Unit = ensureSetup {
         compose(
             """
             import android.widget.TextView
@@ -206,7 +206,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testModelOne(): Unit = forComposerParam(true, false) {
+    fun testModelOne(): Unit = ensureSetup {
         codegen(
             """
                 @Model
@@ -218,7 +218,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSetContent(): Unit = forComposerParam(true, false) {
+    fun testSetContent(): Unit = ensureSetup {
         codegen(
             """
                 fun fakeCompose(block: @Composable() ()->Unit) { }
@@ -235,7 +235,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposeWithResult(): Unit = forComposerParam(true, false) {
+    fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
                 @Composable fun <T> identity(block: @Composable() ()->T): T = block()
@@ -255,7 +255,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservable(): Unit = forComposerParam(true, false) {
+    fun testObservable(): Unit = ensureSetup {
         compose(
             """
                 import android.widget.Button
@@ -291,7 +291,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservableLambda(): Unit = forComposerParam(true, false) {
+    fun testObservableLambda(): Unit = ensureSetup {
         compose(
             """
                 @Model
@@ -329,7 +329,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservableGenericFunction(): Unit = forComposerParam(true, false) {
+    fun testObservableGenericFunction(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -359,7 +359,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservableExtension(): Unit = forComposerParam(true, false) {
+    fun testObservableExtension(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -391,7 +391,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObserverableExpressionBody(): Unit = forComposerParam(true, false) {
+    fun testObserverableExpressionBody(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -425,7 +425,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservableInlineWrapper(): Unit = forComposerParam(true, false) {
+    fun testObservableInlineWrapper(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -469,7 +469,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservableDefaultParameter(): Unit = forComposerParam(true, false) {
+    fun testObservableDefaultParameter(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -501,7 +501,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObservableEarlyReturn(): Unit = forComposerParam(true, false) {
+    fun testObservableEarlyReturn(): Unit = ensureSetup {
         compose("""
             @Model
             class Counter() {
@@ -545,7 +545,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGSimpleTextView(): Unit = forComposerParam(true, false) {
+    fun testCGSimpleTextView(): Unit = ensureSetup {
         compose(
             """
                 TextView(text="Hello, world!", id=42)
@@ -557,7 +557,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGLocallyScopedFunction(): Unit = forComposerParam(true, false) {
+    fun testCGLocallyScopedFunction(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -579,7 +579,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGLocallyScopedExtensionFunction(): Unit = forComposerParam(true, false) {
+    fun testCGLocallyScopedExtensionFunction(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -601,7 +601,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testImplicitReceiverScopeCall(): Unit = forComposerParam(true, false) {
+    fun testImplicitReceiverScopeCall(): Unit = ensureSetup {
         compose(
             """
                 import androidx.compose.*
@@ -630,7 +630,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGLocallyScopedInvokeOperator(): Unit = forComposerParam(true, false) {
+    fun testCGLocallyScopedInvokeOperator(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -653,7 +653,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testTrivialExtensionFunction(): Unit = forComposerParam(true, false) {
+    fun testTrivialExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
             { mapOf<String, String>() },
@@ -666,7 +666,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testTrivialInvokeExtensionFunction(): Unit = forComposerParam(true, false) {
+    fun testTrivialInvokeExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
             noParameters,
@@ -679,7 +679,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNSimpleTextView(): Unit = forComposerParam(true, false) {
+    fun testCGNSimpleTextView(): Unit = ensureSetup {
         compose(
             """
                 TextView(text="Hello, world!", id=42)
@@ -691,7 +691,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInliningTemp(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -712,7 +712,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInliningTemp2(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp2(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -728,7 +728,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInliningTemp3(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp3(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -744,7 +744,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInliningTemp4(): Unit = forComposerParam(true, false) {
+    fun testInliningTemp4(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -769,7 +769,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     // generated IR.
 
     @Test
-    fun testInline_DirectRuntime_Identity(): Unit = forComposerParam(true, false) {
+    fun testInline_DirectRuntime_Identity(): Unit = ensureSetup {
         compose("""
             inline fun inlineWrapper(base: Int, children: () -> Unit) {
               children()
@@ -793,7 +793,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInline_NonComposable_Identity(): Unit = forComposerParam(true, false) {
+    fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose("""
             @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
               children()
@@ -810,7 +810,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInline_Composable_Identity(): Unit = forComposerParam(true, false) {
+    fun testInline_Composable_Identity(): Unit = ensureSetup {
         compose("""
             @Composable
             inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
@@ -828,7 +828,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInline_Composable_EmitChildren(): Unit = forComposerParam(true, false) {
+    fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
         compose("""
             @Composable
             inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {
@@ -852,7 +852,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNInlining(): Unit = forComposerParam(true, false) {
+    fun testCGNInlining(): Unit = ensureSetup {
         compose(
             """
                 LinearLayout(orientation=LinearLayout.VERTICAL) {
@@ -866,7 +866,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGUpdatedComposition(): Unit = forComposerParam(true, false) {
+    fun testCGUpdatedComposition(): Unit = ensureSetup {
         var value = "Hello, world!"
 
         compose(
@@ -885,7 +885,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNUpdatedComposition(): Unit = forComposerParam(true, false) {
+    fun testCGNUpdatedComposition(): Unit = ensureSetup {
         var value = "Hello, world!"
 
         compose(
@@ -904,7 +904,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGViewGroup(): Unit = forComposerParam(true, false) {
+    fun testCGViewGroup(): Unit = ensureSetup {
         val tvId = 258
         val llId = 260
         var text = "Hello, world!"
@@ -935,7 +935,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     // @Test
-    fun testCGNAmbient(): Unit = forComposerParam(true, false) {
+    fun testCGNAmbient(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello, world!"
 
@@ -968,7 +968,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNFunctionComponent(): Unit = forComposerParam(true, false) {
+    fun testCGNFunctionComponent(): Unit = ensureSetup {
         var text = "Hello, world!"
         val tvId = 123
 
@@ -997,7 +997,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     // @Test
-    fun testAmbientReference(): Unit = forComposerParam(true, false) {
+    fun testAmbientReference(): Unit = ensureSetup {
         val outerId = 123
         val innerId = 345
         val buttonId = 456
@@ -1075,7 +1075,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
     @Ignore("Test case for b/143464846 - re-enable when bug is fixed.")
     @Test
-    fun testAmbientConsumedFromDefaultParameter(): Unit = forComposerParam(true, false) {
+    fun testAmbientConsumedFromDefaultParameter(): Unit = ensureSetup {
         val initialText = "no text"
         val helloWorld = "Hello World!"
         compose("""
@@ -1117,7 +1117,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNViewGroup(): Unit = forComposerParam(true, false) {
+    fun testCGNViewGroup(): Unit = ensureSetup {
         val tvId = 258
         val llId = 260
         var text = "Hello, world!"
@@ -1148,7 +1148,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testMemoization(): Unit = forComposerParam(true, false) {
+    fun testMemoization(): Unit = ensureSetup {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
 
@@ -1222,7 +1222,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineClassMemoization(): Unit = forComposerParam(true, false) {
+    fun testInlineClassMemoization(): Unit = ensureSetup {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
 
@@ -1293,7 +1293,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testStringParameterMemoization(): Unit = forComposerParam(true, false) {
+    fun testStringParameterMemoization(): Unit = ensureSetup {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
 
@@ -1333,7 +1333,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNSimpleCall(): Unit = forComposerParam(true, false) {
+    fun testCGNSimpleCall(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello, world!"
 
@@ -1361,7 +1361,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     // @Test
-    fun testCGNSimpleCall2(): Unit = forComposerParam(true, false) {
+    fun testCGNSimpleCall2(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello, world!"
         var someInt = 456
@@ -1394,7 +1394,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGNCallWithChildren(): Unit = forComposerParam(true, false) {
+    fun testCGNCallWithChildren(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello, world!"
 
@@ -1427,7 +1427,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     // @Test
-    fun testCGNStuff(): Unit = forComposerParam(true, false) {
+    fun testCGNStuff(): Unit = ensureSetup {
         val tvId = 258
         var num = 123
 
@@ -1458,7 +1458,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     // @Test
-    fun testTagBasedMemoization(): Unit = forComposerParam(true, false) {
+    fun testTagBasedMemoization(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello World"
 
@@ -1492,7 +1492,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGComposableFunctionInvocationOneParameter(): Unit = forComposerParam(true, false) {
+    fun testCGComposableFunctionInvocationOneParameter(): Unit = ensureSetup {
         val tvId = 91
         var phone = "(123) 456-7890"
         compose(
@@ -1516,7 +1516,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCGComposableFunctionInvocationTwoParameters(): Unit = forComposerParam(true, false) {
+    fun testCGComposableFunctionInvocationTwoParameters(): Unit = ensureSetup {
         val tvId = 111
         val rsId = 112
         var left = 0
@@ -1573,7 +1573,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testImplicitReceiverPassing1(): Unit = forComposerParam(true, false) {
+    fun testImplicitReceiverPassing1(): Unit = ensureSetup {
         compose(
             """
                 @Composable fun Int.Foo(x: @Composable() Int.() -> Unit) {
@@ -1595,7 +1595,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testImplicitReceiverPassing2(): Unit = forComposerParam(true, false) {
+    fun testImplicitReceiverPassing2(): Unit = ensureSetup {
         compose(
             """
                 @Composable fun Int.Foo(x: @Composable() Int.(text: String) -> Unit, text: String) {
@@ -1621,7 +1621,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testEffects1(): Unit = forComposerParam(true, false) {
+    fun testEffects1(): Unit = ensureSetup {
         compose(
             """
                 import androidx.ui.androidview.adapters.*
@@ -1655,7 +1655,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testEffects2(): Unit = forComposerParam(true, false) {
+    fun testEffects2(): Unit = ensureSetup {
         compose(
             """
                 import androidx.ui.androidview.adapters.*
@@ -1691,7 +1691,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testEffects3(): Unit = forComposerParam(true, false) {
+    fun testEffects3(): Unit = ensureSetup {
         val log = StringBuilder()
         compose(
             """
@@ -1736,7 +1736,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testEffects4(): Unit = forComposerParam(true, false) {
+    fun testEffects4(): Unit = ensureSetup {
         val log = StringBuilder()
         compose(
             """
@@ -1783,7 +1783,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testVariableCalls1(): Unit = forComposerParam(true, false) {
+    fun testVariableCalls1(): Unit = ensureSetup {
         compose(
             """
                 val component = @Composable {
@@ -1801,7 +1801,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testVariableCalls2(): Unit = forComposerParam(true, false) {
+    fun testVariableCalls2(): Unit = ensureSetup {
         compose(
             """
                 val component = @Composable {
@@ -1823,7 +1823,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testVariableCalls3(): Unit = forComposerParam(true, false) {
+    fun testVariableCalls3(): Unit = ensureSetup {
         compose(
             """
                 val component = @Composable {
@@ -1851,7 +1851,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
     // b/123721921
     @Test
-    fun testDefaultParameters1(): Unit = forComposerParam(true, false) {
+    fun testDefaultParameters1(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -1870,7 +1870,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testDefaultParameters2(): Unit = forComposerParam(true, false) {
+    fun testDefaultParameters2(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -1890,7 +1890,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testPropertiesAndCtorParamsOnEmittables(): Unit = forComposerParam(true, false) {
+    fun testPropertiesAndCtorParamsOnEmittables(): Unit = ensureSetup {
         codegen(
             """
             class SimpleEmittable(label: String? = null) : Emittable {
@@ -1909,7 +1909,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleClassConstructor(): Unit = forComposerParam(true, false) {
+    fun testSimpleClassConstructor(): Unit = ensureSetup {
         codegen(
             """
             import androidx.compose.Emittable
@@ -1943,7 +1943,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testMovement(): Unit = forComposerParam(true, false) {
+    fun testMovement(): Unit = ensureSetup {
         val tvId = 50
         val btnIdAdd = 100
         val btnIdUp = 200
@@ -2030,7 +2030,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testObserveKtxWithInline(): Unit = forComposerParam(true, false) {
+    fun testObserveKtxWithInline(): Unit = ensureSetup {
         compose(
             """
                 @Composable
@@ -2066,7 +2066,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testKeyTag(): Unit = forComposerParam(true, false) {
+    fun testKeyTag(): Unit = ensureSetup {
         compose(
             """
             val list = mutableListOf(0,1,2,3)
@@ -2116,7 +2116,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNonFcs(): Unit = forComposerParam(true, false) {
+    fun testNonFcs(): Unit = ensureSetup {
         compose(
             """
 
@@ -2131,7 +2131,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNonComposeParameters(): Unit = forComposerParam(true, false) {
+    fun testNonComposeParameters(): Unit = ensureSetup {
         compose(
             """
                 class Action(
@@ -2151,7 +2151,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testStableParameters_Various(): Unit = forComposerParam(true, false) {
+    fun testStableParameters_Various(): Unit = ensureSetup {
         val output = ArrayList<String>()
         compose("""
             @Model
@@ -2308,7 +2308,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testStableParameters_Lambdas(): Unit = forComposerParam(true, false) {
+    fun testStableParameters_Lambdas(): Unit = ensureSetup {
         val output = ArrayList<String>()
         compose("""
             @Model
@@ -2381,7 +2381,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testRecomposeScope(): Unit = forComposerParam(true, false) {
+    fun testRecomposeScope(): Unit = ensureSetup {
         compose("""
              @Model
             class M { var count = 0 }
@@ -2434,7 +2434,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testRecomposeScope_ReceiverScope(): Unit = forComposerParam(true, false) {
+    fun testRecomposeScope_ReceiverScope(): Unit = ensureSetup {
         compose("""
             @Model
             class M { var count = 0 }
@@ -2469,7 +2469,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testRecomposeScope_Method(): Unit = forComposerParam(true, false) {
+    fun testRecomposeScope_Method(): Unit = ensureSetup {
         compose("""
             @Model
             class M { var count = 0 }
@@ -2608,19 +2608,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
 
         val instanceOfClass = instanceClass.newInstance()
-        val testMethod = if (ComposeFlags.COMPOSER_PARAM)
-            instanceClass.getMethod("test", *parameterTypes, Composer::class.java)
-        else
-            instanceClass.getMethod("test", *parameterTypes)
+        val testMethod = instanceClass.getMethod("test", *parameterTypes, Composer::class.java)
 
         return compose {
             val values = valuesFactory()
             val arguments = values.map { it.value as Any }.toTypedArray()
-            if (ComposeFlags.COMPOSER_PARAM) {
-                testMethod.invoke(instanceOfClass, *arguments, currentComposerNonNull)
-            } else {
-                testMethod.invoke(instanceOfClass, *arguments)
-            }
+            testMethod.invoke(instanceOfClass, *arguments, currentComposerNonNull)
         }
     }
 

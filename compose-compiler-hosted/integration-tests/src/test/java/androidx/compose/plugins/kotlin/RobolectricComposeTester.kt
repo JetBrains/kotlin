@@ -72,23 +72,19 @@ class RobolectricComposeTester internal constructor(
         val activity = controller.create().get()
         val root = activity.root
         scheduler.advanceToLastPostedRunnable()
-        val composition = if (ComposeFlags.COMPOSER_PARAM) {
-            val composeInto = Compose::class.java.methods.first {
-                if (it.name != "composeInto") false
-                else {
-                    val param = it.parameters.getOrNull(2)
-                    param?.type == Function1::class.java
-                }
+        val composeInto = Compose::class.java.methods.first {
+            if (it.name != "composeInto") false
+            else {
+                val param = it.parameters.getOrNull(2)
+                param?.type == Function1::class.java
             }
-            composeInto.invoke(
-                Compose,
-                root,
-                null,
-                { composer: Composer<*> -> composable() }
-            ) as Composition
-        } else {
-            Compose.composeInto(root, null, composable)
         }
+        val composition = composeInto.invoke(
+            Compose,
+            root,
+            null,
+            { composer: Composer<*> -> composable() }
+        ) as Composition
         scheduler.advanceToLastPostedRunnable()
         block(activity)
         val advanceFn = advance ?: { composition.compose() }

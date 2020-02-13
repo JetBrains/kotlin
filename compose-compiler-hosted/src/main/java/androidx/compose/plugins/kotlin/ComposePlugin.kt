@@ -96,9 +96,6 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposeTypeResolutionInterceptorExtension()
             )
-            SyntheticIrExtension.registerExtension(project,
-                ComposeSyntheticIrExtension()
-            )
             IrGenerationExtension.registerExtension(project,
                 ComposeIrGenerationExtension()
             )

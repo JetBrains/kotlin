@@ -41,7 +41,7 @@ import java.net.URLClassLoader
 class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
-    fun testCrossinlineEmittable(): Unit = forComposerParam(true, false) {
+    fun testCrossinlineEmittable(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -75,7 +75,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testConstCrossModule(): Unit = forComposerParam(true, false) {
+    fun testConstCrossModule(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -104,7 +104,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNonCrossinlineComposable(): Unit = forComposerParam(true, false) {
+    fun testNonCrossinlineComposable(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -137,7 +137,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNonCrossinlineComposableNoGenerics(): Unit = forComposerParam(true, false) {
+    fun testNonCrossinlineComposableNoGenerics(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -173,7 +173,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testRemappedTypes(): Unit = forComposerParam(true, false) {
+    fun testRemappedTypes(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -209,7 +209,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineIssue(): Unit = forComposerParam(true, false) {
+    fun testInlineIssue(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -238,7 +238,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineComposableProperty(): Unit = forComposerParam(true, false) {
+    fun testInlineComposableProperty(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -271,7 +271,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNestedInlineIssue(): Unit = forComposerParam(true, false) {
+    fun testNestedInlineIssue(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -308,7 +308,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposerIntrinsicInline(): Unit = forComposerParam(true, false) {
+    fun testComposerIntrinsicInline(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -349,7 +349,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposableOrderIssue(): Unit = forComposerParam(true, false) {
+    fun testComposableOrderIssue(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -388,7 +388,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleXModuleCall(): Unit = forComposerParam(true, false) {
+    fun testSimpleXModuleCall(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -419,7 +419,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testJvmFieldIssue(): Unit = forComposerParam(true, false) {
+    fun testJvmFieldIssue(): Unit = ensureSetup {
         compile(
             "TestG", mapOf(
                 "library module" to mapOf(
@@ -448,7 +448,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInstanceXModuleCall(): Unit = forComposerParam(true, false) {
+    fun testInstanceXModuleCall(): Unit = ensureSetup {
         compile(
             "TestH", mapOf(
                 "library module" to mapOf(
@@ -479,7 +479,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleProperty(): Unit = forComposerParam(true, false) {
+    fun testXModuleProperty(): Unit = ensureSetup {
         compile(
             "TestI", mapOf(
                 "library module" to mapOf(
@@ -507,7 +507,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleInterface(): Unit = forComposerParam(true, false) {
+    fun testXModuleInterface(): Unit = ensureSetup {
         compile(
             "TestJ", mapOf(
                 "library module" to mapOf(
@@ -541,7 +541,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleCtorComposableParam(): Unit = forComposerParam(true, false) {
+    fun testXModuleCtorComposableParam(): Unit = ensureSetup {
         compile(
             "TestJ", mapOf(
                 "library module" to mapOf(
@@ -568,7 +568,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_SimpleComposition(): Unit = forComposerParam(true, false) {
+    fun testCrossModule_SimpleComposition(): Unit = ensureSetup {
         val tvId = 29
 
         compose(
@@ -629,7 +629,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_ComponentFunction(): Unit = forComposerParam(true, false) {
+    fun testCrossModule_ComponentFunction(): Unit = ensureSetup {
         val tvName = 101
         val tvAge = 102
 
@@ -700,7 +700,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossModule_ObjectFunction(): Unit = forComposerParam(true, false) {
+    fun testCrossModule_ObjectFunction(): Unit = ensureSetup {
         val tvName = 101
         val tvAge = 102
 
@@ -834,16 +834,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
         val advanceMethod = instanceClass.getMethod("advance")
-        val composeMethod = if (ComposeFlags.COMPOSER_PARAM)
-            instanceClass.getMethod("compose", Composer::class.java)
-        else
-            instanceClass.getMethod("compose")
+        val composeMethod = instanceClass.getMethod("compose", Composer::class.java)
 
         return composeMulti({
-            if (ComposeFlags.COMPOSER_PARAM)
-                composeMethod.invoke(instanceOfClass, currentComposerNonNull)
-            else
-                composeMethod.invoke(instanceOfClass)
+            composeMethod.invoke(instanceOfClass, currentComposerNonNull)
         }) {
             advanceMethod.invoke(instanceOfClass)
         }

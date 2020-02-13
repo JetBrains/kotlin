@@ -20,7 +20,7 @@ import org.junit.Before
 
 class KtxTransformationTest : AbstractCodegenTest() {
 
-    fun testObserveLowering() = forComposerParam(true, false) { testCompile(
+    fun testObserveLowering() = ensureSetup { testCompile(
         """
             import android.widget.Button
             import androidx.compose.*
@@ -43,7 +43,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testEmptyComposeFunction() = forComposerParam(true, false) { testCompile(
+    fun testEmptyComposeFunction() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -54,7 +54,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testSingleViewCompose() = forComposerParam(true, false) { testCompile(
+    fun testSingleViewCompose() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.*
@@ -68,7 +68,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testMultipleRootViewCompose() = forComposerParam(true, false) { testCompile(
+    fun testMultipleRootViewCompose() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.*
@@ -84,7 +84,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testNestedViewCompose() = forComposerParam(true, false) { testCompile(
+    fun testNestedViewCompose() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.*
@@ -104,7 +104,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testSingleComposite() = forComposerParam(true, false) { testCompile(
+    fun testSingleComposite() = ensureSetup { testCompile(
         """
          import androidx.compose.*
 
@@ -120,7 +120,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testMultipleRootComposite() = forComposerParam(true, false) { testCompile(
+    fun testMultipleRootComposite() = ensureSetup { testCompile(
         """
          import androidx.compose.*
 
@@ -138,7 +138,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testViewAndComposites() = forComposerParam(true, false) { testCompile(
+    fun testViewAndComposites() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.*
@@ -157,7 +157,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testForEach() = forComposerParam(true, false) { testCompile(
+    fun testForEach() = ensureSetup { testCompile(
         """
          import androidx.compose.*
 
@@ -175,7 +175,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testForLoop() = forComposerParam(true, false) { testCompile(
+    fun testForLoop() = ensureSetup { testCompile(
         """
          import androidx.compose.*
 
@@ -193,7 +193,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testEarlyReturns() = forComposerParam(true, false) { testCompile(
+    fun testEarlyReturns() = ensureSetup { testCompile(
         """
          import androidx.compose.*
 
@@ -212,7 +212,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testConditionalRendering() = forComposerParam(true, false) { testCompile(
+    fun testConditionalRendering() = ensureSetup { testCompile(
         """
          import androidx.compose.*
 
@@ -236,7 +236,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testExtensionFunctions() = forComposerParam(true, false) { testCompile(
+    fun testExtensionFunctions() = ensureSetup { testCompile(
         """
 
         import androidx.compose.*
@@ -253,7 +253,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testChildrenWithTypedParameters() = forComposerParam(true, false) { testCompile(
+    fun testChildrenWithTypedParameters() = ensureSetup { testCompile(
         """
         import android.widget.*
         import androidx.compose.*
@@ -278,7 +278,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testChildrenCaptureVariables() = forComposerParam(true, false) { testCompile(
+    fun testChildrenCaptureVariables() = ensureSetup { testCompile(
         """
         import android.widget.*
         import androidx.compose.*
@@ -299,7 +299,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testChildrenDeepCaptureVariables() = forComposerParam(true, false) { testCompile(
+    fun testChildrenDeepCaptureVariables() = ensureSetup { testCompile(
         """
         import android.widget.*
         import androidx.compose.*
@@ -327,7 +327,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testChildrenDeepCaptureVariablesWithParameters() = forComposerParam(true, false) {
+    fun testChildrenDeepCaptureVariablesWithParameters() = ensureSetup {
         testCompile(
         """
         import android.widget.*
@@ -357,7 +357,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testChildrenOfNativeView() = forComposerParam(true, false) { testCompile(
+    fun testChildrenOfNativeView() = ensureSetup { testCompile(
         """
         import android.widget.*
         import androidx.compose.*
@@ -374,7 +374,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testIrSpecial() = forComposerParam(true, false) { testCompile(
+    fun testIrSpecial() = ensureSetup { testCompile(
         """
         import android.widget.*
         import androidx.compose.*
@@ -396,7 +396,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testGenericsInnerClass() = forComposerParam(true, false) { testCompile(
+    fun testGenericsInnerClass() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -415,7 +415,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testXGenericConstructorParams() = forComposerParam(true, false) { testCompile(
+    fun testXGenericConstructorParams() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -442,7 +442,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testSimpleNoArgsComponent() = forComposerParam(true, false) { testCompile(
+    fun testSimpleNoArgsComponent() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -456,7 +456,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testDotQualifiedObjectToClass() = forComposerParam(true, false) { testCompile(
+    fun testDotQualifiedObjectToClass() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -472,7 +472,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testPackageQualifiedTags() = forComposerParam(true, false) { testCompile(
+    fun testPackageQualifiedTags() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -483,7 +483,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testLocalLambda() = forComposerParam(true, false) { testCompile(
+    fun testLocalLambda() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -498,7 +498,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testPropertyLambda() = forComposerParam(true, false) { testCompile(
+    fun testPropertyLambda() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -511,7 +511,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testLambdaWithArgs() = forComposerParam(true, false) { testCompile(
+    fun testLambdaWithArgs() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -524,7 +524,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testLocalMethod() = forComposerParam(true, false) { testCompile(
+    fun testLocalMethod() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -539,7 +539,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testSimpleLambdaChildren() = forComposerParam(true, false) { testCompile(
+    fun testSimpleLambdaChildren() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.*
@@ -558,7 +558,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testFunctionComponentsWithChildrenSimple() = forComposerParam(true, false) { testCompile(
+    fun testFunctionComponentsWithChildrenSimple() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -574,7 +574,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testFunctionComponentWithChildrenOneArg() = forComposerParam(true, false) { testCompile(
+    fun testFunctionComponentWithChildrenOneArg() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -590,7 +590,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testKtxLambdaInForLoop() = forComposerParam(true, false) { testCompile(
+    fun testKtxLambdaInForLoop() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.TextView
@@ -606,7 +606,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testKtxLambdaInIfElse() = forComposerParam(true, false) { testCompile(
+    fun testKtxLambdaInIfElse() = ensureSetup { testCompile(
         """
         import androidx.compose.*
         import android.widget.TextView
@@ -625,7 +625,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testMultiplePivotalAttributesOdd() = forComposerParam(true, false) { testCompile(
+    fun testMultiplePivotalAttributesOdd() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -654,7 +654,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testSinglePivotalAttribute() = forComposerParam(true, false) { testCompile(
+    fun testSinglePivotalAttribute() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -675,7 +675,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = forComposerParam(true, false) {
+    fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = ensureSetup {
         testCompile(
         """
         import androidx.compose.*
@@ -703,7 +703,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testKtxEmittable() = forComposerParam(true, false) { testCompile(
+    fun testKtxEmittable() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -726,7 +726,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testKtxCompoundEmittable() = forComposerParam(true, false) { testCompile(
+    fun testKtxCompoundEmittable() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 
@@ -754,7 +754,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testInvocableObject() = forComposerParam(true, false) { testCompile(
+    fun testInvocableObject() = ensureSetup { testCompile(
         """
         import androidx.compose.*
 

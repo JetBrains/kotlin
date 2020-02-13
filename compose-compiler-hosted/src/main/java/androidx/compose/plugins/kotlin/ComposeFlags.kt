@@ -19,5 +19,4 @@ package androidx.compose.plugins.kotlin
 object ComposeFlags {
     var FRAMED_COMPONENTS = false
     var FRAMED_MODEL_CLASSES = true
-    var COMPOSER_PARAM = true
 }
