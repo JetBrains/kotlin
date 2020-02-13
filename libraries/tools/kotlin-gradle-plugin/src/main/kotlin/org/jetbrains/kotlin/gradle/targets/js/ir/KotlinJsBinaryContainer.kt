@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -34,9 +35,20 @@ constructor(
 
     fun executable(
         compilation: KotlinJsIrCompilation = defaultCompilation
-    ) = compilation.binaries.executable()
+    ) {
+        (target as KotlinJsSubTargetContainerDsl).whenBrowserConfigured {
+            (this as KotlinJsIrSubTarget).produceExecutable()
+        }
 
-    internal fun executable() = createBinaries(
+        target.whenNodejsConfigured {
+            (this as KotlinJsIrSubTarget).produceExecutable()
+        }
+
+        compilation.binaries.executableInternal(compilation)
+    }
+
+    internal fun executableInternal(compilation: KotlinJsIrCompilation) = createBinaries(
+        compilation = compilation,
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = ::Executable
     )
@@ -48,12 +60,14 @@ constructor(
             .single()
 
     private fun <T : JsBinary> createBinaries(
+        compilation: KotlinJsIrCompilation,
         buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
         create: (target: KotlinTarget, name: String, buildVariantKind: BuildVariantKind) -> T
     ) {
         buildVariantKinds.forEach { buildVariantKind ->
             val name = generateBinaryName(
+                compilation,
                 buildVariantKind,
                 jsBinaryType
             )
@@ -73,12 +87,14 @@ constructor(
 
     companion object {
         internal fun generateBinaryName(
+            compilation: KotlinJsIrCompilation,
             buildVariantKind: BuildVariantKind,
             jsBinaryType: JsBinaryType
         ) =
             lowerCamelCaseName(
-                buildVariantKind.name,
-                jsBinaryType.name
+                compilation.name.let { if (it == KotlinCompilation.MAIN_COMPILATION_NAME) null else it },
+                buildVariantKind.name.toLowerCase(),
+                jsBinaryType.name.toLowerCase()
             )
     }
 }
