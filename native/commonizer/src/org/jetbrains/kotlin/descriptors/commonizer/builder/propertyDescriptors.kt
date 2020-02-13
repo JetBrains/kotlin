@@ -80,7 +80,7 @@ private fun CirProperty.buildDescriptor(
     val getterDescriptor = getter?.let { getter ->
         DescriptorFactory.createGetter(
             propertyDescriptor,
-            getter.annotations,
+            getter.annotations.buildDescriptors(targetComponents),
             getter.isDefault,
             getter.isExternal,
             getter.isInline
@@ -92,8 +92,8 @@ private fun CirProperty.buildDescriptor(
     val setterDescriptor = setter?.let { setter ->
         DescriptorFactory.createSetter(
             propertyDescriptor,
-            setter.annotations,
-            setter.parameterAnnotations,
+            setter.annotations.buildDescriptors(targetComponents),
+            setter.parameterAnnotations.buildDescriptors(targetComponents),
             setter.isDefault,
             setter.isExternal,
             setter.isInline,
@@ -102,8 +102,13 @@ private fun CirProperty.buildDescriptor(
         )
     }
 
-    val backingField = backingFieldAnnotations?.let { FieldDescriptorImpl(it, propertyDescriptor) }
-    val delegateField = delegateFieldAnnotations?.let { FieldDescriptorImpl(it, propertyDescriptor) }
+    val backingField = backingFieldAnnotations?.let { annotations ->
+        FieldDescriptorImpl(annotations.buildDescriptors(targetComponents), propertyDescriptor)
+    }
+
+    val delegateField = delegateFieldAnnotations?.let { annotations ->
+        FieldDescriptorImpl(annotations.buildDescriptors(targetComponents), propertyDescriptor)
+    }
 
     propertyDescriptor.initialize(
         getterDescriptor,

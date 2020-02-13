@@ -16,13 +16,13 @@ annotation class JsAnnotationForAnnotationClassesOnly(val text: String)
 @CommonAnnotationForAnnotationClassesOnly("annotation-class")
 annotation class JsAnnotation(val text: String)
 
-@Target(AnnotationTarget.CLASS)
-actual annotation class CommonOuterAnnotation(actual val inner: CommonInnerAnnotation)
-actual annotation class CommonInnerAnnotation(actual val text: String)
+//@Target(AnnotationTarget.CLASS)
+//actual annotation class CommonOuterAnnotation(actual val inner: CommonInnerAnnotation)
+//actual annotation class CommonInnerAnnotation(actual val text: String)
 
-@Target(AnnotationTarget.CLASS)
-annotation class JsOuterAnnotation(val inner: JsInnerAnnotation)
-annotation class JsInnerAnnotation(val text: String)
+//@Target(AnnotationTarget.CLASS)
+//annotation class JsOuterAnnotation(val inner: JsInnerAnnotation)
+//annotation class JsInnerAnnotation(val text: String)
 
 @JsAnnotation("property")
 @CommonAnnotation("property")
@@ -57,6 +57,6 @@ actual class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("cons
 @CommonAnnotation("type-alias")
 actual typealias AnnotatedTypeAlias = AnnotatedClass
 
-@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
-@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
-actual object ObjectWithNestedAnnotations
+//@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
+//@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
+//actual object ObjectWithNestedAnnotations

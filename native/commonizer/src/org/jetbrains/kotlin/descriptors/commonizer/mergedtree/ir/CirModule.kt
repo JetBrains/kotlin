@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 
 data class CirModule(val name: Name, val builtIns: KotlinBuiltIns) : CirDeclaration {
-    constructor(descriptor: ModuleDescriptor) : this(descriptor.name, descriptor.builtIns)
+    constructor(descriptor: ModuleDescriptor) : this(descriptor.name, descriptor.builtIns) // TODO: strong ref
 }

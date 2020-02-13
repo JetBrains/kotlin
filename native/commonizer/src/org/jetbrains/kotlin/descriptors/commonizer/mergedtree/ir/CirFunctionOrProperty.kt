@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiver
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality, CirMaybeCallableMemberOfClass {
     val isExternal: Boolean
@@ -23,20 +22,26 @@ abstract class CirCommonFunctionOrProperty : CirFunctionOrProperty {
     final override val containingClassIsData: Boolean? get() = unsupported()
 }
 
-abstract class CirWrappedFunctionOrProperty<T : CallableMemberDescriptor>(protected val wrapped: T) : CirFunctionOrProperty {
-    final override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
-    final override val name get() = wrapped.name
-    final override val modality get() = wrapped.modality
-    final override val visibility get() = wrapped.visibility
-    final override val isExternal get() = wrapped.isExternal
-    final override val extensionReceiver by lazy(PUBLICATION) { wrapped.extensionReceiverParameter?.toReceiver() }
-    final override val returnType by lazy(PUBLICATION) { CirType.create(wrapped.returnType!!) }
-    final override val kind get() = wrapped.kind
-    final override val containingClassKind: ClassKind? get() = containingClass?.kind
-    final override val containingClassModality: Modality? get() = containingClass?.modality
-    final override val containingClassIsData: Boolean? get() = containingClass?.isData
-    final override val typeParameters by lazy(PUBLICATION) { wrapped.typeParameters.map(::CirWrappedTypeParameter) }
-    private val containingClass: ClassDescriptor? get() = wrapped.containingDeclaration as? ClassDescriptor
+abstract class CirFunctionOrPropertyImpl<T : CallableMemberDescriptor>(original: T) : CirFunctionOrProperty {
+    final override val annotations = original.annotations.map(::CirAnnotation)
+    final override val name = original.name
+    final override val modality = original.modality
+    final override val visibility = original.visibility
+    final override val isExternal = original.isExternal
+    final override val extensionReceiver = original.extensionReceiverParameter?.toReceiver()
+    final override val returnType = CirType.create(original.returnType!!)
+    final override val kind = original.kind
+    final override val containingClassKind: ClassKind?
+    final override val containingClassModality: Modality?
+    final override val containingClassIsData: Boolean?
+    final override val typeParameters = original.typeParameters.map(::CirTypeParameterImpl)
+
+    init {
+        val containingClass = original.containingDeclaration as? ClassDescriptor
+        containingClassKind = containingClass?.kind
+        containingClassModality = containingClass?.modality
+        containingClassIsData = containingClass?.isData
+    }
 }
 
 data class CirExtensionReceiver(

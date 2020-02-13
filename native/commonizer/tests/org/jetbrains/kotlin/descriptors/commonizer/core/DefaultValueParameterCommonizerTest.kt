@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
@@ -157,7 +157,7 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParam
 
             return CirTestValueParameter(
                 name = Name.identifier(name),
-                annotations = Annotations.EMPTY,
+                annotations = emptyList(),
                 returnType = returnType,
                 varargElementType = returnType.takeIf { hasVarargElementType }, // the vararg type itself does not matter here, only it's presence matters
                 isCrossinline = isCrossinline,
@@ -170,7 +170,7 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParam
 
 internal data class CirTestValueParameter(
     override val name: Name,
-    override val annotations: Annotations,
+    override val annotations: List<CirAnnotation>,
     override val returnType: CirType,
     override val varargElementType: CirType?,
     override val declaresDefaultValue: Boolean,

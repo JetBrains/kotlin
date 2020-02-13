@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.fqName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 sealed class CirType {
     companion object {
@@ -36,25 +35,35 @@ sealed class CirType {
  * This is necessary to properly compare types for type aliases, where abbreviation type represents the type alias itself while
  * expanded type represents right-hand side declaration that should be processed separately.
  *
- * There is no difference between [abbreviation] and [expanded] for types representing classes and type parameters.
+ * There is no difference between "abbreviation" and "expanded" for types representing classes and type parameters.
  */
-class CirSimpleType(private val wrapped: SimpleType) : CirType() {
-    val annotations by lazy(PUBLICATION) { abbreviation.annotations.map(::CirAnnotation) }
-    val kind = CirSimpleTypeKind.determineKind(abbreviation.declarationDescriptor)
-    val fqName by lazy(PUBLICATION) { abbreviation.fqName }
-    val arguments by lazy(PUBLICATION) { abbreviation.arguments.map(::CirTypeProjection) }
-    val isMarkedNullable get() = abbreviation.isMarkedNullable
-    val isDefinitelyNotNullType get() = abbreviation.isDefinitelyNotNullType
-    val expandedTypeConstructorId by lazy(PUBLICATION) { CirTypeConstructorId(expanded) }
+class CirSimpleType(original: SimpleType) : CirType() {
+    val annotations: List<CirAnnotation>
+    val kind: CirSimpleTypeKind
+    val fqName: FqName
+    val arguments: List<CirTypeProjection>
+    val isMarkedNullable: Boolean
+    val isDefinitelyNotNullType: Boolean
+    val expandedTypeConstructorId: CirTypeConstructorId
+
+    init {
+        val abbreviation = (original as? AbbreviatedType)?.abbreviation ?: original
+        val expanded = (original as? AbbreviatedType)?.expandedType ?: original
+
+        annotations = abbreviation.annotations.map(::CirAnnotation)
+        kind = CirSimpleTypeKind.determineKind(abbreviation.declarationDescriptor)
+        fqName = abbreviation.fqName
+        arguments = abbreviation.arguments.map(::CirTypeProjection)
+        isMarkedNullable = abbreviation.isMarkedNullable
+        isDefinitelyNotNullType = abbreviation.isDefinitelyNotNullType
+        expandedTypeConstructorId = CirTypeConstructorId(expanded)
+    }
 
     inline val isClassOrTypeAlias get() = (kind == CLASS || kind == TYPE_ALIAS)
-    val fqNameWithTypeParameters by lazy(PUBLICATION) { wrapped.fqNameWithTypeParameters }
+    val fqNameWithTypeParameters = original.fqNameWithTypeParameters
 
-    override fun equals(other: Any?) = wrapped == (other as? CirSimpleType)?.wrapped
-    override fun hashCode() = wrapped.hashCode()
-
-    private inline val abbreviation: SimpleType get() = (wrapped as? AbbreviatedType)?.abbreviation ?: wrapped
-    private inline val expanded: SimpleType get() = (wrapped as? AbbreviatedType)?.expandedType ?: wrapped
+    override fun equals(other: Any?) = fqNameWithTypeParameters == (other as? CirSimpleType)?.fqNameWithTypeParameters
+    override fun hashCode() = fqNameWithTypeParameters.hashCode()
 }
 
 enum class CirSimpleTypeKind {
@@ -79,10 +88,10 @@ data class CirTypeConstructorId(val fqName: FqName, val numberOfTypeParameters: 
     constructor(type: SimpleType) : this(type.fqName, type.constructor.parameters.size)
 }
 
-class CirTypeProjection(private val wrapped: TypeProjection) {
-    val projectionKind get() = wrapped.projectionKind
-    val isStarProjection get() = wrapped.isStarProjection
-    val type by lazy(PUBLICATION) { CirType.create(wrapped.type) }
+class CirTypeProjection(original: TypeProjection) {
+    val projectionKind = original.projectionKind
+    val isStarProjection = original.isStarProjection
+    val type = CirType.create(original.type)
 }
 
 data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType()

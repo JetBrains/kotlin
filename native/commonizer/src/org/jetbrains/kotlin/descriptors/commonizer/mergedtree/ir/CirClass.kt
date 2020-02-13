@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirClass : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality {
     val companion: FqName? // null means no companion object
@@ -62,39 +61,37 @@ data class CirCommonClassConstructor(
     override val containingClassIsData get() = unsupported()
 }
 
-class CirWrappedClass(private val wrapped: ClassDescriptor) : CirClass {
-    override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
-    override val name get() = wrapped.name
-    override val typeParameters by lazy(PUBLICATION) { wrapped.declaredTypeParameters.map(::CirWrappedTypeParameter) }
-    override val companion by lazy(PUBLICATION) { wrapped.companionObjectDescriptor?.fqNameSafe }
-    override val kind get() = wrapped.kind
-    override val modality get() = wrapped.modality
-    override val visibility get() = wrapped.visibility
-    override val isCompanion get() = wrapped.isCompanionObject
-    override val isData get() = wrapped.isData
-    override val isInline get() = wrapped.isInline
-    override val isInner get() = wrapped.isInner
-    override val isExternal get() = wrapped.isExternal
-    override val supertypes by lazy(PUBLICATION) { wrapped.typeConstructor.supertypes.map(CirType.Companion::create) }
+class CirClassImpl(original: ClassDescriptor) : CirClass {
+    override val annotations = original.annotations.map(::CirAnnotation)
+    override val name = original.name
+    override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
+    override val companion = original.companionObjectDescriptor?.fqNameSafe
+    override val kind = original.kind
+    override val modality = original.modality
+    override val visibility = original.visibility
+    override val isCompanion = original.isCompanionObject
+    override val isData = original.isData
+    override val isInline = original.isInline
+    override val isInner = original.isInner
+    override val isExternal = original.isExternal
+    override val supertypes = original.typeConstructor.supertypes.map(CirType.Companion::create)
 }
 
-class CirWrappedClassConstructor(private val wrapped: ClassConstructorDescriptor) : CirClassConstructor {
-    override val isPrimary get() = wrapped.isPrimary
-    override val kind get() = wrapped.kind
-    override val containingClassKind get() = wrapped.containingDeclaration.kind
-    override val containingClassModality get() = wrapped.containingDeclaration.modality
-    override val containingClassIsData get() = wrapped.containingDeclaration.isData
-    override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
-    override val visibility get() = wrapped.visibility
-    override val typeParameters by lazy(PUBLICATION) {
-        wrapped.typeParameters.mapNotNull { typeParameter ->
-            // save only type parameters that are contributed by the constructor itself
-            typeParameter.takeIf { it.containingDeclaration == wrapped }?.let(::CirWrappedTypeParameter)
-        }
+class CirClassConstructorImpl(original: ClassConstructorDescriptor) : CirClassConstructor {
+    override val isPrimary = original.isPrimary
+    override val kind = original.kind
+    override val containingClassKind = original.containingDeclaration.kind
+    override val containingClassModality = original.containingDeclaration.modality
+    override val containingClassIsData = original.containingDeclaration.isData
+    override val annotations = original.annotations.map(::CirAnnotation)
+    override val visibility = original.visibility
+    override val typeParameters = original.typeParameters.mapNotNull { typeParameter ->
+        // save only type parameters that are contributed by the constructor itself
+        typeParameter.takeIf { it.containingDeclaration == original }?.let(::CirTypeParameterImpl)
     }
-    override val valueParameters by lazy(PUBLICATION) { wrapped.valueParameters.map(::CirWrappedValueParameter) }
-    override val hasStableParameterNames get() = wrapped.hasStableParameterNames()
-    override val hasSynthesizedParameterNames get() = wrapped.hasSynthesizedParameterNames()
+    override val valueParameters = original.valueParameters.map(::CirValueParameterImpl)
+    override val hasStableParameterNames = original.hasStableParameterNames()
+    override val hasSynthesizedParameterNames = original.hasSynthesizedParameterNames()
 }
 
 object CirClassRecursionMarker : CirClass, CirRecursionMarker {

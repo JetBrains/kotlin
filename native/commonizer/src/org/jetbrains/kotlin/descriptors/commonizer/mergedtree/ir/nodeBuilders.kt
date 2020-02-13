@@ -66,7 +66,7 @@ internal fun buildPropertyNode(
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
     descriptors = properties,
-    targetDeclarationProducer = ::CirWrappedProperty,
+    targetDeclarationProducer = ::CirPropertyImpl,
     commonValueProducer = { commonize(containingDeclarationCommon, it, PropertyCommonizer(cache)) },
     recursionMarker = null,
     nodeProducer = ::CirPropertyNode
@@ -80,7 +80,7 @@ internal fun buildFunctionNode(
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
     descriptors = functions,
-    targetDeclarationProducer = ::CirWrappedFunction,
+    targetDeclarationProducer = ::CirFunctionImpl,
     commonValueProducer = { commonize(containingDeclarationCommon, it, FunctionCommonizer(cache)) },
     recursionMarker = null,
     nodeProducer = ::CirFunctionNode
@@ -94,7 +94,7 @@ internal fun buildClassNode(
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     descriptors = classes,
-    targetDeclarationProducer = ::CirWrappedClass,
+    targetDeclarationProducer = ::CirClassImpl,
     commonValueProducer = { commonize(containingDeclarationCommon, it, ClassCommonizer(cacheRW)) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = ::CirClassNode
@@ -113,7 +113,7 @@ internal fun buildClassConstructorNode(
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
     descriptors = constructors,
-    targetDeclarationProducer = ::CirWrappedClassConstructor,
+    targetDeclarationProducer = ::CirClassConstructorImpl,
     commonValueProducer = { commonize(containingDeclarationCommon, it, ClassConstructorCommonizer(cache)) },
     recursionMarker = null,
     nodeProducer = ::CirClassConstructorNode
@@ -126,7 +126,7 @@ internal fun buildTypeAliasNode(
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     descriptors = typeAliases,
-    targetDeclarationProducer = ::CirWrappedTypeAlias,
+    targetDeclarationProducer = ::CirTypeAliasImpl,
     commonValueProducer = { commonize(it, TypeAliasCommonizer(cacheRW)) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = ::CirTypeAliasNode

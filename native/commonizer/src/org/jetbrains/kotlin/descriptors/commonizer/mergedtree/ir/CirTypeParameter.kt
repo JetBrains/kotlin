@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirTypeParameter {
-    val annotations: Annotations
+    val annotations: List<CirAnnotation>
     val name: Name
     val isReified: Boolean
     val variance: Variance
@@ -25,13 +23,13 @@ data class CirCommonTypeParameter(
     override val variance: Variance,
     override val upperBounds: List<CirType>
 ) : CirTypeParameter {
-    override val annotations get() = Annotations.EMPTY
+    override val annotations: List<CirAnnotation> get() = emptyList()
 }
 
-data class CirWrappedTypeParameter(private val wrapped: TypeParameterDescriptor) : CirTypeParameter {
-    override val annotations get() = wrapped.annotations
-    override val name get() = wrapped.name
-    override val isReified get() = wrapped.isReified
-    override val variance get() = wrapped.variance
-    override val upperBounds by lazy(PUBLICATION) { wrapped.upperBounds.map(CirType.Companion::create) }
+class CirTypeParameterImpl(original: TypeParameterDescriptor) : CirTypeParameter {
+    override val annotations = original.annotations.map(::CirAnnotation)
+    override val name = original.name
+    override val isReified = original.isReified
+    override val variance = original.variance
+    override val upperBounds = original.upperBounds.map(CirType.Companion::create)
 }

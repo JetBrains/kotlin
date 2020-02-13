@@ -6,18 +6,17 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirTypeAlias : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility {
     val underlyingType: CirSimpleType
     val expandedType: CirSimpleType
 }
 
-class CirWrappedTypeAlias(private val wrapped: TypeAliasDescriptor) : CirTypeAlias {
-    override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
-    override val name get() = wrapped.name
-    override val typeParameters by lazy(PUBLICATION) { wrapped.declaredTypeParameters.map(::CirWrappedTypeParameter) }
-    override val visibility get() = wrapped.visibility
-    override val underlyingType by lazy(PUBLICATION) { CirSimpleType(wrapped.underlyingType) }
-    override val expandedType by lazy(PUBLICATION) { CirSimpleType(wrapped.expandedType) }
+class CirTypeAliasImpl(original: TypeAliasDescriptor) : CirTypeAlias {
+    override val annotations = original.annotations.map(::CirAnnotation)
+    override val name = original.name
+    override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
+    override val visibility = original.visibility
+    override val underlyingType = CirSimpleType(original.underlyingType)
+    override val expandedType = CirSimpleType(original.expandedType)
 }

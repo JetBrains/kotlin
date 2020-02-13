@@ -8,9 +8,37 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.*
 
-class CirAnnotation(private val wrapped: AnnotationDescriptor) {
-    val fqName: FqName get() = wrapped.fqName ?: error("Annotation with no FQ name: ${wrapped::class.java}, $wrapped")
-    val allValueArguments: Map<Name, ConstantValue<*>> get() = wrapped.allValueArguments
+class CirAnnotation(original: AnnotationDescriptor) {
+    val fqName: FqName = original.fqName ?: error("Annotation with no FQ name: ${original::class.java}, $original")
+    val allValueArguments: Map<Name, ConstantValue<*>> = original.allValueArguments
+
+    init {
+        allValueArguments.forEach { (name, constantValue) ->
+            checkSupportedInCommonization(constantValue) { "${original::class.java}, $original[$name]" }
+        }
+    }
+}
+
+internal fun checkSupportedInCommonization(constantValue: ConstantValue<*>, location: () -> String) {
+    @Suppress("TrailingComma")
+    return when (constantValue) {
+        is StringValue,
+        is IntegerValueConstant<*>,
+        is UnsignedValueConstant<*>,
+        is BooleanValue,
+        is NullValue,
+        is DoubleValue,
+        is FloatValue,
+        is EnumValue -> {
+            // OK
+        }
+        is ArrayValue -> {
+            constantValue.value.forEachIndexed { index, innerConstantValue ->
+                checkSupportedInCommonization(innerConstantValue) { "${location()}[$index]" }
+            }
+        }
+        else -> error("Unsupported const value type: ${constantValue::class.java}, $constantValue at ${location()}")
+    }
 }

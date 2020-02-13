@@ -1,8 +1,8 @@
 expect annotation class CommonAnnotationForAnnotationClassesOnly(text: String) { val text: String }
 expect annotation class CommonAnnotation(text: String) { val text: String }
 
-expect annotation class CommonOuterAnnotation(inner: CommonInnerAnnotation) { val inner: CommonInnerAnnotation }
-expect annotation class CommonInnerAnnotation(text: String) { val text: String }
+//expect annotation class CommonOuterAnnotation(inner: CommonInnerAnnotation) { val inner: CommonInnerAnnotation }
+//expect annotation class CommonInnerAnnotation(text: String) { val text: String }
 
 expect var propertyWithoutBackingField: Double
 expect val propertyWithBackingField: Double
@@ -15,4 +15,4 @@ expect fun <Q : Number> Q.function2(): Q
 expect class AnnotatedClass(value: String) { val value: String }
 expect class AnnotatedTypeAlias
 
-expect object ObjectWithNestedAnnotations
+//expect object ObjectWithNestedAnnotations
