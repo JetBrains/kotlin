@@ -76,11 +76,9 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
       }, this);
 
     ExtensionPointChangeListener listener = () -> {
-      // Synchronously remove foldings when extension is removed
       for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors()) {
         if (fileEditor instanceof TextEditor) {
           FoldingUpdate.clearFoldingCache(((TextEditor)fileEditor).getEditor());
-          //updateFoldRegions(((TextEditor)fileEditor).getEditor());
         }
       }
     };
