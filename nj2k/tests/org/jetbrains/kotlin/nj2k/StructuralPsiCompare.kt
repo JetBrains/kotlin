@@ -28,7 +28,7 @@ internal fun KtFile.dumpStructureText(): String {
                 }
                 element.acceptChildren(this)
             }
-        },
+        }
     )
 
     return sb.toString().trim()

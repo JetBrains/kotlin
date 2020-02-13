@@ -328,7 +328,7 @@ internal fun findUsages(
                                 handler.processElementUsages(psiElement, processor, options)
                             }
                         }
-                    },
+                    }
                 )
             }
         }

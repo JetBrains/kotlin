@@ -163,7 +163,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
 
                 println(myProjectPom.contentsToByteArray().toString(Charsets.UTF_8))
             },
-            "quick-fix-$name", "Kotlin",
+            "quick-fix-$name", "Kotlin"
         )
     }
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.hierarchy.calls.HierarchyTreeStructure
 fun doHierarchyTestCompat(
     hierarchyFixture: HierarchyViewTestFixture,
     treeStructureComputable: Computable<out HierarchyTreeStructure>,
-    expectedStructure: String,
+    expectedStructure: String
 ) {
     HierarchyViewTestFixture.doHierarchyTest(treeStructureComputable.compute(), expectedStructure)
 }

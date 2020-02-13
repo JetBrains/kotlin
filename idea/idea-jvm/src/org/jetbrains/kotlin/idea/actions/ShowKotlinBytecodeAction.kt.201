@@ -36,7 +36,7 @@ class ShowKotlinBytecodeAction : AnAction() {
         val toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID) ?: toolWindowManager.registerToolWindow(
             "Kotlin Bytecode",
             false,
-            ToolWindowAnchor.RIGHT,
+            ToolWindowAnchor.RIGHT
         )
             .apply {
                 setIcon(KotlinIcons.SMALL_LOGO_13)

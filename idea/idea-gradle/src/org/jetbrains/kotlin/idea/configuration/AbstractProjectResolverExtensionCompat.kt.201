@@ -23,6 +23,6 @@ abstract class AbstractProjectResolverExtensionCompat : AbstractProjectResolverE
     abstract fun initializeModuleNode(
         gradleModule: IdeaModule,
         moduleDataNode: DataNode<ModuleData>,
-        projectDataNode: DataNode<ProjectData>,
+        projectDataNode: DataNode<ProjectData>
     )
 }
