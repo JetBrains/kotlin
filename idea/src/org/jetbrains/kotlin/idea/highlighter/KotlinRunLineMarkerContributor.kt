@@ -37,7 +37,7 @@ class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
             val platform = function.containingKtFile.module?.platform ?: return null
             if (!platform.idePlatformKind.tooling.acceptsAsEntryPoint(function)) return null
 
-            return Info(AllIcons.RunConfigurations.TestState.Run, null, ExecutorAction.getActions(0))
+            return Info(AllIcons.RunConfigurations.TestState.Run, null, *ExecutorAction.getActions(0))
         }
 
         return null

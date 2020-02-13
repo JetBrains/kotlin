@@ -66,6 +66,6 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
 
         val targetPlatform = declaration.module?.platform ?: return null
         val icon = targetPlatform.idePlatformKind.tooling.getTestIcon(declaration, descriptor) ?: return null
-        return Info(icon, { "Run Test" }, ExecutorAction.getActions())
+        return Info(icon, { "Run Test" }, *ExecutorAction.getActions())
     }
 }
