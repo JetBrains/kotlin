@@ -60,7 +60,7 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
                     is AppleSimulator -> "iphonesimulator"
                     else -> throw IllegalStateException()
                 }
-                File(moduleRoot, FileUtil.join("build", "bin", "iosAppMain", "Debug-$deviceType", "iosApp.app"))
+                File(moduleRoot, FileUtil.join("build", "bin", "iosAppMain", "Debug-$deviceType", "${moduleRoot.name}.app"))
             }
             else -> throw IllegalStateException()
         }
