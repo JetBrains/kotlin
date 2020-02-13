@@ -7,27 +7,27 @@ import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
 
 class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringProvider {
-    val availabilityIndicator = SuggestedRefactoringAvailabilityIndicator(project)
-    private val changeCollector = SuggestedRefactoringChangeCollector(availabilityIndicator)
-    private val listener = SuggestedRefactoringChangeListener(project, changeCollector)
+  val availabilityIndicator = SuggestedRefactoringAvailabilityIndicator(project)
+  private val changeCollector = SuggestedRefactoringChangeCollector(availabilityIndicator)
+  private val listener = SuggestedRefactoringChangeListener(project, changeCollector)
 
-    val state: SuggestedRefactoringState?
-        get() = changeCollector.state
+  val state: SuggestedRefactoringState?
+    get() = changeCollector.state
 
-    class Startup : StartupActivity.DumbAware {
-        override fun runActivity(project: Project) {
-            val listener = getInstance(project).listener
-            listener.attach()
-            Disposer.register(project, listener)
-        }
+  class Startup : StartupActivity.DumbAware {
+    override fun runActivity(project: Project) {
+      val listener = getInstance(project).listener
+      listener.attach()
+      Disposer.register(project, listener)
     }
+  }
 
-    override fun reset() {
-        listener.reset()
-    }
+  override fun reset() {
+    listener.reset()
+  }
 
-    companion object {
-        fun getInstance(project: Project): SuggestedRefactoringProviderImpl =
-            SuggestedRefactoringProvider.getInstance(project) as SuggestedRefactoringProviderImpl
-    }
+  companion object {
+    fun getInstance(project: Project): SuggestedRefactoringProviderImpl =
+      SuggestedRefactoringProvider.getInstance(project) as SuggestedRefactoringProviderImpl
+  }
 }

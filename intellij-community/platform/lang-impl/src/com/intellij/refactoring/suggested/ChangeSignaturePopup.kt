@@ -24,278 +24,283 @@ import javax.swing.*
 import kotlin.math.roundToInt
 
 internal class ChangeSignaturePopup(
-    signatureChangeModel: SignatureChangePresentationModel,
-    nameOfStuffToUpdate: String,
-    newParameterData: List<SuggestedRefactoringUI.NewParameterData>,
-    project: Project,
-    refactoringSupport: SuggestedRefactoringSupport,
-    language: Language,
-    colorsScheme: EditorColorsScheme,
-    screenSize: Dimension
-) : JPanel(BorderLayout()) {
-    private val button = object : JButton() {
-        override fun isDefaultButton() = true
+  signatureChangeModel: SignatureChangePresentationModel,
+  nameOfStuffToUpdate: String,
+  newParameterData: List<SuggestedRefactoringUI.NewParameterData>,
+  project: Project,
+  refactoringSupport: SuggestedRefactoringSupport,
+  language: Language,
+  colorsScheme: EditorColorsScheme,
+  screenSize: Dimension
+) : JPanel(BorderLayout())
+{
+  private val button = object : JButton() {
+    override fun isDefaultButton() = true
+  }
+
+  private val updateButtonText = RefactoringBundle.message("suggested.refactoring.update.button.text")
+  private val nextButtonText = RefactoringBundle.message("suggested.refactoring.next.button.text")
+
+  private val editorFont = Font(colorsScheme.editorFontName, Font.PLAIN, colorsScheme.editorFontSize)
+
+  private val signatureChangePage = SignatureChangesPage(signatureChangeModel, editorFont, screenSize, nameOfStuffToUpdate)
+
+  private val parameterValuesPage = if (newParameterData.isNotEmpty()) {
+    ParameterValuesPage(project, language, refactoringSupport, editorFont)
+  }
+  else {
+    null
+  }
+
+  private enum class Page { SignatureChange, ParameterValues }
+
+  private var currentPage = Page.SignatureChange
+
+  init {
+    val buttonPanel = JPanel(BorderLayout()).apply {
+      add(button, BorderLayout.EAST)
     }
 
-    private val updateButtonText = RefactoringBundle.message("suggested.refactoring.update.button.text")
-    private val nextButtonText = RefactoringBundle.message("suggested.refactoring.next.button.text")
+    add(signatureChangePage, BorderLayout.CENTER)
+    add(buttonPanel, BorderLayout.SOUTH)
 
-    private val editorFont = Font(colorsScheme.editorFontName, Font.PLAIN, colorsScheme.editorFontSize)
+    border = JBUI.Borders.empty(5, 2)
 
-    private val signatureChangePage = SignatureChangesPage(signatureChangeModel, editorFont, screenSize, nameOfStuffToUpdate)
-    
-    private val parameterValuesPage = if (newParameterData.isNotEmpty()) {
-        ParameterValuesPage(project, language, refactoringSupport, editorFont)
-    } else {
-        null
-    }
+    button.text = if (parameterValuesPage == null) updateButtonText else nextButtonText
 
-    private enum class Page { SignatureChange, ParameterValues }
-
-    private var currentPage = Page.SignatureChange
-
-    init {
-        val buttonPanel = JPanel(BorderLayout()).apply {
-            add(button, BorderLayout.EAST)
+    button.addActionListener {
+      when (currentPage) {
+        Page.SignatureChange -> {
+          if (parameterValuesPage != null) {
+            parameterValuesPage.initialize(newParameterData)
+            remove(signatureChangePage)
+            add(parameterValuesPage, BorderLayout.CENTER)
+            button.text = updateButtonText
+            currentPage = Page.ParameterValues
+            onNext()
+            parameterValuesPage.defaultFocus()
+          }
+          else {
+            onOk(newParameterData.map { NewParameterValue.None })
+          }
         }
 
-        add(signatureChangePage, BorderLayout.CENTER)
-        add(buttonPanel, BorderLayout.SOUTH)
-
-        border = JBUI.Borders.empty(5, 2)
-
-        button.text = if (parameterValuesPage == null) updateButtonText else nextButtonText
-
-        button.addActionListener {
-            when (currentPage) {
-                Page.SignatureChange -> {
-                    if (parameterValuesPage != null) {
-                        parameterValuesPage.initialize(newParameterData)
-                        remove(signatureChangePage)
-                        add(parameterValuesPage, BorderLayout.CENTER)
-                        button.text = updateButtonText
-                        currentPage = Page.ParameterValues
-                        onNext()
-                        parameterValuesPage.defaultFocus()
-                    } else {
-                        onOk(newParameterData.map { NewParameterValue.None })
-                    }
-                }
-
-                Page.ParameterValues -> {
-                    val values = parameterValuesPage!!.getValues()
-                    if (values != null) {
-                        onOk(values)
-                    }
-                    //TODO: some feedback if incorrect expression
-                }
-            }
+        Page.ParameterValues -> {
+          val values = parameterValuesPage!!.getValues()
+          if (values != null) {
+            onOk(values)
+          }
+          //TODO: some feedback if incorrect expression
         }
+      }
     }
+  }
 
-    lateinit var onNext: () -> Unit
-    lateinit var onOk: (newParameterValues: List<NewParameterValue>) -> Unit
+  lateinit var onNext: () -> Unit
+  lateinit var onOk: (newParameterValues: List<NewParameterValue>) -> Unit
 
-    fun onEnter() {
-        button.doClick()
+  fun onEnter() {
+    button.doClick()
+  }
+
+  fun isEnterEnabled(): Boolean {
+    return when (currentPage) {
+      Page.SignatureChange -> true
+      Page.ParameterValues -> !parameterValuesPage!!.isLookupShown() && parameterValuesPage.areAllValuesCorrect()
     }
+  }
 
-    fun isEnterEnabled(): Boolean {
-        return when (currentPage) {
-            Page.SignatureChange -> true
-            Page.ParameterValues -> !parameterValuesPage!!.isLookupShown() && parameterValuesPage.areAllValuesCorrect()
-        }
+  fun isEscapeEnabled(): Boolean {
+    return when (currentPage) {
+      Page.SignatureChange -> true
+      Page.ParameterValues -> !parameterValuesPage!!.isLookupShown()
     }
-
-    fun isEscapeEnabled(): Boolean {
-        return when (currentPage) {
-            Page.SignatureChange -> true
-            Page.ParameterValues -> !parameterValuesPage!!.isLookupShown()
-        }
-    }
+  }
 }
 
 private class SignatureChangesPage(
-    signatureChangeModel: SignatureChangePresentationModel,
-    editorFont: Font,
-    screenSize: Dimension,
-    nameOfStuffToUpdate: String
+  signatureChangeModel: SignatureChangePresentationModel,
+  editorFont: Font,
+  screenSize: Dimension,
+  nameOfStuffToUpdate: String
 ) : JPanel(BorderLayout()) {
-    init {
-        // we use editor scheme that is the default for the current UI theme
-        // (we don't use one from the current editor because one can have light UI theme and dark editor scheme or vise versa)
-        val themeColorsScheme = EditorColorsManager.getInstance().schemeForCurrentUITheme
-        var presentation = SignatureChangePresentation(signatureChangeModel, editorFont, themeColorsScheme, verticalMode = false)
-        if (presentation.requiredSize.width > screenSize.width * 0.75) {
-            presentation = SignatureChangePresentation(signatureChangeModel, editorFont, themeColorsScheme, verticalMode = true)
+  init {
+    // we use editor scheme that is the default for the current UI theme
+    // (we don't use one from the current editor because one can have light UI theme and dark editor scheme or vise versa)
+    val themeColorsScheme = EditorColorsManager.getInstance().schemeForCurrentUITheme
+    var presentation = SignatureChangePresentation(signatureChangeModel, editorFont, themeColorsScheme, verticalMode = false)
+    if (presentation.requiredSize.width > screenSize.width * 0.75) {
+      presentation = SignatureChangePresentation(signatureChangeModel, editorFont, themeColorsScheme, verticalMode = true)
+    }
+
+    add(JLabel(RefactoringBundle.message("suggested.refactoring.change.signature.label.text", nameOfStuffToUpdate)), BorderLayout.NORTH)
+    add(
+      object : JComponent() {
+        init {
+          preferredSize = presentation.requiredSize
         }
 
-        add(JLabel(RefactoringBundle.message("suggested.refactoring.change.signature.label.text", nameOfStuffToUpdate)), BorderLayout.NORTH)
-        add(
-            object : JComponent() {
-                init {
-                    preferredSize = presentation.requiredSize
-                }
+        override fun paint(g: Graphics) {
+          presentation.paint(g as Graphics2D, Rectangle(0, 0, width, height))
+        }
+      },
+      BorderLayout.CENTER
+    )
 
-                override fun paint(g: Graphics) {
-                    presentation.paint(g as Graphics2D, Rectangle(0, 0, width, height))
-                }
-            },
-            BorderLayout.CENTER
-        )
-
-        border = JBUI.Borders.empty(0, 4)
-    }
+    border = JBUI.Borders.empty(0, 4)
+  }
 }
 
 private class ParameterValuesPage(
-    private val project: Project,
-    private val language: Language,
-    private val refactoringSupport: SuggestedRefactoringSupport,
-    private val editorFont: Font
+  private val project: Project,
+  private val language: Language,
+  private val refactoringSupport: SuggestedRefactoringSupport,
+  private val editorFont: Font
 ) : JPanel(BorderLayout()) {
-    private val codeFragments = mutableListOf<PsiCodeFragment>()
-    private val textFields = mutableListOf<LanguageTextField>()
-    private val checkBoxes = mutableListOf<JCheckBox?>()
-    private val focusSequence = mutableListOf<() -> JComponent>()
+  private val codeFragments = mutableListOf<PsiCodeFragment>()
+  private val textFields = mutableListOf<LanguageTextField>()
+  private val checkBoxes = mutableListOf<JCheckBox?>()
+  private val focusSequence = mutableListOf<() -> JComponent>()
 
-    fun initialize(newParameterData: List<SuggestedRefactoringUI.NewParameterData>) {
-        val label = JLabel(RefactoringBundle.message("suggested.refactoring.parameter.values.label.text")).apply {
-            border = JBUI.Borders.empty(0, 6, 0, 6)
-        }
-        add(label, BorderLayout.NORTH)
+  fun initialize(newParameterData: List<SuggestedRefactoringUI.NewParameterData>) {
+    val label = JLabel(RefactoringBundle.message("suggested.refactoring.parameter.values.label.text")).apply {
+      border = JBUI.Borders.empty(0, 6, 0, 6)
+    }
+    add(label, BorderLayout.NORTH)
 
-        val panel = JPanel(GridBagLayout()).apply {
-            border = JBUI.Borders.empty(10, 6, 18, 6)
-        }
-        add(panel, BorderLayout.CENTER)
+    val panel = JPanel(GridBagLayout()).apply {
+      border = JBUI.Borders.empty(10, 6, 18, 6)
+    }
+    add(panel, BorderLayout.CENTER)
 
-        val dummyContext = FontRenderContext(AffineTransform(), false, false)
-        val textFieldWidth = (editorFont.getMaxCharBounds(dummyContext).width * 25).roundToInt()
+    val dummyContext = FontRenderContext(AffineTransform(), false, false)
+    val textFieldWidth = (editorFont.getMaxCharBounds(dummyContext).width * 25).roundToInt()
 
-        val c = GridBagConstraints()
-        c.gridy = 0
-        c.anchor = GridBagConstraints.LINE_START
-        c.fill = GridBagConstraints.HORIZONTAL
-        var isFirstCheckbox = true
-        for ((presentableName, codeFragment, offerToUseAnyVariable) in newParameterData) {
-            c.gridx = 0
+    val c = GridBagConstraints()
+    c.gridy = 0
+    c.anchor = GridBagConstraints.LINE_START
+    c.fill = GridBagConstraints.HORIZONTAL
+    var isFirstCheckbox = true
+    for ((presentableName, codeFragment, offerToUseAnyVariable) in newParameterData) {
+      c.gridx = 0
 
-            c.weightx = 0.0
-            c.insets = Insets(0, 0, 0, 0)
-            panel.add(JLabel("$presentableName:").apply { font = editorFont }, c)
-            c.gridx++
+      c.weightx = 0.0
+      c.insets = Insets(0, 0, 0, 0)
+      panel.add(JLabel("$presentableName:").apply { font = editorFont }, c)
+      c.gridx++
 
-            codeFragments.add(codeFragment)
+      codeFragments.add(codeFragment)
 
-            c.weightx = 1.0
-            c.insets = Insets(0, 4, 0, 0)
-            val document = PsiDocumentManager.getInstance(project).getDocument(codeFragment)!!
-            val textField = MyTextField(language, project, document).apply {
-                setPreferredWidth(textFieldWidth)
-            }
-            panel.add(textField, c)
-            textFields.add(textField)
-            focusSequence.add { textField.editor!!.contentComponent }
-            c.gridx++
+      c.weightx = 1.0
+      c.insets = Insets(0, 4, 0, 0)
+      val document = PsiDocumentManager.getInstance(project).getDocument(codeFragment)!!
+      val textField = MyTextField(language, project, document).apply {
+        setPreferredWidth(textFieldWidth)
+      }
+      panel.add(textField, c)
+      textFields.add(textField)
+      focusSequence.add { textField.editor!!.contentComponent }
+      c.gridx++
 
-            if (offerToUseAnyVariable) {
-                c.weightx = 0.0
-                c.insets = Insets(0, 10, 0, 0)
-                val checkBox = JCheckBox(RefactoringBundle.message("suggested.refactoring.use.any.variable.checkbox.text"))
-                panel.add(checkBox, c)
-                checkBoxes.add(checkBox)
-                focusSequence.add { checkBox }
+      if (offerToUseAnyVariable) {
+        c.weightx = 0.0
+        c.insets = Insets(0, 10, 0, 0)
+        val checkBox = JCheckBox(RefactoringBundle.message("suggested.refactoring.use.any.variable.checkbox.text"))
+        panel.add(checkBox, c)
+        checkBoxes.add(checkBox)
+        focusSequence.add { checkBox }
 
-                checkBox.addItemListener {
-                    textField.isEnabled = !checkBox.isSelected
-                }
-
-                if (isFirstCheckbox) {
-                    val hint = RefactoringBundle.message("suggested.refactoring.use.any.variable.checkbox.hint")
-                    panel.add(UI.PanelFactory.panel(checkBox).withTooltip(hint).createPanel(), c)
-                }
-                isFirstCheckbox = false
-            }
-            else {
-                checkBoxes.add(null)
-            }
-
-            c.gridy++
+        checkBox.addItemListener {
+          textField.isEnabled = !checkBox.isSelected
         }
 
-        isFocusCycleRoot = true
-        focusTraversalPolicy = MyFocusTraversalPolicy()
-    }
-
-    fun defaultFocus() {
-        focusSequence.first()().requestFocusInWindow()
-    }
-
-    fun isLookupShown(): Boolean {
-        return textFields.any {
-            (LookupManager.getActiveLookup(it.editor) as LookupElementListPresenter?)?.isShown ?: false
+        if (isFirstCheckbox) {
+          val hint = RefactoringBundle.message("suggested.refactoring.use.any.variable.checkbox.hint")
+          panel.add(UI.PanelFactory.panel(checkBox).withTooltip(hint).createPanel(), c)
         }
+        isFirstCheckbox = false
+      }
+      else {
+        checkBoxes.add(null)
+      }
+
+      c.gridy++
     }
 
-    fun areAllValuesCorrect(): Boolean {
-        return textFields.indices.all { getValue(it) != null }
+    isFocusCycleRoot = true
+    focusTraversalPolicy = MyFocusTraversalPolicy()
+  }
+
+  fun defaultFocus() {
+    focusSequence.first()().requestFocusInWindow()
+  }
+
+  fun isLookupShown(): Boolean {
+    return textFields.any {
+      (LookupManager.getActiveLookup(it.editor) as LookupElementListPresenter?)?.isShown ?: false
+    }
+  }
+
+  fun areAllValuesCorrect(): Boolean {
+    return textFields.indices.all { getValue(it) != null }
+  }
+
+  fun getValues(): List<NewParameterValue>? {
+    return textFields.indices.map { index -> getValue(index) ?: return null }
+  }
+
+  private fun getValue(index: Int): NewParameterValue? {
+    val textField = textFields[index]
+    val checkBox = checkBoxes[index]
+    val fragment = codeFragments[index]
+
+    return if (checkBox != null && checkBox.isSelected) {
+      NewParameterValue.AnyVariable
+    }
+    else {
+      if (textField.text.isBlank()) {
+        NewParameterValue.None
+      }
+      else {
+        refactoringSupport.ui.extractValue(fragment)
+      }
+    }
+  }
+
+  private class MyTextField(
+    language: Language,
+    project: Project,
+    document: Document
+  ) : LanguageTextField(
+    language,
+    project,
+    "",
+    { _, _, _ -> document },
+    true
+  ) {
+    override fun createEditor(): EditorEx {
+      return super.createEditor().apply {
+        setPlaceholder(RefactoringBundle.message("suggested.refactoring.parameter.values.placeholder"))
+        setShowPlaceholderWhenFocused(true)
+      }
+    }
+  }
+
+  private inner class MyFocusTraversalPolicy : FocusTraversalPolicy() {
+    override fun getComponentAfter(aContainer: Container, aComponent: Component?): Component? {
+      val index = focusSequence.indexOfFirst { it() == aComponent }
+      if (index < 0) return null
+      return if (index < focusSequence.lastIndex) focusSequence[index + 1]() else focusSequence.first()()
     }
 
-    fun getValues(): List<NewParameterValue>? {
-        return textFields.indices.map { index -> getValue(index) ?: return null }
+    override fun getComponentBefore(aContainer: Container, aComponent: Component?): Component? {
+      val index = focusSequence.indexOfFirst { it() == aComponent }
+      if (index < 0) return null
+      return if (index > 0) focusSequence[index - 1]() else focusSequence.last()()
     }
 
-    private fun getValue(index: Int): NewParameterValue? {
-        val textField = textFields[index]
-        val checkBox = checkBoxes[index]
-        val fragment = codeFragments[index]
-
-        return if (checkBox != null && checkBox.isSelected) {
-            NewParameterValue.AnyVariable
-        } else {
-            if (textField.text.isBlank()) {
-                NewParameterValue.None
-            } else {
-                refactoringSupport.ui.extractValue(fragment)
-            }
-        }
-    }
-
-    private class MyTextField(
-        language: Language,
-        project: Project,
-        document: Document
-    ) : LanguageTextField(
-        language,
-        project,
-        "",
-        { _, _, _ -> document },
-        true
-    ) {
-        override fun createEditor(): EditorEx {
-            return super.createEditor().apply {
-                setPlaceholder(RefactoringBundle.message("suggested.refactoring.parameter.values.placeholder"))
-                setShowPlaceholderWhenFocused(true)
-            }
-        }
-    }
-
-    private inner class MyFocusTraversalPolicy : FocusTraversalPolicy() {
-        override fun getComponentAfter(aContainer: Container, aComponent: Component?): Component? {
-            val index = focusSequence.indexOfFirst { it() == aComponent }
-            if (index < 0) return null
-            return if (index < focusSequence.lastIndex) focusSequence[index + 1]() else focusSequence.first()()
-        }
-
-        override fun getComponentBefore(aContainer: Container, aComponent: Component?): Component? {
-            val index = focusSequence.indexOfFirst { it() == aComponent }
-            if (index < 0) return null
-            return if (index > 0) focusSequence[index - 1]() else focusSequence.last()()
-        }
-
-        override fun getDefaultComponent(aContainer: Container) = focusSequence.first()()
-        override fun getFirstComponent(aContainer: Container) = focusSequence.first()()
-        override fun getLastComponent(aContainer: Container) = focusSequence.last()()
-    }
+    override fun getDefaultComponent(aContainer: Container) = focusSequence.first()()
+    override fun getFirstComponent(aContainer: Container) = focusSequence.first()()
+    override fun getLastComponent(aContainer: Container) = focusSequence.last()()
+  }
 }

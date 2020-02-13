@@ -16,83 +16,91 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringBundle
 
 class SuggestedRefactoringIntentionContributor : IntentionMenuContributor {
-    private val icon = AllIcons.Actions.SuggestedRefactoringBulb
+  private val icon = AllIcons.Actions.SuggestedRefactoringBulb
 
-    override fun collectActions(
-        hostEditor: Editor,
-        hostFile: PsiFile,
-        intentions: ShowIntentionsPass.IntentionsInfo,
-        passIdToShowIntentionsFor: Int,
-        offset: Int
-    ) {
-        val project = hostFile.project
-        val refactoringProvider = SuggestedRefactoringProviderImpl.getInstance(project)
-        var state = refactoringProvider.state ?: return
+  override fun collectActions(
+    hostEditor: Editor,
+    hostFile: PsiFile,
+    intentions: ShowIntentionsPass.IntentionsInfo,
+    passIdToShowIntentionsFor: Int,
+    offset: Int
+  ) {
+    val project = hostFile.project
+    val refactoringProvider = SuggestedRefactoringProviderImpl.getInstance(project)
+    var state = refactoringProvider.state ?: return
 
-        val declaration = state.declaration
-        if (!declaration.isValid) return
-        if (hostFile != declaration.containingFile) return
-        if (state.syntaxError) return
+    val declaration = state.declaration
+    if (!declaration.isValid) return
+    if (hostFile != declaration.containingFile) return
+    if (state.syntaxError) return
 
-        val refactoringSupport = state.refactoringSupport
+    val refactoringSupport = state.refactoringSupport
 
-        state = refactoringSupport.availability.refineSignaturesWithResolve(state)
+    state = refactoringSupport.availability.refineSignaturesWithResolve(state)
 
-        if (state.oldSignature == state.newSignature) {
-            val document = PsiDocumentManager.getInstance(project).getDocument(hostFile)!!
-            val modificationStamp = document.modificationStamp
-            ApplicationManager.getApplication().invokeLater {
-                if (document.modificationStamp == modificationStamp) {
-                    refactoringProvider.availabilityIndicator.clear()
-                }
-            }
-            return
+    if (state.oldSignature == state.newSignature) {
+      val document = PsiDocumentManager.getInstance(project).getDocument(hostFile)!!
+      val modificationStamp = document.modificationStamp
+      ApplicationManager.getApplication().invokeLater {
+        if (document.modificationStamp == modificationStamp) {
+          refactoringProvider.availabilityIndicator.clear()
         }
-
-        val refactoringData = refactoringSupport.availability.detectAvailableRefactoring(state)
-
-        // update availability indicator with more precise state that takes into account resolve
-        refactoringProvider.availabilityIndicator.update(declaration, refactoringData, refactoringSupport)
-
-        val range = when (refactoringData) {
-            is SuggestedRenameData -> refactoringSupport.nameRange(refactoringData.declaration)!!
-            is SuggestedChangeSignatureData -> refactoringSupport.changeSignatureAvailabilityRange(declaration)!!
-            else -> return
-        }
-
-        if (!range.containsOffset(offset)) return
-
-        SuggestedRefactoringFeatureUsage.refactoringSuggested(refactoringData, state)
-
-        val text = when (refactoringData) {
-            is SuggestedRenameData -> RefactoringBundle.message("suggested.refactoring.rename.intention.text", refactoringData.oldName, refactoringData.declaration.name)
-            is SuggestedChangeSignatureData -> RefactoringBundle.message("suggested.refactoring.change.signature.intention.text", refactoringData.nameOfStuffToUpdate)
-        }
-
-        val intention = MyIntention(text, showReviewBalloon = refactoringData is SuggestedChangeSignatureData)
-        // we add it into 'errorFixesToShow' if it's not empty to always be at the top of the list
-        // we don't add into it if it's empty to keep the color of the bulb
-        val collectionToAdd = intentions.errorFixesToShow.takeIf { it.isNotEmpty() }
-                              ?: intentions.inspectionFixesToShow
-        collectionToAdd.add(0, HighlightInfo.IntentionActionDescriptor(intention, icon))
+      }
+      return
     }
 
-    private class MyIntention(
-        private val text: String,
-        private val showReviewBalloon: Boolean
-    ) : IntentionAction, PriorityAction {
-        override fun getPriority() = PriorityAction.Priority.TOP
+    val refactoringData = refactoringSupport.availability.detectAvailableRefactoring(state)
 
-        override fun getFamilyName() = "Suggested Refactoring"
+    // update availability indicator with more precise state that takes into account resolve
+    refactoringProvider.availabilityIndicator.update(declaration, refactoringData, refactoringSupport)
 
-        override fun getText() = text
-
-        override fun isAvailable(project: Project, editor: Editor, file: PsiFile?) = true
-
-        override fun startInWriteAction() = false
-
-        override fun invoke(project: Project, editor: Editor, file: PsiFile?) {
-            performSuggestedRefactoring(project, editor, null, null, showReviewBalloon, ActionPlaces.INTENTION_MENU)
-        }
+    val range = when (refactoringData) {
+      is SuggestedRenameData -> refactoringSupport.nameRange(refactoringData.declaration)!!
+      is SuggestedChangeSignatureData -> refactoringSupport.changeSignatureAvailabilityRange(declaration)!!
+      else -> return
     }
+
+    if (!range.containsOffset(offset)) return
+
+    SuggestedRefactoringFeatureUsage.refactoringSuggested(refactoringData, state)
+
+    val text = when (refactoringData) {
+      is SuggestedRenameData -> RefactoringBundle.message(
+        "suggested.refactoring.rename.intention.text",
+        refactoringData.oldName,
+        refactoringData.declaration.name
+      )
+      
+      is SuggestedChangeSignatureData -> RefactoringBundle.message(
+        "suggested.refactoring.change.signature.intention.text",
+        refactoringData.nameOfStuffToUpdate
+      )
+    }
+
+    val intention = MyIntention(text, showReviewBalloon = refactoringData is SuggestedChangeSignatureData)
+    // we add it into 'errorFixesToShow' if it's not empty to always be at the top of the list
+    // we don't add into it if it's empty to keep the color of the bulb
+    val collectionToAdd = intentions.errorFixesToShow.takeIf { it.isNotEmpty() }
+                          ?: intentions.inspectionFixesToShow
+    collectionToAdd.add(0, HighlightInfo.IntentionActionDescriptor(intention, icon))
+  }
+
+  private class MyIntention(
+    private val text: String,
+    private val showReviewBalloon: Boolean
+  ) : IntentionAction, PriorityAction {
+    override fun getPriority() = PriorityAction.Priority.TOP
+
+    override fun getFamilyName() = "Suggested Refactoring"
+
+    override fun getText() = text
+
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile?) = true
+
+    override fun startInWriteAction() = false
+
+    override fun invoke(project: Project, editor: Editor, file: PsiFile?) {
+      performSuggestedRefactoring(project, editor, null, null, showReviewBalloon, ActionPlaces.INTENTION_MENU)
+    }
+  }
 }
