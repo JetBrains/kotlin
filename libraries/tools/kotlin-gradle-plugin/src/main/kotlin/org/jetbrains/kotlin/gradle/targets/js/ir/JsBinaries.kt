@@ -17,12 +17,14 @@ sealed class JsBinary(
     internal val type: BuildVariantKind,
     internal val compilation: KotlinJsCompilation
 ) {
-    val linkTaskName: String = linkTaskName(type)
+    val linkTaskName: String = linkTaskName()
 
     val linkTask: TaskProvider<KotlinJsIrLink>
-        get() = target.project.tasks.named(linkTaskName) as TaskProvider<KotlinJsIrLink>
+        get() = target.project.tasks
+            .withType(KotlinJsIrLink::class.java)
+            .named(linkTaskName)
 
-    private fun linkTaskName(type: BuildVariantKind): String =
+    private fun linkTaskName(): String =
         lowerCamelCaseName(
             "compile",
             type.name.toLowerCase(),
