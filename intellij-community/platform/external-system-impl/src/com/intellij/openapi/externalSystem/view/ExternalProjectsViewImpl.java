@@ -238,7 +238,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
   private void scheduleTaskAndRunConfigUpdate() {
     scheduleStructureRequest(() -> {
       assert myStructure != null;
-      myStructure.updateNodesAsync(new SmartList<>(TaskNode.class, RunConfigurationNode.class));
+      myStructure.updateNodesAsync(Arrays.asList(TaskNode.class, RunConfigurationNode.class));
     });
   }
 

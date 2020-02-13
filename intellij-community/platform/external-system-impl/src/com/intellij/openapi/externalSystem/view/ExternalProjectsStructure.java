@@ -225,13 +225,14 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     myAsyncTreeModel
       .accept(new CollectingVisitor<>(nodes, nodeClasses), false)
       .onSuccess(p -> {
-        if (!nodes.isEmpty()) {
           invalidatePaths(nodes, structure);
-        }
       });
   }
 
   private void invalidatePaths(@NotNull Collection<TreePath> paths, boolean structure) {
+    if (paths.isEmpty()) {
+      return;
+    }
     paths.forEach(p -> myTreeModel.invalidate(p, structure));
   }
 
@@ -249,11 +250,11 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
   }
 
   private static class CollectingVisitor<T extends ExternalSystemNode> implements TreeVisitor {
-    private final List<TreePath> myNodes;
+    private final List<TreePath> myCollector;
     private final Collection<Class<? extends T>> myNodeClasses;
 
-    public CollectingVisitor(List<TreePath> nodes, Collection<Class<? extends T>> nodeClasses) {
-      myNodes = nodes;
+    public CollectingVisitor(List<TreePath> nodeCollector, Collection<Class<? extends T>> nodeClasses) {
+      myCollector = nodeCollector;
       myNodeClasses = nodeClasses;
     }
 
@@ -262,7 +263,7 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     public Action visit(@NotNull TreePath path) {
       Object object = TreeUtil.getLastUserObject(path);
       if (object != null && anyAssignableFrom(object.getClass())) {
-        myNodes.add(path);
+        myCollector.add(path);
       }
       return Action.CONTINUE;
     }
