@@ -19,6 +19,7 @@ package com.intellij.codeInsight.intention.actions;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -30,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author mike
  */
-public class ShowIntentionActionsAction extends BaseCodeInsightAction implements HintManagerImpl.ActionToIgnore {
+public class ShowIntentionActionsAction extends BaseCodeInsightAction implements HintManagerImpl.ActionToIgnore,
+                                                                                 LightEditCompatible {
   public ShowIntentionActionsAction() {
     setEnabledInModalContext(true);
   }
