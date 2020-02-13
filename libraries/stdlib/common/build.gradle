@@ -58,7 +58,8 @@ compileTestKotlinCommon {
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+                "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
+                "-XXLanguage:-NewInference"
         ]
     }
 }

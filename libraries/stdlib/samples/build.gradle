@@ -15,7 +15,8 @@ compileTestKotlin {
         freeCompilerArgs = [
                 "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
                 "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-Xuse-experimental=kotlin.time.ExperimentalTime"
+                "-Xuse-experimental=kotlin.time.ExperimentalTime",
+                "-XXLanguage:-NewInference"
         ]
     }
 }
