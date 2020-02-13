@@ -10,12 +10,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
-import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.IR_TARGET_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsTargetPreset(
     project: Project,
@@ -50,7 +51,12 @@ open class KotlinJsTargetPreset(
         kotlinPluginVersion
     )
 
-    override fun getName(): String = PRESET_NAME
+    override fun getName(): String {
+        return lowerCamelCaseName(
+            PRESET_NAME,
+            irPreset?.let { JsCompilerType.both.name }
+        )
+    }
 
     override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
         return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { (forTarget as KotlinJsTarget).irTarget })

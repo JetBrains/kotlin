@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.JsCompilerType
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsIrTargetPreset(
     project: Project,
@@ -39,7 +41,10 @@ open class KotlinJsIrTargetPreset(
         KotlinJsIrCompilationFactory(project, forTarget)
 
     companion object {
-        const val PRESET_NAME = "js"
+        val PRESET_NAME = lowerCamelCaseName(
+            "js",
+            JsCompilerType.ir.name
+        )
     }
 }
 
