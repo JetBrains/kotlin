@@ -135,7 +135,7 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
                 val os = ByteArrayOutputStream()
                 val printWriter = PrintWriter(os)
                 val writer = TraceClassVisitor(printWriter)
-                val reader = ClassReader(it.inputStream())
+                val reader = ClassReader(it.inputStream().readBytes())
                 reader.accept(
                     writer,
                     ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES

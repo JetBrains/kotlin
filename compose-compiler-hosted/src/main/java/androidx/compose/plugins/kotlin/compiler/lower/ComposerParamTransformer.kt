@@ -18,21 +18,18 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.frames.findTopLevel
+import androidx.compose.plugins.kotlin.generateSymbols
 import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyGetterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertySetterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
@@ -41,8 +38,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
@@ -57,6 +52,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyGetterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedPropertySetterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -72,17 +71,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.isInt
-import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -98,20 +97,18 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.ceil
 import kotlin.math.min
 
-private const val DEBUG_LOG = false
-
 class ComposerParamTransformer(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace,
     val functionBodySkipping: Boolean
 ) :
     AbstractComposeLowering(context, symbolRemapper, bindingTrace),
-    FileLoweringPass,
     ModuleLoweringPass {
 
     override fun lower(module: IrModuleFragment) {
@@ -148,36 +145,10 @@ class ComposerParamTransformer(
 
     private val transformedFunctionSet = mutableSetOf<IrFunction>()
 
-    private val composerType = composerTypeDescriptor.defaultType.toIrType()
-
-    override fun lower(irFile: IrFile) {
-        if (DEBUG_LOG) {
-            println("""
-                =========
-                BEFORE
-                =========
-            """.trimIndent())
-            println(irFile.dump())
-        }
-        irFile.transform(this, null)
-        if (DEBUG_LOG) {
-            println("""
-                =========
-                AFTER TRANSFORM
-                =========
-            """.trimIndent())
-            println(irFile.dump())
-        }
-        irFile.remapComposableTypesWithComposerParam()
-        if (DEBUG_LOG) {
-            println("""
-                =========
-                AFTER TYPE REMAPPING
-                =========
-            """.trimIndent())
-            println(irFile.dump())
-        }
-    }
+    private val composerType = composerTypeDescriptor
+        .defaultType
+        .replaceArgumentsWithStarProjections()
+        .toIrType()
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         return super.visitFunction(declaration.withComposerParamIfNeeded())
@@ -242,8 +213,10 @@ class ComposerParamTransformer(
         if (!symbol.descriptor.isComposable() && !isComposableLambda)
             return this
         val ownerFn = when {
-            isComposableLambda ->
+            isComposableLambda -> {
+                if (!symbol.isBound) context.irProviders.getDeclaration(symbol)
                 (symbol.owner as IrSimpleFunction).lambdaInvokeWithComposerParamIfNeeded()
+            }
             else -> (symbol.owner as IrSimpleFunction).withComposerParamIfNeeded()
         }
         if (!transformedFunctionSet.contains(ownerFn))
@@ -255,7 +228,6 @@ class ComposerParamTransformer(
             endOffset,
             type,
             ownerFn.symbol,
-            ownerFn.symbol.descriptor,
             typeArgumentsCount,
             ownerFn.valueParameters.size,
             origin,
@@ -384,7 +356,7 @@ class ComposerParamTransformer(
             composeSyntheticParamCount(argCount, hasDefaults = false)
         else
             1
-        val newFnClass = context.irIntrinsics.symbols.externalSymbolTable
+        val newFnClass = context.symbolTable
             .referenceClass(context.builtIns.getFunction(argCount + extraParams))
         val newDescriptor = newFnClass.descriptor.unsubstitutedMemberScope.findFirstFunction(
             OperatorNameConventions.INVOKE.identifier
@@ -397,10 +369,13 @@ class ComposerParamTransformer(
             newDescriptor,
             newDescriptor.returnType?.toIrType()!!
         ).also { fn ->
+            if (!newFnClass.isBound) context.irProviders.getDeclaration(newFnClass)
             fn.parent = newFnClass.owner
 
             fn.copyTypeParametersFrom(this)
+            dispatchReceiverParameter?.type?.let { context.bindIfNeeded(it) }
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
+            extensionReceiverParameter?.type?.let { context.bindIfNeeded(it) }
             fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
             newDescriptor.valueParameters.forEach { p ->
                 fn.addValueParameter(p.name.identifier, p.type.toIrType())
@@ -414,29 +389,33 @@ class ComposerParamTransformer(
         return copy().also { fn ->
             fn.origin = COMPOSABLE_DECOY_IMPL
             (fn as IrFunctionImpl).metadata = metadata
-            val errorClass = getTopLevelClass(FqName("kotlin.NotImplementedError"))
-            val errorCtor = errorClass.owner.constructors.single {
+            val errorCls = context.moduleDescriptor.findTopLevel(FqName("kotlin" +
+                    ".NotImplementedError"))
+            val errorCtor = context.symbolTable.referenceConstructor(errorCls.constructors.single {
                 it.valueParameters.size == 1 &&
-                        it.valueParameters.single().type.isString()
-            }
-            if (this is IrOverridableDeclaration<*>) {
-                overriddenSymbols.mapTo(fn.overriddenSymbols) { it as IrSimpleFunctionSymbol }
-            }
+                        KotlinBuiltIns.isString(it.valueParameters.single().type)
+            })
             // the decoy cannot have default expressions in its parameters, since they might be
             // composable and if they are, it wouldn't have a composer param to use
             fn.valueParameters.clear()
             valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn, defaultValue = null) }
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 +irThrow(
-                    irCall(errorCtor).apply {
-                        putValueArgument(
-                            0,
-                            irString(
-                                "Composable functions cannot be called without a " +
-                                        "composer. If you are getting this error, it " +
-                                        "is likely because of a misconfigured compiler"
-                            )
-                        )
+                    IrConstructorCallImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        errorCls.defaultType.toIrType(),
+                        errorCtor,
+                        0, 0, 1
+                    ).also {
+                        it.putValueArgument(0, IrConstImpl.string(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            builtIns.stringType,
+                            "Composable functions cannot be called without a " +
+                                    "composer. If you are getting this error, it " +
+                                    "is likely because of a misconfigured compiler"
+                        ))
                     }
                 )
             }
@@ -482,14 +461,23 @@ class ComposerParamTransformer(
             isInline,
             isExternal,
             descriptor.isTailrec,
-            descriptor.isSuspend
+            descriptor.isSuspend,
+            descriptor.isOperator,
+            isExpect,
+            isFakeOverride
         ).also { fn ->
             newDescriptor.bind(fn)
             if (this is IrSimpleFunction) {
                 fn.correspondingPropertySymbol = correspondingPropertySymbol
             }
             fn.parent = parent
+            this.typeParameters.forEach { it.superTypes.forEach {
+                if (it is IrSimpleType && !it.classifier.isBound) context.irProviders
+                .getDeclaration(it
+                .classifier)
+            } }
             fn.copyTypeParametersFrom(this)
+            generateSymbols(context)
             fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
             fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
             valueParameters.mapTo(fn.valueParameters) { p ->
@@ -501,6 +489,18 @@ class ComposerParamTransformer(
                 // case in composable lambdas. The synthetic name that kotlin generates for
                 // anonymous parameters has an issue where it is not safe to dex, so we sanitize
                 // the names here to ensure that dex is always safe.
+                p.type.let { if (it is IrSimpleType && !it.classifier.isBound) context.irProviders
+                    .getDeclaration(it
+                        .classifier) }
+                p.type.let {
+                    if (it is IrSimpleType) it.arguments.forEach {
+                        if (it is IrTypeProjection) {
+                            val tp = it.type
+                            if (tp is IrSimpleType && !tp.classifier.isBound) context.irProviders
+                                .getDeclaration(tp.classifier)
+                        }
+                    }
+                }
                 p.copyTo(fn, name = dexSafeName(p.name))
             }
             annotations.mapTo(fn.annotations) { a -> a }
@@ -521,14 +521,15 @@ class ComposerParamTransformer(
 
     private fun jvmNameAnnotation(name: String): IrConstructorCall {
         val jvmName = getTopLevelClass(DescriptorUtils.JVM_NAME)
+        val cd = context.moduleDescriptor.findTopLevel(DescriptorUtils.JVM_NAME)
+            .unsubstitutedPrimaryConstructor!!
         val type = jvmName.createType(false, emptyList())
-        val ctor = jvmName.constructors.first()
+        val ctor = context.symbolTable.referenceConstructor(cd)
         return IrConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             type,
             ctor,
-            ctor.descriptor,
             0, 0, 1
         ).also {
             it.putValueArgument(0, IrConstImpl.string(
@@ -705,7 +706,7 @@ class ComposerParamTransformer(
             (psi as? KtFunctionLiteral)?.let {
                 val arg = InlineUtil.getInlineArgumentDescriptor(
                     it,
-                    context.state.bindingContext
+                    context.bindingContext
                 ) ?: return false
 
                 return !arg.type.hasComposableAnnotation()
@@ -719,12 +720,12 @@ class ComposerParamTransformer(
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(
                         it,
-                        context.state.bindingContext,
+                        context.bindingContext,
                         false
                     )
                 )
                     return true
-                if (it.isEmitInline(context.state.bindingContext)) {
+                if (it.isEmitInline(context.bindingContext)) {
                     return true
                 }
             }
@@ -735,7 +736,7 @@ class ComposerParamTransformer(
     fun IrFunction.isEmitInlineChildrenLambda(): Boolean {
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
-                if (it.isEmitInline(context.state.bindingContext)) {
+                if (it.isEmitInline(context.bindingContext)) {
                     return true
                 }
             }

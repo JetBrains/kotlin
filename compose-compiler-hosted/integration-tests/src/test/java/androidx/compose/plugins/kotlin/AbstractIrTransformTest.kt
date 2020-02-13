@@ -18,14 +18,14 @@ package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.compiler.lower.dumpSrc
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendFacade
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.defaultJvmPhases
-import org.jetbrains.kotlin.backend.jvm.withPluginPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -119,57 +120,49 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             analysisResult.throwIfError()
             AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
         }
+        val extensions = JvmGeneratorExtensions()
         val generatorContext = psi2ir.createGeneratorContext(
             analysisResult.moduleDescriptor,
             analysisResult.bindingContext,
-            extensions = JvmGeneratorExtensions
+            extensions = extensions
         )
-        val irModuleFragment = psi2ir.generateModuleFragment(generatorContext, files)
 
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
-            ?: PhaseConfig(defaultJvmPhases).withPluginPhases(files.first().project)
-
-        val codegenFactory = JvmIrCodegenFactory(phaseConfig)
-
-        val state = GenerationState.Builder(
-            files.first().project,
-            ClassBuilderFactories.TEST,
+        val irProviders = generateTypicalIrProviderList(
             analysisResult.moduleDescriptor,
-            analysisResult.bindingContext,
-            files,
-            configuration
-        ).codegenFactory(codegenFactory).build()
-
-        val context = JvmBackendContext(
-            state,
-            generatorContext.sourceManager,
-            irModuleFragment.irBuiltins,
-            irModuleFragment,
+            generatorContext.irBuiltIns,
             generatorContext.symbolTable,
-            phaseConfig,
-            firMode = false
+            extensions = extensions
         )
-//        state.irBasedMapAsmMethod = { descriptor ->
-//            context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor).owner)
-//        }
-//        state.mapInlineClass = { descriptor ->
-//            context.typeMapper.mapType(context.referenceClass(descriptor).owner.defaultType)
-//        }
+
         ExternalDependenciesGenerator(
-            irModuleFragment.descriptor,
             generatorContext.symbolTable,
-            irModuleFragment.irBuiltins,
-            JvmGeneratorExtensions.externalDeclarationOrigin,
-            facadeClassGenerator = ::facadeClassGenerator
+            irProviders
         ).generateUnboundSymbolsAsDependencies()
 
         val extension = ComposeIrGenerationExtension()
 
-        for (irFile in irModuleFragment.files) {
-            extension.generate(irFile, context, context.state.bindingContext, transforms)
+        psi2ir.addPostprocessingStep { module ->
+            extension.generate(
+                module,
+                IrPluginContext(
+                    generatorContext.moduleDescriptor,
+                    generatorContext.bindingContext,
+                    generatorContext.languageVersionSettings,
+                    generatorContext.symbolTable,
+                    generatorContext.typeTranslator,
+                    generatorContext.irBuiltIns,
+                    irProviders = irProviders
+                ),
+                transforms = transforms
+            )
         }
 
-        return irModuleFragment
+        return psi2ir.generateModuleFragment(
+            generatorContext,
+            files,
+            irProviders = irProviders,
+            expectDescriptorToSymbol = null
+        )
     }
 
     fun facadeClassGenerator(source: DeserializedContainerSource): IrClass? {

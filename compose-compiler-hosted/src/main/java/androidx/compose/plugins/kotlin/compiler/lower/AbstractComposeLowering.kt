@@ -25,7 +25,7 @@ import androidx.compose.plugins.kotlin.isMarkedStable
 import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -85,13 +85,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -99,7 +100,6 @@ import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.endOffset
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -119,31 +119,31 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import kotlin.math.abs
 
 abstract class AbstractComposeLowering(
-    val context: JvmBackendContext,
+    val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
     val bindingTrace: BindingTrace
 ) : IrElementTransformerVoid() {
 
     protected val typeTranslator =
         TypeTranslator(
-            context.ir.symbols.externalSymbolTable,
-            context.state.languageVersionSettings,
+            context.symbolTable,
+            context.languageVersionSettings,
             context.builtIns
         ).apply {
             constantValueGenerator = ConstantValueGenerator(
-                context.state.module,
-                context.ir.symbols.externalSymbolTable
+                context.moduleDescriptor,
+                context.symbolTable
             )
             constantValueGenerator.typeTranslator = this
         }
 
     protected val builtIns = context.irBuiltIns
 
-    protected val composerTypeDescriptor = context.state.module.findClassAcrossModuleDependencies(
-        ClassId.topLevel(ComposeFqNames.Composer)
+    protected val composerTypeDescriptor = context.moduleDescriptor
+        .findClassAcrossModuleDependencies(ClassId.topLevel(ComposeFqNames.Composer)
     ) ?: error("Cannot find the Composer class")
 
-    private val symbolTable get() = context.ir.symbols.externalSymbolTable
+    private val symbolTable get() = context.symbolTable
 
     fun referenceFunction(descriptor: CallableDescriptor): IrFunctionSymbol {
         return symbolRemapper.getReferencedFunction(symbolTable.referenceFunction(descriptor))
@@ -160,7 +160,7 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelClass(fqName: FqName): IrClassSymbol {
-        val descriptor = context.state.module.getPackage(fqName.parent()).memberScope
+        val descriptor = context.moduleDescriptor.getPackage(fqName.parent()).memberScope
             .getContributedClassifier(
                 fqName.shortName(), NoLookupLocation.FROM_BACKEND
             ) as ClassDescriptor? ?: error("Class is not found: $fqName")
@@ -168,7 +168,7 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelFunction(fqName: FqName): IrFunctionSymbol {
-        val descriptor = context.state.module.getPackage(fqName.parent()).memberScope
+        val descriptor = context.moduleDescriptor.getPackage(fqName.parent()).memberScope
             .getContributedFunctions(
                 fqName.shortName(), NoLookupLocation.FROM_BACKEND
             ).singleOrNull() ?: error("Function not found $fqName")
@@ -178,7 +178,7 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelPropertyGetter(fqName: FqName): IrFunctionSymbol {
-        val descriptor = context.state.module.getPackage(fqName.parent()).memberScope
+        val descriptor = context.moduleDescriptor.getPackage(fqName.parent()).memberScope
             .getContributedVariables(
                 fqName.shortName(), NoLookupLocation.FROM_BACKEND
             ).singleOrNull() ?: error("Function not found $fqName")
@@ -192,6 +192,9 @@ abstract class AbstractComposeLowering(
     fun IrAnnotationContainer.hasComposableAnnotation(): Boolean {
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
+
+    fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
+        any { it.symbol.descriptor.constructedClass.fqNameSafe == fqName }
 
     fun IrCall.isTransformedComposableCall(): Boolean {
         return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_CALL, this] ?: false
@@ -320,7 +323,6 @@ abstract class AbstractComposeLowering(
                 endOffset = endOffset,
                 type = type,
                 symbol = symbol,
-                descriptor = descriptor,
                 typeArgumentsCount = descriptor.typeParametersCount,
                 origin = IrStatementOrigin.LAMBDA
             )
@@ -423,6 +425,7 @@ abstract class AbstractComposeLowering(
         extensionReceiver: IrExpression? = null,
         vararg args: IrExpression
     ): IrCallImpl {
+        context.irProviders.getDeclaration(symbol)
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -439,7 +442,7 @@ abstract class AbstractComposeLowering(
 
     protected fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         return irCall(
-            context.irIntrinsics.symbols.intAnd,
+            context.symbols.intAnd,
             lhs,
             null,
             rhs
@@ -449,7 +452,7 @@ abstract class AbstractComposeLowering(
     protected fun irInv(lhs: IrExpression): IrCallImpl {
         val int = context.builtIns.intType
         return irCall(
-            context.irIntrinsics.symbols.getUnaryOperator(OperatorNames.INV, int),
+            context.symbols.getUnaryOperator(OperatorNames.INV, int),
             lhs
         )
     }
@@ -457,7 +460,7 @@ abstract class AbstractComposeLowering(
     protected fun irOr(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         val int = context.builtIns.intType
         return irCall(
-            context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.OR, int, int),
+            context.symbols.getBinaryOperator(OperatorNames.OR, int, int),
             lhs,
             null,
             rhs
@@ -513,7 +516,7 @@ abstract class AbstractComposeLowering(
     protected fun irXor(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         val int = context.builtIns.intType
         return irCall(
-            context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.XOR, int, int),
+            context.symbols.getBinaryOperator(OperatorNames.XOR, int, int),
             lhs,
             null,
             rhs
@@ -669,7 +672,6 @@ abstract class AbstractComposeLowering(
                     UNDEFINED_OFFSET,
                     type,
                     function.symbol,
-                    function.symbol.descriptor,
                     function.typeParameters.size,
                     IrStatementOrigin.LAMBDA
                 )
@@ -692,3 +694,5 @@ fun IrValueParameter.isComposerParam(): Boolean =
 fun ValueParameterDescriptor.isComposerParam(): Boolean =
     name == KtxNameConventions.COMPOSER_PARAMETER &&
             type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
+
+object COMPOSE_STATEMENT_ORIGIN : IrStatementOriginImpl("COMPOSE_STATEMENT_ORIGIN")

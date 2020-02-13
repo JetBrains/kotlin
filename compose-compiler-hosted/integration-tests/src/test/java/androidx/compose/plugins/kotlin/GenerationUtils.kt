@@ -19,14 +19,12 @@ package androidx.compose.plugins.kotlin
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.defaultJvmPhases
-import org.jetbrains.kotlin.backend.jvm.withPluginPhases
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -84,13 +82,12 @@ object GenerationUtils {
             if (configuration.getBoolean(JVMConfigurationKeys.IR))
                 JvmIrCodegenFactory(
                     configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
-                        ?: PhaseConfig(defaultJvmPhases).withPluginPhases(files.first().project)
+                        ?: PhaseConfig(jvmPhases)
                 )
             else DefaultCodegenFactory
         ).build()
         if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler
-                .THROW_EXCEPTION)
+            KotlinCodegenFacade.compileCorrectFiles(state)
         }
 
         // For JVM-specific errors

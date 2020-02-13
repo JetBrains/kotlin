@@ -11,6 +11,7 @@ import androidx.compose.plugins.kotlin.hasPivotalAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
@@ -97,7 +99,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ComposableCallTransformer(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace
 ) :
@@ -638,7 +640,9 @@ class ComposableCallTransformer(
                         ctorCall.candidateDescriptor as ClassConstructorDescriptor
                     )
 
-                    +irReturn(irCall(ctorCallSymbol).apply {
+                    +irReturn(IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset,
+                        ctorCall.candidateDescriptor.returnType!!.toIrType(), ctorCallSymbol)
+                        .apply {
                         putTypeArguments(ctorCall.typeArguments) { it.toIrType() }
                         ctorLambdaDescriptor.valueParameters.zip(
                             ctorCall

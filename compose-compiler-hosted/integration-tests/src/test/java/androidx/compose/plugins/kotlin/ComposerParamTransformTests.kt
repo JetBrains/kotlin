@@ -46,11 +46,11 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<N>?) {
+            fun Example(%composer: Composer<*>?) {
               bar
             }
             @JvmName("getBar")
-            fun <get-bar>(%composer: Composer<N>?): Int {
+            fun <get-bar>(%composer: Composer<*>?): Int {
               return 123
             }
         """
@@ -72,11 +72,11 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """
             abstract class BaseFoo {
               @Composable
-              abstract fun bar(%composer: Composer<N>?)
+              abstract fun bar(%composer: Composer<*>?)
             }
             class FooImpl : BaseFoo {
               @Composable
-              override fun bar(%composer: Composer<N>?) { }
+              override fun bar(%composer: Composer<*>?) { }
             }
         """
     )
@@ -100,17 +100,17 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Wat(%composer: Composer<N>?) { }
+            fun Wat(%composer: Composer<*>?) { }
             @Composable
-            fun Foo(x: Int, %composer: Composer<N>?) {
+            fun Foo(x: Int, %composer: Composer<*>?) {
               Wat(%composer)
               @Composable
-              fun goo(%composer: Composer<N>?) {
+              fun goo(%composer: Composer<*>?) {
                 Wat(%composer)
               }
               class Bar {
                 @Composable
-                fun baz(%composer: Composer<N>?) {
+                fun baz(%composer: Composer<*>?) {
                   Wat(%composer)
                 }
               }
@@ -188,7 +188,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<N>?) {
+            fun Example(%composer: Composer<*>?) {
               Example(%composer)
             }
         """
@@ -207,12 +207,12 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(children: Function1<Composer<N>, Unit>, %composer: Composer<N>?) {
+            fun Example(children: Function1<Composer<*>, Unit>, %composer: Composer<*>?) {
               children(%composer)
             }
             @Composable
-            fun Test(%composer: Composer<N>?) {
-              Example({ %composer: Composer<N>? ->
+            fun Test(%composer: Composer<*>?) {
+              Example({ %composer: Composer<*>? ->
               }, %composer)
             }
         """
@@ -233,7 +233,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """
             private fun TextView.setRef(ref: Function1<TextView, Unit>) { }
             @Composable
-            fun Test(%composer: Composer<N>?) {
+            fun Test(%composer: Composer<*>?) {
               TextView(
                 ref = { it: TextView ->
                 }
@@ -252,7 +252,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @JvmName("getMyProperty")
-            fun <get-myProperty>(%composer: Composer<N>?): Function0<Unit> {
+            fun <get-myProperty>(%composer: Composer<*>?): Function0<Unit> {
               return {
               }
             }

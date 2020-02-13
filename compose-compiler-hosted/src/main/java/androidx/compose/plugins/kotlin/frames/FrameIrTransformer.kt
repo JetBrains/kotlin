@@ -16,11 +16,10 @@
 
 package androidx.compose.plugins.kotlin.frames
 
+import androidx.compose.plugins.kotlin.compiler.lower.COMPOSE_STATEMENT_ORIGIN
 import androidx.compose.plugins.kotlin.compiler.lower.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -112,6 +111,8 @@ import androidx.compose.plugins.kotlin.frames.analysis.FrameWritableSlices
 import androidx.compose.plugins.kotlin.frames.analysis.FrameWritableSlices.FRAMED_DESCRIPTOR
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -148,7 +149,7 @@ import org.jetbrains.kotlin.utils.Printer
  *   - Remove the moved fields from the class and rewrite any methods that refer to the removed
  *     methods to use the getters and setters instead.
  */
-class FrameIrTransformer(val context: JvmBackendContext) :
+class FrameIrTransformer(val pluginContext: IrPluginContext) :
     IrElementTransformerVoidWithContext(),
     FileLoweringPass,
     ModuleLoweringPass {
@@ -170,8 +171,8 @@ class FrameIrTransformer(val context: JvmBackendContext) :
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val className = declaration.descriptor.fqNameSafe
-        val bindingContext = context.state.bindingContext
-        val symbolTable = context.ir.symbols.externalSymbolTable
+        val bindingContext = pluginContext.bindingContext
+        val symbolTable = pluginContext.symbolTable
 
         val recordClassDescriptor =
             bindingContext.get(
@@ -181,11 +182,11 @@ class FrameIrTransformer(val context: JvmBackendContext) :
         // If there are no properties, skip the class
         if (!declaration.anyChild { it is IrProperty }) return super.visitClassNew(declaration)
 
-        val framesPackageDescriptor = context.state.module.getPackage(framesPackageName)
+        val framesPackageDescriptor = pluginContext.moduleDescriptor.getPackage(framesPackageName)
 
         val recordClassScope = recordClassDescriptor.unsubstitutedMemberScope
 
-        val recordTypeDescriptor = context.state.module.findClassAcrossModuleDependencies(
+        val recordTypeDescriptor = pluginContext.moduleDescriptor.findClassAcrossModuleDependencies(
             ClassId.topLevel(recordClassName)
         ) ?: error("Cannot find the Record class")
 
@@ -200,13 +201,15 @@ class FrameIrTransformer(val context: JvmBackendContext) :
         var recordClass: IrClass? = null
 
         val framedType =
-            context.state.module.findClassAcrossModuleDependencies(ClassId.topLevel(framedTypeName))
-            ?: error("Cannot find the Framed interface")
+            pluginContext.moduleDescriptor.findClassAcrossModuleDependencies(
+                ClassId.topLevel(framedTypeName)
+            ) ?: error("Cannot find the Framed interface")
 
         val classBuilder = IrClassBuilder(
-            context,
+            pluginContext,
             declaration,
-            declaration.descriptor
+            declaration.descriptor,
+            pluginContext.languageVersionSettings
         )
 
         with(classBuilder) {
@@ -237,8 +240,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
 
                     // Fields are left uninitialized as they will be set either by the framed object's constructor or by a call to assign()
                     +syntheticConstructorDelegatingCall(
-                        superConstructor,
-                        superConstructor.descriptor
+                        superConstructor
                     )
                 }
 
@@ -265,8 +267,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                     +irReturn(
                         syntheticConstructorCall(
                             recordClassDescriptor.defaultType.toIrType(),
-                            recordCtorSymbol!!,
-                            recordConstructorDescriptor
+                            recordCtorSymbol!!
                         )
                     )
                 }
@@ -393,9 +394,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                 +syntheticSetField(
                     fieldReference, thisValue(), syntheticConstructorCall(
                         recordClassDescriptor.defaultType.toIrType(),
-                        recordCtorSymbol!!,
-                        // Non-null was already validated when the record class was constructed
-                        recordClassDescriptor.unsubstitutedPrimaryConstructor!!
+                        recordCtorSymbol!!
                     )
                 )
 
@@ -434,8 +433,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
 
                 +syntheticCall(
                     unitType!!,
-                    symbolTable.referenceSimpleFunction(createdDescriptor),
-                    createdDescriptor
+                    symbolTable.referenceSimpleFunction(createdDescriptor)
                 ).apply {
                     putValueArgument(0, thisValue())
                 }
@@ -456,7 +454,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             val readableSymbol = symbolTable.referenceSimpleFunction(readableDescriptor)
             val writableSymbol = symbolTable.referenceSimpleFunction(writableDescriptor)
             metadata.getFramedProperties(
-                context.state.bindingContext
+                pluginContext.bindingContext
             ).forEach { propertyDescriptor ->
                 val irFramedProperty = declaration.declarations.find {
                     it.descriptor.name == propertyDescriptor.name
@@ -486,8 +484,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                                         toRecord(
                                             syntheticCall(
                                                 recordClass!!.defaultType,
-                                                readableSymbol,
-                                                readableDescriptor
+                                                readableSymbol
                                             ).also {
                                                 it.putValueArgument(
                                                     0,
@@ -530,8 +527,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                                     irRecordField,
                                     toRecord(syntheticCall(
                                         recordClass!!.defaultType,
-                                        writableSymbol,
-                                        writableDescriptor
+                                        writableSymbol
                                     ).also {
                                         it.putValueArgument(
                                             0, recordGetter(setterThisSymbol, setterThisType)
@@ -584,9 +580,8 @@ class FrameIrTransformer(val context: JvmBackendContext) :
         startOffset = expression.startOffset,
         endOffset = expression.endOffset,
         type = expression.type,
-        descriptor = function.descriptor,
-        symbol = function.symbol
-
+        symbol = function.symbol,
+        origin = COMPOSE_STATEMENT_ORIGIN
     ).apply {
         dispatchReceiver = expression.receiver
     }
@@ -657,19 +652,20 @@ fun IrElement.anyChild(filter: (descriptor: IrElement) -> Boolean): Boolean {
 }
 
 class IrClassBuilder(
-    private val context: JvmBackendContext,
+    val pluginContext: IrPluginContext,
     var irClass: IrClass,
-    private val classDescriptor: ClassDescriptor
+    private val classDescriptor: ClassDescriptor,
+    val languageVersionSettings: LanguageVersionSettings
 ) {
     private val typeTranslator =
         TypeTranslator(
-            context.ir.symbols.externalSymbolTable,
-            context.state.languageVersionSettings, context.builtIns
+            pluginContext.symbolTable,
+            languageVersionSettings, pluginContext.builtIns
         ).apply {
             constantValueGenerator =
                 ConstantValueGenerator(
-                    context.state.module,
-                    context.ir.symbols.externalSymbolTable
+                    pluginContext.moduleDescriptor,
+                    pluginContext.symbolTable
                 )
             constantValueGenerator.typeTranslator = this
         }
@@ -697,7 +693,7 @@ class IrClassBuilder(
             IrDeclarationOrigin.DELEGATE,
             initializerSymbol
         ).apply {
-            body = DeclarationIrBuilder(context, initializerSymbol).irBlockBody {
+            body = DeclarationIrBuilder(pluginContext, initializerSymbol).irBlockBody {
                 this@irBlockBody.block(this@apply)
             }
         }
@@ -728,7 +724,7 @@ class IrClassBuilder(
         it.descriptor.getAllSuperclassesWithoutAny().forEach { superClass ->
             it.superTypes.add(superClass.defaultType.toIrType())
         }
-        IrClassBuilder(context, it, it.descriptor).block(it)
+        IrClassBuilder(pluginContext, it, it.descriptor, languageVersionSettings).block(it)
     }
 
     fun constructor(
@@ -746,7 +742,7 @@ class IrClassBuilder(
             constructorSymbol,
             irClass.defaultType
         ).apply {
-            body = DeclarationIrBuilder(context, constructorSymbol).irBlockBody {
+            body = DeclarationIrBuilder(pluginContext, constructorSymbol).irBlockBody {
                 createParameterDeclarations()
                 this@irBlockBody.block(this@apply)
             }
@@ -819,9 +815,9 @@ class IrClassBuilder(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.DELEGATE,
             methodDescriptor,
-            realReturnType ?: context.irBuiltIns.unitType
+            realReturnType ?: pluginContext.irBuiltIns.unitType
         ).apply {
-            body = DeclarationIrBuilder(context, symbol).irBlockBody {
+            body = DeclarationIrBuilder(pluginContext, symbol).irBlockBody {
                 createParameterDeclarations()
                 this@irBlockBody.block(this@apply)
             }
@@ -837,7 +833,7 @@ class IrClassBuilder(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
         descriptor.returnType!!.toIrType(),
         symbol,
-        descriptor
+        COMPOSE_STATEMENT_ORIGIN
     ).also {
         it.dispatchReceiver = dispatchReceiver
         it.putValueArgument(0, argument)
@@ -853,29 +849,25 @@ class IrClassBuilder(
 
     fun syntheticCall(
         kotlinType: IrType,
-        symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor
+        symbol: IrFunctionSymbol
     ) =
         IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             kotlinType,
             symbol,
-            descriptor,
             typeArgumentsCount = 0
         )
 
     fun syntheticConstructorCall(
         kotlinType: IrType,
-        symbol: IrConstructorSymbol,
-        descriptor: ClassConstructorDescriptor
+        symbol: IrConstructorSymbol
     ) =
         IrConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             kotlinType,
             symbol,
-            descriptor,
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
             valueArgumentsCount = 0
@@ -896,14 +888,12 @@ class IrClassBuilder(
 }
 
 fun IrBlockBodyBuilder.syntheticConstructorDelegatingCall(
-    symbol: IrConstructorSymbol,
-    descriptor: ClassConstructorDescriptor
+    symbol: IrConstructorSymbol
 ) = IrDelegatingConstructorCallImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.unitType,
         symbol,
-        descriptor,
         typeArgumentsCount = 0
     )
 
@@ -994,6 +984,8 @@ class FrameRecordClassDescriptor(
     bindingContext: BindingContext
 ) : ClassDescriptor {
     override fun getKind() = ClassKind.CLASS
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? = null
+
     override fun getModality() = Modality.FINAL
     override fun getName() = myName
     override fun getSource() = SourceElement.NO_SOURCE!!
@@ -1015,6 +1007,9 @@ class FrameRecordClassDescriptor(
     override fun getThisAsReceiverParameter() = thisAsReceiverParameter
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? =
         myUnsubstitutedPrimaryConstructor
+
+    override fun isFun(): Boolean = false
+
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
     override fun getOriginal(): ClassDescriptor = this
     override fun isExpect() = false
@@ -1039,6 +1034,8 @@ class FrameRecordClassDescriptor(
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor?.visitClassDescriptor(this, null)
     }
+
+    override fun isDefinitelyNotSamInterface(): Boolean = true
 
     override val annotations = Annotations.EMPTY
 

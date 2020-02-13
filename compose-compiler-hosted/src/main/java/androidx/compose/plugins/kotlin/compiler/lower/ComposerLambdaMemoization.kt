@@ -23,6 +23,8 @@ import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -56,6 +58,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.getDeclaration
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -140,7 +143,7 @@ const val RESTARTABLE_FUNCTION_INSTANCE = "restartableFunctionInstance"
 const val RESTARTABLE_FUNCTION_N_INSTANCE = "restartableFunctionNInstance"
 
 class ComposerLambdaMemoization(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace
 ) :
@@ -217,8 +220,9 @@ class ComposerLambdaMemoization(
                         extensionReceiver.isNullOrStable()) {
                 // Save the receivers into a temporaries and memoize the function reference using
                 // the resulting temporaries
-                val builder = context.createIrBuilder(
-                    functionContext.declaration.symbol,
+                val builder = DeclarationIrBuilder(
+                    generatorContext = context,
+                    symbol = functionContext.symbol,
                     startOffset = expression.startOffset,
                     endOffset = expression.endOffset
                 )
@@ -245,7 +249,6 @@ class ComposerLambdaMemoization(
                             endOffset,
                             expression.type,
                             expression.symbol,
-                            expression.descriptor,
                             expression.typeArgumentsCount).copyAttributes(expression).apply {
                             this.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
                             this.extensionReceiver = tempExtensionReceiver?.let { irGet(it) }
@@ -352,12 +355,13 @@ class ComposerLambdaMemoization(
                 else RESTARTABLE_FUNCTION_INSTANCE
         val restartFactorySymbol =
             getTopLevelFunction(composeInternalFqName(restartFunctionFactory))
-        val irBuilder = context.createIrBuilder(
+        val irBuilder = DeclarationIrBuilder(context,
             symbol = declarationContext.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
         )
 
+        context.irProviders.getDeclaration(restartFactorySymbol)
         return irBuilder.irCall(restartFactorySymbol).apply {
             var index = 0
 
@@ -372,7 +376,7 @@ class ComposerLambdaMemoization(
             // key parameter
             putValueArgument(
                 index++, irBuilder.irInt(
-                    descriptor.fqNameSafe.hashCode() xor expression.startOffset
+                    symbol.descriptor.fqNameSafe.hashCode() xor expression.startOffset
                 )
             )
 
@@ -423,7 +427,8 @@ class ComposerLambdaMemoization(
 
         val rememberFunctionSymbol = referenceSimpleFunction(rememberFunctionDescriptor)
 
-        val irBuilder = context.createIrBuilder(
+        val irBuilder = DeclarationIrBuilder(
+            generatorContext = context,
             symbol = functionContext.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
@@ -495,12 +500,12 @@ class ComposerLambdaMemoization(
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(
                         it,
-                        context.state.bindingContext,
+                        context.bindingContext,
                         false
                     )
                 )
                     return true
-                if (it.isEmitInline(context.state.bindingContext)) {
+                if (it.isEmitInline(context.bindingContext)) {
                     return true
                 }
             }

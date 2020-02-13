@@ -21,6 +21,7 @@ import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.hasDirectAnnotation
 import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -359,7 +360,7 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  *     }
  */
 class ComposableFunctionBodyTransformer(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace
 ) :
@@ -524,12 +525,12 @@ class ComposableFunctionBodyTransformer(
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(
                         it,
-                        context.state.bindingContext,
+                        context.bindingContext,
                         false
                     )
                 )
                     return false
-                if (it.isEmitInline(context.state.bindingContext)) {
+                if (it.isEmitInline(context.bindingContext)) {
                     return false
                 }
             }
@@ -1265,8 +1266,7 @@ class ComposableFunctionBodyTransformer(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             type,
-            symbol,
-            descriptor
+            symbol
         )
     }
 
@@ -1527,15 +1527,15 @@ class ComposableFunctionBodyTransformer(
             return super.visitCall(expression)
         }
         encounteredComposableCall()
-        if (expression.descriptor.fqNameSafe == ComposeFqNames.key) {
+        if (expression.symbol.descriptor.fqNameSafe == ComposeFqNames.key) {
             return visitKeyCall(expression)
         }
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
         expression.transformChildrenVoid()
 
-        val numParams = expression.descriptor.valueParameters.size
-        val lastParam = expression.descriptor.valueParameters[numParams - 1]
+        val numParams = expression.symbol.descriptor.valueParameters.size
+        val lastParam = expression.symbol.descriptor.valueParameters[numParams - 1]
         val hasDefault = lastParam.name == KtxNameConventions.DEFAULT_PARAMETER
         val numRealParams = if (hasDefault) numParams - 3 else numParams - 2
         val defaultArg = if (hasDefault) expression.getValueArgument(lastParam) else null
@@ -2222,12 +2222,12 @@ class ComposableFunctionBodyTransformer(
 
             if (bitsToShiftLeft == 0) return value
             val int = context.builtIns.intType
-            val shiftLeft = context.irIntrinsics.symbols.getBinaryOperator(
+            val shiftLeft = context.symbols.getBinaryOperator(
                 OperatorNames.SHL,
                 int,
                 int
             )
-            val shiftRight = context.irIntrinsics.symbols.getBinaryOperator(
+            val shiftRight = context.symbols.getBinaryOperator(
                 OperatorNames.SHR,
                 int,
                 int

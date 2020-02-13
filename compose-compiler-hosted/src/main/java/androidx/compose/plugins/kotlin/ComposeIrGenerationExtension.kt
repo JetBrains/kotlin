@@ -18,18 +18,19 @@ package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
-import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
+import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataTransformer
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getDeclaration
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 object ComposeTransforms {
@@ -47,62 +48,50 @@ object ComposeTransforms {
 
 class ComposeIrGenerationExtension : IrGenerationExtension {
     override fun generate(
-        file: IrFile,
-        backendContext: BackendContext,
-        bindingContext: BindingContext
+        moduleFragment: IrModuleFragment,
+        pluginContext: IrPluginContext
     ) = generate(
-        file,
-        backendContext,
-        bindingContext,
+        moduleFragment,
+        pluginContext,
         transforms = ComposeTransforms.DEFAULT
     )
 
     fun generate(
-        file: IrFile,
-        backendContext: BackendContext,
-        bindingContext: BindingContext,
+        module: IrModuleFragment,
+        pluginContext: IrPluginContext,
         transforms: Int
     ) {
         // TODO: refactor transformers to work with just BackendContext
-        val jvmContext = backendContext as JvmBackendContext
-        val module = jvmContext.ir.irModule
-        val bindingTrace = DelegatingBindingTrace(
-            bindingContext,
-            "trace in ComposeIrGenerationExtension"
-        )
+        val bindingTrace = DelegatingBindingTrace(pluginContext.bindingContext, "trace in " +
+                "ComposeIrGenerationExtension")
 
-        // We transform the entire module all at once since we end up remapping symbols, we need to
-        // ensure that everything in the module points to the right symbol. There is no extension
-        // point that allows you to transform at the module level but we should communicate this
-        // need with JetBrains as it seems like the only reasonable way to update top-level symbols.
-        // If a module-based extension point gets added, we should refactor this to use it.
-        if (file == module.files.first()) {
+        // create a symbol remapper to be used across all transforms
+        val symbolRemapper = DeepCopySymbolRemapper()
 
-            // create a symbol remapper to be used across all transforms
-            val symbolRemapper = DeepCopySymbolRemapper()
-
-            // add metadata from the frontend onto IR Nodes so that the metadata will travel
-            // with the ir nodes as they transform and get copied
-            ComposeResolutionMetadataTransformer(jvmContext).lower(module)
+        // add metadata from the frontend onto IR Nodes so that the metadata will travel
+        // with the ir nodes as they transform and get copied
+        ComposeResolutionMetadataTransformer(pluginContext).lower(module)
 
             // transform @Model classes
             if (transforms and ComposeTransforms.FRAMED_CLASSES != 0) {
-                FrameIrTransformer(jvmContext).lower(module)
+                FrameIrTransformer(pluginContext).lower(module)
             }
 
             // Memoize normal lambdas and wrap composable lambdas
             if (transforms and ComposeTransforms.LAMBDA_MEMOIZATION != 0) {
-                ComposerLambdaMemoization(jvmContext, symbolRemapper, bindingTrace).lower(module)
+                ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(module)
             }
 
             val functionBodySkipping = transforms and ComposeTransforms.FUNCTION_BODY_SKIPPING != 0
+
+        generateSymbols(pluginContext)
 
             // transform all composable functions to have an extra synthetic composer
             // parameter. this will also transform all types and calls to include the extra
             // parameter.
             if (transforms and ComposeTransforms.COMPOSER_PARAM != 0) {
                 ComposerParamTransformer(
-                    jvmContext,
+                    pluginContext,
                     symbolRemapper,
                     bindingTrace,
                     functionBodySkipping
@@ -114,28 +103,65 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             // transform calls to the currentComposer to just use the local parameter from the
             // previous transform
             if (transforms and ComposeTransforms.INTRINSICS != 0) {
-                ComposerIntrinsicTransformer(jvmContext, functionBodySkipping).lower(module)
+                ComposerIntrinsicTransformer(pluginContext, functionBodySkipping).lower(module)
             }
 
             if (transforms and ComposeTransforms.CONTROL_FLOW_GROUPS != 0) {
                 ComposableFunctionBodyTransformer(
-                    jvmContext,
+                    pluginContext,
                     symbolRemapper,
                     bindingTrace
                 ).lower(module)
             }
 
+            generateSymbols(pluginContext)
+
             // transform composable calls and emits into their corresponding calls appealing
             // to the composer
             if (transforms and ComposeTransforms.CALLS_AND_EMITS != 0) {
-                ComposableCallTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+                ComposableCallTransformer(pluginContext, symbolRemapper, bindingTrace).lower(module)
             }
+
+            generateSymbols(pluginContext)
 
             // transform composable functions to have restart groups so that they can be
             // recomposed
             if (transforms and ComposeTransforms.RESTART_GROUPS != 0) {
-                ComposeObservePatcher(jvmContext, symbolRemapper, bindingTrace).lower(module)
+                ComposeObservePatcher(pluginContext, symbolRemapper, bindingTrace).lower(module)
             }
-        }
+            generateSymbols(pluginContext)
     }
+}
+
+val SymbolTable.allUnbound: List<IrSymbol>
+    get() {
+        val r = mutableListOf<IrSymbol>()
+        r.addAll(unboundClasses)
+        r.addAll(unboundConstructors)
+        r.addAll(unboundEnumEntries)
+        r.addAll(unboundFields)
+        r.addAll(unboundSimpleFunctions)
+        r.addAll(unboundProperties)
+        r.addAll(unboundTypeParameters)
+        r.addAll(unboundTypeAliases)
+        return r
+    }
+
+fun generateSymbols(pluginContext: IrPluginContext) {
+    lateinit var unbound: List<IrSymbol>
+    val visited = mutableSetOf<IrSymbol>()
+    do {
+        unbound = pluginContext.symbolTable.allUnbound
+
+        for (symbol in unbound) {
+            if (visited.contains(symbol)) {
+                continue
+            }
+            // Symbol could get bound as a side effect of deserializing other symbols.
+            if (!symbol.isBound) {
+                pluginContext.irProviders.getDeclaration(symbol)
+            }
+            if (!symbol.isBound) { visited.add(symbol) }
+        }
+    } while ((unbound - visited).isNotEmpty())
 }

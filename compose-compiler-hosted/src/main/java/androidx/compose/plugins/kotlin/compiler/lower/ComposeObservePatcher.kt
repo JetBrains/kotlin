@@ -21,6 +21,7 @@ import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.KtxNameConventions.UPDATE_SCOPE
 import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -71,6 +73,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -88,7 +91,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ComposeObservePatcher(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace
 ) :
@@ -125,12 +128,12 @@ class ComposeObservePatcher(
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(
                         it,
-                        context.state.bindingContext,
+                        context.bindingContext,
                         false
                     )
                 )
                     return declaration
-                if (it.isEmitInline(context.state.bindingContext)) {
+                if (it.isEmitInline(context.bindingContext)) {
                     return declaration
                 }
             }
@@ -273,23 +276,21 @@ class ComposeObservePatcher(
                     fn.body = localIrBuilder.irBlockBody {
                         // Call the function again with the same parameters
                         +irReturn(irCall(selfSymbol).apply {
-                            symbol.descriptor
-                                .valueParameters
+                            original.valueParameters
                                 .filter { !it.isComposerParam() }
                                 .forEachIndexed {
                                     index, valueParameter ->
-                                val value = original.valueParameters[index].symbol
                                 putValueArgument(
                                     index, IrGetValueImpl(
                                         UNDEFINED_OFFSET,
                                         UNDEFINED_OFFSET,
-                                        valueParameter.type.toIrType(),
-                                        value
+                                        valueParameter.type,
+                                        valueParameter.symbol
                                     )
                                 )
                             }
                             putValueArgument(
-                                descriptor.valueParameters.size - 1,
+                                symbol.descriptor.valueParameters.size - 1,
                                 IrGetValueImpl(
                                     UNDEFINED_OFFSET,
                                     UNDEFINED_OFFSET,
@@ -328,8 +329,8 @@ class ComposeObservePatcher(
                                         )
                                 )
                             }
-                            symbol.descriptor.typeParameters.forEachIndexed { index, descriptor ->
-                                putTypeArgument(index, descriptor.defaultType.toIrType())
+                            original.typeParameters.forEachIndexed { index, parameter ->
+                                putTypeArgument(index, parameter.defaultType)
                             }
                         })
                     }
@@ -341,7 +342,6 @@ class ComposeObservePatcher(
                         UNDEFINED_OFFSET,
                         blockParameterType.toIrType(),
                         fn.symbol,
-                        fn.symbol.descriptor,
                         0,
                         IrStatementOrigin.LAMBDA
                     )
@@ -355,7 +355,8 @@ class ComposeObservePatcher(
             val result = irTemporary(endRestartGroup)
             val updateScopeSymbol = referenceSimpleFunction(updateScopeDescriptor)
             +irIfThen(irNot(irEqeqeq(irGet(result.type, result.symbol), irNull())),
-                irCall(updateScopeSymbol).apply {
+                IrCallImpl(startOffset, endOffset, updateScopeDescriptor.returnType!!.toIrType(),
+                    updateScopeSymbol).apply {
                     dispatchReceiver = irGet(result.type, result.symbol)
                     putValueArgument(
                         0,
@@ -439,8 +440,7 @@ class ComposeObservePatcher(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             type,
-            symbol,
-            descriptor
+            symbol
         )
     }
 

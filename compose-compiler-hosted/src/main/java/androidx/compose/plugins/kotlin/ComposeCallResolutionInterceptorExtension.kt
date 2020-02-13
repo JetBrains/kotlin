@@ -101,7 +101,7 @@ class ComposableResolvedCall<T : CallableDescriptor>(
 }
 
 @Suppress("INVISIBLE_REFERENCE", "EXPERIMENTAL_IS_NOT_ENABLED")
-@UseExperimental(org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints::class)
+@OptIn(org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints::class)
 open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExtension {
     override fun interceptCandidates(
         candidates: Collection<Candidate>,

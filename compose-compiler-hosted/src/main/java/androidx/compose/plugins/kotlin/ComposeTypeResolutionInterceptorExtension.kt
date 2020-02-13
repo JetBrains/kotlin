@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
  * If a lambda is marked as `@Composable`, then the inferred type should become `@Composable`
  */
 @Suppress("INVISIBLE_REFERENCE", "EXPERIMENTAL_IS_NOT_ENABLED")
-@UseExperimental(org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints::class)
+@OptIn(org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints::class)
 open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptorExtension {
 
     override fun interceptFunctionLiteralDescriptor(

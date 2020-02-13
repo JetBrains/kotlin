@@ -1902,7 +1902,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
-            private fun Item(@Pivotal id: Int, onMove: (Int) -> Unit) {
+            // TODO: Investigate making this private; looks like perhaps a compiler bug as of rebase
+            fun Item(@Pivotal id: Int, onMove: (Int) -> Unit) {
                 Observe {
                     val count = state { 0 }
                     LinearLayout(orientation=LinearLayout.HORIZONTAL) {
@@ -2010,7 +2011,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
-            private fun StatefulButton() {
+            // TODO: Investigate making this private; looks like perhaps a compiler bug as of rebase
+            fun StatefulButton() {
                 val count = state { 0 }
                 Button(text="Clicked ${'$'}{count.value} times!", onClick={ count.value++ })
             }
