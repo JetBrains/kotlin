@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.intrinsics.Not
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
@@ -110,33 +108,12 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
 
                 getOperandsIfCallToEqeqOrEquals(expression)?.let { (left, right) ->
-                    val constFalse =
-                        IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
-
                     return when {
                         left.isNullConst() && right.isNullConst() ->
                             IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
                         left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*> ->
-                            constFalse
-
-                        right.isNullConst() && left.type.unboxInlineClass().isPrimitiveType() ||
-                                left.isNullConst() && right.type.unboxInlineClass().isPrimitiveType() -> {
-                            val nonNullArgument = if (left.isNullConst()) right else left
-                            if (hasNoSideEffectsForNullCompare(nonNullArgument)) {
-                                constFalse
-                            } else {
-                                IrBlockImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin).apply {
-                                    statements.add(
-                                        nonNullArgument.coerceToUnitIfNeeded(
-                                            nonNullArgument.type.toKotlinType(),
-                                            context.irBuiltIns
-                                        )
-                                    )
-                                    statements.add(constFalse)
-                                }
-                            }
-                        }
+                            IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
                         else -> expression
                     }
