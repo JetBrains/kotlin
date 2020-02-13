@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
@@ -29,8 +28,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val distribution: Distribution = BrowserDistribution()
-
-    private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -197,20 +194,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         BuildVariantKind.DEVELOPMENT -> debugValue
     }
 
-    override fun configureBuildVariants() {
-        buildVariants = project.container(BuildVariant::class.java)
-        buildVariants.create(PRODUCTION) {
-            it.kind = BuildVariantKind.PRODUCTION
-        }
-        buildVariants.create(DEVELOPMENT) {
-            it.kind = BuildVariantKind.DEVELOPMENT
-        }
-    }
-
     companion object {
-        const val PRODUCTION = "production"
-        const val DEVELOPMENT = "development"
-
         private const val WEBPACK_TASK_NAME = "webpack"
         private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         private const val DISTRIBUTION_TASK_NAME = "distribution"

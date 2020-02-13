@@ -47,7 +47,4 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         assembleTask.dependsOn(productionExecutable.linkTask)
     }
-
-    override fun configureBuildVariants() {
-    }
 }

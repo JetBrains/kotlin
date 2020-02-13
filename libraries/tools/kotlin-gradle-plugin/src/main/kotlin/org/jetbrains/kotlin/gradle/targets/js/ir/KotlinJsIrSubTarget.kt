@@ -39,7 +39,6 @@ abstract class KotlinJsIrSubTarget(
     internal fun configure() {
         NpmResolverPlugin.apply(project)
 
-        configureBuildVariants()
         configureTests()
 
         target.compilations.all {
@@ -62,8 +61,6 @@ abstract class KotlinJsIrSubTarget(
 
     protected fun disambiguateCamelCased(vararg names: String): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
-
-    abstract fun configureBuildVariants()
 
     private fun configureTests() {
         testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
