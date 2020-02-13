@@ -69,11 +69,15 @@ class FirCallArgumentsProcessor(
 
                 val currentParameter = currentParameter ?: return MappingStatus.ERROR
                 argumentMap[argument] = currentParameter
-                if (!currentParameter.isVararg ||
-                    argument is FirWrappedArgumentExpression && argument.isSpread
-                ) {
+
+                val isSpread = argument is FirWrappedArgumentExpression && argument.isSpread
+                if (!currentParameter.isVararg || isSpread) {
                     usedParameters += currentParameter
                     currentParameterIndex++
+                }
+
+                if (!currentParameter.isVararg && isSpread) {
+                    return MappingStatus.ERROR
                 }
 
                 return MappingStatus.SUCCESS

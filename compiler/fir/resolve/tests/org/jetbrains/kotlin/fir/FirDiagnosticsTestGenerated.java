@@ -268,6 +268,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/simpleTypeAlias.kt");
     }
 
+    @TestMetadata("spreadOperator.kt")
+    public void testSpreadOperator() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/spreadOperator.kt");
+    }
+
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/syntheticsVsNormalProperties.kt");
