@@ -44,9 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InstalledPackagesPanel extends JPanel {
   private static final Logger LOG = Logger.getInstance(InstalledPackagesPanel.class);
-
-  private static final String LOADING_PACKAGES_LIST_TITLE = "Loading Packages List";
-
+  
   private final AnActionButton myUpgradeButton;
   protected final AnActionButton myInstallButton;
   private final AnActionButton myUninstallButton;
@@ -64,8 +62,13 @@ public class InstalledPackagesPanel extends JPanel {
     super(new BorderLayout());
     myProject = project;
     myNotificationArea = area;
-
-    myPackagesTableModel = new DefaultTableModel(new String[]{"Package", "Version", "Latest version"}, 0) {
+    
+    String[] names = {
+      IdeBundle.message("packages.settings.package"),
+      IdeBundle.message("packages.settings.version"),
+      IdeBundle.message("packages.settings.latest.version")
+    };
+    myPackagesTableModel = new DefaultTableModel(names, 0) {
       @Override
       public boolean isCellEditable(int i, int i1) {
         return false;
@@ -414,7 +417,7 @@ public class InstalledPackagesPanel extends JPanel {
   public void doUpdatePackages(@NotNull final PackageManagementService packageManagementService) {
     onUpdateStarted();
     ProgressManager progressManager = ProgressManager.getInstance();
-    progressManager.run(new Task.Backgroundable(myProject, LOADING_PACKAGES_LIST_TITLE, true, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+    progressManager.run(new Task.Backgroundable(myProject, IdeBundle.message("packages.settings.loading"), true, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         Collection<InstalledPackage> packages = Lists.newArrayList();
