@@ -13,6 +13,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.DocumentEx;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -171,6 +172,17 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
 
   private void clearInjectorCache() {
     cachedInjectors = null;
+    if (myProject.isDisposed()) return;
+
+    for (VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
+      PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
+      if (psiFile != null) {
+        for (DocumentWindow document : InjectedLanguageUtil.getCachedInjectedDocuments(psiFile)) {
+          EditorWindowImpl.disposeEditorFor(document);
+        }
+        dropFileCaches(psiFile);
+      }
+    }
   }
 
   @Override
