@@ -10,8 +10,7 @@ FILE: boundSmartcastsInBranches.kt
     }
     public final fun test_0(list: R|kotlin/collections/List<A>|): R|kotlin/Unit| {
         lvar goodA: R|A?| = Null(null)
-        lval <range>: R|kotlin/collections/List<A>| = R|<local>/list|
-        lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/<range>|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
+        lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/list|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
         while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
             lval a: R|A| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|A|>|()
             when () {

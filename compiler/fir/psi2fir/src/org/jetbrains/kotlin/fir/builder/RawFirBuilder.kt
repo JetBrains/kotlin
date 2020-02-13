@@ -1243,15 +1243,12 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
         }
 
         override fun visitForExpression(expression: KtForExpression, data: Unit?): FirElement {
-            val ktRangeExpression = expression.loopRange.toFirExpression("No range in for loop")
+            val rangeExpression = expression.loopRange.toFirExpression("No range in for loop")
             val ktParameter = expression.loopParameter
             val loopSource = expression.toFirSourceElement()
             return buildBlock {
                 source = loopSource
                 val rangeSource = expression.loopRange?.toFirSourceElement()
-                val rangeVal =
-                    generateTemporaryVariable(baseSession, rangeSource, Name.special("<range>"), ktRangeExpression)
-                statements += rangeVal
                 val iteratorVal = generateTemporaryVariable(
                     baseSession, rangeSource, Name.special("<iterator>"),
                     buildFunctionCall {
@@ -1260,7 +1257,7 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
                             source = loopSource
                             name = Name.identifier("iterator")
                         }
-                        explicitReceiver = generateResolvedAccessExpression(rangeSource, rangeVal)
+                        explicitReceiver = rangeExpression
                     },
                 )
                 statements += iteratorVal

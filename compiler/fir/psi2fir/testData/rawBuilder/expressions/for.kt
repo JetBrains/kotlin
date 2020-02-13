@@ -4,6 +4,15 @@ fun foo() {
     }
 }
 
+fun fooLabeled() {
+    println("!!!")
+    label@ for (i in 1..10) {
+        if (i == 5) continue@label
+        println(i)
+    }
+    println("!!!")
+}
+
 fun bar(list: List<String>) {
     for (element in list.subList(0, 10)) {
         println(element)

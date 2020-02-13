@@ -828,14 +828,11 @@ class ExpressionsConverter(
 
         return buildBlock {
             source = forLoop.toFirSourceElement()
-            val rangeVal =
-                generateTemporaryVariable(this@ExpressionsConverter.baseSession, null, Name.special("<range>"), rangeExpression)
-            statements += rangeVal
             val iteratorVal = generateTemporaryVariable(
                 this@ExpressionsConverter.baseSession, null, Name.special("<iterator>"),
                 buildFunctionCall {
                     calleeReference = buildSimpleNamedReference { name = Name.identifier("iterator") }
-                    explicitReceiver = generateResolvedAccessExpression(null, rangeVal)
+                    explicitReceiver = rangeExpression
                 }
             )
             statements += iteratorVal
