@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -457,14 +457,18 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAc
     val allTypes = typesFromSmartCast.also {
         it += qualifiedAccessExpression.resultType.coneTypeUnsafe<ConeKotlinType>()
     }
-    val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx as ConeInferenceContext, allTypes)
+    val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx, allTypes)
     // TODO: add check that intersectedType is not equal to original type
     val intersectedTypeRef = buildResolvedTypeRef {
         source = qualifiedAccessExpression.resultType.source
         type = intersectedType
         annotations += qualifiedAccessExpression.resultType.annotations
     }
-    return FirExpressionWithSmartcastImpl(qualifiedAccessExpression, intersectedTypeRef, typesFromSmartCast)
+    return buildExpressionWithSmartcast {
+        originalExpression = qualifiedAccessExpression
+        typeRef = intersectedTypeRef
+        this.typesFromSmartCast = typesFromSmartCast
+    }
 }
 
 fun CallableId.isInvoke() =
