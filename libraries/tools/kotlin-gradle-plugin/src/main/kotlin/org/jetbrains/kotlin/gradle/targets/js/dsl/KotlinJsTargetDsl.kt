@@ -10,6 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
@@ -52,6 +53,9 @@ interface KotlinJsTargetDsl : KotlinTarget {
     fun produceExecutable()
 
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
+
+    // Need to compatibility when users use KotlinJsCompilation specific in build script
+    override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
 }
 
 interface KotlinJsSubTargetDsl {
