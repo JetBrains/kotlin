@@ -1826,6 +1826,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
         }
 
+        @TestMetadata("coercionToUnitInLambdaReturnValue.kt")
+        public void testCoercionToUnitInLambdaReturnValue() throws Exception {
+            runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
+        }
+
         @TestMetadata("genericPropertyReferenceType.kt")
         public void testGenericPropertyReferenceType() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");

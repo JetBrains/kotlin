@@ -1827,6 +1827,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
         }
 
+        @TestMetadata("coercionToUnitInLambdaReturnValue.kt")
+        public void testCoercionToUnitInLambdaReturnValue() throws Exception {
+            runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
+        }
+
         @TestMetadata("genericPropertyReferenceType.kt")
         public void testGenericPropertyReferenceType() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");
