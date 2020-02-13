@@ -30,7 +30,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
         """,
             """
             public final class JvmKt {
-              private final static Ljava/lang/String; foo = ""
+              private final static Ljava/lang/String; foo
               public final static getFoo()Ljava/lang/String;
               public final static <clinit>()V
             }
@@ -55,7 +55,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
         final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
           OUTERCLASS JvmKt Test (Landroidx/compose/Composer;)V
           final static INNERCLASS JvmKt%Test%1 null null
-          synthetic <init>()V
+          <init>()V
           public final invoke(Landroidx/compose/Composer;)V
           public synthetic bridge invoke(Ljava/lang/Object;)Ljava/lang/Object;
         }

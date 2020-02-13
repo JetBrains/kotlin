@@ -61,9 +61,9 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<N>?, %changed: Int) {
+            fun Test(%composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(80698815)
-              if (%changed !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%changed, 0) || !%composer.skipping) {
                 A(1, %composer, 0b0110)
                 B(0, %composer, 0, 0b0001)
                 B(2, %composer, 0b0110, 0)
@@ -91,9 +91,9 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<N>?, %changed: Int) {
+            fun Test(%composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(80698815)
-              if (%changed !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%changed, 0) || !%composer.skipping) {
                 A(0, 1, 2, 0, 0, %composer, 0b01111110, 0b00011000)
                 A(0, 0, 2, 0, 0, %composer, 0b01100110, 0b00011010)
               } else {
@@ -119,18 +119,18 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, %composer: Composer<N>?, %changed: Int, %default: Int) {
+            fun Test(x: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(80698815)
               var %dirty = %changed
-              val x = if (%default and 0b0001 !== 0) {
+              val x = if (!EQEQEQ(%default and 0b0001, 0)) {
                 makeInt()
               } else {
                 x
               }
-              if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
+              if (EQEQEQ(%default and 0b0001, 0) && EQEQEQ(%changed and 0b0110, 0)) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%dirty and 0b0011 xor 0b0010, 0) || !%composer.skipping) {
               } else {
                 %composer.skipCurrentGroup()
               }
@@ -154,24 +154,24 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun A(a: Int, b: Int, %composer: Composer<N>?, %changed: Int, %default: Int) {
+            fun A(a: Int, b: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(2064)
               var %dirty = %changed
-              val a = if (%default and 0b0001 !== 0) 0 else a
-              if (%default and 0b0001 !== 0) {
+              val a = if (!EQEQEQ(%default and 0b0001, 0)) 0 else a
+              if (!EQEQEQ(%default and 0b0001, 0)) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110, 0)) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0010 else 0b0100
               }
-              val b = if (%default and 0b0010 !== 0) {
+              val b = if (!EQEQEQ(%default and 0b0010, 0)) {
                 a + 1
               } else {
                 b
               }
-              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
+              if (EQEQEQ(%default and 0b0010, 0) && EQEQEQ(%changed and 0b00011000, 0)) {
                 %dirty = %dirty or if (%composer.changed(b)) 0b1000 else 0b00010000
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%dirty and 0b1011 xor 0b1010, 0) || !%composer.skipping) {
                 print(a)
                 print(b)
               } else {
@@ -228,198 +228,198 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<N>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int) {
               %composer.startRestartGroup(2002223143)
               var %dirty = %changed
               var %dirty1 = %changed1
               var %dirty2 = %changed2
-              val a00 = if (%default and 0b0001 !== 0) 0 else a00
-              if (%default and 0b0001 !== 0) {
+              val a00 = if (!EQEQEQ(%default and 0b0001, 0)) 0 else a00
+              if (!EQEQEQ(%default and 0b0001, 0)) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110, 0)) {
                 %dirty = %dirty or if (%composer.changed(a00)) 0b0010 else 0b0100
               }
-              val a01 = if (%default and 0b0010 !== 0) 0 else a01
-              if (%default and 0b0010 !== 0) {
+              val a01 = if (!EQEQEQ(%default and 0b0010, 0)) 0 else a01
+              if (!EQEQEQ(%default and 0b0010, 0)) {
                 %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a01)) 0b1000 else 0b00010000
               }
-              val a02 = if (%default and 0b0100 !== 0) 0 else a02
-              if (%default and 0b0100 !== 0) {
+              val a02 = if (!EQEQEQ(%default and 0b0100, 0)) 0 else a02
+              if (!EQEQEQ(%default and 0b0100, 0)) {
                 %dirty = %dirty or 0b01100000
-              } else if (%changed and 0b01100000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a02)) 0b00100000 else 0b01000000
               }
-              val a03 = if (%default and 0b1000 !== 0) 0 else a03
-              if (%default and 0b1000 !== 0) {
+              val a03 = if (!EQEQEQ(%default and 0b1000, 0)) 0 else a03
+              if (!EQEQEQ(%default and 0b1000, 0)) {
                 %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b000110000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b000110000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a03)) 0b10000000 else 0b000100000000
               }
-              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
-              if (%default and 0b00010000 !== 0) {
+              val a04 = if (!EQEQEQ(%default and 0b00010000, 0)) 0 else a04
+              if (!EQEQEQ(%default and 0b00010000, 0)) {
                 %dirty = %dirty or 0b011000000000
-              } else if (%changed and 0b011000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b011000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a04)) 0b001000000000 else 0b010000000000
               }
-              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
-              if (%default and 0b00100000 !== 0) {
+              val a05 = if (!EQEQEQ(%default and 0b00100000, 0)) 0 else a05
+              if (!EQEQEQ(%default and 0b00100000, 0)) {
                 %dirty = %dirty or 0b0001100000000000
-              } else if (%changed and 0b0001100000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0001100000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a05)) 0b100000000000 else 0b0001000000000000
               }
-              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
-              if (%default and 0b01000000 !== 0) {
+              val a06 = if (!EQEQEQ(%default and 0b01000000, 0)) 0 else a06
+              if (!EQEQEQ(%default and 0b01000000, 0)) {
                 %dirty = %dirty or 0b0110000000000000
-              } else if (%changed and 0b0110000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a06)) 0b0010000000000000 else 0b0100000000000000
               }
-              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
-              if (%default and 0b10000000 !== 0) {
+              val a07 = if (!EQEQEQ(%default and 0b10000000, 0)) 0 else a07
+              if (!EQEQEQ(%default and 0b10000000, 0)) {
                 %dirty = %dirty or 0b00011000000000000000
-              } else if (%changed and 0b00011000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a07)) 0b1000000000000000 else 0b00010000000000000000
               }
-              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
-              if (%default and 0b000100000000 !== 0) {
+              val a08 = if (!EQEQEQ(%default and 0b000100000000, 0)) 0 else a08
+              if (!EQEQEQ(%default and 0b000100000000, 0)) {
                 %dirty = %dirty or 0b01100000000000000000
-              } else if (%changed and 0b01100000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a08)) 0b00100000000000000000 else 0b01000000000000000000
               }
-              val a09 = if (%default and 0b001000000000 !== 0) 0 else a09
-              if (%default and 0b001000000000 !== 0) {
+              val a09 = if (!EQEQEQ(%default and 0b001000000000, 0)) 0 else a09
+              if (!EQEQEQ(%default and 0b001000000000, 0)) {
                 %dirty = %dirty or 0b000110000000000000000000
-              } else if (%changed and 0b000110000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b000110000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a09)) 0b10000000000000000000 else 0b000100000000000000000000
               }
-              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
-              if (%default and 0b010000000000 !== 0) {
+              val a10 = if (!EQEQEQ(%default and 0b010000000000, 0)) 0 else a10
+              if (!EQEQEQ(%default and 0b010000000000, 0)) {
                 %dirty = %dirty or 0b011000000000000000000000
-              } else if (%changed and 0b011000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b011000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a10)) 0b001000000000000000000000 else 0b010000000000000000000000
               }
-              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
-              if (%default and 0b100000000000 !== 0) {
+              val a11 = if (!EQEQEQ(%default and 0b100000000000, 0)) 0 else a11
+              if (!EQEQEQ(%default and 0b100000000000, 0)) {
                 %dirty = %dirty or 0b0001100000000000000000000000
-              } else if (%changed and 0b0001100000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0001100000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a11)) 0b100000000000000000000000 else 0b0001000000000000000000000000
               }
-              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
-              if (%default and 0b0001000000000000 !== 0) {
+              val a12 = if (!EQEQEQ(%default and 0b0001000000000000, 0)) 0 else a12
+              if (!EQEQEQ(%default and 0b0001000000000000, 0)) {
                 %dirty = %dirty or 0b0110000000000000000000000000
-              } else if (%changed and 0b0110000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a12)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
               }
-              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
-              if (%default and 0b0010000000000000 !== 0) {
+              val a13 = if (!EQEQEQ(%default and 0b0010000000000000, 0)) 0 else a13
+              if (!EQEQEQ(%default and 0b0010000000000000, 0)) {
                 %dirty = %dirty or 0b00011000000000000000000000000000
-              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a13)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
               }
-              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
-              if (%default and 0b0100000000000000 !== 0) {
+              val a14 = if (!EQEQEQ(%default and 0b0100000000000000, 0)) 0 else a14
+              if (!EQEQEQ(%default and 0b0100000000000000, 0)) {
                 %dirty = %dirty or 0b01100000000000000000000000000000
-              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a14)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
               }
-              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
-              if (%default and 0b1000000000000000 !== 0) {
+              val a15 = if (!EQEQEQ(%default and 0b1000000000000000, 0)) 0 else a15
+              if (!EQEQEQ(%default and 0b1000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110
-              } else if (%changed1 and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0010 else 0b0100
               }
-              val a16 = if (%default and 0b00010000000000000000 !== 0) 0 else a16
-              if (%default and 0b00010000000000000000 !== 0) {
+              val a16 = if (!EQEQEQ(%default and 0b00010000000000000000, 0)) 0 else a16
+              if (!EQEQEQ(%default and 0b00010000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000
-              } else if (%changed1 and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b1000 else 0b00010000
               }
-              val a17 = if (%default and 0b00100000000000000000 !== 0) 0 else a17
-              if (%default and 0b00100000000000000000 !== 0) {
+              val a17 = if (!EQEQEQ(%default and 0b00100000000000000000, 0)) 0 else a17
+              if (!EQEQEQ(%default and 0b00100000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000
-              } else if (%changed1 and 0b01100000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b00100000 else 0b01000000
               }
-              val a18 = if (%default and 0b01000000000000000000 !== 0) 0 else a18
-              if (%default and 0b01000000000000000000 !== 0) {
+              val a18 = if (!EQEQEQ(%default and 0b01000000000000000000, 0)) 0 else a18
+              if (!EQEQEQ(%default and 0b01000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b000110000000
-              } else if (%changed1 and 0b000110000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b000110000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b10000000 else 0b000100000000
               }
-              val a19 = if (%default and 0b10000000000000000000 !== 0) 0 else a19
-              if (%default and 0b10000000000000000000 !== 0) {
+              val a19 = if (!EQEQEQ(%default and 0b10000000000000000000, 0)) 0 else a19
+              if (!EQEQEQ(%default and 0b10000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b011000000000
-              } else if (%changed1 and 0b011000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b011000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b001000000000 else 0b010000000000
               }
-              val a20 = if (%default and 0b000100000000000000000000 !== 0) 0 else a20
-              if (%default and 0b000100000000000000000000 !== 0) {
+              val a20 = if (!EQEQEQ(%default and 0b000100000000000000000000, 0)) 0 else a20
+              if (!EQEQEQ(%default and 0b000100000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0001100000000000
-              } else if (%changed1 and 0b0001100000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0001100000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a20)) 0b100000000000 else 0b0001000000000000
               }
-              val a21 = if (%default and 0b001000000000000000000000 !== 0) 0 else a21
-              if (%default and 0b001000000000000000000000 !== 0) {
+              val a21 = if (!EQEQEQ(%default and 0b001000000000000000000000, 0)) 0 else a21
+              if (!EQEQEQ(%default and 0b001000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110000000000000
-              } else if (%changed1 and 0b0110000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a21)) 0b0010000000000000 else 0b0100000000000000
               }
-              val a22 = if (%default and 0b010000000000000000000000 !== 0) 0 else a22
-              if (%default and 0b010000000000000000000000 !== 0) {
+              val a22 = if (!EQEQEQ(%default and 0b010000000000000000000000, 0)) 0 else a22
+              if (!EQEQEQ(%default and 0b010000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000000000000000
-              } else if (%changed1 and 0b00011000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a22)) 0b1000000000000000 else 0b00010000000000000000
               }
-              val a23 = if (%default and 0b100000000000000000000000 !== 0) 0 else a23
-              if (%default and 0b100000000000000000000000 !== 0) {
+              val a23 = if (!EQEQEQ(%default and 0b100000000000000000000000, 0)) 0 else a23
+              if (!EQEQEQ(%default and 0b100000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000000000000000
-              } else if (%changed1 and 0b01100000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a23)) 0b00100000000000000000 else 0b01000000000000000000
               }
-              val a24 = if (%default and 0b0001000000000000000000000000 !== 0) 0 else a24
-              if (%default and 0b0001000000000000000000000000 !== 0) {
+              val a24 = if (!EQEQEQ(%default and 0b0001000000000000000000000000, 0)) 0 else a24
+              if (!EQEQEQ(%default and 0b0001000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b000110000000000000000000
-              } else if (%changed1 and 0b000110000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b000110000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a24)) 0b10000000000000000000 else 0b000100000000000000000000
               }
-              val a25 = if (%default and 0b0010000000000000000000000000 !== 0) 0 else a25
-              if (%default and 0b0010000000000000000000000000 !== 0) {
+              val a25 = if (!EQEQEQ(%default and 0b0010000000000000000000000000, 0)) 0 else a25
+              if (!EQEQEQ(%default and 0b0010000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b011000000000000000000000
-              } else if (%changed1 and 0b011000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b011000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a25)) 0b001000000000000000000000 else 0b010000000000000000000000
               }
-              val a26 = if (%default and 0b0100000000000000000000000000 !== 0) 0 else a26
-              if (%default and 0b0100000000000000000000000000 !== 0) {
+              val a26 = if (!EQEQEQ(%default and 0b0100000000000000000000000000, 0)) 0 else a26
+              if (!EQEQEQ(%default and 0b0100000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0001100000000000000000000000
-              } else if (%changed1 and 0b0001100000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0001100000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a26)) 0b100000000000000000000000 else 0b0001000000000000000000000000
               }
-              val a27 = if (%default and 0b1000000000000000000000000000 !== 0) 0 else a27
-              if (%default and 0b1000000000000000000000000000 !== 0) {
+              val a27 = if (!EQEQEQ(%default and 0b1000000000000000000000000000, 0)) 0 else a27
+              if (!EQEQEQ(%default and 0b1000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110000000000000000000000000
-              } else if (%changed1 and 0b0110000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a27)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
               }
-              val a28 = if (%default and 0b00010000000000000000000000000000 !== 0) 0 else a28
-              if (%default and 0b00010000000000000000000000000000 !== 0) {
+              val a28 = if (!EQEQEQ(%default and 0b00010000000000000000000000000000, 0)) 0 else a28
+              if (!EQEQEQ(%default and 0b00010000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000000000000000000000000000
-              } else if (%changed1 and 0b00011000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a28)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
               }
-              val a29 = if (%default and 0b00100000000000000000000000000000 !== 0) 0 else a29
-              if (%default and 0b00100000000000000000000000000000 !== 0) {
+              val a29 = if (!EQEQEQ(%default and 0b00100000000000000000000000000000, 0)) 0 else a29
+              if (!EQEQEQ(%default and 0b00100000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000000000000000000000000000
-              } else if (%changed1 and 0b01100000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a29)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
               }
-              val a30 = if (%default and 0b01000000000000000000000000000000 !== 0) 0 else a30
-              if (%default and 0b01000000000000000000000000000000 !== 0) {
+              val a30 = if (!EQEQEQ(%default and 0b01000000000000000000000000000000, 0)) 0 else a30
+              if (!EQEQEQ(%default and 0b01000000000000000000000000000000, 0)) {
                 %dirty2 = %dirty2 or 0b0110
-              } else if (%changed2 and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed2 and 0b0110, 0)) {
                 %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0010 else 0b0100
               }
-              if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010, 0) || !EQEQEQ(%dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010, 0) || !EQEQEQ(%dirty2 and 0b0011 xor 0b0010, 0) || !%composer.skipping) {
                 print("Hello world!")
               } else {
                 %composer.skipCurrentGroup()
@@ -476,204 +476,204 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<N>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
               %composer.startRestartGroup(2002223143)
               var %dirty = %changed
               var %dirty1 = %changed1
               var %dirty2 = %changed2
-              val a00 = if (%default and 0b0001 !== 0) 0 else a00
-              if (%default and 0b0001 !== 0) {
+              val a00 = if (!EQEQEQ(%default and 0b0001, 0)) 0 else a00
+              if (!EQEQEQ(%default and 0b0001, 0)) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110, 0)) {
                 %dirty = %dirty or if (%composer.changed(a00)) 0b0010 else 0b0100
               }
-              val a01 = if (%default and 0b0010 !== 0) 0 else a01
-              if (%default and 0b0010 !== 0) {
+              val a01 = if (!EQEQEQ(%default and 0b0010, 0)) 0 else a01
+              if (!EQEQEQ(%default and 0b0010, 0)) {
                 %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a01)) 0b1000 else 0b00010000
               }
-              val a02 = if (%default and 0b0100 !== 0) 0 else a02
-              if (%default and 0b0100 !== 0) {
+              val a02 = if (!EQEQEQ(%default and 0b0100, 0)) 0 else a02
+              if (!EQEQEQ(%default and 0b0100, 0)) {
                 %dirty = %dirty or 0b01100000
-              } else if (%changed and 0b01100000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a02)) 0b00100000 else 0b01000000
               }
-              val a03 = if (%default and 0b1000 !== 0) 0 else a03
-              if (%default and 0b1000 !== 0) {
+              val a03 = if (!EQEQEQ(%default and 0b1000, 0)) 0 else a03
+              if (!EQEQEQ(%default and 0b1000, 0)) {
                 %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b000110000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b000110000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a03)) 0b10000000 else 0b000100000000
               }
-              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
-              if (%default and 0b00010000 !== 0) {
+              val a04 = if (!EQEQEQ(%default and 0b00010000, 0)) 0 else a04
+              if (!EQEQEQ(%default and 0b00010000, 0)) {
                 %dirty = %dirty or 0b011000000000
-              } else if (%changed and 0b011000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b011000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a04)) 0b001000000000 else 0b010000000000
               }
-              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
-              if (%default and 0b00100000 !== 0) {
+              val a05 = if (!EQEQEQ(%default and 0b00100000, 0)) 0 else a05
+              if (!EQEQEQ(%default and 0b00100000, 0)) {
                 %dirty = %dirty or 0b0001100000000000
-              } else if (%changed and 0b0001100000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0001100000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a05)) 0b100000000000 else 0b0001000000000000
               }
-              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
-              if (%default and 0b01000000 !== 0) {
+              val a06 = if (!EQEQEQ(%default and 0b01000000, 0)) 0 else a06
+              if (!EQEQEQ(%default and 0b01000000, 0)) {
                 %dirty = %dirty or 0b0110000000000000
-              } else if (%changed and 0b0110000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a06)) 0b0010000000000000 else 0b0100000000000000
               }
-              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
-              if (%default and 0b10000000 !== 0) {
+              val a07 = if (!EQEQEQ(%default and 0b10000000, 0)) 0 else a07
+              if (!EQEQEQ(%default and 0b10000000, 0)) {
                 %dirty = %dirty or 0b00011000000000000000
-              } else if (%changed and 0b00011000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a07)) 0b1000000000000000 else 0b00010000000000000000
               }
-              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
-              if (%default and 0b000100000000 !== 0) {
+              val a08 = if (!EQEQEQ(%default and 0b000100000000, 0)) 0 else a08
+              if (!EQEQEQ(%default and 0b000100000000, 0)) {
                 %dirty = %dirty or 0b01100000000000000000
-              } else if (%changed and 0b01100000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a08)) 0b00100000000000000000 else 0b01000000000000000000
               }
-              val a09 = if (%default and 0b001000000000 !== 0) 0 else a09
-              if (%default and 0b001000000000 !== 0) {
+              val a09 = if (!EQEQEQ(%default and 0b001000000000, 0)) 0 else a09
+              if (!EQEQEQ(%default and 0b001000000000, 0)) {
                 %dirty = %dirty or 0b000110000000000000000000
-              } else if (%changed and 0b000110000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b000110000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a09)) 0b10000000000000000000 else 0b000100000000000000000000
               }
-              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
-              if (%default and 0b010000000000 !== 0) {
+              val a10 = if (!EQEQEQ(%default and 0b010000000000, 0)) 0 else a10
+              if (!EQEQEQ(%default and 0b010000000000, 0)) {
                 %dirty = %dirty or 0b011000000000000000000000
-              } else if (%changed and 0b011000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b011000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a10)) 0b001000000000000000000000 else 0b010000000000000000000000
               }
-              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
-              if (%default and 0b100000000000 !== 0) {
+              val a11 = if (!EQEQEQ(%default and 0b100000000000, 0)) 0 else a11
+              if (!EQEQEQ(%default and 0b100000000000, 0)) {
                 %dirty = %dirty or 0b0001100000000000000000000000
-              } else if (%changed and 0b0001100000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0001100000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a11)) 0b100000000000000000000000 else 0b0001000000000000000000000000
               }
-              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
-              if (%default and 0b0001000000000000 !== 0) {
+              val a12 = if (!EQEQEQ(%default and 0b0001000000000000, 0)) 0 else a12
+              if (!EQEQEQ(%default and 0b0001000000000000, 0)) {
                 %dirty = %dirty or 0b0110000000000000000000000000
-              } else if (%changed and 0b0110000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a12)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
               }
-              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
-              if (%default and 0b0010000000000000 !== 0) {
+              val a13 = if (!EQEQEQ(%default and 0b0010000000000000, 0)) 0 else a13
+              if (!EQEQEQ(%default and 0b0010000000000000, 0)) {
                 %dirty = %dirty or 0b00011000000000000000000000000000
-              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a13)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
               }
-              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
-              if (%default and 0b0100000000000000 !== 0) {
+              val a14 = if (!EQEQEQ(%default and 0b0100000000000000, 0)) 0 else a14
+              if (!EQEQEQ(%default and 0b0100000000000000, 0)) {
                 %dirty = %dirty or 0b01100000000000000000000000000000
-              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a14)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
               }
-              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
-              if (%default and 0b1000000000000000 !== 0) {
+              val a15 = if (!EQEQEQ(%default and 0b1000000000000000, 0)) 0 else a15
+              if (!EQEQEQ(%default and 0b1000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110
-              } else if (%changed1 and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0010 else 0b0100
               }
-              val a16 = if (%default and 0b00010000000000000000 !== 0) 0 else a16
-              if (%default and 0b00010000000000000000 !== 0) {
+              val a16 = if (!EQEQEQ(%default and 0b00010000000000000000, 0)) 0 else a16
+              if (!EQEQEQ(%default and 0b00010000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000
-              } else if (%changed1 and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b1000 else 0b00010000
               }
-              val a17 = if (%default and 0b00100000000000000000 !== 0) 0 else a17
-              if (%default and 0b00100000000000000000 !== 0) {
+              val a17 = if (!EQEQEQ(%default and 0b00100000000000000000, 0)) 0 else a17
+              if (!EQEQEQ(%default and 0b00100000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000
-              } else if (%changed1 and 0b01100000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b00100000 else 0b01000000
               }
-              val a18 = if (%default and 0b01000000000000000000 !== 0) 0 else a18
-              if (%default and 0b01000000000000000000 !== 0) {
+              val a18 = if (!EQEQEQ(%default and 0b01000000000000000000, 0)) 0 else a18
+              if (!EQEQEQ(%default and 0b01000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b000110000000
-              } else if (%changed1 and 0b000110000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b000110000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b10000000 else 0b000100000000
               }
-              val a19 = if (%default and 0b10000000000000000000 !== 0) 0 else a19
-              if (%default and 0b10000000000000000000 !== 0) {
+              val a19 = if (!EQEQEQ(%default and 0b10000000000000000000, 0)) 0 else a19
+              if (!EQEQEQ(%default and 0b10000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b011000000000
-              } else if (%changed1 and 0b011000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b011000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b001000000000 else 0b010000000000
               }
-              val a20 = if (%default and 0b000100000000000000000000 !== 0) 0 else a20
-              if (%default and 0b000100000000000000000000 !== 0) {
+              val a20 = if (!EQEQEQ(%default and 0b000100000000000000000000, 0)) 0 else a20
+              if (!EQEQEQ(%default and 0b000100000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0001100000000000
-              } else if (%changed1 and 0b0001100000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0001100000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a20)) 0b100000000000 else 0b0001000000000000
               }
-              val a21 = if (%default and 0b001000000000000000000000 !== 0) 0 else a21
-              if (%default and 0b001000000000000000000000 !== 0) {
+              val a21 = if (!EQEQEQ(%default and 0b001000000000000000000000, 0)) 0 else a21
+              if (!EQEQEQ(%default and 0b001000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110000000000000
-              } else if (%changed1 and 0b0110000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a21)) 0b0010000000000000 else 0b0100000000000000
               }
-              val a22 = if (%default and 0b010000000000000000000000 !== 0) 0 else a22
-              if (%default and 0b010000000000000000000000 !== 0) {
+              val a22 = if (!EQEQEQ(%default and 0b010000000000000000000000, 0)) 0 else a22
+              if (!EQEQEQ(%default and 0b010000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000000000000000
-              } else if (%changed1 and 0b00011000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a22)) 0b1000000000000000 else 0b00010000000000000000
               }
-              val a23 = if (%default and 0b100000000000000000000000 !== 0) 0 else a23
-              if (%default and 0b100000000000000000000000 !== 0) {
+              val a23 = if (!EQEQEQ(%default and 0b100000000000000000000000, 0)) 0 else a23
+              if (!EQEQEQ(%default and 0b100000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000000000000000
-              } else if (%changed1 and 0b01100000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a23)) 0b00100000000000000000 else 0b01000000000000000000
               }
-              val a24 = if (%default and 0b0001000000000000000000000000 !== 0) 0 else a24
-              if (%default and 0b0001000000000000000000000000 !== 0) {
+              val a24 = if (!EQEQEQ(%default and 0b0001000000000000000000000000, 0)) 0 else a24
+              if (!EQEQEQ(%default and 0b0001000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b000110000000000000000000
-              } else if (%changed1 and 0b000110000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b000110000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a24)) 0b10000000000000000000 else 0b000100000000000000000000
               }
-              val a25 = if (%default and 0b0010000000000000000000000000 !== 0) 0 else a25
-              if (%default and 0b0010000000000000000000000000 !== 0) {
+              val a25 = if (!EQEQEQ(%default and 0b0010000000000000000000000000, 0)) 0 else a25
+              if (!EQEQEQ(%default and 0b0010000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b011000000000000000000000
-              } else if (%changed1 and 0b011000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b011000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a25)) 0b001000000000000000000000 else 0b010000000000000000000000
               }
-              val a26 = if (%default and 0b0100000000000000000000000000 !== 0) 0 else a26
-              if (%default and 0b0100000000000000000000000000 !== 0) {
+              val a26 = if (!EQEQEQ(%default and 0b0100000000000000000000000000, 0)) 0 else a26
+              if (!EQEQEQ(%default and 0b0100000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0001100000000000000000000000
-              } else if (%changed1 and 0b0001100000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0001100000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a26)) 0b100000000000000000000000 else 0b0001000000000000000000000000
               }
-              val a27 = if (%default and 0b1000000000000000000000000000 !== 0) 0 else a27
-              if (%default and 0b1000000000000000000000000000 !== 0) {
+              val a27 = if (!EQEQEQ(%default and 0b1000000000000000000000000000, 0)) 0 else a27
+              if (!EQEQEQ(%default and 0b1000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110000000000000000000000000
-              } else if (%changed1 and 0b0110000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a27)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
               }
-              val a28 = if (%default and 0b00010000000000000000000000000000 !== 0) 0 else a28
-              if (%default and 0b00010000000000000000000000000000 !== 0) {
+              val a28 = if (!EQEQEQ(%default and 0b00010000000000000000000000000000, 0)) 0 else a28
+              if (!EQEQEQ(%default and 0b00010000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000000000000000000000000000
-              } else if (%changed1 and 0b00011000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a28)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
               }
-              val a29 = if (%default and 0b00100000000000000000000000000000 !== 0) 0 else a29
-              if (%default and 0b00100000000000000000000000000000 !== 0) {
+              val a29 = if (!EQEQEQ(%default and 0b00100000000000000000000000000000, 0)) 0 else a29
+              if (!EQEQEQ(%default and 0b00100000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000000000000000000000000000
-              } else if (%changed1 and 0b01100000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a29)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
               }
-              val a30 = if (%default and 0b01000000000000000000000000000000 !== 0) 0 else a30
-              if (%default and 0b01000000000000000000000000000000 !== 0) {
+              val a30 = if (!EQEQEQ(%default and 0b01000000000000000000000000000000, 0)) 0 else a30
+              if (!EQEQEQ(%default and 0b01000000000000000000000000000000, 0)) {
                 %dirty2 = %dirty2 or 0b0110
-              } else if (%changed2 and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed2 and 0b0110, 0)) {
                 %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0010 else 0b0100
               }
-              val a31 = if (%default1 and 0b0001 !== 0) 0 else a31
-              if (%default1 and 0b0001 !== 0) {
+              val a31 = if (!EQEQEQ(%default1 and 0b0001, 0)) 0 else a31
+              if (!EQEQEQ(%default1 and 0b0001, 0)) {
                 %dirty2 = %dirty2 or 0b00011000
-              } else if (%changed2 and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed2 and 0b00011000, 0)) {
                 %dirty2 = %dirty2 or if (%composer.changed(a31)) 0b1000 else 0b00010000
               }
-              if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010, 0) || !EQEQEQ(%dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010, 0) || !EQEQEQ(%dirty2 and 0b1011 xor 0b1010, 0) || !%composer.skipping) {
                 print("Hello world!")
               } else {
                 %composer.skipCurrentGroup()
@@ -731,202 +731,202 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo, %composer: Composer<N>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
               %composer.startRestartGroup(2002223143)
               var %dirty = %changed
               var %dirty1 = %changed1
               var %dirty2 = %changed2
-              val a00 = if (%default and 0b0001 !== 0) 0 else a00
-              if (%default and 0b0001 !== 0) {
+              val a00 = if (!EQEQEQ(%default and 0b0001, 0)) 0 else a00
+              if (!EQEQEQ(%default and 0b0001, 0)) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110, 0)) {
                 %dirty = %dirty or if (%composer.changed(a00)) 0b0010 else 0b0100
               }
-              val a01 = if (%default and 0b0010 !== 0) 0 else a01
-              if (%default and 0b0010 !== 0) {
+              val a01 = if (!EQEQEQ(%default and 0b0010, 0)) 0 else a01
+              if (!EQEQEQ(%default and 0b0010, 0)) {
                 %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a01)) 0b1000 else 0b00010000
               }
-              val a02 = if (%default and 0b0100 !== 0) 0 else a02
-              if (%default and 0b0100 !== 0) {
+              val a02 = if (!EQEQEQ(%default and 0b0100, 0)) 0 else a02
+              if (!EQEQEQ(%default and 0b0100, 0)) {
                 %dirty = %dirty or 0b01100000
-              } else if (%changed and 0b01100000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a02)) 0b00100000 else 0b01000000
               }
-              val a03 = if (%default and 0b1000 !== 0) 0 else a03
-              if (%default and 0b1000 !== 0) {
+              val a03 = if (!EQEQEQ(%default and 0b1000, 0)) 0 else a03
+              if (!EQEQEQ(%default and 0b1000, 0)) {
                 %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b000110000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b000110000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a03)) 0b10000000 else 0b000100000000
               }
-              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
-              if (%default and 0b00010000 !== 0) {
+              val a04 = if (!EQEQEQ(%default and 0b00010000, 0)) 0 else a04
+              if (!EQEQEQ(%default and 0b00010000, 0)) {
                 %dirty = %dirty or 0b011000000000
-              } else if (%changed and 0b011000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b011000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a04)) 0b001000000000 else 0b010000000000
               }
-              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
-              if (%default and 0b00100000 !== 0) {
+              val a05 = if (!EQEQEQ(%default and 0b00100000, 0)) 0 else a05
+              if (!EQEQEQ(%default and 0b00100000, 0)) {
                 %dirty = %dirty or 0b0001100000000000
-              } else if (%changed and 0b0001100000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0001100000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a05)) 0b100000000000 else 0b0001000000000000
               }
-              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
-              if (%default and 0b01000000 !== 0) {
+              val a06 = if (!EQEQEQ(%default and 0b01000000, 0)) 0 else a06
+              if (!EQEQEQ(%default and 0b01000000, 0)) {
                 %dirty = %dirty or 0b0110000000000000
-              } else if (%changed and 0b0110000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a06)) 0b0010000000000000 else 0b0100000000000000
               }
-              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
-              if (%default and 0b10000000 !== 0) {
+              val a07 = if (!EQEQEQ(%default and 0b10000000, 0)) 0 else a07
+              if (!EQEQEQ(%default and 0b10000000, 0)) {
                 %dirty = %dirty or 0b00011000000000000000
-              } else if (%changed and 0b00011000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a07)) 0b1000000000000000 else 0b00010000000000000000
               }
-              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
-              if (%default and 0b000100000000 !== 0) {
+              val a08 = if (!EQEQEQ(%default and 0b000100000000, 0)) 0 else a08
+              if (!EQEQEQ(%default and 0b000100000000, 0)) {
                 %dirty = %dirty or 0b01100000000000000000
-              } else if (%changed and 0b01100000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a08)) 0b00100000000000000000 else 0b01000000000000000000
               }
-              val a09 = if (%default and 0b001000000000 !== 0) {
+              val a09 = if (!EQEQEQ(%default and 0b001000000000, 0)) {
                 Foo()
               } else {
                 a09
               }
-              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
-              if (%default and 0b010000000000 !== 0) {
+              val a10 = if (!EQEQEQ(%default and 0b010000000000, 0)) 0 else a10
+              if (!EQEQEQ(%default and 0b010000000000, 0)) {
                 %dirty = %dirty or 0b011000000000000000000000
-              } else if (%changed and 0b011000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b011000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a10)) 0b001000000000000000000000 else 0b010000000000000000000000
               }
-              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
-              if (%default and 0b100000000000 !== 0) {
+              val a11 = if (!EQEQEQ(%default and 0b100000000000, 0)) 0 else a11
+              if (!EQEQEQ(%default and 0b100000000000, 0)) {
                 %dirty = %dirty or 0b0001100000000000000000000000
-              } else if (%changed and 0b0001100000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0001100000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a11)) 0b100000000000000000000000 else 0b0001000000000000000000000000
               }
-              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
-              if (%default and 0b0001000000000000 !== 0) {
+              val a12 = if (!EQEQEQ(%default and 0b0001000000000000, 0)) 0 else a12
+              if (!EQEQEQ(%default and 0b0001000000000000, 0)) {
                 %dirty = %dirty or 0b0110000000000000000000000000
-              } else if (%changed and 0b0110000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b0110000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a12)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
               }
-              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
-              if (%default and 0b0010000000000000 !== 0) {
+              val a13 = if (!EQEQEQ(%default and 0b0010000000000000, 0)) 0 else a13
+              if (!EQEQEQ(%default and 0b0010000000000000, 0)) {
                 %dirty = %dirty or 0b00011000000000000000000000000000
-              } else if (%changed and 0b00011000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b00011000000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a13)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
               }
-              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
-              if (%default and 0b0100000000000000 !== 0) {
+              val a14 = if (!EQEQEQ(%default and 0b0100000000000000, 0)) 0 else a14
+              if (!EQEQEQ(%default and 0b0100000000000000, 0)) {
                 %dirty = %dirty or 0b01100000000000000000000000000000
-              } else if (%changed and 0b01100000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed and 0b01100000000000000000000000000000, 0)) {
                 %dirty = %dirty or if (%composer.changed(a14)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
               }
-              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
-              if (%default and 0b1000000000000000 !== 0) {
+              val a15 = if (!EQEQEQ(%default and 0b1000000000000000, 0)) 0 else a15
+              if (!EQEQEQ(%default and 0b1000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110
-              } else if (%changed1 and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a15)) 0b0010 else 0b0100
               }
-              val a16 = if (%default and 0b00010000000000000000 !== 0) 0 else a16
-              if (%default and 0b00010000000000000000 !== 0) {
+              val a16 = if (!EQEQEQ(%default and 0b00010000000000000000, 0)) 0 else a16
+              if (!EQEQEQ(%default and 0b00010000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000
-              } else if (%changed1 and 0b00011000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a16)) 0b1000 else 0b00010000
               }
-              val a17 = if (%default and 0b00100000000000000000 !== 0) 0 else a17
-              if (%default and 0b00100000000000000000 !== 0) {
+              val a17 = if (!EQEQEQ(%default and 0b00100000000000000000, 0)) 0 else a17
+              if (!EQEQEQ(%default and 0b00100000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000
-              } else if (%changed1 and 0b01100000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a17)) 0b00100000 else 0b01000000
               }
-              val a18 = if (%default and 0b01000000000000000000 !== 0) 0 else a18
-              if (%default and 0b01000000000000000000 !== 0) {
+              val a18 = if (!EQEQEQ(%default and 0b01000000000000000000, 0)) 0 else a18
+              if (!EQEQEQ(%default and 0b01000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b000110000000
-              } else if (%changed1 and 0b000110000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b000110000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a18)) 0b10000000 else 0b000100000000
               }
-              val a19 = if (%default and 0b10000000000000000000 !== 0) 0 else a19
-              if (%default and 0b10000000000000000000 !== 0) {
+              val a19 = if (!EQEQEQ(%default and 0b10000000000000000000, 0)) 0 else a19
+              if (!EQEQEQ(%default and 0b10000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b011000000000
-              } else if (%changed1 and 0b011000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b011000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a19)) 0b001000000000 else 0b010000000000
               }
-              val a20 = if (%default and 0b000100000000000000000000 !== 0) 0 else a20
-              if (%default and 0b000100000000000000000000 !== 0) {
+              val a20 = if (!EQEQEQ(%default and 0b000100000000000000000000, 0)) 0 else a20
+              if (!EQEQEQ(%default and 0b000100000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0001100000000000
-              } else if (%changed1 and 0b0001100000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0001100000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a20)) 0b100000000000 else 0b0001000000000000
               }
-              val a21 = if (%default and 0b001000000000000000000000 !== 0) 0 else a21
-              if (%default and 0b001000000000000000000000 !== 0) {
+              val a21 = if (!EQEQEQ(%default and 0b001000000000000000000000, 0)) 0 else a21
+              if (!EQEQEQ(%default and 0b001000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110000000000000
-              } else if (%changed1 and 0b0110000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a21)) 0b0010000000000000 else 0b0100000000000000
               }
-              val a22 = if (%default and 0b010000000000000000000000 !== 0) 0 else a22
-              if (%default and 0b010000000000000000000000 !== 0) {
+              val a22 = if (!EQEQEQ(%default and 0b010000000000000000000000, 0)) 0 else a22
+              if (!EQEQEQ(%default and 0b010000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000000000000000
-              } else if (%changed1 and 0b00011000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a22)) 0b1000000000000000 else 0b00010000000000000000
               }
-              val a23 = if (%default and 0b100000000000000000000000 !== 0) 0 else a23
-              if (%default and 0b100000000000000000000000 !== 0) {
+              val a23 = if (!EQEQEQ(%default and 0b100000000000000000000000, 0)) 0 else a23
+              if (!EQEQEQ(%default and 0b100000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000000000000000
-              } else if (%changed1 and 0b01100000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a23)) 0b00100000000000000000 else 0b01000000000000000000
               }
-              val a24 = if (%default and 0b0001000000000000000000000000 !== 0) 0 else a24
-              if (%default and 0b0001000000000000000000000000 !== 0) {
+              val a24 = if (!EQEQEQ(%default and 0b0001000000000000000000000000, 0)) 0 else a24
+              if (!EQEQEQ(%default and 0b0001000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b000110000000000000000000
-              } else if (%changed1 and 0b000110000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b000110000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a24)) 0b10000000000000000000 else 0b000100000000000000000000
               }
-              val a25 = if (%default and 0b0010000000000000000000000000 !== 0) 0 else a25
-              if (%default and 0b0010000000000000000000000000 !== 0) {
+              val a25 = if (!EQEQEQ(%default and 0b0010000000000000000000000000, 0)) 0 else a25
+              if (!EQEQEQ(%default and 0b0010000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b011000000000000000000000
-              } else if (%changed1 and 0b011000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b011000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a25)) 0b001000000000000000000000 else 0b010000000000000000000000
               }
-              val a26 = if (%default and 0b0100000000000000000000000000 !== 0) 0 else a26
-              if (%default and 0b0100000000000000000000000000 !== 0) {
+              val a26 = if (!EQEQEQ(%default and 0b0100000000000000000000000000, 0)) 0 else a26
+              if (!EQEQEQ(%default and 0b0100000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0001100000000000000000000000
-              } else if (%changed1 and 0b0001100000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0001100000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a26)) 0b100000000000000000000000 else 0b0001000000000000000000000000
               }
-              val a27 = if (%default and 0b1000000000000000000000000000 !== 0) 0 else a27
-              if (%default and 0b1000000000000000000000000000 !== 0) {
+              val a27 = if (!EQEQEQ(%default and 0b1000000000000000000000000000, 0)) 0 else a27
+              if (!EQEQEQ(%default and 0b1000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b0110000000000000000000000000
-              } else if (%changed1 and 0b0110000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b0110000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a27)) 0b0010000000000000000000000000 else 0b0100000000000000000000000000
               }
-              val a28 = if (%default and 0b00010000000000000000000000000000 !== 0) 0 else a28
-              if (%default and 0b00010000000000000000000000000000 !== 0) {
+              val a28 = if (!EQEQEQ(%default and 0b00010000000000000000000000000000, 0)) 0 else a28
+              if (!EQEQEQ(%default and 0b00010000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b00011000000000000000000000000000
-              } else if (%changed1 and 0b00011000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b00011000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a28)) 0b1000000000000000000000000000 else 0b00010000000000000000000000000000
               }
-              val a29 = if (%default and 0b00100000000000000000000000000000 !== 0) 0 else a29
-              if (%default and 0b00100000000000000000000000000000 !== 0) {
+              val a29 = if (!EQEQEQ(%default and 0b00100000000000000000000000000000, 0)) 0 else a29
+              if (!EQEQEQ(%default and 0b00100000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or 0b01100000000000000000000000000000
-              } else if (%changed1 and 0b01100000000000000000000000000000 === 0) {
+              } else if (EQEQEQ(%changed1 and 0b01100000000000000000000000000000, 0)) {
                 %dirty1 = %dirty1 or if (%composer.changed(a29)) 0b00100000000000000000000000000000 else 0b01000000000000000000000000000000
               }
-              val a30 = if (%default and 0b01000000000000000000000000000000 !== 0) 0 else a30
-              if (%default and 0b01000000000000000000000000000000 !== 0) {
+              val a30 = if (!EQEQEQ(%default and 0b01000000000000000000000000000000, 0)) 0 else a30
+              if (!EQEQEQ(%default and 0b01000000000000000000000000000000, 0)) {
                 %dirty2 = %dirty2 or 0b0110
-              } else if (%changed2 and 0b0110 === 0) {
+              } else if (EQEQEQ(%changed2 and 0b0110, 0)) {
                 %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0010 else 0b0100
               }
-              val a31 = if (%default1 and 0b0001 !== 0) {
+              val a31 = if (!EQEQEQ(%default1 and 0b0001, 0)) {
                 Foo()
               } else {
                 a31
               }
-              if (%default.inv() and 0b001000000000 !== 0 || %default1.inv() and 0b0001 !== 0 || %dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (!EQEQEQ(%default.inv() and 0b001000000000, 0) || !EQEQEQ(%default1.inv() and 0b0001, 0) || !EQEQEQ(%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010, 0) || !EQEQEQ(%dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010, 0) || !EQEQEQ(%dirty2 and 0b1011 xor 0b1010, 0) || !%composer.skipping) {
                 print("Hello world!")
               } else {
                 %composer.skipCurrentGroup()

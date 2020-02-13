@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ComposableCallableDescriptor : CallableDescriptor {
@@ -67,10 +70,22 @@ class ComposableFunctionDescriptorImpl(
 
 class ComposableSimpleFunctionDescriptorImpl(
     override val underlyingDescriptor: SimpleFunctionDescriptor
-) : SimpleFunctionDescriptor by underlyingDescriptor, ComposableFunctionDescriptor {
+) : SimpleFunctionDescriptor by underlyingDescriptor, ComposableFunctionDescriptor,
+    DescriptorWithContainerSource {
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor? {
         return underlyingDescriptor.substitute(substitutor)?.let {
             ComposableFunctionDescriptor(it)
         }
+    }
+
+    override fun getSource(): SourceElement {
+        return underlyingDescriptor.source
+    }
+
+    override val containerSource: DeserializedContainerSource?
+        get() = (underlyingDescriptor as DescriptorWithContainerSource).containerSource
+
+    override fun toString(): String {
+        return "ComposableSimpleFunctionDescriptorImpl(${this.underlyingDescriptor.name})"
     }
 }

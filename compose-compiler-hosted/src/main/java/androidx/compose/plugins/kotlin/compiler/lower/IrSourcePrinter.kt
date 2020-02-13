@@ -440,7 +440,7 @@ private class IrSourcePrinterVisitor(
     }
 
     private fun IrFunctionAccessExpression.printArgumentList() {
-        val descriptor = descriptor
+        val descriptor = symbol.descriptor
         val arguments = mutableListOf<IrExpression>()
         val paramNames = mutableListOf<String>()
         var trailingLambda: IrExpression? = null
@@ -552,9 +552,9 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall) {
-        val constructedClass = expression.descriptor.constructedClass
+        val constructedClass = expression.symbol.descriptor.constructedClass
         val name = constructedClass.name
-        val isAnnotation = expression.descriptor.isAnnotationConstructor()
+        val isAnnotation = expression.symbol.descriptor.isAnnotationConstructor()
         if (isAnnotation) {
             print("@")
         }
@@ -744,7 +744,7 @@ private class IrSourcePrinterVisitor(
                 }
                 lhs.initializer?.print()
                 print("?.")
-                print(call.descriptor.name)
+                print(call.symbol.descriptor.name)
                 call.printArgumentList()
             }
             else -> {
@@ -1241,7 +1241,7 @@ private class IrSourcePrinterVisitor(
 
     private fun IrMemberAccessExpression.getValueParameterNamesForDebug(): List<String> {
         val expectedCount = valueArgumentsCount
-        return if (this is IrDeclarationReference && symbol.isBound) {
+        return if (symbol.isBound) {
             val owner = symbol.owner
             if (owner is IrFunction) {
                 (0 until expectedCount).map {
