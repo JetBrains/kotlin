@@ -13,10 +13,7 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.FoldingModel;
-import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.project.DumbService;
@@ -27,6 +24,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.psi.impl.source.tree.injected.FoldingModelWindow;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -119,7 +117,7 @@ public class FoldingUpdate {
     return applyDefaultState ? UpdateFoldRegionsOperation.ApplyDefaultStateMode.EXCEPT_CARET_REGION : UpdateFoldRegionsOperation.ApplyDefaultStateMode.NO;
   }
 
-  private static final Key<Object> LAST_UPDATE_INJECTED_STAMP_KEY = Key.create("LAST_UPDATE_INJECTED_STAMP_KEY");
+  static final Key<Object> LAST_UPDATE_INJECTED_STAMP_KEY = Key.create("LAST_UPDATE_INJECTED_STAMP_KEY");
   @Nullable
   public static Runnable updateInjectedFoldRegions(@NotNull final Editor editor, @NotNull final PsiFile file, final boolean applyDefaultState) {
     if (file instanceof PsiCompiledElement) return null;
@@ -166,6 +164,14 @@ public class FoldingUpdate {
         updateOperations.add(new UpdateFoldRegionsOperation(project, injectedEditor, injectedFile, list,
                                                             applyDefaultStateMode(applyDefaultState), !applyDefaultState, true));
       }
+      updateOperations.add(() -> {
+        EditorFoldingInfo info = EditorFoldingInfo.get(editor);
+        for (FoldRegion region : editor.getFoldingModel().getAllFoldRegions()) {
+          if (FoldingModelWindow.isOutdatedInjectedRegion(region)) {
+            info.removeRegion(region);
+          }
+        }
+      });
       foldingModel.runBatchFoldingOperation(() -> {
         for (Runnable operation : updateOperations) {
           operation.run();
@@ -294,6 +300,7 @@ public class FoldingUpdate {
 
   static void clearFoldingCache(@NotNull Editor editor) {
     editor.putUserData(CODE_FOLDING_KEY, null);
+    editor.putUserData(LAST_UPDATE_INJECTED_STAMP_KEY, null);
   }
 
   static class RegionInfo {

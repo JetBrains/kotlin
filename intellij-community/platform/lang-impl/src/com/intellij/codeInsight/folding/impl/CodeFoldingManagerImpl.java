@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.LanguageFolding;
+import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -12,6 +13,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
+import com.intellij.openapi.editor.impl.EditorImpl;
+import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -22,8 +25,11 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderEx;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.LanguageInjector;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.containers.WeakList;
 import org.jdom.Element;
@@ -32,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+
+import static com.intellij.codeInsight.folding.impl.FoldingUpdate.LAST_UPDATE_INJECTED_STAMP_KEY;
 
 public class CodeFoldingManagerImpl extends CodeFoldingManager implements Disposable {
   private final Project myProject;
@@ -65,7 +73,20 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
             }
           }
         }
-      }, myProject);
+      }, this);
+
+    ExtensionPointChangeListener listener = () -> {
+      // Synchronously remove foldings when extension is removed
+      for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors()) {
+        if (fileEditor instanceof TextEditor) {
+          FoldingUpdate.clearFoldingCache(((TextEditor)fileEditor).getEditor());
+          //updateFoldRegions(((TextEditor)fileEditor).getEditor());
+        }
+      }
+    };
+    MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(listener, false, this);
+    LanguageInjector.EXTENSION_POINT_NAME.addExtensionPointListener(listener, this);
+
   }
 
   @Override

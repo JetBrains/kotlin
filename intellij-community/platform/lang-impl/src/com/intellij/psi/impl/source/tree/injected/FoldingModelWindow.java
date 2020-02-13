@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.TextRange;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,8 @@ import java.util.List;
 /**
  * @author cdr
  */
-class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
+@ApiStatus.Internal
+public class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
   private final FoldingModelEx myDelegate;
   private final DocumentWindow myDocumentWindow;
   private final EditorWindow myEditorWindow;
@@ -103,6 +105,11 @@ class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
   private FoldingRegionWindow getWindowRegion(@NotNull FoldRegion hostRegion) {
     FoldingRegionWindow window = hostRegion.getUserData(FOLD_REGION_WINDOW);
     return window != null && window.getEditor() == myEditorWindow ? window : null;
+  }
+
+  public static boolean isOutdatedInjectedRegion(@NotNull FoldRegion region) {
+    FoldingRegionWindow window = region.getUserData(FOLD_REGION_WINDOW);
+    return window != null && !((DocumentWindow)window.getEditor().getDocument()).isValid();
   }
 
   @Override
