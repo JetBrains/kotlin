@@ -3,6 +3,7 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.google.common.hash.Hashing
 import com.google.common.io.Files
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -11,6 +12,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.Urls
 import com.intellij.util.io.HttpRequests
+import com.intellij.util.messages.Topic
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -21,8 +23,26 @@ data class JdkInstallRequest(
   val targetDir: File
 )
 
+interface JdkInstallerListener {
+  /**
+   * Executed at the moment, when a download process for
+   * a given [request] is started
+   */
+  @JvmDefault
+  fun onJdkDownloadStarted(request: JdkInstallRequest) { }
+
+  /**
+   * This event is executed when download process is finished,
+   * for all possible outcomes, no matter it was a success or a failure
+   */
+  @JvmDefault
+  fun onJdkDownloadFinished(request: JdkInstallRequest) { }
+}
+
 object JdkInstaller {
   private val LOG = logger<JdkInstaller>()
+
+  val TOPIC = Topic.create("JdkInstaller.Installing", JdkInstallerListener::class.java, Topic.BroadcastDirection.TO_CHILDREN)
 
   fun defaultInstallDir(newVersion: JdkItem) : String {
     val installFolderName = newVersion.installFolderName
@@ -62,6 +82,8 @@ object JdkInstaller {
   }
 
   fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?) {
+    ApplicationManager.getApplication()?.messageBus?.syncPublisher(TOPIC)?.onJdkDownloadFinished(request)
+
     val item = request.item
     indicator?.text = "Installing ${item.fullPresentationText}..."
 
@@ -115,6 +137,7 @@ object JdkInstaller {
     }
     finally {
       FileUtil.delete(downloadFile)
+      ApplicationManager.getApplication()?.messageBus?.syncPublisher(TOPIC)?.onJdkDownloadFinished(request)
     }
   }
 
