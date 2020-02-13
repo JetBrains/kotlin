@@ -10,6 +10,7 @@ import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsIrCompilation(
@@ -20,8 +21,18 @@ class KotlinJsIrCompilation(
     internal val binaries: KotlinJsBinaryContainer =
         target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
-            this,
-            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+            target,
+            WrapUtil.toDomainObjectSet(JsBinary::class.java).apply {
+                matching { it is Executable }.all {
+                    (target as KotlinJsSubTargetContainerDsl).whenBrowserConfigured {
+                        (this as KotlinJsIrSubTarget).produceExecutable()
+                    }
+
+                    (target as KotlinJsSubTargetContainerDsl).whenNodejsConfigured {
+                        (this as KotlinJsIrSubTarget).produceExecutable()
+                    }
+                }
+            }
         )
 
     internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
