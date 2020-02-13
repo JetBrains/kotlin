@@ -17,7 +17,7 @@ object ErrorsNative {
     @JvmField
     val THROWS_LIST_EMPTY = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
     @JvmField
-    val THROWS_ON_OVERRIDE = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    val INCOMPATIBLE_THROWS_OVERRIDE = DiagnosticFactory1.create<KtElement, DeclarationDescriptor>(Severity.ERROR)
     @JvmField
     val INCOMPATIBLE_THROWS_INHERITED = DiagnosticFactory1.create<KtDeclaration, Collection<DeclarationDescriptor>>(Severity.ERROR)
 

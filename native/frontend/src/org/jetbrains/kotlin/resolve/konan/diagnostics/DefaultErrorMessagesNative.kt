@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
     DiagnosticFactoryToRendererMap("Native").apply {
         put(ErrorsNative.THROWS_LIST_EMPTY, "@Throws must have non-empty class list")
-        put(ErrorsNative.THROWS_ON_OVERRIDE, "@Throws is prohibited for overridden members")
+        put(
+            ErrorsNative.INCOMPATIBLE_THROWS_OVERRIDE, "Member overrides different @Throws filter from {0}",
+            Renderers.NAME
+        )
         put(
             ErrorsNative.INCOMPATIBLE_THROWS_INHERITED, "Member inherits different @Throws filters from {0}",
             Renderers.commaSeparated(Renderers.NAME)
