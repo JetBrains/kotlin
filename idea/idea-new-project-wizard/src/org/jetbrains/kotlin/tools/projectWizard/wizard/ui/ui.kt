@@ -117,11 +117,19 @@ val ProjectKind.icon: Icon
 val ModuleSubType.icon: Icon
     get() = moduleType.icon
 
+val ModuleKind.icon: Icon
+    get() = when (this) {
+        ModuleKind.multiplatform -> KotlinIcons.MPP
+        ModuleKind.singleplatformJs -> KotlinIcons.JS
+        ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
+        ModuleKind.target -> AllIcons.Nodes.Module
+    }
+
 val ModuleConfigurator.icon: Icon
     get() = when (this) {
         is SimpleTargetConfigurator -> moduleSubType.icon
         is TargetConfigurator -> moduleType.icon
-        else -> AllIcons.Nodes.Module
+        else -> moduleKind.icon
     }
 
 fun ToolbarDecorator.createPanelWithPopupHandler(popupTarget: JComponent) = createPanel().apply toolbarApply@{
