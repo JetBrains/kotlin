@@ -931,6 +931,16 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             public void testKT22346() throws Exception {
                 runTest("idea/testData/formatter/callChain/KT22346.after.kt");
             }
+
+            @TestMetadata("KT36466.after.kt")
+            public void testKT36466() throws Exception {
+                runTest("idea/testData/formatter/callChain/KT36466.after.kt");
+            }
+
+            @TestMetadata("NotCallChain.after.kt")
+            public void testNotCallChain() throws Exception {
+                runTest("idea/testData/formatter/callChain/NotCallChain.after.kt");
+            }
         }
 
         @TestMetadata("idea/testData/formatter/fileAnnotations")
@@ -1881,6 +1891,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("FunctionLiteralsInChainCalls.after.inv.kt")
             public void testFunctionLiteralsInChainCalls() throws Exception {
                 runTest("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.inv.kt");
+            }
+
+            @TestMetadata("NotCallChain.after.inv.kt")
+            public void testNotCallChain() throws Exception {
+                runTest("idea/testData/formatter/callChain/NotCallChain.after.inv.kt");
             }
         }
 

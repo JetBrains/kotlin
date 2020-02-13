@@ -8,15 +8,13 @@ val x2 = foo()
         .baz()
         .quux()
 
-val x3 = ((foo()
-        .bar()))
+val x3 = ((foo().bar()))
         .baz()
         .quux()
 
 val x4 = (foo()
         .bar()
-        .baz())
-        .quux()
+        .baz()).quux()
 
 val x5 = (foo())
         .bar()
@@ -38,8 +36,49 @@ val x8 = foo!!!!!!!!
         .baz()!!
         .quux()!!
 
-val x9 = ((b!!)!!!!)!!
-        .f
+val x9 = ((b!!)!!!!)!!.f
+
+val x10 = a()!!.a()
+
+val x11 = a()!!!!.a()
+
+val x12 = a()!!
+        .a()!!
+        .a()
+
+val x13 = a()!!!!
+        .a()
+        .a()
+
+val x14 = a().a()
+
+val x15 = (a()).a()
+
+val x16 = (a())
+        .a()
+        .a()
+
+val x17 = (a().a()).a()
+
+val x18 = (a().a())
+        .a()
+        .a()
+
+val x18 = (a()
+        .a()
+        .a())
+        .a()
+        .a()
+
+val x19 = (a()
+        .a()
+        .a()).a()
+
+val x20 = foo!!.foo
+        .baz()!!
+        .quux()!!.foo.foo.foo.baz().foo
+        .baz()
+        .baz()
 
 val y = xyzzy(foo
         .bar()
