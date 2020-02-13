@@ -45,11 +45,17 @@ public final class UncompressedZipFileSystem extends FileSystem {
 
   @NotNull
   public static UncompressedZipFileSystem create(@NotNull Path uncompressedZip) throws IOException {
+    if (!Files.exists(uncompressedZip)) {
+      throw new FileSystemNotFoundException(uncompressedZip.toString());
+    }
+    if (Files.isDirectory(uncompressedZip)) {
+      throw new UnsupportedOperationException(uncompressedZip.toString() + " is a directory");
+    }
     return UncompressedZipFileSystemProvider.INSTANCE.newFileSystem(uncompressedZip);
   }
 
   @NotNull
-  FileBlockReadOnlyFileChannel openChannel(@NotNull LightZipEntry entry) throws IOException {
+  FileBlockReadOnlyFileChannel openChannel(@NotNull LightZipEntry entry) {
     Lock lock = myOpenFilePoolLock.readLock();
     lock.lock();
     try {
@@ -228,7 +234,6 @@ public final class UncompressedZipFileSystem extends FileSystem {
     Lock lock = myOpenFilePoolLock.writeLock();
     lock.lock();
     try {
-      if (!Files.exists(myUncompressedZipPath)) return;
       FileChannel previousZipChannel = myCurrentZipChannel;
       myCurrentZipChannel = FileChannel.open(myUncompressedZipPath, StandardOpenOption.READ);
       if (previousZipChannel != null && ContainerUtil.isEmpty(myOpenFilePool.get(previousZipChannel))) {

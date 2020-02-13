@@ -30,6 +30,7 @@ import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
+import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.TIntLongHashMap;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TIntObjectIterator;
@@ -37,12 +38,13 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
-import org.jetbrains.concurrency.AsyncPromiseKt;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -114,20 +116,14 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     });
   }
 
-  private static @NotNull Path getStorageToAppend() throws IOException {
-    ensureSharedIndexConfigurationRootExist();
-    return getSharedIndexStorage();
-  }
-
-  private static void ensureSharedIndexConfigurationRootExist() throws IOException {
-    if (!Files.exists(getSharedIndexConfigurationRoot())) {
-      Files.createDirectories(getSharedIndexConfigurationRoot());
-    }
-  }
-
   @NotNull
-  private static Path getSharedIndexStorage() {
-    return getSharedIndexConfigurationRoot().resolve("chunks.zip");
+  private static Path getSharedIndexStorage() throws IOException {
+    Path storage = getSharedIndexConfigurationRoot().resolve("chunks.zip");
+    if (!Files.exists(storage)) {
+      JBZipFile newFile = new JBZipFile(storage.toFile());
+      newFile.close();
+    }
+    return storage;
   }
 
   @Override
@@ -185,7 +181,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
     Path tempChunk = null;
     try {
-      ensureSharedIndexConfigurationRootExist();
       tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
 
       if (!chunkIsNotRegistered(descriptor)) {
@@ -195,7 +190,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
       long ms = System.currentTimeMillis();
       try {
         descriptor.downloadChunk(tempChunk, indicator);
-        SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getStorageToAppend(), descriptor, ideVersion);
+        SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getSharedIndexStorage(), descriptor, ideVersion);
       } finally {
         LOG.info("Chunk " + descriptor.getChunkUniqueId() + " is downloaded in " + (System.currentTimeMillis() - ms) + " ms");
       }
@@ -355,7 +350,12 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     }
   }
 
-  private static Path getSharedIndexConfigurationRoot() {
-    return PathManager.getIndexRoot().toPath().resolve("shared_indexes");
+  @NotNull
+  private static Path getSharedIndexConfigurationRoot() throws IOException {
+    Path root = PathManager.getIndexRoot().toPath().resolve("shared_indexes");
+    if (!Files.exists(root)) {
+      Files.createDirectories(root);
+    }
+    return root;
   }
 }

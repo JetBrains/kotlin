@@ -9,10 +9,7 @@ import com.intellij.util.io.zip.JBZipFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -26,13 +23,22 @@ public class SharedIndexStorageUtil {
                                                 @NotNull Path appendStorage,
                                                 @NotNull SharedIndexChunkLocator.ChunkDescriptor descriptor,
                                                 @NotNull IndexInfrastructureVersion targetVersion) throws IOException {
+    if (!Files.exists(fromChunk)) {
+      throw new NoSuchFileException(fromChunk.toString());
+    }
+
     IndexInfrastructureVersion onlyRestrictedVersions = descriptor.getSupportedInfrastructureVersion().pickOnlyRestrictedIndexes(targetVersion);
 
     try (@NotNull JBZipFile chunkStorage = new JBZipFile(appendStorage.toFile());
          @NotNull UncompressedZipFileSystem tempChunkFs = UncompressedZipFileSystem.create(fromChunk)) {
 
-      String targetBasePath = descriptor.getChunkUniqueId() + "/";
       Path chunkRoot = tempChunkFs.getRootDirectory();
+      if (!Files.exists(chunkRoot)) {
+        return;
+      }
+
+      String targetBasePath = descriptor.getChunkUniqueId() + "/";
+
       Set<String> restrictedFbiIndexes = onlyRestrictedVersions.getFileBasedIndexVersions().keySet();
 
       Files.walkFileTree(chunkRoot, new SimpleFileVisitor<Path>() {

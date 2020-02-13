@@ -25,7 +25,6 @@ public interface SharedIndexChunkLocator {
    * Executed every time an indexing attempt is performed by an IDE.
    * This method is blocking. Use {@param indicator} to report the progress and check
    * for cancellation via {@link ProgressIndicator#checkCanceled()}.
-   * Use {@param descriptorProcessor} to submit detected matching indexes chunks.
    * This method should work fast and it should only download/process indexes metadata.
    * The actual download run with {@link ChunkDescriptor#downloadChunk(Path, ProgressIndicator)} method later.
    */

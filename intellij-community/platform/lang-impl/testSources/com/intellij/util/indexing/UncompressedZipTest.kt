@@ -10,9 +10,7 @@ import junit.framework.TestCase
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
-import java.nio.file.Files
-import java.nio.file.NoSuchFileException
-import java.nio.file.StandardOpenOption
+import java.nio.file.*
 
 class UncompressedZipTest : TestCase() {
 
@@ -162,6 +160,25 @@ class UncompressedZipTest : TestCase() {
       assertNoSuchFileException(fs, "nonExisting.txt")
       assertNoSuchFileException(fs, "existing/nonExisting.txt")
       assertNoSuchFileException(fs, "dirAsFile/someFile.txt")
+    }
+  }
+
+  fun testOpenNonExistingArchive() {
+    try {
+      UncompressedZipFileSystem.create(Paths.get("nonExisting.zip"))
+      fail()
+    }
+    catch (e: FileSystemNotFoundException) {
+      assertEquals("nonExisting.zip", e.message)
+    }
+
+    val tempDir = createTempDir().toPath()
+    try {
+      UncompressedZipFileSystem.create(tempDir)
+      fail()
+    }
+    catch (e: UnsupportedOperationException) {
+      assertEquals("$tempDir is a directory", e.message)
     }
   }
 
