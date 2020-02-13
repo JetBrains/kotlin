@@ -254,30 +254,16 @@ private class ParameterValuesPage(
     val checkBox = checkBoxes[index]
     val fragment = codeFragments[index]
 
-    return if (checkBox != null && checkBox.isSelected) {
-      NewParameterValue.AnyVariable
-    }
-    else {
-      if (textField.text.isBlank()) {
-        NewParameterValue.None
-      }
-      else {
-        refactoringSupport.ui.extractValue(fragment)
-      }
+    return when {
+      checkBox != null && checkBox.isSelected -> NewParameterValue.AnyVariable
+      textField.text.isBlank() -> NewParameterValue.None
+      else -> refactoringSupport.ui.extractValue(fragment)
     }
   }
 
-  private class MyTextField(
-    language: Language,
-    project: Project,
-    document: Document
-  ) : LanguageTextField(
-    language,
-    project,
-    "",
-    { _, _, _ -> document },
-    true
-  ) {
+  private class MyTextField(language: Language, project: Project, document: Document)
+    : LanguageTextField(language, project, "", { _, _, _ -> document }, true)
+  {
     override fun createEditor(): EditorEx {
       return super.createEditor().apply {
         setPlaceholder(RefactoringBundle.message("suggested.refactoring.parameter.values.placeholder"))
