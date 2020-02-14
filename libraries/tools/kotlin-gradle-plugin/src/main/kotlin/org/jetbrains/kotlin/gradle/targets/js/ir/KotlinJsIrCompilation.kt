@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.PRODUCTION
@@ -51,7 +48,7 @@ class KotlinJsIrCompilation(
             return lowerCamelCaseName(
                 if ((target as KotlinJsIrTarget).mixedMode)
                     target.disambiguationClassifier
-                        ?.removeSuffix(JsCompilerType.ir.name.capitalize())
+                        ?.removeCapitalizedJsCompilerSuffix(JsCompilerType.ir)
                 else
                     target.disambiguationClassifier,
                 compilationName

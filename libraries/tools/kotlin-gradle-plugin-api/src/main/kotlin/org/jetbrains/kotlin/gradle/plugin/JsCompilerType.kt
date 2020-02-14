@@ -29,3 +29,6 @@ enum class JsCompilerType : Named, Serializable {
                 .values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }
+
+fun String.removeCapitalizedJsCompilerSuffix(compilerType: JsCompilerType): String =
+    removeSuffix(compilerType.name.capitalize())
