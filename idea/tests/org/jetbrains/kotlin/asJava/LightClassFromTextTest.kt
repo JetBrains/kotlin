@@ -43,7 +43,7 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         val classC = classes[0]
         assertEquals("C", classC.qualifiedName)
         assertEquals("class C", classC.text)
-        assertEquals(TextRange(17, 24), classC.textRange)
+        assertEquals(null, classC.textRange)
         assertEquals(23, classC.textOffset)
         assertEquals(17, classC.startOffsetInParent)
         assertTrue(classC.isWritable)

@@ -175,6 +175,11 @@
                    defaultValue="true"
                    restartRequired="false"/>
 
+      <registryKey key="kotlin.ultra.light.classes.empty.text.range"
+                   description="Return 'null' text range as in old light class implementation"
+                   defaultValue="true"
+                   restartRequired="false"/>
+
       <registryKey key="kotlin.uast.force.uinjectionhost"
                    description="Whether to convert `KtStringTemplateExpression` to `KotlinStringTemplateUPolyadicExpression` in all cases"
                    defaultValue="true"
