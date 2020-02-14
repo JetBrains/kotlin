@@ -73,7 +73,7 @@ public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAcce
 
     @Override
     public @NotNull Collection<Integer> getKeys() {
-      return myContainsValue ? Collections.emptySet() : Collections.singleton(myInputId);
+      return myContainsValue ? Collections.singleton(myInputId) : Collections.emptySet();
     }
 
     @Override

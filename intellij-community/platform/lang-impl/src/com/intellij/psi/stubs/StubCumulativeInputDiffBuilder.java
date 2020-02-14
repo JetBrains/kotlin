@@ -47,7 +47,7 @@ class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer,
 
   @Override
   public @NotNull Collection<Integer> getKeys() {
-    return myCurrentTree == null ? Collections.emptySet() : Collections.singleton(myInputId);
+    return myCurrentTree != null ? Collections.singleton(myInputId) : Collections.emptySet();
   }
 
   private static boolean treesAreEqual(@NotNull SerializedStubTree newSerializedStubTree,
