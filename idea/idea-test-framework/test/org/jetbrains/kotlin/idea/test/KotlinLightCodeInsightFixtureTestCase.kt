@@ -247,7 +247,7 @@ fun <T> withCustomCompilerOptions(fileText: String, project: Project, module: Mo
     }
 }
 
-fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
+private fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
     val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
     // We can have several such directives in quickFixMultiFile tests
@@ -310,7 +310,22 @@ private fun rollbackCompilerOptions(project: Project, module: Module) {
     KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS }
 }
 
-fun configureLanguageAndApiVersion(
+fun withCustomLanguageAndApiVersion(
+    project: Project,
+    module: Module,
+    languageVersion: String,
+    apiVersion: String?,
+    body: () -> Unit
+) {
+    configureLanguageAndApiVersion(project, module, languageVersion, apiVersion)
+    try {
+        body()
+    } finally {
+        configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString, null)
+    }
+}
+
+private fun configureLanguageAndApiVersion(
     project: Project,
     module: Module,
     languageVersion: String,

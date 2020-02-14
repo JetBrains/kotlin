@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
+import org.jetbrains.kotlin.idea.test.withCustomLanguageAndApiVersion
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -43,27 +43,29 @@ private const val RUN_PREFIX = "// RUN:"
 class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testMainInTest() {
         val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
-        configureLanguageAndApiVersion(
-            createModuleResult.module.project, createModuleResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString,
-        )
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
+        withCustomLanguageAndApiVersion(
+            createModuleResult.module.project, createModuleResult.module,
+            LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString, apiVersion = null
+        ) {
+            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
-        val runConfiguration = createConfigurationFromMain(getTestProject(), "some.main")
-        val javaParameters = getJavaRunParameters(runConfiguration)
+            val runConfiguration = createConfigurationFromMain(getTestProject(), "some.main")
+            val javaParameters = getJavaRunParameters(runConfiguration)
 
-        assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.srcOutputDir))
-        assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.testOutputDir))
+            assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.srcOutputDir))
+            assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.testOutputDir))
 
-        createModuleResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
-            val psiFile = PsiManager.getInstance(createModuleResult.module.project).findFile(it)
-            if (psiFile is KtFile) {
-                psiFile.acceptChildren(
-                    object : KtVisitorVoid() {
-                        override fun visitNamedFunction(function: KtNamedFunction) {
-                            functionVisitor(createModuleResult.module, function)
-                        }
-                    },
-                )
+            createModuleResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
+                val psiFile = PsiManager.getInstance(createModuleResult.module.project).findFile(it)
+                if (psiFile is KtFile) {
+                    psiFile.acceptChildren(
+                        object : KtVisitorVoid() {
+                            override fun visitNamedFunction(function: KtNamedFunction) {
+                                functionVisitor(createModuleResult.module, function)
+                            }
+                        },
+                    )
+                }
             }
         }
     }
