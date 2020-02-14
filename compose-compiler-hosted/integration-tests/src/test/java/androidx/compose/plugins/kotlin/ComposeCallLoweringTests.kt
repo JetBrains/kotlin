@@ -229,7 +229,7 @@ class ComposeCallLoweringTests : AbstractCodegenTest() {
                 val DensityAmbient = ambientOf<Density>()
 
                 @Composable
-                fun ambientDensity() = ambient(DensityAmbient)
+                fun ambientDensity() = DensityAmbient.current
 
                 @Composable
                 fun WithDensity(block: @Composable DensityScope.() -> Unit) {
