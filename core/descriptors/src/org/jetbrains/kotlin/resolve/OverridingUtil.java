@@ -20,6 +20,7 @@ import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.annotations.jvm.Mutable;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +98,7 @@ public class OverridingUtil {
                                         DescriptorUtilsKt
                                                 .isTypeRefinementEnabled(DescriptorUtilsKt.getModule(candidateSet.iterator().next()));
 
-        return filterOverrides(candidateSet, allowDescriptorCopies, new Function2<D, D, Pair<CallableDescriptor, CallableDescriptor>>() {
+        return filterOverrides(candidateSet, allowDescriptorCopies, null, new Function2<D, D, Pair<CallableDescriptor, CallableDescriptor>>() {
             @Override
             public Pair<CallableDescriptor, CallableDescriptor> invoke(D a, D b) {
                 return new Pair<CallableDescriptor, CallableDescriptor>(a, b);
@@ -109,6 +110,7 @@ public class OverridingUtil {
     public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
             boolean allowDescriptorCopies,
+            @Nullable Function0<?> cancellationCallback,
             @NotNull Function2<? super D, ? super D, Pair<CallableDescriptor, CallableDescriptor>> transformFirst
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
@@ -116,6 +118,9 @@ public class OverridingUtil {
         Set<D> result = new LinkedHashSet<D>();
         outerLoop:
         for (D meD : candidateSet) {
+            if (cancellationCallback != null) {
+                cancellationCallback.invoke();
+            }
             for (Iterator<D> iterator = result.iterator(); iterator.hasNext(); ) {
                 D otherD = iterator.next();
                 Pair<CallableDescriptor, CallableDescriptor> meAndOther = transformFirst.invoke(meD, otherD);

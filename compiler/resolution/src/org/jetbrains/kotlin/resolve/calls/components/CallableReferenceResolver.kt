@@ -31,18 +31,21 @@ import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
 import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.util.CancellationChecker
 
 
 class CallableReferenceOverloadConflictResolver(
     builtIns: KotlinBuiltIns,
     module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
+    cancellationChecker: CancellationChecker,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
     builtIns,
     module,
     specificityComparator,
+    cancellationChecker,
     { it.candidate },
     { statelessCallbacks.createConstraintSystemForOverloadResolution(constraintInjector, builtIns) },
     Companion::createFlatSignature,
