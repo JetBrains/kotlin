@@ -263,6 +263,11 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/moveFile/moveFileToFile/moveFileToFile.test");
     }
 
+    @TestMetadata("kotlin/moveFile/moveFileWithDotsAsFileReferences/moveFileWithDotsAsFileReferences.test")
+    public void testKotlin_moveFile_moveFileWithDotsAsFileReferences_MoveFileWithDotsAsFileReferences() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveFile/moveFileWithDotsAsFileReferences/moveFileWithDotsAsFileReferences.test");
+    }
+
     @TestMetadata("kotlin/moveFile/moveFileWithoutDeclarations/moveFileWithoutDeclarations.test")
     public void testKotlin_moveFile_moveFileWithoutDeclarations_MoveFileWithoutDeclarations() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveFile/moveFileWithoutDeclarations/moveFileWithoutDeclarations.test");
