@@ -1,6 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress XmlPathReference -->
-  <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/CocoaPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!--suppress XmlPathReference -->
   <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
@@ -67,7 +67,7 @@
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
 
-    <projectService serviceInterface="com.jetbrains.cidr.CocoaDocumentationManager"
+    <projectService serviceInterface="com.jetbrains.cidr.documentation.CocoaDocumentationManager"
                     serviceImplementation="com.jetbrains.mobile.documentation.AppleDocumentationManager"/>
   </extensions>
 

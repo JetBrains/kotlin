@@ -43,6 +43,7 @@ dependencies {
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
+    runtime("com.jetbrains.intellij.cidr:cidr-cocoa:$clionVersion") { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
     runtime("com.android.tools.ddms:ddmlib:26.0.0") {

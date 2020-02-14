@@ -31,6 +31,7 @@ dependencies {
     if (!isStandaloneBuild || !useAppCodeForCommon) {
         compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
         compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
+        compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
     }
     compileOnly(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
 
