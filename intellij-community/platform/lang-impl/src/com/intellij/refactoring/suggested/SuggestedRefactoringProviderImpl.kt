@@ -30,6 +30,11 @@ class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringP
     listener.suppressForCurrentDeclaration()
   }
 
+  // for tests
+  var _amendStateInBackgroundEnabled: Boolean
+    get() = changeCollector._amendStateInBackgroundEnabled
+    set(value) { changeCollector._amendStateInBackgroundEnabled = value }
+
   companion object {
     fun getInstance(project: Project): SuggestedRefactoringProviderImpl =
       SuggestedRefactoringProvider.getInstance(project) as SuggestedRefactoringProviderImpl
