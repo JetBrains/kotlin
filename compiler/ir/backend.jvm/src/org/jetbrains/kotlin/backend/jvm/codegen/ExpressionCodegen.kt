@@ -565,9 +565,7 @@ class ExpressionCodegen(
         // Do not add redundant field initializers that initialize to default values.
         val inPrimaryConstructor = irFunction is IrConstructor && irFunction.isPrimary
         val inClassInit = irFunction.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
-        // "expression.origin == null" means that the field is initialized when it is declared,
-        // i.e., not in an initializer block or constructor body.
-        val isFieldInitializer = expression.origin == null
+        val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
         val skip = (inPrimaryConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst<*> &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
         return if (skip) defaultValue(expression.type) else super.visitSetField(expression, data)

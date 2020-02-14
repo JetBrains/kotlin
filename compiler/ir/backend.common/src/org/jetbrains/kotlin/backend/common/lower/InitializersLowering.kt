@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -79,7 +76,15 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
                 IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol)
             else
                 null
-            IrSetFieldImpl(startOffset, endOffset, declaration.symbol, receiver, expression, context.irBuiltIns.unitType)
+            IrSetFieldImpl(
+                startOffset,
+                endOffset,
+                declaration.symbol,
+                receiver,
+                expression,
+                context.irBuiltIns.unitType,
+                IrStatementOrigin.INITIALIZE_FIELD
+            )
         }
 
     private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
