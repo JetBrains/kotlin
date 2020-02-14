@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.removeCapitalizedJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
@@ -35,7 +36,7 @@ open class KotlinJsTargetPreset(
             platformType
         ).apply {
             this.irTarget = irPreset?.createTarget(
-                lowerCamelCaseName(name.removeSuffix(JsCompilerType.legacy.name.capitalize()), JsCompilerType.ir.name)
+                lowerCamelCaseName(name.removeCapitalizedJsCompilerSuffix(JsCompilerType.legacy), JsCompilerType.ir.name)
             )
         }
     }
