@@ -326,10 +326,10 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.*;
             import android.widget.TextView;
 
-            fun foo() {
+            fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() {
                 val myList = listOf(1,2,3,4,5)
                 myList.forEach @Composable { value: Int -> 
-                    <!NONE_APPLICABLE!>TextView<!>(text=value.toString())
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>TextView<!>(text=value.toString())
                     System.out.println(value) 
                 }
             }
@@ -642,7 +642,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             fun FancyButton() {}
 
             fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Noise<!>() {
-                <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>FancyButton<!>()
+                <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>FancyButton<!>()
             }
         """)
     }
@@ -888,7 +888,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun foo(): Int = 123
 
             fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>App<!>() {
-                val x = <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>()
+                val x = <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>()
                 print(x)
             }
         """)
@@ -901,25 +901,25 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun Foo() {}
 
             val y: Any <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
-            <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 1 }<!>
+            <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 1 }<!>
 
             fun App() {
                 val x = object {
                   val a <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
-                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 2 }<!>
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 2 }<!>
                   @Composable val c get() = state { 4 }
                   @Composable fun bar() { Foo() }
                   fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() {
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
                   }
                 }
                 class Bar {
                   val b <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() =
-                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 6 }<!>
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 6 }<!>
                   @Composable val c get() = state { 7 }
                 }
                 fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Bam<!>() {
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
                 }
                 @Composable fun Boo() {
                     Foo()
@@ -941,7 +941,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                   <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!><!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!><!> { 2 }<!>
                   @Composable val c get() = state { 4 }
                   fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() { 
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
                   }
                   @Composable fun bar() { Foo() }
                 }
@@ -951,7 +951,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                   @Composable val c get() = state { 7 }
                 }
                 fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Bam<!>() {
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
                 }
                 @Composable fun Boo() {
                     Foo()

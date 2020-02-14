@@ -23,7 +23,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Composer
-import androidx.compose.currentComposerNonNull
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -757,39 +756,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 Foo(onClick={})
             """
         ).then {}
-    }
-
-    // NOTE: DirectRuntime tests do not test compose. They test if the IR can handle the case
-    // compose generates. If a DirectRuntime test fails then the related tests will probably fail
-    // in a similar way and a fix will likely be required in IR.
-    //
-    // If they pass but the corresponding Composable or NonComposable test fails then the bug is
-    // in the rewrites made by compose. It is then useful to compare the how the IR inlines the
-    // DirectRuntime byte-code compared to how it inlines the byte-code generated from compose
-    // generated IR.
-
-    @Test
-    fun testInline_DirectRuntime_Identity(): Unit = ensureSetup {
-        compose("""
-            inline fun inlineWrapper(base: Int, children: () -> Unit) {
-              children()
-            }
-
-            fun example() {
-              inlineWrapper(200) {
-                composer.emit(
-                  12,
-                  { context -> TextView(context) },
-                  {
-                    set("Test") { text = it }
-                    set(101) { id = it }
-                  }
-                )
-              }
-            }
-        """, noParameters, "example()").then { activity ->
-            assertEquals("Test", activity.findViewById<TextView>(101).text)
-        }
     }
 
     @Test
@@ -1914,8 +1880,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
             import androidx.compose.Emittable
 
-            import androidx.compose.composer
-
             class Path2() : Emittable {
 
                 private val path99 = Path3()
@@ -2613,7 +2577,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         return compose {
             val values = valuesFactory()
             val arguments = values.map { it.value as Any }.toTypedArray()
-            testMethod.invoke(instanceOfClass, *arguments, currentComposerNonNull)
+            testMethod.invoke(instanceOfClass, *arguments, it)
         }
     }
 
