@@ -13,7 +13,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
-import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
@@ -25,11 +24,9 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderEx;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.LanguageInjector;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.containers.WeakList;
 import org.jdom.Element;
@@ -38,8 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-
-import static com.intellij.codeInsight.folding.impl.FoldingUpdate.LAST_UPDATE_INJECTED_STAMP_KEY;
 
 public class CodeFoldingManagerImpl extends CodeFoldingManager implements Disposable {
   private final Project myProject;
@@ -84,7 +79,6 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
     };
     MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(listener, false, this);
     LanguageInjector.EXTENSION_POINT_NAME.addExtensionPointListener(listener, this);
-
   }
 
   @Override

@@ -107,8 +107,8 @@ public class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
     return window != null && window.getEditor() == myEditorWindow ? window : null;
   }
 
-  public static boolean isOutdatedInjectedRegion(@NotNull FoldRegion region) {
-    FoldingRegionWindow window = region.getUserData(FOLD_REGION_WINDOW);
+  public static boolean isOutdatedInjectedRegion(@NotNull FoldRegion hostRegion) {
+    FoldingRegionWindow window = hostRegion.getUserData(FOLD_REGION_WINDOW);
     return window != null && !((DocumentWindow)window.getEditor().getDocument()).isValid();
   }
 
