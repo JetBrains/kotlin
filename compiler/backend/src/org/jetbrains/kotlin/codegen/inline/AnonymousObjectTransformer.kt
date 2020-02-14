@@ -154,6 +154,11 @@ class AnonymousObjectTransformer(
                     coroutineTransformer.shouldGenerateStateMachine(next) -> coroutineTransformer.newMethod(next)
                     else -> newMethod(classBuilder, next)
                 }
+
+            if (next.name == "<clinit>") {
+                rewriteAssertionsDisabledFieldInitialization(next, inliningContext.root.callSiteInfo.ownerClassName)
+            }
+
             val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
 
             val returnType = Type.getReturnType(next.desc)
@@ -195,7 +200,7 @@ class AnonymousObjectTransformer(
 
         if (inliningContext.generateAssertField && fieldNames.none { it.key == ASSERTIONS_DISABLED_FIELD_NAME }) {
             val clInitBuilder = classBuilder.newMethod(NO_ORIGIN, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
-            generateAssertionsDisabledFieldInitialization(classBuilder, clInitBuilder)
+            generateAssertionsDisabledFieldInitialization(classBuilder, clInitBuilder, inliningContext.root.callSiteInfo.ownerClassName)
             clInitBuilder.visitInsn(Opcodes.RETURN)
             clInitBuilder.visitEnd()
         }
