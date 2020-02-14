@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Companion.UMD
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
@@ -79,7 +78,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = baseConventions?.archivesBaseName,
-        libraryTarget = UMD
+        libraryTarget = KotlinWebpackLibraryTarget.UMD
     )
 
     @get:Internal
