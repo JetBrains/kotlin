@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.isCEnumType
+import org.jetbrains.kotlin.backend.konan.cgen.isVector
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
@@ -52,6 +53,9 @@ private class InteropCallContext(
     fun IrType.isCPointer(): Boolean = this.classOrNull == symbols.interopCPointer
 
     fun IrType.isNativePointed(): Boolean = isSubtypeOfClass(symbols.nativePointed)
+
+    fun IrType.isStoredInMemoryDirectly(): Boolean =
+            isPrimitiveType() || isUnsigned() || isVector()
 }
 
 private inline fun <T> generateInteropCall(
@@ -84,7 +88,7 @@ private fun InteropCallContext.findMemoryAccessFunction(isRead: Boolean, valueTy
     }
 }
 
-private fun InteropCallContext.readPrimitiveFromMemory(
+private fun InteropCallContext.readValueFromMemory(
         nativePtr: IrExpression,
         returnType: IrType
 ): IrExpression  {
@@ -99,7 +103,7 @@ private fun InteropCallContext.readPrimitiveFromMemory(
     return castPrimitiveIfNeeded(memRead, returnType)
 }
 
-private fun InteropCallContext.writePrimitiveToMemory(
+private fun InteropCallContext.writeValueToMemory(
         nativePtr: IrExpression,
         value: IrExpression
 ): IrExpression {
@@ -174,13 +178,13 @@ private fun IrType.getCEnumPrimitiveType(): IrType {
 
 private fun InteropCallContext.readEnumValueFromMemory(nativePtr: IrExpression, enumType: IrType): IrExpression {
     val enumPrimitiveType = enumType.getCEnumPrimitiveType()
-    val readMemory = readPrimitiveFromMemory(nativePtr, enumPrimitiveType)
+    val readMemory = readValueFromMemory(nativePtr, enumPrimitiveType)
     return convertIntegralToEnum(readMemory, enumType)
 }
 
 private fun InteropCallContext.writeEnumValueToMemory(nativePtr: IrExpression, value: IrExpression): IrExpression {
     val valueToWrite = convertEnumToIntegral(value)
-    return writePrimitiveToMemory(nativePtr, valueToWrite)
+    return writeValueToMemory(nativePtr, valueToWrite)
 }
 
 private fun InteropCallContext.convertCPointerToNativePtr(cPointer: IrExpression): IrExpression {
@@ -195,7 +199,7 @@ private fun InteropCallContext.writePointerToMemory(nativePtr: IrExpression, val
         value.type.isCPointer() -> convertCPointerToNativePtr(value)
         else -> error("Unsupported pointer type")
     }
-    return writePrimitiveToMemory(nativePtr, valueToWrite)
+    return writeValueToMemory(nativePtr, valueToWrite)
 }
 
 private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, offset: Long): IrExpression {
@@ -213,7 +217,7 @@ private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, off
 }
 
 private fun InteropCallContext.readPointerFromMemory(nativePtr: IrExpression): IrExpression {
-    val readMemory = readPrimitiveFromMemory(nativePtr, symbols.nativePtrType)
+    val readMemory = readValueFromMemory(nativePtr, symbols.nativePtrType)
     return builder.irCall(symbols.interopInterpretCPointer).also {
         it.putValueArgument(0, readMemory)
     }
@@ -268,7 +272,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             val type = accessor.returnType
             when {
                 type.isCEnumType() -> readEnumValueFromMemory(fieldPointer, type)
-                type.isPrimitiveType() -> readPrimitiveFromMemory(fieldPointer, type)
+                type.isStoredInMemoryDirectly() -> readValueFromMemory(fieldPointer, type)
                 type.isCPointer() -> readPointerFromMemory(fieldPointer)
                 type.isNativePointed() -> readPointed(fieldPointer)
                 else -> error("Cannot get field type: ${type.getClass()?.name}")
@@ -279,7 +283,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             val type = accessor.valueParameters[0].type
             when {
                 type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value)
-                type.isPrimitiveType() -> writePrimitiveToMemory(fieldPointer, value)
+                type.isStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value)
                 type.isCPointer() -> writePointerToMemory(fieldPointer, value)
                 else -> error("Cannot set field of type ${type.getClass()?.name}")
             }

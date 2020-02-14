@@ -763,7 +763,7 @@ private fun KotlinStubs.mapType(type: IrType, retained: Boolean, variadic: Boole
 private fun IrType.isTypeOfNullLiteral(): Boolean = this is IrSimpleType && hasQuestionMark
         && classifier.isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
 
-private fun IrType.isVector(): Boolean {
+internal fun IrType.isVector(): Boolean {
     if (this is IrSimpleType && !this.hasQuestionMark) {
         return classifier.isClassWithFqName(KonanFqNames.Vector128.toUnsafe())
     }
