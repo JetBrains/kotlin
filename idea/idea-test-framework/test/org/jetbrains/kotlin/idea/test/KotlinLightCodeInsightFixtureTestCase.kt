@@ -31,11 +31,8 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
@@ -253,7 +250,11 @@ private fun configureCompilerOptions(fileText: String, project: Project, module:
     val options = InTextDirectivesUtils.findListWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ").firstOrNull()
 
     if (version != null || jvmTarget != null || options != null) {
-        configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)
+        configureLanguageAndApiVersion(
+            project, module,
+            version ?: LanguageVersion.LATEST_STABLE.versionString,
+            null
+        )
 
         val facetSettings = KotlinFacet.get(module)!!.configuration.settings
 
@@ -303,7 +304,7 @@ private fun rollbackCompilerOptions(project: Project, module: Module, removeFace
         return
     }
 
-    configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString)
+    configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString, ApiVersion.LATEST_STABLE.versionString)
 
     val facetSettings = KotlinFacet.get(module)!!.configuration.settings
     (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = JvmTarget.DEFAULT.description
@@ -332,7 +333,12 @@ fun withCustomLanguageAndApiVersion(
                 .update { this.languageVersion = LanguageVersion.LATEST_STABLE.versionString }
             module.removeKotlinFacet(IdeModifiableModelsProviderImpl(project), commitModel = true)
         } else {
-            configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString, null)
+            configureLanguageAndApiVersion(
+                project,
+                module,
+                LanguageVersion.LATEST_STABLE.versionString,
+                ApiVersion.LATEST_STABLE.versionString
+            )
         }
     }
 }
@@ -341,11 +347,17 @@ private fun configureLanguageAndApiVersion(
     project: Project,
     module: Module,
     languageVersion: String,
-    apiVersion: String? = null
+    apiVersion: String?
 ) {
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
         val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
+
+        val compilerArguments = facet.configuration.settings.compilerArguments
+        if (compilerArguments != null) {
+            compilerArguments.apiVersion = null
+        }
+
         facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider)
         if (apiVersion != null) {
             facet.configuration.settings.apiLevel = LanguageVersion.fromVersionString(apiVersion)
