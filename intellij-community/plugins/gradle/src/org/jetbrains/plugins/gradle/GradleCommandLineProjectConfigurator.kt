@@ -16,21 +16,19 @@ import java.nio.file.Path
  * @author yole
  */
 class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigurator {
-  private var initialImport = false
+  private var wasAlreadyImported = false
 
   override fun isApplicable(projectPath: Path, logger: CommandLineInspectionProgressReporter): Boolean {
-    return GradleConstants.KNOWN_GRADLE_FILES.any { projectPath.resolve(it).exists() }
+    return true
   }
 
   override fun configureEnvironment(projectPath: Path, logger: CommandLineInspectionProgressReporter) {
-    initialImport = !projectPath.resolve(".idea").exists()
+    wasAlreadyImported = projectPath.resolve(".idea").exists()
   }
 
   override fun configureProject(project: Project, scope: AnalysisScope, logger: CommandLineInspectionProgressReporter) {
-    val basePath = project.basePath
-    if (!initialImport && basePath != null) {
-      ExternalSystemUtil.refreshProject(basePath,
-                                        ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(ProgressExecutionMode.MODAL_SYNC))
+    if (wasAlreadyImported) {
+      ExternalSystemUtil.refreshProjects( ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(ProgressExecutionMode.MODAL_SYNC))
     }
   }
 }
