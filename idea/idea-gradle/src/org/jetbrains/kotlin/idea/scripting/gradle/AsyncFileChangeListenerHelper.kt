@@ -28,6 +28,6 @@ fun addVfsListener(watcher: GradleScriptInputsWatcher) {
             override fun reset() {}
 
         },
-        watcher.project,
+        watcher.project
     )
 }
