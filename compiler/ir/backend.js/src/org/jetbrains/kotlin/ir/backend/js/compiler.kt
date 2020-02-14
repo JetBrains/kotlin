@@ -56,6 +56,7 @@ fun compile(
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
 
+    // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
     val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
     moduleFragment.acceptVoid(mangleChecker)
     irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
