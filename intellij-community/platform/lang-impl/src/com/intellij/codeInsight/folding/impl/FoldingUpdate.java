@@ -164,19 +164,17 @@ public class FoldingUpdate {
         updateOperations.add(new UpdateFoldRegionsOperation(project, injectedEditor, injectedFile, list,
                                                             applyDefaultStateMode(applyDefaultState), !applyDefaultState, true));
       }
-      updateOperations.add(() -> {
-        EditorFoldingInfo info = EditorFoldingInfo.get(editor);
-        for (FoldRegion region : editor.getFoldingModel().getAllFoldRegions()) {
-          if (FoldingModelWindow.isOutdatedInjectedRegion(region)) {
-            info.removeRegion(region);
-          }
-        }
-      });
       foldingModel.runBatchFoldingOperation(() -> {
         for (Runnable operation : updateOperations) {
           operation.run();
         }
       });
+      EditorFoldingInfo info = EditorFoldingInfo.get(editor);
+      for (FoldRegion region : editor.getFoldingModel().getAllFoldRegions()) {
+        if (FoldingModelWindow.isOutdatedInjectedRegion(region)) {
+          info.removeRegion(region);
+        }
+      }
 
       editor.putUserData(LAST_UPDATE_INJECTED_STAMP_KEY, timeStamp);
     };
