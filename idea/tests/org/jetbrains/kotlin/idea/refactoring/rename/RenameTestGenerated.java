@@ -1148,6 +1148,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/renamePropertyInEnumCompanionWithEntryConflict/renameKotlinPropertyInEnumCompanionWithEntryConflict.test");
     }
 
+    @TestMetadata("renameReferencedResourceFile/renameReferencedResourceFile.test")
+    public void testRenameReferencedResourceFile_RenameReferencedResourceFile() throws Exception {
+        runTest("idea/testData/refactoring/rename/renameReferencedResourceFile/renameReferencedResourceFile.test");
+    }
+
     @TestMetadata("renameSet/set.test")
     public void testRenameSet_Set() throws Exception {
         runTest("idea/testData/refactoring/rename/renameSet/set.test");
