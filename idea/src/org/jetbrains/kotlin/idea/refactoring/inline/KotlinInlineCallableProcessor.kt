@@ -40,7 +40,8 @@ class KotlinInlineCallableProcessor(
     private val reference: KtSimpleNameReference?,
     private val inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
-    private val statementToDelete: KtBinaryExpression? = null
+    private val statementToDelete: KtBinaryExpression? = null,
+    private val postAction: (KtCallableDeclaration) -> Unit = {}
 ) : BaseRefactoringProcessor(project) {
 
     private val kind = when (declaration) {
@@ -82,6 +83,7 @@ class KotlinInlineCallableProcessor(
                         )
                     }
                 }
+                postAction(declaration)
             }
         )
     }
