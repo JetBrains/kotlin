@@ -14,6 +14,9 @@ external private fun Any.share()
 @SymbolName("Kotlin_CPointer_CopyMemory")
 external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, count: Int)
 
+@SymbolName("ReadHeapRefNoLock")
+internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
+
 /**
  * Mutable concurrently accessible data buffer. Could be accessed from several workers simulteniously.
  */

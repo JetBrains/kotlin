@@ -34,7 +34,7 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = FreezeAwareLazyImpl(
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
             LazyThreadSafetyMode.SYNCHRONIZED -> throw UnsupportedOperationException()
-            LazyThreadSafetyMode.PUBLICATION -> throw UnsupportedOperationException()
+            LazyThreadSafetyMode.PUBLICATION -> FreezeAwareLazyImpl(initializer)
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 

@@ -6,17 +6,55 @@
 package runtime.workers.lazy1
 
 import kotlin.test.*
-
 import kotlin.native.concurrent.*
 
-class Leak {
-    val leak by lazy { this }
+class Lazy {
+    val x = 17
+    val self by lazy { this }
+    val recursion: Int by lazy {
+        if (x < 17) 42 else recursion
+    }
+    val freezer: Int by lazy {
+        freeze()
+        42
+    }
+    val thrower: String by lazy {
+        if (x < 100) throw IllegalArgumentException()
+        "FAIL"
+    }
 }
 
-@Test fun runTest() {
-    assertFailsWith<InvalidMutabilityException> {
-        for (i in 1..100)
-            Leak().freeze().leak
+@Test fun runTest1() {
+    assertFailsWith<IllegalStateException> {
+        println(Lazy().recursion)
+    }
+    assertFailsWith<IllegalStateException> {
+        println(Lazy().freeze().recursion)
+    }
+}
+
+@Test fun runTest2() {
+    var sum = 0
+    for (i in 1 .. 100) {
+        val self = Lazy().freeze()
+        assertEquals(self, self.self)
+        sum += self.self.hashCode()
     }
     println("OK")
+}
+
+
+@Test fun runTest3() {
+    assertFailsWith<InvalidMutabilityException> {
+        println(Lazy().freezer)
+    }
+}
+
+@Test fun runTest4() {
+    val self = Lazy()
+    repeat(10) {
+        assertFailsWith<IllegalArgumentException> {
+            println(self.thrower)
+        }
+    }
 }

@@ -6,67 +6,61 @@
 package kotlin.native.concurrent
 
 import kotlin.native.internal.Frozen
-import kotlin.native.internal.NoReorderFields
 
-@SymbolName("Konan_ensureAcyclicAndSet")
-private external fun ensureAcyclicAndSet(where: Any, index: Int, what: Any?): Boolean
-
-@SymbolName("ReadHeapRefNoLock")
-internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
-
-@NoReorderFields
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    // IMPORTANT: due to simplified ensureAcyclicAndSet() semantics fields here must be ordered like this,
-    // as an ordinal is used to refer a field.
-    private var value_: Any? = UNINITIALIZED
-    private var initializer_: (() -> T)? = initializer
+    private val value_ = FreezableAtomicReference<Any?>(UNINITIALIZED)
+    private val initializer_ = FreezableAtomicReference<(() -> T)?>(initializer)
     private val lock_ = Lock()
+
+    private fun getOrInit(doFreeze: Boolean): T {
+        var result = value_.value
+        if (result !== UNINITIALIZED) {
+            if (result === INITIALIZING) {
+                value_.value = UNINITIALIZED
+                throw IllegalStateException("Recursive lazy computation")
+            }
+            @Suppress("UNCHECKED_CAST")
+            return result as T
+        }
+        // Set value_ to INITIALIZING.
+        value_.value = INITIALIZING
+        try {
+            result = initializer_.value!!()
+            if (doFreeze) result.freeze()
+        } catch (throwable: Throwable) {
+            value_.value = UNINITIALIZED
+            throw throwable
+        }
+        if (!doFreeze && this.isFrozen) {
+            value_.value = UNINITIALIZED
+            throw InvalidMutabilityException("Frozen during lazy computation")
+        }
+        // Set value_ to actual one.
+        value_.value = result
+        // Clear initializer.
+        initializer_.value = null
+        @Suppress("UNCHECKED_CAST")
+        return result as T
+    }
 
     override val value: T
         get() {
-            if (isFrozen) {
+            return if (isFrozen) {
                 locked(lock_) {
-                    // Lock is already taken above.
-                    var result = readHeapRefNoLock(this, 0)
-                    if (result !== UNINITIALIZED) {
-                        assert(result !== INITIALIZING)
-                        @Suppress("UNCHECKED_CAST")
-                        return result as T
-                    }
-                    // Set value_ to INITIALIZING.
-                    ensureAcyclicAndSet(this, 0, INITIALIZING)
-                    result = initializer_!!().freeze()
-                    // Set value_.
-                    if (!ensureAcyclicAndSet(this, 0, result)) {
-                        throw InvalidMutabilityException("Setting cyclic data via lazy in $this: $result")
-                    }
-                    // Do not clear initializer_ reference, as it may break freezing invariants and zero out
-                    // still valid object. It seems to be safe only in case when `this` is not reachable from
-                    // initializer.
-                    @Suppress("UNCHECKED_CAST")
-                    return result as T
+                    getOrInit(true)
                 }
             } else {
-                var result: Any? = value_
-                if (result === UNINITIALIZED) {
-                    result = initializer_!!()
-                    if (isFrozen)
-                        throw InvalidMutabilityException("$this got frozen during lazy evaluation" )
-                    value_ = result
-                    initializer_ = null
-                }
-                @Suppress("UNCHECKED_CAST")
-                return result as T
+                getOrInit(false)
             }
         }
 
     /**
      * This operation on shared objects may return value which is no longer reflect the current state of lazy.
      */
-    override fun isInitialized(): Boolean = (value_ !== UNINITIALIZED) && (value_ !== INITIALIZING)
+    override fun isInitialized(): Boolean = (value_.value !== UNINITIALIZED) && (value_.value !== INITIALIZING)
 
     override fun toString(): String = if (isInitialized())
-        value.toString() else "Lazy value not initialized yet."
+        value.toString() else "Lazy value not initialized yet"
 }
 
 internal object UNINITIALIZED {

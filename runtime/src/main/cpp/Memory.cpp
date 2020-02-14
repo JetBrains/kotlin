@@ -2545,49 +2545,6 @@ void ensureNeverFrozen(ObjHeader* object) {
    object->meta_object()->flags_ |= MF_NEVER_FROZEN;
 }
 
-// TODO: incorrect, use 3-color scheme.
-KBoolean ensureAcyclicAndSet(ObjHeader* where, KInt index, ObjHeader* what) {
-    RuntimeAssert(where->container() != nullptr && where->container()->frozen(), "Must be used on frozen objects only");
-    RuntimeAssert(what == nullptr || isPermanentOrFrozen(what),
-        "Must be used with an immutable value");
-    if (what != nullptr) {
-        // Now we check that `where` is not reachable from `what`.
-        // As we cannot modify objects while traversing, instead we remember all seen objects in a set.
-        KStdUnorderedSet<ContainerHeader*> seen;
-        KStdDeque<ContainerHeader*> queue;
-        if (what->container() != nullptr)
-            queue.push_back(what->container());
-        bool acyclic = true;
-        while (!queue.empty() && acyclic) {
-            ContainerHeader* current = queue.front();
-            queue.pop_front();
-            seen.insert(current);
-            if (isAggregatingFrozenContainer(current)) {
-                ContainerHeader** subContainer = reinterpret_cast<ContainerHeader**>(current + 1);
-                for (int i = 0; i < current->objectCount(); ++i) {
-                    if (seen.count(*subContainer) == 0)
-                        queue.push_back(*subContainer++);
-                }
-            } else {
-              traverseContainerReferredObjects(current, [where, &queue, &acyclic, &seen](ObjHeader* obj) {
-                if (obj == where) {
-                    acyclic = false;
-                } else {
-                    auto* objContainer = obj->container();
-                    if (objContainer != nullptr && seen.count(objContainer) == 0)
-                        queue.push_back(objContainer);
-                }
-              });
-            }
-          }
-        if (!acyclic) return false;
-    }
-    UpdateHeapRef(reinterpret_cast<ObjHeader**>(
-            reinterpret_cast<uintptr_t>(where) + where->type_info()->objOffsets_[index]), what);
-    // Fence on updated location?
-    return true;
-}
-
 void shareAny(ObjHeader* obj) {
   auto* container = obj->container();
   if (isShareable(container)) return;
@@ -3038,10 +2995,6 @@ void MutationCheck(ObjHeader* obj) {
 
 void EnsureNeverFrozen(ObjHeader* object) {
   ensureNeverFrozen(object);
-}
-
-KBoolean Konan_ensureAcyclicAndSet(ObjHeader* where, KInt index, ObjHeader* what) {
-  return ensureAcyclicAndSet(where, index, what);
 }
 
 void Kotlin_Any_share(ObjHeader* obj) {
