@@ -39,7 +39,7 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
                 throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
             } else {
                 // Here we just check that we haven't crashed due to exception
-                0
+                0L
             }
         } finally {
             if (configured) {
