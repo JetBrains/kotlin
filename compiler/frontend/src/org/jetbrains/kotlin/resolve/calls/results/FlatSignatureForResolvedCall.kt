@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.argumentValueType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
 
@@ -55,12 +56,14 @@ fun createOverloadingConflictResolver(
     builtIns: KotlinBuiltIns,
     module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
-    platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator
+    platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
+    cancellationChecker: CancellationChecker,
 ) = OverloadingConflictResolver(
     builtIns,
     module,
     specificityComparator,
     platformOverloadsSpecificityComparator,
+    cancellationChecker,
     MutableResolvedCall<*>::getResultingDescriptor,
     ConstraintSystemBuilderImpl.Companion::forSpecificity,
     MutableResolvedCall<*>::createFlatSignature,
