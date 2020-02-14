@@ -13,5 +13,5 @@ class A : B {
 
 val b1 = B()
 val b2 = B("1", "2", "3")
-val b3 = <!INAPPLICABLE_CANDIDATE!>B<!>("1", *array("2", "3"), "4")
+val b3 = B("1", *array("2", "3"), "4")
 val b4 = B(1)

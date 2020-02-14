@@ -109,6 +109,8 @@ class Candidate(
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
     val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
 
+    val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+
     fun dispatchReceiverExpression(): FirExpression = when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> callInfo.explicitReceiver!!
         else -> dispatchReceiverValue?.receiverExpression ?: FirNoReceiverExpression

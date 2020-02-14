@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.utils.addToStdlib.min
 
 
 abstract class ResolutionStage {
@@ -154,11 +155,26 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
         val function = symbol.fir
-        val processor = FirCallArgumentsProcessor(function, callInfo.arguments)
-        val mappingResult = processor.process()
-        candidate.argumentMapping = mappingResult.argumentMapping
-        if (!mappingResult.isSuccess) {
-            return sink.yieldApplicability(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+
+        val mapping = mapArguments(callInfo.arguments, function)
+        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
+        mapping.parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
+            when (resolvedArgument) {
+                is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
+                is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
+                    argumentToParameterMapping[it] = valueParameter
+                }
+            }
+        }
+        candidate.argumentMapping = argumentToParameterMapping
+
+        var applicability = CandidateApplicability.RESOLVED
+        mapping.diagnostics.forEach {
+            candidate.diagnostics += it
+            applicability = min(applicability, it.applicability)
+        }
+        if (applicability < CandidateApplicability.RESOLVED) {
+            return sink.yieldApplicability(applicability)
         }
     }
 }

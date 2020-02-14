@@ -324,16 +324,19 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 internal fun FirExpression.getExpectedType(
     session: FirSession,
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
-) =
-//    if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
-//        parameter.type.unwrap()
-//    } else {
-    if (parameter.isVararg && (this !is FirWrappedArgumentExpression || !isSpread)) {
+): ConeKotlinType {
+    val shouldUnwrapVarargType = when (this) {
+        is FirSpreadArgumentExpression -> !isSpread
+        is FirNamedArgumentExpression -> false
+        else -> true
+    }
+
+    return if (parameter.isVararg && shouldUnwrapVarargType) {
         parameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().varargElementType(session)
     } else {
         parameter.returnTypeRef.coneTypeUnsafe()
-    }//?.varargElementType?.unwrap() ?: parameter.type.unwrap()
-//    }
+    }
+}
 
 
 private fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
