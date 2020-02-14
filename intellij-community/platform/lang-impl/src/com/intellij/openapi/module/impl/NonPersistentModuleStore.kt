@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.module.impl
 
 import com.intellij.configurationStore.SaveSession
@@ -7,6 +7,7 @@ import com.intellij.configurationStore.StateStorageManager
 import com.intellij.configurationStore.StreamProvider
 import com.intellij.openapi.components.*
 import com.intellij.openapi.components.impl.stores.ModuleStore
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.util.messages.MessageBus
 import org.jetbrains.annotations.ApiStatus
 
@@ -15,7 +16,7 @@ internal class NonPersistentModuleStore : ModuleStore {
   override val storageManager: StateStorageManager = NonPersistentStateStorageManager
   override fun setPath(path: String): Unit = Unit
   override fun setPath(path: String, isNew: Boolean): Unit = Unit
-  override fun initComponent(component: Any, serviceDescriptor: ServiceDescriptor?): Unit = Unit
+  override fun initComponent(component: Any, serviceDescriptor: ServiceDescriptor?, pluginId: PluginId?): Unit = Unit
   override fun initPersistencePlainComponent(component: Any, key: String): Unit = Unit
   override fun reloadStates(componentNames: Set<String>, messageBus: MessageBus): Unit = Unit
   override fun reloadState(componentClass: Class<out PersistentStateComponent<*>>): Unit = Unit

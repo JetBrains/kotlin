@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.ide.highlighter.ProjectFileType
@@ -202,7 +202,7 @@ internal class ProjectStoreTest {
       class AOther : A()
 
       val component = AOther()
-      componentStore.initComponent(component, null)
+      componentStore.initComponent(component, null, null)
       assertThat(component.options.foo).isEqualTo("some data")
 
       componentStore.save()
@@ -243,7 +243,7 @@ internal class ProjectStoreTest {
 
     val testComponent = TestComponent()
     testComponent.loadState(TestState(AAvalue = "foo"))
-    (projectManager.defaultProject as ComponentManager).stateStore.initComponent(testComponent, null)
+    (projectManager.defaultProject as ComponentManager).stateStore.initComponent(testComponent, null, null)
 
     val newProjectPath = tempDirManager.newPath()
     val newProject = projectManager.newProject("foo", newProjectPath.systemIndependentPath, true, false)!!
@@ -261,7 +261,7 @@ internal class ProjectStoreTest {
 
   private suspend fun test(project: Project): TestComponent {
     val testComponent = TestComponent()
-    project.stateStore.initComponent(testComponent, null)
+    project.stateStore.initComponent(testComponent, null, null)
     assertThat(testComponent.state).isEqualTo(TestState("customValue"))
 
     testComponent.state!!.AAvalue = "foo"

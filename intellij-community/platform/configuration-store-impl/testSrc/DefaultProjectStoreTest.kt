@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.externalDependencies.DependencyOnPlugin
@@ -83,12 +83,12 @@ internal class DefaultProjectStoreTest {
         <main name="$TEST_COMPONENT_NAME"/><sub name="foo" /><sub name="bar" />
       </component>""".trimIndent()))
     val stateStore = ProjectManager.getInstance().defaultProject.stateStore as ComponentStoreImpl
-    stateStore.initComponent(defaultTestComponent, null)
+    stateStore.initComponent(defaultTestComponent, null, null)
     try {
       // obviously, project must be directory-based also
       createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true) {
         val component = TestComponent()
-        it.stateStore.initComponent(component, null)
+        it.stateStore.initComponent(component, null, null)
         assertThat(component.state).isEqualTo(defaultTestComponent.state)
       }
     }
