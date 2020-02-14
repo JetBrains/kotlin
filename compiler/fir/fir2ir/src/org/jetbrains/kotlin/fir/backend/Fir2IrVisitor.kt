@@ -1029,7 +1029,7 @@ class Fir2IrVisitor(
                     }
                     is IrVariableSymbol -> {
                         IrSetVariableImpl(
-                            startOffset, endOffset, symbol.owner.type, symbol, variableAssignment.rValue.toIrExpression(), null
+                            startOffset, endOffset, irBuiltIns.unitType, symbol, variableAssignment.rValue.toIrExpression(), null
                         )
                     }
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
