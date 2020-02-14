@@ -449,13 +449,13 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     }
   }
 
-  private static <Key> Collection<Key> getKeys(InputDataDiffBuilder<Key, ?> builder) throws StorageException {
-    if (builder instanceof CollectionInputDataDiffBuilder<?, ?>) {
-      return ((CollectionInputDataDiffBuilder<Key, ?>)builder).getSeq();
+  @NotNull
+  private Collection<Key> getKeys(InputDataDiffBuilder<Key, ?> builder) throws StorageException {
+    if (builder instanceof DirectInputDataDiffBuilder<?, ?>) {
+      return ((DirectInputDataDiffBuilder<Key, ?>)builder).getKeys();
     }
-    else if (builder instanceof MapInputDataDiffBuilder<?, ?>) {
-      return ((MapInputDataDiffBuilder<Key, ?>)builder).getMap().keySet();
-    }
+
+    LOG.error("Input data diff builder must be an instance of DirectInputDataDiffBuilder for index " + myIndexId.getName());
 
     Set<Key> keys = new THashSet<>();
     builder.differentiate(

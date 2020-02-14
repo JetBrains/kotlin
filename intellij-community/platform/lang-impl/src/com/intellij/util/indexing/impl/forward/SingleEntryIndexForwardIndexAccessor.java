@@ -9,14 +9,13 @@ import com.intellij.openapi.util.VolatileNotNullLazyValue;
 import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.impl.InputData;
-import com.intellij.util.indexing.impl.InputDataDiffBuilder;
-import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
-import com.intellij.util.indexing.impl.RemovedKeyProcessor;
+import com.intellij.util.indexing.impl.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAccessor<Integer, V> {
@@ -55,7 +54,7 @@ public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAcce
     return null;
   }
 
-  public static class SingleValueDiffBuilder<V> extends InputDataDiffBuilder<Integer, V> {
+  public static class SingleValueDiffBuilder<V> extends DirectInputDataDiffBuilder<Integer, V> {
     private final int myInputId;
     private final boolean myContainsValue;
     @Nullable
@@ -70,6 +69,11 @@ public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAcce
       myInputId = inputId;
       myContainsValue = containsValue;
       myCurrentValue = currentValue;
+    }
+
+    @Override
+    public @NotNull Collection<Integer> getKeys() {
+      return myContainsValue ? Collections.emptySet() : Collections.singleton(myInputId);
     }
 
     @Override

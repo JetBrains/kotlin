@@ -5,17 +5,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.StorageException;
-import com.intellij.util.indexing.impl.DebugAssertions;
-import com.intellij.util.indexing.impl.InputDataDiffBuilder;
-import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
-import com.intellij.util.indexing.impl.RemovedKeyProcessor;
+import com.intellij.util.indexing.impl.*;
 import one.util.streamex.IntStreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, SerializedStubTree> {
+class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer, SerializedStubTree> {
   private static final Logger LOG = Logger.getInstance(SerializedStubTree.class);
   private final int myInputId;
   @Nullable
@@ -46,6 +43,11 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
       updateStubIndices(null);
     }
     return true;
+  }
+
+  @Override
+  public @NotNull Collection<Integer> getKeys() {
+    return myCurrentTree == null ? Collections.emptySet() : Collections.singleton(myInputId);
   }
 
   private static boolean treesAreEqual(@NotNull SerializedStubTree newSerializedStubTree,
