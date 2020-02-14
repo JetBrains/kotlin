@@ -240,8 +240,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     }
   }
 
-  @NotNull
-  private GlobalInspectionContextImpl createGlobalInspectionContext(Project project) {
+  private @NotNull GlobalInspectionContextImpl createGlobalInspectionContext(Project project) {
     final InspectionManagerEx im = (InspectionManagerEx)InspectionManager.getInstance(project);
     GlobalInspectionContextImpl context = im.createNewGlobalContext();
     context.setExternalProfile(myInspectionProfile);
@@ -330,12 +329,11 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     }
   }
 
-  @NotNull
-  private AnalysisScope runAnalysisOnCodeWithoutChanges(Project project,
-                                                        Path projectPath,
-                                                        GlobalInspectionContextImpl context,
-                                                        AnalysisScope scope,
-                                                        Path resultsDataPath) {
+  private @NotNull AnalysisScope runAnalysisOnCodeWithoutChanges(Project project,
+                                                                 Path projectPath,
+                                                                 GlobalInspectionContextImpl context,
+                                                                 AnalysisScope scope,
+                                                                 Path resultsDataPath) {
     VirtualFile[] changes = ChangesUtil.getFilesFromChanges(ChangeListManager.getInstance(project).getAllChanges());
     setupFirstAnalysisHandler(context);
     final List<Path> inspectionsResults = new ArrayList<>();
@@ -437,8 +435,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     );
   }
 
-  @Nullable
-  private static Pair<VirtualFile, Integer> findFileAndLineByRefElement(RefElement refElement) {
+  private static @Nullable Pair<VirtualFile, Integer> findFileAndLineByRefElement(RefElement refElement) {
     PsiElement element = refElement.getPsiElement();
     PsiFile psiFile = element.getContainingFile();
     if (psiFile == null) return null;
@@ -513,8 +510,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     }, createProcessIndicator());
   }
 
-  @NotNull
-  private ProgressIndicatorBase createProcessIndicator() {
+  private @NotNull ProgressIndicatorBase createProcessIndicator() {
     return new ProgressIndicatorBase() {
       private String lastPrefix = "";
       private int myLastPercent = -1;
@@ -544,6 +540,9 @@ public final class InspectionApplication implements CommandLineInspectionProgres
         }
 
         if (myVerboseLevel == 3) {
+          if (text == null) {
+            return;
+          }
           if (!isIndeterminate() && getFraction() > 0) {
             final int percent = (int)(getFraction() * 100);
             if (myLastPercent == percent) return;
@@ -582,8 +581,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     }
   }
 
-  @Nullable
-  private InspectionProfileImpl loadInspectionProfile(@NotNull Project project) throws IOException, JDOMException {
+  private @Nullable InspectionProfileImpl loadInspectionProfile(@NotNull Project project) throws IOException, JDOMException {
     InspectionProfileImpl inspectionProfile = null;
 
     //fetch profile by name from project file (project profiles can be disabled)
@@ -622,8 +620,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     return inspectionProfile;
   }
 
-  @Nullable
-  private InspectionProfileImpl loadProfileByPath(@NotNull String profilePath) throws IOException, JDOMException {
+  private @Nullable InspectionProfileImpl loadProfileByPath(@NotNull String profilePath) throws IOException, JDOMException {
     InspectionProfileImpl inspectionProfile = ApplicationInspectionProfileManager.getInstanceImpl().loadProfile(profilePath);
     if (inspectionProfile != null) {
       reportMessage(1, "Loaded profile '" + inspectionProfile.getName() + "' from file '" + profilePath + "'");
@@ -631,8 +628,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     return inspectionProfile;
   }
 
-  @Nullable
-  private InspectionProfileImpl loadProfileByName(@NotNull Project project, @NotNull String profileName) {
+  private @Nullable InspectionProfileImpl loadProfileByName(@NotNull Project project, @NotNull String profileName) {
     InspectionProjectProfileManager profileManager = InspectionProjectProfileManager.getInstance(project);
     InspectionProfileImpl inspectionProfile = profileManager.getProfile(profileName, false);
     if (inspectionProfile != null) {
@@ -653,8 +649,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
   }
 
 
-  @Nullable
-  private static InspectionsReportConverter getReportConverter(@Nullable final String outputFormat) {
+  private static @Nullable InspectionsReportConverter getReportConverter(@Nullable String outputFormat) {
     return InspectionsReportConverter.EP_NAME.getExtensionList().stream()
       .filter(converter -> converter.getFormatName().equals(outputFormat))
       .findFirst().orElse(null);
@@ -668,19 +663,19 @@ public final class InspectionApplication implements CommandLineInspectionProgres
       }
 
       @Override
-      public void successfullyConverted(@NotNull final File backupDir) {
+      public void successfullyConverted(@NotNull File backupDir) {
         reportMessage(1, InspectionsBundle.message(
           "inspection.application.project.was.succesfully.converted.old.project.files.were.saved.to.0",
                                                   backupDir.getAbsolutePath()));
       }
 
       @Override
-      public void error(@NotNull final String message) {
+      public void error(@NotNull String message) {
         reportError(InspectionsBundle.message("inspection.application.cannot.convert.project.0", message));
       }
 
       @Override
-      public void cannotWriteToFiles(@NotNull final List<? extends File> readonlyFiles) {
+      public void cannotWriteToFiles(@NotNull List<? extends File> readonlyFiles) {
         StringBuilder files = new StringBuilder();
         for (File file : readonlyFiles) {
           files.append(file.getAbsolutePath()).append("; ");
@@ -690,8 +685,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     };
   }
 
-  @Nullable
-  private static String getPrefix(final String text) {
+  private static @Nullable String getPrefix(final @NotNull String text) {
     int idx = text.indexOf(" in ");
     if (idx == -1) {
       idx = text.indexOf(" of ");
