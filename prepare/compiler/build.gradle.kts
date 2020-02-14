@@ -200,7 +200,7 @@ dependencies {
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
 
     if (Platform.P192.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("lz4-java-1.6.0") }
+        fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
     } else {
         fatJarContents(intellijDep()) { includeJars("lz4-1.3.0") }
     }
