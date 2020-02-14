@@ -5,33 +5,27 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
+import kotlin.reflect.KClass;
 import kotlin.reflect.KDeclarationContainer;
 
-@SuppressWarnings({"unused", "NullableProblems"})
+@SuppressWarnings({"unused", "rawtypes"})
 public class FunctionReferenceImpl extends FunctionReference {
-    private final KDeclarationContainer owner;
-    private final String name;
-    private final String signature;
-
     public FunctionReferenceImpl(int arity, KDeclarationContainer owner, String name, String signature) {
-        super(arity);
-        this.owner = owner;
-        this.name = name;
-        this.signature = signature;
+        super(
+                arity, NO_RECEIVER,
+                ((ClassBasedDeclarationContainer) owner).getJClass(), name, signature,
+                owner instanceof KClass ? 0 : 1
+        );
     }
 
-    @Override
-    public KDeclarationContainer getOwner() {
-        return owner;
+    @SinceKotlin(version = "1.4")
+    public FunctionReferenceImpl(int arity, Class owner, String name, String signature, int flags) {
+        super(arity, NO_RECEIVER, owner, name, signature, flags);
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getSignature() {
-        return signature;
+    @SinceKotlin(version = "1.4")
+    public FunctionReferenceImpl(int arity, Object receiver, Class owner, String name, String signature, int flags) {
+        super(arity, receiver, owner, name, signature, flags);
     }
 }

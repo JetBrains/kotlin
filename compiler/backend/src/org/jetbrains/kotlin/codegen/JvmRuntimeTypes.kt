@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.coroutines.isSuspendLambdaOrLocalFunction
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -30,14 +31,22 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
     private val kotlinCoroutinesJvmInternalPackage =
         MutablePackageFragmentDescriptor(module, languageVersionSettings.coroutinesJvmInternalPackageFqName())
 
+    val generateOptimizedCallableReferenceSuperClasses = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+
     private fun internal(className: String, packageFragment: PackageFragmentDescriptor = kotlinJvmInternalPackage): Lazy<ClassDescriptor> =
         lazy { createClass(packageFragment, className) }
 
     private fun coroutinesInternal(name: String): Lazy<ClassDescriptor> =
         lazy { createCoroutineSuperClass(name) }
 
+    private fun propertyClasses(prefix: String, suffix: String): Lazy<List<ClassDescriptor>> =
+        lazy { (0..2).map { i -> createClass(kotlinJvmInternalPackage, prefix + i + suffix) } }
+
     private val lambda: ClassDescriptor by internal("Lambda")
+
     private val functionReference: ClassDescriptor by internal("FunctionReference")
+    val functionReferenceImpl: ClassDescriptor by internal("FunctionReferenceImpl")
+
     private val localVariableReference: ClassDescriptor by internal("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by internal("MutableLocalVariableReference")
 
@@ -60,13 +69,10 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
             coroutineImpl
     }
 
-    private val propertyReferences: List<ClassDescriptor> by lazy {
-        (0..2).map { i -> createClass(kotlinJvmInternalPackage, "PropertyReference$i") }
-    }
-
-    private val mutablePropertyReferences: List<ClassDescriptor> by lazy {
-        (0..2).map { i -> createClass(kotlinJvmInternalPackage, "MutablePropertyReference$i") }
-    }
+    private val propertyReferences: List<ClassDescriptor> by propertyClasses("PropertyReference", "")
+    private val mutablePropertyReferences: List<ClassDescriptor> by propertyClasses("MutablePropertyReference", "")
+    private val propertyReferenceImpls: List<ClassDescriptor> by propertyClasses("PropertyReference", "Impl")
+    private val mutablePropertyReferenceImpls: List<ClassDescriptor> by propertyClasses("MutablePropertyReference", "Impl")
 
     private fun createClass(
         packageFragment: PackageFragmentDescriptor,
@@ -144,7 +150,8 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
         )
 
         val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
-        return listOfNotNull(functionReference.defaultType, functionType, suspendFunctionType)
+        val superClass = if (generateOptimizedCallableReferenceSuperClasses) functionReferenceImpl else functionReference
+        return listOfNotNull(superClass.defaultType, functionType, suspendFunctionType)
     }
 
     fun getSupertypeForPropertyReference(descriptor: VariableDescriptorWithAccessors, isMutable: Boolean, isBound: Boolean): KotlinType {
@@ -157,6 +164,11 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
                     (if (descriptor.dispatchReceiverParameter != null) 1 else 0) -
                     if (isBound) 1 else 0
 
-        return (if (isMutable) mutablePropertyReferences else propertyReferences)[arity].defaultType
+        val classes = when {
+            generateOptimizedCallableReferenceSuperClasses -> if (isMutable) mutablePropertyReferenceImpls else propertyReferenceImpls
+            else -> if (isMutable) mutablePropertyReferences else propertyReferences
+        }
+
+        return classes[arity].defaultType
     }
 }

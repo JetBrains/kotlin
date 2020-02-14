@@ -5,33 +5,28 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
+import kotlin.reflect.KClass;
 import kotlin.reflect.KDeclarationContainer;
 
-@SuppressWarnings({"unused", "NullableProblems"})
+@SuppressWarnings({"unused", "rawtypes"})
 public class MutablePropertyReference1Impl extends MutablePropertyReference1 {
-    private final KDeclarationContainer owner;
-    private final String name;
-    private final String signature;
-
     public MutablePropertyReference1Impl(KDeclarationContainer owner, String name, String signature) {
-        this.owner = owner;
-        this.name = name;
-        this.signature = signature;
+        super(
+                NO_RECEIVER,
+                ((ClassBasedDeclarationContainer) owner).getJClass(), name, signature,
+                owner instanceof KClass ? 0 : 1
+        );
     }
 
-    @Override
-    public KDeclarationContainer getOwner() {
-        return owner;
+    @SinceKotlin(version = "1.4")
+    public MutablePropertyReference1Impl(Class owner, String name, String signature, int flags) {
+        super(NO_RECEIVER, owner, name, signature, flags);
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getSignature() {
-        return signature;
+    @SinceKotlin(version = "1.4")
+    public MutablePropertyReference1Impl(Object receiver, Class owner, String name, String signature, int flags) {
+        super(receiver, owner, name, signature, flags);
     }
 
     @Override

@@ -20,6 +20,11 @@ public abstract class PropertyReference extends CallableReference implements KPr
         super(receiver);
     }
 
+    @SinceKotlin(version = "1.4")
+    public PropertyReference(Object receiver, Class owner, String name, String signature, int flags) {
+        super(receiver, owner, name, signature, flags);
+    }
+
     @Override
     @SinceKotlin(version = "1.1")
     protected KProperty getReflected() {

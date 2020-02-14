@@ -9,7 +9,7 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unused"})
 public class FunctionReference extends CallableReference implements FunctionBase, KFunction {
     private final int arity;
 
@@ -19,7 +19,12 @@ public class FunctionReference extends CallableReference implements FunctionBase
 
     @SinceKotlin(version = "1.1")
     public FunctionReference(int arity, Object receiver) {
-        super(receiver);
+        this(arity, receiver, null, null, null, 0);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public FunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flags) {
+        super(receiver, owner, name, signature, flags);
         this.arity = arity;
     }
 
