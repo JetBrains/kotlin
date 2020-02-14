@@ -180,6 +180,11 @@
                    defaultValue="true"
                    restartRequired="false"/>
 
+      <registryKey key="kotlin.disable.facade.fake.classes"
+                     description="Experimental disable facade fake light classes"
+                     defaultValue="true"
+                     restartRequired="false"/>
+
       <registryKey key="kotlin.uast.multiresolve.enabled"
                    description="Whether to use multi resolve for UAST in Kotlin provided by `Call.resolveCandidates`, otherwise PsiPolyVariantReference-based multiResolve will be performed"
                    defaultValue="true"

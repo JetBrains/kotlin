@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsClassImpl
@@ -156,10 +157,12 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     ): List<PsiClass> {
         val lightClasses = ArrayList<PsiClass>()
         lightClasses.add(lightClassForFacade)
-        if (lightClassForFacade.files.size > 1) {
-            lightClasses.addAll(lightClassForFacade.files.map {
-                FakeLightClassForFileOfPackage(lightClassForFacade, it)
-            })
+        if (!Registry.`is`("kotlin.disable.facade.fake.classes", true)) {
+            if (lightClassForFacade.files.size > 1) {
+                lightClasses.addAll(lightClassForFacade.files.map {
+                    FakeLightClassForFileOfPackage(lightClassForFacade, it)
+                })
+            }
         }
         return lightClasses
     }
