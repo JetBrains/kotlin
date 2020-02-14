@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtWhenExpression
 
 class KotlinInlineValDialog(
     property: KtProperty,
@@ -66,12 +67,20 @@ class KotlinInlineValDialog(
     override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_LOCAL_THIS
 
     public override fun doAction() {
+        val isWhenSubjectVariable = (callable.parent as? KtWhenExpression)?.subjectVariable == callable
+        val deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration
         invokeRefactoring(
             KotlinInlineCallableProcessor(
                 project, replacementStrategy, callable, reference,
                 inlineThisOnly = isInlineThisOnly,
-                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
-                statementToDelete = assignmentToDelete
+                deleteAfter = deleteAfter && !isWhenSubjectVariable,
+                statementToDelete = assignmentToDelete,
+                postAction = { declaration ->
+                    if (deleteAfter && isWhenSubjectVariable) {
+                        val property = declaration as? KtProperty
+                        property?.initializer?.let { property.replace(it) }
+                    }
+                }
             )
         )
 

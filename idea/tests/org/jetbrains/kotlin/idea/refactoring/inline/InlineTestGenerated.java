@@ -620,6 +620,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/varWithInc.kt");
         }
 
+        @TestMetadata("whenSubject.kt")
+        public void testWhenSubject() throws Exception {
+            runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/whenSubject.kt");
+        }
+
         @TestMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

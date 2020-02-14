@@ -12924,6 +12924,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testVarCopy() throws Exception {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/varCopy.kt");
         }
+
+        @TestMetadata("whenSubject.kt")
+        public void testWhenSubject() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/whenSubject.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/unsafeCastFromDynamic")
