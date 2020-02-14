@@ -1476,9 +1476,14 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
+                is FirVarargArgumentsExpression -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }
+    }
+
+    private fun FlowContent.generate(varargArgumentExpression: FirVarargArgumentsExpression) {
+        generateList(varargArgumentExpression.arguments, separator = ",") { generate(it) }
     }
 
     private fun FlowContent.generate(binaryLogicExpression: FirBinaryLogicExpression) {
