@@ -20,6 +20,7 @@ import java.io.StringWriter
 data class KotlinWebpackConfig(
     val mode: Mode = Mode.DEVELOPMENT,
     val entry: File? = null,
+    val output: KotlinWebpackOutput? = null,
     val outputPath: File? = null,
     val outputFileName: String? = entry?.name,
     val configDirectory: File? = null,
@@ -205,7 +206,12 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendEntry() {
-        if (entry == null || outputPath == null) return
+        if (
+            entry == null
+            || outputPath == null
+            || output == null
+        )
+            return
 
         val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
 
@@ -223,7 +229,9 @@ data class KotlinWebpackConfig(
                         return chunkData.chunk.name === 'main'
                             ? ${outputFileName.jsQuoted()}
                             : ${multiEntryOutput.jsQuoted()};
-                    }
+                    },
+                    library: "${output.library}",
+                    libraryTarget: "${output.libraryTarget}",
                 };
                 
             """.trimIndent()
