@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -51,16 +54,8 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val irClass: IrClass = type.classOrNull!!.owner
 
-    init {
-        if (value != null) {
-            val properties = irClass.declarations.filterIsInstance<IrProperty>()
-            for (property in properties) {
-                val propertySignature = CompileTimeFunction(property.name.asString(), listOf(irClass.descriptor.defaultType.toString()))
-                val propertyValue = unaryFunctions[propertySignature]?.invoke(value)
-                    ?: throw NoSuchMethodException("For given property $propertySignature there is no entry in unary map")
-                fields.add(Variable(property.descriptor, Primitive(propertyValue, property.backingField!!.type)))
-            }
-        }
+    override fun getState(descriptor: DeclarationDescriptor): State {
+        return super.getState(descriptor) ?: this
     }
 
     override fun setState(newVar: Variable) {
@@ -129,10 +124,13 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
         }
     }
 
+    fun setStatesFrom(state: Complex) = state.fields.forEach { setState(it) }
+
     override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
-        return irClass.declarations.filterIsInstance<IrFunction>()
-            .filter { it.descriptor.name == descriptor.name }
-            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
+        if (descriptor is PropertyGetterDescriptor)
+            return irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }.single { it.descriptor.equalTo(descriptor) }
+
+        return irClass.declarations.filterIsInstance<IrFunction>().singleOrNull { it.descriptor.equalTo(descriptor) }
     }
 }
 
@@ -274,7 +272,7 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
 
 class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
     // irFunction is anonymous declaration, but irCall will contain descriptor of invoke method from Function interface
-    private val invokeDescriptor = irClass.declarations.first().descriptor
+    private val invokeDescriptor = irClass.declarations.single { it.nameForIrSerialization.asString() == "invoke" }.descriptor
 
     override fun setState(newVar: Variable) {
         throw UnsupportedOperationException("Method setState is not supported in Lambda class")

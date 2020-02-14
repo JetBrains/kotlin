@@ -11,6 +11,7 @@ import kotlinx.coroutines.yield
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -75,7 +76,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrFunctionImpl -> interpretFunction(this, data)
                 is IrCall -> interpretCall(this, data)
                 is IrConstructorCall -> interpretConstructorCall(this, data)
+                is IrEnumConstructorCall -> interpretEnumConstructorCall(this, data)
                 is IrDelegatingConstructorCall -> interpretDelegatedConstructorCall(this, data)
+                is IrInstanceInitializerCall -> interpretInstanceInitializerCall(this, data)
                 is IrBody -> interpretBody(this, data)
                 is IrBlock -> interpretBlock(this, data)
                 is IrReturn -> interpretReturn(this, data)
@@ -99,6 +102,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrCatch -> interpretCatch(this, data)
                 is IrThrow -> interpretThrow(this, data)
                 is IrStringConcatenation -> interpretStringConcatenation(this, data)
+                is IrFunctionExpression -> interpretFunctionExpression(this, data)
+                is IrFunctionReference -> interpretFunctionReference(this, data)
 
                 else -> TODO("${this.javaClass} not supported")
             }
@@ -143,7 +148,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 while (cause != null) {
                     for ((causeStackIndex, causeStackTraceElement) in cause.stackTrace.withIndex()) {
                         val currentStackTraceValue = causeStackTraceElement.className + "." + causeStackTraceElement.methodName
-                        if (currentStackTraceValue== lastNeededValue) {
+                        if (currentStackTraceValue == lastNeededValue) {
                             cause.stackTrace = cause.stackTrace.sliceArray(0 until causeStackIndex).reversedArray()
                             break
                         }
@@ -210,11 +215,13 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "arrayOfNulls" -> {
-                val result = arrayOfNulls<Any?>(irFunction.getArgsForMethodInvocation(data).first() as Int)
+                val size = (data.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value as Int
+                val result = arrayOfNulls<Any?>(size)
                 data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
             }
             "values", "enumValues" -> {
-                val enumClass = irFunction.parentAsClass
+                val enumClass =
+                    (irFunction.parent as? IrClass) ?: data.getVariableState(irFunction.typeParameters.first().descriptor).irClass
                 val enumEntries = enumClass.declarations
                     .filterIsInstance<IrEnumEntry>()
                     .map { entry ->
@@ -224,14 +231,16 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 data.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
             }
             "valueOf", "enumValueOf" -> {
-                val enumClass = irFunction.parentAsClass
-                val enumEntryName = (data.getAll().single().state as Primitive<*>).value.toString()
+                val enumClass =
+                    (irFunction.parent as? IrClass) ?: data.getVariableState(irFunction.typeParameters.first().descriptor).irClass
+                val enumEntryName = (data.getVariableState(irFunction.valueParameters.first().descriptor) as Primitive<*>).value.toString()
                 val enumEntry = enumClass.declarations
                     .filterIsInstance<IrEnumEntry>()
                     .singleOrNull { it.name.asString() == enumEntryName }
                 if (enumEntry == null) {
                     val message = "No enum constant ${enumClass.fqNameForIrSerialization}.$enumEntryName"
                     data.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
+                    return Code.EXCEPTION
                 } else {
                     enumEntry.interpret(data).also { if (it != Code.NEXT) return it }
                 }
@@ -289,7 +298,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun calculateBuiltIns(irFunction: IrFunction, data: Frame): Code {
         val descriptor = irFunction.descriptor
-        val methodName = descriptor.name.asString()
+        val methodName = when (val property = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol) {
+            null -> descriptor.name.asString()
+            else -> property.owner.name.asString()
+        }
         val args = data.getAll().map { it.state }
 
         val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
@@ -370,26 +382,50 @@ class IrInterpreter(irModule: IrModuleFragment) {
         extensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, it)) }
 
         // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
-        val receiverAsFirstArgument = if (irFunction.isLocalLambda()) listOfNotNull(irFunction.symbol.getExtensionReceiver()) else listOf()
+        val receiverAsFirstArgument = if (dispatchReceiver is Lambda) listOfNotNull(irFunction.symbol.getExtensionReceiver()) else listOf()
         val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
         interpretValueParameters(expression, data).also { if (it != Code.NEXT) return it }
         newFrame.addAll(valueParametersDescriptors.map { Variable(it, data.popReturnValue()) })
 
-        val isWrapper = (dispatchReceiver is Wrapper && rawExtensionReceiver == null) ||
-                (extensionReceiver is Wrapper && rawDispatchReceiver == null)
+        irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
+            if (typeParameter.isReified) {
+                val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner, mutableListOf())
+                newFrame.addVar(Variable(typeParameter.descriptor, typeArgumentState))
+            }
+        }
+
+        val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
         val code = when {
-            isWrapper -> ((dispatchReceiver ?: extensionReceiver) as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
+            isWrapper -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
             irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
-            irFunction.body == null -> calculateBuiltIns(irFunction, newFrame)
+            irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction, newFrame)
             else -> irFunction.interpret(newFrame)
         }
         data.pushReturnValue(newFrame)
         return code
     }
 
+    private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall, data: Frame): Code {
+        val irClass = call.classSymbol.owner
+
+        val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
+        classProperties.forEach { property ->
+            property.backingField?.initializer?.expression?.interpret(data)?.also { if (it != Code.NEXT) return it }
+            val receiver = irClass.thisReceiver!!.descriptor
+            if (property.backingField?.initializer != null)
+                property.backingField?.let { data.getVariableState(receiver).setState(Variable(it.descriptor, data.popReturnValue())) }
+        }
+
+        val anonymousInitializer = irClass.declarations.filterIsInstance<IrAnonymousInitializer>().filter { !it.isStatic }
+        anonymousInitializer.forEach { init -> init.body.interpret(data).also { if (it != Code.NEXT) return it } }
+
+        return Code.NEXT
+    }
+
     private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): Code {
+        val isPrimary = (constructorCall.symbol.owner as IrConstructor).isPrimary
         interpretValueParameters(constructorCall, data).also { if (it != Code.NEXT) return it }
         val valueParameters = constructorCall.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }.toMutableList()
         val newFrame = InterpreterFrame(valueParameters)
@@ -402,23 +438,33 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         if (parent.defaultType.isArray() || parent.defaultType.isPrimitiveArray()) {
             // array constructor doesn't have body so must be treated separately
-            // here we must except only one possible constructor, with one value parameter size
-            // the other one, with lambda, is transforming into ir returnable block
             val arrayConstructor = irBuiltIns.primitiveArrays.first().constructors.single { it.owner.valueParameters.size == 2 }
             val sizeDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "size" }.descriptor
-            val size = (newFrame.getVariableState(sizeDescriptor) as Primitive<Int>).value
+            val size = (newFrame.getVariableState(sizeDescriptor) as Primitive<*>).value as Int
+
+            val arrayValue = Array<Any?>(size) { 0 }
+            if (valueParameters.size == 2) {
+                val initDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "init" }.descriptor
+                val initLambda = newFrame.getVariableState(initDescriptor) as Lambda
+                val indexDescriptor = initLambda.irFunction.valueParameters.single().descriptor
+                for (i in 0 until size) {
+                    val lambdaFrame = InterpreterFrame(mutableListOf(Variable(indexDescriptor, i.toState(irBuiltIns.intType))))
+                    initLambda.irFunction.body!!.interpret(lambdaFrame).also { if (it != Code.RETURN) return it }
+                    arrayValue[i] = lambdaFrame.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
+                }
+            }
 
             val array = when (parent.defaultType.getFqName()) {
-                "kotlin.ByteArray" -> Primitive(ByteArray(size), parent.defaultType)
-                "kotlin.CharArray" -> Primitive(CharArray(size), parent.defaultType)
-                "kotlin.ShortArray" -> Primitive(ShortArray(size), parent.defaultType)
-                "kotlin.IntArray" -> Primitive(IntArray(size), parent.defaultType)
-                "kotlin.LongArray" -> Primitive(LongArray(size), parent.defaultType)
-                "kotlin.FloatArray" -> Primitive(FloatArray(size), parent.defaultType)
-                "kotlin.DoubleArray" -> Primitive(DoubleArray(size), parent.defaultType)
-                "kotlin.BooleanArray" -> Primitive(BooleanArray(size), parent.defaultType)
-                else -> throw AssertionError("Unsupported array class ${parent.defaultType.getFqName()}")
-            }
+                "kotlin.ByteArray" -> Primitive(ByteArray(size) { i -> (arrayValue[i] as Number).toByte() }, parent.defaultType)
+                "kotlin.CharArray" -> Primitive(CharArray(size) { i -> (arrayValue[i] as Number).toChar() }, parent.defaultType)
+                "kotlin.ShortArray" -> Primitive(ShortArray(size) { i -> (arrayValue[i] as Number).toShort() }, parent.defaultType)
+                "kotlin.IntArray" -> Primitive(IntArray(size) { i -> (arrayValue[i] as Number).toInt() }, parent.defaultType)
+                "kotlin.LongArray" -> Primitive(LongArray(size) { i -> (arrayValue[i] as Number).toLong() }, parent.defaultType)
+                "kotlin.FloatArray" -> Primitive(FloatArray(size) { i -> (arrayValue[i] as Number).toFloat() }, parent.defaultType)
+                "kotlin.DoubleArray" -> Primitive(DoubleArray(size) { i -> (arrayValue[i] as Number).toDouble() }, parent.defaultType)
+                "kotlin.BooleanArray" -> Primitive(BooleanArray(size) { i -> arrayValue[i].toString().toBoolean() }, parent.defaultType)
+                else -> Primitive<Array<*>>(arrayValue, parent.defaultType)
+            } as Primitive<*>
 
             data.pushReturnValue(array)
             return Code.NEXT
@@ -426,16 +472,22 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val state = Common(parent, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
-        val code = constructorCall.getBody()?.interpret(newFrame) ?: Code.NEXT
-        state.superType = newFrame.popReturnValue() as Complex
-        data.pushReturnValue(state)
-        return code
+        constructorCall.getBody()?.interpret(newFrame)?.also { if (it != Code.NEXT) return it.apply { data.pushReturnValue(newFrame) } }
+        val returnedState = newFrame.popReturnValue() as Complex
+        data.pushReturnValue(if (isPrimary) state.apply { superType = returnedState } else returnedState.apply { setStatesFrom(state) })
+        return Code.NEXT
     }
 
     private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): Code {
         return interpretConstructor(constructorCall, data).apply {
             // constructor can return primitive object; fot example, when create array by constructor
             (data.peekReturnValue() as? Complex)?.let { it.setInstanceRecursive(it) }
+        }
+    }
+
+    private suspend fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall, data: Frame): Code {
+        return interpretConstructor(enumConstructorCall, data).apply {
+            (data.peekReturnValue() as Complex).let { it.setInstanceRecursive(it) }
         }
     }
 
@@ -458,7 +510,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val newFrame = data.copy()
 
         var code = Code.NEXT
-        val iterator = statements.asSequence().iterator()
+        val iterator = statements.iterator()
         while (code == Code.NEXT && iterator.hasNext()) {
             code = iterator.next().interpret(newFrame)
         }
@@ -467,34 +519,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretBlock(block: IrBlock, data: Frame): Code {
-        if (block.isLambdaFunction()) {
-            val irLambdaFunction = block.statements.filterIsInstance<IrFunctionReference>().first()
-            data.pushReturnValue(Lambda(irLambdaFunction.symbol.owner, irLambdaFunction.type.classOrNull!!.owner))
-            return Code.NEXT
-        }
-
-        val inlineFun = (block as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
-        if (inlineFun?.hasAnnotation(evaluateIntrinsicAnnotation) == true) {
-            val newFrame = data.copy()
-            block.statements.filterIsInstance<IrVariable>().forEach { variable ->
-                variable.initializer!!.interpret(newFrame).also { if (it != Code.NEXT) return it }
-                newFrame.addVar(Variable(variable.descriptor, newFrame.popReturnValue()))
-            }
-
-            val originalVarToInline = ParallelVisitorForInlineFun()
-                .apply { this.visitElement(inlineFun.body!!.statements.first(), block.removeBlocks()!!) }
-                .originalVarToInline
-
-            val frameForWrapper = InterpreterFrame()
-            (listOfNotNull(inlineFun.extensionReceiverParameter, inlineFun.dispatchReceiverParameter) + inlineFun.valueParameters)
-                .map { it.descriptor }
-                .forEach { frameForWrapper.addVar(Variable(it, newFrame.getVariableState(originalVarToInline[it]!!))) }
-
-            return Wrapper.getStaticMethod(inlineFun)
-                .invokeMethod(inlineFun, frameForWrapper)
-                .apply { data.pushReturnValue(frameForWrapper) }
-        }
-
         return interpretStatements(block.statements, data)
     }
 
@@ -591,34 +615,36 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): Code {
-        val objectState = Common(expression.symbol.owner, mutableListOf())
-        val newFrame = data.copy().apply { addVar(Variable(expression.symbol.descriptor.thisAsReceiverParameter, objectState)) }
-
-        val constructor = expression.symbol.owner.declarations.single { it is IrConstructor } as IrConstructor
-        val constructorBody = constructor.body?.statements?.get(1) as? IrBlock
-        val irAnnotatedSetFields = constructorBody?.statements?.filterIsInstance<IrSetField>()
-            ?.filter { it.symbol.owner.correspondingPropertySymbol!!.owner.hasAnnotation(compileTimeAnnotation) }
-        irAnnotatedSetFields?.forEach { irSetField -> irSetField.interpret(newFrame).also { if (it != Code.NEXT) return it } }
-
+        val objectState = Common(expression.symbol.owner, mutableListOf()).apply { this.instance = this }
         data.pushReturnValue(objectState)
         return Code.NEXT
     }
 
     private suspend fun interpretGetEnumValue(expression: IrGetEnumValue, data: Frame): Code {
-        return interpretEnumEntry(expression.symbol.owner, data)
+        val enumEntry = expression.symbol.owner
+        val enumSignature = Pair(enumEntry.parentAsClass, enumEntry.name.asString())
+        mapOfEnums[enumSignature]?.let { return Code.NEXT.apply { data.pushReturnValue(it) } }
+        return interpretEnumEntry(enumEntry, data).apply {
+            if (this == Code.NEXT) mapOfEnums[enumSignature] = data.peekReturnValue() as Common
+        }
     }
 
     private suspend fun interpretEnumEntry(enumEntry: IrEnumEntry, data: Frame): Code {
-        val enumSignature = Pair(enumEntry.parentAsClass, enumEntry.name.asString())
-        mapOfEnums[enumSignature]?.let {
-            data.pushReturnValue(it)
-            return Code.NEXT
+        val enumClass = enumEntry.symbol.owner.parentAsClass
+        val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+
+        val enumSuperCall = (enumClass.primaryConstructor?.body?.statements?.firstOrNull() as? IrEnumConstructorCall)
+        if (enumEntries.isNotEmpty() && enumSuperCall != null) {
+            val valueArguments = listOf(
+                enumEntry.name.asString().toIrConst(irBuiltIns.stringType), enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
+            )
+            enumSuperCall.mapValueParameters { valueArguments[it.index] }
         }
 
         val code = enumEntry.initializerExpression?.interpret(data)?.also { if (it != Code.NEXT) return it }
-        code ?: throw AssertionError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
-        mapOfEnums[enumSignature] = data.peekReturnValue() as Common
-        return code
+        enumSuperCall?.mapValueParameters { null }
+        data.pushReturnValue((data.popReturnValue() as Complex))
+        return code ?: throw AssertionError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
@@ -735,6 +761,16 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
 
         data.pushReturnValue(result.toString().toState(expression.type))
+        return Code.NEXT
+    }
+
+    private suspend fun interpretFunctionExpression(expression: IrFunctionExpression, data: Frame): Code {
+        data.pushReturnValue(Lambda(expression.function, expression.type.classOrNull!!.owner))
+        return Code.NEXT
+    }
+
+    private suspend fun interpretFunctionReference(reference: IrFunctionReference, data: Frame): Code {
+        data.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
         return Code.NEXT
     }
 }

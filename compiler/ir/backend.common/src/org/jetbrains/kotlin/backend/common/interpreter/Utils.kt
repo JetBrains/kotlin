@@ -59,7 +59,9 @@ private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boo
 
 private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
     return (this is VariableDescriptor && other is VariableDescriptor && this.name == other.name) ||
-            (this is FunctionInvokeDescriptor && other is FunctionInvokeDescriptor && this.valueParameters.size == other.valueParameters.size)
+            (this is FunctionDescriptor && other is FunctionDescriptor &&
+                    this.valueParameters.map { it.type.toString() } == other.valueParameters.map { it.type.toString() } &&
+                    this.name == other.name)
 }
 
 fun IrCall.isAbstract(): Boolean {
@@ -71,19 +73,11 @@ fun IrCall.isFakeOverridden(): Boolean {
 }
 
 fun IrFunction.isAbstract(): Boolean {
-    return (this.symbol.owner as? IrSimpleFunction)?.modality == Modality.ABSTRACT
+    return (this as? IrSimpleFunction)?.modality == Modality.ABSTRACT
 }
 
 fun IrFunction.isFakeOverridden(): Boolean {
-    return this.symbol.owner.isFakeOverride
-}
-
-fun IrContainerExpression.isLambdaFunction(): Boolean {
-    return this.origin == IrStatementOrigin.LAMBDA || this.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
-}
-
-fun IrDeclaration.isLocalLambda(): Boolean {
-    return this.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    return this.isFakeOverride
 }
 
 fun State.toIrExpression(expression: IrExpression): IrExpression {

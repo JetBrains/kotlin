@@ -121,8 +121,8 @@ val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(
     unaryOperation<Any>("hashCode", "Any") { a -> a.hashCode() },
     unaryOperation<Any>("toString", "Any") { a -> a.defaultToString() },
     unaryOperation<Any?>("CHECK_NOT_NULL", "T0?") { a -> a!! },
-    unaryOperation<ExceptionState>("<get-message>", "Throwable") { a -> a.getMessage() },
-    unaryOperation<ExceptionState>("<get-cause>", "Throwable") { a -> a.getCause() }
+    unaryOperation<ExceptionState>("message", "Throwable") { a -> a.getMessage() },
+    unaryOperation<ExceptionState>("cause", "Throwable") { a -> a.getCause() }
 )
 
 val binaryFunctions = mapOf<CompileTimeFunction, Function2<Any?, Any?, Any?>>(
