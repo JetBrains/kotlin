@@ -119,6 +119,8 @@ class ClassTranslator private constructor(
             enumInitFunction.body.statements += JsAstUtils.asSyntheticStatement(initInvocation.source(companionDescriptor.source.getPsi()))
         }
 
+        maybeConvertInterfaceToSamAdapter(context, constructorFunction)
+
         translatePrimaryConstructor(constructorFunction, context, delegationTranslator)
         addMetadataObject()
         addMetadataType()
@@ -560,6 +562,42 @@ class ClassTranslator private constructor(
             literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getterFunction)
             context.addAccessorsToPrototype(descriptor, property, literal)
         }
+    }
+
+    private fun maybeConvertInterfaceToSamAdapter(context: TranslationContext, constructorFunction: JsFunction) {
+        if (!descriptor.isFun) return
+
+        val paramName = context.scope().declareFreshName("f")
+        constructorFunction.parameters += JsParameter(paramName)
+        constructorFunction.body.statements += JsBinaryOperation(
+            JsBinaryOperator.ASG,
+            pureFqn(Namer.SAM_FIELD_NAME, JsThisRef()),
+            JsNameRef(paramName)
+        ).makeStmt()
+
+        val samDescriptor = descriptor.unsubstitutedMemberScope
+            .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
+            .filterIsInstance<FunctionDescriptor>()
+            .single { it.modality === Modality.ABSTRACT }
+
+        val function = context.getFunctionObject(samDescriptor)
+        val innerContext = context.newDeclaration(samDescriptor).translateAndAliasParameters(samDescriptor, function.parameters)
+
+        if (samDescriptor.isSuspend) {
+            function.fillCoroutineMetadata(innerContext, samDescriptor, hasController = false)
+        }
+
+        val parameters = listOfNotNull(samDescriptor.extensionReceiverParameter) +
+                samDescriptor.valueParameters +
+                listOfNotNull(innerContext.continuationParameterDescriptor)
+
+        val arguments = parameters.map {
+            TranslationUtils.coerce(innerContext, innerContext.getAliasForDescriptor(it)!!, context.currentModule.builtIns.anyType)
+        }
+
+        function.body = JsBlock(JsReturn(JsInvocation(pureFqn(Namer.SAM_FIELD_NAME, JsThisRef()), arguments)))
+
+        context.addDeclarationStatement(context.addFunctionToPrototype(descriptor, samDescriptor, function))
     }
 
     private fun <T : JsNode> T.withDefaultLocation(): T = apply { source = classDeclaration }

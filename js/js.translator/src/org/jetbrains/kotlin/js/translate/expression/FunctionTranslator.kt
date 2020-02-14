@@ -66,7 +66,9 @@ fun TranslationContext.translateAndAliasParameters(
     for (valueParameter in descriptor.valueParameters) {
         val name = getNameForDescriptor(valueParameter)
         val tmpName = JsScope.declareTemporaryName(name.ident).also { it.descriptor = valueParameter }
-        aliases[valueParameter] = JsAstUtils.pureFqn(tmpName, null)
+        val parameterRef = JsAstUtils.pureFqn(tmpName, null)
+        parameterRef.type = valueParameter.type
+        aliases[valueParameter] = parameterRef
         targetList += JsParameter(tmpName).apply { hasDefaultValue = valueParameter.hasDefaultValue() }
     }
 

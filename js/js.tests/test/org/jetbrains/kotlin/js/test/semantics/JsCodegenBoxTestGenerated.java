@@ -9073,6 +9073,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/funInterface/basicFunInterfaceConversion.kt");
         }
 
+        @TestMetadata("funInterfaceInheritance.kt")
+        public void testFunInterfaceInheritance() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/funInterfaceInheritance.kt");
+        }
+
+        @TestMetadata("multimodule.kt")
+        public void testMultimodule() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
+        }
+
         @TestMetadata("nullableSam.kt")
         public void testNullableSam() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/nullableSam.kt");
@@ -9081,6 +9091,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("partialSam.kt")
         public void testPartialSam() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/partialSam.kt");
+        }
+
+        @TestMetadata("primitiveConversions.kt")
+        public void testPrimitiveConversions() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/primitiveConversions.kt");
         }
 
         @TestMetadata("receiverEvaluatedOnce.kt")

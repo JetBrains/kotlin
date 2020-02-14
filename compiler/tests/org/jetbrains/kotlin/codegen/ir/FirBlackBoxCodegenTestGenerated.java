@@ -10593,9 +10593,19 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/funInterface/castFromAny.kt");
         }
 
+        @TestMetadata("funInterfaceInheritance.kt")
+        public void testFunInterfaceInheritance() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/funInterfaceInheritance.kt");
+        }
+
         @TestMetadata("inlinedSamWrapper.kt")
         public void testInlinedSamWrapper() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/inlinedSamWrapper.kt");
+        }
+
+        @TestMetadata("multimodule.kt")
+        public void testMultimodule() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
         }
 
         @TestMetadata("nullableSam.kt")
@@ -10606,6 +10616,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("partialSam.kt")
         public void testPartialSam() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/partialSam.kt");
+        }
+
+        @TestMetadata("primitiveConversions.kt")
+        public void testPrimitiveConversions() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/primitiveConversions.kt");
         }
 
         @TestMetadata("receiverEvaluatedOnce.kt")
