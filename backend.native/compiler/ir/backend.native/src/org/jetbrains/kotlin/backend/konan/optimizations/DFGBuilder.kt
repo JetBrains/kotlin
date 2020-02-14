@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -577,12 +578,21 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 else
                                     DataFlowIR.Node.SimpleConst(symbolTable.mapType(value.type), value.value!!)
 
-                            is IrGetObjectValue -> DataFlowIR.Node.Singleton(
-                                    symbolTable.mapType(value.type),
-                                    if (value.type.isNothing()) // <Nothing> is not a singleton though its instance is get with <IrGetObject> operation.
+                            is IrGetObjectValue -> {
+                                val constructor = if (value.type.isNothing()) {
+                                    // <Nothing> is not a singleton though its instance is get with <IrGetObject> operation.
+                                    null
+                                } else {
+                                    val objectClass = value.symbol.owner
+                                    if (objectClass is IrLazyClass) {
+                                        // Singleton has a private constructor which is not deserialized.
                                         null
-                                    else symbolTable.mapFunction(value.symbol.owner.constructors.single())
-                            )
+                                    } else {
+                                        symbolTable.mapFunction(objectClass.constructors.single())
+                                    }
+                                }
+                                DataFlowIR.Node.Singleton(symbolTable.mapType(value.type), constructor)
+                            }
 
                             is IrConstructorCall -> {
                                 val callee = value.symbol.owner
