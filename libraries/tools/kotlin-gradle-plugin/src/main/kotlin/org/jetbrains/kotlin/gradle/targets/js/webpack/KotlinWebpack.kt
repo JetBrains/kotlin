@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Companion.UMD
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
@@ -74,6 +75,12 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @Input
     var saveEvaluatedConfigFile: Boolean = true
+
+    @Nested
+    val output: KotlinWebpackOutput = KotlinWebpackOutput(
+        library = baseConventions?.archivesBaseName,
+        libraryTarget = UMD
+    )
 
     @get:Internal
     @Deprecated("use destinationDirectory instead", ReplaceWith("destinationDirectory"))
@@ -129,6 +136,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             mode = mode,
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
+            output = output,
             outputPath = destinationDirectory,
             outputFileName = outputFileName,
             configDirectory = configDirectory,
