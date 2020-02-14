@@ -1,7 +1,6 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposableEmitMetadata
-import androidx.compose.plugins.kotlin.ComposeFlags
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.EmitChildrenValueParameterDescriptor
 import androidx.compose.plugins.kotlin.KtxNameConventions
@@ -74,12 +73,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.getIrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -188,12 +187,13 @@ class ComposableCallTransformer(
         irFile.transformChildrenVoid(this)
     }
 
-    private val declarationStack = mutableListOf<IrFunction>()
+    private val declarationStack = mutableListOf<IrSymbolOwner>()
 
-    override fun visitFunction(declaration: IrFunction): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+        if (declaration !is IrSymbolOwner) return super.visitDeclaration(declaration)
         try {
             declarationStack.push(declaration)
-            return super.visitFunction(declaration)
+            return super.visitDeclaration(declaration)
         } finally {
             declarationStack.pop()
         }
@@ -213,9 +213,13 @@ class ComposableCallTransformer(
                     +irComposableCall(expression.transformChildren())
                 }
             } else {
+                val call = if (isInline)
+                    expression.transformChildrenWithoutConvertingLambdas()
+                else
+                    expression.transformChildren()
                 context
                     .createIrBuilder(declarationStack.last().symbol)
-                    .irComposableExpr(expression.transformChildren())
+                    .irComposableExpr(call)
             }
         }
 
@@ -228,41 +232,34 @@ class ComposableCallTransformer(
                 +irComposableEmit(expression.transformChildren(), emitMetadata)
             }
         }
-
-        for (i in 0 until expression.valueArgumentsCount) {
-            val arg = expression.getValueArgument(i)
-            if (arg is IrFunctionExpression && arg.origin == IrStatementOrigin.LAMBDA) {
-                if (arg.function.valueParameters.lastOrNull()?.isComposerParam() == true) {
-                    return convertCallWithComposableParams(expression.transformChildren())
-                }
-            }
-        }
         return super.visitCall(expression)
     }
 
-    private fun convertCallWithComposableParams(expression: IrCall): IrExpression {
-        return context.createIrBuilder(declarationStack.last().symbol).irBlock {
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                if (arg is IrFunctionExpression && arg.origin == IrStatementOrigin.LAMBDA) {
-                    if (arg.function.valueParameters.lastOrNull()?.isComposerParam() == true) {
-                        expression.putValueArgument(i, covertLambdaIfNecessary(arg))
-                    }
+    private fun IrCall.transformChildrenWithoutConvertingLambdas(): IrCall {
+        dispatchReceiver = dispatchReceiver?.transform(this@ComposableCallTransformer, null)
+        extensionReceiver = extensionReceiver?.transform(this@ComposableCallTransformer, null)
+        for (i in 0 until valueArgumentsCount) {
+            val arg = getValueArgument(i) ?: continue
+            if (arg is IrFunctionExpression) {
+                // we convert function expressions into their lowered lambda equivalents, but we
+                // want to avoid doing this for inlined lambda calls.
+                putValueArgument(i, super.visitFunctionExpression(arg))
+            } else {
+                putValueArgument(i, arg.transform(this@ComposableCallTransformer, null))
+            }
+        }
+        return this
+    }
+
+    override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
+        if (expression.origin == IrStatementOrigin.LAMBDA) {
+            if (expression.function.valueParameters.lastOrNull()?.isComposerParam() == true) {
+                return context.createIrBuilder(declarationStack.last().symbol).irBlock {
+                    +covertLambdaIfNecessary(expression.transformChildren())
                 }
             }
-            +expression
         }
-    }
-
-    private fun IrExpression.isReorderTemporaryVariable(): Boolean {
-        return this is IrGetValue &&
-                symbol.owner.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-    }
-
-    private fun IrExpression.unwrapReorderTemporaryVariable(): IrExpression {
-        val getValue = this as IrGetValue
-        val variable = getValue.symbol.owner as IrVariableImpl
-        return variable.initializer!!
+        return super.visitFunctionExpression(expression)
     }
 
     private fun IrBlockBuilder.irComposableCall(
@@ -597,9 +594,11 @@ class ComposableCallTransformer(
 
     private fun nearestComposer(): IrValueParameter {
         for (fn in declarationStack.asReversed().asSequence()) {
-            val param = fn.valueParameters.lastOrNull()
-            if (param != null && param.isComposerParam()) {
-                return param
+            if (fn is IrFunction) {
+                val param = fn.valueParameters.lastOrNull()
+                if (param != null && param.isComposerParam()) {
+                    return param
+                }
             }
         }
         error("Couldn't find composer parameter")
