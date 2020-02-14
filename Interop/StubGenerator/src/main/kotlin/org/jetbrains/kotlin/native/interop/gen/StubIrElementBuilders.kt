@@ -432,8 +432,15 @@ internal class EnumStubBuilder(
 
         for (constant in constants) {
             val literal = context.tryCreateIntegralStub(enumDef.baseType, constant.value) ?: continue
-            val getter = PropertyAccessor.Getter.SimpleGetter(constant = literal)
-            val kind = PropertyStub.Kind.Val(getter)
+            val kind = when (context.generationMode) {
+                GenerationMode.SOURCE_CODE -> {
+                    val getter = PropertyAccessor.Getter.SimpleGetter(constant = literal)
+                    PropertyStub.Kind.Val(getter)
+                }
+                GenerationMode.METADATA -> {
+                    PropertyStub.Kind.Constant(literal)
+                }
+            }
             entries += PropertyStub(
                     constant.name,
                     kotlinType.toStubIrType(),
