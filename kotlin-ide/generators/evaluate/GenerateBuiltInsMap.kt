@@ -151,8 +151,8 @@ private fun generateUnaryBody(unaryOperationsMap: Map<CallableDescriptor, Pair<S
         "    unaryOperation${parameters.first}(\"$methodName\", ${parameters.second}) { a -> $body }"
     } +
             "    unaryOperation<Any?>(\"${irNullCheck.name}\", \"${irNullCheck.valueParameters.first().type}\") { a -> a!! },\n" +
-            "    unaryOperation<ExceptionState>(\"<get-message>\", \"Throwable\") { a -> a.getMessage() },\n" +
-            "    unaryOperation<ExceptionState>(\"<get-cause>\", \"Throwable\") { a -> a.getCause() }"
+            "    unaryOperation<ExceptionState>(\"message\", \"Throwable\") { a -> a.getMessage() },\n" +
+            "    unaryOperation<ExceptionState>(\"cause\", \"Throwable\") { a -> a.getCause() }"
 }
 
 private fun generateBinaryBody(
