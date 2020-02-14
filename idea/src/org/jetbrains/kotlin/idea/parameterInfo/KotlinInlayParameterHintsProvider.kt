@@ -162,9 +162,9 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         }
     }
 
-    override fun getParameterHints(element: PsiElement?): List<InlayInfo> {
+    override fun getParameterHints(element: PsiElement): List<InlayInfo> {
         val resolveToEnabled = HintType.resolveToEnabled(element) ?: return emptyList()
-        return resolveToEnabled.provideHints(element!!)
+        return resolveToEnabled.provideHints(element)
     }
 
     override fun getBlackListDependencyLanguage(): Language = JavaLanguage.INSTANCE
