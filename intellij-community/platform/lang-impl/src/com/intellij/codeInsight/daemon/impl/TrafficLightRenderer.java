@@ -33,6 +33,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.TextIcon;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -373,16 +374,32 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @Override
   public AnalyzerStatus getStatus(Editor editor) {
     if (PowerSaveMode.isEnabled()) {
-      return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode, false);
+      return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode, false,
+                      XmlStringUtil.wrapInHtml("Code analysis is disabled in power save mode"));
     }
 
     DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
-    int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
     List<Icon> statusIcons = new ArrayList<>();
-    Font font = editor.getComponent().getFont().deriveFont(Font.PLAIN, ICON_FONT);
+    Font origFont = editor.getComponent().getFont();
+    Font font = origFont.deriveFont(Font.PLAIN, origFont.getSize() - JBUIScale.scale(2));
 
+    StringBuilder statusText = new StringBuilder();
+    int currentSeverityErrors = 0;
+
+    int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
     for (int i = lastNotNullIndex; i >= 0; i--) {
-      if (status.errorCount[i] > 0) {
+      int count = status.errorCount[i];
+      if (count > 0) {
+        HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
+        String name = StringUtil.toLowerCase(severity.getName());
+        if (count > 1) {
+          name = StringUtil.pluralize(name);
+        }
+
+        if (currentSeverityErrors > 0) statusText.append(", ");
+        statusText.append(count).append(" ").append(name);
+        currentSeverityErrors += count;
+
         statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
         TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
                                      editor.getColorsScheme().getDefaultForeground(), null, 0);
@@ -398,35 +415,42 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         Icon icon = statusIcons.get(i);
         int yShift = (maxIconHeight - icon.getIconHeight()) / 2;
         statusIcon.setIcon(icon, i, xShift, yShift);
+        //noinspection AssignmentToForLoopParameter
         xShift += icon.getIconWidth();
 
         icon = statusIcons.get(i + 1);
         yShift = (maxIconHeight - icon.getIconHeight()) / 2;
         statusIcon.setIcon(icon, i + 1, xShift, yShift);
+        //noinspection AssignmentToForLoopParameter
         xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
       }
-      return new AnalyzerStatus(statusIcon, true);
+
+      if (!status.errorAnalyzingFinished) statusText.append(" found so far");
+      return new AnalyzerStatus(statusIcon, true, XmlStringUtil.wrapInHtml(statusText.toString()));
     }
     else {
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
         TextIcon icon = new TextIcon("OFF", editor.getColorsScheme().getDefaultForeground(), null, 0);
         icon.setFont(font);
-        return new AnalyzerStatus(new LayeredIcon(icon), false);
+
+        statusText.append("No analysis has been performed:<br/>").append(status.reasonWhyDisabled);
+        return new AnalyzerStatus(new LayeredIcon(icon), false, XmlStringUtil.wrapInHtml(statusText.toString()));
       }
 
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         TextIcon icon = new TextIcon("Indexing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
         icon.setFont(font);
-        return new AnalyzerStatus(new LayeredIcon(icon), false);
+        statusText.append("Code analysis has been suspended:<br/>").append(status.reasonWhySuspended);
+        return new AnalyzerStatus(new LayeredIcon(icon), false, XmlStringUtil.wrapInHtml(statusText.toString()));
       }
 
       if (status.errorAnalyzingFinished) {
-        return new AnalyzerStatus(AllIcons.General.InspectionsOK, false);
+        return new AnalyzerStatus(AllIcons.General.InspectionsOK, false, XmlStringUtil.wrapInHtml("No problems found"));
       }
       else {
         TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
         icon.setFont(font);
-        return new AnalyzerStatus(new LayeredIcon(icon), false);
+        return new AnalyzerStatus(new LayeredIcon(icon), false, XmlStringUtil.wrapInHtml("No problems found so far"));
       }
     }
   }
