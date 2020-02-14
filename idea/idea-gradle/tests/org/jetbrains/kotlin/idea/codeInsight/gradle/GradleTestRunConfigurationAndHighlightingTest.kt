@@ -28,11 +28,6 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
     }
 
     @Test
-    fun testKotlinJUnitSettings() {
-        doTest()
-    }
-
-    @Test
     fun preferredConfigurations() {
         doTest()
     }
