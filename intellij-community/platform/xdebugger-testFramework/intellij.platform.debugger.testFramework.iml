@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.testExtensions" />
+    <orderEntry type="library" name="StreamEx" level="project" />
   </component>
 </module>

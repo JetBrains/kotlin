@@ -34,5 +34,6 @@
     <orderEntry type="library" name="jackson-databind" level="project" />
     <orderEntry type="library" name="jackson-module-kotlin" level="project" />
     <orderEntry type="library" name="xz" level="project" />
+    <orderEntry type="library" scope="TEST" name="StreamEx" level="project" />
   </component>
 </module>
