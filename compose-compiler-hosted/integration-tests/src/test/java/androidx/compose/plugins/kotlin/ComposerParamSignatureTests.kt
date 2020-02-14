@@ -264,6 +264,24 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testRestartGroupsInComposableVariables(): Unit = validateBytecode(
+        """
+        val bar: @Composable() () -> Unit = {}
+        """
+    ) {
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.startRestartGroup"))
+    }
+
+    @Test
+    fun testRestartGroupsInComposableVariables2(): Unit = validateBytecode(
+        """
+        val bar = @Composable {}
+        """
+    ) {
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.startRestartGroup"))
+    }
+
+    @Test
     fun testDataClassHashCode(): Unit = validateBytecode(
         """
         data class Foo(
@@ -595,8 +613,19 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               synthetic <init>()V
               public final invoke(ILandroidx/compose/Composer;)V
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%foo%1%invoke%1 null null
               final static INNERCLASS TestKt%foo%1 null null
               OUTERCLASS TestKt <clinit> ()V
+            }
+            final class TestKt%foo%1%invoke%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
+              synthetic <init>(LTestKt%foo%1;I)V
+              public final invoke(Landroidx/compose/Composer;)V
+              private final synthetic LTestKt%foo%1; %tmp1_rcvr
+              private final synthetic I %x
+              public synthetic bridge invoke(Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%foo%1%invoke%1 null null
+              final static INNERCLASS TestKt%foo%1 null null
+              OUTERCLASS TestKt%foo%1 invoke (ILandroidx/compose/Composer;)V
             }
         """
     )
@@ -621,8 +650,19 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               synthetic <init>()V
               public final invoke(ILandroidx/compose/Composer;)V
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%Bar%foo%1%invoke%1 null null
               final static INNERCLASS TestKt%Bar%foo%1 null null
               OUTERCLASS TestKt Bar (Lkotlin/jvm/functions/Function1;Landroidx/compose/Composer;)V
+            }
+            final class TestKt%Bar%foo%1%invoke%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
+              synthetic <init>(LTestKt%Bar%foo%1;I)V
+              public final invoke(Landroidx/compose/Composer;)V
+              private final synthetic LTestKt%Bar%foo%1; %tmp1_rcvr
+              private final synthetic I %x
+              public synthetic bridge invoke(Ljava/lang/Object;)Ljava/lang/Object;
+              final static INNERCLASS TestKt%Bar%foo%1%invoke%1 null null
+              final static INNERCLASS TestKt%Bar%foo%1 null null
+              OUTERCLASS TestKt%Bar%foo%1 invoke (ILandroidx/compose/Composer;)V
             }
             final class TestKt%Bar%5 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
               synthetic <init>(Lkotlin/jvm/functions/Function1;)V
