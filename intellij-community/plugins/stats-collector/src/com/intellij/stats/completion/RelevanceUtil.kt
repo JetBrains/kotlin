@@ -4,7 +4,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 
 object RelevanceUtil {
-  private val IGNORED_FACTORS = setOf("kotlin.byNameAlphabetical", "scalaMethodCompletionWeigher", "unresolvedOnTop")
+  private val IGNORED_FACTORS = setOf("kotlin.byNameAlphabetical", "scalaMethodCompletionWeigher", "unresolvedOnTop", "alphabetic")
 
   /*
   * First map contains only features affecting default elements ordering
