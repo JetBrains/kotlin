@@ -61,7 +61,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
 
   public static class BackwardReferenceReader extends CompilerReferenceReader<JavaCompilerBackwardReferenceIndex> {
     protected BackwardReferenceReader(Project project, File buildDir) {
-      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, new PathRelativizerService(project.getBasePath(), buildDir.getPath()), true));
+      super(buildDir, new JavaCompilerBackwardReferenceIndex(buildDir, new PathRelativizerService(project.getBasePath()), true));
     }
 
     @Override
