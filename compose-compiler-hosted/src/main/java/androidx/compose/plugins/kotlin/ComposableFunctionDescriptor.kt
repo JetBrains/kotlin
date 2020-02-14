@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ComposableCallableDescriptor : CallableDescriptor {
     val underlyingDescriptor: CallableDescriptor
-    val composerCall: ResolvedCall<*>
-    val composerMetadata: ComposerMetadata
 }
 
 interface ComposableFunctionDescriptor : FunctionDescriptor, ComposableCallableDescriptor {
@@ -38,69 +36,41 @@ interface ComposablePropertyDescriptor : PropertyDescriptor, ComposableCallableD
 }
 
 class ComposablePropertyDescriptorImpl(
-    override val underlyingDescriptor: PropertyDescriptor,
-    override val composerCall: ResolvedCall<*>,
-    override val composerMetadata: ComposerMetadata
+    override val underlyingDescriptor: PropertyDescriptor
 ) : PropertyDescriptor by underlyingDescriptor, ComposablePropertyDescriptor {
     override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor? {
         return underlyingDescriptor.substitute(substitutor)?.let {
-            ComposablePropertyDescriptorImpl(
-                underlyingDescriptor = it,
-                composerCall = composerCall,
-                composerMetadata = composerMetadata
-            )
+            ComposablePropertyDescriptorImpl(it)
         }
     }
 }
 
 fun ComposableFunctionDescriptor(
-    underlyingDescriptor: FunctionDescriptor,
-    composerCall: ResolvedCall<*>,
-    composerMetadata: ComposerMetadata
+    underlyingDescriptor: FunctionDescriptor
 ): ComposableFunctionDescriptor {
     return if (underlyingDescriptor is SimpleFunctionDescriptor) {
-        ComposableSimpleFunctionDescriptorImpl(
-            underlyingDescriptor,
-            composerCall,
-            composerMetadata
-        )
+        ComposableSimpleFunctionDescriptorImpl(underlyingDescriptor)
     } else {
-        ComposableFunctionDescriptorImpl(
-            underlyingDescriptor,
-            composerCall,
-            composerMetadata
-        )
+        ComposableFunctionDescriptorImpl(underlyingDescriptor)
     }
 }
 
 class ComposableFunctionDescriptorImpl(
-    override val underlyingDescriptor: FunctionDescriptor,
-    override val composerCall: ResolvedCall<*>,
-    override val composerMetadata: ComposerMetadata
+    override val underlyingDescriptor: FunctionDescriptor
 ) : FunctionDescriptor by underlyingDescriptor, ComposableFunctionDescriptor {
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor? {
         return underlyingDescriptor.substitute(substitutor)?.let {
-            ComposableFunctionDescriptor(
-                underlyingDescriptor = it,
-                composerCall = composerCall,
-                composerMetadata = composerMetadata
-            )
+            ComposableFunctionDescriptor(it)
         }
     }
 }
 
 class ComposableSimpleFunctionDescriptorImpl(
-    override val underlyingDescriptor: SimpleFunctionDescriptor,
-    override val composerCall: ResolvedCall<*>,
-    override val composerMetadata: ComposerMetadata
+    override val underlyingDescriptor: SimpleFunctionDescriptor
 ) : SimpleFunctionDescriptor by underlyingDescriptor, ComposableFunctionDescriptor {
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor? {
         return underlyingDescriptor.substitute(substitutor)?.let {
-            ComposableFunctionDescriptor(
-                underlyingDescriptor = it,
-                composerCall = composerCall,
-                composerMetadata = composerMetadata
-            )
+            ComposableFunctionDescriptor(it)
         }
     }
 }

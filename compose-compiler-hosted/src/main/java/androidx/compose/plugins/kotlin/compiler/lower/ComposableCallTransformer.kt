@@ -1104,18 +1104,6 @@ class ComposableCallTransformer(
                         annotations += it
                     }
                 }
-                val bindingContext = context.state.bindingContext
-                bindingContext.get(
-                    ComposeWritableSlices.RESTART_COMPOSER,
-                    function.descriptor as SimpleFunctionDescriptor
-                )?.let {
-                    val trace = context.state.bindingTrace
-                    trace.record(
-                        ComposeWritableSlices.RESTART_COMPOSER,
-                        descriptor as SimpleFunctionDescriptor,
-                        it
-                    )
-                }
                 val valueParameterMap =
                     callee.explicitParameters.withIndex().associate { (index, param) ->
                         param to param.copyTo(this, index = index)

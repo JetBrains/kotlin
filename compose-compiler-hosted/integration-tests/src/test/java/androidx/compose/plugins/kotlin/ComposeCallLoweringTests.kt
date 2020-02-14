@@ -20,7 +20,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Composer
-import androidx.compose.currentComposerNonNull
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -460,7 +459,6 @@ fun <T> B(foo: T, bar: String) { }
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.Composable
-import androidx.compose.composer
 
 class WebContext {
     var webView: WebView? = null
@@ -1240,7 +1238,7 @@ fun WebComponent(
         return compose {
             val values = valuesFactory()
             val arguments = values.map { it.value as Any }.toTypedArray()
-            testMethod.invoke(instanceOfClass, *arguments, currentComposerNonNull)
+            testMethod.invoke(instanceOfClass, *arguments, it)
         }
     }
 

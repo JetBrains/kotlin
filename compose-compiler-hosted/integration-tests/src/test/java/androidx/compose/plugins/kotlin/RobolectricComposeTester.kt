@@ -42,13 +42,13 @@ private class TestActivity : Activity() {
 
 private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
 
-fun compose(composable: () -> Unit) =
+fun compose(composable: (Composer<*>) -> Unit) =
     RobolectricComposeTester(composable)
-fun composeMulti(composable: () -> Unit, advance: () -> Unit) =
+fun composeMulti(composable: (Composer<*>) -> Unit, advance: () -> Unit) =
     RobolectricComposeTester(composable, advance)
 
 class RobolectricComposeTester internal constructor(
-    val composable: () -> Unit,
+    val composable: (Composer<*>) -> Unit,
     val advance: (() -> Unit)? = null
 ) {
     inner class ActiveTest(
@@ -83,7 +83,7 @@ class RobolectricComposeTester internal constructor(
             Compose,
             root,
             null,
-            { composer: Composer<*> -> composable() }
+            composable
         ) as Composition
         scheduler.advanceToLastPostedRunnable()
         block(activity)
