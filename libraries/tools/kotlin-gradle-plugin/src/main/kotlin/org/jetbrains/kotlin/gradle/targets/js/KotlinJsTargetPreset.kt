@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
-import org.jetbrains.kotlin.gradle.targets.js.ir.IR_TARGET_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -35,17 +34,11 @@ open class KotlinJsTargetPreset(
             project,
             platformType
         ).apply {
-            this.irTarget = irPreset?.createTarget("$name$IR_TARGET_SUFFIX")
+            this.irTarget = irPreset?.createTarget(
+                lowerCamelCaseName(name.removeSuffix(JsCompilerType.legacy.name.capitalize()), JsCompilerType.ir.name)
+            )
         }
     }
-
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
-        if (irPreset == null) {
-            super.provideTargetDisambiguationClassifier(target)
-        } else {
-            LEGACY_DISAMBIGUATION_CLASSIFIER +
-                    super.provideTargetDisambiguationClassifier(target)
-        }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
         kotlinPluginVersion
@@ -79,11 +72,9 @@ class KotlinJsSingleTargetPreset(
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
-        irPreset?.let { LEGACY_DISAMBIGUATION_CLASSIFIER }
+        null
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
         kotlinPluginVersion
     )
 }
-
-const val LEGACY_DISAMBIGUATION_CLASSIFIER = "legacy"
