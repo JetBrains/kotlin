@@ -9,6 +9,7 @@ import com.intellij.execution.Location
 import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.JavaPsiFacade
@@ -41,78 +42,28 @@ private const val RUN_PREFIX = "// RUN:"
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testMainInTest() {
-        val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
+        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
         configureLanguageAndApiVersion(
-            createResult.module.project, createResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString
+            createModuleResult.module.project, createModuleResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString,
         )
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, addJdk(testRootDisposable, ::mockJdk))
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
-        val runConfiguration = createConfigurationFromMain("some.main")
+        val runConfiguration = createConfigurationFromMain(getTestProject(), "some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
 
-        assertTrue(javaParameters.classPath.rootDirs.contains(createResult.srcOutputDir))
-        assertTrue(javaParameters.classPath.rootDirs.contains(createResult.testOutputDir))
+        assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.srcOutputDir))
+        assertTrue(javaParameters.classPath.rootDirs.contains(createModuleResult.testOutputDir))
 
-        fun functionVisitor(function: KtNamedFunction) {
-            val file = function.containingKtFile
-            val options =
-                function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()?.map { it.text.trim().replace("//", "").trim() }
-                    ?.filter { it.isNotBlank() }?.toList() ?: emptyList()
-            if (options.isNotEmpty()) {
-                val assertIsMain = "yes" in options
-                val assertIsNotMain = "no" in options
-
-                val languageVersionSettings = languageVersionSettingsFromText(listOf(file.text))
-                createResult.module.setLanguageVersionSettings(languageVersionSettings)
-                val isMainFunction =
-                    MainFunctionDetector(languageVersionSettings) { it.resolveToDescriptorIfAny() }.isMain(function)
-
-                if (assertIsMain) {
-                    assertTrue("$file: The function ${function.fqName?.asString()} should be main", isMainFunction)
-                }
-                if (assertIsNotMain) {
-                    assertFalse("$file: The function ${function.fqName?.asString()} should NOT be main", isMainFunction)
-                }
-
-                if (isMainFunction) {
-                    createConfigurationFromMain(function.fqName?.asString()!!).checkConfiguration()
-
-                    assertNotNull(
-                        "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
-                        KotlinRunConfigurationProducer.getEntryPointContainer(function)
-                    )
-                } else {
-                    try {
-                        createConfigurationFromMain(function.fqName?.asString()!!).checkConfiguration()
-                        fail(
-                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()"
-                        )
-                    } catch (expected: Throwable) {
-                    }
-
-                    if (function.containingFile.text.startsWith("// entryPointExists")) {
-                        assertNotNull(
-                            "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
-                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
-                        )
-                    } else {
-                        assertNull(
-                            "Kotlin configuration producer shouldn't produce configuration for ${function.fqName?.asString()}",
-                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
-                        )
-                    }
-                }
-            }
-        }
-
-        createResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
-            val psiFile = PsiManager.getInstance(createResult.module.project).findFile(it)
+        createModuleResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
+            val psiFile = PsiManager.getInstance(createModuleResult.module.project).findFile(it)
             if (psiFile is KtFile) {
-                psiFile.acceptChildren(object : KtVisitorVoid() {
-                    override fun visitNamedFunction(function: KtNamedFunction) {
-                        functionVisitor(function)
-                    }
-                })
+                psiFile.acceptChildren(
+                    object : KtVisitorVoid() {
+                        override fun visitNamedFunction(function: KtNamedFunction) {
+                            functionVisitor(createModuleResult.module, function)
+                        }
+                    },
+                )
             }
         }
     }
@@ -126,12 +77,12 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, testProjectJdk)
 
         val moduleWithDependencySrcDir = configureModule(
-            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency
+            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency,
         ).srcOutputDir
 
         ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
 
-        val kotlinRunConfiguration = createConfigurationFromMain("some.test.main")
+        val kotlinRunConfiguration = createConfigurationFromMain(getTestProject(), "some.test.main")
         kotlinRunConfiguration.setModule(moduleWithDependency)
 
         val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
@@ -146,7 +97,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
 
         ModuleRootModificationUtil.addDependency(myModule, createLibraryWithLongPaths(project))
 
-        val kotlinRunConfiguration = createConfigurationFromMain("some.test.main")
+        val kotlinRunConfiguration = createConfigurationFromMain(getTestProject(),"some.test.main")
         kotlinRunConfiguration.setModule(myModule)
 
         val javaParameters = getJavaRunParameters(kotlinRunConfiguration)
@@ -206,7 +157,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         val module = configureModule(moduleDirPath("module"), getTestProject().baseDir!!).module
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
 
-        val javaParameters = getJavaRunParameters(createConfigurationFromMain("some.main"))
+        val javaParameters = getJavaRunParameters(createConfigurationFromMain(getTestProject(),"some.main"))
 
         assertEquals(moduleName, javaParameters.moduleName)
     }
@@ -241,7 +192,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                             actualClasses.add(actualClass)
                         }
                     }
-                }
+                },
             )
             assertEquals(expectedClasses, actualClasses)
         } finally {
@@ -249,17 +200,71 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         }
     }
 
-    private fun createConfigurationFromMain(mainFqn: String): KotlinRunConfiguration {
-        val mainFunction =
-            KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
-
-        return createConfigurationFromElement(mainFunction) as KotlinRunConfiguration
-    }
-
     private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): KotlinRunConfiguration {
         val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
         val mainFunction = obj.declarations.single { it is KtFunction && it.getName() == "main" }
         return createConfigurationFromElement(mainFunction, save) as KotlinRunConfiguration
+    }
+
+    companion object {
+        private fun functionVisitor(module: Module, function: KtNamedFunction) {
+            val project = function.project
+            val file = function.containingKtFile
+            val options = function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()
+                ?.map { it.text.trim().replace("//", "").trim() }
+                ?.filter { it.isNotBlank() }?.toList() ?: emptyList()
+
+            if (options.isNotEmpty()) {
+                val assertIsMain = "yes" in options
+                val assertIsNotMain = "no" in options
+
+                val languageVersionSettings = languageVersionSettingsFromText(listOf(file.text))
+                module.setLanguageVersionSettings(languageVersionSettings)
+                val isMainFunction =
+                    MainFunctionDetector(languageVersionSettings) { it.resolveToDescriptorIfAny() }.isMain(function)
+
+                if (assertIsMain) {
+                    assertTrue("$file: The function ${function.fqName?.asString()} should be main", isMainFunction)
+                }
+                if (assertIsNotMain) {
+                    assertFalse("$file: The function ${function.fqName?.asString()} should NOT be main", isMainFunction)
+                }
+
+                if (isMainFunction) {
+                    createConfigurationFromMain(project, function.fqName?.asString()!!).checkConfiguration()
+
+                    assertNotNull(
+                        "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
+                        KotlinRunConfigurationProducer.getEntryPointContainer(function),
+                    )
+                } else {
+                    try {
+                        createConfigurationFromMain(project, function.fqName?.asString()!!).checkConfiguration()
+                        fail(
+                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()",
+                        )
+                    } catch (expected: Throwable) {
+                    }
+
+                    if (function.containingFile.text.startsWith("// entryPointExists")) {
+                        assertNotNull(
+                            "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function),
+                        )
+                    } else {
+                        assertNull(
+                            "Kotlin configuration producer shouldn't produce configuration for ${function.fqName?.asString()}",
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function),
+                        )
+                    }
+                }
+            }
+        }
+
+        private fun createConfigurationFromMain(project: Project, mainFqn: String): KotlinRunConfiguration {
+            val mainFunction = KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, project, project.allScope()).first()
+            return createConfigurationFromElement(mainFunction) as KotlinRunConfiguration
+        }
     }
 
     override fun getTestDataPath() = getTestDataPathBase() + "/run/"
