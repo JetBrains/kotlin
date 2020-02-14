@@ -18,10 +18,11 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import org.jetbrains.kotlin.checkers.languageVersionSettingsFromText
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.project.setLanguageVersionSettings
+import org.jetbrains.kotlin.idea.project.withLanguageVersionSettings
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -58,13 +59,16 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
             createModuleResult.srcDir?.children?.filter { it.extension == "kt" }?.forEach {
                 val psiFile = PsiManager.getInstance(createModuleResult.module.project).findFile(it)
                 if (psiFile is KtFile) {
-                    psiFile.acceptChildren(
-                        object : KtVisitorVoid() {
-                            override fun visitNamedFunction(function: KtNamedFunction) {
-                                functionVisitor(createModuleResult.module, function)
-                            }
-                        },
-                    )
+                    val languageVersionSettings = languageVersionSettingsFromText(listOf(psiFile.text))
+                    module.withLanguageVersionSettings(languageVersionSettings) {
+                        psiFile.acceptChildren(
+                            object : KtVisitorVoid() {
+                                override fun visitNamedFunction(function: KtNamedFunction) {
+                                    functionVisitor(languageVersionSettings, function)
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -209,7 +213,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     }
 
     companion object {
-        private fun functionVisitor(module: Module, function: KtNamedFunction) {
+        private fun functionVisitor(fileLanguageSettings: LanguageVersionSettings, function: KtNamedFunction) {
             val project = function.project
             val file = function.containingKtFile
             val options = function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()
@@ -220,10 +224,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                 val assertIsMain = "yes" in options
                 val assertIsNotMain = "no" in options
 
-                val languageVersionSettings = languageVersionSettingsFromText(listOf(file.text))
-                module.setLanguageVersionSettings(languageVersionSettings)
-                val isMainFunction =
-                    MainFunctionDetector(languageVersionSettings) { it.resolveToDescriptorIfAny() }.isMain(function)
+                val isMainFunction = MainFunctionDetector(fileLanguageSettings) { it.resolveToDescriptorIfAny() }.isMain(function)
 
                 if (assertIsMain) {
                     assertTrue("$file: The function ${function.fqName?.asString()} should be main", isMainFunction)
