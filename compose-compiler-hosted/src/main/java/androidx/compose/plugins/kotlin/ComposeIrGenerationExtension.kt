@@ -60,8 +60,8 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             // parameter.
             ComposerParamTransformer(jvmContext, symbolRemapper).lower(module)
 
-            // transform calls to the currentComposerIntrinsic to just use the local
-            // parameter from the previous transform
+            // transform calls to the currentComposer to just use the local parameter from the
+            // previous transform
             ComposerIntrinsicTransformer(jvmContext).lower(module)
 
             // transform composable calls and emits into their corresponding calls appealing
