@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.facet.configureFacet
-import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.COMPILER_ARGUMENTS_DIRECTIVE
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.JVM_TARGET_DIRECTIVE
@@ -236,12 +234,13 @@ object CompilerTestDirectives {
 }
 
 fun <T> withCustomCompilerOptions(fileText: String, project: Project, module: Module, body: () -> T): T {
+    val removeFacet = !module.hasKotlinFacet()
     val configured = configureCompilerOptions(fileText, project, module)
     try {
         return body()
     } finally {
         if (configured) {
-            rollbackCompilerOptions(project, module)
+            rollbackCompilerOptions(project, module, removeFacet)
         }
     }
 }
@@ -295,7 +294,15 @@ fun <T> configureRegistryAndRun(fileText: String, body: () -> T) {
     }
 }
 
-private fun rollbackCompilerOptions(project: Project, module: Module) {
+private fun rollbackCompilerOptions(project: Project, module: Module, removeFacet: Boolean) {
+    KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS }
+    KotlinCommonCompilerArgumentsHolder.getInstance(project).update { this.languageVersion = LanguageVersion.LATEST_STABLE.versionString }
+
+    if (removeFacet) {
+        module.removeKotlinFacet(IdeModifiableModelsProviderImpl(project), commitModel = true)
+        return
+    }
+
     configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString)
 
     val facetSettings = KotlinFacet.get(module)!!.configuration.settings
@@ -306,7 +313,6 @@ private fun rollbackCompilerOptions(project: Project, module: Module) {
     }
     compilerSettings.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS
     facetSettings.updateMergedArguments()
-    KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS }
 }
 
 fun withCustomLanguageAndApiVersion(
@@ -316,11 +322,18 @@ fun withCustomLanguageAndApiVersion(
     apiVersion: String?,
     body: () -> Unit
 ) {
+    val removeFacet = !module.hasKotlinFacet()
     configureLanguageAndApiVersion(project, module, languageVersion, apiVersion)
     try {
         body()
     } finally {
-        configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString, null)
+        if (removeFacet) {
+            KotlinCommonCompilerArgumentsHolder.getInstance(project)
+                .update { this.languageVersion = LanguageVersion.LATEST_STABLE.versionString }
+            module.removeKotlinFacet(IdeModifiableModelsProviderImpl(project), commitModel = true)
+        } else {
+            configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString, null)
+        }
     }
 }
 
