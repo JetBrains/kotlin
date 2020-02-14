@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
-import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.junit.InheritorChooser
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -44,11 +43,11 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
     }
 
     override fun isPreferredConfiguration(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration() || super.isPreferredConfiguration(self, other)
+        return other.isJpsJunitConfiguration()
     }
 
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration() || super.shouldReplace(self, other)
+        return other.isJpsJunitConfiguration()
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
@@ -100,10 +99,6 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
 
 abstract class AbstractKotlinTestMethodGradleConfigurationProducer
     : TestMethodGradleConfigurationProducer(), KotlinGradleConfigurationProducer {
-    override fun getConfigurationFactory(): ConfigurationFactory {
-        return KotlinGradleExternalTaskConfigurationType.instance.factory
-    }
-
     override fun isConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
         if (!context.check()) {
             return false
