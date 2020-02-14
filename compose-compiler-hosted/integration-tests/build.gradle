@@ -45,13 +45,6 @@ dependencies {
 android {
     defaultConfig {
         minSdkVersion 16
-        javaCompileOptions {
-            annotationProcessorOptions {
-                // The kotlin-compiler contains an annotation processor that we don't need to invoke
-                // The following ensure a warning isn't reported by the android plugin.
-                includeCompileClasspath false
-            }
-        }
     }
     lintOptions {
         disable("SyntheticAccessor")
