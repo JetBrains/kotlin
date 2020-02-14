@@ -26,6 +26,10 @@ class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringP
     listener.reset()
   }
 
+  fun suppressForCurrentDeclaration() {
+    listener.suppressForCurrentDeclaration()
+  }
+
   companion object {
     fun getInstance(project: Project): SuggestedRefactoringProviderImpl =
       SuggestedRefactoringProvider.getInstance(project) as SuggestedRefactoringProviderImpl

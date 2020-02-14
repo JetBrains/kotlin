@@ -24,7 +24,7 @@ class SuggestedRefactoringChangeCollector(
   }
 
   override fun inconsistentState(refactoringSupport: SuggestedRefactoringSupport) {
-    state = state?.copy(syntaxError = true)
+    state = state?.withSyntaxError(true)
     updateAvailabilityIndicator()
   }
 

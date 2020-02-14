@@ -61,6 +61,13 @@ class SuggestedRefactoringChangeListener(
     }
   }
 
+  fun suppressForCurrentDeclaration() {
+    if (editingState != null && !editingState!!.isRefactoringSuppressed) {
+      editingState = editingState!!.copy(isRefactoringSuppressed = true)
+      watcher.reset()
+    }
+  }
+
   private fun processBeforeFirstChangeWithPsiAndDocumentInSync(
     psiFile: PsiFile,
     document: Document,

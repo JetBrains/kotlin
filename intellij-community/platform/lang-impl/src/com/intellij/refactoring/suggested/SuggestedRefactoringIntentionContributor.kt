@@ -27,18 +27,28 @@ class SuggestedRefactoringIntentionContributor : IntentionMenuContributor {
   ) {
     val project = hostFile.project
     val refactoringProvider = SuggestedRefactoringProviderImpl.getInstance(project)
-    var state = refactoringProvider.state ?: return
+    var state = refactoringProvider.state
+    if (state == null) return
 
     val declaration = state.declaration
     if (!declaration.isValid) return
     if (hostFile != declaration.containingFile) return
-    if (state.syntaxError) return
 
     val refactoringSupport = state.refactoringSupport
 
+    if (refactoringSupport.availability.shouldSuppressRefactoringForDeclaration(state)) {
+      // additional checks showed that the initial declaration was unsuitable for refactoring
+      ApplicationManager.getApplication().invokeLater {
+        refactoringProvider.suppressForCurrentDeclaration()
+      }
+      return
+    }
+
+    if (state.syntaxError) return
+
     state = refactoringSupport.availability.refineSignaturesWithResolve(state)
 
-    if (state.oldSignature == state.newSignature) {
+    if (state.syntaxError || state.oldSignature == state.newSignature) {
       val document = PsiDocumentManager.getInstance(project).getDocument(hostFile)!!
       val modificationStamp = document.modificationStamp
       ApplicationManager.getApplication().invokeLater {
