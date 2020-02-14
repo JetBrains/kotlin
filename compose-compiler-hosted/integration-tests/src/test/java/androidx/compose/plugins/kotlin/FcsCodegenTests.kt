@@ -1194,6 +1194,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         compose(
             """
+                import android.view.View
+
                 inline class InlineInt(val value: Int)
                 inline class InlineInlineInt(val value: InlineInt)
                 inline class InlineMutableSet(val value: MutableSet<String>)
@@ -1265,6 +1267,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         compose(
             """
+                import android.view.View
+
                 fun View.setComposed(composed: Set<String>) = setTag($tagId, composed)
 
                 val composedSet = mutableSetOf<String>()
