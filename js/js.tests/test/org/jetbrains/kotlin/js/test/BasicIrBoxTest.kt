@@ -79,7 +79,8 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        skipDceDriven: Boolean
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
@@ -149,7 +150,7 @@ abstract class BasicIrBoxTest(
                 }
             }
 
-            if (runIrPir) {
+            if (runIrPir && !skipDceDriven) {
                 compile(
                     project = config.project,
                     mainModule = MainModule.SourceFiles(filesToCompile),

@@ -126,6 +126,8 @@ abstract class BasicBoxTest(
         val inferMainModule = INFER_MAIN_MODULE.matcher(fileContent).find()
         val klibBasedMpp = KLIB_BASED_MPP.matcher(fileContent).find()
 
+        val skipDceDriven = SKIP_DCE_DRIVEN.matcher(fileContent).find()
+
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
                 file.name,
@@ -169,7 +171,7 @@ abstract class BasicBoxTest(
                     testFactory.tmpDir,
                     file.parent, module, outputFileName, dceOutputFileName, pirOutputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
-                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, klibBasedMpp
+                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, klibBasedMpp, skipDceDriven
                 )
 
                 when {
@@ -247,7 +249,7 @@ abstract class BasicBoxTest(
                     }
                 }
 
-                if (runIrPir && !SKIP_DCE_DRIVEN.matcher(fileContent).find()) {
+                if (runIrPir && !skipDceDriven) {
                     runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
                 }
             }
@@ -381,7 +383,8 @@ abstract class BasicBoxTest(
         testFunction: String,
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
-        klibBasedMpp: Boolean
+        klibBasedMpp: Boolean,
+        skipDceDriven: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -405,7 +408,7 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, dceOutputFile, pirOutputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, skipDceDriven
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -457,7 +460,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledOutputFile, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, true
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -529,7 +532,8 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        skipDceDriven: Boolean
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
