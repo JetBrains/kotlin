@@ -16,7 +16,8 @@ headers = alloca.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcn
 compilerOpts = -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE
 linkerOpts = -ldl -lresolv
 
-excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries
+excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries \
+                    uuid_generate_early_random setgrfile
 excludedFunctions.watchos_arm32 = longjmperror
 excludedFunctions.watchos_arm64 = longjmperror
 
