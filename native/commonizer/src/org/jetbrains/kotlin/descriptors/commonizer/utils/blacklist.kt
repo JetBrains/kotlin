@@ -15,6 +15,9 @@ private val DEPRECATED_ANNOTATION_FQN = FqName(Deprecated::class.java.name)
 internal fun SimpleFunctionDescriptor.isKniBridgeFunction() =
     name.asString().startsWith("kniBridge")
 
+internal fun SimpleFunctionDescriptor.isDeprecated() =
+    annotations.hasAnnotation(DEPRECATED_ANNOTATION_FQN)
+
 // the following logic determines Kotlin functions with conflicting overloads in Darwin library:
 internal fun SimpleFunctionDescriptor.isBlacklistedDarwinFunction(): Boolean {
     if ((containingDeclaration as? PackageFragmentDescriptor)?.fqName?.isUnderDarwinPackage != true)
@@ -23,9 +26,6 @@ internal fun SimpleFunctionDescriptor.isBlacklistedDarwinFunction(): Boolean {
     val name = name.asString()
     if (!name.startsWith("simd_") && !name.startsWith("__"))
         return false
-
-    if (annotations.hasAnnotation(DEPRECATED_ANNOTATION_FQN))
-        return true
 
     return valueParameters.any { parameter ->
         val type = parameter.type

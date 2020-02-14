@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
 import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isBlacklistedDarwinFunction
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isDeprecated
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isKniBridgeFunction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -53,8 +54,13 @@ internal inline fun PropertyCollector(
 internal inline fun FunctionCollector(
     crossinline typedCollector: (SimpleFunctionDescriptor) -> Unit
 ): (DeclarationDescriptor) -> Boolean = Collector<SimpleFunctionDescriptor> { candidate ->
-    if (candidate.kind.isReal && !candidate.isKniBridgeFunction() && !candidate.isBlacklistedDarwinFunction())
+    if (candidate.kind.isReal
+        && !candidate.isKniBridgeFunction()
+        && !candidate.isDeprecated()
+        && !candidate.isBlacklistedDarwinFunction()
+    ) {
         typedCollector(candidate)
+    }
 }
 
 /** Used for approximation of [PropertyDescriptor]s before running concrete [Commonizer]s */
