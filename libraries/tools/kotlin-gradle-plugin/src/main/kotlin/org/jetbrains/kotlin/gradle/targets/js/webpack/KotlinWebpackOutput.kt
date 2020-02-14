@@ -6,47 +6,26 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackLibraryTarget.Companion.fromString
 
 data class KotlinWebpackOutput(
     @Input var library: String?,
-    @Input var libraryTarget: KotlinWebpackLibraryTarget?
+    @Input var libraryTarget: String?
 ) {
-    fun getLibraryTarget(): String {
-        return this.libraryTarget.toString()
-    }
-
-    fun setLibraryTarget(value: String) {
-        this.libraryTarget = fromString(value)
-    }
-}
-
-enum class KotlinWebpackLibraryTarget {
-    VAR,
-    ASSIGN,
-    THIS,
-    WINDOW,
-    SELF,
-    GLOBAL,
-    COMMONJS,
-    COMMONJS2,
-    COMMONJS_MODULE,
-    AMD,
-    AMD_REQUIRE,
-    UMD,
-    UMD2,
-    JSONP,
-    SYSTEM;
-
-    override fun toString(): String {
-        return super.toString()
-            .toLowerCase()
-            .replace("_", "-")
-    }
-
-    companion object {
-        internal fun fromString(value: String): KotlinWebpackLibraryTarget {
-            return valueOf(value.toUpperCase().replace("-", "_"))
-        }
+    object Target {
+        const val VAR = "var"
+        const val ASSIGN = "assign"
+        const val THIS = "this"
+        const val WINDOW = "window"
+        const val SELF = "self"
+        const val GLOBAL = "global"
+        const val COMMONJS = "commonjs"
+        const val COMMONJS2 = "commonjs2"
+        const val COMMONJS_MODULE = "commonjs-module"
+        const val AMD = "amd"
+        const val AMD_REQUIRE = "amd-require"
+        const val UMD = "umd"
+        const val UMD2 = "umd2"
+        const val JSONP = "jsonp"
+        const val SYSTEM = "system"
     }
 }

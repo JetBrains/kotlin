@@ -78,7 +78,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = baseConventions?.archivesBaseName,
-        libraryTarget = KotlinWebpackLibraryTarget.UMD
+        libraryTarget = KotlinWebpackOutput.Target.UMD
     )
 
     @get:Internal
