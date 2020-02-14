@@ -54,23 +54,22 @@ internal class CEnumByValueFunctionGenerator(
                 val values = irTemporaryVar(irCall(valuesIrFunctionSymbol))
                 val inductionVariable = irTemporaryVar(irInt(0))
                 val arrayClass = values.type.classOrNull!!
-                val valuesSize = irCall(symbols.arraySize.getValue(arrayClass)).also { irCall ->
+                val valuesSize = irCall(symbols.arraySize.getValue(arrayClass), irBuiltIns.intType).also { irCall ->
                     irCall.dispatchReceiver = irGet(values)
                 }
                 val getElementFn = symbols.arrayGet.getValue(arrayClass)
                 val plusFun = symbols.intPlusInt
                 val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
                 +irWhile().also { loop ->
-                    loop.condition = irCall(lessFunctionSymbol).also { irCall ->
+                    loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->
                         irCall.putValueArgument(0, irGet(inductionVariable))
                         irCall.putValueArgument(1, valuesSize)
                     }
                     loop.body = irBlock {
-                        val untypedEntry = irCall(getElementFn).also { irCall ->
+                        val entry = irTemporaryVar(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
                             irCall.dispatchReceiver = irGet(values)
                             irCall.putValueArgument(0, irGet(inductionVariable))
-                        }
-                        val entry = irTemporaryVar(irImplicitCast(untypedEntry, byValueIrFunction.returnType))
+                        })
                         val valueGetter = entry.type.getClass()!!.getPropertyGetter("value")!!
                         val entryValue = irGet(irValueParameter.type, irGet(entry), valueGetter)
                         +irIfThenElse(
@@ -87,7 +86,7 @@ internal class CEnumByValueFunctionGenerator(
                         )
                     }
                 }
-                +irCall(symbols.ThrowNullPointerException)
+                +irCall(symbols.ThrowNullPointerException, irBuiltIns.nothingType)
             })
         }
         return byValueIrFunction
