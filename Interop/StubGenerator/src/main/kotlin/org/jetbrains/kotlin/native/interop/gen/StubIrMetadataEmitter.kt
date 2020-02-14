@@ -163,6 +163,7 @@ internal class ModuleMetadataEmitter(
                     KmProperty(element.flags, name, element.getterFlags, element.setterFlags).also { km ->
                         element.annotations.mapTo(km.annotations) { it.map() }
                         km.uniqId = data.uniqIds.uniqIdForProperty(element)
+                        km.receiverParameterType = element.receiverType?.map()
                         km.returnType = element.type.map()
                         if (element.kind is PropertyStub.Kind.Var) {
                             val setter = element.kind.setter
