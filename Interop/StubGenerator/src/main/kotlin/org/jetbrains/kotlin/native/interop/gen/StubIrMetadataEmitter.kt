@@ -445,19 +445,21 @@ private class MappingExtensions(
     fun StubType.map(shouldExpandTypeAliases: Boolean = true): KmType = when (this) {
         is AbbreviatedType -> {
             val typeAliasClassifier = KmClassifier.TypeAlias(abbreviatedClassifier.fqNameSerialized)
+            val typeArguments = typeArguments.map { it.map(shouldExpandTypeAliases) }
+            val abbreviatedType = KmType(flags).also { km ->
+                km.classifier = typeAliasClassifier
+                km.arguments += typeArguments
+            }
             if (shouldExpandTypeAliases) {
                 // Abbreviated and expanded types have the same nullability.
                 KmType(flags).also { km ->
-                    km.abbreviatedType = KmType(flags).also { abbreviatedType ->
-                        abbreviatedType.classifier = typeAliasClassifier
-                        typeArguments.mapTo(abbreviatedType.arguments) { it.map(shouldExpandTypeAliases) }
-                    }
+                    km.abbreviatedType = abbreviatedType
                     val kmUnderlyingType = underlyingType.map(true)
                     km.arguments += kmUnderlyingType.arguments
                     km.classifier = kmUnderlyingType.classifier
                 }
             } else {
-                KmType(flags).also { km -> km.classifier = typeAliasClassifier }
+                abbreviatedType
             }
         }
         is ClassifierStubType -> KmType(flags).also { km ->
