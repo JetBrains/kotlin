@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
@@ -55,6 +56,8 @@ class DataClassMembersGenerator(
     fun generateDataClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
         MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate()
     }
+
+    fun IrMemberAccessExpression.commitSubstituted(descriptor: CallableDescriptor) = context.run { commitSubstituted(descriptor) }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
         context.symbolTable.declareSimpleFunctionWithOverrides(
@@ -257,7 +260,9 @@ class DataClassMembersGenerator(
         }
 
         private fun MemberFunctionBuilder.getHashCodeOf(kotlinType: KotlinType, irValue: IrExpression): IrExpression {
+            var substituted: FunctionDescriptor? = null
             val hashCodeFunctionSymbol = getHashCodeFunction(kotlinType) {
+                substituted = it
                 declarationGenerator.context.symbolTable.referenceSimpleFunction(it.original)
             }
 
@@ -267,6 +272,7 @@ class DataClassMembersGenerator(
                 } else {
                     putValueArgument(0, irValue)
                 }
+                commitSubstituted(substituted ?: hashCodeFunctionSymbol.descriptor)
             }
         }
 

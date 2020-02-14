@@ -10245,6 +10245,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
         }
 
+        @TestMetadata("genericInlineClassSynthMembers.kt")
+        public void testGenericInlineClassSynthMembers() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/genericInlineClassSynthMembers.kt");
+        }
+
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
