@@ -965,7 +965,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     public void generateAssertField() {
         if (jvmAssertFieldGenerated) return;
-        AssertCodegenUtilKt.generateAssertionsDisabledFieldInitialization(v, createOrGetClInitCodegen().v);
+        AssertCodegenUtilKt.generateAssertionsDisabledFieldInitialization(v, createOrGetClInitCodegen().v, v.getThisName());
         jvmAssertFieldGenerated = true;
     }
 
