@@ -1,16 +1,15 @@
 // No initializers for this class because the fields/properties are initialized to defaults.
-class RedundantInitializersToDefault {
-    companion object {
-        // Constants
-        const val constInt: Int = 0
-        const val constByte: Byte = 0
-        const val constLong: Long = 0L
-        const val constShort: Short = 0
-        const val constDouble: Double = 0.0
-        const val constFloat: Float = 0.0f
-        const val constBoolean: Boolean = false
-        const val constChar: Char = '\u0000'
-    }
+object RedundantInitializersToDefault {
+    // Constants
+
+    const val constInt: Int = 0
+    const val constByte: Byte = 0
+    const val constLong: Long = 0L
+    const val constShort: Short = 0
+    const val constDouble: Double = 0.0
+    const val constFloat: Float = 0.0f
+    const val constBoolean: Boolean = false
+    const val constChar: Char = '\u0000'
 
     // Properties
 
@@ -83,15 +82,14 @@ class RedundantInitializersToDefault {
     val myIntegerField: java.lang.Integer? = null
 }
 
-class NonRedundantInitializers {
+object NonRedundantInitializers {
     // NOT redundant because the JVM's default values for floating-point types are positive 0.0.
     // See: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.3
     val myDouble: Double = -0.0
     val myFloat: Float = -0.0f
 }
 
-// There is 1 PUTSTATIC for the companion object instance.
+// There is 1 additional PUTSTATIC for both classes for the object instance.
 
-// 0 PUTFIELD RedundantInitializersToDefault
-// 2 PUTFIELD NonRedundantInitializers
-// 1 PUTSTATIC
+// 1 PUTSTATIC RedundantInitializersToDefault
+// 3 PUTSTATIC NonRedundantInitializers

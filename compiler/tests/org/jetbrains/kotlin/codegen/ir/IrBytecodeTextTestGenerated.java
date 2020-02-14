@@ -339,6 +339,21 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/redundantValInitializer.kt");
     }
 
+    @TestMetadata("redundantValInitializerInObject.kt")
+    public void testRedundantValInitializerInObject() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/redundantValInitializerInObject.kt");
+    }
+
+    @TestMetadata("redundantVarInitializer.kt")
+    public void testRedundantVarInitializer() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/redundantVarInitializer.kt");
+    }
+
+    @TestMetadata("redundantVarInitializerInObject.kt")
+    public void testRedundantVarInitializerInObject() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/redundantVarInitializerInObject.kt");
+    }
+
     @TestMetadata("reifiedAsCheck.kt")
     public void testReifiedAsCheck() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/reifiedAsCheck.kt");
