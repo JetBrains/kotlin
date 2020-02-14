@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
-    val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposerIntrinsic>")
+    val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
     val Pivotal = ComposeUtils.composeFqName("Pivotal")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
     val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
