@@ -67,7 +67,7 @@ internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
 }
 
 val IrField.isMainOnlyNonPrimitive get() = when  {
-        descriptor.type.computePrimitiveBinaryTypeOrNull() != null -> false
+        type.computePrimitiveBinaryTypeOrNull() != null -> false
         else -> storageKind == FieldStorageKind.MAIN_THREAD
     }
 
