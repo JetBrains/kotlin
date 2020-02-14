@@ -196,9 +196,8 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
   }
 
   static String getNewProjectActionId() {
-    if (PlatformUtils.isIntelliJ()) return "NewProject";
+    if (PlatformUtils.isIntelliJ() || PlatformUtils.isWebStorm()) return "NewProject";
     if (PlatformUtils.isPhpStorm()) return "NewDirectoryProject";
-    if (PlatformUtils.isWebStorm()) return "NewWebStormDirectoryProject";
     throw new IllegalStateException("Provide new project action id for your IDE");
   }
 
