@@ -61,5 +61,3 @@ class KotlinJsIrSingleTargetPreset(
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator(kotlinPluginVersion)
 }
-
-const val IR_TARGET_SUFFIX = "Ir"

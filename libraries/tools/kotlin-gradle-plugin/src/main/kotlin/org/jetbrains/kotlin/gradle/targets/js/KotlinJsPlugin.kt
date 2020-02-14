@@ -10,10 +10,12 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.configureDefaultVersionsResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsPlugin(
     private val kotlinPluginVersion: String,
@@ -35,7 +37,13 @@ open class KotlinJsPlugin(
             KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion, mixedMode)
         else null
 
-        val target = KotlinJsSingleTargetPreset(project, kotlinPluginVersion, irPreset).createTarget("Js")
+        val target = KotlinJsSingleTargetPreset(project, kotlinPluginVersion, irPreset)
+            .createTarget(
+                lowerCamelCaseName(
+                    "js",
+                    irPreset?.let { JsCompilerType.legacy.name }
+                )
+            )
 
         kotlinExtension.target = target
 

@@ -9,8 +9,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -34,7 +36,9 @@ open class KotlinJsCompilation(
 
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
-            target.disambiguationClassifier?.removePrefix(LEGACY_DISAMBIGUATION_CLASSIFIER),
+            (target as KotlinJsTarget).irTarget?.let {
+                target.disambiguationClassifier?.removeSuffix(JsCompilerType.legacy.name.capitalize())
+            } ?: target.disambiguationClassifier,
             compilationName
         )
 }
