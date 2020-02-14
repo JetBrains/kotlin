@@ -34,8 +34,6 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
         return listOf("-P$CORRELATION_ID_GRADLE_PROPERTY_NAME=${System.nanoTime()}")
     }
 
-    override fun getModelProvider() = KotlinDslScriptModelProvider()
-
     @Suppress("unused")
     protected fun KotlinDslScriptsModel.toListOfScriptModels(): List<KotlinDslScriptModel> =
         scriptModels.map { (file, model) ->
