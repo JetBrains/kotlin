@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.replace
@@ -46,7 +45,6 @@ interface ComposableEmitMetadata {
 }
 
 class ComposableEmitDescriptor(
-    val composer: ResolvedCall<*>,
     override val composerMetadata: ComposerMetadata,
     override val emitCall: ResolvedCall<*>,
     override val hasChildren: Boolean,
@@ -77,7 +75,6 @@ class ComposableEmitDescriptor(
             ctorCall: ResolvedCall<*>,
             ctorParams: List<String>,
             validations: List<ValidatedAssignment>,
-            composerCall: ResolvedCall<*>,
             composerMetadata: ComposerMetadata,
             name: Name
         ): ComposableEmitDescriptor {
@@ -89,7 +86,6 @@ class ComposableEmitDescriptor(
             val original = resolvedCall.resultingDescriptor as? SimpleFunctionDescriptor
 
             val descriptor = ComposableEmitDescriptor(
-                composerCall,
                 composerMetadata,
                 emitCall,
                 hasChildren,
