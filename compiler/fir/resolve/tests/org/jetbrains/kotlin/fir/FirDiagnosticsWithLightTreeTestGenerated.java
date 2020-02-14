@@ -1269,6 +1269,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("callableReferencesAndDefaultParameters.kt")
+        public void testCallableReferencesAndDefaultParameters() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferencesAndDefaultParameters.kt");
+        }
+
         @TestMetadata("covariantArrayAsReceiver.kt")
         public void testCovariantArrayAsReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/covariantArrayAsReceiver.kt");
