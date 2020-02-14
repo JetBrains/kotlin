@@ -26,10 +26,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -115,8 +112,9 @@ public class SdkDownloadTracker implements Disposable {
    * Looks into the currently downloading SDK instances
    * and returns one with matching name
    */
+  @NotNull
   public List<Sdk> findDownloadingSdks(@Nullable String sdkName) {
-    if (sdkName == null) return null;
+    if (sdkName == null) return Collections.emptyList();
 
     List<Sdk> result = new ArrayList<>();
     for (PendingDownload task : myPendingTasks) {
