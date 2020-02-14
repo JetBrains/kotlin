@@ -1,0 +1,33 @@
+---
+typedef float __attribute__ ((__vector_size__ (16)))   KVector4f;
+
+typedef struct {
+    int i;
+} Trivial;
+
+enum E {
+    R, G, B
+};
+
+struct Complex {
+    unsigned int ui;
+    KVector4f vec4f;
+    Trivial t;
+    struct Complex* next;
+    enum E e;
+    int arr[2];
+};
+
+struct Complex produceComplex() {
+    struct Complex complex;
+    complex.ui = 128;
+    KVector4f vec = { 1.0, 1.0, 1.0, 1.0 };
+    complex.vec4f = vec;
+    Trivial t = { .i = 1 };
+    complex.t = t;
+    complex.next = 0;
+    complex.e = R;
+    complex.arr[0] = -51;
+    complex.arr[1] = -19;
+    return complex;
+};
