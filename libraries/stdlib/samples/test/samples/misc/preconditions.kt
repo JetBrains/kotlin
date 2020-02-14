@@ -14,6 +14,18 @@ class Preconditions {
     }
 
     @Sample
+    @Suppress("UNUSED_VARIABLE")
+    fun failWithUnreachable() {
+        assertFailsWith<IllegalStateException> {
+            val result = when (kotlin.random.Random.nextInt(1, 3)) {
+                1 -> "reachable"
+                2 -> "reachable"
+                else -> unreachable()
+            }
+        }
+    }
+
+    @Sample
     fun failRequireWithLazyMessage() {
 
         fun getIndices(count: Int): List<Int> {

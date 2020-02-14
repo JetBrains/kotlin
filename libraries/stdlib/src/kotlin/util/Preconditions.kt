@@ -141,3 +141,14 @@ public inline fun <T : Any> checkNotNull(value: T?, lazyMessage: () -> Any): T {
  */
 @kotlin.internal.InlineOnly
 public inline fun error(message: Any): Nothing = throw IllegalStateException(message.toString())
+
+/**
+ * Indicates unreachable code.
+ *
+ * @sample samples.misc.Preconditions.failWithUnreachable
+ * @throws IllegalStateException is thrown if this function is called, always!
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun unreachable(): Nothing = error("internal error: entered unreachable code")
