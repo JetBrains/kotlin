@@ -34,12 +34,12 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.module.EmptyModuleType;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.project.ProjectBundle;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.roots.ProjectExtension;
 import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.psi.PsiBundle;
 import com.intellij.serialization.ObjectSerializer;
 import com.intellij.ui.PlaceHolder;
 import com.intellij.util.Alarm;
@@ -109,15 +109,14 @@ public final class RemoteExternalSystemCommunicationManager implements ExternalS
 
         // IDE jars.
         List<String> classPath = new ArrayList<>(PathManager.getUtilClassPath());
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ProjectBundle.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(PlaceHolder.class));
-        ExternalSystemApiUtil.addBundle(params.getClassPath(), "messages.ProjectBundle", ProjectBundle.class);
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(PsiBundle.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(Alarm.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(DependencyScope.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExtensionPointName.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(StorageUtilKt.class));
-        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExternalSystemTaskNotificationListener.class));
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(Project.class)); //intellij.platform.core
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(PlaceHolder.class)); //intellij.platform.editor
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(DependencyScope.class)); //intellij.platform.projectModel
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ProjectExtension.class)); //intellij.platform.projectModel.impl
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(Alarm.class)); //intellij.platform.ide
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExtensionPointName.class)); //intellij.platform.extensions
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(StorageUtilKt.class)); //intellij.platform.ide.impl
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExternalSystemTaskNotificationListener.class)); //intellij.platform.externalSystem
 
         // java plugin jar if it's installed
         Class<? extends SdkType> javaSdkClass = ExternalSystemJdkProvider.getInstance().getJavaSdkType().getClass();
