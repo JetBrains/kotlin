@@ -10662,6 +10662,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/completion/partialForIlt.kt");
             }
 
+            @TestMetadata("partialForIltWithNothing.kt")
+            public void testPartialForIltWithNothing() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/completion/partialForIltWithNothing.kt");
+            }
+
             @TestMetadata("transitiveConstraint.kt")
             public void testTransitiveConstraint() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/completion/transitiveConstraint.kt");
