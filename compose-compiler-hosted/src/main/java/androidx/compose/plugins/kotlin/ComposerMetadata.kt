@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.CallResolver
@@ -58,8 +56,7 @@ class ComposerMetadata(
     //      fun <T : View> emit(key: Any, ctor: (context: Context) -> T, update: U<T>.() -> Unit)
     //
     // would produce a Pair of [View] to [Context]
-    private val emittableTypeToImplicitCtorTypes: List<Pair<List<KotlinType>, Set<KotlinType>>>,
-    val callDescriptors: List<FunctionDescriptor>
+    private val emittableTypeToImplicitCtorTypes: List<Pair<List<KotlinType>, Set<KotlinType>>>
 ) {
 
     companion object {
@@ -121,14 +118,6 @@ class ComposerMetadata(
                 psiFactory
             )
 
-            val callCandidates = resolveComposerMethodCandidates(
-                KtxNameConventions.CALL,
-                resolutionContext,
-                composerType,
-                callResolver,
-                psiFactory
-            )
-
             for (candidate in emitCandidates.map { it.candidateDescriptor }) {
                 if (candidate.name != KtxNameConventions.EMIT) continue
                 if (candidate !is SimpleFunctionDescriptor) continue
@@ -164,34 +153,29 @@ class ComposerMetadata(
                 }
             }
 
-            val callDescriptors = callCandidates.mapNotNull {
-                it.candidateDescriptor as? FunctionDescriptor
-            }
-
             return ComposerMetadata(
                 composerType,
                 emitSimpleUpperBoundTypes,
                 emitCompoundUpperBoundTypes,
-                emittableTypeToImplicitCtorTypes,
-                callDescriptors
+                emittableTypeToImplicitCtorTypes
             )
         }
 
         fun getOrBuild(
-            descriptor: VariableDescriptor,
+            composerType: KotlinType,
             callResolver: CallResolver,
             psiFactory: KtPsiFactory,
             resolutionContext: BasicCallResolutionContext
         ): ComposerMetadata {
             val meta = resolutionContext.trace.bindingContext[
                     ComposeWritableSlices.COMPOSER_METADATA,
-                    descriptor
+                    composerType
             ]
             return if (meta == null) {
-                val built = build(descriptor.type, callResolver, psiFactory, resolutionContext)
+                val built = build(composerType, callResolver, psiFactory, resolutionContext)
                 resolutionContext.trace.record(
                     ComposeWritableSlices.COMPOSER_METADATA,
-                    descriptor,
+                    composerType,
                     built
                 )
                 built

@@ -18,7 +18,6 @@ package androidx.compose.plugins.kotlin
 
 import android.widget.TextView
 import androidx.compose.Composer
-import androidx.compose.currentComposerNonNull
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -837,7 +836,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         val composeMethod = instanceClass.getMethod("compose", Composer::class.java)
 
         return composeMulti({
-            composeMethod.invoke(instanceOfClass, currentComposerNonNull)
+            composeMethod.invoke(instanceOfClass, it)
         }) {
             advanceMethod.invoke(instanceOfClass)
         }

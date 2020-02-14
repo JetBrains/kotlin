@@ -159,7 +159,6 @@ class ComposeEmitResolver(
     fun resolveCandidates(
         call: Call,
         candidates: Collection<FunctionDescriptor>,
-        getComposerCall: ResolvedCall<*>,
         name: Name,
         resolutionContext: ResolutionContext<*>
     ): List<ComposableEmitDescriptor> {
@@ -230,7 +229,6 @@ class ComposeEmitResolver(
         val result = resolveChild(
             openTagExpr,
             candidates,
-            getComposerCall,
             name,
             makeCall(
                 callElement = call.callElement,
@@ -249,7 +247,6 @@ class ComposeEmitResolver(
     private fun resolveChild(
         expression: KtExpression,
         candidates: Collection<FunctionDescriptor>,
-        getComposerCall: ResolvedCall<*>,
         name: Name,
         call: Call,
         attributes: Map<String, AttributeInfo>,
@@ -398,7 +395,6 @@ class ComposeEmitResolver(
                 validations = setterValidations,
                 pivotals = pivotals,
                 ctorParams = resolvedCall.buildParamsFromAttributes(attributes),
-                composerCall = getComposerCall,
                 emitCall = emitCall,
                 name = name,
                 composerMetadata = composer

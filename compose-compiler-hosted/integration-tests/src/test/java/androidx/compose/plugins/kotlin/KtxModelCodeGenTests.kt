@@ -19,7 +19,6 @@ package androidx.compose.plugins.kotlin
 import android.widget.TextView
 import androidx.compose.FrameManager
 import androidx.compose.Composer
-import androidx.compose.currentComposerNonNull
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -337,7 +336,7 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
         val composeMethod = instanceClass.getMethod("compose", Composer::class.java)
 
         return composeMulti({
-            composeMethod.invoke(instanceOfClass, currentComposerNonNull)
+            composeMethod.invoke(instanceOfClass, it)
         }) {
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()
