@@ -316,15 +316,15 @@ class SwiftNotThrowingWithBridge : ThrowsWithBridge {
     }
 }
 
-func testExceptions() throws {
-    func testThrowing(_ block: () throws -> Void) throws {
-        do {
-            try block()
-        } catch let error as NSError {
-            try assertTrue(error.kotlinException is MyException)
-        }
+private func testThrowing(_ block: () throws -> Void) throws {
+    do {
+        try block()
+    } catch let error as NSError {
+        try assertTrue(error.kotlinException is MyException)
     }
+}
 
+func testExceptions() throws {
     try testThrowing { try ValuesKt.throwException(error: false) }
     do {
         try ValuesKt.throwException(error: true)
@@ -1197,6 +1197,46 @@ func testStringConversion() throws {
     try test2()
 }
 
+class GH3825SwiftImpl : GH3825 {
+    class E : Error {}
+
+    func call0(callback: () -> KotlinBoolean) throws {
+        if callback().boolValue { throw E() }
+    }
+
+    func call1(doThrow: Bool, callback: () -> Void) throws {
+        if doThrow { throw E() }
+        callback()
+    }
+
+    func call2(callback: () -> Void, doThrow: Bool) throws {
+        if doThrow { throw E() }
+        callback()
+    }
+}
+
+func testGH3825() throws {
+    try ValuesKt.testGH3825(gh3825: GH3825SwiftImpl())
+
+    let test = GH3825KotlinImpl()
+    var count = 0
+
+    try testThrowing { try test.call0 { true } }
+    try test.call0 {
+        count += 1
+        return false
+    }
+    try assertEquals(actual: count, expected: 1)
+
+    try testThrowing { try test.call1(doThrow: true) { count += 1 } }
+    try test.call1(doThrow: false) { count += 1 }
+    try assertEquals(actual: count, expected: 2)
+
+    try testThrowing { try test.call2(callback: { count += 1 }, doThrow: true)}
+    try test.call2(callback: { count += 1 }, doThrow: false)
+    try assertEquals(actual: count, expected: 3)
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -1253,6 +1293,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestGH3503_3", method: withAutorelease(testGH3503_3)),
             TestCase(name: "TestGH3525", method: withAutorelease(testGH3525)),
             TestCase(name: "TestStringConversion", method: withAutorelease(testStringConversion)),
+            TestCase(name: "TestGH3825", method: withAutorelease(testGH3825)),
 
             // Stress test, must remain the last one:
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),

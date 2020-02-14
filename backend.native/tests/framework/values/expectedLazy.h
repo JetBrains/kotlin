@@ -1106,6 +1106,24 @@ __attribute__((swift_name("TestStringConversion")))
 @property id str __attribute__((swift_name("str")));
 @end;
 
+__attribute__((swift_name("GH3825")))
+@protocol ValuesGH3825
+@required
+- (BOOL)call0AndReturnError:(NSError * _Nullable * _Nullable)error callback:(ValuesBoolean *(^)(void))callback __attribute__((swift_name("call0(callback:)")));
+- (BOOL)call1DoThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error callback:(void (^)(void))callback __attribute__((swift_name("call1(doThrow:callback:)")));
+- (BOOL)call2Callback:(void (^)(void))callback doThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call2(callback:doThrow:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("GH3825KotlinImpl")))
+@interface ValuesGH3825KotlinImpl : ValuesBase <ValuesGH3825>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (BOOL)call0AndReturnError:(NSError * _Nullable * _Nullable)error callback:(ValuesBoolean *(^)(void))callback __attribute__((swift_name("call0(callback:)")));
+- (BOOL)call1DoThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error callback:(void (^)(void))callback __attribute__((swift_name("call1(doThrow:callback:)")));
+- (BOOL)call2Callback:(void (^)(void))callback doThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call2(callback:doThrow:)")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
@@ -1199,6 +1217,7 @@ __attribute__((swift_name("ValuesKt")))
 + (int32_t)testAbstractInterfaceCallX:(id<ValuesIAbstractInterface>)x __attribute__((swift_name("testAbstractInterfaceCall(x:)")));
 + (int32_t)testAbstractInterfaceCall2X:(id<ValuesIAbstractInterface2>)x __attribute__((swift_name("testAbstractInterfaceCall2(x:)")));
 + (void)fooA:(ValuesKotlinAtomicReference<id> *)a __attribute__((swift_name("foo(a:)")));
++ (BOOL)testGH3825Gh3825:(id<ValuesGH3825>)gh3825 error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testGH3825(gh3825:)")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));

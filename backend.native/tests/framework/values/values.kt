@@ -10,6 +10,7 @@ package conversions
 
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
+import kotlin.native.internal.ObjCErrorException
 import kotlin.native.ref.WeakReference
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
@@ -328,7 +329,7 @@ fun testSwiftThrowing(methods: SwiftOverridableMethodsWithThrows) = with(methods
 }
 
 private inline fun assertSwiftThrowing(block: () -> Unit) =
-        assertFailsWith<kotlin.native.internal.ObjCErrorException>(block = block)
+        assertFailsWith<ObjCErrorException>(block = block)
 
 @Throws(Throwable::class)
 fun testSwiftNotThrowing(methods: SwiftOverridableMethodsWithThrows) = with(methods) {
@@ -356,7 +357,7 @@ abstract class ThrowsWithBridge : ThrowsWithBridgeBase {
 
 @Throws(Throwable::class)
 fun testSwiftThrowing(test: ThrowsWithBridgeBase, flag: Boolean) {
-    assertFailsWith<kotlin.native.internal.ObjCErrorException> {
+    assertFailsWith<ObjCErrorException> {
         if (flag) {
             test.plusOne(0)
         } else {
@@ -936,3 +937,42 @@ class TestStringConversion {
 }
 
 fun foo(a: kotlin.native.concurrent.AtomicReference<*>) {}
+
+interface GH3825 {
+    @Throws(MyException::class) fun call0(callback: () -> Boolean)
+    @Throws(MyException::class) fun call1(doThrow: Boolean, callback: () -> Unit)
+    @Throws(MyException::class) fun call2(callback: () -> Unit, doThrow: Boolean)
+}
+
+class GH3825KotlinImpl : GH3825 {
+    override fun call0(callback: () -> Boolean) {
+        if (callback()) throw MyException()
+    }
+
+    override fun call1(doThrow: Boolean, callback: () -> Unit) {
+        if (doThrow) throw MyException()
+        callback()
+    }
+
+    override fun call2(callback: () -> Unit, doThrow: Boolean) {
+        if (doThrow) throw MyException()
+        callback()
+    }
+}
+
+@Throws(Throwable::class)
+fun testGH3825(gh3825: GH3825) {
+    var count = 0
+
+    assertFailsWith<ObjCErrorException> { gh3825.call0({ true }) }
+    gh3825.call0({ count += 1; false })
+    assertEquals(1, count)
+
+    assertFailsWith<ObjCErrorException> { gh3825.call1(true, { fail() }) }
+    gh3825.call1(false, { count += 1 })
+    assertEquals(2, count)
+
+    assertFailsWith<ObjCErrorException> { gh3825.call2({ fail() }, true) }
+    gh3825.call2({ count += 1 }, false)
+    assertEquals(3, count)
+}
