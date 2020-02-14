@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
@@ -94,8 +96,25 @@ class TypeDeserializer(
             KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
         }
 
-        val abbreviatedTypeProto = proto.abbreviatedType(c.typeTable) ?: return simpleType
-        return simpleType.withAbbreviation(simpleType(abbreviatedTypeProto))
+        val computedType = proto.abbreviatedType(c.typeTable)?.let {
+            simpleType.withAbbreviation(simpleType(it))
+        } ?: simpleType
+
+        // TODO: move this hack in some platform specific place ASAP
+        if (proto.hasClassName()) {
+            val classId = c.nameResolver.getClassId(proto.className)
+            val originalPackageFqn = classId.packageFqName
+            if (originalPackageFqn in forwardPackagesSet) {
+                // This hack is about keeping original class id written into proto which is required for correct IR linkage
+                val classDescriptor = constructor.declarationDescriptor as ClassDescriptor
+                val realPackageFqn = (classDescriptor.containingDeclaration as PackageFragmentDescriptor).fqName
+                if (originalPackageFqn != realPackageFqn) {
+                    return SupposititiousSimpleType(computedType, classId)
+                }
+            }
+        }
+
+        return computedType
     }
 
     private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor {
@@ -253,4 +272,15 @@ class TypeDeserializer(
     }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")
+
+    companion object {
+        private val cNames = FqName("cnames")
+        private val cNamesStructs = cNames.child(Name.identifier("structs"))
+
+        private val objCNames = FqName("objcnames")
+        private val objCNamesClasses = objCNames.child(Name.identifier("classes"))
+        private val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
+
+        private val forwardPackagesSet = setOf(cNamesStructs, objCNamesClasses, objCNamesProtocols)
+    }
 }
