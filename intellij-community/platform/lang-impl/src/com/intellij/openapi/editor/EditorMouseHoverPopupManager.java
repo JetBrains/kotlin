@@ -18,6 +18,7 @@ import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -899,7 +900,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       if (!Registry.is("editor.new.mouse.hover.popups")) {
         return;
       }
-      if (action instanceof HintManagerImpl.ActionToIgnore) return;
+      if (action instanceof HintManagerImpl.ActionToIgnore || action instanceof ActionGroup) return;
       getInstance().cancelProcessingAndCloseHint();
     }
 
