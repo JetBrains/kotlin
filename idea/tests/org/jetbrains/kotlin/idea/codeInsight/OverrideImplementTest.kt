@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
+import org.jetbrains.kotlin.idea.test.withCustomLanguageAndApiVersion
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
@@ -282,8 +282,9 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     }
 
     fun testCopyExperimental() {
-        configureLanguageAndApiVersion(project, module, "1.3", "1.3")
-        doOverrideFileTest("targetFun")
+        withCustomLanguageAndApiVersion(project, module, "1.3", "1.3") {
+            doOverrideFileTest("targetFun")
+        }
     }
 
     fun testUnresolvedType() {
