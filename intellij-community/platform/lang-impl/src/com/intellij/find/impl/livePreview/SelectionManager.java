@@ -64,8 +64,8 @@ public class SelectionManager {
             }
           }
         });
-        editor.getSelectionModel().setSelection(cursor.getStartOffset(), cursor.getEndOffset());
         editor.getCaretModel().moveToOffset(cursor.getEndOffset());
+        editor.getSelectionModel().setSelection(cursor.getStartOffset(), cursor.getEndOffset());
       }
       else {
         FindUtil.selectSearchResultInEditor(editor, cursor, -1);
