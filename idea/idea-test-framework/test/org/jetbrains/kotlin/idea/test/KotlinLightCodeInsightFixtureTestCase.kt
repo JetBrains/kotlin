@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -89,7 +88,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
 
-        EditorTracker.getInstance(project)
+        editorTrackerProjectOpened(project)
 
         invalidateLibraryCache(project)
 
