@@ -33,6 +33,7 @@ import java.util.List;
 
 import static com.intellij.openapi.project.ProjectUtilCore.displayUrlRelativeToProject;
 import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
+import static com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR;
 import static com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR;
 
 public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
@@ -171,7 +172,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     String filePath = myNewFileName;
     if (mySubPath.length > 0) {
       filePath = toSystemDependentName(
-        StringUtil.join(mySubPath, Character.toString(VFS_SEPARATOR_CHAR))
+        StringUtil.join(mySubPath, VFS_SEPARATOR)
         + VFS_SEPARATOR_CHAR + myNewFileName
       );
     }
@@ -245,7 +246,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
     String path = f.getPath();
     if (pathToCreate.length > 0) {
-      path += VFS_SEPARATOR_CHAR + StringUtil.join(pathToCreate, VFS_SEPARATOR_CHAR + "");
+      path += VFS_SEPARATOR_CHAR + StringUtil.join(pathToCreate, VFS_SEPARATOR);
     }
     String presentablePath = f.getFileSystem().extractPresentableUrl(path);
 
