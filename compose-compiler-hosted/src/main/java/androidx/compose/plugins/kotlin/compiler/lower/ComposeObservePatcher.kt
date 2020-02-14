@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -83,6 +84,7 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopySymbolRemapper) :
@@ -231,7 +233,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                     index = 0,
                     annotations = Annotations.EMPTY,
                     name = KtxNameConventions.COMPOSER_PARAMETER,
-                    outType = composerTypeDescriptor.defaultType,
+                    outType = composerTypeDescriptor.defaultType.makeNullable(),
                     declaresDefaultValue = false,
                     isCrossinline = false,
                     isNoinline = false,
@@ -261,7 +263,7 @@ class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopy
                     val localIrBuilder = context.createIrBuilder(fn.symbol)
                     fn.addValueParameter(
                         KtxNameConventions.COMPOSER_PARAMETER.identifier,
-                        composerTypeDescriptor.defaultType.toIrType()
+                        composerTypeDescriptor.defaultType.toIrType().makeNullable()
                     )
                     fn.body = localIrBuilder.irBlockBody {
                         // Call the function again with the same parameters

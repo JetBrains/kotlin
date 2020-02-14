@@ -76,6 +76,25 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testNoComposerNullCheck(): Unit = validateBytecode(
+        """
+        @Composable fun Foo() {}
+        """
+    ) {
+        assert(!it.contains("INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull"))
+    }
+
+    @Test
+    fun testNoComposerNullCheck2(): Unit = validateBytecode(
+        """
+        val foo = @Composable {}
+        val bar = @Composable { x: Int -> }
+        """, dumpClasses = true
+    ) {
+        assert(!it.contains("INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull"))
+    }
+
+    @Test
     fun testParameterLambdasHaveRestartGroups(): Unit = checkApi(
         """
             @Composable fun Foo(children: @Composable() (x: Int) -> Unit) {
