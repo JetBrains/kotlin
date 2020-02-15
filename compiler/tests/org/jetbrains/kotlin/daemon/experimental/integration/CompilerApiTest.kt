@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
 import org.junit.Ignore
 import java.io.File
@@ -100,7 +100,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             }
             return code to outputs
         } finally {
-            KtUsefulTestCase.resetApplicationToNull(application)
+            resetApplicationToNull(application)
         }
     }
 

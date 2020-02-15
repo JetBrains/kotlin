@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
@@ -158,7 +158,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         override fun dispose() {
             Disposer.dispose(parentDisposable)
             if (appWasNull) {
-                KtUsefulTestCase.resetApplicationToNull()
+                resetApplicationToNull()
             }
         }
     }
