@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.upperIfFlexible
 class MemoryOptimizationsTest : KtUsefulTestCase() {
     fun testBasicFlexibleTypeCase() {
         val moduleDescriptor = JvmResolveUtil.analyze(
-                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
         ).moduleDescriptor
 
         val appendableClass =
@@ -71,7 +71,7 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         val environment =
                 KotlinTestUtils
                         .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                                myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
+                                testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
                         )
         val moduleDescriptor =
                 JvmResolveUtil.analyze(
