@@ -99,7 +99,7 @@ private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
         val req = JdkRequirements.parseRequirement(sdk) ?: return null
         LOG.info("Looking for a local SDK for ${sdk.sdkType.presentableName} with name ${sdk}")
 
-        fun List<JavaLocalSdkFix>.pickBestMatch() = this.minBy { it.version }
+        fun List<JavaLocalSdkFix>.pickBestMatch() = this.maxBy { it.version }
 
         return tryUsingExistingSdk(req, sdk.sdkType, indicator).pickBestMatch()
                ?: lazyLocalJdks.filter { req.matches(it) }.pickBestMatch()
