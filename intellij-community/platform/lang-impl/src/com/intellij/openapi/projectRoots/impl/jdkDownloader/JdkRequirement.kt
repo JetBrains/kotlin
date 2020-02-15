@@ -47,14 +47,6 @@ object JdkRequirements {
     val homePredicate = request.sdkHomePredicate
     val versionStringPredicate = request.sdkVersionStringPredicate
 
-    if (nameFilter == null && homePredicate == null && versionStringPredicate == null) {
-      return null
-    }
-
-    if (homePredicate == null && versionStringPredicate == null) {
-      return nameFilter
-    }
-
     return object: JdkRequirement {
       override fun matches(sdk: Sdk): Boolean {
         if (nameFilter != null) {
