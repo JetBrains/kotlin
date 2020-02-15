@@ -32,7 +32,9 @@ class GradleScriptOutOfSourceNotificationProvider(private val project: Project) 
             val link = createActionLabel("") {}
             link.setIcon(AllIcons.General.ContextHelp)
             link.setUseIconAsLink(true)
-            link.toolTipText = "Script configuration is used by IDE in highlighting, completion and other functionalities"
+            link.toolTipText = "The external Gradle project needs to be imported to get this script analyzed. <br/>" +
+                    "You can import the related Gradle project or click \"Load script configuration\" " +
+                    "to get code insight without importing."
         }
     }
 
