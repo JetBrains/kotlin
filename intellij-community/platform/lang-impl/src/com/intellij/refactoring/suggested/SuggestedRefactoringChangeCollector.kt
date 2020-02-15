@@ -50,23 +50,22 @@ class SuggestedRefactoringChangeCollector(
     val project = initialState.declaration.project
     val psiDocumentManager = PsiDocumentManager.getInstance(project)
     val document = psiDocumentManager.getDocument(psiFile)!!
-    require(psiDocumentManager.isCommitted(document))
-
-    fun isSomethingChanged() = state !== initialState || !psiDocumentManager.isCommitted(document)
 
     ReadAction.nonBlocking {
         val states = initialState.refactoringSupport.availability.amendStateInBackground(initialState)
         states.forEach { newState ->
           ApplicationManager.getApplication().invokeLater {
-            if (!isSomethingChanged()) {
+            if (state === initialState) {
               state = newState
-              updateAvailabilityIndicator()
+              if (psiDocumentManager.isCommitted(document)) { // we can't update availability indicator if document is not committed
+                updateAvailabilityIndicator()
+              }
             }
           }
         }
       }
       .inSmartMode(project)
-      .expireWhen(::isSomethingChanged) //TODO: is explicit cancellation better?
+      .expireWhen { state !== initialState } //TODO: is explicit cancellation better?
       .expireWith(project)
       .submit(AppExecutorUtil.getAppExecutorService())
   }
