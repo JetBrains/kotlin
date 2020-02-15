@@ -35,7 +35,6 @@ class SuggestedRefactoringChangeCollector(
     ApplicationManager.getApplication().assertIsDispatchThread()
     state = state?.withSyntaxError(true)
     updateAvailabilityIndicator()
-    amendStateInBackground()
   }
 
   override fun reset() {
