@@ -3,6 +3,7 @@
 package com.intellij.refactoring.rename;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.find.findUsages.FindUsagesHelper;
 import com.intellij.ide.actions.CopyReferenceAction;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.Language;
@@ -35,6 +36,7 @@ import com.intellij.refactoring.util.TextOccurrencesUtilBase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageInfoFactory;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -65,55 +67,95 @@ public class RenameUtil {
                                                  Map<? extends PsiElement, String> allRenames) {
     List<UsageInfo> result = Collections.synchronizedList(new ArrayList<>());
 
-    RenamePsiElementProcessor processor = RenamePsiElementProcessor.forElement(element);
+    RenamePsiElementProcessor elementProcessor = RenamePsiElementProcessor.forElement(element);
+
+    processUsages(info -> {
+                    result.add(info);
+                    return true;
+                  },
+                  element,
+                  elementProcessor,
+                  newName,
+                  searchScope,
+                  true,
+                  searchInStringsAndComments,
+                  searchForTextOccurrences);
+
+    elementProcessor.findCollisions(element, newName, allRenames, result);
+
+    return result.toArray(UsageInfo.EMPTY_ARRAY);
+  }
+
+  public static boolean hasNonCodeUsages(@NotNull PsiElement element,
+                                         String newName,
+                                         @NotNull SearchScope searchScope) {
+    RenamePsiElementProcessor elementProcessor = RenamePsiElementProcessor.forElement(element);
+    return !processUsages(info -> false, element, elementProcessor, newName, searchScope, false, true, true);
+  }
+
+  private static boolean processUsages(
+    @NotNull Processor<UsageInfo> processor,
+    @NotNull PsiElement element,
+    @NotNull RenamePsiElementProcessor elementProcessor,
+    String newName,
+    @NotNull SearchScope searchScope,
+    boolean searchInCode,
+    boolean searchInStringsAndComments,
+    boolean searchForTextOccurrences
+  ) {
     SearchScope useScope = PsiSearchHelper.getInstance(element.getProject()).getUseScope(element);
     if (!(useScope instanceof LocalSearchScope)) {
       useScope = searchScope.intersectWith(useScope);
     }
-    Collection<PsiReference> refs = processor.findReferences(element, useScope, searchInStringsAndComments);
-    for (final PsiReference ref : refs) {
-      if (ref == null) {
-        LOG.error("null reference from processor " + processor);
-        continue;
+
+    if (searchInCode) {
+      Collection<PsiReference> refs = elementProcessor.findReferences(element, useScope, searchInStringsAndComments);
+      for (final PsiReference ref : refs) {
+        if (ref == null) {
+          LOG.error("null reference from processor " + elementProcessor);
+          continue;
+        }
+        PsiElement referenceElement = ref.getElement();
+        if (!processor.process(elementProcessor.createUsageInfo(element, ref, referenceElement))) return false;
       }
-      PsiElement referenceElement = ref.getElement();
-      result.add(processor.createUsageInfo(element, ref, referenceElement));
     }
 
-    processor.findCollisions(element, newName, allRenames, result);
-
-    final PsiElement searchForInComments = processor.getElementToSearchInStringsAndComments(element);
+    final PsiElement searchForInComments = elementProcessor.getElementToSearchInStringsAndComments(element);
 
     if (searchInStringsAndComments && searchForInComments != null) {
       String stringToSearch = ElementDescriptionUtil.getElementDescription(searchForInComments, NonCodeSearchDescriptionLocation.STRINGS_AND_COMMENTS);
       if (stringToSearch.length() > 0) {
-        final String stringToReplace = getStringToReplace(element, newName, false, processor);
+        final String stringToReplace = getStringToReplace(element, newName, false, elementProcessor);
         UsageInfoFactory factory = new NonCodeUsageInfoFactory(searchForInComments, stringToReplace);
-        TextOccurrencesUtilBase.addUsagesInStringsAndComments(searchForInComments, searchScope, stringToSearch, result, factory);
+        if (!TextOccurrencesUtilBase.processUsagesInStringsAndComments(processor, searchForInComments,
+                                                                       searchScope, stringToSearch, factory)) return false;
       }
     }
 
     if (searchForTextOccurrences && searchForInComments != null) {
       String stringToSearch = ElementDescriptionUtil.getElementDescription(searchForInComments, NonCodeSearchDescriptionLocation.NON_JAVA);
       if (stringToSearch.length() > 0) {
-        final String stringToReplace = getStringToReplace(element, newName, true, processor);
-        addTextOccurrence(searchForInComments, result, searchScope, stringToSearch, stringToReplace);
+        final String stringToReplace = getStringToReplace(element, newName, true, elementProcessor);
+        if (!processTextOccurrences(processor, searchForInComments, searchScope, stringToSearch, stringToReplace)) return false;
       }
 
-      final Pair<String, String> additionalStringToSearch = processor.getTextOccurrenceSearchStrings(searchForInComments, newName);
+      final Pair<String, String> additionalStringToSearch = elementProcessor.getTextOccurrenceSearchStrings(searchForInComments, newName);
       if (additionalStringToSearch != null && additionalStringToSearch.first.length() > 0) {
-        addTextOccurrence(searchForInComments, result, searchScope, additionalStringToSearch.first, additionalStringToSearch.second);
+        if (!processTextOccurrences(processor, searchForInComments, searchScope,
+                                    additionalStringToSearch.first, additionalStringToSearch.second)) return false;
       }
     }
 
-    return result.toArray(UsageInfo.EMPTY_ARRAY);
+    return true;
   }
 
-  private static void addTextOccurrence(@NotNull PsiElement element,
-                                        @NotNull List<? super UsageInfo> result,
-                                        @NotNull SearchScope searchScope,
-                                        @NotNull String stringToSearch,
-                                        String stringToReplace) {
+  private static boolean processTextOccurrences(
+    @NotNull Processor<UsageInfo> processor,
+    @NotNull PsiElement element,
+    @NotNull SearchScope searchScope,
+    @NotNull String stringToSearch,
+    String stringToReplace
+  ) {
     UsageInfoFactory factory = new UsageInfoFactory() {
       @Override
       public UsageInfo createUsageInfo(@NotNull PsiElement usage, int startOffset, int endOffset) {
@@ -123,7 +165,10 @@ public class RenameUtil {
       }
     };
     if (searchScope instanceof GlobalSearchScope) {
-      TextOccurrencesUtilBase.addTextOccurrences(element, stringToSearch, (GlobalSearchScope)searchScope, result, factory);
+      return FindUsagesHelper.processTextOccurrences(element, stringToSearch, (GlobalSearchScope)searchScope, factory, processor);
+    }
+    else {
+      return true;
     }
   }
 

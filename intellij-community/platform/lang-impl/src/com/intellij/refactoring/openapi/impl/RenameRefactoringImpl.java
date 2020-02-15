@@ -64,4 +64,9 @@ public class RenameRefactoringImpl extends RefactoringImpl<RenameProcessor> impl
       }
     }
   }
+
+  @Override
+  public boolean hasNonCodeUsages() {
+    return myProcessor.hasNonCodeUsages();
+  }
 }

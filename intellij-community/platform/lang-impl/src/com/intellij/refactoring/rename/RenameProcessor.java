@@ -317,6 +317,14 @@ public class RenameProcessor extends BaseRefactoringProcessor {
     return usageInfos;
   }
 
+  public boolean hasNonCodeUsages() {
+    for (PsiElement element : new ArrayList<>(myAllRenames.keySet())) {
+      String newName = myAllRenames.get(element);
+      if (RenameUtil.hasNonCodeUsages(element, newName, myRefactoringScope)) return true;
+    }
+    return false;
+  }
+
   @Override
   protected void refreshElements(PsiElement @NotNull [] elements) {
     LOG.assertTrue(elements.length > 0);
