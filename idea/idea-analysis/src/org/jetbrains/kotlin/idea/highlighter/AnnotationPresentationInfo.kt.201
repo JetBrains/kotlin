@@ -68,6 +68,7 @@ class AnnotationPresentationInfo(
             .also { builder -> highlightType?.let { builder.highlightType(it) } }
             .also { builder -> textAttributes?.let { builder.textAttributes(it) } }
             .also { consumer(it) }
+            .create()
     }
 
     private fun getMessage(diagnostic: Diagnostic): String {
