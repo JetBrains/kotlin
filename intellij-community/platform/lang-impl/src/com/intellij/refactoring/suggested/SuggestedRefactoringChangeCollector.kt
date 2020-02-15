@@ -4,6 +4,7 @@ package com.intellij.refactoring.suggested
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.AppExecutorUtil
 
@@ -30,7 +31,7 @@ class SuggestedRefactoringChangeCollector(
     amendStateInBackground()
   }
 
-  override fun inconsistentState(refactoringSupport: SuggestedRefactoringSupport) {
+  override fun inconsistentState() {
     ApplicationManager.getApplication().assertIsDispatchThread()
     state = state?.withSyntaxError(true)
     updateAvailabilityIndicator()
@@ -46,12 +47,19 @@ class SuggestedRefactoringChangeCollector(
   private fun amendStateInBackground() {
     if (!_amendStateInBackgroundEnabled) return
     val initialState = state ?: return
+    val psiFile = initialState.declaration.containingFile
     val project = initialState.declaration.project
+    val psiDocumentManager = PsiDocumentManager.getInstance(project)
+    val document = psiDocumentManager.getDocument(psiFile)!!
+    require(psiDocumentManager.isCommitted(document))
+
+    fun isSomethingChanged() = state !== initialState || !psiDocumentManager.isCommitted(document)
+
     ReadAction.nonBlocking {
         val states = initialState.refactoringSupport.availability.amendStateInBackground(initialState)
         states.forEach { newState ->
           ApplicationManager.getApplication().invokeLater {
-            if (state == initialState) {
+            if (!isSomethingChanged()) {
               state = newState
               updateAvailabilityIndicator()
             }
@@ -59,7 +67,7 @@ class SuggestedRefactoringChangeCollector(
         }
       }
       .inSmartMode(project)
-      .expireWhen { state != initialState } //TODO: is explicit cancellation better?
+      .expireWhen(::isSomethingChanged) //TODO: is explicit cancellation better?
       .expireWith(project)
       .submit(AppExecutorUtil.getAppExecutorService())
   }

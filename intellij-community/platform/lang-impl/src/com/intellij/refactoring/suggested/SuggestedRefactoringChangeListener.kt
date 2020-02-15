@@ -239,7 +239,7 @@ class SuggestedRefactoringChangeListener(
         val range = signatureRange?.union(watchedRange) ?: watchedRange
         if (psiFile.hasErrorElementInRange(range)) {
           if (!editingState.isRefactoringSuppressed) {
-            watcher.inconsistentState(refactoringSupport)
+            watcher.inconsistentState()
           }
         }
         else {
@@ -303,6 +303,6 @@ class SuggestedRefactoringChangeListener(
 interface SuggestedRefactoringSignatureWatcher {
   fun editingStarted(declaration: PsiElement, refactoringSupport: SuggestedRefactoringSupport)
   fun nextSignature(declaration: PsiElement, refactoringSupport: SuggestedRefactoringSupport)
-  fun inconsistentState(refactoringSupport: SuggestedRefactoringSupport)
+  fun inconsistentState()
   fun reset()
 }

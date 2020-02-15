@@ -204,7 +204,9 @@ internal fun SuggestedRefactoringAvailabilityIndicator.update(
   refactoringSupport: SuggestedRefactoringSupport
 ) {
   val psiFile = declaration.containingFile
-  val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)!!
+  val psiDocumentManager = PsiDocumentManager.getInstance(psiFile.project)
+  val document = psiDocumentManager.getDocument(psiFile)!!
+  require(psiDocumentManager.isCommitted(document))
 
   val refactoringAvailable: Boolean
   val tooltip: String
