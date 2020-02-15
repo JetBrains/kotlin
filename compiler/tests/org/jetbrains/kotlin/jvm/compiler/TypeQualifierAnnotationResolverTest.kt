@@ -101,7 +101,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
             )
         }
 
-        val environment = KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val container = JvmResolveUtil.createContainer(environment)
         val typeQualifierResolver = container.get<JavaResolverComponents>().annotationTypeQualifierResolver
 
