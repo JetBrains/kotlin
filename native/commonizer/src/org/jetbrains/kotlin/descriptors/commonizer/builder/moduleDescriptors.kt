@@ -33,7 +33,7 @@ private fun CirModule.buildDescriptor(
     val moduleDescriptor = ModuleDescriptorImpl(
         moduleName = name,
         storageManager = components.storageManager,
-        builtIns = builtIns,
+        builtIns = components.targetComponents[index].builtIns,
         capabilities = emptyMap() // TODO: preserve capabilities from the original module descriptors, KT-33998
     )
 

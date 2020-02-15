@@ -29,7 +29,7 @@ internal class DeclarationsBuilderVisitor1(
         check(data.isEmpty()) // root node may not have containing declarations
         check(components.targetComponents.size == node.dimension)
 
-        val allTargets = (node.target + node.common()!!).map { it.target }
+        val allTargets = (node.target + node.common()!!).map { it!!.target }
 
         val modulesByTargets = HashMap<Target, MutableList<ModuleDescriptorImpl>>()
 

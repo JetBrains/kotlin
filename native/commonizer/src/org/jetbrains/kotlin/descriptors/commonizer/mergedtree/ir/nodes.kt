@@ -21,7 +21,7 @@ interface CirNodeWithFqName<T : CirDeclaration, R : CirDeclaration> : CirNode<T,
 }
 
 class CirRootNode(
-    override val target: List<CirRoot>,
+    override val target: List<CirRoot?>,
     override val common: NullableLazyValue<CirRoot>
 ) : CirNode<CirRoot, CirRoot> {
     class ClassifiersCacheImpl : CirClassifiersCache {

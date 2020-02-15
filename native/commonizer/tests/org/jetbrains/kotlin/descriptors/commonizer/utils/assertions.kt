@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizationPerformed
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizationResult
+import org.jetbrains.kotlin.descriptors.commonizer.Result
 import org.jetbrains.kotlin.test.util.DescriptorValidator.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.File
@@ -22,7 +22,7 @@ fun assertIsDirectory(file: File) {
 }
 
 @ExperimentalContracts
-fun assertCommonizationPerformed(result: CommonizationResult) {
+fun assertCommonizationPerformed(result: Result) {
     contract {
         returns() implies (result is CommonizationPerformed)
     }

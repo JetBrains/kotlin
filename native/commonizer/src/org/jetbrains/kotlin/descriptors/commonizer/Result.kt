@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
-sealed class CommonizationResult
+sealed class Result
 
-object NothingToCommonize : CommonizationResult()
+object NothingToCommonize : Result()
 
 class CommonizationPerformed(
     val modulesByTargets: Map<Target, Collection<ModuleDescriptor>>
-) : CommonizationResult() {
+) : Result() {
     val commonTarget: OutputTarget by lazy {
         modulesByTargets.keys.filterIsInstance<OutputTarget>().single()
     }

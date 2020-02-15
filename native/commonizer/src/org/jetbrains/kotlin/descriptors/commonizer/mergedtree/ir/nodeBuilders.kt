@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
-import org.jetbrains.kotlin.descriptors.commonizer.OutputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
@@ -21,12 +20,14 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun buildRootNode(
     storageManager: StorageManager,
-    targets: List<InputTarget>
-): CirRootNode = CirRootNode(
-    target = targets.map { CirRoot(it) },
-    common = storageManager.createNullableLazyValue {
-        CirRoot(OutputTarget(targets.toSet()))
-    }
+    targetProviders: List<TargetProvider>
+): CirRootNode = buildNode(
+    storageManager = storageManager,
+    descriptors = targetProviders,
+    targetDeclarationProducer = { CirRoot(it.target, it.builtInsClass.name, it.builtInsProvider) },
+    commonValueProducer = { commonize(it, RootCommonizer.default()) },
+    recursionMarker = null,
+    nodeProducer = ::CirRootNode
 )
 
 internal fun buildModuleNode(

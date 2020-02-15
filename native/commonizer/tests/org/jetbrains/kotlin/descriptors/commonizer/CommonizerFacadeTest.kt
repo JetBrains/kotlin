@@ -55,19 +55,6 @@ class CommonizerFacadeTest {
         }
     }
 
-    @Test
-    fun mismatchedModules() {
-        val modules = listOf(
-            mockEmptyModule("<foo>"),
-            mockEmptyModule("<foo>"),
-            mockEmptyModule("<bar>")
-        )
-
-        val result = runCommonization(modules.eachModuleAsTarget())
-
-        assertEquals(NothingToCommonize, result)
-    }
-
     private fun assertSingleModuleForTarget(
         @Suppress("SameParameterValue") expectedModuleName: String,
         modules: Collection<ModuleDescriptor>

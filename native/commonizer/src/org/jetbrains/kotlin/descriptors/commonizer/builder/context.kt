@@ -154,16 +154,16 @@ fun CirRootNode.createGlobalBuilderComponents(
 
     val targetContexts = (0 until dimension).map { index ->
         val isCommon = index == indexOfCommon
-        val target = (if (isCommon) common()!! else target[index]).target
+        val root = if (isCommon) common()!! else target[index]!!
 
-        val builtIns = modules.asSequence()
-            .mapNotNull { if (isCommon) it.common() else it.target[index] }
-            .first()
-            .builtIns
+        val builtIns = root.builtInsProvider.loadBuiltIns()
+        check(builtIns::class.java.name == root.builtInsClass) {
+            "Unexpected built-ins class: ${builtIns::class.java}, $builtIns\nExpected: ${root.builtInsClass}"
+        }
 
         TargetDeclarationsBuilderComponents(
             storageManager = storageManager,
-            target = target,
+            target = root.target,
             builtIns = builtIns,
             isCommon = isCommon,
             index = index,

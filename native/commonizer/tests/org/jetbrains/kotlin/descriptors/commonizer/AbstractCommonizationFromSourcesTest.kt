@@ -35,9 +35,16 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             InputTarget("target_$index") to moduleDescriptor
         }.toMap().toCommonizationParameters()
 
-        fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters() = CommonizationParameters().also {
+        fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters() = Parameters().also {
             forEach { (target, moduleDescriptor) ->
-                it.addTarget(target, listOf(moduleDescriptor))
+                it.addTarget(
+                    TargetProvider(
+                        target = target,
+                        builtInsClass = moduleDescriptor.builtIns::class.java,
+                        builtInsProvider = BuiltInsProvider.wrap(moduleDescriptor.builtIns),
+                        modulesProvider = ModulesProvider.wrap(moduleDescriptor)
+                    )
+                )
             }
         }
     }

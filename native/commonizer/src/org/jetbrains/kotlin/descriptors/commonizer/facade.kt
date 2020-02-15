@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.mergeRoots
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-fun runCommonization(parameters: CommonizationParameters): CommonizationResult {
-    if (!parameters.hasIntersection())
+fun runCommonization(parameters: Parameters): Result {
+    if (!parameters.hasAnythingToCommonize())
         return NothingToCommonize
 
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
     // build merged tree:
-    val mergedTree = mergeRoots(storageManager, parameters.getModulesByTargets())
+    val mergedTree = mergeRoots(storageManager, parameters.targetProviders)
 
     // commonize:
     mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
