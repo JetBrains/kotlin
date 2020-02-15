@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+
+import static org.jetbrains.kotlin.test.testFramework.TestApplicationUtilKt.resetApplicationToNull;
 
 public class CompileEnvironmentTest extends TestCase {
 
@@ -58,6 +59,6 @@ public class CompileEnvironmentTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        KtUsefulTestCase.resetApplicationToNull();
+        resetApplicationToNull();
     }
 }

@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
 import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
 import java.io.File;
@@ -165,27 +164,10 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         finally {
             super.tearDown();
-            resetApplicationToNull(application);
+            TestApplicationUtilKt.resetApplicationToNull(application);
             application = null;
         }
     }
-
-    public static void resetApplicationToNull(Application old) {
-        if (old != null) return;
-        resetApplicationToNull();
-    }
-
-    public static void resetApplicationToNull() {
-        try {
-            Field ourApplicationField = ApplicationManager.class.getDeclaredField("ourApplication");
-            ourApplicationField.setAccessible(true);
-            ourApplicationField.set(null, null);
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
 
     protected final void disposeRootDisposable() {
         Disposer.dispose(getTestRootDisposable());
