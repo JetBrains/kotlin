@@ -6950,6 +6950,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/named.kt");
         }
 
+        @TestMetadata("namedWithSameNameFunction.kt")
+        public void testNamedWithSameNameFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/namedWithSameNameFunction.kt");
+        }
+
+        @TestMetadata("namedWithSameNameFunction2.kt")
+        public void testNamedWithSameNameFunction2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/namedWithSameNameFunction2.kt");
+        }
+
+        @TestMetadata("namedWithSameNameProperty.kt")
+        public void testNamedWithSameNameProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/namedWithSameNameProperty.kt");
+        }
+
         @TestMetadata("notApplicableCollision.kt")
         public void testNotApplicableCollision() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/notApplicableCollision.kt");
