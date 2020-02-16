@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CustomShortcutSet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.LaterInvocator
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
@@ -16,6 +17,7 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.JBPopupListener
@@ -23,7 +25,9 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.RefactoringFactory
 import com.intellij.refactoring.suggested.SuggestedRefactoringExecution.NewParameterValue
 import com.intellij.ui.awt.RelativePoint
 import java.awt.Font
@@ -58,7 +62,7 @@ internal fun performSuggestedRefactoring(
         SuggestedRefactoringFeatureUsage.logEvent(SuggestedRefactoringFeatureUsage.REFACTORING_PERFORMED, refactoringData, state, actionPlace)
 
         performWithDumbEditor(editor) {
-          refactoringSupport.execution.rename(refactoringData, project, editor)
+          performRename(refactoringSupport, refactoringData, project, editor)
         }
 
         // no refactoring availability anymore even if no usages updated
@@ -95,7 +99,7 @@ internal fun performSuggestedRefactoring(
         SuggestedRefactoringFeatureUsage.logEvent(SuggestedRefactoringFeatureUsage.REFACTORING_PERFORMED, refactoringData, state, actionPlace)
 
         performWithDumbEditor(editor) {
-          refactoringSupport.execution.changeSignature(refactoringData, newParameterValues, project, editor)
+          performChangeSignature(refactoringSupport, refactoringData, newParameterValues, project, editor)
         }
 
         // no refactoring availability anymore even if no usages updated
@@ -294,6 +298,68 @@ private fun performWithDumbEditor(editor: Editor, action: () -> Unit) {
   finally {
     (editor as? EditorImpl)?.stopDumbLater()
   }
+}
+
+private fun performRename(refactoringSupport: SuggestedRefactoringSupport, data: SuggestedRenameData, project: Project, editor: Editor) {
+  val relativeCaretOffset = editor.caretModel.offset - refactoringSupport.anchorOffset(data.declaration)
+
+  val newName = data.declaration.name!!
+  runWriteAction {
+    data.declaration.setName(data.oldName)
+  }
+
+  val refactoring = RefactoringFactory.getInstance(project).createRename(data.declaration, newName, true, true)
+  refactoring.respectAllAutomaticRenames()
+
+  if (refactoring.hasNonCodeUsages() && !ApplicationManager.getApplication().isHeadlessEnvironment) {
+    val question = RefactoringBundle.message("suggested.refactoring.rename.text.occurrences", data.oldName, newName)
+    val result = Messages.showOkCancelDialog(
+      project,
+      question,
+      RefactoringBundle.message("suggested.refactoring.rename.text.occurrences.title"),
+      RefactoringBundle.message("suggested.refactoring.rename.with.preview.button.text"),
+      RefactoringBundle.message("suggested.refactoring.ignore.button.text"),
+      Messages.getQuestionIcon()
+    )
+    if (result != Messages.OK) {
+      refactoring.isSearchInComments = false
+      refactoring.isSearchInNonJavaFiles = false
+    }
+  }
+
+  refactoring.run()
+
+  if (data.declaration.isValid) {
+    editor.caretModel.moveToOffset(relativeCaretOffset + refactoringSupport.anchorOffset(data.declaration))
+  }
+}
+
+private fun performChangeSignature(
+  refactoringSupport: SuggestedRefactoringSupport,
+  data: SuggestedChangeSignatureData,
+  newParameterValues: List<NewParameterValue>,
+  project: Project,
+  editor: Editor
+) {
+  val preparedData = refactoringSupport.execution.prepareChangeSignature(data)
+
+  val relativeCaretOffset = editor.caretModel.offset - refactoringSupport.anchorOffset(data.declaration)
+
+  val restoreNewSignature = runWriteAction {
+    data.restoreInitialState(refactoringSupport)
+  }
+
+  refactoringSupport.execution.performChangeSignature(data, newParameterValues, preparedData)
+
+  runWriteAction {
+    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+    restoreNewSignature()
+    editor.caretModel.moveToOffset(relativeCaretOffset + refactoringSupport.anchorOffset(data.declaration))
+  }
+}
+
+private fun SuggestedRefactoringSupport.anchorOffset(declaration: PsiElement): Int {
+  return nameRange(declaration)?.startOffset ?: declaration.startOffset
 }
 
 // for testing
