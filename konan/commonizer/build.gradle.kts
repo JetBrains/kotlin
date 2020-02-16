@@ -31,9 +31,19 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
 
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    if (Platform[193].orLower()) {
+        testCompile(intellijDep()) {
+            includeJars(
+                "openapi",
+                "picocontainer",
+                rootProject = rootProject
+            )
+            isTransitive = false
+        }
+    }
+
     testCompile(intellijDep()) {
         includeJars(
-            "openapi",
             "jps-model",
             "extensions",
             "util",
@@ -43,7 +53,6 @@ dependencies {
             "idea_rt",
             "guava",
             "trove4j",
-            "picocontainer",
             "asm-all",
             "log4j",
             "jdom",
