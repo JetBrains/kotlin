@@ -28,12 +28,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx {
-  /**
-   * @deprecated Use {@link #getMethodType()} instead
-   */
-  @Deprecated
   public static final String METHOD_TYPE = "Method {0}";
 
   public static final DataKey<MethodHierarchyBrowserBase> DATA_KEY = DataKey.create("com.intellij.ide.hierarchy.MethodHierarchyBrowserBase");
@@ -46,6 +45,13 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
   @NotNull
   protected String getPrevOccurenceActionNameImpl() {
     return IdeBundle.message("hierarchy.method.prev.occurence.name");
+  }
+
+  @Override
+  protected Map<String, Supplier<String>> getI18nMap() {
+    HashMap<String, Supplier<String>> map = new HashMap<>();
+    map.put(METHOD_TYPE, MethodHierarchyBrowserBase::getMethodType);
+    return map;
   }
 
   @Override

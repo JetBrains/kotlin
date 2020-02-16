@@ -14,25 +14,13 @@ import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
-  /**
-   * @deprecated Use {@link #getTypeHierarchyType()} instead
-   */
-  @Deprecated
   public static final String TYPE_HIERARCHY_TYPE = "Class {0}";
-
-  /**
-   * @deprecated Use {@link #getSubtypesHierarchyType()} instead
-   */
-  @Deprecated
   public static final String SUBTYPES_HIERARCHY_TYPE = "Subtypes of {0}";
-
-  /**
-   * @deprecated Use {@link #getSupertypesHierarchyType()} instead
-   */
-  @Deprecated
   public static final String SUPERTYPES_HIERARCHY_TYPE = "Supertypes of {0}";
 
   private boolean myIsInterface;
@@ -81,6 +69,15 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   protected abstract boolean canBeDeleted(PsiElement psiElement);
 
   protected abstract String getQualifiedName(PsiElement psiElement);
+
+  @Override
+  protected Map<String, Supplier<String>> getI18nMap() {
+    HashMap<String, Supplier<String>> map = new HashMap<>();
+    map.put(TYPE_HIERARCHY_TYPE, TypeHierarchyBrowserBase::getTypeHierarchyType);
+    map.put(SUBTYPES_HIERARCHY_TYPE, TypeHierarchyBrowserBase::getSubtypesHierarchyType);
+    map.put(SUPERTYPES_HIERARCHY_TYPE, TypeHierarchyBrowserBase::getSupertypesHierarchyType);
+    return map;
+  }
 
   public boolean isInterface() {
     return myIsInterface;

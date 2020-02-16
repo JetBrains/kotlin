@@ -62,17 +62,10 @@ import java.util.function.Supplier;
 public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implements OccurenceNavigator {
   private static final Logger LOG = Logger.getInstance(HierarchyBrowserBaseEx.class);
 
-  /**
-   * Use {code {@link #getScopeProject()}} instead
-   */
-  @Deprecated
   public static final String SCOPE_PROJECT = "Production";
-
-  /**
-   * Use {code {@link #getScopeAll()}} instead
-   */
-  @Deprecated
   public static final String SCOPE_ALL = "All";
+  public static final String SCOPE_CLASS = "This Class";
+  public static final String SCOPE_TEST = "Test";
 
   public static final String HELP_ID = "reference.toolWindows.hierarchy";
 
@@ -81,6 +74,8 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
   @SuppressWarnings("DeprecatedIsStillUsed")
   protected String myCurrentViewType;
+
+  private final Map<String, Supplier<String>> myI18nMap;
 
   private static class Sheet implements Disposable {
     private AsyncTreeModel myAsyncTreeModel;
@@ -122,6 +117,8 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
     Map<String, JTree> type2treeMap = new THashMap<>();
     createTrees(type2treeMap);
+
+    myI18nMap = getI18nMap();
 
     HierarchyBrowserManager.State state = HierarchyBrowserManager.getSettings(project);
 
@@ -192,6 +189,15 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   protected abstract String getNextOccurenceActionNameImpl();
 
   protected abstract void createTrees(@NotNull Map<String, JTree> trees);
+
+  protected Map<String, Supplier<String>> getI18nMap() {
+    HashMap<String, Supplier<String>> map = new HashMap<>();
+    map.put(SCOPE_PROJECT, HierarchyBrowserBaseEx::getScopeProject);
+    map.put(SCOPE_CLASS, HierarchyBrowserBaseEx::getScopeClass);
+    map.put(SCOPE_TEST, HierarchyBrowserBaseEx::getScopeTest);
+    map.put(SCOPE_ALL, HierarchyBrowserBaseEx::getScopeAll);
+    return map;
+  }
 
   @Nullable
   protected abstract JPanel createLegendPanel();
@@ -345,7 +351,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     }
 
     if (myContent != null) {
-      final String displayName = getContentDisplayName(typeName, element);
+      final String displayName = getContentDisplayName(myI18nMap.computeIfAbsent(typeName, key -> () -> key).get(), element);
       if (displayName != null) {
         myContent.setDisplayName(displayName);
       }
