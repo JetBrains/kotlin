@@ -27,6 +27,6 @@ fun addVfsListener(watcher: GradleScriptInputsWatcher) {
             override fun init() {}
 
         },
-        watcher.project,
+        watcher.project
     )
 }

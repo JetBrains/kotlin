@@ -44,7 +44,7 @@ class KotlinFilePathReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(KtStringTemplateExpression::class.java),
-            KotlinFilePathReferenceProvider,
+            KotlinFilePathReferenceProvider
         )
     }
 }
