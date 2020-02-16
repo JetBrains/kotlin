@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 
 interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality, CirMaybeCallableMemberOfClass {
     val isExternal: Boolean
@@ -24,7 +25,7 @@ abstract class CirCommonFunctionOrProperty : CirFunctionOrProperty {
 
 abstract class CirFunctionOrPropertyImpl<T : CallableMemberDescriptor>(original: T) : CirFunctionOrProperty {
     final override val annotations = original.annotations.map(::CirAnnotation)
-    final override val name = original.name
+    final override val name = original.name.intern()
     final override val modality = original.modality
     final override val visibility = original.visibility
     final override val isExternal = original.isExternal

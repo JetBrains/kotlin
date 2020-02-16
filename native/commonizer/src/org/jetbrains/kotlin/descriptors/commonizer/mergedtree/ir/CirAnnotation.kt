@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.constants.*
 
 class CirAnnotation(original: AnnotationDescriptor) {
     val fqName: FqName = original.fqName?.intern() ?: error("Annotation with no FQ name: ${original::class.java}, $original")
-    val allValueArguments: Map<Name, ConstantValue<*>> = original.allValueArguments
+    val allValueArguments: Map<Name, ConstantValue<*>> = original.allValueArguments.mapKeys { it.key.intern() }
 
     init {
         allValueArguments.forEach { (name, constantValue) ->

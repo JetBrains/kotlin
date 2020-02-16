@@ -32,7 +32,7 @@ internal fun mergeModules(
         }
     }
 
-    val moduleName = modules.firstNonNull().name
+    val moduleName = modules.firstNonNull().name.intern()
     for ((packageFqName, packageMemberScopesGroup) in packageMemberScopesMap) {
         node.packages += mergePackages(storageManager, cacheRW, moduleName, packageFqName, packageMemberScopesGroup.toList())
     }

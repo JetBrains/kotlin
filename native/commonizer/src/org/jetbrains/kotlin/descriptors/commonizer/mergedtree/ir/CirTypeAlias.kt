@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 
 interface CirTypeAlias : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility {
     val underlyingType: CirSimpleType
@@ -14,7 +15,7 @@ interface CirTypeAlias : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclar
 
 class CirTypeAliasImpl(original: TypeAliasDescriptor) : CirTypeAlias {
     override val annotations = original.annotations.map(::CirAnnotation)
-    override val name = original.name
+    override val name = original.name.intern()
     override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
     override val visibility = original.visibility
     override val underlyingType = CirSimpleType(original.underlyingType)

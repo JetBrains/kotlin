@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -23,7 +24,7 @@ internal fun mergeRoots(
 
     targetProviders.forEachIndexed { index, targetProvider ->
         for (module in targetProvider.modulesProvider.loadModules()) {
-            modulesMap[module.name][index] = module
+            modulesMap[module.name.intern()][index] = module
         }
     }
 

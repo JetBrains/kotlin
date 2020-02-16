@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.Cla
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
@@ -33,7 +34,7 @@ internal fun mergeClasses(
         clazz?.unsubstitutedMemberScope?.collectMembers(
             PropertyCollector { propertiesMap[PropertyApproximationKey(it)][index] = it },
             FunctionCollector { functionsMap[FunctionApproximationKey(it)][index] = it },
-            ClassCollector { classesMap[it.name][index] = it }
+            ClassCollector { classesMap[it.name.intern()][index] = it }
         )
     }
 

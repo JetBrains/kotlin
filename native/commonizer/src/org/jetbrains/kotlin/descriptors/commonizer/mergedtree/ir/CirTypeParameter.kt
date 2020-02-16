@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -28,7 +29,7 @@ data class CirCommonTypeParameter(
 
 class CirTypeParameterImpl(original: TypeParameterDescriptor) : CirTypeParameter {
     override val annotations = original.annotations.map(::CirAnnotation)
-    override val name = original.name
+    override val name = original.name.intern()
     override val isReified = original.isReified
     override val variance = original.variance
     override val upperBounds = original.upperBounds.map(CirType.Companion::create)

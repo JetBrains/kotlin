@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -21,6 +22,7 @@ internal inline val KotlinType.fqNameInterned: FqName
     get() = declarationDescriptor.fqNameSafe.intern()
 
 internal fun FqName.intern(): FqName = fqNameInterner.intern(this)
+internal fun Name.intern(): Name = nameInterner.intern(this)
 
 internal val KotlinType.fqNameWithTypeParameters: String
     get() {
@@ -75,3 +77,4 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
 private val stringInterner = NonThreadSafeInterner<String>()
 
 private val fqNameInterner = NonThreadSafeInterner<FqName>()
+private val nameInterner = NonThreadSafeInterner<Name>()

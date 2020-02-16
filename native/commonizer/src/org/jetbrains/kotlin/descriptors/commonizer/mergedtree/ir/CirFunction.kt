@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
 interface CirFunctionModifiers {
@@ -72,7 +73,7 @@ data class CirCommonValueParameter(
 }
 
 class CirValueParameterImpl(original: ValueParameterDescriptor) : CirValueParameter {
-    override val name = original.name
+    override val name = original.name.intern()
     override val annotations = original.annotations.map(::CirAnnotation)
     override val returnType = CirType.create(original.returnType!!)
     override val varargElementType = original.varargElementType?.let(CirType.Companion::create)

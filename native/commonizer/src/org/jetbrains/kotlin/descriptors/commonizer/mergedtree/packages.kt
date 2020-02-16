@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackageNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -36,8 +37,8 @@ internal fun mergePackages(
         memberScope?.collectMembers(
             PropertyCollector { propertiesMap[PropertyApproximationKey(it)][index] = it },
             FunctionCollector { functionsMap[FunctionApproximationKey(it)][index] = it },
-            ClassCollector { classesMap[it.name][index] = it },
-            TypeAliasCollector { typeAliasesMap[it.name][index] = it }
+            ClassCollector { classesMap[it.name.intern()][index] = it },
+            TypeAliasCollector { typeAliasesMap[it.name.intern()][index] = it }
         )
     }
 

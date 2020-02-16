@@ -64,7 +64,7 @@ data class CirCommonClassConstructor(
 
 class CirClassImpl(original: ClassDescriptor) : CirClass {
     override val annotations = original.annotations.map(::CirAnnotation)
-    override val name = original.name
+    override val name = original.name.intern()
     override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
     override val companion = original.companionObjectDescriptor?.fqNameSafe?.intern()
     override val kind = original.kind
