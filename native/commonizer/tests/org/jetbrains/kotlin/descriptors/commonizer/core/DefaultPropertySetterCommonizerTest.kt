@@ -62,7 +62,8 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, C
 
     private fun doTestFailure(vararg variants: Visibility?) =
         super.doTestFailure(
-            *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray()
+            *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray(),
+            shouldFailOnFirstVariant = false
         )
 
     override fun createCommonizer() = PropertySetterCommonizer.default()

@@ -33,14 +33,18 @@ abstract class AbstractCommonizerTest<T, R> {
         if (!isEqual(expected, actual)) fail("Expected: $expected\nActual: $actual")
     }
 
-    // should fail on the last variant
-    protected fun doTestFailure(vararg variants: T) {
+    protected fun doTestFailure(
+        vararg variants: T,
+        shouldFailOnFirstVariant: Boolean = false // by default should fail on the last variant
+    ) {
         check(variants.isNotEmpty())
+
+        val failureIndex = if (shouldFailOnFirstVariant) 0 else variants.size - 1
 
         val commonized = createCommonizer().apply {
             variants.forEachIndexed { index, variant ->
                 val result = commonizeWith(variant)
-                if (index == variants.size - 1) assertFalse(result) else assertTrue(result)
+                if (index >= failureIndex) assertFalse(result) else assertTrue(result)
             }
         }
 

@@ -34,7 +34,6 @@ private class DefaultTypeCommonizer(private val cache: CirClassifiersCache) :
  * See also [AbstractStrictEqualityTypeChecker].
  */
 internal fun areTypesEqual(cache: CirClassifiersCache, a: CirType, b: CirType): Boolean = when {
-    a === b -> true
     a is CirSimpleType -> (b is CirSimpleType) && areSimpleTypesEqual(cache, a, b)
     a is CirFlexibleType -> (b is CirFlexibleType)
             && areSimpleTypesEqual(cache, a.lowerBound, b.lowerBound)
@@ -43,15 +42,14 @@ internal fun areTypesEqual(cache: CirClassifiersCache, a: CirType, b: CirType): 
 }
 
 private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b: CirSimpleType): Boolean {
-    if (a.arguments.size != b.arguments.size
-        || a.isMarkedNullable != b.isMarkedNullable
-        || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
+    if (a !== b
+        && (a.arguments.size != b.arguments.size
+                || a.isMarkedNullable != b.isMarkedNullable
+                || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
+                || a.fqName != b.fqName)
     ) {
         return false
     }
-
-    if (a.fqName != b.fqName)
-        return false
 
     fun isClassOrTypeAliasUnderStandardKotlinPackages() =
         // N.B. only for descriptors that represent classes or type aliases, but not type parameters!
@@ -60,7 +58,7 @@ private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b:
                 // If classes are from the standard Kotlin packages, compare them only by type constructors.
                 // Effectively, this includes comparison of 1) FQ names of underlying descriptors and 2) number of type constructor parameters.
                 // See org.jetbrains.kotlin.types.AbstractClassTypeConstructor.equals() for details.
-                && a.expandedTypeConstructorId == b.expandedTypeConstructorId
+                && (a === b || a.expandedTypeConstructorId == b.expandedTypeConstructorId)
 
     fun descriptorsCanBeCommonizedThemselves() =
         a.kind == b.kind && when (a.kind) {

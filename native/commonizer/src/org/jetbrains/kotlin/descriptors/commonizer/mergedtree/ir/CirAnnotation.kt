@@ -20,6 +20,26 @@ class CirAnnotation(original: AnnotationDescriptor) {
             checkSupportedInCommonization(constantValue) { "${original::class.java}, $original[$name]" }
         }
     }
+
+    // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
+    private var cachedHashCode = 0
+
+    private fun computeHashCode() = fqName.hashCode() * 31 + allValueArguments.hashCode()
+
+    override fun hashCode(): Int {
+        var currentHashCode = cachedHashCode
+        if (currentHashCode != 0) return currentHashCode
+
+        currentHashCode = computeHashCode()
+        cachedHashCode = currentHashCode
+        return currentHashCode
+    }
+
+    override fun equals(other: Any?): Boolean =
+        if (other is CirAnnotation) {
+            fqName == other.fqName && allValueArguments == other.allValueArguments
+        } else
+            false
 }
 
 internal fun checkSupportedInCommonization(constantValue: ConstantValue<*>, location: () -> String) {

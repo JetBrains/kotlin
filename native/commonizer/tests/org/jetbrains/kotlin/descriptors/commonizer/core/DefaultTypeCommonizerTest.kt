@@ -100,19 +100,22 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames1() = doTestFailure(
         mockClassType("org.sample.Foo"),
-        mockClassType("org.fictitiousPackageName.Foo")
+        mockClassType("org.fictitiousPackageName.Foo"),
+        shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames2() = doTestFailure(
         mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Bar")
+        mockClassType("org.sample.Bar"),
+        shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames3() = doTestFailure(
         mockClassType("org.sample.Foo"),
-        mockClassType("kotlin.String")
+        mockClassType("kotlin.String"),
+        shouldFailOnFirstVariant = true
     )
 
     @Test
@@ -256,13 +259,15 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNames() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.BarAlias") { mockClassType("org.sample.Foo") }
+        mockTAType("org.sample.BarAlias") { mockClassType("org.sample.Foo") },
+        shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentClasses() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") }
+        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") },
+        shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
@@ -275,7 +280,8 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             mockTAType("org.sample.FooAliasL2") {
                 mockClassType("org.sample.Foo")
             }
-        }
+        },
+        shouldFailOnFirstVariant = true
     )
 
     @Test
@@ -357,13 +363,15 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability3() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) }
+        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
+        shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability4() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) }
+        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
+        shouldFailOnFirstVariant = true
     )
 
     private fun prepareCache(variants: Array<out KotlinType>) {
@@ -409,10 +417,13 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         )
     }
 
-    fun doTestFailure(vararg variants: KotlinType) {
+    fun doTestFailure(vararg variants: KotlinType, shouldFailOnFirstVariant: Boolean = false) {
         prepareCache(variants)
 
-        doTestFailure(variants = *variants.map(CirType.Companion::create).toTypedArray())
+        doTestFailure(
+            variants = *variants.map(CirType.Companion::create).toTypedArray(),
+            shouldFailOnFirstVariant = shouldFailOnFirstVariant
+        )
     }
 
     override fun createCommonizer() = TypeCommonizer.default(cache)

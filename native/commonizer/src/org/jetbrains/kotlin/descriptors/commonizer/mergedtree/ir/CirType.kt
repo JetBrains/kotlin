@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.CLASS
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.TYPE_ALIAS
-import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.fqName
-import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
 
@@ -22,8 +19,8 @@ sealed class CirType {
     companion object {
         fun create(type: KotlinType): CirType = type.unwrap().run {
             when (this) {
-                is SimpleType -> CirSimpleType(this)
-                is FlexibleType -> CirFlexibleType(CirSimpleType(lowerBound), CirSimpleType(upperBound))
+                is SimpleType -> CirSimpleType.create(this)
+                is FlexibleType -> CirFlexibleType(CirSimpleType.create(lowerBound), CirSimpleType.create(upperBound))
             }
         }
     }
@@ -38,7 +35,7 @@ sealed class CirType {
  *
  * There is no difference between "abbreviation" and "expanded" for types representing classes and type parameters.
  */
-class CirSimpleType(original: SimpleType) : CirType() {
+class CirSimpleType private constructor(original: SimpleType) : CirType() {
     val annotations: List<CirAnnotation>
     val kind: CirSimpleTypeKind
     val fqName: FqName
@@ -63,8 +60,55 @@ class CirSimpleType(original: SimpleType) : CirType() {
     inline val isClassOrTypeAlias get() = (kind == CLASS || kind == TYPE_ALIAS)
     val fqNameWithTypeParameters = original.fqNameWithTypeParameters
 
+    // Note: equals() and hashCode() are implemented in a way that only right-hand side declaration
+    // is compared for typealiases (well, actually "fqNameWithTypeParameters" for the right-hand side).
+    // This is sufficient for unit tests and for evaluating commonized supertypes, but is absolutely
+    // unsuitable for comparison of CirSimpleType for the purposes of interning, etc.
     override fun equals(other: Any?) = fqNameWithTypeParameters == (other as? CirSimpleType)?.fqNameWithTypeParameters
     override fun hashCode() = fqNameWithTypeParameters.hashCode()
+
+    private class Interned(val type: CirSimpleType) {
+        // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
+        private var cachedHashCode = 0
+
+        private fun computeHashCode(): Int {
+            var result = type.annotations.hashCode()
+            result = 31 * result + type.kind.hashCode()
+            result = 31 * result + type.fqName.hashCode()
+            result = 31 * result + type.arguments.hashCode()
+            result = 31 * result + type.isMarkedNullable.hashCode()
+            result = 31 * result + type.isDefinitelyNotNullType.hashCode()
+            result = 31 * result + type.fqNameWithTypeParameters.hashCode()
+            return result
+        }
+
+        override fun hashCode(): Int {
+            var currentHashCode = cachedHashCode
+            if (currentHashCode != 0) return currentHashCode
+
+            currentHashCode = computeHashCode()
+            cachedHashCode = currentHashCode
+            return currentHashCode
+        }
+
+        override fun equals(other: Any?): Boolean =
+            if (other is Interned) {
+                type.isMarkedNullable == other.type.isMarkedNullable
+                        && type.fqName == other.type.fqName
+                        && type.kind == other.type.kind
+                        && type.arguments == other.type.arguments
+                        && type.fqNameWithTypeParameters == other.type.fqNameWithTypeParameters
+                        && type.annotations == other.type.annotations
+                        && type.isDefinitelyNotNullType == other.type.isDefinitelyNotNullType
+            } else
+                false
+    }
+
+    companion object {
+        private val interner = NonThreadSafeInterner<Interned>()
+
+        fun create(original: SimpleType): CirSimpleType = interner.intern(Interned(CirSimpleType(original))).type
+    }
 }
 
 enum class CirSimpleTypeKind {
@@ -89,10 +133,12 @@ data class CirTypeConstructorId(val fqName: FqName, val numberOfTypeParameters: 
     constructor(type: SimpleType) : this(type.fqNameInterned, type.constructor.parameters.size)
 }
 
-class CirTypeProjection(original: TypeProjection) {
-    val projectionKind = original.projectionKind
-    val isStarProjection = original.isStarProjection
-    val type = CirType.create(original.type)
+data class CirTypeProjection(
+    val projectionKind: Variance,
+    val isStarProjection: Boolean,
+    val type: CirType
+) {
+    constructor(original: TypeProjection) : this(original.projectionKind, original.isStarProjection, CirType.create(original.type))
 }
 
 data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType()

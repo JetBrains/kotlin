@@ -18,6 +18,6 @@ class CirTypeAliasImpl(original: TypeAliasDescriptor) : CirTypeAlias {
     override val name = original.name.intern()
     override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
     override val visibility = original.visibility
-    override val underlyingType = CirSimpleType(original.underlyingType)
-    override val expandedType = CirSimpleType(original.expandedType)
+    override val underlyingType = CirSimpleType.create(original.underlyingType)
+    override val expandedType = CirSimpleType.create(original.expandedType)
 }
