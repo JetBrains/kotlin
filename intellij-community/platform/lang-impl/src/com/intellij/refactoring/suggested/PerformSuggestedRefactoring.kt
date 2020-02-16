@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.refactoring.suggested.SuggestedRefactoringExecution.NewParameterValue
+import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.ui.awt.RelativePoint
 import java.awt.Font
 import java.awt.Insets
@@ -308,7 +309,9 @@ private fun performRename(refactoringSupport: SuggestedRefactoringSupport, data:
     data.declaration.setName(data.oldName)
   }
 
-  val refactoring = RefactoringFactory.getInstance(project).createRename(data.declaration, newName, true, true)
+  val textOccurrencesEnabled = TextOccurrencesUtil.isSearchTextOccurrencesEnabled(data.declaration)
+
+  val refactoring = RefactoringFactory.getInstance(project).createRename(data.declaration, newName, true, textOccurrencesEnabled)
   refactoring.respectAllAutomaticRenames()
 
   if (refactoring.hasNonCodeUsages() && !ApplicationManager.getApplication().isHeadlessEnvironment) {

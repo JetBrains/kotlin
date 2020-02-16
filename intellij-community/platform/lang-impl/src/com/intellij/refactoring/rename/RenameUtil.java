@@ -88,9 +88,12 @@ public class RenameUtil {
 
   public static boolean hasNonCodeUsages(@NotNull PsiElement element,
                                          String newName,
-                                         @NotNull SearchScope searchScope) {
+                                         @NotNull SearchScope searchScope,
+                                         boolean searchInStringsAndComments,
+                                         boolean searchForTextOccurrences) {
     RenamePsiElementProcessor elementProcessor = RenamePsiElementProcessor.forElement(element);
-    return !processUsages(info -> false, element, elementProcessor, newName, searchScope, false, true, true);
+    return !processUsages(info -> false, element, elementProcessor, newName, searchScope,
+                          false, searchInStringsAndComments, searchForTextOccurrences);
   }
 
   private static boolean processUsages(
