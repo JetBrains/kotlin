@@ -3438,6 +3438,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("binary.kt")
+        public void testBinary() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/binary.kt");
+        }
+
         @TestMetadata("char.kt")
         public void testChar() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/char.kt");
@@ -3541,6 +3546,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("gtlteq.kt")
         public void testGtlteq() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/gtlteq.kt");
+        }
+
+        @TestMetadata("hexadecimal.kt")
+        public void testHexadecimal() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/hexadecimal.kt");
         }
 
         @TestMetadata("lteqgt.kt")
