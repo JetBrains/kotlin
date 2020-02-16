@@ -66,6 +66,15 @@ public class RenameRefactoringImpl extends RefactoringImpl<RenameProcessor> impl
   }
 
   @Override
+  public void respectAllAutomaticRenames() {
+    for (AutomaticRenamerFactory factory : AutomaticRenamerFactory.EP_NAME.getExtensionList()) {
+      if (getElements().stream().anyMatch(element -> factory.isApplicable(element))) {
+        myProcessor.addRenamerFactory(factory);
+      }
+    }
+  }
+
+  @Override
   public boolean hasNonCodeUsages() {
     return myProcessor.hasNonCodeUsages();
   }
