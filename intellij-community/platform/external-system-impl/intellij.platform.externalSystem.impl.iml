@@ -21,5 +21,6 @@
     <orderEntry type="module" module-name="intellij.platform.objectSerializer" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>

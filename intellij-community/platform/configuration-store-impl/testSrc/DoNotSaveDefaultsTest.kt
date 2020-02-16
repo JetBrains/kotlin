@@ -2,7 +2,6 @@
 package com.intellij.configurationStore
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.internal.statistic.persistence.UsageStatisticsPersistenceComponent
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
@@ -98,7 +97,7 @@ internal class DoNotSaveDefaultsTest {
     val directoryTree = Paths.get(componentManager.stateStore.storageManager.expandMacros(APP_CONFIG)).getDirectoryTree(hashSetOf(
       "path.macros.xml" /* todo EP to register (provide) macro dynamically */,
       "stubIndex.xml" /* low-level non-roamable stuff */,
-      UsageStatisticsPersistenceComponent.USAGE_STATISTICS_XML /* SHOW_NOTIFICATION_ATTR in internal mode */,
+      "usage.statistics.xml" /* SHOW_NOTIFICATION_ATTR in internal mode */,
       "tomee.extensions.xml", "jboss.extensions.xml",
       "glassfish.extensions.xml" /* javaee non-roamable stuff, it will be better to fix it */,
       "dimensions.xml" /* non-roamable sizes of window, dialogs, etc. */,

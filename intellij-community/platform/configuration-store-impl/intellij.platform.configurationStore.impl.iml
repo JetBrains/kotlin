@@ -21,5 +21,6 @@
     <orderEntry type="module" module-name="intellij.platform.objectSerializer" />
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
     <orderEntry type="library" name="snakeyaml-engine" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>

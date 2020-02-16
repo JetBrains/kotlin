@@ -25,5 +25,6 @@
     <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" />
     <orderEntry type="library" name="ion" level="project" />
     <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>
