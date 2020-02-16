@@ -11,5 +11,5 @@ import kotlin.system.*
 @ExperimentalTime
 internal actual object MonotonicTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSECONDS), TimeSource { // TODO: interface should not be required here
     override fun read(): Long = getTimeNanos()
-    override fun toString(): String = "TimeSource(nanoTime)"
+    override fun toString(): String = "TimeSource(nanoTime())"
 }
