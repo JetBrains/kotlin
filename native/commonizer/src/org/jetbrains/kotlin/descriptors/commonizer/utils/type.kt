@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import kotlin.collections.HashSet
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
     get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
@@ -20,7 +21,10 @@ internal inline val KotlinType.fqName: FqName
     get() = declarationDescriptor.fqNameSafe
 
 internal val KotlinType.fqNameWithTypeParameters: String
-    get() = buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters, HashSet()) }
+    get() {
+        // use of interner saves up to 95% of duplicates
+        return stringInterner.intern(buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters, HashSet()) })
+    }
 
 private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
     append(type.fqName)
@@ -64,3 +68,6 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
     if (type.isMarkedNullable)
         append("?")
 }
+
+// dedicated to hold unique entries of "fqNameWithTypeParameters"
+private val stringInterner = Interner<String>()
