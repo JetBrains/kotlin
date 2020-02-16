@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import java.util.WeakHashMap
 
-internal class Interner<T : Any> {
+internal class NonThreadSafeInterner<T : Any> {
     private val pool = WeakHashMap<T, T>()
 
     fun intern(value: T): T = pool.computeIfAbsent(value) { value }

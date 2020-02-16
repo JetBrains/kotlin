@@ -17,8 +17,10 @@ import kotlin.collections.HashSet
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
     get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
 
-internal inline val KotlinType.fqName: FqName
-    get() = declarationDescriptor.fqNameSafe
+internal inline val KotlinType.fqNameInterned: FqName
+    get() = declarationDescriptor.fqNameSafe.intern()
+
+internal fun FqName.intern(): FqName = fqNameInterner.intern(this)
 
 internal val KotlinType.fqNameWithTypeParameters: String
     get() {
@@ -27,7 +29,7 @@ internal val KotlinType.fqNameWithTypeParameters: String
     }
 
 private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
-    append(type.fqName)
+    append(type.fqNameInterned)
 
     val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
     if (typeParameterDescriptor != null) {
@@ -70,4 +72,6 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
 }
 
 // dedicated to hold unique entries of "fqNameWithTypeParameters"
-private val stringInterner = Interner<String>()
+private val stringInterner = NonThreadSafeInterner<String>()
+
+private val fqNameInterner = NonThreadSafeInterner<FqName>()

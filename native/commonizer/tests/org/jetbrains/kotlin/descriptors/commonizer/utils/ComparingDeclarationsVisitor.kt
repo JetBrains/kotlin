@@ -426,8 +426,8 @@ internal class ComparingDeclarationsVisitor(
             context.nextLevel("Unwrapped/unabbreviated type annotations")
         )
 
-        val expectedFqName = expectedUnwrapped.fqName
-        val actualFqName = actualUnwrapped.fqName
+        val expectedFqName = expectedUnwrapped.fqNameInterned
+        val actualFqName = actualUnwrapped.fqNameInterned
 
         context.assertEquals(expectedFqName, actualFqName, "type FQN")
 

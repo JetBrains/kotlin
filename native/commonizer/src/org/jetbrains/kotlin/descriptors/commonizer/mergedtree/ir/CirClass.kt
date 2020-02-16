@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -65,7 +66,7 @@ class CirClassImpl(original: ClassDescriptor) : CirClass {
     override val annotations = original.annotations.map(::CirAnnotation)
     override val name = original.name
     override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
-    override val companion = original.companionObjectDescriptor?.fqNameSafe
+    override val companion = original.companionObjectDescriptor?.fqNameSafe?.intern()
     override val kind = original.kind
     override val modality = original.modality
     override val visibility = original.visibility

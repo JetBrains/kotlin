@@ -28,7 +28,7 @@ internal fun mergeModules(
 
     modules.forEachIndexed { index, module ->
         module?.collectNonEmptyPackageMemberScopes { packageFqName, memberScope ->
-            packageMemberScopesMap[packageFqName][index] = memberScope
+            packageMemberScopesMap[packageFqName.intern()][index] = memberScope
         }
     }
 

@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 
 class CirAnnotation(original: AnnotationDescriptor) {
-    val fqName: FqName = original.fqName ?: error("Annotation with no FQ name: ${original::class.java}, $original")
+    val fqName: FqName = original.fqName?.intern() ?: error("Annotation with no FQ name: ${original::class.java}, $original")
     val allValueArguments: Map<Name, ConstantValue<*>> = original.allValueArguments
 
     init {

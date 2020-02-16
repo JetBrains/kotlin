@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKi
 import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.utils.fqName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
 
@@ -52,7 +53,7 @@ class CirSimpleType(original: SimpleType) : CirType() {
 
         annotations = abbreviation.annotations.map(::CirAnnotation)
         kind = CirSimpleTypeKind.determineKind(abbreviation.declarationDescriptor)
-        fqName = abbreviation.fqName
+        fqName = abbreviation.fqNameInterned
         arguments = abbreviation.arguments.map(::CirTypeProjection)
         isMarkedNullable = abbreviation.isMarkedNullable
         isDefinitelyNotNullType = abbreviation.isDefinitelyNotNullType
@@ -85,7 +86,7 @@ enum class CirSimpleTypeKind {
 }
 
 data class CirTypeConstructorId(val fqName: FqName, val numberOfTypeParameters: Int) {
-    constructor(type: SimpleType) : this(type.fqName, type.constructor.parameters.size)
+    constructor(type: SimpleType) : this(type.fqNameInterned, type.constructor.parameters.size)
 }
 
 class CirTypeProjection(original: TypeProjection) {
