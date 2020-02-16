@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessingForElement
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RemoveExplicitPropertyTypeProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
     override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean {
+        if (element.typeReference == null) return false
         val needFieldTypes = settings?.specifyFieldTypeByDefault == true
         val needLocalVariablesTypes = settings?.specifyLocalVariableTypeByDefault == true
 
@@ -56,7 +58,15 @@ class RemoveExplicitPropertyTypeProcessing : InspectionLikeProcessingForElement<
     }
 
     override fun apply(element: KtProperty) {
-        element.typeReference = null
+        val typeReference = element.typeReference ?: return
+        element.colon?.let { colon ->
+            val followingWhiteSpace = colon.nextSibling?.takeIf { following ->
+                following is PsiWhiteSpace && following.isInSingleLine()
+            }
+            followingWhiteSpace?.delete()
+            colon.delete()
+        }
+        typeReference.delete()
     }
 }
 

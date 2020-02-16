@@ -55,6 +55,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.mapToIndex
 
 class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing() {
+    override val options: PostProcessingOptions =
+        PostProcessingOptions(
+            disablePostprocessingFormatting = false // without it comment saver will make the file invalid :(
+        )
+
     override fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext) {
         val ktElements = elements.filterIsInstance<KtElement>()
         val resolutionFacade = runReadAction {
