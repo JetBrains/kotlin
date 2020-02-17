@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+
 open class A {
     open fun foo() = "FAIL"
 
