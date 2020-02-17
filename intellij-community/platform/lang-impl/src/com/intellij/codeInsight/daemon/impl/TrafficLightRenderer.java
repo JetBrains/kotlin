@@ -294,7 +294,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     if (PowerSaveMode.isEnabled()) {
       statusLabel = "Code analysis is disabled in power save mode";
       status.errorAnalyzingFinished = true;
-      icon = AllIcons.General.InspectionsTrafficOff;
+      icon = AllIcons.General.InspectionsPowerSaveMode;
       return result;
     }
     if (status.reasonWhyDisabled != null) {
