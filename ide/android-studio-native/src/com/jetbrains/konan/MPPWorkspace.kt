@@ -5,8 +5,11 @@
 
 package com.jetbrains.konan
 
+import com.intellij.execution.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.mpp.AppleRunConfiguration
+import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
 
 internal object XCProject {
@@ -14,9 +17,22 @@ internal object XCProject {
     const val pathAttributeKey = "PATH"
 }
 
+private class TargetListener(private val workspace: MPPWorkspace) : ExecutionTargetListener {
+    override fun activeTargetChanged(target: ExecutionTarget) {
+        val configuration = RunManager.getInstance(workspace.project).selectedConfiguration?.configuration ?: return
+        if (configuration !is AppleRunConfiguration) return
+        configuration.selectedDevice = target as? Device
+    }
+}
+
 @State(name = "MPPWorkspace", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class MPPWorkspace(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
     var xcproject: String? = null
+
+    init {
+        val connection = project.messageBus.connect()
+        connection.subscribe(ExecutionTargetManager.TOPIC, TargetListener(this))
+    }
 
     override fun getState(): Element? {
         val stateElement = Element("state")

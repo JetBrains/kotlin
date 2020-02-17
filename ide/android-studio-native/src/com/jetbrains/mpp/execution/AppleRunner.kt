@@ -6,13 +6,12 @@
 package com.jetbrains.mpp.execution
 
 import com.intellij.execution.ExecutionException
-import com.intellij.execution.configurations.DebuggingRunnerData
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
-import com.intellij.execution.console.ConsoleViewWrapperBase
+import com.intellij.execution.executors.DefaultDebugExecutor
+import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.DefaultProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.execution.ui.ExecutionConsoleEx
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
@@ -22,17 +21,22 @@ import com.intellij.xdebugger.impl.ui.XDebugSessionData
 import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.mpp.AppleRunConfiguration
 
-class AppleDebugRunner : DefaultProgramRunner() {
+class AppleRunner : DefaultProgramRunner() {
 
-    override fun getRunnerId(): String = DebuggingRunnerData.DEBUGGER_RUNNER_ID
+    override fun getRunnerId(): String = "AppleRunner"
 
     override fun canRun(executorId: String, profile: RunProfile): Boolean {
-        if (executorId == runnerId && profile is AppleRunConfiguration) return true
-        return false
+        if (profile !is AppleRunConfiguration) return false
+
+        return when (executorId) {
+            DefaultRunExecutor.EXECUTOR_ID -> profile.selectedDevice is AppleSimulator
+            DefaultDebugExecutor.EXECUTOR_ID -> true
+            else -> false
+        }
     }
 
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-        if (environment.executor.id != runnerId) {
+        if (environment.executor.id == DefaultRunExecutor.EXECUTOR_ID) {
             return super.doExecute(state, environment)
         }
 

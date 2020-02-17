@@ -26,7 +26,7 @@
     <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
     <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
-    <programRunner implementation="com.jetbrains.mpp.execution.AppleDebugRunner"/>
+    <programRunner implementation="com.jetbrains.mpp.execution.AppleRunner"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mpp.BuildIOSAppTaskProvider"/>
   </extensions>
 
