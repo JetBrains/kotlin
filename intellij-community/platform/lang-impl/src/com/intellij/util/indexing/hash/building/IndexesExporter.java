@@ -2,9 +2,9 @@
 package com.intellij.util.indexing.hash.building;
 
 import com.intellij.concurrency.JobLauncher;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -50,60 +50,116 @@ public class IndexesExporter {
     return project.getService(IndexesExporter.class);
   }
 
-  public IndexInfrastructureVersion exportIndexesChunk(@NotNull IndexChunk chunk, @NotNull Path zipFile, @NotNull ProgressIndicator indicator) {
-    Path chunkRoot = getUnpackedIndexRoot(zipFile);
-    IndexInfrastructureVersion version = ReadAction.compute(() -> processChunkUnderReadAction(chunkRoot, chunk, indicator));
-    zipIndexOut(chunkRoot, zipFile, indicator);
-    return version;
+  @NotNull
+  public IndexInfrastructureVersion exportIndexesChunk(@NotNull IndexChunk chunk,
+                                                       @NotNull Path zipFile,
+                                                       @NotNull ProgressIndicator indicator) {
+    final Disposable rootDisposable = Disposer.newDisposable();
+    Path chunkRoot = zipFile.resolveSibling(zipFile.getFileName().toString() + ".unpacked");
+    try {
+      PathKt.delete(chunkRoot);
+      PathKt.delete(zipFile);
+      PathKt.createDirectories(chunkRoot);
+      return exportIndexesChunkImpl(chunk, chunkRoot, zipFile, indicator, rootDisposable);
+    } catch (Exception e) {
+      try {
+        PathKt.delete(chunkRoot);
+        PathKt.delete(zipFile);
+      } catch (Exception ignore) {
+        //nop
+      }
+      throw new RuntimeException("Failed to generate shared indexes. " + e.getMessage(), e);
+    } finally {
+      Disposer.dispose(rootDisposable);
+    }
   }
 
   @NotNull
-  private static Path getUnpackedIndexRoot(@NotNull Path indexZipFile) {
-    Path indexRoot = indexZipFile.resolveSibling(indexZipFile.getFileName().toString() + ".unpacked");
-    PathKt.delete(indexRoot);
-    return PathKt.createDirectories(indexRoot);
-  }
+  private IndexInfrastructureVersion exportIndexesChunkImpl(@NotNull IndexChunk chunk,
+                                                            @NotNull Path chunkRoot,
+                                                            @NotNull Path zipFile,
+                                                            @NotNull ProgressIndicator indicator,
+                                                            @NotNull Disposable rootDisposable) throws Exception {
 
-  @NotNull
-  private IndexInfrastructureVersion processChunkUnderReadAction(@NotNull Path chunkRoot,
-                                                                 @NotNull IndexChunk chunk,
-                                                                 @NotNull ProgressIndicator indicator) {
     List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
       .extensions()
       .filter(FileBasedIndexExtension::dependsOnFileContent)
       .filter(ex -> !(ex instanceof StubUpdatingIndex))
       .collect(Collectors.toList());
-    List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = ContainerUtil.map(exportableFileBasedIndexExtensions, ex -> getGenerator(chunkRoot, ex));
+
+    List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = ContainerUtil.map(exportableFileBasedIndexExtensions,
+                                                                                ex -> new HashBasedIndexGenerator<>(ex, chunkRoot));
 
     List<StubIndexExtension<?, ?>> exportableStubIndexExtensions = StubIndexExtension.EP_NAME.getExtensionList();
 
     Path stubIndexesRoot = chunkRoot.resolve(StubUpdatingIndex.INDEX_ID.getName());
     Path serializerNamesStorageFile = StubSharedIndexExtension.getStubSerializerNamesStorageFile(stubIndexesRoot);
     SerializationManagerImpl chunkSerializationManager = new SerializationManagerImpl(serializerNamesStorageFile, false);
-    StubHashBasedIndexGenerator stubGenerator = StubHashBasedIndexGenerator.create(stubIndexesRoot, chunkSerializationManager, exportableStubIndexExtensions);
+    Disposer.register(rootDisposable, chunkSerializationManager);
 
-    try {
-      List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
-      allGenerators.add(stubGenerator);
+    StubHashBasedIndexGenerator stubGenerator = StubHashBasedIndexGenerator.create(stubIndexesRoot,
+                                                                                   chunkSerializationManager,
+                                                                                   exportableStubIndexExtensions);
 
-      generate(chunk, allGenerators, chunkRoot, indicator);
+    List<HashBasedIndexGenerator<?, ?>> allGenerators = new ArrayList<>(fileBasedGenerators);
+    allGenerators.add(stubGenerator);
+
+    indicator.pushState();
+    try(ContentHashEnumerator hashEnumerator = new ContentHashEnumerator(chunkRoot.resolve("hashes"))) {
+      openGenerators(allGenerators);
+      
+      ReadAction.run(() -> {
+        List<VirtualFile> allFiles = collectAllFilesForIndexing(chunk.getRoots(), indicator);
+        LOG.warn("Collected " + allFiles.size() + " files to index for " + chunk.getName());
+
+        indicator.setText("Indexing files...");
+
+        boolean isOk = JobLauncher.getInstance().invokeConcurrentlyUnderProgress(
+          new ArrayList<>(allFiles),
+          indicator,
+          f -> {
+            generateIndexesForFile(f, allGenerators, hashEnumerator);
+            return true;
+          });
+
+        if (!isOk) {
+          throw new RuntimeException("Failed to generate indexes in parallel. JobLauncher returned false");
+        }
+      });
     } finally {
-      Disposer.dispose(chunkSerializationManager);
+      closeGenerators(allGenerators);
+      indicator.popState();
     }
 
     deleteEmptyIndices(fileBasedGenerators, chunkRoot, false);
     deleteEmptyIndices(stubGenerator.getStubGenerators(), chunkRoot, true);
 
-    IndexInfrastructureVersion indexInfrastructureVersion = IndexInfrastructureVersion.fromExtensions(exportableFileBasedIndexExtensions,
-                                                                                                      exportableStubIndexExtensions);
+    zipIndexOut(chunkRoot, zipFile, indicator);
     printStatistics(chunk, fileBasedGenerators, stubGenerator);
-    return indexInfrastructureVersion;
+
+    return IndexInfrastructureVersion.fromExtensions(exportableFileBasedIndexExtensions,
+                                                     exportableStubIndexExtensions);
   }
 
-  @NotNull
-  private static <K, V> HashBasedIndexGenerator<K, V> getGenerator(Path chunkRoot, FileBasedIndexExtension<K, V> extension) {
-    return new HashBasedIndexGenerator<>(extension, chunkRoot);
+  private static void openGenerators(@NotNull List<HashBasedIndexGenerator<?, ?>> allGenerators) {
+    for (HashBasedIndexGenerator<?, ?> generator : allGenerators) {
+      try {
+        generator.openIndex();
+      } catch (Exception e) {
+        throw new RuntimeException("Failed to open " + generator.getExtension().getName().getName() + ". " + e.getMessage(), e);
+      }
+    }
+  }
+
+  private static void closeGenerators(@NotNull List<HashBasedIndexGenerator<?, ?>> allGenerators) {
+    for (HashBasedIndexGenerator<?, ?> generator : allGenerators) {
+      try {
+        generator.closeIndex();
+      } catch (Exception e) {
+        throw new RuntimeException("Failed to close " + generator.getExtension().getName().getName() + ". " + e.getMessage(), e);
+      }
+    }
   }
 
   private static void deleteEmptyIndices(@NotNull List<HashBasedIndexGenerator<?, ?>> generators,
@@ -125,88 +181,74 @@ public class IndexesExporter {
         EmptyIndexEnumerator.writeEmptyIndexes(chunkRoot, emptyIndices);
       }
     }
-    catch (IOException e) {
-      throw new RuntimeException("Failed to write indexes file", e);
+    catch (Exception e) {
+      throw new RuntimeException("Failed to deleteEmptyIndices. " + e.getMessage(), e);
     }
   }
 
-  private static void zipIndexOut(@NotNull Path indexRoot, @NotNull Path zipFile, @NotNull ProgressIndicator indicator) {
+  private static void zipIndexOut(@NotNull Path indexRoot,
+                                  @NotNull Path zipFile,
+                                  @NotNull ProgressIndicator indicator) {
+    indicator.pushState();
     indicator.setIndeterminate(true);
     indicator.setText("Zipping index pack");
-
     try (JBZipFile file = new JBZipFile(zipFile.toFile())) {
-      Files.walk(indexRoot).forEach(p -> {
-        if (Files.isDirectory(p)) return;
+      indicator.setText2("Scanning files...");
+      List<Path> allFiles = Files.walk(indexRoot).filter(f -> !Files.isDirectory(f)).collect(Collectors.toList());
+
+      indicator.setIndeterminate(false);
+      double count = 0;
+      for (Path p : allFiles) {
         String relativePath = indexRoot.relativize(p).toString();
+
+        indicator.setFraction(count++ / allFiles.size());
+        indicator.setText2(relativePath);
+
         try {
           JBZipEntry entry = file.getOrCreateEntry(relativePath);
           entry.setMethod(ZipEntry.STORED);
           entry.setDataFromFile(p.toFile());
         }
-        catch (IOException e) {
+        catch (Exception e) {
           throw new RuntimeException("Failed to add " + relativePath + " entry to the target archive. " + e.getMessage(), e);
         }
-      });
+      }
     } catch (Exception e) {
       throw new RuntimeException("Failed to generate indexes archive at " + zipFile + ". " + e.getMessage(), e);
+    } finally {
+      indicator.popState();
     }
   }
 
-  private void generate(@NotNull IndexChunk chunk,
-                        @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
-                        @NotNull Path chunkOut,
-                        @NotNull ProgressIndicator indicator) {
+  @NotNull
+  private static List<VirtualFile> collectAllFilesForIndexing(@NotNull Set<VirtualFile> roots,
+                                                              @NotNull ProgressIndicator indicator) {
+    indicator.pushState();
     try {
-      ContentHashEnumerator hashEnumerator = new ContentHashEnumerator(chunkOut.resolve("hashes"));
-      try {
-        for (HashBasedIndexGenerator<?, ?> generator : generators) {
-          generator.openIndex();
-        }
+      indicator.setText("Collecting files to index...");
+      indicator.setIndeterminate(true);
 
-        indicator.setText("Collecting files to index...");
-        Set<VirtualFile> files = new THashSet<>();
-        for (VirtualFile root : chunk.getRoots()) {
-          VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Boolean>() {
-            @Override
-            public boolean visitFile(@NotNull VirtualFile file) {
-              if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
-                files.add(file);
-              }
-              return true;
+      Set<VirtualFile> files = new THashSet<>();
+
+      double count = 0;
+      for (VirtualFile root : roots) {
+        indicator.setFraction(count ++ / roots.size());
+        indicator.setText2(root.getPath());
+
+        VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Boolean>() {
+          @Override
+          public boolean visitFile(@NotNull VirtualFile file) {
+            if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
+              files.add(file);
             }
-          });
-        }
+            return true;
+          }
+        });
+      }
 
-        LOG.warn("Collected " + files.size() + " files to index for " + chunk.getName());
-        indicator.setText("Indexing files...");
-
-        boolean isOk = JobLauncher.getInstance().invokeConcurrentlyUnderProgress(new ArrayList<>(files),
-                                                                                 indicator,
-                                                                                 f -> {
-                                                                                   generateIndexesForFile(f, generators, hashEnumerator);
-                                                                                   return true;
-                                                                                 });
-
-        if (!isOk) {
-          throw new RuntimeException("Failed to generate indexes in parallel. JobLauncher returned false");
-        }
-      }
-      finally {
-        hashEnumerator.close();
-      }
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    finally {
-      try {
-        for (HashBasedIndexGenerator<?, ?> generator : generators) {
-          generator.closeIndex();
-        }
-      }
-      catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      return new ArrayList<>(files);
+    } finally {
+      indicator.popState();
     }
   }
 
