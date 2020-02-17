@@ -1094,9 +1094,32 @@ class Fir2IrVisitor(
         }
     }
 
+    private fun FirBlock.mapToIrStatements(): List<IrStatement?> {
+        val irRawStatements = statements.map { it.toIrStatement() }
+        val result = mutableListOf<IrStatement?>()
+        var missNext = false
+        for ((index, irRawStatement) in irRawStatements.withIndex()) {
+            if (missNext) {
+                missNext = false
+                continue
+            } else if (irRawStatement is IrVariable && irRawStatement.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) {
+                missNext = true
+                val irNextStatement = irRawStatements[index + 1]!!
+                result += IrBlockImpl(
+                    irRawStatement.startOffset, irNextStatement.endOffset,
+                    (irNextStatement as IrExpression).type, IrStatementOrigin.FOR_LOOP,
+                    listOf(irRawStatement, irNextStatement)
+                )
+            } else {
+                result += irRawStatement
+            }
+        }
+        return result
+    }
+
     private fun FirBlock.convertToIrBlockBody(): IrBlockBody {
         return convertWithOffsets { startOffset, endOffset ->
-            val irStatements = statements.map { it.toIrStatement() }
+            val irStatements = mapToIrStatements()
             IrBlockBodyImpl(
                 startOffset, endOffset,
                 if (irStatements.isNotEmpty()) {
@@ -1121,7 +1144,7 @@ class Fir2IrVisitor(
         return convertWithOffsets { startOffset, endOffset ->
             IrBlockImpl(
                 startOffset, endOffset, type, origin,
-                statements.mapNotNull { it.toIrStatement() }
+                mapToIrStatements().filterNotNull()
             )
         }
     }
