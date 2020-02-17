@@ -27,8 +27,11 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.text.View;
+import javax.swing.text.html.ImageView;
 import java.awt.*;
 import java.awt.font.TextAttribute;
+import java.awt.image.ImageObserver;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -57,10 +60,8 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   @Override
   public int calcHeightInPixels(@NotNull Inlay inlay) {
-    Editor editor = inlay.getEditor();
-    JComponent component = getRendererComponent(inlay);
-    AppUIUtil.targetToDevice(component, editor.getContentComponent());
-    component.setSize(Math.max(0, calcInlayWidth(editor) - calcInlayStartX() - scale(LEFT_INSET) - scale(RIGHT_INSET)), Integer.MAX_VALUE);
+    int width = Math.max(0, calcInlayWidth(inlay.getEditor()) - calcInlayStartX() - scale(LEFT_INSET) - scale(RIGHT_INSET));
+    JComponent component = getRendererComponent(inlay, width, -1);
     return component.getPreferredSize().height + scale(TOP_BOTTOM_INSETS) * 2 + scale(getTopMargin()) + scale(getBottomMargin());
   }
 
@@ -82,12 +83,11 @@ class DocRenderer implements EditorCustomElementRenderer {
     g.fillRoundRect(startX, filledStartY, targetRegion.width - startX, filledHeight, arcSize, arcSize);
     ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, savedAntiAliasing);
 
-    JComponent component = getRendererComponent(inlay);
-    component.setBackground(bgColor);
     int componentWidth = targetRegion.width - startX - scale(LEFT_INSET) - scale(RIGHT_INSET);
     int componentHeight = filledHeight - scale(TOP_BOTTOM_INSETS) * 2;
     if (componentWidth > 0 && componentHeight > 0) {
-      component.setSize(componentWidth, componentHeight);
+      JComponent component = getRendererComponent(inlay, componentWidth, componentHeight);
+      component.setBackground(bgColor);
       Graphics dg = g.create(startX + scale(LEFT_INSET), filledStartY + arcSize, componentWidth, componentHeight);
       GraphicsUtil.setupAntialiasing(dg);
       component.paint(dg);
@@ -136,8 +136,10 @@ class DocRenderer implements EditorCustomElementRenderer {
     return Math.max(0, indentPixels - scale(LEFT_INSET));
   }
 
-  private JComponent getRendererComponent(Inlay inlay) {
+  private JComponent getRendererComponent(Inlay inlay, int width, int height) {
+    boolean newInstance = false;
     if (myPane == null || Boolean.TRUE.equals(inlay.getUserData(RECREATE_COMPONENT) != null)) {
+      newInstance = true;
       myPane = new JEditorPane(UIUtil.HTML_MIME, "");
       myPane.setEditable(false);
       myPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
@@ -152,7 +154,40 @@ class DocRenderer implements EditorCustomElementRenderer {
       myPane.setText(myItem.textToRender);
       inlay.putUserData(RECREATE_COMPONENT, null);
     }
+    AppUIUtil.targetToDevice(myPane, inlay.getEditor().getContentComponent());
+    myPane.setSize(width, height < 0 ? (newInstance ? Integer.MAX_VALUE : myPane.getHeight()) : height);
+    if (newInstance) {
+      trackImageUpdates(inlay);
+    }
     return myPane;
+  }
+
+  private void trackImageUpdates(Inlay inlay) {
+    myPane.getPreferredSize(); // trigger internal layout
+    ImageObserver observer = (img, infoflags, x, y, width, height) -> {
+      SwingUtilities.invokeLater(() -> {
+        if (inlay.isValid()) inlay.update();
+      });
+      return true;
+    };
+    if (trackImageUpdates(myPane.getUI().getRootView(myPane), observer)) {
+      observer.imageUpdate(null, 0, 0, 0, 0, 0);
+    }
+  }
+
+  private static boolean trackImageUpdates(View view, ImageObserver observer) {
+    boolean result = false;
+    if (view instanceof ImageView) {
+      Image image = ((ImageView)view).getImage();
+      if (image != null) {
+        result = image.getWidth(observer) >= 0 || image.getHeight(observer) >= 0;
+      }
+    }
+    int childCount = view.getViewCount();
+    for (int i = 0; i < childCount; i++) {
+      result |= trackImageUpdates(view.getView(i), observer);
+    }
+    return result;
   }
 
   private static JBHtmlEditorKit createEditorKit() {
