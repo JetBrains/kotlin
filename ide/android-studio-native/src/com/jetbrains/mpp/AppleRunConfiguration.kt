@@ -13,7 +13,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.MPPWorkspace
 import com.jetbrains.mpp.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
@@ -23,7 +22,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: MobileConfig
     LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction {
 
     val xcodeproj: String?
-        get() = MPPWorkspace.getInstance(project).xcproject
+        get() = ProjectWorkspace.getInstance(project).xcproject
 
     val xcodeScheme: String = "iosApp" // TODO: Use provided.
 

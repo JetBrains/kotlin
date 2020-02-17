@@ -13,7 +13,7 @@
 
   <project-components>
     <component>
-      <implementation-class>com.jetbrains.konan.MPPWorkspace</implementation-class>
+      <implementation-class>com.jetbrains.mpp.ProjectWorkspace</implementation-class>
     </component>
   </project-components>
 
@@ -24,7 +24,7 @@
     <applicationService serviceImplementation="com.jetbrains.mpp.execution.DeviceService"/>
 
     <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
-    <externalProjectDataService implementation="com.jetbrains.konan.MPPProjectDataService"/>
+    <externalProjectDataService implementation="com.jetbrains.mpp.ProjectDataService"/>
     <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
     <programRunner implementation="com.jetbrains.mpp.execution.AppleRunner"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mpp.BuildIOSAppTaskProvider"/>
