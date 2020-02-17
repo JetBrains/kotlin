@@ -270,8 +270,7 @@ fun JavaExec.buildJs(sources: List<String>, dependencies: List<String>, outPath:
          "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
          "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
          "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
-         "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-         "-XXLanguage:-NewInference"
+         "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
      )
     args = allArgs
 
