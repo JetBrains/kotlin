@@ -255,7 +255,9 @@ class ServiceTreeView extends ServiceView {
       }
       if (Comparing.equal(newSelection, myLastSelection)) {
         myLastSelection = newSelection;
-        if (mySelected) {
+        // Skip updating details component if updatedItem has been already marked as removed,
+        // thus details component will be updated in the next already submitted update runnable.
+        if (mySelected && (updatedItem == null || !updatedItem.isRemoved())) {
           ServiceViewDescriptor descriptor = newSelection == null || (newSelection.isRemoved() && updatedItem == null) ?
                                              null : newSelection.getViewDescriptor();
           myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
