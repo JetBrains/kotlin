@@ -111,10 +111,24 @@ class ConvertTwoComparisonsToRangeCheckInspection :
                 is KtConstantExpression -> {
                     val constantValue = ConstantExpressionEvaluator.getConstant(this, context)?.getValue(type) ?: return null
                     return when {
-                        KotlinBuiltIns.isInt(type) -> (constantValue as Int + number).toString()
-                        KotlinBuiltIns.isLong(type) -> (constantValue as Long + number).toString()
+                        KotlinBuiltIns.isInt(type) -> (constantValue as Int + number).let {
+                            val text = this.text
+                            when {
+                                text.startsWith("0x") -> "0x${it.toString(16)}"
+                                text.startsWith("0b") -> "0b${it.toString(2)}"
+                                else -> it.toString()
+                            }
+                        }
+                        KotlinBuiltIns.isLong(type) -> (constantValue as Long + number).let {
+                            val text = this.text
+                            when {
+                                text.startsWith("0x") -> "0x${it.toString(16)}"
+                                text.startsWith("0b") -> "0b${it.toString(2)}"
+                                else -> it.toString()
+                            }
+                        }
                         KotlinBuiltIns.isChar(type) -> "'${constantValue as Char + number}'"
-                        else -> return null
+                        else -> null
                     }
                 }
                 else -> return if (number >= 0) "($text + $number)" else "($text - ${-number})"
