@@ -45,33 +45,7 @@ public class DaemonEditorPopup extends PopupHandler {
 
     ActionManager actionManager = ActionManager.getInstance();
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    Shortcut shortcut = KeymapUtil.getPrimaryShortcut("GotoNextError");
-    String shortcutText = shortcut != null ? " (" + KeymapUtil.getShortcutText(shortcut) + ")" : "";
-    DefaultActionGroup gotoGroup = DefaultActionGroup.createPopupGroup(() -> CodeInsightBundle.message("popup.title.next.error.action.0.goes.through", shortcutText));
-    gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.errors.first.radio")) {
-                    @Override
-                    public boolean isSelected(@NotNull AnActionEvent e) {
-                      return DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
-                    }
-
-                    @Override
-                    public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                      DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(state);
-                    }
-                  }
-    );
-    gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.next.error.warning.radio")) {
-                    @Override
-                    public boolean isSelected(@NotNull AnActionEvent e) {
-                      return !DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
-                    }
-
-                    @Override
-                    public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                      DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(!state);
-                    }
-                  }
-    );
+    DefaultActionGroup gotoGroup = createGotoGroup();
     actionGroup.add(gotoGroup);
     actionGroup.addSeparator();
     actionGroup.add(new AnAction(EditorBundle.messagePointer("customize.highlighting.level.menu.item")) {
@@ -101,5 +75,37 @@ public class DaemonEditorPopup extends PopupHandler {
       UIEventLogger.logUIEvent(UIEventId.DaemonEditorPopupInvoked);
       editorPopup.getComponent().show(comp, x, y);
     }
+  }
+
+  @NotNull
+  static DefaultActionGroup createGotoGroup() {
+    Shortcut shortcut = KeymapUtil.getPrimaryShortcut("GotoNextError");
+    String shortcutText = shortcut != null ? " (" + KeymapUtil.getShortcutText(shortcut) + ")" : "";
+    DefaultActionGroup gotoGroup = DefaultActionGroup.createPopupGroup(() -> CodeInsightBundle.message("popup.title.next.error.action.0.goes.through", shortcutText));
+    gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.errors.first.radio")) {
+                    @Override
+                    public boolean isSelected(@NotNull AnActionEvent e) {
+                      return DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
+                    }
+
+                    @Override
+                    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                      DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(state);
+                    }
+                  }
+    );
+    gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.next.error.warning.radio")) {
+                    @Override
+                    public boolean isSelected(@NotNull AnActionEvent e) {
+                      return !DaemonCodeAnalyzerSettings.getInstance().isNextErrorActionGoesToErrorsFirst();
+                    }
+
+                    @Override
+                    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                      DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(!state);
+                    }
+                  }
+    );
+    return gotoGroup;
   }
 }

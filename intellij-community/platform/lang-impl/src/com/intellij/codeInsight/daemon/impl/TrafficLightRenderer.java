@@ -7,13 +7,19 @@ import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile;
+import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -23,10 +29,18 @@ import com.intellij.openapi.editor.markup.AnalyzerStatus;
 import com.intellij.openapi.editor.markup.ErrorStripeRenderer;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.options.ex.ConfigurableExtensionPointUtil;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.profile.codeInspection.ui.ErrorsConfigurableProvider;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiDocumentManager;
@@ -36,6 +50,7 @@ import com.intellij.ui.TextIcon;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.JBValue;
 import com.intellij.util.ui.UIUtil;
@@ -72,7 +87,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   protected int[] errorCount;
 
   private static final JBValue ICON_TEXT_GAP = new JBValue.Float(6);
-  private static final int ICON_FONT = 11;
 
   /**
    * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
@@ -374,84 +388,140 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @Override
   public AnalyzerStatus getStatus(Editor editor) {
     if (PowerSaveMode.isEnabled()) {
-      return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode, false,
-                      XmlStringUtil.wrapInHtml("Code analysis is disabled in power save mode"));
-    }
-
-    DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
-    List<Icon> statusIcons = new ArrayList<>();
-    Font origFont = editor.getComponent().getFont();
-    Font font = origFont.deriveFont(Font.PLAIN, origFont.getSize() - JBUIScale.scale(2));
-
-    StringBuilder statusText = new StringBuilder();
-    int currentSeverityErrors = 0;
-
-    int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
-    for (int i = lastNotNullIndex; i >= 0; i--) {
-      int count = status.errorCount[i];
-      if (count > 0) {
-        HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
-        String name = StringUtil.toLowerCase(severity.getName());
-        if (count > 1) {
-          name = StringUtil.pluralize(name);
-        }
-
-        if (currentSeverityErrors > 0) statusText.append(", ");
-        statusText.append(count).append(" ").append(name);
-        currentSeverityErrors += count;
-
-        statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
-        TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
-                                     editor.getColorsScheme().getDefaultForeground(), null, 0);
-        icon.setFont(font);
-        statusIcons.add(icon);
-      }
-    }
-
-    if (statusIcons.size() > 0) {
-      LayeredIcon statusIcon = new LayeredIcon(statusIcons.size());
-      int maxIconHeight = statusIcons.stream().mapToInt(i -> i.getIconHeight()).max().orElse(0);
-      for (int i = 0, xShift = 0; i < statusIcons.size(); i += 2) {
-        Icon icon = statusIcons.get(i);
-        int yShift = (maxIconHeight - icon.getIconHeight()) / 2;
-        statusIcon.setIcon(icon, i, xShift, yShift);
-        //noinspection AssignmentToForLoopParameter
-        xShift += icon.getIconWidth();
-
-        icon = statusIcons.get(i + 1);
-        yShift = (maxIconHeight - icon.getIconHeight()) / 2;
-        statusIcon.setIcon(icon, i + 1, xShift, yShift);
-        //noinspection AssignmentToForLoopParameter
-        xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
-      }
-
-      if (!status.errorAnalyzingFinished) statusText.append(" found so far");
-      return new AnalyzerStatus(statusIcon, true, XmlStringUtil.wrapInHtml(statusText.toString()));
+      return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
+                                  "Code analysis is disabled in power save mode", this::initActions);
     }
     else {
-      if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
-        TextIcon icon = new TextIcon("OFF", editor.getColorsScheme().getDefaultForeground(), null, 0);
-        icon.setFont(font);
+      DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
+      List<Icon> statusIcons = new ArrayList<>();
+      Font editorFont = editor.getComponent().getFont();
+      Font font = editorFont.deriveFont(Font.PLAIN, editorFont.getSize() - JBUIScale.scale(2));
 
-        statusText.append("No analysis has been performed:<br/>").append(status.reasonWhyDisabled);
-        return new AnalyzerStatus(new LayeredIcon(icon), false, XmlStringUtil.wrapInHtml(statusText.toString()));
+      StringBuilder statusText = new StringBuilder();
+      int currentSeverityErrors = 0;
+
+      int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
+      for (int i = lastNotNullIndex; i >= 0; i--) {
+        int count = status.errorCount[i];
+        if (count > 0) {
+          HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
+          String name = StringUtil.toLowerCase(severity.getName());
+          if (count > 1) {
+            name = StringUtil.pluralize(name);
+          }
+
+          if (currentSeverityErrors > 0) statusText.append(", ");
+          statusText.append(count).append(" ").append(name);
+          currentSeverityErrors += count;
+
+          statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
+          TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
+                                       editor.getColorsScheme().getDefaultForeground(), null, 0);
+          icon.setFont(font);
+          statusIcons.add(icon);
+        }
       }
 
-      if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
-        TextIcon icon = new TextIcon("Indexing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
-        icon.setFont(font);
-        statusText.append("Code analysis has been suspended:<br/>").append(status.reasonWhySuspended);
-        return new AnalyzerStatus(new LayeredIcon(icon), false, XmlStringUtil.wrapInHtml(statusText.toString()));
-      }
+      if (statusIcons.size() > 0) {
+        LayeredIcon statusIcon = new LayeredIcon(statusIcons.size());
+        int maxIconHeight = statusIcons.stream().mapToInt(i -> i.getIconHeight()).max().orElse(0);
+        for (int i = 0, xShift = 0; i < statusIcons.size(); i += 2) {
+          Icon icon = statusIcons.get(i);
+          int yShift = (maxIconHeight - icon.getIconHeight()) / 2;
+          statusIcon.setIcon(icon, i, xShift, yShift);
+          //noinspection AssignmentToForLoopParameter
+          xShift += icon.getIconWidth();
 
-      if (status.errorAnalyzingFinished) {
-        return new AnalyzerStatus(AllIcons.General.InspectionsOK, false, XmlStringUtil.wrapInHtml("No problems found"));
+          icon = statusIcons.get(i + 1);
+          yShift = (maxIconHeight - icon.getIconHeight()) / 2;
+          statusIcon.setIcon(icon, i + 1, xShift, yShift);
+          //noinspection AssignmentToForLoopParameter
+          xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
+        }
+
+        if (!status.errorAnalyzingFinished) statusText.append(" found so far");
+        return new AnalyzerStatus(statusIcon, statusText.toString(), this::initActions).withNavigation();
       }
       else {
-        TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
-        icon.setFont(font);
-        return new AnalyzerStatus(new LayeredIcon(icon), false, XmlStringUtil.wrapInHtml("No problems found so far"));
+        if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
+          TextIcon icon = new TextIcon("OFF", editor.getColorsScheme().getDefaultForeground(), null, 0);
+          icon.setFont(font);
+
+          statusText.append("No analysis has been performed:<br/>").append(status.reasonWhyDisabled);
+          return new AnalyzerStatus(new LayeredIcon(icon), statusText.toString(), this::initActions);
+        }
+        else if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
+          TextIcon icon = new TextIcon("Indexing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+          icon.setFont(font);
+          statusText.append("Code analysis has been suspended:<br/>").append(status.reasonWhySuspended);
+          return new AnalyzerStatus(new LayeredIcon(icon), statusText.toString(), this::initActions);
+        }
+        else if (status.errorAnalyzingFinished) {
+          return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found", this::initActions);
+        }
+        else {
+          TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+          icon.setFont(font);
+          return new AnalyzerStatus(new LayeredIcon(icon), "No problems found so far", this::initActions);
+        }
       }
+    }
+  }
+
+  private AnAction initActions() {
+    MenuAction menuAction = new MenuAction();
+
+    if (myProject != null) { // Configure inspections
+      menuAction.add(new DumbAwareAction(EditorBundle.message("hector.configure.inspections")) {
+        @Override
+        public void update(@NotNull AnActionEvent e) {
+          e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+          if (!myProject.isDisposed()) {
+            Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(myProject, ErrorsConfigurableProvider.class);
+            if (projectConfigurable != null) {
+              ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
+            }
+          }
+        }
+      });
+    }
+
+    menuAction.add(DaemonEditorPopup.createGotoGroup());
+
+    if (myProject != null) { // Import popup
+      ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
+      PsiFile psiFile = ObjectUtils.notNull(getPsiFile()); // First in-the-method condition makes this fine.
+      VirtualFile virtualFile = psiFile.getVirtualFile();
+      assert virtualFile != null;
+      boolean notInLibrary = !fileIndex.isInLibrary(virtualFile) || fileIndex.isInContent(virtualFile);
+
+      if (notInLibrary) {
+        menuAction.addAll(Separator.create(), new DumbAwareAction() {
+          @Override
+          public void update(@NotNull AnActionEvent e) {
+            String actionText = myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile) ? "Don't show import tooltip": "Show import tooltip";
+            e.getPresentation().setText(actionText);
+          }
+
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            boolean hintEnabled = myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile);
+            myDaemonCodeAnalyzer.setImportHintsEnabled(psiFile, !hintEnabled);
+          }
+        });
+      }
+    }
+
+    return menuAction;
+  }
+
+  private static class MenuAction extends DefaultActionGroup implements HintManagerImpl.ActionToIgnore {
+    private MenuAction() {
+      setPopup(true);
     }
   }
 }
