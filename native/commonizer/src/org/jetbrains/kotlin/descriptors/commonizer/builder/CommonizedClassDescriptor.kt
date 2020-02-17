@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
@@ -139,6 +140,7 @@ class CommonizedClassDescriptor(
         override fun isDenotable() = true
         override fun getDeclarationDescriptor() = this@CommonizedClassDescriptor
         override val supertypeLoopChecker get() = SupertypeLoopChecker.EMPTY
+        override fun toString() = declarationDescriptor.fqNameSafe.asString()
     }
 }
 
