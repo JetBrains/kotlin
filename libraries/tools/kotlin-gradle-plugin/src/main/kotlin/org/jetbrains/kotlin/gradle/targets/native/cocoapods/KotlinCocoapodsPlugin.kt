@@ -167,7 +167,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register("podspec", PodGenerateSpecTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
-            it.settings = cocoapodsExtension
+            it.cocoapodsExtension = cocoapodsExtension
             it.dependsOn(dummyFrameworkTask)
             val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
             if (generateWrapper) {
@@ -253,7 +253,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register("podGenerateSpec", PodGenerateSpecTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
-            it.settings = cocoapodsExtension
+            it.cocoapodsExtension = cocoapodsExtension
             it.dependsOn(dummyFrameworkTask)
         }
     }
@@ -267,24 +267,21 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register(POD_INSTALL_TASK_NAME, PodInstallTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Invokes `pod install` call within Podfile location directory"
-            it.settings = podGenerateSpecTask.settings
+            it.settings = podGenerateSpecTask.cocoapodsExtension
             it.dependsOn(podGenerateSpecTask)
         }
     }
 
     private fun registerPodBuildSettingsTask(
         project: Project,
-        cocoapodsExtension: CocoapodsExtension,
-        buildSettings: PodBuildSettings
+        cocoapodsExtension: CocoapodsExtension
     ) {
         val podInstallTask = project.tasks.getByPath(POD_INSTALL_TASK_NAME) as PodInstallTask
 
         project.tasks.register("podBuildSettings", PodBuildSettingsTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Collect environment variables from .xcworkspace file"
-            it.settings = cocoapodsExtension
-            it.xcWorkspaceDirProvider = podInstallTask.xcWorkspaceFileProvider
-            it.buildSettings = buildSettings
+            it.cocoapodsExtension = cocoapodsExtension
             it.dependsOn(podInstallTask)
         }
     }
@@ -297,8 +294,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register("podBuildDependencies", PodBuildDependenciesTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Calls `xcodebuild` on xcworkspace for the pod scheme"
-            it.xcWorkspaceDirProvider = podBuildSettingsTask.xcWorkspaceDirProvider
-            it.buildSettings = podBuildSettingsTask.buildSettings
+            it.cocoapodsExtension = podBuildSettingsTask.cocoapodsExtension
             it.dependsOn(podBuildSettingsTask)
         }
     }
@@ -310,7 +306,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         val podBuildDependenciesTask = project.tasks.getByPath("podBuildDependencies") as PodBuildDependenciesTask
-
 
         val moduleNames = mutableSetOf<String>()
         cocoapodsExtension.pods.all { pod ->
@@ -343,15 +338,16 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     // but there are no parameters set by Xcode or manually by user (KT-31062).
 
                     interopTask.doFirst { _ ->
-                        podBuildDependenciesTask.buildSettings.cflags?.let { args ->
+                        val podBuildSettings = PodBuildSettings.readBuildSettings(project)
+                        podBuildSettings.cflags?.let { args ->
                             // Xcode quotes around paths with spaces.
                             // Here and below we need to split such paths taking this into account.
                             interop.compilerOpts.addAll(args.splitQuotedArgs())
                         }
-                        podBuildDependenciesTask.buildSettings.headerPaths?.let { args ->
+                        podBuildSettings.headerPaths?.let { args ->
                             interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
                         }
-                        podBuildDependenciesTask.buildSettings.frameworkPaths?.let { args ->
+                        podBuildSettings.frameworkPaths?.let { args ->
                             interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
                         }
                         val hasCompilerOpts = interop.compilerOpts.isNotEmpty()
@@ -377,9 +373,12 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension
     ) {
-        project.tasks.register("podImport", PodImportTask::class.java) {
+
+        val podBuildDependenciesTask = project.tasks.getByPath("podBuildDependencies") as PodBuildDependenciesTask
+        val podImportTask = project.tasks.register("podImport") {
             it.group = TASK_GROUP
             it.description = "Called on Gradle sync, depends on Cinterop tasks for every used pod"
+            it.dependsOn(podBuildDependenciesTask)
 
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.all { interop ->
@@ -400,13 +399,12 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlinExtension = project.multiplatformExtension
             val cocoapodsExtension = CocoapodsExtension(this)
-            val buildSettings = PodBuildSettings(this)
 
             kotlinExtension.addExtension(EXTENSION_NAME, cocoapodsExtension)
             createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
             registerPodGenerateSpecTask(project, cocoapodsExtension)
             registerPodInstallTask(project)
-            registerPodBuildSettingsTask(project, cocoapodsExtension, buildSettings)
+            registerPodBuildSettingsTask(project, cocoapodsExtension)
             registerPodBuildDependenciesTask(project)
             setupCinterops(project, kotlinExtension, cocoapodsExtension)
             registerPodImportTask(project, kotlinExtension)
