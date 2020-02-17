@@ -594,6 +594,21 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @Test
+    fun testEnableFeatureSupportGSKWithoutFoundKotlinVersion() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
     @TargetVersions("4.7+")
     @Test
     fun testEnableFeatureSupportToExistentArgumentsWithXFlag() = testEnableFeatureSupportToExistentArguments()
