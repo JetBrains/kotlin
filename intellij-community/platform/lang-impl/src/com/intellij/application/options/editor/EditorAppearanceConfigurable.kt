@@ -46,7 +46,7 @@ class EditorAppearanceConfigurable : BoundCompositeSearchableConfigurable<Unname
     val model = EditorSettingsExternalizable.getInstance()
     return panel {
       row {
-        cell {
+        cell(isFullWidth = true) {
           val cbBlinkCaret = checkBox(myCbBlinkCaret)
           intTextField(model::getBlinkPeriod, model::setBlinkPeriod, columns = 5).enableIf(cbBlinkCaret.selected)
         }
