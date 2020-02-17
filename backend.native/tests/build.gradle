@@ -3357,19 +3357,16 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
         it.headers "$projectDir/interop/objc/smoke.h"
-        it.linkerOpts "-L$buildDir",  "-lobjcsmoke"
     }
 
     createInterop("objcMisc") {
         it.defFile 'interop/objc_with_initializer/objc_misc.def'
         it.headers "$projectDir/interop/objc_with_initializer/objc_misc.h"
-        it.linkerOpts "-L$buildDir",  "-lobjcmisc"
     }
 
     createInterop("objcMessaging") {
         it.defFile 'interop/objc/msg_send/messaging.def'
         it.headers "$projectDir/interop/objc/msg_send/messaging.h"
-        it.linkerOpts "-L$buildDir", "-lobjcmessaging"
     }
 
     createInterop("objcKt34467") {
@@ -3381,7 +3378,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcGh3343") {
         it.defFile 'framework/gh3343/objclib.def'
         it.headers "$projectDir/framework/gh3343/objclib.h"
-        it.linkerOpts "-L$buildDir"
     }
 }
 
@@ -3403,15 +3399,13 @@ Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
                 UtilsKt.sameDependenciesAs(libTask, task as KonanInteropTest)
                 task.dependsOn(libTask)
 
-                def lnOpts = (project.tasks.getByName(libTask)).linkerOpts
-
                 program(name, targets: [target.name]) {
                     libraries {
                         artifact lib
                     }
                     srcFiles task.getSources()
                     baseDir "$testOutputLocal/$name"
-                    if (lnOpts != null) linkerOpts(lnOpts)
+                    linkerOpts "-L$buildDir"
                     extraOpts task.flags
                     extraOpts project.globalTestArgs
                 }
