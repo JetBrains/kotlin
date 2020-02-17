@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36646 Don't box primitive values in equality comparison with nullable primitive values in JVM_IR
+
 fun testBoolean1(a: Boolean, b: Boolean?) = a == b
 fun testBoolean2(a: Boolean, b: Boolean?) = a != b
 
