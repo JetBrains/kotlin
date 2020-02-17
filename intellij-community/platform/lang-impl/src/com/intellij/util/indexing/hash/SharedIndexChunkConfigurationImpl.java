@@ -20,6 +20,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.concurrency.SameThreadExecutor;
+import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.building.EmptyIndexEnumerator;
@@ -48,6 +50,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @ApiStatus.Internal
@@ -64,6 +67,10 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   private final UncompressedZipFileSystem myReadSystem;
 
   private final Map<Project, Long> myProjectStructureStamps = Collections.synchronizedMap(new WeakHashMap<>());
+
+  private final Executor mySharedIndexExecutor = ApplicationManager.getApplication().isUnitTestMode()
+    ? SameThreadExecutor.INSTANCE
+    : SequentialTaskExecutor.createSequentialApplicationPoolExecutor("shared-index-loader", ProcessIOExecutorService.INSTANCE);
 
   @Override
   public void disposeIndexChunkData(@NotNull ID<?, ?> indexId, int chunkId) {
@@ -153,33 +160,20 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   }
 
   @NotNull
-  public Promise<Void> preloadIndex(@NotNull Project project,
-                                    @NotNull ChunkDescriptor descriptor,
+  public Promise<Void> preloadIndex(@NotNull ChunkDescriptor descriptor,
                                     @NotNull ProgressIndicator indicator) {
     AsyncPromise<Void> p = new AsyncPromise<>();
-    Runnable runnable = () -> {
-      Promises.compute(p, () -> {
-        loadSharedIndex(project, descriptor, indicator, IndexInfrastructureVersion.getIdeVersion());
-        return null;
-      });
-    };
-
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      runnable.run();
-    } else {
-      ProcessIOExecutorService.INSTANCE.execute(runnable);
-    }
-
+    mySharedIndexExecutor.execute(() -> Promises.compute(p, () -> {
+      loadSharedIndex(descriptor, indicator, IndexInfrastructureVersion.getIdeVersion());
+      return null;
+    }));
     return p;
   }
 
   // for now called sequentially on a single background thread
-  private void loadSharedIndex(@NotNull Project project,
-                               @NotNull ChunkDescriptor descriptor,
+  private void loadSharedIndex(@NotNull ChunkDescriptor descriptor,
                                @NotNull ProgressIndicator indicator,
                                @NotNull IndexInfrastructureVersion ideVersion) {
-    if (project.isDisposed()) return;
-
     Path tempChunk = null;
     try {
       tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
@@ -206,13 +200,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     }
 
     syncSharedIndexStorage();
-
-    try {
-      attachChunk(descriptor, project);
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
   }
 
   private static void deleteFile(@Nullable Path sharedIndexChunk) {
@@ -261,20 +248,26 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
         for (ChunkDescriptor descriptor : descriptors) {
           if (ideVersion.getBaseIndexes().equals(descriptor.getSupportedInfrastructureVersion().getBaseIndexes())) {
             LOG.info("Found shared index " + descriptor.getChunkUniqueId() + " for " + descriptor.getOrderEntries());
-            loadSharedIndex(project, descriptor, indicator, ideVersion);
+            if (!project.isDisposed()) {
+              loadSharedIndex(descriptor, indicator, ideVersion);
+            }
           } else {
             LOG.info("Shared index " + descriptor.getChunkUniqueId() + " is unsuported");
+          }
+
+          try {
+            attachChunk(descriptor, project);
+          }
+          catch (IOException e) {
+            LOG.error(e);
           }
         }
       }
 
       myProjectStructureStamps.put(project, actualStamp);
     };
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      runnable.run();
-    } else {
-      ProcessIOExecutorService.INSTANCE.execute(runnable);
-    }
+
+    mySharedIndexExecutor.execute(runnable);
   }
 
   @NotNull

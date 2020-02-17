@@ -6,8 +6,10 @@ import com.google.common.io.Files
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.Urls
@@ -23,26 +25,26 @@ data class JdkInstallRequest(
   val targetDir: File
 )
 
+private val JDK_INSTALL_LISTENER_EP_NAME = ExtensionPointName.create<JdkInstallerListener>("com.intellij.jdkDownloader.jdkInstallerListener")
+
 interface JdkInstallerListener {
   /**
    * Executed at the moment, when a download process for
    * a given [request] is started
    */
   @JvmDefault
-  fun onJdkDownloadStarted(request: JdkInstallRequest) { }
+  fun onJdkDownloadStarted(request: JdkInstallRequest, project: Project?) { }
 
   /**
    * This event is executed when download process is finished,
    * for all possible outcomes, no matter it was a success or a failure
    */
   @JvmDefault
-  fun onJdkDownloadFinished(request: JdkInstallRequest) { }
+  fun onJdkDownloadFinished(request: JdkInstallRequest, project: Project?) { }
 }
 
 object JdkInstaller {
   private val LOG = logger<JdkInstaller>()
-
-  val TOPIC = Topic.create("JdkInstaller.Installing", JdkInstallerListener::class.java, Topic.BroadcastDirection.TO_CHILDREN)
 
   fun defaultInstallDir(newVersion: JdkItem) : String {
     val installFolderName = newVersion.installFolderName
@@ -81,8 +83,10 @@ object JdkInstaller {
     return targetDir to null
   }
 
-  fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?) {
-    ApplicationManager.getApplication()?.messageBus?.syncPublisher(TOPIC)?.onJdkDownloadStarted(request)
+  fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?, project: Project?) {
+    for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
+      listener.onJdkDownloadStarted(request, project)
+    }
 
     val item = request.item
     indicator?.text = "Installing ${item.fullPresentationText}..."
@@ -137,7 +141,10 @@ object JdkInstaller {
     }
     finally {
       FileUtil.delete(downloadFile)
-      ApplicationManager.getApplication()?.messageBus?.syncPublisher(TOPIC)?.onJdkDownloadFinished(request)
+
+      for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
+        listener.onJdkDownloadFinished(request, project)
+      }
     }
   }
 

@@ -153,7 +153,7 @@ class JdkDownloaderTest {
   private inline fun testUnpacking(item: JdkItem, resultDir: (File) -> Unit) {
     val dir = fsRule.newFolder()
     JdkInstaller.installJdk(
-      JdkInstallRequest(item, dir), null)
+      JdkInstallRequest(item, dir), null, null)
     resultDir(dir)
   }
 }

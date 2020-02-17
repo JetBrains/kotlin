@@ -51,7 +51,7 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
       JdkInstaller.prepareJdkInstallation(jdkItem, jdkHome)
     } ?: return
 
-    sdkCreatedCallback.accept(newDownloadTask(request))
+    sdkCreatedCallback.accept(newDownloadTask(request, project))
   }
 
   private inline fun <T : Any> runTaskAndReportError(project: Project?,
@@ -86,13 +86,13 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
 }
 
 internal interface JdkDownloaderBase {
-  fun newDownloadTask(request: JdkInstallRequest): SdkDownloadTask {
+  fun newDownloadTask(request: JdkInstallRequest, project: Project?): SdkDownloadTask {
     return object : SdkDownloadTask {
       override fun getSuggestedSdkName() = request.item.suggestedSdkName
       override fun getPlannedHomeDir() = request.targetDir.absolutePath
       override fun getPlannedVersion() = request.item.versionString
       override fun doDownload(indicator: ProgressIndicator) {
-        JdkInstaller.installJdk(request, indicator)
+        JdkInstaller.installJdk(request, indicator, project)
       }
     }
   }
