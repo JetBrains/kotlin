@@ -9,7 +9,6 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
@@ -38,9 +37,11 @@ constructor(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
         if (compilation !is KotlinJsIrCompilation) {
-            throw IllegalArgumentException(
-                "Unable to create executable for $compilation. Use IR compiler (kotlin.js.compiler=true) instead."
+            project.logger.warn(
+                "binaries.executable configuration is useless with IR compiler." +
+                        "Use produceExecutable() instead"
             )
+            return
         }
 
         (target as KotlinJsSubTargetContainerDsl).whenBrowserConfigured {
@@ -70,7 +71,7 @@ constructor(
         compilation: KotlinJsCompilation,
         buildVariantKinds: Collection<BuildVariantKind> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
-        create: (target: KotlinTarget, name: String, buildVariantKind: BuildVariantKind) -> T
+        create: (compilation: KotlinJsCompilation, name: String, buildVariantKind: BuildVariantKind) -> T
     ) {
         buildVariantKinds.forEach { buildVariantKind ->
             val name = generateBinaryName(
@@ -83,7 +84,7 @@ constructor(
                 "Cannot create binary $name: binary with such a name already exists"
             }
 
-            val binary = create(target, name, buildVariantKind)
+            val binary = create(compilation, name, buildVariantKind)
             add(binary)
             // Allow accessing binaries as properties of the container in Groovy DSL.
             if (this is ExtensionAware) {
@@ -96,12 +97,12 @@ constructor(
         internal fun generateBinaryName(
             compilation: KotlinJsCompilation,
             buildVariantKind: BuildVariantKind,
-            jsBinaryType: JsBinaryType
+            jsBinaryType: JsBinaryType?
         ) =
             lowerCamelCaseName(
                 compilation.name.let { if (it == KotlinCompilation.MAIN_COMPILATION_NAME) null else it },
                 buildVariantKind.name.toLowerCase(),
-                jsBinaryType.name.toLowerCase()
+                jsBinaryType?.name?.toLowerCase()
             )
     }
 }

@@ -6,6 +6,5 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 enum class JsBinaryType {
-    EXECUTABLE,
-    TEST
+    EXECUTABLE
 }

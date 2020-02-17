@@ -64,47 +64,51 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         val commonRunTask = project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
-        compilation.binaries.all { binary ->
-            val type = binary.type
+        compilation.binaries
+            .matching { it is Executable }
+            .all { binary ->
+                binary as Executable
 
-            val runTask = project.registerTask<KotlinWebpack>(
-                disambiguateCamelCased(
-                    binary.name,
-                    RUN_TASK_NAME
-                )
-            ) {
-                it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    binary.linkTask,
-                    target.project.tasks.getByName(compilation.processResourcesTaskName)
-                )
+                val type = binary.type
 
-                it.configureOptimization(type)
+                val runTask = project.registerTask<KotlinWebpack>(
+                    disambiguateCamelCased(
+                        binary.executeTaskBaseName,
+                        RUN_TASK_NAME
+                    )
+                ) {
+                    it.dependsOn(
+                        nodeJs.npmInstallTask,
+                        binary.linkTask,
+                        target.project.tasks.getByName(compilation.processResourcesTaskName)
+                    )
 
-                it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
-                it.compilation = compilation
-                it.entry = binary.linkTask.map { it.outputFile }.get()
-                it.description = "start ${type.name.toLowerCase()} webpack dev server"
+                    it.configureOptimization(type)
 
-                it.devServer = KotlinWebpackConfig.DevServer(
-                    open = true,
-                    contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-                )
+                    it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    it.compilation = compilation
+                    it.entry = binary.linkTask.map { it.outputFile }.get()
+                    it.description = "start ${type.name.toLowerCase()} webpack dev server"
 
-                it.outputs.upToDateWhen { false }
+                    it.devServer = KotlinWebpackConfig.DevServer(
+                        open = true,
+                        contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
+                    )
 
-                commonRunConfigurations.forEach { configure ->
-                    it.configure()
+                    it.outputs.upToDateWhen { false }
+
+                    commonRunConfigurations.forEach { configure ->
+                        it.configure()
+                    }
+                }
+
+                if (type == BuildVariantKind.DEVELOPMENT) {
+                    target.runTask.dependsOn(runTask)
+                    commonRunTask.configure {
+                        it.dependsOn(runTask)
+                    }
                 }
             }
-
-            if (type == BuildVariantKind.DEVELOPMENT) {
-                target.runTask.dependsOn(runTask)
-                commonRunTask.configure {
-                    it.dependsOn(runTask)
-                }
-            }
-        }
     }
 
     override fun configureBuild(
@@ -132,43 +136,47 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         assembleTask.dependsOn(distributeResourcesTask)
 
-        compilation.binaries.all { binary ->
-            val type = binary.type
-            val webpackTask = project.registerTask<KotlinWebpack>(
-                disambiguateCamelCased(
-                    binary.name,
-                    WEBPACK_TASK_NAME
-                )
-            ) {
-                it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    binary.linkTask,
-                    distributeResourcesTask
-                )
+        compilation.binaries
+            .matching { it is Executable }
+            .all { binary ->
+                binary as Executable
 
-                it.configureOptimization(type)
+                val type = binary.type
+                val webpackTask = project.registerTask<KotlinWebpack>(
+                    disambiguateCamelCased(
+                        binary.executeTaskBaseName,
+                        WEBPACK_TASK_NAME
+                    )
+                ) {
+                    it.dependsOn(
+                        nodeJs.npmInstallTask,
+                        binary.linkTask,
+                        distributeResourcesTask
+                    )
 
-                it.compilation = compilation
-                it.entry = binary.linkTask.map { it.outputFile }.get()
-                it.description = "build webpack ${type.name.toLowerCase()} bundle"
-                it.destinationDirectory = distribution.directory
+                    it.configureOptimization(type)
 
-                commonWebpackConfigurations.forEach { configure ->
-                    it.configure()
+                    it.compilation = compilation
+                    it.entry = binary.linkTask.map { it.outputFile }.get()
+                    it.description = "build webpack ${type.name.toLowerCase()} bundle"
+                    it.destinationDirectory = distribution.directory
+
+                    commonWebpackConfigurations.forEach { configure ->
+                        it.configure()
+                    }
+                }
+
+                if (type == BuildVariantKind.PRODUCTION) {
+                    assembleTask.dependsOn(webpackTask)
+                    val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                        it.dependsOn(webpackTask)
+                    }
+                    project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                        it.dependsOn(webpackCommonTask)
+                        it.dependsOn(distributeResourcesTask)
+                    }
                 }
             }
-
-            if (type == BuildVariantKind.PRODUCTION) {
-                assembleTask.dependsOn(webpackTask)
-                val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
-                    it.dependsOn(webpackTask)
-                }
-                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
-                    it.dependsOn(webpackCommonTask)
-                    it.dependsOn(distributeResourcesTask)
-                }
-            }
-        }
     }
 
     private fun KotlinWebpack.configureOptimization(kind: BuildVariantKind) {

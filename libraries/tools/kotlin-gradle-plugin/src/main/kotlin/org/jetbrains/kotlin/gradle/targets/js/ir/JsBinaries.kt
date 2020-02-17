@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 sealed class JsBinary(
-    internal val target: KotlinTarget,
+    internal val compilation: KotlinJsCompilation,
     internal val name: String,
     internal val type: BuildVariantKind
 ) {
@@ -26,32 +28,31 @@ sealed class JsBinary(
     private fun linkTaskName(): String =
         lowerCamelCaseName(
             "compile",
-            type.name.toLowerCase(),
             name,
             "Kotlin",
             target.targetName
         )
+
+    val target: KotlinTarget
+        get() = compilation.target
 
     val project: Project
         get() = target.project
 }
 
 class Executable(
-    target: KotlinTarget,
+    compilation: KotlinJsCompilation,
     name: String,
     type: BuildVariantKind
 ) : JsBinary(
-    target,
+    compilation,
     name,
     type
-)
-
-class TestExecutable(
-    target: KotlinTarget,
-    name: String,
-    type: BuildVariantKind
-) : JsBinary(
-    target,
-    name,
-    type
-)
+) {
+    val executeTaskBaseName: String =
+        generateBinaryName(
+            compilation,
+            type,
+            null
+        )
+}
