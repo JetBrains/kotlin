@@ -169,7 +169,7 @@ class CyclicCollector {
          restartCount = 0;
         restart:
          COLLECTOR_LOG("start cycle GC\n");
-         if (restartCount > 10) {
+         if (restartCount > 10 && !terminateCollector_) {
            COLLECTOR_LOG("wait for some time to avoid GC trashing\n");
            struct timeval tv;
            struct timespec ts;
