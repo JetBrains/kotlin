@@ -156,7 +156,7 @@ abstract class AbstractKotlinTarget(
         }.toSet()
     }
 
-    protected fun createKotlinVariant(
+    protected open fun createKotlinVariant(
         componentName: String,
         compilation: KotlinCompilation<*>,
         usageContexts: Set<DefaultKotlinUsageContext>
