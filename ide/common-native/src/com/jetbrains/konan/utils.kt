@@ -71,6 +71,7 @@ fun runBuildTasks(
 }
 
 // Returns Kotlin/Native internal version (not the same as Big Kotlin version).
+@Suppress("unused") // actually used in org.jetbrains.konan.debugger.KonanValueRendererFactoryKt.getPrettyPrintersLocation
 fun getKotlinNativeVersion(kotlinNativeHome: String): CompilerVersion? {
     return try {
         Distribution(konanHomeOverride = kotlinNativeHome).compilerVersion?.parseCompilerVersion()
