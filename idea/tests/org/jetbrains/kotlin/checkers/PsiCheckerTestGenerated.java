@@ -934,10 +934,5 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         public void testOperatorCallDiagnosticsOnInOperator() throws Exception {
             runTest("idea/testData/checker/diagnosticsMessage/operatorCallDiagnosticsOnInOperator.kt");
         }
-
-        @TestMetadata("standaloneSamConversionIsDisabledInIDE.kt")
-        public void testStandaloneSamConversionIsDisabledInIDE() throws Exception {
-            runTest("idea/testData/checker/diagnosticsMessage/standaloneSamConversionIsDisabledInIDE.kt");
-        }
     }
 }
