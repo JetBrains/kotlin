@@ -1289,6 +1289,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/problems/definetelyNotNullForTypeParameter.kt");
         }
 
+        @TestMetadata("definitelyNotNullAndOriginalType.kt")
+        public void testDefinitelyNotNullAndOriginalType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
+        }
+
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
