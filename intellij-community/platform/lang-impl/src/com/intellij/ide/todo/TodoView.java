@@ -358,6 +358,6 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
     return DumbService.getInstance(myProject).wrapWithSpoiler(panel, () -> ApplicationManager.getApplication().invokeLater(() -> {
       panel.rebuildCache();
       panel.updateTree();
-    }), panel);
+    }, myProject.getDisposed()), panel);
   }
 }
