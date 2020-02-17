@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirQualifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -23,11 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
@@ -44,7 +44,7 @@ interface ReceiverValue : Receiver {
         type.scope(useSiteSession, scopeSession)
 }
 
-private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirExpression =
+private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirThisReceiverExpression =
     buildThisReceiverExpression {
         calleeReference = buildImplicitThisReference {
             boundSymbol = symbol
@@ -96,7 +96,9 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? = implicitScope
 
-    override val receiverExpression: FirExpression = receiverExpression(boundSymbol, type)
+    private val originalReceiverExpression: FirThisReceiverExpression = receiverExpression(boundSymbol, type)
+    final override var receiverExpression: FirExpression = originalReceiverExpression
+        private set
 
     /*
      * Should be called only in ImplicitReceiverStack
@@ -104,6 +106,15 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     internal fun replaceType(type: ConeKotlinType) {
         if (type == this.type) return
         this.type = type
+        receiverExpression = if (type == originalReceiverExpression.typeRef.coneTypeUnsafe()) {
+            originalReceiverExpression
+        } else {
+            buildExpressionWithSmartcast {
+                originalExpression = originalReceiverExpression
+                typeRef = originalReceiverExpression.typeRef.resolvedTypeFromPrototype(type)
+                typesFromSmartCast = listOf(type)
+            }
+        }
         implicitScope = type.scope(useSiteSession, scopeSession)
     }
 }

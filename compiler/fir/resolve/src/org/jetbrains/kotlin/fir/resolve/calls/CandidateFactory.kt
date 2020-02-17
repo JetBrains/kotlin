@@ -49,23 +49,10 @@ class CandidateFactory private constructor(
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
-        val receiverExpression = builtInExtensionFunctionReceiverValue?.let {
-            val receiverExpression = builtInExtensionFunctionReceiverValue.receiverExpression
-            if (receiverExpression is FirQualifiedAccessExpression &&
-                it.type != builtInExtensionFunctionReceiverValue.receiverExpression.typeRef.coneTypeUnsafe()) {
-                buildExpressionWithSmartcast {
-                    originalExpression = receiverExpression
-                    typeRef = receiverExpression.typeRef.resolvedTypeFromPrototype(it.type)
-                    typesFromSmartCast = listOf(it.type)
-                }
-            } else {
-                receiverExpression
-            }
-        }
         return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
             explicitReceiverKind, bodyResolveComponents, baseSystem,
-            receiverExpression?.let {
+            builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
             } ?: callInfo
         )
