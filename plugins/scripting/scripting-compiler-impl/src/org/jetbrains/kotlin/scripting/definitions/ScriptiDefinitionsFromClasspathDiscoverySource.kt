@@ -112,8 +112,11 @@ private fun scriptTemplatesDiscoverySequence(
                         defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
                         val discoveryMarkers = File(dep, SCRIPT_DEFINITION_MARKERS_PATH).listFiles()
                         if (discoveryMarkers?.isEmpty() == false) {
-                            val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map { it.name }
-                                .partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
+                            val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map {
+                                it.name.removeSuffix(
+                                    SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
+                                )
+                            }.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
                             foundDefinitionClasses.forEach {
                                 yield(it)
                             }
