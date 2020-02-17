@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.native.concurrent.SharedImmutable
+
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
@@ -336,6 +338,7 @@ public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
     else compareToIgnoreCase(this, other)
 }
 
+@SharedImmutable
 private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
