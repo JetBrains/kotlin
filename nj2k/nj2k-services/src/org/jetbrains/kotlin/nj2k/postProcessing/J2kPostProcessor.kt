@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.j2k.files
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.nj2k.KotlinNJ2KServicesBundle
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.postProcessing.processings.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import sun.java2d.loops.FillRect
 
 class NewJ2kPostProcessor : PostProcessor {
     @Suppress("PrivatePropertyName")
@@ -260,7 +260,7 @@ private val cleaningUpDiagnosticBasedPostProcessingGroup =
 
 private val processings: List<NamedPostProcessingGroup> = listOf(
     NamedPostProcessingGroup(
-        "Inferring types",
+        KotlinNJ2KServicesBundle.message("processing.step.inferring.types"),
         listOf(
             InspectionLikeProcessingGroup(
                 processings = listOf(
@@ -275,7 +275,7 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         )
     ),
     NamedPostProcessingGroup(
-        "Cleaning up code",
+        KotlinNJ2KServicesBundle.message("processing.step.cleaning.up.code"),
         listOf(
             InspectionLikeProcessingGroup(VarToValProcessing()),
             ConvertGettersAndSettersToPropertyProcessing(),
@@ -294,7 +294,7 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         )
     ),
     NamedPostProcessingGroup(
-        "Optimizing imports and formatting code",
+        KotlinNJ2KServicesBundle.message("processing.step.optimizing.imports.and.formatting.code"),
         listOf(
             ShortenReferenceProcessing(),
             OptimizeImportsProcessing(),
