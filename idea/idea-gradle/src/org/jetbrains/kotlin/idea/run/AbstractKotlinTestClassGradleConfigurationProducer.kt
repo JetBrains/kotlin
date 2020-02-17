@@ -10,6 +10,7 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.junit.InheritorChooser
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
@@ -86,6 +87,7 @@ abstract class AbstractKotlinMultiplatformTestClassGradleConfigurationProducer :
                 LOG.warn("Cannot apply class test configuration, uses raw run configuration")
                 performRunnable.run()
             }
+            settings.externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(context.module)
             configuration.name = classes.joinToString("|") { it.name ?: "<error>" }
             performRunnable.run()
         }
