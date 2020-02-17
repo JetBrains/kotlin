@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
@@ -16,6 +17,7 @@ import com.intellij.psi.stubs.SerializationManagerImpl;
 import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubSharedIndexExtension;
 import com.intellij.psi.stubs.StubUpdatingIndex;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileBasedIndexExtension;
@@ -28,10 +30,11 @@ import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
@@ -54,13 +57,16 @@ public class IndexesExporter {
   public IndexInfrastructureVersion exportIndexesChunk(@NotNull IndexChunk chunk,
                                                        @NotNull Path zipFile,
                                                        @NotNull ProgressIndicator indicator) {
-    final Disposable rootDisposable = Disposer.newDisposable();
+    ErrorsCollector errorsCollector = new OptimisticErrorsCollector();
+    Disposable rootDisposable = Disposer.newDisposable();
     Path chunkRoot = zipFile.resolveSibling(zipFile.getFileName().toString() + ".unpacked");
     try {
       PathKt.delete(chunkRoot);
       PathKt.delete(zipFile);
       PathKt.createDirectories(chunkRoot);
-      return exportIndexesChunkImpl(chunk, chunkRoot, zipFile, indicator, rootDisposable);
+      IndexInfrastructureVersion version = exportIndexesChunkImpl(chunk, chunkRoot, zipFile, indicator, rootDisposable, errorsCollector);
+      errorsCollector.report();
+      return version;
     } catch (Exception e) {
       try {
         PathKt.delete(chunkRoot);
@@ -79,7 +85,8 @@ public class IndexesExporter {
                                                             @NotNull Path chunkRoot,
                                                             @NotNull Path zipFile,
                                                             @NotNull ProgressIndicator indicator,
-                                                            @NotNull Disposable rootDisposable) throws Exception {
+                                                            @NotNull Disposable rootDisposable,
+                                                            @NotNull ErrorsCollector errorsCollector) throws Exception {
 
     List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
       .EXTENSION_POINT_NAME
@@ -108,18 +115,24 @@ public class IndexesExporter {
     indicator.pushState();
     try(ContentHashEnumerator hashEnumerator = new ContentHashEnumerator(chunkRoot.resolve("hashes"))) {
       openGenerators(allGenerators);
-      
+
       ReadAction.run(() -> {
         List<VirtualFile> allFiles = collectAllFilesForIndexing(chunk.getRoots(), indicator);
-        LOG.warn("Collected " + allFiles.size() + " files to index for " + chunk.getName());
 
         indicator.setText("Indexing files...");
+        indicator.setIndeterminate(false);
 
+        AtomicInteger completedFiles = new AtomicInteger();
         boolean isOk = JobLauncher.getInstance().invokeConcurrentlyUnderProgress(
           new ArrayList<>(allFiles),
           indicator,
           f -> {
-            generateIndexesForFile(f, allGenerators, hashEnumerator);
+            double count = completedFiles.incrementAndGet() * 1.0d / allFiles.size();
+            if (indicator.getFraction() + 0.007 < count) {
+              indicator.setFraction(count);
+            }
+
+            generateIndexesForFile(f, allGenerators, hashEnumerator, errorsCollector);
             return true;
           });
 
@@ -229,6 +242,7 @@ public class IndexesExporter {
       indicator.setIndeterminate(true);
 
       Set<VirtualFile> files = new THashSet<>();
+      AtomicLong totalSize = new AtomicLong();
 
       double count = 0;
       for (VirtualFile root : roots) {
@@ -239,6 +253,7 @@ public class IndexesExporter {
           @Override
           public boolean visitFile(@NotNull VirtualFile file) {
             if (!file.isDirectory() && !SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
+              totalSize.addAndGet(file.getLength());
               files.add(file);
             }
             return true;
@@ -246,6 +261,7 @@ public class IndexesExporter {
         });
       }
 
+      LOG.warn("Collected " + files.size() + " files (" + StringUtil.formatFileSize(totalSize.get()) + ") to index");
       return new ArrayList<>(files);
     } finally {
       indicator.popState();
@@ -254,18 +270,37 @@ public class IndexesExporter {
 
   private void generateIndexesForFile(@NotNull VirtualFile file,
                                       @NotNull Collection<HashBasedIndexGenerator<?, ?>> generators,
-                                      @NotNull ContentHashEnumerator hashEnumerator) {
+                                      @NotNull ContentHashEnumerator hashEnumerator,
+                                      @NotNull ErrorsCollector errorsCollector) {
+    FileContentImpl fc;
     try {
-      FileContentImpl fc = (FileContentImpl)FileContentImpl.createByFile(file, myProject);
-      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
-      int hashId = Math.abs(hashEnumerator.enumerate(hash));
-
-      for (HashBasedIndexGenerator<?, ?> generator : generators) {
-        generator.indexFile(hashId, fc);
-      }
+      fc = (FileContentImpl)FileContentImpl.createByFile(file, myProject);
+    } catch (Exception e) {
+      errorsCollector.fileContentError(file, e);
+      return;
     }
-    catch (Exception e) {
-      throw new RuntimeException("Can't index " + file.getPath(), e);
+
+    int hashId;
+    try {
+      byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(fc, false);
+      if (SystemProperties.getBooleanProperty("shared.index.skip.same.hash", false) && hashEnumerator.hasHashFor(hash)) {
+        LOG.info("Duplicate content hash found for: " + file);
+        return;
+      }
+
+      hashId = Math.abs(hashEnumerator.enumerate(hash));
+    } catch (Exception e) {
+      errorsCollector.fileHashError(file, e);
+      return;
+    }
+
+    for (HashBasedIndexGenerator<?, ?> generator : generators) {
+      try {
+        generator.indexFile(hashId, fc);
+      } catch (Exception e) {
+        errorsCollector.fileIndexError(file, generator, e);
+        //we continue further!
+      }
     }
   }
 
@@ -316,5 +351,43 @@ public class IndexesExporter {
       stringBuilder.append(" (empty result)");
     }
     stringBuilder.append("\n");
+  }
+
+  private static class OptimisticErrorsCollector extends ErrorsCollector {
+    private final List<RuntimeException> myReports = new ArrayList<>();
+
+    @Override
+    protected void logReport(@NotNull RuntimeException e) {
+      synchronized (myReports) {
+        myReports.add(e);
+      }
+
+      LOG.warn(e.getMessage(), e);
+    }
+
+    @Override
+    public void report() {
+      if (myReports.isEmpty()) return;
+
+      LOG.warn("There were " + myReports.size() + " reports collected");
+    }
+  }
+
+  private static abstract class ErrorsCollector {
+    protected abstract void logReport(@NotNull RuntimeException e);
+
+    public abstract void report();
+
+    public void fileContentError(@NotNull VirtualFile file, @NotNull Throwable e) {
+      logReport(new RuntimeException("Failed to create FileContent for " + file + ". " + e.getMessage(), e));
+    }
+
+    public void fileHashError(@NotNull VirtualFile file, @NotNull Throwable e) {
+      logReport(new RuntimeException("Failed to compute hash for file " + file + ". " + e.getMessage(), e));
+    }
+
+    public void fileIndexError(VirtualFile file, HashBasedIndexGenerator<?, ?> generator, @NotNull Throwable e) {
+      logReport(new RuntimeException("Failed to build " + generator.getExtension().getName().getName() + " index for file " + file + ". " + e.getMessage(), e));
+    }
   }
 }
