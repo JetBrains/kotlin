@@ -21,13 +21,18 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import kotlin.reflect.KClass
 
@@ -88,12 +93,43 @@ open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
 }
 
 open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
-    override lateinit var target: KotlinJsTarget
+    lateinit var irPreset: KotlinJsIrSingleTargetPreset
 
-    open fun js(body: KotlinJsTarget.() -> Unit) = target.run(body)
+    lateinit var legacyPreset: KotlinJsSingleTargetPreset
+
+    override lateinit var target: KotlinJsTargetDsl
+
+    open fun js(
+        compiler: JsCompilerType = legacy,
+        body: KotlinJsTargetDsl.() -> Unit
+    ) {
+        val target = when (compiler) {
+            legacy -> legacyPreset
+                .createTarget("js")
+            ir -> irPreset
+                .createTarget("js")
+            both -> legacyPreset
+                .createTarget(
+                    lowerCamelCaseName(
+                        "js",
+                        legacy.name
+                    )
+                )
+        }
+
+        this.target = target
+
+        target.project.components.addAll(target.components)
+
+        target.run(body)
+    }
+
+    open fun js(
+        body: KotlinJsTargetDsl.() -> Unit
+    ) = js(compiler = legacy, body = body)
 
     @Deprecated("Use js instead", ReplaceWith("js(body)"))
-    open fun target(body: KotlinJsTarget.() -> Unit) = js(body)
+    open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
