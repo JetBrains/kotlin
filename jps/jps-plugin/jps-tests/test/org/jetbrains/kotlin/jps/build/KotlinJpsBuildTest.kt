@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
@@ -638,7 +639,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
      *
      */
     fun testKotlinProjectWithEnabledNewInferenceInIDE() {
-         doTest()
+        initProject(JVM_MOCK_RUNTIME)
+        val module = myProject.modules.single()
+        val args = module.kotlinCompilerArguments
+        args.languageVersion = LanguageVersion.KOTLIN_1_3.versionString
+        myProject.kotlinCommonCompilerArguments = args
+
+        buildAllModules().assertSuccessful()
     }
 
     fun testKotlinProjectWithErrorsBecauseOfNewInference() {
