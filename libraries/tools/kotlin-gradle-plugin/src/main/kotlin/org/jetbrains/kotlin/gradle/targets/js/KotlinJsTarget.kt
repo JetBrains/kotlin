@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
@@ -62,6 +60,18 @@ constructor(
             )
 
             setOf(result)
+        }
+    }
+
+    override fun createKotlinVariant(
+        componentName: String,
+        compilation: KotlinCompilation<*>,
+        usageContexts: Set<DefaultKotlinUsageContext>
+    ): KotlinVariant {
+        return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
+            irTarget?.let {
+                artifactTargetName = targetName.removeCapitalizedJsCompilerSuffix(JsCompilerType.legacy)
+            }
         }
     }
 
