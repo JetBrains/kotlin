@@ -773,17 +773,23 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
             }
             is FunctionDescriptor -> candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
             is PropertyDescriptor -> {
-                val shouldForceApproximationAndSubstitution = candidateDescriptor.returnType?.let { type ->
-                    type.contains { it is NewCapturedType } ||
-                            type.contains { it.constructor is IntegerLiteralTypeConstructor } ||
-                            type.contains { it is DefinitelyNotNullType } ||
-                            type.contains { it is StubType }
-                } ?: false
-
-                if (candidateDescriptor.typeParameters.isNotEmpty() || shouldForceApproximationAndSubstitution)
+                if (candidateDescriptor.typeParameters.isNotEmpty())
                     candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
-                else
-                    candidateDescriptor
+                else {
+                    val shouldForceApproximationAndSubstitution = candidateDescriptor.returnType?.let { type ->
+                        type.contains {
+                            it is NewCapturedType ||
+                                    it.constructor is IntegerLiteralTypeConstructor ||
+                                    it is DefinitelyNotNullType ||
+                                    it is StubType
+                        }
+                    } ?: false
+
+                    if (shouldForceApproximationAndSubstitution)
+                        candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
+                    else
+                        candidateDescriptor
+                }
             }
             else -> candidateDescriptor
         }
