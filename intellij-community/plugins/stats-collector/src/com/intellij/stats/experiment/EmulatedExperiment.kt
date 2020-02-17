@@ -3,14 +3,13 @@ package com.intellij.stats.experiment
 
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.internal.statistic.DeviceIdManager
+import com.intellij.internal.statistic.eventLog.EventLogConfiguration
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
-import kotlin.math.abs
 
 /*
- * For now, we decide about AB experiment inside IDE using user id and salt
+ * For now, we decide about AB experiment inside IDE using bucket
  */
 class EmulatedExperiment {
     companion object {
@@ -39,9 +38,7 @@ class EmulatedExperiment {
             return null
         }
 
-        val userId = DeviceIdManager.getOrGenerateId()
-        val hash = abs((userId + salt).hashCode()) % 8
-        return when (hash) {
+        return when (EventLogConfiguration.bucket % 8) {
             3 -> GROUP_A_EXPERIMENT_VERSION
             4 -> GROUP_B_EXPERIMENT_VERSION
             5 -> GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
