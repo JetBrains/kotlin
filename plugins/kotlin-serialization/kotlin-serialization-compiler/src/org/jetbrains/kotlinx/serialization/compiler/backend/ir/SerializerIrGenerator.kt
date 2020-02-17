@@ -371,18 +371,21 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                         property.type,
                         genericIndex = property.genericIndex
                     )
+                    val isSerializable = innerSerial != null
                     // todo: update
                     val decodeFuncToCall =
-                        (if (innerSerial != null) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
+                        (if (isSerializable) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
                         else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
                             .let {
-                                inputClass.referenceMethod(it)
+                                inputClass.referenceMethod(it) { it.valueParameters.size == if (isSerializable) 4 else 2 }
                             }
                     val typeArgs =
                         if (decodeFuncToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
                     val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
-                    if (innerSerial != null)
+                    if (innerSerial != null) {
                         args.add(innerSerial)
+                        args.add(localProps[index].get())
+                    }
                     // local$i = localInput.decode...(...)
                     +irSetVar(
                         localProps[index].symbol,
