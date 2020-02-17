@@ -34,7 +34,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
   public void compose(@NotNull StringBuilder buf, RefEntity refEntity) {
     genPageHeader(buf, refEntity);
     if (myTool.getDescriptions(refEntity) != null) {
-      appendHeading(buf, InspectionsBundle.message("inspection.problem.synopsis"));
+      appendHeading(buf, AnalysisBundle.message("inspection.problem.synopsis"));
       buf.append("<div class=\"problem-description\">");
       CommonProblemDescriptor[] descriptions = myTool.getDescriptions(refEntity);
 
@@ -94,7 +94,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
     }
 
     genPageHeader(buf, refElement);
-    appendHeading(buf, InspectionsBundle.message("inspection.problem.synopsis"));
+    appendHeading(buf, AnalysisBundle.message("inspection.problem.synopsis"));
     buf.append("<br>");
     appendAfterHeaderIndention(buf);
 
