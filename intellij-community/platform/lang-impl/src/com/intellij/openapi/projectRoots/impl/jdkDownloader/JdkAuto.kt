@@ -33,7 +33,7 @@ private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
                     .singleOrNull(notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType()::value) ?: return null
 
     return object : UnknownSdkLookup {
-      val lazyDownloadModel by lazy {
+      val lazyDownloadModel: List<JdkItem> by lazy {
         indicator.pushState()
         indicator.text = "Downloading JDK list..."
         try {
@@ -42,7 +42,7 @@ private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
           throw e
         } catch (t: Throwable) {
           LOG.warn("JdkAuto has failed to download the list of available JDKs. " + t.message, t)
-          listOf()
+          listOf<JdkItem>()
         } finally {
           indicator.popState()
         }
