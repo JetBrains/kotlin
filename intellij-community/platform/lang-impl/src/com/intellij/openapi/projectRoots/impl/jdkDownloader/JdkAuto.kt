@@ -4,6 +4,7 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JdkUtil
@@ -33,8 +34,18 @@ private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
 
     return object : UnknownSdkLookup {
       val lazyDownloadModel by lazy {
+        indicator.pushState()
         indicator.text = "Downloading JDK list..."
-        JdkListDownloader.downloadModelForJdkInstaller(indicator)
+        try {
+          JdkListDownloader.downloadModelForJdkInstaller(indicator)
+        } catch(e: ProcessCanceledException) {
+          throw e
+        } catch (t: Throwable) {
+          LOG.warn("JdkAuto has failed to download the list of available JDKs. " + t.message, t)
+          listOf()
+        } finally {
+          indicator.popState()
+        }
       }
 
       override fun proposeDownload(sdk: UnknownSdk, indicator: ProgressIndicator): UnknownSdkDownloadableSdkFix? {
