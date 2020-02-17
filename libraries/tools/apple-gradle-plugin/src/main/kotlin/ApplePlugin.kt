@@ -44,18 +44,46 @@ private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override va
     override val apple: SourceDirectorySet = objects.sourceDirectorySet("$name Apple source", name)
 }
 
-private open class AppleGenerateXcodeProjectTask @Inject constructor(
-    private val target: AppleTarget,
-    private val execActionFactory: ExecActionFactory
+private abstract class AppleTask @Inject constructor(
+    protected val target: AppleTarget,
+    protected val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
-    var baseDir: File = System.getProperty("xcodeProjBaseDir")?.let(::File) ?: project.buildDir.resolve("tmp/apple/${target.name}")
-        @OutputDirectory get
+    open val baseDir: File
+        get() = dependsOn.filterIsInstance<AppleGenerateXcodeProjectTask>().singleOrNull()?.baseDir
+            ?: dependsOn.filterIsInstance<AppleTask>().last().baseDir
 
-    var configName: String = "Debug"
-        @Input get
+    protected val teamIDOrNull: String?
+        @Input get() = project.findProperty("apple.teamID")?.toString()
+
+    protected val teamID: String
+        get() = teamIDOrNull
+            ?: throw GradleException("Failed to retrieve Apple Development Team ID.\nPlease specify via 'apple.teamID' property")
+
+    protected fun xcodeBuild(vararg args: String) {
+        logger.lifecycle("RUNNING XCODEBUILD:")
+
+        with(execActionFactory.newExecAction()) {
+            environment("DEVELOPER_DIR", XcodeBase.getBasePath())
+            commandLine(
+                "xcrun", "xcodebuild",
+                *args
+            )
+            workingDir = baseDir
+            execute().assertNormalExitValue()
+        }
+    }
+}
+
+private open class AppleGenerateXcodeProjectTask @Inject constructor(
+    target: AppleTarget,
+    execActionFactory: ExecActionFactory
+) : AppleTask(target, execActionFactory) {
+    override val baseDir: File = System.getProperty("xcodeProjBaseDir")?.let(::File) ?: project.buildDir.resolve("tmp/apple/${target.name}")
+        @OutputDirectory get
 
     @TaskAction
     fun execute() {
+        val teamID = teamIDOrNull
         val projectDir = baseDir.resolve("${target.name}.xcodeproj")
 
         if (projectDir.exists()) {
@@ -133,7 +161,9 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
         val symRoot = sourceDirectorySet.outputDir
 
         with(pbxProjectFile.manipulator) {
-            addConfiguration(configName, emptyMap(), null)
+            for (configName in arrayOf("Debug", "Release")) {
+                addConfiguration(configName, emptyMap(), null)
+            }
 
             val sourcesGroupDir = sourceDirectorySet.srcDirs.firstOrNull { it.isDirectory && it.exists() }
                 ?: baseDir.resolve("Sources")
@@ -158,14 +188,15 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
                     BuildSettingNames.SWIFT_VERSION to "5.0",
                     BuildSettingNames.ALWAYS_SEARCH_USER_PATHS to "NO",
                     BuildSettingNames.CLANG_ENABLE_MODULES to "YES",
-                    BuildSettingNames.CLANG_ENABLE_OBJC_ARC to "YES",
-                    // Debug
-                    BuildSettingNames.ONLY_ACTIVE_ARCH to "YES"
+                    BuildSettingNames.CLANG_ENABLE_OBJC_ARC to "YES"
                 )
                 settings += customSettings
 
+                val codeSignSettings = teamIDOrNull?.let { mapOf("DEVELOPMENT_TEAM" to teamID) } ?: emptyMap()
+
                 val pbxTarget = addNativeTarget(name, typeId, settings, platform)
-                addConfiguration(configName, settings, pbxTarget)
+                addConfiguration("Debug", settings + mapOf(BuildSettingNames.ONLY_ACTIVE_ARCH to "YES"), pbxTarget)
+                addConfiguration("Release", settings + codeSignSettings, pbxTarget)
 
                 for (phaseType in listOf(
                     PBXBuildPhase.Type.SOURCES,
@@ -180,7 +211,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
 
             val targetSettings = mutableMapOf(
                 BuildSettingNames.INFOPLIST_FILE to infoPlistFile.toRelativeString(baseDir),
-                BuildSettingNames.PRODUCT_BUNDLE_IDENTIFIER to getQualifiedName(target.name),
+                BuildSettingNames.PRODUCT_BUNDLE_IDENTIFIER to getQualifiedName(target.name), // should start with team qualifier (e.g. "com.jetbrains")
                 BuildSettingNames.ASSETCATALOG_COMPILER_APPICON_NAME to "AppIcon"
             )
             target.bridgingHeader?.let {
@@ -251,50 +282,96 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
     ).joinToString(".")
 }
 
-private open class AppleBuildTask @Inject constructor(
-    protected val target: AppleTarget,
-    protected val execActionFactory: ExecActionFactory
-) : DefaultTask() {
+private open class AppleBuildTask @Inject constructor(target: AppleTarget, execActionFactory: ExecActionFactory) :
+    AppleTask(target, execActionFactory) {
     init {
         group = BasePlugin.BUILD_GROUP
     }
 
+    var configName: String = "Debug"
+        @Input get
+
     @TaskAction
     fun build() {
-        val configName = "Debug"
-
-        val generateXcodeprojTask = dependsOn.filterIsInstance<AppleGenerateXcodeProjectTask>().single()
-        val baseDir = generateXcodeprojTask.baseDir
         val projectDir = baseDir.resolve("${target.name}.xcodeproj")
 
-        println("RUNNING XCODEBUILD")
-
-        with(execActionFactory.newExecAction()) {
-            environment("DEVELOPER_DIR", XcodeBase.getBasePath())
-            commandLine(
-                "xcrun", "xcodebuild",
-                "-project", projectDir.toRelativeString(baseDir),
-                "-scheme", xcodeScheme,
-                "-configuration", configName,
-                "-sdk", "iphonesimulator",
-                "-derivedDataPath", "DerivedData",
-                xcodeBuildTask
-            )
-            workingDir = baseDir
-            execute().assertNormalExitValue()
-        }
+        val sdkArgs = xcodeBuildSdk?.let { arrayOf("-sdk", it) } ?: emptyArray()
+        xcodeBuild(
+            "-project", projectDir.toRelativeString(baseDir),
+            "-scheme", xcodeScheme,
+            "-configuration", configName,
+            "-derivedDataPath", "DerivedData",
+            *sdkArgs,
+            xcodeBuildTask, *xcodeBuildArgs
+        )
     }
 
     open val xcodeBuildTask: String = "build"
+    open val xcodeBuildSdk: String? = "iphonesimulator"
+    open val xcodeBuildArgs: Array<String> = emptyArray()
     open val xcodeScheme: String = target.name
 }
 
-private open class AppleBuildTestTask @Inject constructor(
-    target: AppleTarget,
-    execActionFactory: ExecActionFactory
-) : AppleBuildTask(target, execActionFactory) {
+private open class AppleBuildTestTask @Inject constructor(target: AppleTarget, execActionFactory: ExecActionFactory) :
+    AppleBuildTask(target, execActionFactory) {
     override val xcodeBuildTask: String = "build-for-testing"
     override val xcodeScheme: String = target.name + "Tests"
+}
+
+private open class AppleArchiveTask @Inject constructor(target: AppleTarget, execActionFactory: ExecActionFactory) :
+    AppleBuildTask(target, execActionFactory) {
+    init {
+        configName = "Release"
+    }
+
+    val xcarchivePath: String
+        get() = target.sourceSet.apple.outputDir
+            .resolve("archive")
+            .resolve("${target.name}.xcarchive")
+            .toRelativeString(baseDir)
+
+    override val xcodeBuildTask: String = "archive"
+    override val xcodeBuildSdk: String? = null
+    override val xcodeBuildArgs: Array<String>
+        get() = arrayOf(
+            "-destination", "generic/platform=iOS",
+            "-archivePath", xcarchivePath,
+            "-allowProvisioningUpdates",
+            "CODE_SIGN_STYLE=Automatic",
+            "DEVELOPMENT_TEAM=$teamID"
+        )
+    override val xcodeScheme: String = target.name
+}
+
+private open class AppleExportIPATask @Inject constructor(
+    target: AppleTarget,
+    execActionFactory: ExecActionFactory
+) : AppleTask(target, execActionFactory) {
+
+    // development / app-store / ad-hoc / enterprise
+    var method: String = "development"
+        @Input get
+
+    @TaskAction
+    fun build() {
+        val xcarchivePath = dependsOn.filterIsInstance<AppleArchiveTask>().single().xcarchivePath
+
+        val exportOptions = Plist().also { plist ->
+            plist["method"] = method
+            plist["teamID"] = teamID
+        }
+        val exportOptionsPlist = baseDir.resolve("${target.name}-exportOptions.plist")
+        XMLPlistDriver().write(exportOptions, exportOptionsPlist)
+
+        val optionsPlistPath = exportOptionsPlist.toRelativeString(baseDir)
+        xcodeBuild(
+            "-exportArchive",
+            "-archivePath", xcarchivePath,
+            "-exportOptionsPlist", optionsPlistPath,
+            "-exportPath", target.sourceSet.apple.outputDir.toRelativeString(baseDir),
+            "-allowProvisioningUpdates"
+        )
+    }
 }
 
 private open class AppleTargetFactory @Inject constructor(
@@ -337,6 +414,19 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
         it.configure {
             dependsOn(configuration.incoming.files)
             dependsOn(generateXcodeprojTask)
+            onlyIf { SystemInfoRt.isMac }
+        }
+    }
+    override val archiveTask: AppleArchiveTask by project.tasks.register("archive", AppleArchiveTask::class.java, this).also {
+        it.configure {
+            dependsOn(configuration.incoming.files)
+            dependsOn(generateXcodeprojTask)
+            onlyIf { SystemInfoRt.isMac }
+        }
+    }
+    override val exportIPATask: AppleExportIPATask by project.tasks.register("exportIpa", AppleExportIPATask::class.java, this).also {
+        it.configure {
+            dependsOn(archiveTask)
             onlyIf { SystemInfoRt.isMac }
         }
     }
