@@ -55,13 +55,11 @@ COMPILATION FAILED
 One type argument expected for class A<T>
 One type argument expected for class A<T>
 One type argument expected for class A<T>
-Type inference failed: Not enough information to infer parameter T in constructor A<T>()
-Please specify it explicitly.
-Type inference failed: Not enough information to infer parameter T in constructor A<T>()
-Please specify it explicitly.
-Type inference failed: Not enough information to infer parameter T in constructor A<T>()
-Please specify it explicitly.
+Not enough information to infer type variable T
+Not enough information to infer type variable T
+Not enough information to infer type variable T
 One type argument expected for class A<T>
+Not enough information to infer type variable T
 
 ================ Step #2 =================
 
