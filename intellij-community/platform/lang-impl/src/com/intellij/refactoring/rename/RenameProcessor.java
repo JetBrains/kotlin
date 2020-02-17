@@ -498,6 +498,8 @@ public class RenameProcessor extends BaseRefactoringProcessor {
       eventId,
       new FeatureUsageData()
         .addData("scope_type", getStatisticsCompatibleScopeName())
+        .addData("search_in_comments", isSearchInComments())
+        .addData("search_in_text_occurrences", isSearchTextOccurrences())
         .addData("rename_processor", PluginInfoDetectorKt.getPluginInfo(renameProcessor).isSafeToReport()
                                      ? renameProcessor.getName()
                                      : "third.party")
