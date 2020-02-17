@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -53,8 +52,7 @@ internal val addContinuationPhase = makeIrFilePhase(
 
 private class AddContinuationLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val suspendLambdas = findSuspendAndInlineLambdas(irFile)
-        transformSuspendLambdasIntoContinuations(irFile, suspendLambdas)
+        transformSuspendLambdasIntoContinuations(irFile)
         // This should be done after converting lambdas into classes to avoid breaking the invariant that
         // each lambda is referenced at most once while creating `$$forInline` methods.
         addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile)
@@ -95,15 +93,28 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         })
     }
 
-    private fun transformSuspendLambdasIntoContinuations(irFile: IrFile, suspendLambdas: List<SuspendLambdaInfo>) {
-        for (lambda in suspendLambdas) {
+    private fun transformSuspendLambdasIntoContinuations(irFile: IrFile) {
+        val inlineReferences = mutableSetOf<IrCallableReference>()
+        val suspendLambdas = mutableMapOf<IrFunctionReference, SuspendLambdaInfo>()
+        irFile.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
+            override fun visitInlineReference(argument: IrCallableReference) {
+                inlineReferences.add(argument)
+            }
+
+            override fun visitFunctionReference(expression: IrFunctionReference) {
+                expression.acceptChildrenVoid(this)
+                if (expression.isSuspend && expression.origin == IrStatementOrigin.LAMBDA && expression !in inlineReferences) {
+                    suspendLambdas[expression] = SuspendLambdaInfo(expression)
+                }
+            }
+        })
+
+        for (lambda in suspendLambdas.values) {
             (lambda.function.parent as IrDeclarationContainer).declarations.remove(lambda.function)
         }
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                if (!expression.isSuspend)
-                    return expression
-                val info = suspendLambdas.singleOrNull { it.function == expression.symbol.owner } ?: return expression
+                val info = suspendLambdas[expression] ?: return super.visitFunctionReference(expression)
                 return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
                     val expressionArguments = expression.getArguments().map { it.second }
                     irBlock {
@@ -117,7 +128,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                             "Inconsistency between callable reference to suspend lambda and the corresponding continuation"
                         }
                         +irCall(constructor.symbol).apply {
-                            for (typeParameter in info.constructor.parentAsClass.typeParameters) {
+                            for (typeParameter in constructor.parentAsClass.typeParameters) {
                                 putTypeArgument(typeParameter.index, expression.getTypeArgument(typeParameter.index))
                             }
                             expressionArguments.forEachIndexed { index, argument ->
@@ -662,25 +673,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 return result
             }
         })
-    }
-
-    private fun findSuspendAndInlineLambdas(irElement: IrElement): List<SuspendLambdaInfo> {
-        val suspendLambdas = arrayListOf<SuspendLambdaInfo>()
-        val inlineReferences = mutableSetOf<IrCallableReference>()
-        irElement.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
-            override fun visitInlineReference(argument: IrCallableReference) {
-                inlineReferences.add(argument)
-            }
-
-            override fun visitFunctionReference(expression: IrFunctionReference) {
-                expression.acceptChildrenVoid(this)
-
-                if (expression.isSuspend && expression.origin == IrStatementOrigin.LAMBDA && expression !in inlineReferences) {
-                    suspendLambdas += SuspendLambdaInfo(expression)
-                }
-            }
-        })
-        return suspendLambdas
     }
 
     private class SuspendLambdaInfo(val reference: IrFunctionReference) {
