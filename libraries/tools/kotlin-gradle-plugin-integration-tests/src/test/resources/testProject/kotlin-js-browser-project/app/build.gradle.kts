@@ -12,5 +12,6 @@ kotlin {
         browser {
         }
         produceExecutable()
+        binaries.executable()
     }
 }

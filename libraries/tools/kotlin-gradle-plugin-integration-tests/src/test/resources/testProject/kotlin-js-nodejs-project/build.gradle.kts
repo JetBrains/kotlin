@@ -15,6 +15,7 @@ kotlin {
     target {
         useCommonJs()
         produceExecutable()
+        binaries.executable()
         nodejs {
         }
     }
