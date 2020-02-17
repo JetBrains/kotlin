@@ -42,7 +42,7 @@ public class CreateDirectoryPathFix extends AbstractCreateFileFix {
   @Override
   @NotNull
   public String getFamilyName() {
-    return CodeInsightBundle.message("create.file.family");
+    return CodeInsightBundle.message("create.directory.family");
   }
 
   @Nullable
