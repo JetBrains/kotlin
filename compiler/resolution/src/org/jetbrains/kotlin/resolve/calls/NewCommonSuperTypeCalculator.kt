@@ -97,7 +97,7 @@ object NewCommonSuperTypeCalculator {
         contextStubTypesEqualToAnything: AbstractTypeCheckerContext,
         contextStubTypesNotEqual: AbstractTypeCheckerContext
     ): SimpleTypeMarker {
-        if (types.all { it is ErrorType }) {
+        if (types.any { it is ErrorType }) {
             return ErrorUtils.createErrorType("CST(${types.joinToString()}")
         }
 

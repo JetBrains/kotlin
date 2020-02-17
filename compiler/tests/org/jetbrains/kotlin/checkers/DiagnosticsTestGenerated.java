@@ -9903,6 +9903,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inference/conflictingSubstitutions.kt");
             }
 
+            @TestMetadata("cstFromErrorAndNonErrorTypes.kt")
+            public void testCstFromErrorAndNonErrorTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/cstFromErrorAndNonErrorTypes.kt");
+            }
+
             @TestMetadata("dependOnExpectedType.kt")
             public void testDependOnExpectedType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/dependOnExpectedType.kt");
