@@ -388,12 +388,17 @@ fun Project.getTemplateParameters(): Map<String, String> {
      * 1.3.40-dev-1654
      * 1.3.30-eap-125
      * 1.3.30-release-170
+     * 1.4-M1-eap-125
      * 1.3-SNAPSHOT
      */
     val kotlinBuildNumber = kotlinBuildNumberByIdeaPlugin
 
     val (numericVersion, releaseType) = kotlinBuildNumber.toLowerCase(Locale.US)
+            // split only over the last '-' using reversed
+            .reversed()
             .split('-', limit = 3)
+            //restore order
+            .map { it.reversed() }.reversed()
             .takeIf { it.size in 2..3 }
             ?.let { (numericVersion, releaseTypeName) ->
                 val releaseType = ReleaseType.values().firstOrNull {
