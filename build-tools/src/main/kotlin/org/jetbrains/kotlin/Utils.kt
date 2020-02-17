@@ -125,6 +125,17 @@ fun Task.sameDependenciesAs(task: Task) {
     this.dependsOn(dependencies)
 }
 
+/**
+ * Set dependency on [lib] built by the Konan Plugin for the [task],
+ * also make [lib] depend on `dist` and all dependencies of the [task] to make [lib] execute before the [task].
+ */
+fun Project.dependOnKonanBuildingTask(lib: String, target: KonanTarget, task: Task) {
+    val libTask = "compileKonan${lib.capitalize()}${target.name.capitalize()}"
+    this.dependsOnDist(libTask)
+    libTask.sameDependenciesAs(task)
+    task.dependsOn(libTask)
+}
+
 //endregion
 // Run command line from string.
 fun Array<String>.runCommand(workingDir: File = File("."),

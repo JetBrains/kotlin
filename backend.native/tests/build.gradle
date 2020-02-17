@@ -362,10 +362,7 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
                     extraOpts task.flags
                     extraOpts project.globalTestArgs
                 }
-                String libTaskName = "compileKonan${lib.capitalize()}${targetName.capitalize()}"
-                UtilsKt.dependsOnDist(project, libTaskName)
-                UtilsKt.sameDependenciesAs(libTaskName, task as KonanLinkTest)
-                task.dependsOn(libTaskName)
+                UtilsKt.dependOnKonanBuildingTask(project, lib, target, task)
 
                 // Build an executable with library
                 program(name, targets: [targetName]) {
@@ -376,8 +373,6 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
                     srcFiles  task.getSources()
                     extraOpts task.flags
                     extraOpts project.globalTestArgs
-                    // depend on library build task
-                    dependsOn libTaskName
                 }
             }
         }
@@ -3394,10 +3389,7 @@ Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
         if (task.enabled) {
             konanArtifacts {
                 def lib = task.interop
-                def libTask = "compileKonan${lib.capitalize()}${target.name.capitalize()}"
-                UtilsKt.dependsOnDist(project, libTask)
-                UtilsKt.sameDependenciesAs(libTask, task as KonanInteropTest)
-                task.dependsOn(libTask)
+                UtilsKt.dependOnKonanBuildingTask(project, lib, target, task)
 
                 program(name, targets: [target.name]) {
                     libraries {
@@ -3901,12 +3893,7 @@ if (isAppleTarget(project)) {
 
         konanArtifacts {
             def lib = "objcGh3343"
-            def libTask = "compileKonan${lib.capitalize()}${target.name.capitalize()}"
-            UtilsKt.dependsOnDist(project, libTask)
-            UtilsKt.sameDependenciesAs(libTask, mainTask)
-            mainTask.dependsOn(libTask)
-
-            def lnOpts = (project.tasks.getByName(libTask)).linkerOpts
+            UtilsKt.dependOnKonanBuildingTask(project, lib, target, mainTask)
 
             framework(frameworkName, targets: [ target ]) {
                 libraries {
@@ -3919,7 +3906,7 @@ if (isAppleTarget(project)) {
                     dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
                 }
 
-                linkerOpts lnOpts
+                linkerOpts "-L$buildDir"
                 extraOpts "-Xembed-bitcode-marker"
                 extraOpts project.globalTestArgs
             }
