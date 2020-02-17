@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
+import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
@@ -57,6 +59,15 @@ interface CallResolutionInterceptorExtension {
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
     ): Collection<NewResolutionOldInference.MyCandidate> = candidates
+
+    fun interceptCandidates(
+        callResolutionResult: CallResolutionResult,
+        context: BasicCallResolutionContext,
+        callResolver: KotlinCallResolver,
+        name: Name,
+        kind: NewResolutionOldInference.ResolutionKind,
+        tracing: TracingStrategy
+    ): CallResolutionResult = callResolutionResult
 
     fun interceptCandidates(
         candidates: Collection<FunctionDescriptor>,
