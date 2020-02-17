@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.model.psi.impl;
 
 import com.intellij.model.Symbol;
@@ -11,6 +11,7 @@ import com.intellij.pom.references.PomService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class PsiElement2Declaration implements PsiSymbolDeclaration {
 
@@ -18,9 +19,9 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
   private final PsiElement myDeclaringElement;
   private final TextRange myDeclarationRange;
 
-  private PsiElement2Declaration(@NotNull PsiElement targetElement, @NotNull PsiElement declaringElement, TextRange range) {
-    myDeclaringElement = declaringElement;
+  private PsiElement2Declaration(@NotNull PsiElement targetElement, @NotNull PsiElement declaringElement, @NotNull TextRange range) {
     myTargetElement = targetElement;
+    myDeclaringElement = declaringElement;
     myDeclarationRange = range;
   }
 
@@ -40,6 +41,17 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
   @Override
   public TextRange getDeclarationRange() {
     return myDeclarationRange;
+  }
+
+  @Nullable
+  static PsiSymbolDeclaration createFromPsi(@NotNull PsiElement targetElement) {
+    if (targetElement instanceof PsiNameIdentifierOwner) {
+      PsiElement identifyingElement = ((PsiNameIdentifierOwner)targetElement).getIdentifyingElement();
+      if (identifyingElement != null) {
+        return new PsiElement2Declaration(targetElement, identifyingElement, rangeOf(identifyingElement));
+      }
+    }
+    return null;
   }
 
   @NotNull
