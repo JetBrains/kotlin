@@ -49,6 +49,10 @@ class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent
         storage.fileChanged(filePath, ts)
     }
 
+    fun clearState() {
+        storage = Storage()
+    }
+
     @TestOnly
     fun clearAndRefillState() {
         loadState(project.service<GradleScriptInputsWatcher>().state)
