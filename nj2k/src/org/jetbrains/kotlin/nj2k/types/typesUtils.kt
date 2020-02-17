@@ -184,6 +184,9 @@ fun JKType.isArrayType() =
         else -> false
     }
 
+fun JKType.isUnit() =
+    safeAs<JKClassType>()?.classReference?.fqName == KotlinBuiltIns.FQ_NAMES.unit.asString()
+
 val JKType.isCollectionType: Boolean
     get() = safeAs<JKClassType>()?.classReference?.fqName in collectionFqNames
 
