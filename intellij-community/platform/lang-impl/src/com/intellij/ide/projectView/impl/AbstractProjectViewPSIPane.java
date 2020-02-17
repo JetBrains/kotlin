@@ -199,6 +199,9 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
     else if (myAsyncSupport != null) {
       myAsyncSupport.updateAll(afterUpdate);
     }
+    else {
+      return ActionCallback.REJECTED;
+    }
     return cb;
   }
 
