@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,26 +39,25 @@ class MemoizedInlineClassReplacements {
     val getReplacementFunction: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
-                !it.hasMangledParameters ||
-                        it.isSyntheticInlineClassMember ||
-                        it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
+                // Don't mangle anonymous or synthetic functions
+                it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
                         it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
-                        it.origin.isSynthetic -> null
-                it.hasMethodReplacement -> createMethodReplacement(it)
-                it.hasStaticReplacement -> createStaticReplacement(it)
-                else -> null
+                        it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
+                        it.origin.isSynthetic ||
+                        it.isInlineClassFieldGetter -> null
+
+                // Mangle all functions in the body of an inline class
+                it.parent.safeAs<IrClass>()?.isInline == true ->
+                    createStaticReplacement(it)
+
+                // Otherwise, mangle functions with mangled parameters, while ignoring constructors
+                it is IrSimpleFunction && it.hasMangledParameters ->
+                    if (it.dispatchReceiverParameter != null) createMethodReplacement(it) else createStaticReplacement(it)
+
+                else ->
+                    null
             }
         }
-
-    private val IrFunction.hasStaticReplacement: Boolean
-        get() = origin != IrDeclarationOrigin.FAKE_OVERRIDE &&
-                (this is IrSimpleFunction || this is IrConstructor && constructedClass.isInline)
-
-    private val IrFunction.hasMethodReplacement: Boolean
-        get() = dispatchReceiverParameter != null && this is IrSimpleFunction && (parent as? IrClass)?.isInline != true
-
-    private val IrFunction.isSyntheticInlineClassMember: Boolean
-        get() = origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER || isInlineClassFieldGetter
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
@@ -150,20 +149,24 @@ class MemoizedInlineClassReplacements {
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
             val newValueParameters = ArrayList<IrValueParameter>()
             for ((index, parameter) in function.explicitParameters.withIndex()) {
-                val name = when (parameter) {
-                    function.dispatchReceiverParameter -> Name.identifier("arg$index")
-                    function.extensionReceiverParameter -> Name.identifier("\$this\$${function.name}")
-                    else -> parameter.name
+                newValueParameters += when (parameter) {
+                    // FAKE_OVERRIDEs have broken dispatch receivers
+                    function.dispatchReceiverParameter ->
+                        function.parentAsClass.thisReceiver!!.copyTo(
+                            this, index = index, name = Name.identifier("arg$index"),
+                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                        )
+                    function.extensionReceiverParameter ->
+                        parameter.copyTo(
+                            this, index = index, name = Name.identifier("\$this\$${function.name}"),
+                            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                        )
+                    else ->
+                        parameter.copyTo(this, index = index, defaultValue = null).also {
+                            // See comment next to a similar line above.
+                            it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
+                        }
                 }
-                val parameterOrigin = when (parameter) {
-                    function.dispatchReceiverParameter -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                    function.extensionReceiverParameter -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
-                    else -> parameter.origin
-                }
-                val newParameter = parameter.copyTo(this, index = index, name = name, defaultValue = null, origin = parameterOrigin)
-                newValueParameters += newParameter
-                // See comment next to a similar line above.
-                newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
             }
             valueParameters = newValueParameters
         }

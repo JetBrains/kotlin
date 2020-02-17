@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -116,6 +116,17 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
+    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction) {
+        source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
+            irExprBody(irCall(target).apply {
+                passTypeArgumentsFrom(source)
+                for ((parameter, newParameter) in source.explicitParameters.zip(target.explicitParameters)) {
+                    putArgument(newParameter, irGet(parameter))
+                }
+            })
+        }
+    }
+
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
@@ -125,16 +136,15 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
             return listOf(replacement)
 
-        // Replace the function body with a wrapper
-        context.createIrBuilder(function.symbol, function.startOffset, function.endOffset).run {
-            val call = irCall(replacement).apply {
-                passTypeArgumentsFrom(function)
-                for ((parameter, newParameter) in function.explicitParameters.zip(replacement.explicitParameters)) {
-                    putArgument(newParameter, irGet(parameter))
-                }
-            }
+        // Update the overridden symbols to point to their inline class replacements
+        function.overriddenSymbols = replacement.overriddenSymbols
 
-            function.body = irExprBody(call)
+        // Replace the function body with a wrapper
+        if (!function.isFakeOverride || !function.parentAsClass.isInline) {
+            createBridgeBody(function, replacement)
+        } else {
+            // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
+            createBridgeBody(replacement, function)
         }
 
         return listOf(replacement, function)

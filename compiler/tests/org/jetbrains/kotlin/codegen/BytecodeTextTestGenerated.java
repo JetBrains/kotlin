@@ -2760,6 +2760,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassesUnboxingAfterAssertionOperator.kt");
         }
 
+        @TestMetadata("interfaceDefaultImplStubs.kt")
+        public void testInterfaceDefaultImplStubs() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/interfaceDefaultImplStubs.kt");
+        }
+
+        @TestMetadata("interfaceJvmDefaultImplStubs.kt")
+        public void testInterfaceJvmDefaultImplStubs() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/interfaceJvmDefaultImplStubs.kt");
+        }
+
         @TestMetadata("isCheckForInlineClass.kt")
         public void testIsCheckForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/isCheckForInlineClass.kt");
