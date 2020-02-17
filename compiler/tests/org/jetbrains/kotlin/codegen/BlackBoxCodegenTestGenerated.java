@@ -24420,6 +24420,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testSignatureOfSimpleInnerSimpleOuter() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfSimpleInnerSimpleOuter.kt");
             }
+
+            @TestMetadata("suspendFunctionLiteralGenericSignature.kt")
+            public void testSuspendFunctionLiteralGenericSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/suspendFunctionLiteralGenericSignature.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
