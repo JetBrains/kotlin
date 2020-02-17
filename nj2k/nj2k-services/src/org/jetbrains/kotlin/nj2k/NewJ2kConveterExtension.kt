@@ -42,24 +42,27 @@ class NewJ2kConverterExtension : J2kConverterExtension() {
             hasAnyKotlinRuntimeInScope(module) || isModuleConfigured(module.toModuleGroup())
         if (kotlinIsConfigured) return true
 
-        val title = "Kotlin is not configured in the project"
+        val title = KotlinNJ2KServicesBundle.message("converter.kotlin.not.configured.title")
         if (Messages.showOkCancelDialog(
                 project,
-                "You will have to configure Kotlin in project before performing a conversion.",
+                KotlinNJ2KServicesBundle.message("converter.kotlin.not.configured.message"),
                 title,
-                "OK, configure Kotlin in the project",
-                "No, cancel conversion",
+                KotlinNJ2KServicesBundle.message("converter.kotlin.not.configured.configure"),
+                KotlinNJ2KServicesBundle.message("converter.kotlin.not.configured.cancel.conversion"),
                 Messages.getWarningIcon()
             ) == Messages.OK
         ) {
             val configurators = getAbleToRunConfigurators(module).filter { it.targetPlatform.isJvm() }
             when {
-                configurators.isEmpty() -> Messages.showErrorDialog("There aren't configurators available", title)
+                configurators.isEmpty() -> {
+                    val message = KotlinNJ2KServicesBundle.message("converter.kotlin.not.configured.no.configurators.available")
+                    Messages.showErrorDialog(message, title)
+                }
                 configurators.size == 1 -> configurators.single().configure(project, emptyList())
                 else -> {
                     val resultIndex = Messages.showChooseDialog(//TODO a better dialog?
                         project,
-                        "Choose Configurator",
+                        KotlinNJ2KServicesBundle.message("converter.kotlin.not.configured.choose.configurator"),
                         title,
                         null,
                         configurators.map { it.presentableText }.toTypedArray(),
