@@ -3560,87 +3560,83 @@ standaloneTest("interop_opengl_teapot") {
 }
 */
 
-interopTest("interop_objc_smoke") {
-    disabled = !isAppleTarget(project)
-    goldValue = "84\nFoo\nDeallocated\n" +
-            "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
-            "true\ntrue\n" +
-            "Global string\nAnother global string\nnull\nglobal object\n" +
-            "5\n" +
-            "String macro\n" +
-            "CFString macro\n" +
-            "Deallocated\nDeallocated\n" +
-            "Class TestExportObjCClass34 has multiple implementations. Which one will be used is undefined.\n"
+if (PlatformInfo.isAppleTarget(project)) {
+    interopTest("interop_objc_smoke") {
+        goldValue = "84\nFoo\nDeallocated\n" +
+                "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
+                "true\ntrue\n" +
+                "Global string\nAnother global string\nnull\nglobal object\n" +
+                "5\n" +
+                "String macro\n" +
+                "CFString macro\n" +
+                "Deallocated\nDeallocated\n" +
+                "Class TestExportObjCClass34 has multiple implementations. Which one will be used is undefined.\n"
 
-    source = "interop/objc/smoke.kt"
-    interop = 'objcSmoke'
+        source = "interop/objc/smoke.kt"
+        interop = 'objcSmoke'
 
-    if (twoStageEnabled) {
-        // Without this flag the test fails in the two-stage mode due to KT-33160.
-        // TODO: Remove this flag when the bug is fixed.
-        flags += "-nodefaultlibs"
-    }
-
-    doBeforeBuild {
-        execKonanClang(project.target) {
-            args "$projectDir/interop/objc/smoke.m"
-            args "-lobjc", '-fobjc-arc'
-            args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
-        }
-        if (project.target instanceof KonanTarget.IOS_X64) {
-            UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
+        if (twoStageEnabled) {
+            // Without this flag the test fails in the two-stage mode due to KT-33160.
+            // TODO: Remove this flag when the bug is fixed.
+            flags += "-nodefaultlibs"
         }
 
-        copy {
-            from("interop/objc/Localizable.stringsdict")
-            into("$testOutputLocal/$name/$target/en.lproj/")
-        }
-    }
-}
+        doBeforeBuild {
+            execKonanClang(project.target) {
+                args "$projectDir/interop/objc/smoke.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
+            }
+            if (project.target instanceof KonanTarget.IOS_X64) {
+                UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
+            }
 
-interopTest("interop_objc_global_initializer") {
-    disabled = !isAppleTarget(project)
-    goldValue = "OK\n"
-
-    source = "interop/objc_with_initializer/objc_test.kt"
-    interop = 'objcMisc'
-    flags = ['-g']
-
-    doBeforeBuild {
-        execKonanClang(project.target) {
-            args "$projectDir/interop/objc_with_initializer/objc_misc.m"
-            args "-lobjc", '-fobjc-arc'
-            args '-fPIC', '-shared', '-o', "$buildDir/libobjcmisc.dylib"
-        }
-        if (project.target instanceof KonanTarget.IOS_X64) {
-            UtilsKt.codesign(project, "$buildDir/libobjcmisc.dylib")
+            copy {
+                from("interop/objc/Localizable.stringsdict")
+                into("$testOutputLocal/$name/$target/en.lproj/")
+            }
         }
     }
-}
 
-interopTest("interop_objc_msg_send") {
-    disabled = !isAppleTarget(project)
+    interopTest("interop_objc_global_initializer") {
+        goldValue = "OK\n"
+        source = "interop/objc_with_initializer/objc_test.kt"
+        interop = 'objcMisc'
+        flags = ['-g']
 
-    source = "interop/objc/msg_send/main.kt"
-    interop = 'objcMessaging'
-
-    doBeforeBuild {
-        execKonanClang(project.target) {
-            args "$projectDir/interop/objc/msg_send/messaging.m"
-            args "-lobjc", '-fobjc-arc'
-            args '-fPIC', '-shared', '-o', "$buildDir/libobjcmessaging.dylib"
-        }
-        if (project.target instanceof KonanTarget.IOS_X64) {
-            UtilsKt.codesign(project, "$buildDir/libobjcmessaging.dylib")
+        doBeforeBuild {
+            execKonanClang(project.target) {
+                args "$projectDir/interop/objc_with_initializer/objc_misc.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcmisc.dylib"
+            }
+            if (project.target instanceof KonanTarget.IOS_X64) {
+                UtilsKt.codesign(project, "$buildDir/libobjcmisc.dylib")
+            }
         }
     }
-}
 
-interopTest("interop_objc_kt34467") {
-    disabled = !isAppleTarget(project)
-    source = "interop/objc/kt34467/foo.kt"
-    interop = 'objcKt34467'
-    goldValue = "OK\n42\n"
+    interopTest("interop_objc_msg_send") {
+        source = "interop/objc/msg_send/main.kt"
+        interop = 'objcMessaging'
+
+        doBeforeBuild {
+            execKonanClang(project.target) {
+                args "$projectDir/interop/objc/msg_send/messaging.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcmessaging.dylib"
+            }
+            if (project.target instanceof KonanTarget.IOS_X64) {
+                UtilsKt.codesign(project, "$buildDir/libobjcmessaging.dylib")
+            }
+        }
+    }
+
+    interopTest("interop_objc_kt34467") {
+        source = "interop/objc/kt34467/foo.kt"
+        interop = 'objcKt34467'
+        goldValue = "OK\n42\n"
+    }
 }
 
 standaloneTest("jsinterop_math") {
