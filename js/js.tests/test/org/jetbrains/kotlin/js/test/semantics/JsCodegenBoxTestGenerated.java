@@ -21737,6 +21737,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/traits/kt5393_property.kt");
         }
 
+        @TestMetadata("methodFromBranchOfIntersectionType.kt")
+        public void testMethodFromBranchOfIntersectionType() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/methodFromBranchOfIntersectionType.kt");
+        }
+
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             runTest("compiler/testData/codegen/box/traits/multiple.kt");

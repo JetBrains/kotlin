@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi2ir.generators.getSubstitutedFunctionTypeForSamTy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import javax.lang.model.type.IntersectionType
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     InsertImplicitCasts(
@@ -332,7 +333,10 @@ internal class InsertImplicitCasts(
             (valueType.hasEnhancedNullability() && !isLambdaReturnValue) && !expectedType.acceptsNullValues() ->
                 implicitNonNull(valueType, expectedType)
 
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(
+                typeTranslator.LegacyTypeApproximation().approximate(valueType),
+                expectedType.makeNullable()
+            ) ->
                 this
 
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->

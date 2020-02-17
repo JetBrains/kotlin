@@ -116,7 +116,7 @@ class TypeTranslator(
         )
     }
 
-    private inner class LegacyTypeApproximation {
+    inner class LegacyTypeApproximation {
 
         fun approximate(ktType: KotlinType): KotlinType {
             val properlyApproximatedType = approximateByKotlinRules(ktType)

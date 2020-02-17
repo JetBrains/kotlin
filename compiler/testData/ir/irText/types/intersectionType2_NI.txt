@@ -94,12 +94,14 @@ FILE fqName:<root> fileName:/intersectionType2_NI.kt
                 VAR name:nn type:<root>.C [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
                 VAR name:c type:kotlin.Any [val]
-                  WHEN type=kotlin.Any origin=IF
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'val mm: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
+                  TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    WHEN type=kotlin.Any origin=IF
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: GET_VAR 'val mm: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.foo'
-                  GET_VAR 'val c: kotlin.Any [val] declared in <root>.foo.<anonymous>' type=kotlin.Any origin=null
+                  TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    GET_VAR 'val c: kotlin.Any [val] declared in <root>.foo.<anonymous>' type=kotlin.Any origin=null
