@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -101,7 +101,7 @@ private val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
 internal val IrFunction.hasMangledParameters: Boolean
-    get() = dispatchReceiverParameter?.type?.getClass()?.isInline == true ||
+    get() = dispatchReceiverParameter != null && parentAsClass.isInline ||
             fullValueParameterList.any { it.type.requiresMangling } ||
             (this is IrConstructor && constructedClass.isInline)
 
