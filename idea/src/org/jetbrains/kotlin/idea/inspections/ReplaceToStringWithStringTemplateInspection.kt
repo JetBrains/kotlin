@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.core.canDropBraces
+import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.idea.intentions.isToString
-import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.*
 
 class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java
@@ -24,7 +23,9 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         val variable = element.receiverExpression.text
-        element.replace(KtPsiFactory(element).createExpression("\"$$variable\""))
+        val replaced = element.replace(KtPsiFactory(element).createExpression("\"\${$variable}\""))
+        val blockStringTemplateEntry = (replaced as? KtStringTemplateExpression)?.entries?.firstOrNull() as? KtBlockStringTemplateEntry
+        if (blockStringTemplateEntry?.canDropBraces() == true) blockStringTemplateEntry.dropBraces()
     }
 
     override fun inspectionText(element: KtDotQualifiedExpression) = "Call of 'toString' could be replaced with string template"

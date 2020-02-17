@@ -11001,6 +11001,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceToStringWithStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("callExpression.kt")
+        public void testCallExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceToStringWithStringTemplate/callExpression.kt");
+        }
+
         @TestMetadata("nonReference.kt")
         public void testNonReference() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceToStringWithStringTemplate/nonReference.kt");
