@@ -2,11 +2,6 @@
 Compiling files:
   src/usages.kt
 Exit code: COMPILATION_ERROR
-  None of the following functions can be called with the arguments supplied: 
-public final fun foo(x: ((x: String!) -> Unit)!): Unit defined in bar.C
-public open fun foo(x: SAMInterface!): Unit defined in bar.C
-  None of the following functions can be called with the arguments supplied: 
-public final fun bar(x: ((x: String!) -> Unit)!): Unit defined in bar.C
-public open fun bar(x: SAMInterface!): Unit defined in bar.C
+  No value passed for parameter 'x'
+  No value passed for parameter 'x'
   No value passed for parameter 'function'
-
