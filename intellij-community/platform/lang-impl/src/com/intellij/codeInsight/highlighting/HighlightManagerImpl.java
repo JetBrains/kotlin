@@ -18,6 +18,7 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
+import com.intellij.openapi.editor.impl.ImaginaryEditor;
 import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -187,6 +188,8 @@ public final class HighlightManagerImpl extends HighlightManager {
                                 boolean hideByTextChange,
                                 boolean hideByAnyKey,
                                 @Nullable Collection<? super RangeHighlighter> highlighters) {
+    if (editor instanceof ImaginaryEditor) return;
+
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {
       flags |= HIDE_BY_TEXT_CHANGE;
