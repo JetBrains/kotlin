@@ -118,7 +118,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
     Map<String, JTree> type2treeMap = new THashMap<>();
     createTrees(type2treeMap);
 
-    myI18nMap = getI18nMap();
+    myI18nMap = getPresentableNameMap();
 
     HierarchyBrowserManager.State state = HierarchyBrowserManager.getSettings(project);
 
@@ -190,7 +190,11 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   protected abstract void createTrees(@NotNull Map<String, JTree> trees);
 
-  protected Map<String, Supplier<String>> getI18nMap() {
+  /**
+   * Put (scope type -> presentable name) pairs into a map.
+   * This map is used in {@link #changeView(String, boolean)} method to get a proper localization in UI.
+   */
+  protected Map<String, Supplier<String>> getPresentableNameMap() {
     HashMap<String, Supplier<String>> map = new HashMap<>();
     map.put(SCOPE_PROJECT, HierarchyBrowserBaseEx::getScopeProject);
     map.put(SCOPE_CLASS, HierarchyBrowserBaseEx::getScopeClass);

@@ -82,7 +82,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   }
 
   @Override
-  protected Map<String, Supplier<String>> getI18nMap() {
+  protected Map<String, Supplier<String>> getPresentableNameMap() {
     HashMap<String, Supplier<String>> map = new HashMap<>();
     map.put(CALLER_TYPE, CallHierarchyBrowserBase::getCallerType);
     map.put(CALLEE_TYPE, CallHierarchyBrowserBase::getCalleeType);
