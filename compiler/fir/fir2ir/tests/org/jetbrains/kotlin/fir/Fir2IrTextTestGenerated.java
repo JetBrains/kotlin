@@ -1827,6 +1827,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
         }
 
+        @TestMetadata("castsInsideCoroutineInference.kt")
+        public void testCastsInsideCoroutineInference() throws Exception {
+            runTest("compiler/testData/ir/irText/types/castsInsideCoroutineInference.kt");
+        }
+
         @TestMetadata("coercionToUnitInLambdaReturnValue.kt")
         public void testCoercionToUnitInLambdaReturnValue() throws Exception {
             runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
