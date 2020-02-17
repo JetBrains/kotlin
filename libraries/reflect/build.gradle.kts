@@ -120,9 +120,12 @@ val stripMetadata by tasks.registering {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
-    inputs.file(inputJar).withPathSensitivity(RELATIVE)
+
+    inputs.file(inputJar).withNormalizer(ClasspathNormalizer::class.java)
+
     outputs.file(outputJar)
     outputs.cacheIf { true }
+
     doLast {
         stripMetadata(
             logger = logger,
