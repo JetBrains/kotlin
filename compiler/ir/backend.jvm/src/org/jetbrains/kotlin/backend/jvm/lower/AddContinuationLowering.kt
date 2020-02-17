@@ -666,53 +666,33 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun findSuspendAndInlineLambdas(irElement: IrElement): List<SuspendLambdaInfo> {
         val suspendLambdas = arrayListOf<SuspendLambdaInfo>()
-        val capturesCrossinline = mutableSetOf<IrCallableReference>()
         val inlineReferences = mutableSetOf<IrCallableReference>()
         irElement.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
             override fun visitInlineReference(argument: IrCallableReference) {
                 inlineReferences.add(argument)
-                val getValue = (argument as? IrGetValue) ?: return
-                val parameter = getValue.symbol.owner as? IrValueParameter ?: return
-                if (parameter.isCrossinline) {
-                    capturesCrossinline += argument
-                }
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
-                if (expression.isSuspend && expression !in inlineReferences && expression.origin == IrStatementOrigin.LAMBDA) {
-                    var expressionCapturesCrossinline = false
-                    for (i in 0 until expression.valueArgumentsCount) {
-                        val getValue = expression.getValueArgument(i) as? IrGetValue ?: continue
-                        val owner = getValue.symbol.owner as? IrValueParameter ?: continue
-                        if (owner.isCrossinline) {
-                            expressionCapturesCrossinline = true
-                            break
-                        }
-                    }
-                    suspendLambdas += SuspendLambdaInfo(
-                        expression.symbol.owner,
-                        (expression.type as IrSimpleType).arguments.size - 1,
-                        expression,
-                        expressionCapturesCrossinline || expression in capturesCrossinline
-                    )
+                if (expression.isSuspend && expression.origin == IrStatementOrigin.LAMBDA && expression !in inlineReferences) {
+                    suspendLambdas += SuspendLambdaInfo(expression)
                 }
             }
         })
         return suspendLambdas
     }
 
-    private class SuspendLambdaInfo(
-        val function: IrFunction,
-        val arity: Int,
-        val reference: IrFunctionReference,
-        val capturesCrossinline: Boolean
-    ) {
+    private class SuspendLambdaInfo(val reference: IrFunctionReference) {
+        val function = reference.symbol.owner
+        val arity = (reference.type as IrSimpleType).arguments.size - 1
+        val capturesCrossinline = function.valueParameters.any {
+            when (val argument = reference.getValueArgument(it.index)) {
+                is IrGetValue -> (argument.symbol.owner as? IrValueParameter)?.isCrossinline == true
+                is IrGetField -> argument.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
+                else -> false
+            }
+        }
         lateinit var constructor: IrConstructor
     }
 }
