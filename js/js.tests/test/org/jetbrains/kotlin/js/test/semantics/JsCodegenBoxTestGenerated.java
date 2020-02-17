@@ -7479,6 +7479,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/delegatedProperty/useReflectionOnKProperty.kt");
         }
 
+        @TestMetadata("valByMapDelegatedProperty.kt")
+        public void testValByMapDelegatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/valByMapDelegatedProperty.kt");
+        }
+
         @TestMetadata("valInInnerClass.kt")
         public void testValInInnerClass() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/valInInnerClass.kt");

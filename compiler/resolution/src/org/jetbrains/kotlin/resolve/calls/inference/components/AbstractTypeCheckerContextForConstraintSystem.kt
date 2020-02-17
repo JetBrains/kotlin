@@ -57,8 +57,10 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()
 
         // we should strip annotation's because we have incorporation operation and they should be not affected
-        val mySubType = if (hasExact) subType.removeExactAnnotation() else subType
-        val mySuperType = if (hasExact) superType.removeExactAnnotation() else superType
+        val mySubType =
+            if (hasExact) extractTypeForProjectedType(subType, out = true) ?: subType.removeExactAnnotation() else subType
+        val mySuperType =
+            if (hasExact) extractTypeForProjectedType(superType, out = false) ?: superType.removeExactAnnotation() else superType
 
         val result = internalAddSubtypeConstraint(mySubType, mySuperType)
         if (!hasExact) return result
@@ -67,6 +69,20 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
 
         if (result == null && result2 == null) return null
         return (result ?: true) && (result2 ?: true)
+    }
+
+    private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? {
+        val typeMarker = type.asSimpleType()?.asCapturedType() ?: return null
+
+        val projection = typeMarker.typeConstructorProjection()
+        if (projection.isStarProjection()) return null
+
+
+        return when (projection.getVariance()) {
+            TypeVariance.IN -> if (!out) typeMarker.lowerType() ?: projection.getType() else null
+            TypeVariance.OUT -> if (out) projection.getType() else null
+            TypeVariance.INV -> null
+        }
     }
 
     private fun KotlinTypeMarker.isTypeVariableWithExact() =
