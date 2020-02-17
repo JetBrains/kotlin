@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
@@ -195,5 +195,5 @@ private class KlibMetadataDependencyContainer(
 private val MetadataFactories =
     KlibMetadataFactories(
         { DefaultBuiltIns.Instance },
-        org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
+        NullFlexibleTypeDeserializer
     )
