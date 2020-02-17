@@ -103,7 +103,6 @@ public class IndexesExporter {
     Path stubIndexesRoot = chunkRoot.resolve(StubUpdatingIndex.INDEX_ID.getName());
     Path serializerNamesStorageFile = StubSharedIndexExtension.getStubSerializerNamesStorageFile(stubIndexesRoot);
     SerializationManagerImpl chunkSerializationManager = new SerializationManagerImpl(serializerNamesStorageFile, false);
-    Disposer.register(rootDisposable, chunkSerializationManager);
 
     StubHashBasedIndexGenerator stubGenerator = StubHashBasedIndexGenerator.create(stubIndexesRoot,
                                                                                    chunkSerializationManager,
@@ -141,6 +140,7 @@ public class IndexesExporter {
         }
       });
     } finally {
+      Disposer.dispose(chunkSerializationManager);
       closeGenerators(allGenerators);
       indicator.popState();
     }
