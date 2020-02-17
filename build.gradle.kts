@@ -386,6 +386,11 @@ allprojects {
         isReproducibleFileOrder = true
     }
 
+    tasks.withType<Test> {
+        outputs.cacheIf { false }
+        // https://youtrack.jetbrains.com/issue/KT-37089
+    }
+
     tasks {
         register("listArchives") { listConfigurationContents("archives") }
 
