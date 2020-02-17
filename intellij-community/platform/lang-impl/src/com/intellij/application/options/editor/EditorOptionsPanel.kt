@@ -134,7 +134,7 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
         row {
           cell(isFullWidth = true) {
             checkBox(enableDnD)
-            comment(message("checkbox.enable.drag.n.drop.functionality.in.editor.comment")).withLargeLeftGap()
+            commentNoWrap(message("checkbox.enable.drag.n.drop.functionality.in.editor.comment")).withLargeLeftGap()
           }
         }
       }
@@ -208,7 +208,7 @@ class EditorOptionsPanel : BoundConfigurable(message("title.editor"), ID) {
               row {
                 cell(isFullWidth = true) {
                   radioButton(message("radiobutton.enable.richcopy.as.rich.text")).bindValue(true)
-                  comment(message("radiobutton.enable.richcopy.as.rich.text.comment")).withLargeLeftGap()
+                  commentNoWrap(message("radiobutton.enable.richcopy.as.rich.text.comment")).withLargeLeftGap()
                 }
               }
               row { radioButton(message("radiobutton.enable.richcopy.as.simple.text")).bindValue(false) }
