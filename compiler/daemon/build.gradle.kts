@@ -49,11 +49,7 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
-
-runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
-    from(mainSourceSet.output)
-}
+runtimeJar()
 
 sourcesJar()
 
