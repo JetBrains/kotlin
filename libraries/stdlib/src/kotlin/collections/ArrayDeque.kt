@@ -5,6 +5,9 @@
 
 package kotlin.collections
 
+import kotlin.native.concurrent.SharedImmutable
+
+@SharedImmutable
 private val emptyElementData = emptyArray<Any?>()
 private const val maxArraySize = Int.MAX_VALUE - 8
 private const val defaultMinCapacity = 10
