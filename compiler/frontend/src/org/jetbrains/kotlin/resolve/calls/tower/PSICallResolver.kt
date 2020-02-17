@@ -109,6 +109,10 @@ class PSICallResolver(
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
+        result = candidateInterceptor.interceptResolvedCandidates(
+            result, context, kotlinCallResolver, name, resolutionKind, tracingStrategy
+        )
+
         val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
         return overloadResolutionResults.also {
             clearCacheForApproximationResults()
