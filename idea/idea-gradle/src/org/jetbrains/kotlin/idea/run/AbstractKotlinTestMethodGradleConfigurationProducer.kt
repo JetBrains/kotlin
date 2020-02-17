@@ -11,6 +11,7 @@ import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.junit.InheritorChooser
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
@@ -83,6 +84,8 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
             val result = settings.applyTestConfiguration(context.module, tasks, *classes) {
                 createTestFilterFrom(context.location, it, psiMethod, true)
             }
+
+            settings.externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(context.module)
 
             if (result) {
                 configuration.name = (if (classes.size == 1) classes[0].name!! + "." else "") + psiMethod.name
