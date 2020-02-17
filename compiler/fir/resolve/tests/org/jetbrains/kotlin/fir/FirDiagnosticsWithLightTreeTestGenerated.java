@@ -58,6 +58,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");
     }
 
+    @TestMetadata("covariantArrayAsReceiver.kt")
+    public void testCovariantArrayAsReceiver() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/covariantArrayAsReceiver.kt");
+    }
+
     @TestMetadata("defaultJavaImportHiding.kt")
     public void testDefaultJavaImportHiding() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/defaultJavaImportHiding.kt");
@@ -1277,11 +1282,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("callableReferencesAndDefaultParameters.kt")
         public void testCallableReferencesAndDefaultParameters() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/callableReferencesAndDefaultParameters.kt");
-        }
-
-        @TestMetadata("covariantArrayAsReceiver.kt")
-        public void testCovariantArrayAsReceiver() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/covariantArrayAsReceiver.kt");
         }
 
         @TestMetadata("definetelyNotNullForTypeParameter.kt")

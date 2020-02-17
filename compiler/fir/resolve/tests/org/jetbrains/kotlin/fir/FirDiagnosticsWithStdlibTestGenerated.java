@@ -138,6 +138,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/implicitReceiverOrder.kt");
     }
 
+    @TestMetadata("inapplicableRemoveAll.kt")
+    public void testInapplicableRemoveAll() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/inapplicableRemoveAll.kt");
+    }
+
     @TestMetadata("javaEnumSynthetic.kt")
     public void testJavaEnumSynthetic() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/javaEnumSynthetic.kt");
@@ -673,11 +678,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("delegateTypeMismatch.kt")
         public void testDelegateTypeMismatch() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/delegateTypeMismatch.kt");
-        }
-
-        @TestMetadata("inapplicableRemoveAll.kt")
-        public void testInapplicableRemoveAll() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/inapplicableRemoveAll.kt");
         }
 
         @TestMetadata("invokePriority.kt")
