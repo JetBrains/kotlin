@@ -79,7 +79,6 @@ class SuggestedRefactoringChangeCollector(
 
     val refactoringSupport = state.refactoringSupport
     if (!state.declaration.isValid || refactoringSupport.nameRange(state.declaration) == null) {
-      require(state.syntaxError)
       availabilityIndicator.disable()
       return
     }
