@@ -153,7 +153,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     functionNClass,
                     hasQuestionMark = false,
                     arguments = (info.function.explicitParameters.subList(0, info.arity).map { it.type }
-                            + info.function.continuationType() + info.function.returnType)
+                            + info.function.continuationType() + context.irBuiltIns.anyNType)
                         .map { makeTypeProjection(it, Variance.INVARIANT) },
                     annotations = emptyList()
                 )
