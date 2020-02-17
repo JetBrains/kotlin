@@ -158,7 +158,7 @@ open class SerializerJsTranslator(
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
         val wBeginFunc = ctx.getNameForDescriptor(
-            encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
+            encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 1 })
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
 
         val serializableSource = ((serializableDescriptor.findPsi() as? KtPureClassOrObject)
@@ -167,13 +167,9 @@ open class SerializerJsTranslator(
             context.buildInitializersRemapping(serializableSource, serializableDescriptor.getSuperClassNotAny())
 
         // output.writeBegin(desc, [])
-        val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
-            JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
-        }
         val call = JsInvocation(
             JsNameRef(wBeginFunc, JsNameRef(jsFun.parameters[0].name)),
-            serialClassDescRef,
-            JsArrayLiteral(typeParams)
+            serialClassDescRef
         )
         val objRef = JsNameRef(jsFun.parameters[1].name)
         // output = output.writeBegin...
@@ -259,14 +255,11 @@ open class SerializerJsTranslator(
         +JsVars(localProps.map { JsVars.JsVar(it.name) }, true)
 
         //input = input.readBegin(...)
-        val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
-            JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
-        }
         val inputVar = JsNameRef(jsFun.scope.declareFreshName("input"))
-        val readBeginF = decoderClass.getFuncDesc(CallingConventions.begin).single()
+        val readBeginF = decoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 1 }
         val readBeginCall = JsInvocation(
             JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
-            serialClassDescRef, JsArrayLiteral(typeParams)
+            serialClassDescRef
         )
         +JsVars(JsVars.JsVar(inputVar.name, readBeginCall))
 

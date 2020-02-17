@@ -231,10 +231,9 @@ open class SerializerCodegenImpl(
             // output = output.writeBegin(classDesc, new KSerializer[0])
             load(outputVar, encoderType)
             load(descVar, descType)
-            genArrayOfTypeParametersSerializers()
             invokeinterface(
                 encoderType.internalName, CallingConventions.begin,
-                "(" + descType.descriptor + kSerializerArrayType.descriptor +
+                "(" + descType.descriptor +
                         ")" + kOutputType.descriptor
             )
             store(outputVar, kOutputType)
@@ -322,10 +321,9 @@ open class SerializerCodegenImpl(
             // input = input.readBegin(classDesc, new KSerializer[0])
             load(inputVar, decoderType)
             load(descVar, descType)
-            genArrayOfTypeParametersSerializers()
             invokeinterface(
                 decoderType.internalName, CallingConventions.begin,
-                "(" + descType.descriptor + kSerializerArrayType.descriptor +
+                "(" + descType.descriptor +
                         ")" + kInputType.descriptor
             )
             store(inputVar, kInputType)
