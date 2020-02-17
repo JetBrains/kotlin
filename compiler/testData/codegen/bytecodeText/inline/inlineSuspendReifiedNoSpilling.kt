@@ -1,6 +1,6 @@
+// $$forInline suffix is not needed: KT-36797
+// JVM_IR generates fake inliner variable with suffix $$forInline, when old BE does not do this
 // IGNORE_BACKEND: JVM_IR
-// In JVM_IR $i$f variables occupy different slots
-
 interface ApplicationCall
 
 interface AuthenticationService {

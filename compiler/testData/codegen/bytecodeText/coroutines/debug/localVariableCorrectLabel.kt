@@ -14,8 +14,12 @@ fun main(args: Array<String>) {
 @BuilderInference
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
-// 1 LOCALVARIABLE a I L17 L.* 3
-// 1 LINENUMBER 8 L17
-// Adding ignore flags below the test since the test relies on line numbers.
-// IGNORE_BACKEND: JVM_IR
+// label numbers differ in BEs
 
+// JVM_TEMPLATES
+// 1 LOCALVARIABLE a I L17 L.*
+// 1 LINENUMBER 8 L17
+
+// JVM_IR_TEMPLATES
+// 1 LOCALVARIABLE a I L14 L.*
+// 1 LINENUMBER 8 L14
