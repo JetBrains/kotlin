@@ -71,7 +71,28 @@ private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
     }
 }
 
+private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
+    "Boolean" to "Z",
+    "Byte" to "B",
+    "Char" to "C",
+    "Short" to "S",
+    "Int" to "I",
+    "Long" to "L",
+    "Float" to "F",
+    "Double" to "D",
+)
+
 private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
+    (coneType as? ConeClassLikeType)?.let {
+        val classId = it.lookupTag.classId
+        if (classId.packageFqName.toString() == "kotlin") {
+            PRIMITIVE_TYPE_SIGNATURE[classId.shortClassName.identifier]?.let {
+                append(it)
+                return
+            }
+        }
+    }
+
     fun appendClassLikeType(type: ConeClassLikeType) {
         append("L")
         val classId = type.lookupTag.classId

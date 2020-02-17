@@ -198,6 +198,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/reflectionClass.kt");
     }
 
+    @TestMetadata("removeIf.kt")
+    public void testRemoveIf() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/removeIf.kt");
+    }
+
     @TestMetadata("removeOnAbstractMap.kt")
     public void testRemoveOnAbstractMap() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/removeOnAbstractMap.kt");

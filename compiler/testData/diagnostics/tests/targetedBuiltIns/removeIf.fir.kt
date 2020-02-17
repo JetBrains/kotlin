@@ -7,6 +7,6 @@ interface A : MutableCollection<String> {
 }
 
 fun foo(x: MutableList<String>, y: A) {
-    x.<!UNRESOLVED_REFERENCE!>removeIf<!> { <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>length<!> > 0 }
+    x.removeIf { it.length > 0 }
     y.removeIf { it.length > 0 }
 }
