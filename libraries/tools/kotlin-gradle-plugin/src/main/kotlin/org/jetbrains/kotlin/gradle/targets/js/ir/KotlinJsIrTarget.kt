@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -36,7 +37,7 @@ constructor(
     platformType: KotlinPlatformType,
     internal val mixedMode: Boolean
 ) :
-    KotlinBinaryContainer<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
+    KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {

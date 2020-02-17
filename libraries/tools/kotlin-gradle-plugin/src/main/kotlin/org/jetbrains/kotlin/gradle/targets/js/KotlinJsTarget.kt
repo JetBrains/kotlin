@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
@@ -47,7 +47,7 @@ constructor(
     project: Project,
     platformType: KotlinPlatformType
 ) :
-    KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
+    KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {

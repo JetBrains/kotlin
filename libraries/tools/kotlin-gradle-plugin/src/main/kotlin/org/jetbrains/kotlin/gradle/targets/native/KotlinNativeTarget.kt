@@ -23,7 +23,7 @@ import javax.inject.Inject
 open class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget
-) : KotlinBinaryContainer<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
+) : KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
     project,
     KotlinPlatformType.native
 ) {

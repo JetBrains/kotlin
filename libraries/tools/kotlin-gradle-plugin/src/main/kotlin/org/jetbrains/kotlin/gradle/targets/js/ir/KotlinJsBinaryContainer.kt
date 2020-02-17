@@ -10,8 +10,8 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
@@ -23,7 +23,7 @@ import javax.inject.Inject
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
-    val target: KotlinBinaryContainer<KotlinJsCompilation, KotlinJsBinaryContainer>,
+    val target: KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>,
     backingContainer: DomainObjectSet<JsBinary>
 ) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project

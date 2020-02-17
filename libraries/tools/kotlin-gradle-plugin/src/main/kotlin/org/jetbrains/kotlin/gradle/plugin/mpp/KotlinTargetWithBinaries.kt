@@ -12,7 +12,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
-abstract class KotlinBinaryContainer<T : KotlinCompilation<*>, out R : DomainObjectSet<*>>(
+abstract class KotlinTargetWithBinaries<T : KotlinCompilation<*>, out R : DomainObjectSet<*>>(
     project: Project,
     platformType: KotlinPlatformType
 ) : KotlinOnlyTarget<T>(project, platformType) {
