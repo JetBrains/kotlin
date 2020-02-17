@@ -136,15 +136,16 @@ class CompositeResolverForModuleFactory(
 
             val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
 
-            val MetadataFactories = KlibMetadataFactories(
+            val metadataFactories = KlibMetadataFactories(
                 { DefaultBuiltIns.Instance },
                 NullFlexibleTypeDeserializer
             )
 
             val klibMetadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
-                MetadataFactories.DefaultDescriptorFactory,
-                MetadataFactories.DefaultPackageFragmentsFactory,
-                MetadataFactories.flexibleTypeDeserializer
+                metadataFactories.DefaultDescriptorFactory,
+                metadataFactories.DefaultPackageFragmentsFactory,
+                metadataFactories.flexibleTypeDeserializer,
+                metadataFactories.platformDependentTypeTransformer
             )
 
             klibMetadataProvider = klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(

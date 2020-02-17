@@ -100,18 +100,10 @@ class TypeDeserializer(
             simpleType.withAbbreviation(simpleType(it))
         } ?: simpleType
 
-        // TODO: move this hack in some platform specific place ASAP
+
         if (proto.hasClassName()) {
             val classId = c.nameResolver.getClassId(proto.className)
-            val originalPackageFqn = classId.packageFqName
-            if (originalPackageFqn in forwardPackagesSet) {
-                // This hack is about keeping original class id written into proto which is required for correct IR linkage
-                val classDescriptor = constructor.declarationDescriptor as ClassDescriptor
-                val realPackageFqn = (classDescriptor.containingDeclaration as PackageFragmentDescriptor).fqName
-                if (originalPackageFqn != realPackageFqn) {
-                    return SupposititiousSimpleType(computedType, classId)
-                }
-            }
+            return c.components.platformDependentTypeTransformer.transformPlatformType(classId, computedType)
         }
 
         return computedType
@@ -272,15 +264,4 @@ class TypeDeserializer(
     }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")
-
-    companion object {
-        private val cNames = FqName("cnames")
-        private val cNamesStructs = cNames.child(Name.identifier("structs"))
-
-        private val objCNames = FqName("objcnames")
-        private val objCNamesClasses = objCNames.child(Name.identifier("classes"))
-        private val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
-
-        private val forwardPackagesSet = setOf(cNamesStructs, objCNamesClasses, objCNamesProtocols)
-    }
 }

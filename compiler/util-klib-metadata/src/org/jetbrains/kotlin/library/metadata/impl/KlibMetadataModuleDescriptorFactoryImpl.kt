@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentP
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -36,7 +37,8 @@ private val ModuleDescriptorImpl.isStdlibModule
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer
+    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    override val platformDependentTypeTransformer: PlatformDependentTypeTransformer
 ) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -151,7 +153,8 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
-            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+            platformDependentTypeTransformer = platformDependentTypeTransformer
         )
 
         fragmentsToInitialize.forEach {

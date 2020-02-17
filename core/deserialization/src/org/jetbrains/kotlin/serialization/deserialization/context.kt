@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -50,7 +51,8 @@ class DeserializationComponents(
     val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
     val extensionRegistryLite: ExtensionRegistryLite,
     val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default,
-    val samConversionResolver: SamConversionResolver
+    val samConversionResolver: SamConversionResolver,
+    val platformDependentTypeTransformer: PlatformDependentTypeTransformer = PlatformDependentTypeTransformer.None
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
