@@ -133,19 +133,26 @@ class TypeTranslator(
             return properlyApproximatedType
         }
 
+        private val isWithNewInference = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
-        private fun approximateByKotlinRules(ktType: KotlinType): KotlinType {
-            if (ktType.constructor.isDenotable) return ktType
-
-            return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-                typeApproximatorForNI.approximateDeclarationType(
-                    ktType,
-                    local = false,
-                    languageVersionSettings = languageVersionSettings
-                )
-            else
-                approximateCapturedTypes(ktType).upper
-        }
+        private fun approximateByKotlinRules(ktType: KotlinType): KotlinType =
+            if (isWithNewInference) {
+                if (ktType.constructor.isDenotable && ktType.arguments.isEmpty())
+                    ktType
+                else
+                    typeApproximatorForNI.approximateDeclarationType(
+                        ktType,
+                        local = false,
+                        languageVersionSettings = languageVersionSettings
+                    )
+            } else {
+                // Hack to preserve *-projections in arguments in OI.
+                // Expected to be removed as soon as OI is deprecated.
+                if (ktType.constructor.isDenotable)
+                    ktType
+                else
+                    approximateCapturedTypes(ktType).upper
+            }
 
     }
 

@@ -1872,6 +1872,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/intersectionType3_OI.kt");
         }
 
+        @TestMetadata("kt36143.kt")
+        public void testKt36143() throws Exception {
+            runTest("compiler/testData/ir/irText/types/kt36143.kt");
+        }
+
         @TestMetadata("localVariableOfIntersectionType_NI.kt")
         public void testLocalVariableOfIntersectionType_NI() throws Exception {
             runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType_NI.kt");
@@ -1890,6 +1895,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("smartCastOnReceiverOfGenericType.kt")
         public void testSmartCastOnReceiverOfGenericType() throws Exception {
             runTest("compiler/testData/ir/irText/types/smartCastOnReceiverOfGenericType.kt");
+        }
+
+        @TestMetadata("starProjection_OI.kt")
+        public void testStarProjection_OI() throws Exception {
+            runTest("compiler/testData/ir/irText/types/starProjection_OI.kt");
         }
 
         @TestMetadata("compiler/testData/ir/irText/types/nullChecks")

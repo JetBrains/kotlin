@@ -1,0 +1,7 @@
+FILE fqName:<root> fileName:/kt36143.kt
+  FUN name:test visibility:public modality:FINAL <> ($receiver:kotlin.Array<out kotlin.String>) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Array<out kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
+        CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR '<this>: kotlin.Array<out kotlin.String> declared in <root>.test' type=kotlin.Array<out kotlin.String> origin=null
