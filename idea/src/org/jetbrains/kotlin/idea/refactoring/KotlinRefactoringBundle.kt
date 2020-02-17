@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.kotlin.idea
+package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.CommonBundle
 import org.jetbrains.annotations.NonNls
@@ -21,9 +21,9 @@ import org.jetbrains.annotations.PropertyKey
 import org.jetbrains.kotlin.idea.core.util.KotlinBundleBase
 import java.util.*
 
-object KotlinBundle : KotlinBundleBase() {
+object KotlinRefactoringBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.idea.KotlinBundle"
+    private const val BUNDLE = "org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 
