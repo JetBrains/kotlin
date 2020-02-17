@@ -240,6 +240,9 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
         try {
           descriptors = locator.locateIndex(project, entries, indicator);
         }
+        catch (ProcessCanceledException e) {
+          throw e;
+        }
         catch (Throwable t) {
           LOG.error("Failed to execute SharedIndexChunkLocator: " + locator.getClass() + ". " + t.getMessage(), t);
           continue;
