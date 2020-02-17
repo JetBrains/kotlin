@@ -106,8 +106,6 @@ val reflectShadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")
     configurations = listOf(embedded)
 
-    callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
-
     exclude("**/*.proto")
 
     if (kotlinBuildProperties.relocation) {
