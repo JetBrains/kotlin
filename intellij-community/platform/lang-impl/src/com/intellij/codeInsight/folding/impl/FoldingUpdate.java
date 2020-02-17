@@ -24,7 +24,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.psi.impl.source.tree.injected.FoldingModelWindow;
+import com.intellij.psi.impl.source.tree.injected.FoldingRegionWindow;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -171,7 +171,8 @@ public class FoldingUpdate {
       });
       EditorFoldingInfo info = EditorFoldingInfo.get(editor);
       for (FoldRegion region : editor.getFoldingModel().getAllFoldRegions()) {
-        if (FoldingModelWindow.isOutdatedInjectedRegion(region)) {
+        FoldingRegionWindow injectedRegion = FoldingRegionWindow.getInjectedRegion(region);
+        if (injectedRegion != null && !injectedRegion.isValid()) {
           info.removeRegion(region);
         }
       }

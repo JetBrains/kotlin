@@ -24,8 +24,7 @@ import java.util.List;
 /**
  * @author cdr
  */
-@ApiStatus.Internal
-public class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
+class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
   private final FoldingModelEx myDelegate;
   private final DocumentWindow myDocumentWindow;
   private final EditorWindow myEditorWindow;
@@ -107,11 +106,6 @@ public class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
     return window != null && window.getEditor() == myEditorWindow ? window : null;
   }
 
-  public static boolean isOutdatedInjectedRegion(@NotNull FoldRegion hostRegion) {
-    FoldingRegionWindow window = hostRegion.getUserData(FOLD_REGION_WINDOW);
-    return window != null && !((DocumentWindow)window.getEditor().getDocument()).isValid();
-  }
-
   @Override
   public void runBatchFoldingOperation(@NotNull Runnable operation, boolean allowMovingCaret, boolean keepRelativeCaretPosition) {
     myDelegate.runBatchFoldingOperation(operation, allowMovingCaret, keepRelativeCaretPosition);
@@ -138,7 +132,7 @@ public class FoldingModelWindow implements FoldingModelEx, ModificationTracker {
     return FoldRegion.EMPTY_ARRAY; //todo implement
   }
 
-  private static final Key<FoldingRegionWindow> FOLD_REGION_WINDOW = Key.create("FOLD_REGION_WINDOW");
+  static final Key<FoldingRegionWindow> FOLD_REGION_WINDOW = Key.create("FOLD_REGION_WINDOW");
   @Override
   public FoldRegion createFoldRegion(int startOffset, int endOffset, @NotNull String placeholder, FoldingGroup group, boolean neverExpands) {
     TextRange hostRange = myDocumentWindow.injectedToHost(new TextRange(startOffset, endOffset));

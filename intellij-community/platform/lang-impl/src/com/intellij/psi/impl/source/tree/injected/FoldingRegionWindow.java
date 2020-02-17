@@ -76,4 +76,8 @@ public class FoldingRegionWindow extends RangeMarkerWindow implements FoldRegion
   public void setPlaceholderText(@NotNull String text) {
     myHostRegion.setPlaceholderText(text);
   }
+
+  public static FoldingRegionWindow getInjectedRegion(@NotNull FoldRegion hostRegion) {
+    return hostRegion.getUserData(FoldingModelWindow.FOLD_REGION_WINDOW);
+  }
 }
