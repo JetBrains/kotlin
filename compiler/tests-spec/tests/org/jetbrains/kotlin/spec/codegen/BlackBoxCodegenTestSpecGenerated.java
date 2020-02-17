@@ -3305,6 +3305,63 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Building_the_overload_candidate_set_ocs extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Infix_function_call extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInInfix_function_call() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-4")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_4 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_4() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-4/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-4/pos/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            }
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
