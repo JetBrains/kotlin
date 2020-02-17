@@ -275,13 +275,6 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         )
     ),
     NamedPostProcessingGroup(
-        "Formatting code",
-        listOf(
-            FormatCodeProcessing(),
-            ShortenReferenceProcessing()
-        )
-    ),
-    NamedPostProcessingGroup(
         "Cleaning up code",
         listOf(
             InspectionLikeProcessingGroup(VarToValProcessing()),
@@ -301,10 +294,10 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         )
     ),
     NamedPostProcessingGroup(
-        "Optimizing imports",
+        "Optimizing imports and formatting code",
         listOf(
-            OptimizeImportsProcessing(),
             ShortenReferenceProcessing(),
+            OptimizeImportsProcessing(),
             FormatCodeProcessing()
         )
     )

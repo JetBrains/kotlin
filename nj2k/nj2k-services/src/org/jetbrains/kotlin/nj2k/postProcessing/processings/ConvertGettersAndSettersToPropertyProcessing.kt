@@ -263,10 +263,11 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
 
     private fun KtExpression.isReferenceToThis() =
         when (this) {
-            is KtThisExpression -> instanceReference.resolve() == getStrictParentOfType<KtClassOrObject>()
-            is KtReferenceExpression -> resolve() == getStrictParentOfType<KtClassOrObject>()
-            else -> false
-        }
+            is KtThisExpression -> instanceReference
+            is KtReferenceExpression -> this
+            is KtQualifiedExpression -> selectorExpression as? KtReferenceExpression
+            else -> null
+        }?.resolve() == getStrictParentOfType<KtClassOrObject>()
 
     private fun KtElement.usages(scope: PsiElement? = null) =
         searcher.search(this, scope)
