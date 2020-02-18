@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 
 const val KOTLIN_NATIVE_DEFINITIONS_FILE_EXTENSION = "def"
 const val KOTLIN_NATIVE_DEFINITIONS_ID = "KND"
-const val KOTLIN_NATIVE_DEFINITIONS_NAME = "Kotlin/Native Def"
-const val KOTLIN_NATIVE_DEFINITIONS_DESCRIPTION = "Definitions file for Kotlin/Native C interop"
+
+val KOTLIN_NATIVE_DEFINITIONS_NAME = KotlinNativeBundle.message("kotlin.native.definitions.short")
+val KOTLIN_NATIVE_DEFINITIONS_DESCRIPTION = KotlinNativeBundle.message("kotlin.native.definitions.description")
 
 object NativeDefinitionsFileType : LanguageFileType(NativeDefinitionsLanguage.INSTANCE) {
 
