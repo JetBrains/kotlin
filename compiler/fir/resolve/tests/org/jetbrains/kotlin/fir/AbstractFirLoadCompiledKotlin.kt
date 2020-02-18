@@ -82,7 +82,8 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
             "compiler/fir/resolve/testData/loadCompiledKotlin/" +
                     testDataPath
                         .removePrefix("compiler/testData/loadJava/compiledKotlin/")
-                        .removeSuffix(File(testDataPath).name).also { File(it).mkdirs() }
+                        .removeSuffix(File(testDataPath).name)
+        File(testDataDirectoryPath).mkdirs()
 
         KotlinTestUtils.assertEqualsToFile(
             File(testDataDirectoryPath + getTestName(false) + ".txt"),
