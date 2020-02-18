@@ -128,5 +128,15 @@ class ChangeVariableMutabilityFix(
                 return ChangeVariableMutabilityFix(property, makeVar = false, actionText = "Change to val")
             }
         }
+
+        val MUST_BE_INITIALIZED_FACTORY = object : KotlinSingleIntentionActionFactory() {
+            override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                val property = Errors.MUST_BE_INITIALIZED.cast(diagnostic).psiElement as? KtProperty ?: return null
+                val getter = property.getter ?: return null
+                if (!getter.hasBody()) return null
+                if (getter.hasBlockBody() && property.typeReference == null) return null
+                return ChangeVariableMutabilityFix(property, makeVar = false)
+            }
+        }
     }
 }
