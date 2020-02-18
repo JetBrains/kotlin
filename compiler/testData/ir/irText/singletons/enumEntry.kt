@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: ANY
 enum class Z {
     ENTRY {
         fun test() {}

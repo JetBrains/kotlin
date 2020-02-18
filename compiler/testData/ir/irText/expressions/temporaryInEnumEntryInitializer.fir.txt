@@ -27,14 +27,14 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String? visibility:private [final]' type=kotlin.String? origin=null
               receiver: GET_VAR '<this>: <root>.En declared in <root>.En.<get-x>' type=<root>.En origin=null
     ENUM_ENTRY name:ENTRY
-      class: CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:local superTypes:[<root>.En]
+      class: CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.En]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.En.ENTRY
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.String?) [primary] declared in <root>.En'
               x: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String? origin=null
                 $this: CALL 'public final fun <get-n> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:local superTypes:[<root>.En]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.En]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.En) returnType:kotlin.Array<<root>.En>
       $this: VALUE_PARAMETER name:<this> type:<root>.En
       BLOCK_BODY

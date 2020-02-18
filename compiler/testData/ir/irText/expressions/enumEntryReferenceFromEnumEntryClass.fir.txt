@@ -6,12 +6,12 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.MyEnum>]'
     ENUM_ENTRY name:Z
-      class: CLASS ENUM_ENTRY name:Z modality:FINAL visibility:local superTypes:[<root>.MyEnum]
+      class: CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.MyEnum]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.Z
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Z modality:FINAL visibility:local superTypes:[<root>.MyEnum]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
         PROPERTY name:counter visibility:public modality:FINAL [var]
           FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private
             EXPRESSION_BODY

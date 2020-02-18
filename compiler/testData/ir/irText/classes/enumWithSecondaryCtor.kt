@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: ANY
 // WITH_RUNTIME
 
 enum class Test0(val x: Int) {

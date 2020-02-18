@@ -18,12 +18,12 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test0 declared in <root>.Test0.<get-x>' type=<root>.Test0 origin=null
     ENUM_ENTRY name:ZERO
-      class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:local superTypes:[<root>.Test0]
+      class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test0]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test0.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:local superTypes:[<root>.Test0]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test0]'
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test0
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
@@ -88,20 +88,20 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
     ENUM_ENTRY name:ZERO
-      class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:local superTypes:[<root>.Test1]
+      class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:local superTypes:[<root>.Test1]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test1]'
     ENUM_ENTRY name:ONE
-      class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:local superTypes:[<root>.Test1]
+      class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1.ONE
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
               x: CONST Int type=kotlin.Int value=1
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:local superTypes:[<root>.Test1]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test1]'
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
@@ -166,25 +166,25 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     ENUM_ENTRY name:ZERO
-      class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:local superTypes:[<root>.Test2]
+      class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:local superTypes:[<root>.Test2]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test2.ZERO) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ZERO
           BLOCK_BODY
             CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value="ZERO"
     ENUM_ENTRY name:ONE
-      class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:local superTypes:[<root>.Test2]
+      class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ONE
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
               x: CONST Int type=kotlin.Int value=1
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:local superTypes:[<root>.Test2]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test2.ONE) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ONE
           BLOCK_BODY

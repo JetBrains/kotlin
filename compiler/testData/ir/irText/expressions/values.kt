@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: ANY
 enum class Enum { A }
 object A
 val a = 0

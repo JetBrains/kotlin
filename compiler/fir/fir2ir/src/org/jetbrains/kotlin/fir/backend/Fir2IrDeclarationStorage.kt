@@ -275,12 +275,13 @@ class Fir2IrDeclarationStorage(
         val descriptor = WrappedClassDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
+        val visibility = Visibilities.LOCAL
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
+            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol,
                     Name.special("<no name provided>"), anonymousObject.classKind,
-                    Visibilities.LOCAL, modality,
+                    visibility, modality,
                     isCompanion = false, isInner = false, isData = false,
                     isExternal = false, isInline = false, isExpect = false, isFun = false
                 ).apply {
@@ -295,12 +296,13 @@ class Fir2IrDeclarationStorage(
         val descriptor = WrappedClassDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
+        val visibility = Visibilities.PRIVATE
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
+            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol,
                     enumEntry.name, anonymousObject.classKind,
-                    Visibilities.LOCAL, modality,
+                    visibility, modality,
                     isCompanion = false, isInner = false, isData = false,
                     isExternal = false, isInline = false, isExpect = false, isFun = false
                 ).apply {

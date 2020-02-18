@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: ANY
 fun WithCompanion.test() {
     val test1 = object : WithCompanion(this) {}
     val test2 = object : WithCompanion(this.foo()) {}

@@ -6,12 +6,12 @@ FILE fqName:<root> fileName:/enumClassModality.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestFinalEnum1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestFinalEnum1>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestFinalEnum1]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFinalEnum1.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestFinalEnum1]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum1]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestFinalEnum1) returnType:kotlin.Array<<root>.TestFinalEnum1>
       $this: VALUE_PARAMETER name:<this> type:<root>.TestFinalEnum1
       BLOCK_BODY
@@ -72,13 +72,13 @@ FILE fqName:<root> fileName:/enumClassModality.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestFinalEnum2 declared in <root>.TestFinalEnum2.<get-x>' type=<root>.TestFinalEnum2 origin=null
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestFinalEnum2]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFinalEnum2.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestFinalEnum2'
               x: CONST Int type=kotlin.Int value=1
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestFinalEnum2]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum2]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestFinalEnum2) returnType:kotlin.Array<<root>.TestFinalEnum2>
       $this: VALUE_PARAMETER name:<this> type:<root>.TestFinalEnum2
       BLOCK_BODY
@@ -127,12 +127,12 @@ FILE fqName:<root> fileName:/enumClassModality.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestFinalEnum3 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestFinalEnum3>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestFinalEnum3]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum3]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFinalEnum3.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum3'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestFinalEnum3]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum3]'
     FUN name:doStuff visibility:public modality:FINAL <> ($this:<root>.TestFinalEnum3) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestFinalEnum3
       BLOCK_BODY
@@ -184,12 +184,12 @@ FILE fqName:<root> fileName:/enumClassModality.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestOpenEnum1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestOpenEnum1>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestOpenEnum1]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestOpenEnum1.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestOpenEnum1]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum1]'
         FUN name:toString visibility:public modality:FINAL <> ($this:<root>.TestOpenEnum1.X1) returnType:kotlin.String
           $this: VALUE_PARAMETER name:<this> type:<root>.TestOpenEnum1.X1
           BLOCK_BODY
@@ -243,12 +243,12 @@ FILE fqName:<root> fileName:/enumClassModality.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestOpenEnum2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestOpenEnum2>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestOpenEnum2]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestOpenEnum2.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum2'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestOpenEnum2]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestOpenEnum2.X1) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.TestOpenEnum2.X1
           BLOCK_BODY
@@ -303,12 +303,12 @@ FILE fqName:<root> fileName:/enumClassModality.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestAbstractEnum1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestAbstractEnum1>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestAbstractEnum1]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum1.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestAbstractEnum1]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum1]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestAbstractEnum1.X1) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.TestAbstractEnum1.X1
           BLOCK_BODY
@@ -379,12 +379,12 @@ FILE fqName:<root> fileName:/enumClassModality.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestAbstractEnum2 modality:FINAL visibility:public superTypes:[<root>.IFoo; kotlin.Enum<<root>.TestAbstractEnum2>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestAbstractEnum2]
+      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum2.X1
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum2'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:local superTypes:[<root>.TestAbstractEnum2]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.TestAbstractEnum2.X1) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.TestAbstractEnum2.X1
           BLOCK_BODY
