@@ -13,9 +13,16 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
+import org.jetbrains.kotlin.gradle.utils.API
+import org.jetbrains.kotlin.gradle.utils.COMPILE
+import org.jetbrains.kotlin.gradle.utils.IMPLEMENTATION
+import org.jetbrains.kotlin.gradle.utils.RUNTIME
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
-import org.jetbrains.kotlin.statistics.metrics.*
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.IStatisticsValuesConsumer
+import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
@@ -219,7 +226,8 @@ internal class DefaultKotlinBuildStatsService internal constructor(
                     StringMetrics.KOTLIN_REFLECT_VERSION,
                     dependency.version ?: "0.0.0"
                 )
-                dependency.group == "org.jetbrains.kotlinx" && dependency.name.startsWith("kotlinx-serialization-runtime") -> sessionLogger.report(
+                dependency.group == "org.jetbrains.kotlinx" && dependency.name
+                    .startsWith("kotlinx-serialization-runtime") -> sessionLogger.report(
                     StringMetrics.KOTLIN_SERIALIZATION_VERSION,
                     dependency.version ?: "0.0.0"
                 )
@@ -269,19 +277,19 @@ internal class DefaultKotlinBuildStatsService internal constructor(
                                 }
                             }
                         }
-                        "api" -> {
+                        API -> {
                             sessionLogger.report(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
                             reportLibrariesVersions(dependencies)
                         }
-                        "implementation" -> {
+                        IMPLEMENTATION -> {
                             sessionLogger.report(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
                             reportLibrariesVersions(dependencies)
                         }
-                        "compile" -> {
+                        COMPILE -> {
                             sessionLogger.report(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
                             reportLibrariesVersions(dependencies)
                         }
-                        "runtime" -> {
+                        RUNTIME -> {
                             sessionLogger.report(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
                             reportLibrariesVersions(dependencies)
                         }

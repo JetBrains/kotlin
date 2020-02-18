@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.COMPILE
+import org.jetbrains.kotlin.gradle.utils.RUNTIME
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -325,10 +327,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 }
 
 internal val KotlinCompilation<*>.deprecatedCompileConfigurationName: String
-    get() = disambiguateName("compile")
+    get() = disambiguateName(COMPILE)
 
 internal val KotlinCompilationToRunnableFiles<*>.deprecatedRuntimeConfigurationName: String
-    get() = disambiguateName("runtime")
+    get() = disambiguateName(RUNTIME)
 
 internal val KotlinTarget.testTaskName: String
     get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
