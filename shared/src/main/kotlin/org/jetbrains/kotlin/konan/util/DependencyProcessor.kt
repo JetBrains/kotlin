@@ -93,7 +93,8 @@ class DependencyProcessor(dependenciesRoot: File,
                           attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
                           customProgressCallback: ProgressCallback? = null,
                           val keepUnstable: Boolean = true,
-                          val deleteArchives: Boolean = true) {
+                          val deleteArchives: Boolean = true,
+                          private val archiveType: ArchiveType = ArchiveType.systemDefault) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = homeDependencyCache.apply { mkdirs() }
@@ -104,32 +105,34 @@ class DependencyProcessor(dependenciesRoot: File,
     private var isInfoShown = false
 
     private val downloader = DependencyDownloader(maxAttempts, attemptIntervalMs, customProgressCallback)
-    private val extractor = DependencyExtractor()
-
-    private val archiveExtension get() = extractor.archiveExtension
+    private val extractor = DependencyExtractor(archiveType)
 
     constructor(dependenciesRoot: File,
                 properties: KonanPropertiesLoader,
                 dependenciesUrl: String = properties.dependenciesUrl,
-                keepUnstable:Boolean = true) : this(
+                keepUnstable:Boolean = true,
+                archiveType: ArchiveType = ArchiveType.systemDefault) : this(
             dependenciesRoot,
             properties.properties,
             properties.dependencies,
             dependenciesUrl,
-            keepUnstable = keepUnstable)
+            keepUnstable = keepUnstable,
+            archiveType = archiveType)
 
     constructor(dependenciesRoot: File,
                 properties: Properties,
                 dependencies: List<String>,
                 dependenciesUrl: String = properties.dependenciesUrl,
-                keepUnstable:Boolean = true) : this(
+                keepUnstable:Boolean = true,
+                archiveType: ArchiveType = ArchiveType.systemDefault) : this(
             dependenciesRoot,
             dependenciesUrl,
             dependencyToCandidates = properties.findCandidates(dependencies),
             airplaneMode = properties.airplaneMode,
             maxAttempts = properties.downloadingAttempts,
             attemptIntervalMs = properties.downloadingAttemptIntervalMs,
-            keepUnstable = keepUnstable)
+            keepUnstable = keepUnstable,
+            archiveType = archiveType)
 
 
     class DependencyFile(directory: File, fileName: String) {
@@ -165,7 +168,7 @@ class DependencyProcessor(dependenciesRoot: File,
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
-        val fileName = "$depName.$archiveExtension"
+        val fileName = "$depName.${archiveType.fileExtension}"
         val archive = cacheDirectory.resolve(fileName)
         val url = URL("$baseUrl/$fileName")
 

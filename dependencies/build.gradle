@@ -5,13 +5,10 @@
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.FromString
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import static org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.Named
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
-import org.jetbrains.kotlin.konan.target.ConfigurablesImplKt
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.TargetManager
+import org.jetbrains.kotlin.konan.util.ArchiveType
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
@@ -43,7 +40,7 @@ class NativeDep extends DefaultTask {
 
     @TaskAction
     void downloadAndExtract() {
-        def downloader = new DependencyProcessor(baseOutDir, konanPropertiesLoader, baseUrl, false)
+        def downloader = new DependencyProcessor(baseOutDir, konanPropertiesLoader, baseUrl, false, ArchiveType.systemDefault)
         downloader.showInfo = false
         downloader.run()
     }
@@ -94,7 +91,8 @@ platformManager.filteredOutEnabledButNotSupported.each { target ->
             loader.properties,
             loader.dependencies,
             NativeDep.baseUrl,
-            false
+            false,
+            ArchiveType.systemDefault
     )
 
     DependencyKind.values().each { kind ->

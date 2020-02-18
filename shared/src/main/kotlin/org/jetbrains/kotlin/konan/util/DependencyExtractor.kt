@@ -20,16 +20,22 @@ import org.jetbrains.kotlin.konan.file.unzipTo
 import java.io.File
 import java.util.concurrent.TimeUnit
 
+enum class ArchiveType(val fileExtension: String) {
+    ZIP("zip"),
+    TAR_GZ("tar.gz");
 
-class DependencyExtractor {
-    internal val useZip = System.getProperty("os.name").startsWith("Windows")
-
-    internal val archiveExtension = if (useZip) {
-        "zip"
-    } else {
-        "tar.gz"
+    companion object {
+        val systemDefault = if (System.getProperty("os.name").startsWith("Windows")) {
+            ZIP
+        } else {
+            TAR_GZ
+        }
     }
+}
 
+class DependencyExtractor(
+        private val archiveType: ArchiveType
+) {
     private fun extractTarGz(tarGz: File, targetDirectory: File) {
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", tarGz.canonicalPath)
@@ -53,10 +59,9 @@ class DependencyExtractor {
     }
 
     fun extract(archive: File, targetDirectory: File) {
-        if (useZip) {
-            archive.toPath().unzipTo(targetDirectory.toPath())
-        } else {
-            extractTarGz(archive, targetDirectory)
+        when (archiveType) {
+            ArchiveType.ZIP -> archive.toPath().unzipTo(targetDirectory.toPath())
+            ArchiveType.TAR_GZ -> extractTarGz(archive, targetDirectory)
         }
     }
 
