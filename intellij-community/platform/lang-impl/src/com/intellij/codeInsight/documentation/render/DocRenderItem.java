@@ -22,10 +22,15 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiDocCommentBase;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +52,7 @@ class DocRenderItem {
   final RangeHighlighter highlighter;
   String textToRender;
   private FoldRegion foldRegion;
-  private Inlay<DocRenderer> inlay;
+  Inlay<DocRenderer> inlay;
 
   static boolean isValidRange(@NotNull Document document, @NotNull TextRange range) {
     CharSequence text = document.getImmutableCharSequence();
@@ -74,7 +79,7 @@ class DocRenderItem {
       boolean updated = false;
       for (Iterator<DocRenderItem> it = items.iterator(); it.hasNext(); ) {
         DocRenderItem item = it.next();
-        DocRenderPassFactory.Item matchingItem = item.isValid() ? itemsToSet.removeItem(item.getTextRange()) : null;
+        DocRenderPassFactory.Item matchingItem = item.isValid() ? itemsToSet.removeItem(item.highlighter) : null;
         if (matchingItem == null) {
           updated |= item.remove(foldingTasks);
           it.remove();
@@ -133,6 +138,11 @@ class DocRenderItem {
           }
         }, connection);
         editor.getCaretModel().addCaretListener(new MyCaretListener(), connection);
+
+        DocRenderMouseEventBridge mouseEventBridge = new DocRenderMouseEventBridge();
+        editor.addEditorMouseListener(mouseEventBridge, connection);
+        editor.addEditorMouseMotionListener(mouseEventBridge, connection);
+
         editor.putUserData(LISTENERS_DISPOSABLE, connection);
       }
     }
@@ -151,10 +161,6 @@ class DocRenderItem {
       .addRangeHighlighter(textRange.getStartOffset(), textRange.getEndOffset(), 0, null, HighlighterTargetArea.EXACT_RANGE);
     AnAction toggleAction = new ToggleRenderingAction(this);
     highlighter.setGutterIconRenderer(new MyGutterIconRenderer(toggleAction));
-  }
-
-  private Segment getTextRange() {
-    return highlighter;
   }
 
   private int calcFoldStartOffset() {
@@ -259,6 +265,22 @@ class DocRenderItem {
       inlay = null;
     }
     return true;
+  }
+
+  PsiElement getOwner() {
+    Project project = editor.getProject();
+    if (project != null && highlighter.isValid()) {
+      PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+      PsiFile file = psiDocumentManager.getPsiFile(editor.getDocument());
+      if (file != null) {
+        PsiDocCommentBase comment = PsiTreeUtil.getParentOfType(file.findElementAt(highlighter.getStartOffset()), PsiDocCommentBase.class,
+                                                                false);
+        if (comment != null) {
+          return comment.getOwner();
+        }
+      }
+    }
+    return null;
   }
 
   private static void updateInlays(@NotNull Editor editor) {

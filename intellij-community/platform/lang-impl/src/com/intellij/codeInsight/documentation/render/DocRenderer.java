@@ -2,7 +2,10 @@
 package com.intellij.codeInsight.documentation.render;
 
 import com.intellij.codeInsight.documentation.DocumentationComponent;
+import com.intellij.codeInsight.documentation.DocumentationManager;
+import com.intellij.codeInsight.documentation.QuickDocUtil;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.Document;
@@ -10,14 +13,20 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorCustomElementRenderer;
 import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.event.CaretEvent;
+import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.GraphicsUtil;
@@ -27,6 +36,9 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.html.ImageView;
 import java.awt.*;
@@ -47,7 +59,8 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static final int TOP_BOTTOM_INSETS = 8;
 
   private final DocRenderItem myItem;
-  private JEditorPane myPane;
+  private boolean myRepaintRequested;
+  JEditorPane myPane;
 
   DocRenderer(DocRenderItem item) {
     myItem = item;
@@ -136,11 +149,20 @@ class DocRenderer implements EditorCustomElementRenderer {
     return Math.max(0, indentPixels - scale(LEFT_INSET));
   }
 
+  Point getEditorPaneLocationWithinInlay() {
+    return new Point(calcInlayStartX() + scale(LEFT_INSET), scale(getTopMargin()) + scale(ARC_WIDTH));
+  }
+
   private JComponent getRendererComponent(Inlay inlay, int width, int height) {
     boolean newInstance = false;
     if (myPane == null || Boolean.TRUE.equals(inlay.getUserData(RECREATE_COMPONENT) != null)) {
       newInstance = true;
-      myPane = new JEditorPane(UIUtil.HTML_MIME, "");
+      myPane = new JEditorPane(UIUtil.HTML_MIME, "") {
+        @Override
+        public void repaint(long tm, int x, int y, int width, int height) {
+          myRepaintRequested = true;
+        }
+      };
       myPane.setEditable(false);
       myPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
       myPane.setEditorKit(createEditorKit());
@@ -152,6 +174,11 @@ class DocRenderer implements EditorCustomElementRenderer {
       myPane.setFont(myPane.getFont().deriveFont(fontAttributes));
       myPane.setForeground(getColorFromRegistry("editor.render.doc.comments.fg"));
       myPane.setText(myItem.textToRender);
+      myPane.addHyperlinkListener(e -> {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          activateLink(e);
+        }
+      });
       inlay.putUserData(RECREATE_COMPONENT, null);
     }
     AppUIUtil.targetToDevice(myPane, inlay.getEditor().getContentComponent());
@@ -160,6 +187,52 @@ class DocRenderer implements EditorCustomElementRenderer {
       trackImageUpdates(inlay);
     }
     return myPane;
+  }
+
+  private void activateLink(HyperlinkEvent event) {
+    Editor editor = myItem.editor;
+    Project project = editor.getProject();
+    Element element = event.getSourceElement();
+    if (project != null && element != null) {
+      Rectangle location = null;
+      try {
+        location = myPane.modelToView(element.getStartOffset());
+      }
+      catch (BadLocationException ignored) {}
+      PsiElement owner = myItem.getOwner();
+      if (owner != null && location != null) {
+        if (QuickDocUtil.getActiveDocComponent(project) == null) {
+          Point inlayPosition = Objects.requireNonNull(myItem.inlay.getBounds()).getLocation();
+          Point relativePosition = getEditorPaneLocationWithinInlay();
+          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT,
+                             new Point(inlayPosition.x + relativePosition.x + location.x,
+                                       inlayPosition.y + relativePosition.y + location.y + location.height));
+        }
+        DocumentationManager documentationManager = DocumentationManager.getInstance(project);
+        documentationManager.showJavaDocInfo(editor, owner, owner, () -> {
+          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
+        }, "", false, true);
+        DocumentationComponent component = QuickDocUtil.getActiveDocComponent(project);
+        if (component != null) {
+          component.startWait();
+          documentationManager.navigateByLink(component, event.getDescription());
+        }
+        if (documentationManager.getDocInfoHint() == null) {
+          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
+        }
+        if (documentationManager.hasActiveDockedDocWindow()) {
+          documentationManager.setAllowContentUpdateFromContext(false);
+          Disposable disposable = Disposer.newDisposable();
+          editor.getCaretModel().addCaretListener(new CaretListener() {
+            @Override
+            public void caretPositionChanged(@NotNull CaretEvent e) {
+              documentationManager.resetAutoUpdateState();
+              Disposer.dispose(disposable);
+            }
+          }, disposable);
+        }
+      }
+    }
   }
 
   private void trackImageUpdates(Inlay inlay) {
@@ -188,6 +261,15 @@ class DocRenderer implements EditorCustomElementRenderer {
       result |= trackImageUpdates(view.getView(i), observer);
     }
     return result;
+  }
+
+  void doWithRepaintTracking(Runnable task) {
+    myRepaintRequested = false;
+    task.run();
+    Inlay<DocRenderer> inlay = myItem.inlay;
+    if (myRepaintRequested && inlay != null) {
+      inlay.repaint();
+    }
   }
 
   private static JBHtmlEditorKit createEditorKit() {

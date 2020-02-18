@@ -173,6 +173,10 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
     }
   }
 
+  public void resetAutoUpdateState() {
+    restartAutoUpdate(PropertiesComponent.getInstance().getBoolean(getAutoUpdateEnabledProperty(), getAutoUpdateDefault()));
+  }
+
   public void updateComponent() {
     updateComponent(false);
   }
