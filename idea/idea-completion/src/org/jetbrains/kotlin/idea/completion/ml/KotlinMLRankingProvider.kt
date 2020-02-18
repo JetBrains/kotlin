@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.ml
 
-import com.completion.ranker.model.kotlin.MLWhiteBox
+import com.jetbrains.completion.ranker.model.kotlin.MLGlassBox
 import com.intellij.internal.ml.DecisionFunction
 import com.intellij.internal.ml.ModelMetadata
 import com.intellij.internal.ml.completion.CompletionRankingModelBase
@@ -16,7 +16,7 @@ import com.intellij.lang.Language
 class KotlinMLRankingProvider : JarCompletionModelProvider("Kotlin", "kotlin_features") {
     override fun createModel(metadata: ModelMetadata): DecisionFunction {
         return object : CompletionRankingModelBase(metadata) {
-            override fun predict(features: DoubleArray?): Double = MLWhiteBox.makePredict(features)
+            override fun predict(features: DoubleArray?): Double = MLGlassBox.makePredict(features)
         }
     }
 
