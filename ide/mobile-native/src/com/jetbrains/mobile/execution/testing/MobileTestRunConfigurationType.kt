@@ -13,15 +13,21 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.mobile.MobileBundle
 
 class MobileTestRunConfigurationType : ConfigurationTypeBase(
-    "KonanMobileTest",
+    ID,
     MobileBundle.message("run.configuration.test.name"),
     MobileBundle.message("run.configuration.test.description"),
     AllIcons.RunConfigurations.Junit
 ) {
     init {
         addFactory(object : ConfigurationFactory(this) {
+            override fun getId(): String = ID
+
             override fun createTemplateConfiguration(project: Project): RunConfiguration =
                 MobileTestRunConfiguration(project, this, name)
         })
+    }
+
+    companion object {
+        private const val ID = "KonanMobileTest"
     }
 }

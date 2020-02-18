@@ -14,13 +14,15 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.mobile.MobileBundle
 
 class MobileAppRunConfigurationType : ConfigurationTypeBase(
-    "KonanMobile",
+    ID,
     MobileBundle.message("run.configuration.name"),
     MobileBundle.message("run.configuration.description"),
     AllIcons.RunConfigurations.Application
 ) {
     init {
         addFactory(object : ConfigurationFactory(this) {
+            override fun getId(): String = ID
+
             override fun createTemplateConfiguration(project: Project): RunConfiguration =
                 MobileAppRunConfiguration(project, this, name)
         })
@@ -31,5 +33,7 @@ class MobileAppRunConfigurationType : ConfigurationTypeBase(
     companion object {
         val instance: MobileAppRunConfigurationType
             get() = ConfigurationTypeUtil.findConfigurationType(MobileAppRunConfigurationType::class.java)
+
+        private const val ID = "KonanMobile"
     }
 }
