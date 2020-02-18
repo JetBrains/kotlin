@@ -21,6 +21,7 @@ import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyGetterDescriptor
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDesc
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.isExpect
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
@@ -93,6 +94,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
@@ -102,9 +104,10 @@ private const val DEBUG_LOG = false
 
 class ComposerParamTransformer(
     context: JvmBackendContext,
-    symbolRemapper: DeepCopySymbolRemapper
+    symbolRemapper: DeepCopySymbolRemapper,
+    bindingTrace: BindingTrace
 ) :
-    AbstractComposeLowering(context, symbolRemapper),
+    AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     FileLoweringPass,
     ModuleLoweringPass {
 
@@ -137,8 +140,7 @@ class ComposerParamTransformer(
         module.patchDeclarationParents()
     }
 
-    private val transformedFunctions: MutableMap<IrFunction, IrFunction>
-        get() = context.suspendFunctionViews
+    private val transformedFunctions: MutableMap<IrFunction, IrFunction> = mutableMapOf()
 
     private val transformedFunctionSet = mutableSetOf<IrFunction>()
 
@@ -233,7 +235,7 @@ class ComposerParamTransformer(
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
         val isComposableLambda = isComposableLambdaInvoke()
-        if (!descriptor.isComposable() && !isComposableLambda)
+        if (!symbol.descriptor.isComposable() && !isComposableLambda)
             return this
         val ownerFn = when {
             isComposableLambda ->
@@ -256,7 +258,7 @@ class ComposerParamTransformer(
             superQualifierSymbol
         ).also {
             it.copyAttributes(this)
-            context.state.irTrace.record(
+            context.irTrace.record(
                 ComposeWritableSlices.IS_COMPOSABLE_CALL,
                 it,
                 true
@@ -321,7 +323,8 @@ class ComposerParamTransformer(
     fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
-        val newFnClass = context.irIntrinsics.symbols.getFunction(argCount + 1)
+        val newFnClass = context.irIntrinsics.symbols.externalSymbolTable.referenceClass(context.builtIns
+            .getFunction(argCount + 1))
         val newDescriptor = newFnClass.descriptor.unsubstitutedMemberScope.findFirstFunction(
             OperatorNameConventions.INVOKE.identifier
         ) { true }
@@ -362,7 +365,7 @@ class ComposerParamTransformer(
             // composable and if they are, it wouldn't have a composer param to use
             fn.valueParameters.clear()
             valueParameters.mapTo(fn.valueParameters) { p -> p.copyTo(fn, defaultValue = null) }
-            fn.body = context.createIrBuilder(fn.symbol).irBlockBody {
+            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 +irThrow(
                     irCall(errorCtor).apply {
                         putValueArgument(
@@ -579,7 +582,7 @@ class ComposerParamTransformer(
                                 call !== expression &&
                                 call.isInlineParameterLambdaInvoke()
                             ) {
-                                context.state.irTrace.record(
+                                context.irTrace.record(
                                     ComposeWritableSlices.IS_INLINE_COMPOSABLE_CALL,
                                     call,
                                     true
