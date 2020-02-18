@@ -69,7 +69,7 @@ internal class KotlinJsPresetEntry(
         return """
     fun $presetName(
         name: String = "$presetName",
-        compiler: JsCompilerType = JsCompilerType.legacy,
+        compiler: JsCompilerType = defaultJsCompilerType,
         configure: ${targetType.renderShort()}.() -> Unit = { }
     ): ${targetType.renderShort()} =
         $configureOrCreateFunctionName(
@@ -86,7 +86,7 @@ internal class KotlinJsPresetEntry(
     fun $presetName(
         name: String = "$presetName",
         configure: ${targetType.renderShort()}.() -> Unit = { }
-    ) = $presetName(name = "$presetName", compiler = JsCompilerType.legacy, configure = configure)
+    ) = $presetName(name = "$presetName", compiler = defaultJsCompilerType, configure = configure)
     
     fun $presetName(
         compiler: JsCompilerType,

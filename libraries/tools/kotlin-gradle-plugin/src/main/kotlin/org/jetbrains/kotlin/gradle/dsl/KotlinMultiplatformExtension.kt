@@ -11,7 +11,6 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 open class KotlinMultiplatformExtension :
     KotlinProjectExtension(),
@@ -22,6 +21,9 @@ open class KotlinMultiplatformExtension :
         internal set
 
     override lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
+        internal set
+
+    override lateinit var defaultJsCompilerType: JsCompilerType
         internal set
 
     @Suppress("unused") // DSL
