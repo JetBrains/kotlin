@@ -48,6 +48,11 @@ private abstract class AppleTask @Inject constructor(
     protected val target: AppleTarget,
     protected val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
+    init {
+        @Suppress("LeakingThis")
+        onlyIf { SystemInfoRt.isMac }
+    }
+
     open val baseDir: File
         get() = dependsOn.filterIsInstance<AppleGenerateXcodeProjectTask>().singleOrNull()?.baseDir
             ?: dependsOn.filterIsInstance<AppleTask>().last().baseDir
@@ -396,14 +401,12 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
     val generateXcodeprojTask: AppleGenerateXcodeProjectTask by project.tasks.register("generateXcodeproj", AppleGenerateXcodeProjectTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
-            onlyIf { SystemInfoRt.isMac }
         }
     }
     override val buildTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
             dependsOn(generateXcodeprojTask)
-            onlyIf { SystemInfoRt.isMac }
         }
 
         project.tasks.named(BasePlugin.ASSEMBLE_TASK_NAME) {
@@ -414,20 +417,17 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
         it.configure {
             dependsOn(configuration.incoming.files)
             dependsOn(generateXcodeprojTask)
-            onlyIf { SystemInfoRt.isMac }
         }
     }
     override val archiveTask: AppleArchiveTask by project.tasks.register("archive", AppleArchiveTask::class.java, this).also {
         it.configure {
             dependsOn(configuration.incoming.files)
             dependsOn(generateXcodeprojTask)
-            onlyIf { SystemInfoRt.isMac }
         }
     }
     override val exportIPATask: AppleExportIPATask by project.tasks.register("exportIpa", AppleExportIPATask::class.java, this).also {
         it.configure {
             dependsOn(archiveTask)
-            onlyIf { SystemInfoRt.isMac }
         }
     }
 
