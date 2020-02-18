@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.*
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.builder.model.SourceProvider
@@ -805,7 +804,6 @@ class KotlinConfigurationTools internal constructor(
 abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTools: KotlinConfigurationTools) {
     protected val logger = Logging.getLogger(this.javaClass)
 
-    abstract fun forEachVariant(project: Project, action: (BaseVariant) -> Unit): Unit
     abstract fun getResDirectories(variantData: BaseVariant): FileCollection
     abstract fun getFlavorNames(variant: BaseVariant): List<String>
     abstract fun getBuildTypeName(variant: BaseVariant): String
@@ -879,7 +877,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
                                                         androidPluginIds.joinToString("\n\t") { "* $it" })
         }
 
-        forEachVariant(project) { variant ->
+        project.forEachVariant { variant ->
             val variantName = getVariantName(variant)
 
             // Create the compilation and configure it first, then add to the compilations container. As this code is executed
@@ -899,7 +897,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         }
 
         project.whenEvaluated {
-            forEachVariant(project) { variant ->
+            forEachVariant { variant ->
                 val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
                 postprocessVariant(variant, compilation, project, ext, plugin)
 
@@ -966,7 +964,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         if (kotlinAndroidTarget.disambiguationClassifier != null) {
 
             val sourceSetToVariants = mutableMapOf<AndroidSourceSet, MutableList<BaseVariant>>().apply {
-                forEachVariant(project) { variant ->
+                project.forEachVariant { variant ->
                     for (sourceSet in getSourceProviders(variant)) {
                         val androidSourceSet = sourceSet as? AndroidSourceSet ?: continue
                         getOrPut(androidSourceSet) { mutableListOf() }.add(variant)
@@ -1241,5 +1239,23 @@ internal fun compareVersionNumbers(v1: String?, v2: String?): Int {
             idx++
         }
         return 0
+    }
+}
+
+internal fun Project.forEachVariant(action: (BaseVariant) -> Unit) {
+    val androidExtension = this.extensions.getByName("android")
+    when (androidExtension) {
+        is AppExtension -> androidExtension.applicationVariants.all(action)
+        is LibraryExtension -> {
+            androidExtension.libraryVariants.all(action)
+            if (androidExtension is FeatureExtension) {
+                androidExtension.featureVariants.all(action)
+            }
+        }
+        is TestExtension -> androidExtension.applicationVariants.all(action)
+    }
+    if (androidExtension is TestedExtension) {
+        androidExtension.testVariants.all(action)
+        androidExtension.unitTestVariants.all(action)
     }
 }
