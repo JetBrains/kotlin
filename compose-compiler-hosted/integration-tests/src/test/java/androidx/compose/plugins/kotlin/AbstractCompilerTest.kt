@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
+import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -181,7 +182,7 @@ abstract class AbstractCompilerTest : TestCase() {
     protected fun getTestName(lowercaseFirstLetter: Boolean): String =
         getTestName(this.name ?: "", lowercaseFirstLetter)
     protected fun getTestName(name: String, lowercaseFirstLetter: Boolean): String {
-        val trimmedName = StringUtil.trimStart(name, "test")
+        val trimmedName = trimStart(name, "test")
         return if (StringUtil.isEmpty(trimmedName)) "" else lowercaseFirstLetter(
             trimmedName,
             lowercaseFirstLetter
@@ -289,4 +290,11 @@ fun newConfiguration(): CompilerConfiguration {
     })
 
     return configuration
+}
+
+@Contract(pure = true)
+fun trimStart(s: String, prefix: String): String {
+    return if (s.startsWith(prefix)) {
+        s.substring(prefix.length)
+    } else s
 }
