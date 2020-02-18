@@ -14,8 +14,6 @@ import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.impl.ExtensionComponentAdapter
-import com.intellij.psi.impl.search.IndexPatternBuilder
-import com.intellij.psi.impl.search.JspIndexPatternBuilder
 import com.intellij.task.ProjectTaskRunner
 import com.intellij.task.impl.JpsProjectTaskRunner
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -59,9 +57,6 @@ class KotlinNativeIdeInitializer {
         unregisterExtensionsFromPlugins(ConfigurationType.CONFIGURATION_TYPE_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
         unregisterExtensionsFromPlugins(RunConfigurationProducer.EP_NAME, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
         unregisterExtensionsFromPlugins(ProgramRunner.PROGRAM_RUNNER_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
-
-        // Disable Java Server Pages indexes
-        unregisterExtensionsByClass(IndexPatternBuilder.EP_NAME, JspIndexPatternBuilder::class.java)
     }
 
     private fun <T : Any> unregisterExtensionsByClass(
