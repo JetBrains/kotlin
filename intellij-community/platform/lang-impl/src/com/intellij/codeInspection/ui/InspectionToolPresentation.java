@@ -154,7 +154,8 @@ public interface InspectionToolPresentation extends ProblemDescriptionsProcessor
       severity = presentation.getSeverity(refElement);
     }
     if (severity == null) {
-      severity = profile.getErrorLevel(HighlightDisplayKey.find(presentation.getToolWrapper().getShortName()), psiElement).getSeverity();
+      String shortName = presentation.getToolWrapper().getShortName();
+      severity = profile.getErrorLevel(HighlightDisplayKey.find(shortName), psiElement).getSeverity();
     }
     return severity;
   }
