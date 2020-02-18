@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.structureView.newStructureView;
 
 import com.intellij.ide.CopyPasteDelegator;
@@ -609,11 +608,13 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     }
   }
 
-  private class MyAutoScrollFromSourceHandler extends AutoScrollFromSourceHandler {
+  private final class MyAutoScrollFromSourceHandler extends AutoScrollFromSourceHandler implements Disposable {
     private FileEditorPositionListener myFileEditorPositionListener;
 
-    private MyAutoScrollFromSourceHandler(Project project, Disposable parentDisposable) {
+    private MyAutoScrollFromSourceHandler(Project project, @NotNull Disposable parentDisposable) {
       super(project, getTree(), parentDisposable);
+
+      Disposer.register(parentDisposable, this);
     }
 
     @Override
@@ -627,7 +628,6 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
 
     @Override
     public void dispose() {
-      super.dispose();
       if (myFileEditorPositionListener != null) {
         myTreeModel.removeEditorPositionListener(myFileEditorPositionListener);
       }
