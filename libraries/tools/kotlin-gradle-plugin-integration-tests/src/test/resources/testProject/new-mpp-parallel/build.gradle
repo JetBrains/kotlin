@@ -32,6 +32,7 @@ kotlin {
 
     targets {
         fromPreset(presets.jvm, 'jvm')
-        fromPreset(presets.js, 'js')
     }
+
+    js()
 }
