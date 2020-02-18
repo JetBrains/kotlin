@@ -313,8 +313,6 @@ private val jvmFilePhases = listOf(
     collectionStubMethodLowering,
     jvmInlineClassPhase,
 
-    sharedVariablesPhase,
-
     makePatchParentsPhase(1),
 
     enumWhenPhase,
@@ -323,6 +321,7 @@ private val jvmFilePhases = listOf(
     singleAbstractMethodPhase,
     assertionPhase,
     returnableBlocksPhase,
+    sharedVariablesPhase,
     localDeclarationsPhase,
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,

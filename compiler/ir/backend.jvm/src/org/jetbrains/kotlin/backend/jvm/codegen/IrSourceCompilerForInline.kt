@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
@@ -36,7 +36,6 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.File
 
 class IrSourceCompilerForInline(
     override val state: GenerationState,
@@ -107,9 +106,9 @@ class IrSourceCompilerForInline(
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
-    override fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label) {
-        require(finallyCodegen is ExpressionCodegen)
-        finallyCodegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
+    override fun generateFinallyBlocksIfNeeded(codegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label, target: Label?) {
+        require(codegen is ExpressionCodegen)
+        codegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
     }
 
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
@@ -139,9 +138,15 @@ class IrSourceCompilerForInline(
     override val compilationContextFunctionDescriptor: FunctionDescriptor
         get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.toIrBasedDescriptor()
 
-    override fun getContextLabels(): Set<String> {
-        val name = codegen.irFunction.name.asString()
-        return setOf(name)
+    override fun getContextLabels(): Map<String, Label?> {
+        val result = mutableMapOf<String, Label?>(codegen.irFunction.name.asString() to null)
+        for (info in data.infos) {
+            if (info !is LoopInfo)
+                continue
+            result[info.loop.nonLocalReturnLabel(false)] = info.continueLabel
+            result[info.loop.nonLocalReturnLabel(true)] = info.breakLabel
+        }
+        return result
     }
 
     // TODO: Find a way to avoid using PSI here
@@ -161,3 +166,6 @@ private tailrec fun IrDeclaration.isInlineOrInsideInline(): Boolean {
     if (parent !is IrDeclaration) return false
     return parent.isInlineOrInsideInline()
 }
+
+// TODO generate better labels; this is unique (includes the object's address), but not very descriptive
+internal fun IrLoop.nonLocalReturnLabel(forBreak: Boolean): String = "$this\$${if (forBreak) "break" else "continue"}"
