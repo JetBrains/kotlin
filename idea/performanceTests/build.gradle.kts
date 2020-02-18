@@ -21,6 +21,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))
     testRuntimeOnly(project(":idea:idea-gradle-tooling-api"))
+    testRuntimeOnly(project(":kotlin-gradle-statistics"))
 
     testImplementation(intellijPluginDep("gradle"))
     testImplementation(project(":compiler:backend"))
@@ -29,11 +30,17 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testImplementation(projectTests(":idea"))
+    testImplementation(project(":idea:idea-gradle")) { isTransitive = false }
     testImplementation(commonDep("junit:junit"))
 
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java"))
         testRuntimeOnly(intellijPluginDep("java"))
+    }
+
+    Platform[193].orHigher {
+        testImplementation(intellijPluginDep("gradle-java"))
+        testRuntimeOnly(intellijPluginDep("gradle-java"))
     }
 
     testCompileOnly(intellijDep())
