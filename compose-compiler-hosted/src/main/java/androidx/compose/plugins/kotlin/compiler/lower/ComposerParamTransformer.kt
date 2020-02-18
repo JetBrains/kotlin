@@ -73,6 +73,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -525,7 +527,7 @@ class ComposerParamTransformer(
 
             val composerParam = fn.addValueParameter(
                 KtxNameConventions.COMPOSER_PARAMETER.identifier,
-                composerType
+                composerType.makeNullable()
             )
             fn.transformChildrenVoid(object : IrElementTransformerVoid() {
                 var isNestedScope = false
