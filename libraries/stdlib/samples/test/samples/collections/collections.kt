@@ -787,4 +787,14 @@ class Collections {
         }
 
     }
+
+    class Filtering {
+        @Sample
+        fun filterNotNull() {
+            val numbers: List<Int?> = listOf(1, 2, null, 4)
+            val nonNullNumbers = numbers.filterNotNull()
+
+            assertPrints(nonNullNumbers, "[1, 2, 4]")
+        }
+    }
 }

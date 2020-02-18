@@ -439,6 +439,8 @@ public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing all elements that are not `null`.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNull
  */
 public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
     @Suppress("UNCHECKED_CAST")

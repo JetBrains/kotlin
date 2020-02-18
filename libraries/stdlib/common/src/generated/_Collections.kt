@@ -749,6 +749,8 @@ public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> 
 
 /**
  * Returns a list containing all elements that are not `null`.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNull
  */
 public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
     return filterNotNullTo(ArrayList<T>())

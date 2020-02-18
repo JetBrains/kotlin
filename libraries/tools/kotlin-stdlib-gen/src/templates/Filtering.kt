@@ -730,6 +730,7 @@ object Filtering : TemplateGroupBase() {
         include(Iterables, Sequences, ArraysOfObjects)
     } builder {
         doc { "Returns a list containing all elements that are not `null`." }
+        sample("samples.collections.Collections.Filtering.filterNotNull")
         typeParam("T : Any")
         returns("List<T>")
         toNullableT = true
