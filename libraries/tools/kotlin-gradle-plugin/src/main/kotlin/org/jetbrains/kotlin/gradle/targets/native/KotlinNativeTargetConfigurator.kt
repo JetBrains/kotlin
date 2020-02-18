@@ -149,11 +149,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         }
     }
 
-    internal fun Project.createKlibCompilationTask(compilation: AbstractKotlinNativeCompilation): TaskProvider<out KotlinNativeCompile> {
-        val compileTask = project.registerTask<KotlinNativeCompile>(
+    internal fun Project.createKlibCompilationTask(compilation: AbstractKotlinNativeCompilation): KotlinNativeCompile {
+        val compileTask = project.tasks.create(
             compilation.compileKotlinTaskName,
             KotlinNativeCompile::class.java
-        ) { task ->
+        ).also { task ->
             task.compilation = compilation
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Compiles a klibrary from the '${compilation.name}' " +
@@ -178,7 +178,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
                 dependsOn(compileTask)
             }
-            createRegularKlibArtifact(compilation, compileTask.get() /*TODO don't instantiate the task eagerly*/)
+            createRegularKlibArtifact(compilation, compileTask)
         }
 
         return compileTask

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -127,7 +127,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
             with(nativeTargetConfigurator) {
                 project.createKlibCompilationTask(kotlinCompilation)
-            }
+            }.thisTaskProvider
 
         override fun run() = Unit
     }
