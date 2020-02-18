@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.removeCapitalizedJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsIrTargetPreset(
@@ -52,11 +53,20 @@ open class KotlinJsIrTargetPreset(
 class KotlinJsIrSingleTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) :
-    KotlinJsIrTargetPreset(project, kotlinPluginVersion) {
-
+) : KotlinJsIrTargetPreset(
+    project,
+    kotlinPluginVersion
+) {
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? = null
+    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
+        return if (mixedMode!!) {
+            super.provideTargetDisambiguationClassifier(target)
+                ?.removePrefix(target.name.removeCapitalizedJsCompilerSuffix(JsCompilerType.ir))
+                ?.decapitalize()
+        } else {
+            null
+        }
+    }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator(kotlinPluginVersion)
