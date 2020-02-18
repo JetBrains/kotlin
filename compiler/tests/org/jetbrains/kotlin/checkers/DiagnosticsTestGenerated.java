@@ -10702,6 +10702,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/constraints"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
+                @TestMetadata("approximationWithDefNotNullInInvPositionDuringInference.kt")
+                public void testApproximationWithDefNotNullInInvPositionDuringInference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/approximationWithDefNotNullInInvPositionDuringInference.kt");
+                }
+
                 @TestMetadata("constraintFromVariantTypeWithNestedProjection.kt")
                 public void testConstraintFromVariantTypeWithNestedProjection() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/constraintFromVariantTypeWithNestedProjection.kt");
