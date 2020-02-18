@@ -312,10 +312,10 @@ private open class AppleBuildTask @Inject constructor(target: AppleTarget, execA
         )
     }
 
-    open val xcodeBuildTask: String = "build"
-    open val xcodeBuildSdk: String? = "iphonesimulator"
-    open val xcodeBuildArgs: Array<String> = emptyArray()
-    open val xcodeScheme: String = target.name
+    protected open val xcodeBuildTask: String = "build"
+    protected open val xcodeBuildSdk: String? = "iphonesimulator"
+    protected open val xcodeBuildArgs: Array<String> = emptyArray()
+    protected open val xcodeScheme: String = target.name
 }
 
 private open class AppleBuildTestTask @Inject constructor(target: AppleTarget, execActionFactory: ExecActionFactory) :
@@ -330,18 +330,17 @@ private open class AppleArchiveTask @Inject constructor(target: AppleTarget, exe
         configName = "Release"
     }
 
-    val xcarchivePath: String
-        get() = target.sourceSet.apple.outputDir
+    val xcarchive: File
+        @OutputDirectory get() = target.sourceSet.apple.outputDir
             .resolve("archive")
             .resolve("${target.name}.xcarchive")
-            .toRelativeString(baseDir)
 
     override val xcodeBuildTask: String = "archive"
     override val xcodeBuildSdk: String? = null
     override val xcodeBuildArgs: Array<String>
         get() = arrayOf(
             "-destination", "generic/platform=iOS",
-            "-archivePath", xcarchivePath,
+            "-archivePath", xcarchive.toRelativeString(baseDir),
             "-allowProvisioningUpdates"
         )
     override val xcodeScheme: String = target.name
@@ -358,7 +357,7 @@ private open class AppleExportIPATask @Inject constructor(
 
     @TaskAction
     fun build() {
-        val xcarchivePath = dependsOn.filterIsInstance<AppleArchiveTask>().single().xcarchivePath
+        val xcarchive = dependsOn.filterIsInstance<AppleArchiveTask>().single().xcarchive
 
         val exportOptions = Plist().also { plist ->
             plist["method"] = method
@@ -370,7 +369,7 @@ private open class AppleExportIPATask @Inject constructor(
         val optionsPlistPath = exportOptionsPlist.toRelativeString(baseDir)
         xcodeBuild(
             "-exportArchive",
-            "-archivePath", xcarchivePath,
+            "-archivePath", xcarchive.toRelativeString(baseDir),
             "-exportOptionsPlist", optionsPlistPath,
             "-exportPath", target.sourceSet.apple.outputDir.toRelativeString(baseDir),
             "-allowProvisioningUpdates"
