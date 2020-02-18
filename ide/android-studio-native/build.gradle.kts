@@ -38,6 +38,8 @@ dependencies {
 
     implementation("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
     implementation("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
+
+    implementation(project(":idea:jvm-debugger:jvm-debugger-core")) { isTransitive = false }
 }
 
 
