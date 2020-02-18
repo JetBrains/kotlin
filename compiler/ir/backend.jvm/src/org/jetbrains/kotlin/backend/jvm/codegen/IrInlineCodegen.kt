@@ -181,10 +181,6 @@ class IrExpressionLambdaImpl(
 
     override val isSuspend: Boolean = function.isSuspend
 
-    override fun isReturnFromMe(labelName: String): Boolean {
-        return false //always false
-    }
-
     // This name doesn't actually matter: it is used internally to tell this lambda's captured
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
     // This particular string slightly aids in debugging internal compiler errors as it at least
