@@ -21,7 +21,8 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
     constructor(module: Module) :
             this(module, KotlinCodeBlockModificationListener.getInstance(module.project).perModuleOutOfCodeBlockTrackerUpdater)
 
-    private val kotlinOutOfCodeBlockTracker = KotlinCodeBlockModificationListener.getInstance(module.project).kotlinOutOfCodeBlockTracker
+    private val kotlinOutOfCodeBlockTracker =
+        KotlinCodeBlockModificationListener.getInstanceOrNull(module.project)?.kotlinOutOfCodeBlockTracker
 
     private val dependencies by lazy {
         // Avoid implicit capturing for this to make CachedValueStabilityChecker happy
@@ -39,7 +40,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
     object KeyForCachedDependencies
 
     override fun getModificationCount(): Long {
-        val currentGlobalCount = kotlinOutOfCodeBlockTracker.modificationCount
+        val currentGlobalCount = kotlinOutOfCodeBlockTracker?.modificationCount ?: 0
 
         if (updater.hasPerModuleModificationCounts()) {
             val selfCount = updater.getModificationCount(module)
@@ -67,7 +68,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
 
     internal class Updater(project: Project) {
         private val kotlinOfOfCodeBlockTracker by lazy {
-            KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
+            KotlinCodeBlockModificationListener.getInstanceOrNull(project)?.kotlinOutOfCodeBlockTracker
         }
 
         private val perModuleModCount = mutableMapOf<Module, Long>()
@@ -81,14 +82,14 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
         private var perModuleChangesHighWatermark: Long? = null
 
         internal fun getModificationCount(module: Module): Long {
-            return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: kotlinOfOfCodeBlockTracker.modificationCount
+            return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: kotlinOfOfCodeBlockTracker?.modificationCount ?: 0
         }
 
         internal fun hasPerModuleModificationCounts() = perModuleChangesHighWatermark != null
 
         internal fun onKotlinPhysicalFileOutOfBlockChange(ktFile: KtFile, immediateUpdatesProcess: Boolean) {
             lastAffectedModule = ModuleUtil.findModuleForPsiElement(ktFile)
-            lastAffectedModuleModCount = kotlinOfOfCodeBlockTracker.modificationCount
+            lastAffectedModuleModCount = kotlinOfOfCodeBlockTracker?.modificationCount ?: 0
 
             if (immediateUpdatesProcess) {
                 onPsiModificationTrackerUpdate(0)
@@ -96,7 +97,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
         }
 
         internal fun onPsiModificationTrackerUpdate(customIncrement: Int) {
-            val newModCount = kotlinOfOfCodeBlockTracker.modificationCount
+            val newModCount = kotlinOfOfCodeBlockTracker?.modificationCount ?: 0
             val affectedModule = lastAffectedModule
             if (affectedModule != null && newModCount == lastAffectedModuleModCount + customIncrement) {
                 if (perModuleChangesHighWatermark == null) {

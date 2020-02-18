@@ -32,7 +32,8 @@ class SubpackagesIndexService(private val project: Project) {
         // a map from any existing package (in kotlin) to a set of subpackages (not necessarily direct) containing files
         private val allPackageFqNames = hashSetOf<FqName>()
         private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>()
-        private val oocbCount = KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker.modificationCount
+        private val oocbCount =
+            KotlinCodeBlockModificationListener.getInstanceOrNull(project)?.kotlinOutOfCodeBlockTracker?.modificationCount ?: 0
 
         init {
             for (fqNameAsString in allPackageFqNames) {

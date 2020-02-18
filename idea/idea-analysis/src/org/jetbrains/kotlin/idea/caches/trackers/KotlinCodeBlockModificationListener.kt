@@ -327,6 +327,10 @@ class KotlinCodeBlockModificationListener(
 
         fun getInstance(project: Project): KotlinCodeBlockModificationListener =
             project.getComponent(KotlinCodeBlockModificationListener::class.java)
+
+        fun getInstanceOrNull(project: Project): KotlinCodeBlockModificationListener? =
+            project.getComponent(KotlinCodeBlockModificationListener::class.java)
+
     }
 }
 

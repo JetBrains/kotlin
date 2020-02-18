@@ -104,12 +104,14 @@ class PluginDeclarationProviderFactory(
         val cachedPackageExists =
             moduleSourceInfo?.let { ServiceManager.getService(project, PerModulePackageCacheService::class.java).packageExists(fqName, it) }
         val moduleModificationCount = moduleSourceInfo?.createModificationTracker()?.modificationCount
+        val outOfCodeBlockTrackerModificationCount =
+            KotlinCodeBlockModificationListener.getInstanceOrNull(project)?.kotlinOutOfCodeBlockTracker?.modificationCount ?: 0
 
         val common = """
                 packageExists = $packageExists, cachedPackageExists = $cachedPackageExists,
                 oldPackageExists = $oldPackageExists,
                 SPI.packageExists = $spiPackageExists, SPI = $subpackagesIndex,
-                OOCB count = ${KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker.modificationCount}
+                OOCB count = ${outOfCodeBlockTrackerModificationCount}
                 moduleModificationCount = $moduleModificationCount
             """.trimIndent()
 
