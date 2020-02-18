@@ -21,9 +21,7 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.process.internal.ExecActionFactory
@@ -54,9 +52,8 @@ private abstract class AppleTask @Inject constructor(
         onlyIf { SystemInfoRt.isMac }
     }
 
-    open val baseDir: File
-        get() = dependsOn.filterIsInstance<AppleGenerateXcodeProjectTask>().singleOrNull()?.baseDir
-            ?: dependsOn.filterIsInstance<AppleTask>().last().baseDir
+    protected open val baseDir: File
+        get() = System.getProperty("xcodeProjBaseDir")?.let(::File) ?: project.buildDir.resolve("tmp/apple/${target.name}")
 
     protected val teamIDOrNull: String?
         @Input get() = project.findProperty("apple.teamID")?.toString()
@@ -84,8 +81,13 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
     target: AppleTarget,
     execActionFactory: ExecActionFactory
 ) : AppleTask(target, execActionFactory) {
-    override val baseDir: File = System.getProperty("xcodeProjBaseDir")?.let(::File) ?: project.buildDir.resolve("tmp/apple/${target.name}")
-        @OutputDirectory get
+    override val baseDir: File
+        @OutputDirectory get() = super.baseDir
+
+    val sourceDirectorySet: SourceDirectorySet
+        @InputFiles get() = target.sourceSet.apple
+    val testSourceDirectorySet: SourceDirectorySet
+        @InputFiles get() = target.testSourceSet.apple
 
     @TaskAction
     fun execute() {
@@ -162,8 +164,6 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
             ?: throw RuntimeException("Could not find SDK.")
         val mainGroup = pbxProjectFile.projectObject.mainGroup!!
 
-        val sourceDirectorySet = target.sourceSet.apple
-        val testSourceDirectorySet = target.testSourceSet.apple
         val symRoot = sourceDirectorySet.outputDir
 
         with(pbxProjectFile.manipulator) {
@@ -294,13 +294,14 @@ private open class AppleBuildTask @Inject constructor(target: AppleTarget, execA
         group = BasePlugin.BUILD_GROUP
     }
 
+    val projectDir: File
+        @InputDirectory get() = baseDir.resolve("${target.name}.xcodeproj")
+
     var configName: String = "Debug"
         @Input get
 
     @TaskAction
     fun build() {
-        val projectDir = baseDir.resolve("${target.name}.xcodeproj")
-
         val sdkArgs = xcodeBuildSdk?.let { arrayOf("-sdk", it) } ?: emptyArray()
         xcodeBuild(
             "-project", projectDir.toRelativeString(baseDir),
