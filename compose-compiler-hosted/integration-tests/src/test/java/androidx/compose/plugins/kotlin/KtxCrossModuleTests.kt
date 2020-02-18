@@ -322,11 +322,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     """,
                     "x/A.kt" to """
                     import androidx.compose.Composable
-                    import androidx.compose.currentComposerIntrinsic
+                    import androidx.compose.currentComposer
 
                     @Composable
                     inline fun abc(): Any {
-                        return currentComposerIntrinsic
+                        return currentComposer
                     }
                     """,
                     "x/B.kt" to """

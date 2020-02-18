@@ -136,7 +136,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                 $src
 
                 @Composable fun assertComposer(expected: Composer<*>?) {
-                    val actual = currentComposerIntrinsic
+                    val actual = currentComposer
                     assert(expected === actual)
                 }
 
