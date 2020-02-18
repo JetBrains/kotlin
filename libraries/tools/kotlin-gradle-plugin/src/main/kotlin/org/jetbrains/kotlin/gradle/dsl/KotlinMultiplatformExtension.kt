@@ -25,6 +25,9 @@ open class KotlinMultiplatformExtension :
     override lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
 
+    override lateinit var defaultJsCompilerType: JsCompilerType
+        internal set
+
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
         get() = targets.withType(KotlinTargetWithTests::class.java)

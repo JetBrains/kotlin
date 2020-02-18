@@ -73,6 +73,8 @@ class KotlinMultiplatformPlugin(
             presets = project.container(KotlinTargetPreset::class.java)
             addExtension("presets", presets)
 
+            defaultJsCompilerType = PropertiesProvider(project).jsCompiler
+
             isGradleMetadataAvailable =
                 featurePreviews.activeFeatures.find { it.name == "GRADLE_METADATA" }?.let { metadataFeature ->
                     isGradleMetadataExperimental = true
