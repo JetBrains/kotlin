@@ -30,6 +30,7 @@ include ':common'
 include ':backend.native:tests'
 include ':backend.native:debugger-tests'
 include ':utilities'
+include 'dependencyPacker'
 
 include ':performance'
 include ':performance:ring'
@@ -73,3 +74,4 @@ includeBuild 'build-tools'
 includeBuild 'extracted/konan.metadata'
 includeBuild 'extracted/konan.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'
+
