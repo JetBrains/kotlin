@@ -83,7 +83,7 @@ inline fun <reified T : PsiElement> List<PsiElement>.descendantsOfType(): List<T
 fun PsiElement.isInRange(outerRange: TextRange) =
     outerRange.contains(range)
 
-internal fun runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> Unit) {
+fun runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> Unit) {
     ApplicationManager.getApplication().invokeAndWait {
         CommandProcessor.getInstance().runUndoTransparentAction {
             if (inWriteAction) {
