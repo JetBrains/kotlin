@@ -24,6 +24,7 @@ import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
 import com.intellij.xdebugger.ui.DebuggerColors
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import java.awt.Color
@@ -177,7 +178,10 @@ class SimpleColoredTextIconPresentationRenderer {
     }
 
     fun renderCreationNode(infoData: CoroutineInfoData) =
-        SimpleColoredTextIcon(AllIcons.Debugger.ThreadSuspended, true, "Creation stack frame of ${infoData.name}")
+        SimpleColoredTextIcon(
+            AllIcons.Debugger.ThreadSuspended, true,
+            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.frame", infoData.name)
+        )
 
     fun renderErrorNode(error: String) =
         SimpleColoredTextIcon(AllIcons.Actions.Lightning,false, error)

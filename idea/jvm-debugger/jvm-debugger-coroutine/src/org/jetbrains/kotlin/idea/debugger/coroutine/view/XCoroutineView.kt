@@ -40,9 +40,9 @@ import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreeState
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueContainerNode
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueNodeImpl
 import com.sun.jdi.request.EventRequest
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.VersionedImplementationProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ApplicationThreadExecutor
@@ -150,7 +150,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         CreateContentParams(
             CoroutineDebuggerContentInfo.XCOROUTINE_THREADS_CONTENT,
             mainPanel,
-            KotlinBundle.message("debugger.session.tab.xcoroutine.title"),
+            KotlinDebuggerCoroutinesBundle.message("coroutine.view.title"),
             null,
             panel.tree
         )
@@ -158,7 +158,10 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class EmptyNode : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {})
 
     inner class XCoroutinesRootNode(suspendContext: XSuspendContext) :
-        XValueContainerNode<CoroutineGroupContainer>(panel.tree, null, false, CoroutineGroupContainer(suspendContext, "Default group"))
+        XValueContainerNode<CoroutineGroupContainer>(
+            panel.tree, null, false,
+            CoroutineGroupContainer(suspendContext, KotlinDebuggerCoroutinesBundle.message("coroutine.view.default.group"))
+        )
 
     inner class CoroutineGroupContainer(val suspendContext: XSuspendContext, val groupName: String) : XValueContainer() {
         override fun computeChildren(node: XCompositeNode) {
@@ -191,7 +194,8 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                     }
                     node.addChildren(children, true)
                 } else {
-                    node.addChildren(XValueChildrenList.singleton(ErrorNode("Error occurs while fetching information")), true)
+                    val errorNode = ErrorNode(KotlinDebuggerCoroutinesBundle.message("coroutine.view.fetching.error"))
+                    node.addChildren(XValueChildrenList.singleton(errorNode), true)
                 }
             }
         }

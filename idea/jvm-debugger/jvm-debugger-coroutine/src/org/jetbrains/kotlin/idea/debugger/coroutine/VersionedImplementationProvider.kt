@@ -15,7 +15,7 @@ class VersionedImplementationProvider {
             if (value != null) {
                 label.text = value
             } else if (index >= 0) {
-                label.text = "Loading..."
+                label.text = KotlinDebuggerCoroutinesBundle.message("coroutine.dump.threads.loading")
             }
         }
 }

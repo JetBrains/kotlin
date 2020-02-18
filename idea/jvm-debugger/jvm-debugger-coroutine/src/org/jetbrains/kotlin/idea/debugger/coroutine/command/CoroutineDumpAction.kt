@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.text.DateFormatUtil
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.view.CoroutineDumpPanel
 import org.jetbrains.kotlin.idea.debugger.coroutine.coroutineDebuggerEnabled
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
@@ -43,7 +43,7 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
                     val states = CoroutineDebugProbesProxy(context.suspendContext ?: return)
                         .dumpCoroutines()
                     if (states.isOk()) {
-                        val message = KotlinBundle.message("debugger.session.tab.coroutine.message.error")
+                        val message = KotlinDebuggerCoroutinesBundle.message("coroutine.dump.failed")
                         XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(message,MessageType.ERROR).notify(project)
                     } else {
                         val f = fun() {
@@ -72,7 +72,7 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
         val content = ui.createContent(id, panel, id, null, null).apply {
             putUserData(RunnerContentUi.LIGHTWEIGHT_CONTENT_MARKER, true)
             isCloseable = true
-            description = "Coroutine Dump"
+            description = KotlinDebuggerCoroutinesBundle.message("coroutine.dump.panel.title")
         }
         ui.addContent(content)
         ui.selectAndFocus(content, true, true)
