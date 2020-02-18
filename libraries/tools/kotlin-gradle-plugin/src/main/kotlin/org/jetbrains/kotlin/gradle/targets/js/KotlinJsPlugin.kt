@@ -36,7 +36,7 @@ open class KotlinJsPlugin(
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion)
             legacyPreset = KotlinJsSingleTargetPreset(project, kotlinPluginVersion)
-            defaultCompilerType = PropertiesProvider(project).jsCompiler
+            defaultJsCompilerType = PropertiesProvider(project).jsCompiler
         }
 
         // Explicitly create configurations for main and test
