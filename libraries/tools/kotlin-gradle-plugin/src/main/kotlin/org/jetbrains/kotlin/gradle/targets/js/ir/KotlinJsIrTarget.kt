@@ -127,7 +127,7 @@ constructor(
         }
     }
 
-    fun useCommonJs() {
+    override fun useCommonJs() {
         compilations.all {
             it.compileKotlinTask.kotlinOptions {
                 moduleKind = "commonjs"

@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsIrTargetPreset(
     project: Project,
-    kotlinPluginVersion: String,
-    private val mixedMode: Boolean
+    kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project,
     kotlinPluginVersion
 ) {
+    internal var mixedMode: Boolean? = null
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
@@ -50,10 +51,9 @@ open class KotlinJsIrTargetPreset(
 
 class KotlinJsIrSingleTargetPreset(
     project: Project,
-    kotlinPluginVersion: String,
-    mixedMode: Boolean
+    kotlinPluginVersion: String
 ) :
-    KotlinJsIrTargetPreset(project, kotlinPluginVersion, mixedMode) {
+    KotlinJsIrTargetPreset(project, kotlinPluginVersion) {
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? = null

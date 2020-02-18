@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import kotlin.reflect.KClass
@@ -56,7 +55,7 @@ internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinMultiplatformExtension
 
-open class KotlinProjectExtension: KotlinSourceSetContainer {
+open class KotlinProjectExtension : KotlinSourceSetContainer {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
@@ -103,12 +102,18 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
         compiler: JsCompilerType = legacy,
         body: KotlinJsTargetDsl.() -> Unit
     ) {
-        val target = when (compiler) {
+        val target: KotlinJsTargetDsl = when (compiler) {
             legacy -> legacyPreset
+                .also { it.irPreset = null }
                 .createTarget("js")
             ir -> irPreset
+                .also { it.mixedMode = false }
                 .createTarget("js")
             both -> legacyPreset
+                .also {
+                    irPreset.mixedMode = true
+                    it.irPreset = irPreset
+                }
                 .createTarget(
                     lowerCamelCaseName(
                         "js",
@@ -130,19 +135,6 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
 
     @Deprecated("Use js instead", ReplaceWith("js(body)"))
     open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
-
-    @Deprecated(
-        "Needed for IDE import using the MPP import mechanism",
-        level = DeprecationLevel.HIDDEN
-    )
-    fun getTargets() =
-        target.project.container(KotlinTarget::class.java).apply { add(target) }
-}
-
-open class KotlinJsIrProjectExtension : KotlinSingleTargetExtension() {
-    override lateinit var target: KotlinJsIrTarget
-
-    open fun js(body: KotlinJsIrTarget.() -> Unit) = target.run(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
