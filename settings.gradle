@@ -301,6 +301,10 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded",
         ":kotlin-serialization:plugin-marker",
 
+        ":kotlin-stm",
+        ":kotlin-stm-unshaded",
+        ":kotlin-stm:plugin-marker",
+
         ":kotlinx-stm-compiler-plugin"
 
 if (buildProperties.includeCidrPlugins) {
@@ -514,5 +518,8 @@ project(':kotlin-serialization:plugin-marker').projectDir = file("$rootDir/libra
 
 
 project(':kotlinx-stm-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-stm/kotlin-stm-compiler")
+project(':kotlin-stm').projectDir = file("$rootDir/libraries/tools/kotlin-stm")
+project(':kotlin-stm-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-stm-unshaded")
+project(':kotlin-stm:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-stm/plugin-marker")
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")

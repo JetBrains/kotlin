@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT publish, deserialize <init>, <clinit>
+// CURIOUS_ABOUT f, <init>, <clinit>
 // WITH_RUNTIME
 
 package koko
@@ -8,10 +8,9 @@ import kotlinx.stm.*
 @SharedMutable
 class User(val firstName: String, val lastName: String) {
 //    val stm: STM = STMSearcher.findStm()
-    class UNested(val xn: Int)
 
     fun f() {
-        // return stm.runAtomically(null) { }
+        // return this.stm.runAtomically(null) { }
     }
 }
 

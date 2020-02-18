@@ -1,0 +1,75 @@
+final class koko/User$f$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+    void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          ICONST_1
+          INVOKESPECIAL (kotlin/jvm/internal/Lambda, <init>, (I)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final void invoke(long p)
+
+    public java.lang.Object invoke(java.lang.Object p1)
+}
+
+public final class koko/User : java/lang/Object {
+    private final kotlinx.stm.STM _______stm_____
+
+    private final java.lang.String firstName
+
+    private final java.lang.String lastName
+
+    public void <init>(java.lang.String firstName, java.lang.String lastName) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (firstName)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (2)
+          LDC (lastName)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (0)
+        LABEL (L1)
+        LINENUMBER (8)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+        LABEL (L2)
+        LINENUMBER (9)
+          ALOAD (0)
+          ALOAD (1)
+          PUTFIELD (firstName, Ljava/lang/String;)
+          ALOAD (0)
+          ALOAD (2)
+          PUTFIELD (lastName, Ljava/lang/String;)
+        LABEL (L3)
+        LINENUMBER (8)
+          ALOAD (0)
+          GETSTATIC (INSTANCE, Lkotlinx/stm/STMSearcher;)
+          INVOKEVIRTUAL (kotlinx/stm/STMSearcher, getSTM, ()Lkotlinx/stm/STM;)
+          PUTFIELD (_______stm_____, Lkotlinx/stm/STM;)
+        LABEL (L4)
+        LINENUMBER (9)
+          RETURN
+        LABEL (L5)
+    }
+
+    public final void f() {
+        LABEL (L0)
+        LINENUMBER (8)
+          ALOAD (0)
+          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
+          ACONST_NULL
+          CHECKCAST
+          NEW
+          DUP
+          INVOKESPECIAL (koko/User$f$1, <init>, ()V)
+          CHECKCAST
+          INVOKEVIRTUAL (kotlinx/stm/STM, runAtomically, (Ljava/lang/Long;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;)
+          POP
+          RETURN
+        LABEL (L1)
+    }
+
+    public final java.lang.String getFirstName()
+
+    public final java.lang.String getLastName()
+}

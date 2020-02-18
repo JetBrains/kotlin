@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlinx.stm.compiler.extensions.StmComponentRegistrar
 import java.io.File

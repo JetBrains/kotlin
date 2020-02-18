@@ -722,6 +722,7 @@ tasks {
             ":kotlin-annotation-processing-gradle:test",
             ":kotlinx-serialization-compiler-plugin:test",
             ":kotlinx-serialization-ide-plugin:test",
+            ":kotlinx-stm-compiler-plugin:test",
             ":idea:jvm-debugger:jvm-debugger-test:test"
         )
     }

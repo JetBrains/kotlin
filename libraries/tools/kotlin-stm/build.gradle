@@ -1,0 +1,46 @@
+apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
+
+configureJvmProject(project)
+configurePublishing(project)
+
+pill {
+    variant = 'FULL'
+}
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.fork = false
+}
+
+dependencies {
+    compileOnly project(':kotlin-gradle-plugin')
+    compileOnly project(':kotlin-gradle-plugin-api')
+
+    compileOnly kotlinStdlib()
+    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+
+    embedded(project(":kotlinx-stm-compiler-plugin")) { transitive = false }
+}
+
+jar {
+    manifestAttributes(manifest, project)
+}
+
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
+
+artifacts {
+    archives sourcesJar
+}
+
+javadocJar()
+
+pluginBundle {
+    plugins {
+        create("kotlinSTM") {
+            id = 'org.jetbrains.kotlin.plugin.stm'
+            description = displayName = 'Kotlin compiler plugin for kotlinx.stm library'
+        }
+    }
+}

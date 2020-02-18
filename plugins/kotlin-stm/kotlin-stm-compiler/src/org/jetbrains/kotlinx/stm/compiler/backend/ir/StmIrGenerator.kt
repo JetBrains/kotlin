@@ -488,8 +488,6 @@ class STMenerator(val descr: ClassDescriptor, override val compilerContext: IrPl
 //            +irReturn()
 //        }
 
-        irFunction.body = IrBlockBodyBuilder(compilerContext, irClass.sc).blockBody {  }
-
         irClass.contributeFunction(descriptor) {
             val lambdaDescriptor = AnonymousFunctionDescriptor(
                 /*containingDeclaration = */ descriptor,
@@ -544,7 +542,7 @@ class STMenerator(val descr: ClassDescriptor, override val compilerContext: IrPl
                 IrStatementOrigin.LAMBDA
             ) as IrExpression
 
-            val stmFieldExpr = irGetField(irGet(irClass.thisReceiver!!), stmField)
+            val stmFieldExpr = irGetField(irGet(irFunction.dispatchReceiverParameter!!), stmField)
 
             +irReturn(
                 irInvoke(
