@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -84,8 +85,10 @@ object JdkInstaller {
   }
 
   fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?, project: Project?) {
-    for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
-      listener.onJdkDownloadStarted(request, project)
+    if (Extensions.getRootArea() != null) {
+      for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
+        listener.onJdkDownloadStarted(request, project)
+      }
     }
 
     val item = request.item
@@ -142,8 +145,10 @@ object JdkInstaller {
     finally {
       FileUtil.delete(downloadFile)
 
-      for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
-        listener.onJdkDownloadFinished(request, project)
+      if (Extensions.getRootArea() != null) {
+        for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
+          listener.onJdkDownloadFinished(request, project)
+        }
       }
     }
   }
