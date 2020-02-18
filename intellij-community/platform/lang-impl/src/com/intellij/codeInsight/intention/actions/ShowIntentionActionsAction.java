@@ -19,10 +19,14 @@ package com.intellij.codeInsight.intention.actions;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
-import com.intellij.ide.lightEdit.LightEditCompatible;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilBase;
@@ -32,9 +36,26 @@ import org.jetbrains.annotations.NotNull;
  * @author mike
  */
 public class ShowIntentionActionsAction extends BaseCodeInsightAction implements HintManagerImpl.ActionToIgnore,
-                                                                                 LightEditCompatible {
+                                                                                 DumbAware {
   public ShowIntentionActionsAction() {
     setEnabledInModalContext(true);
+  }
+
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    Project project = event.getProject();
+    Presentation presentation = event.getPresentation();
+    if (LightEdit.owns(project)) {
+      presentation.setEnabledAndVisible(true);
+      return;
+    }
+    else if (project != null && DumbService.isDumb(project)) {
+      DumbService.getInstance(project).showDumbModeNotification(
+        ApplicationBundle.message("intentions.are.not.available.message"));
+      presentation.setEnabledAndVisible(false);
+      return;
+    }
+    super.update(event);
   }
 
   @Override
