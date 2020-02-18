@@ -82,9 +82,11 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
     if (toolWindow == null) {
       toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask.closable(getToolwindowId(), AllIcons.Toolwindows.Documentation, ToolWindowAnchor.RIGHT));
     }
+    else {
+      toolWindow.setAvailable(true);
+    }
     myToolWindow = toolWindow;
 
-    toolWindow.setAvailable(true, null);
     toolWindow.setToHideOnEmptyContent(false);
 
     setToolwindowDefaultState();

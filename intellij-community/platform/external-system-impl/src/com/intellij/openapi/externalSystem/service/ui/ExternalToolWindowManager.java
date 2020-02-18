@@ -38,8 +38,10 @@ public final class ExternalToolWindowManager {
         public void onProjectsLinked(@NotNull Collection linked) {
 
           Consumer<ToolWindow> activate = (toolWindow) -> toolWindow.setAvailable(true, () -> {
-            final boolean shouldShow = settings.getLinkedProjectsSettings().size() == 1;
-            if (shouldShow) toolWindow.show(null);
+            boolean shouldShow = settings.getLinkedProjectsSettings().size() == 1;
+            if (shouldShow) {
+              toolWindow.show(null);
+            }
           });
 
           final ToolWindow toolWindow = getToolWindow(project, manager.getSystemId());
@@ -69,7 +71,7 @@ public final class ExternalToolWindowManager {
           }
           final ToolWindow toolWindow = getToolWindow(project, manager.getSystemId());
           if (toolWindow != null) {
-            UIUtil.invokeLaterIfNeeded(() -> toolWindow.setAvailable(false, null));
+            UIUtil.invokeLaterIfNeeded(() -> toolWindow.setAvailable(false));
           }
         }
       });
