@@ -49,7 +49,7 @@ public abstract class BaseAnalysisAction extends AnAction {
     if (scope == null) return;
 
     String title = getDialogTitle();
-    String noon = AnalysisScopeBundle.message("analysis.scope.title", myAnalysisNoon);
+    String noon = AnalysisScopeBundle.message("analysis.scope.title", myAnalysisNoon.get());
     Module module = getModuleFromContext(dataContext);
     boolean rememberScope = ActionPlaces.isMainMenuOrActionSearch(e.getPlace());
     AnalysisUIOptions uiOptions = AnalysisUIOptions.getInstance(project);
