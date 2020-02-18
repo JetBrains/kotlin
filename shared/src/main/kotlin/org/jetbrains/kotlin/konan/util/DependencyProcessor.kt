@@ -85,21 +85,21 @@ sealed class DependencySource {
  * If [airplaneMode] is true will throw a RuntimeException instead of downloading.
  */
 class DependencyProcessor(dependenciesRoot: File,
-                          val dependenciesUrl: String,
+                          private val dependenciesUrl: String,
                           dependencyToCandidates: Map<String, List<DependencySource>>,
                           homeDependencyCache: File = defaultDependencyCacheDir,
-                          val airplaneMode: Boolean = false,
+                          private val airplaneMode: Boolean = false,
                           maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
                           attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
                           customProgressCallback: ProgressCallback? = null,
-                          val keepUnstable: Boolean = true,
-                          val deleteArchives: Boolean = true,
+                          private val keepUnstable: Boolean = true,
+                          private val deleteArchives: Boolean = true,
                           private val archiveType: ArchiveType = ArchiveType.systemDefault) {
 
-    val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
-    val cacheDirectory = homeDependencyCache.apply { mkdirs() }
+    private val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
+    private val cacheDirectory = homeDependencyCache.apply { mkdirs() }
 
-    val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
+    private val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
 
     var showInfo = true
     private var isInfoShown = false
@@ -283,15 +283,14 @@ class DependencyProcessor(dependenciesRoot: File,
 }
 
 internal object InternalServer {
-    private val host = "repo.labs.intellij.net"
-    val url = "https://$host/kotlin-native"
+    private const val host = "repo.labs.intellij.net"
+    const val url = "https://$host/kotlin-native"
 
-    private val internalDomain = "labs.intellij.net"
+    private const val internalDomain = "labs.intellij.net"
 
     val isAvailable: Boolean get() {
         val envKey = "KONAN_USE_INTERNAL_SERVER"
-        val envValue = System.getenv(envKey)
-        return when (envValue) {
+        return when (val envValue = System.getenv(envKey)) {
             null, "0" -> false
             "1" -> true
             "auto" -> isAccessible
