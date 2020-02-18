@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.presentation
 
+import com.intellij.codeInsight.hints.InlayPresentationFactory
 import java.awt.Point
 import java.awt.event.MouseEvent
 
@@ -9,20 +10,15 @@ import java.awt.event.MouseEvent
  */
 class OnHoverPresentation(
   presentation: InlayPresentation,
-  val onHoverListener: PresentationFactory.HoverListener) : StaticDelegatePresentation(presentation) {
-  var isInside = false
+  private val onHoverListener: InlayPresentationFactory.HoverListener) : StaticDelegatePresentation(presentation) {
 
   override fun mouseMoved(event: MouseEvent, translated: Point) {
     super.mouseMoved(event, translated)
-    if (!isInside) {
-      isInside = true
-      onHoverListener.onHover(event)
-    }
+    onHoverListener.onHover(event, translated)
   }
 
   override fun mouseExited() {
     super.mouseExited()
-    isInside = false
     onHoverListener.onHoverFinished()
   }
 }

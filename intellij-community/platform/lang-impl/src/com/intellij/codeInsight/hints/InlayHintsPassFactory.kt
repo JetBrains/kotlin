@@ -28,12 +28,11 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
     val language = file.language
     val collectors = HintUtils.getHintProvidersForLanguage(language, file.project)
       .mapNotNull { it.getCollectorWrapperFor(file, editor, language) }
-    return InlayHintsPass(file, collectors, editor, settings)
+      .filter { settings.hintsShouldBeShown(it.key, language) }
+    return InlayHintsPass(file, collectors, editor)
   }
 
   companion object {
-    private val PSI_MODIFICATION_STAMP = Key.create<Long>("inlay.psi.modification.stamp")
-
     fun forceHintsUpdateOnNextPass() {
       for (editor in EditorFactory.getInstance().allEditors) {
         editor.putUserData(PSI_MODIFICATION_STAMP, null)
@@ -42,6 +41,9 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
         DaemonCodeAnalyzer.getInstance(project).restart()
       }
     }
+
+    @JvmStatic
+    private val PSI_MODIFICATION_STAMP = Key.create<Long>("inlay.psi.modification.stamp")
 
     fun putCurrentModificationStamp(editor: Editor, file: PsiFile) {
       editor.putUserData(PSI_MODIFICATION_STAMP, getCurrentModificationStamp(file))

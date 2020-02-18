@@ -17,7 +17,7 @@ class InsetPresentation(
   val top: Int = 0,
   val down: Int = 0
 ) : StaticDelegatePresentation(presentation) {
-  private var presentationUnderCursor: InlayPresentation? = null
+  private var isPresentationUnderCursor = false
 
   override val width: Int
     get() = presentation.width + left + right
@@ -36,12 +36,13 @@ class InsetPresentation(
   ) {
     val x = original.x
     val y = original.y
-    if (x < left || x >= left + presentation.width || y < top || y >= top + presentation.height) {
-      if (presentationUnderCursor != null) {
-        presentationUnderCursor?.mouseExited()
-        presentationUnderCursor = null
-        return
+    val cursorIsOutOfBounds = x < left || x >= left + presentation.width || y < top || y >= top + presentation.height
+    if (cursorIsOutOfBounds) {
+      if (isPresentationUnderCursor) {
+        presentation.mouseExited()
+        isPresentationUnderCursor = false
       }
+      return
     }
     val translated = original.translateNew(-left, -top)
     action(presentation, translated)
@@ -55,20 +56,12 @@ class InsetPresentation(
 
   override fun mouseMoved(event: MouseEvent, translated: Point) {
     handleMouse(translated) { presentation, point ->
-      if (presentation != presentationUnderCursor) {
-        presentationUnderCursor?.mouseExited()
-        presentationUnderCursor = presentation
-      }
       presentation.mouseMoved(event, point)
     }
   }
 
   override fun mouseExited() {
-    try {
-      presentationUnderCursor?.mouseExited()
-    }
-    finally {
-      presentationUnderCursor = null
-    }
+    presentation.mouseExited()
+    isPresentationUnderCursor = false
   }
 }

@@ -9,4 +9,9 @@ data class SpacePresentation(override var width: Int, override var height: Int) 
   }
 
   override fun toString(): String = " "
+
+  override fun updateState(previousPresentation: InlayPresentation): Boolean {
+    if (previousPresentation !is SpacePresentation) return true
+    return width != previousPresentation.width || height != previousPresentation.height
+  }
 }

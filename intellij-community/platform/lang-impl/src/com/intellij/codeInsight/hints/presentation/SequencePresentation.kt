@@ -9,6 +9,11 @@ import java.awt.Point
 import java.awt.Rectangle
 import java.awt.event.MouseEvent
 
+/**
+ * Represents list of presentations placed without any margin, aligned to top.
+ * Must not be empty
+ * @param presentations list of presentations, must not be changed from outside as there is no defensive copying
+ */
 class SequencePresentation(val presentations: List<InlayPresentation>) : BasePresentation() {
   init {
     if (presentations.isEmpty()) throw IllegalArgumentException()
@@ -23,7 +28,9 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
   }
 
   override var width: Int = 0
+    private set
   override var height: Int = 0
+    private set
 
   init {
     calcDimensions()
@@ -56,6 +63,11 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
     for (presentation in presentations) {
       val presentationWidth = presentation.width
       if (x < xOffset + presentationWidth) {
+        if (y > presentation.height) { // out of presentation
+          changePresentationUnderCursor(null)
+          return
+        }
+        changePresentationUnderCursor(presentation)
         val translated = original.translateNew(-xOffset, 0)
         action(presentation, translated)
         return
@@ -72,21 +84,12 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
 
   override fun mouseMoved(event: MouseEvent, translated: Point) {
     handleMouse(translated) { presentation, point ->
-      if (presentation != presentationUnderCursor) {
-        presentationUnderCursor?.mouseExited()
-        presentationUnderCursor = presentation
-      }
       presentation.mouseMoved(event, point)
     }
   }
 
   override fun mouseExited() {
-    try {
-      presentationUnderCursor?.mouseExited()
-    }
-    finally {
-      presentationUnderCursor = null
-    }
+    changePresentationUnderCursor(null)
   }
 
   override fun updateState(previousPresentation: InlayPresentation): Boolean {
@@ -104,7 +107,14 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
 
   override fun toString(): String = presentations.joinToString(" ", "[", "]") { "$it" }
 
-  inner class InternalListener(private val currentPresentation: InlayPresentation) : PresentationListener {
+  private fun changePresentationUnderCursor(presentation: InlayPresentation?) {
+    if (presentationUnderCursor != presentation) {
+      presentationUnderCursor?.mouseExited()
+      presentationUnderCursor = presentation
+    }
+  }
+
+  private inner class InternalListener(private val currentPresentation: InlayPresentation) : PresentationListener {
     override fun contentChanged(area: Rectangle) {
       area.add(shiftOfCurrent(), 0)
       this@SequencePresentation.fireContentChanged(area)

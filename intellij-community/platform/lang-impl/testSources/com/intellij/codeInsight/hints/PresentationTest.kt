@@ -5,6 +5,7 @@ import com.intellij.codeInsight.hints.presentation.*
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
+import java.awt.Color
 import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.JPanel
@@ -100,22 +101,73 @@ class PresentationTest : TestCase() {
     assertEquals(1, height)
   }
 
-  private class ClickCheckingPresentation(
-    val presentation: InlayPresentation,
-    var expectedClick: Pair<Int, Int>?
-  ): InlayPresentation by presentation {
+  fun testContainerPresentationMouseOutside() {
+    val inner = ClickCheckingPresentation(SpacePresentation(50, 20), expectedClick = null)
+    val presentation = ContainerInlayPresentation(inner, InlayPresentationFactory.Padding(3, 5, 6, 8), null, Color.RED)
+    click(presentation, 1, 2)
+  }
 
+  fun testContainerPresentationMouseInside() {
+    val inner = ClickCheckingPresentation(SpacePresentation(50, 20), expectedClick = 7 to 4)
+    val presentation = ContainerInlayPresentation(inner, InlayPresentationFactory.Padding(3, 5, 6, 8), null, Color.RED)
+    click(presentation, 10, 10)
+  }
 
-    override fun mouseClicked(event: MouseEvent, translated: Point) {
-      val expectedClickVal = expectedClick
-      if (expectedClickVal == null) {
-        fail("No clicks expected")
-        return
+  fun testContainerPresentationSize() {
+    val inner = SpacePresentation(50, 20)
+    val presentation = ContainerInlayPresentation(inner, InlayPresentationFactory.Padding(3, 5, 6, 8), null, Color.RED)
+    assertEquals(58, presentation.width)
+    assertEquals(34, presentation.height)
+  }
+
+  fun testVerticalPresentationClick() {
+    val inner = ClickCheckingPresentation(SpacePresentation(10, 10), 5 to 5)
+    val presentation = VerticalListInlayPresentation(listOf(
+      SpacePresentation(20, 10),
+      inner
+    ))
+    click(presentation, 5, 15)
+    inner.assertWasClicked()
+  }
+
+  fun testVerticalPresentationClickInSpareSpace() {
+    val inner = ClickCheckingPresentation(SpacePresentation(10, 10), null)
+    val presentation = VerticalListInlayPresentation(listOf(
+      SpacePresentation(20, 10),
+      inner
+    ))
+    click(presentation, 15, 15)
+  }
+
+  fun testVerticalPresentationEvents() {
+    val inner = SpacePresentation(10, 10)
+    val presentation = VerticalListInlayPresentation(listOf(
+      SpacePresentation(20, 10),
+      inner
+    ))
+    val listener = ChangeCountingListener()
+    presentation.addListener(listener)
+    inner.fireContentChanged()
+    assertTrue(listener.contentChanged)
+  }
+
+  fun testHoverSeqPresentation() {
+    var wasHover = false
+    var hoverFinished = false
+    val presentation = object: StaticDelegatePresentation(SpacePresentation(10, 10)) {
+      override fun mouseMoved(event: MouseEvent, translated: Point) {
+        wasHover = true
       }
-      assertEquals(expectedClickVal.first, translated.x)
-      assertEquals(expectedClickVal.second, translated.y)
-      super.mouseClicked(event, translated)
+
+      override fun mouseExited() {
+        hoverFinished = true
+      }
     }
+    val seqPresentation = SequencePresentation(listOf(presentation))
+    moveMouse(seqPresentation, 5, 5)
+    seqPresentation.mouseExited()
+    assertTrue(wasHover)
+    assertTrue(hoverFinished)
   }
 }
 
@@ -188,6 +240,20 @@ class HeavyPresentationTest : BasePlatformTestCase() {
     }
   }
 
+  fun testRecursiveRootPresentationListener() {
+    val inner = SpacePresentation(10, 10)
+    val r1 = RecursivelyUpdatingRootPresentation(inner)
+    val listener = ChangeCountingListener()
+    r1.addListener(listener)
+
+    val afterUpdateInner = SpacePresentation(20, 20)
+    r1.update(RecursivelyUpdatingRootPresentation(afterUpdateInner), myFixture.editor, getFactory())
+
+    afterUpdateInner.fireContentChanged()
+
+    assertEquals(1, listener.contentChangesCount)
+  }
+
   private fun getFactory() = PresentationFactory(myFixture.editor as EditorImpl)
 
   private fun unwrapFolding(presentation: InlayPresentation): InlayPresentation {
@@ -200,4 +266,9 @@ class HeavyPresentationTest : BasePlatformTestCase() {
 private fun click(presentation: InlayPresentation, x: Int, y: Int) {
   val event = MouseEvent(JPanel(), 0, 0, 0, x, y, 0, true, 0)
   presentation.mouseClicked(event, Point(x, y))
+}
+
+private fun moveMouse(presentation: InlayPresentation, x: Int, y: Int) {
+  val event = MouseEvent(JPanel(), 0, 0, 0, x, y, 0, true, 0)
+  presentation.mouseMoved(event, Point(x, y))
 }
