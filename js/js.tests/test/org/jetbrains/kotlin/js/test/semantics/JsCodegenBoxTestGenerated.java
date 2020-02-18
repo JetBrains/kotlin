@@ -10060,6 +10060,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt");
         }
 
+        @TestMetadata("anySuperCall.kt")
+        public void testAnySuperCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
+        }
+
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
         public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
@@ -11215,6 +11220,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("genericMethodWithInlineClassOverride.kt")
             public void testGenericMethodWithInlineClassOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverride.kt");
+            }
+
+            @TestMetadata("interfaceSuperCall.kt")
+            public void testInterfaceSuperCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCall.kt");
             }
 
             @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
