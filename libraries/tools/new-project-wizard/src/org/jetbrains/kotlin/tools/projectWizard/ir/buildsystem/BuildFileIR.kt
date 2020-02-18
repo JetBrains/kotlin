@@ -123,14 +123,6 @@ data class BuildFileIR(
 val BuildFileIR.targets
     get() = modules.safeAs<MultiplatformModulesStructureIR>()?.targets.orEmpty()
 
-val BuildFileIR.sourcesets
-    get() = modules.modules.flatMap { module ->
-        when (module) {
-            is SingleplatformModuleIR -> module.sourcesets
-            is MultiplatformModuleIR -> listOf(module as SourcesetIR)
-        }
-    }
-
 sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
     abstract val modules: List<ModuleIR>
 
