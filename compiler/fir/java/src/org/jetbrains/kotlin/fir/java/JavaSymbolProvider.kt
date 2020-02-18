@@ -92,7 +92,12 @@ class JavaSymbolProvider(
         stack: JavaTypeParameterStack,
     ) {
         for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, nullability = ConeNullability.UNKNOWN)
+            bounds += upperBound.toFirResolvedTypeRef(
+                this@JavaSymbolProvider.session,
+                stack,
+                isForSupertypes = false,
+                forTypeParameterBounds = true
+            )
         }
         addDefaultBoundIfNecessary()
     }
@@ -260,7 +265,7 @@ class JavaSymbolProvider(
                 firJavaClass.replaceSuperTypeRefs(
                     javaClass.supertypes.map { supertype ->
                         supertype.toFirResolvedTypeRef(
-                            this@JavaSymbolProvider.session, javaTypeParameterStack, typeParametersNullability = ConeNullability.UNKNOWN
+                            this@JavaSymbolProvider.session, javaTypeParameterStack, isForSupertypes = true, forTypeParameterBounds = false
                         )
                     }
                 )

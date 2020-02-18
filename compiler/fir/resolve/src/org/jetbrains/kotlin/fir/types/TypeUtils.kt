@@ -189,7 +189,7 @@ fun ConeClassLikeLookupTag.constructClassType(
     return ConeClassLikeTypeImpl(this, typeArguments, isNullable)
 }
 
-fun ConeClassifierLookupTag.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+fun ConeClassifierLookupTag.constructType(typeArguments: Array<out ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable)
         is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable)

@@ -5,7 +5,7 @@ public open class NonTrivialFunctionType : R|kotlin/Any| {
 
     public open operator fun wildcardUnbound(comparator: R|ft<java/util/Comparator<*>, java/util/Comparator<*>?>!|): R|kotlin/Unit|
 
-    public open operator fun wildcardBound(comparator: R|ft<java/util/Comparator<in kotlin/CharSequence>, java/util/Comparator<in kotlin/CharSequence>?>!|): R|kotlin/Unit|
+    public open operator fun wildcardBound(comparator: R|ft<java/util/Comparator<in ft<kotlin/CharSequence, kotlin/CharSequence?>!>, java/util/Comparator<in ft<kotlin/CharSequence, kotlin/CharSequence?>!>?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/NonTrivialFunctionType|
 

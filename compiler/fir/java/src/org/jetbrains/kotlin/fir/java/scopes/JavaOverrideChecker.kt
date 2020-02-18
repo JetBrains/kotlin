@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
+import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.typeContext
@@ -32,7 +32,7 @@ class JavaOverrideChecker internal constructor(
             return candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
         }
         if (candidateType is ConeClassLikeType && baseType is ConeTypeParameterType) {
-            val boundType = baseType.lookupTag.typeParameterSymbol.fir.bounds.singleOrNull()?.toNotNullConeKotlinType(
+            val boundType = baseType.lookupTag.typeParameterSymbol.fir.bounds.singleOrNull()?.toConeKotlinTypeProbablyFlexible(
                 session, javaTypeParameterStack
             )
             if (boundType != null) {
@@ -49,8 +49,8 @@ class JavaOverrideChecker internal constructor(
 
     override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes(
-            candidateTypeRef.toNotNullConeKotlinType(session, javaTypeParameterStack),
-            baseTypeRef.toNotNullConeKotlinType(session, javaTypeParameterStack),
+            candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
+            baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
             substitutor
         )
 
