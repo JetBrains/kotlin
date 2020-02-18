@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerTypeHolder
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import java.io.File
 
@@ -14,7 +15,10 @@ fun main() {
     generateKotlinTargetContainerWithPresetFunctionsInterface()
 }
 
-private val parentInterface = KotlinTargetsContainerWithPresets::class
+private val parentInterfaces = listOf(
+    KotlinTargetsContainerWithPresets::class,
+    KotlinJsCompilerTypeHolder::class
+)
 
 private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
@@ -24,15 +28,16 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         generatePresetFunctions(it, presetsProperty, "configureOrCreate")
     }
 
-    val parentInterfaceName =
-        typeName(parentInterface.java.canonicalName)
+    val parentInterfaceNames =
+        parentInterfaces.map { typeName(it.java.canonicalName) }
+
 
     val className =
         typeName("org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions")
 
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
-        .plus(parentInterfaceName)
+        .plus(parentInterfaceNames)
         .plus(typeName(ConfigureUtil::class.java.canonicalName))
         .plus(typeName(Closure::class.java.canonicalName))
         .filter { it.packageName() != className.packageName() }
@@ -46,7 +51,7 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         "package ${className.packageName()}",
         imports,
         generatedCodeWarning,
-        "interface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
+        "interface ${className.renderShort()} : ${parentInterfaceNames.joinToString { it.renderShort() }} {",
         functions.joinToString("\n\n") { it.indented(4) },
         "}"
     ).joinToString("\n\n")
