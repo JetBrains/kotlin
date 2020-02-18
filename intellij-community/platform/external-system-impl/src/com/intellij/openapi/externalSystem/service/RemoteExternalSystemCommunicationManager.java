@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.CommonBundle;
@@ -7,7 +7,6 @@ import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.SimpleJavaParameters;
@@ -98,7 +97,7 @@ public final class RemoteExternalSystemCommunicationManager implements ExternalS
   }
 
   private RunProfileState createRunProfileState(final String configuration) {
-    return new CommandLineState(null) {
+    return new RunProfileState() {
       private SimpleJavaParameters createJavaParameters() throws ExecutionException {
 
         final SimpleJavaParameters params = new SimpleJavaParameters();
@@ -174,9 +173,8 @@ public final class RemoteExternalSystemCommunicationManager implements ExternalS
         return new DefaultExecutionResult(processHandler);
       }
 
-      @Override
       @NotNull
-      protected OSProcessHandler startProcess() throws ExecutionException {
+      private OSProcessHandler startProcess() throws ExecutionException {
         SimpleJavaParameters params = createJavaParameters();
         GeneralCommandLine commandLine = params.toCommandLine();
         OSProcessHandler processHandler = new OSProcessHandler(commandLine);
