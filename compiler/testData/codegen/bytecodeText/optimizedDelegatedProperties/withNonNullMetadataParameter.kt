@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36814 Support optimized delegated properties in JVM_IR
 
 class Provider<T>(val _value: T) {
     inline operator fun provideDelegate(thisRef: Any?, kProperty: Any) =

@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
-
+// TODO KT-36812 Generate proper lifetime intervals for local variables in JVM_IR
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

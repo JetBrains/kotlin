@@ -3053,34 +3053,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/bytecodeText/jackAndJill")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class JackAndJill extends AbstractBytecodeTextTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInJackAndJill() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jackAndJill"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @TestMetadata("inlineDefaultBodyInClass.kt")
-        public void testInlineDefaultBodyInClass() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/jackAndJill/inlineDefaultBodyInClass.kt");
-        }
-
-        @TestMetadata("inlinedConstuctor.kt")
-        public void testInlinedConstuctor() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/jackAndJill/inlinedConstuctor.kt");
-        }
-
-        @TestMetadata("inlinedConstuctorWithSuperCallParams.kt")
-        public void testInlinedConstuctorWithSuperCallParams() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/jackAndJill/inlinedConstuctorWithSuperCallParams.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/bytecodeText/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
