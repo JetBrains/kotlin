@@ -22,6 +22,7 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.ClassType
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerEvaluationBundle
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -101,13 +102,13 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         val classLoader = try {
             ClassLoadingUtils.getClassLoader(context.evaluationContext, process)
         } catch (e: Exception) {
-            throw EvaluateException("Error creating evaluation class loader: $e", e)
+            throw EvaluateException(KotlinDebuggerEvaluationBundle.message("error.creating.class.loader", e.toString()), e)
         }
 
         try {
             defineClasses(classes, context, classLoader)
         } catch (e: Exception) {
-            throw EvaluateException("Error during classes definition $e", e)
+            throw EvaluateException(KotlinDebuggerEvaluationBundle.message("error.class.definition", e.toString()), e)
         }
 
         return classLoader
@@ -157,7 +158,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
     private class ClassBytes(val name: String) {
         val bytes: ByteArray by lazy {
             val inputStream = this::class.java.classLoader.getResourceAsStream(name.replace('.', '/') + ".class")
-                ?: throw EvaluateException("Couldn't find $name class in current class loader")
+                ?: throw EvaluateException(KotlinDebuggerEvaluationBundle.message("error.cant.find.class", name))
 
             inputStream.use {
                 it.readBytes()
