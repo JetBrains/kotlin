@@ -681,6 +681,11 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/extensionFunctionArgumentOrReturnType.kt");
         }
 
+        @TestMetadata("externalFunInterface.kt")
+        public void testExternalFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/externalFunInterface.kt");
+        }
+
         @TestMetadata("externalInterfaceNested.kt")
         public void testExternalInterfaceNested() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/externalInterfaceNested.kt");
