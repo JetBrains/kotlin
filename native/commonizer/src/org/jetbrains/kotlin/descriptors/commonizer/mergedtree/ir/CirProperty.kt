@@ -51,8 +51,8 @@ class CirPropertyImpl(original: PropertyDescriptor) : CirFunctionOrPropertyImpl<
     override val isDelegate = @Suppress("DEPRECATION") original.isDelegated
     override val getter = original.getter?.toGetter()
     override val setter = original.setter?.toSetter()
-    override val backingFieldAnnotations = original.backingField?.annotations?.map(::CirAnnotation)
-    override val delegateFieldAnnotations = original.delegateField?.annotations?.map(::CirAnnotation)
+    override val backingFieldAnnotations = original.backingField?.annotations?.map(CirAnnotation.Companion::create)
+    override val delegateFieldAnnotations = original.delegateField?.annotations?.map(CirAnnotation.Companion::create)
     override val compileTimeInitializer = original.compileTimeInitializer
 
     init {
@@ -82,7 +82,7 @@ data class CirGetter(
             if (isDefault && annotations.isEmpty())
                 DEFAULT_NO_ANNOTATIONS
             else
-                CirGetter(annotations.map(::CirAnnotation), isDefault, isExternal, isInline)
+                CirGetter(annotations.map(CirAnnotation.Companion::create), isDefault, isExternal, isInline)
     }
 }
 
@@ -105,8 +105,8 @@ data class CirSetter(
         )
 
         fun PropertySetterDescriptor.toSetter() = CirSetter(
-            annotations.map(::CirAnnotation),
-            valueParameters.single().annotations.map(::CirAnnotation),
+            annotations.map(CirAnnotation.Companion::create),
+            valueParameters.single().annotations.map(CirAnnotation.Companion::create),
             visibility,
             isDefault,
             isExternal,

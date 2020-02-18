@@ -48,7 +48,7 @@ class CirSimpleType private constructor(original: SimpleType) : CirType() {
         val abbreviation = (original as? AbbreviatedType)?.abbreviation ?: original
         val expanded = (original as? AbbreviatedType)?.expandedType ?: original
 
-        annotations = abbreviation.annotations.map(::CirAnnotation)
+        annotations = abbreviation.annotations.map(CirAnnotation.Companion::create)
         kind = CirSimpleTypeKind.determineKind(abbreviation.declarationDescriptor)
         fqName = abbreviation.fqNameInterned
         arguments = abbreviation.arguments.map(::CirTypeProjection)

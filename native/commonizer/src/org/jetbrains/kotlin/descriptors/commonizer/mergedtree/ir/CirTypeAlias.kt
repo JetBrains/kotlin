@@ -14,7 +14,7 @@ interface CirTypeAlias : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclar
 }
 
 class CirTypeAliasImpl(original: TypeAliasDescriptor) : CirTypeAlias {
-    override val annotations = original.annotations.map(::CirAnnotation)
+    override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     override val name = original.name.intern()
     override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
     override val visibility = original.visibility

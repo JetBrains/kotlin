@@ -63,7 +63,7 @@ data class CirCommonClassConstructor(
 }
 
 class CirClassImpl(original: ClassDescriptor) : CirClass {
-    override val annotations = original.annotations.map(::CirAnnotation)
+    override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     override val name = original.name.intern()
     override val typeParameters = original.declaredTypeParameters.map(::CirTypeParameterImpl)
     override val companion = original.companionObjectDescriptor?.fqNameSafe?.intern()
@@ -84,7 +84,7 @@ class CirClassConstructorImpl(original: ClassConstructorDescriptor) : CirClassCo
     override val containingClassKind = original.containingDeclaration.kind
     override val containingClassModality = original.containingDeclaration.modality
     override val containingClassIsData = original.containingDeclaration.isData
-    override val annotations = original.annotations.map(::CirAnnotation)
+    override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     override val visibility = original.visibility
     override val typeParameters = original.typeParameters.mapNotNull { typeParameter ->
         // save only type parameters that are contributed by the constructor itself

@@ -28,7 +28,7 @@ data class CirCommonTypeParameter(
 }
 
 class CirTypeParameterImpl(original: TypeParameterDescriptor) : CirTypeParameter {
-    override val annotations = original.annotations.map(::CirAnnotation)
+    override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     override val name = original.name.intern()
     override val isReified = original.isReified
     override val variance = original.variance

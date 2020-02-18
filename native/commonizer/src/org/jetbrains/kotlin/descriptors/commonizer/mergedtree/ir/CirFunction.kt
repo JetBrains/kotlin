@@ -74,7 +74,7 @@ data class CirCommonValueParameter(
 
 class CirValueParameterImpl(original: ValueParameterDescriptor) : CirValueParameter {
     override val name = original.name.intern()
-    override val annotations = original.annotations.map(::CirAnnotation)
+    override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     override val returnType = CirType.create(original.returnType!!)
     override val varargElementType = original.varargElementType?.let(CirType.Companion::create)
     override val declaresDefaultValue = original.declaresDefaultValue()

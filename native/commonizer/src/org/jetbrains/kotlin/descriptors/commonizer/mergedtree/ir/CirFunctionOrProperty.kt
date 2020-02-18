@@ -24,7 +24,7 @@ abstract class CirCommonFunctionOrProperty : CirFunctionOrProperty {
 }
 
 abstract class CirFunctionOrPropertyImpl<T : CallableMemberDescriptor>(original: T) : CirFunctionOrProperty {
-    final override val annotations = original.annotations.map(::CirAnnotation)
+    final override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     final override val name = original.name.intern()
     final override val modality = original.modality
     final override val visibility = original.visibility
@@ -51,7 +51,7 @@ data class CirExtensionReceiver(
 ) {
     companion object {
         fun CirType.toReceiverNoAnnotations() = CirExtensionReceiver( /* TODO: commonize annotations, KT-34234 */ emptyList(), this)
-        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations.map(::CirAnnotation), CirType.create(type))
+        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations.map(CirAnnotation.Companion::create), CirType.create(type))
     }
 }
 
