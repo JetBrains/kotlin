@@ -49,9 +49,4 @@ public interface SharedIndexChunkConfiguration {
   void locateIndexes(@NotNull Project project,
                      @NotNull Set<OrderEntry> entries,
                      @NotNull ProgressIndicator indicator);
-
-  /**
-   * Disposes persistent data structures for a given {@param indexId} in {@param chunkId}
-   */
-  void disposeIndexChunkData(@NotNull ID<?, ?> indexId, int chunkId);
 }

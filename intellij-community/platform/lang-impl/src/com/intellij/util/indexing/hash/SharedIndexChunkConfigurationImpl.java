@@ -29,9 +29,9 @@ import com.intellij.util.indexing.provided.SharedIndexChunkLocator;
 import com.intellij.util.indexing.provided.SharedIndexChunkLocator.ChunkDescriptor;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
 import com.intellij.util.indexing.zipFs.UncompressedZipFileSystem;
-import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
+import com.intellij.util.io.PersistentStringEnumerator;
 import com.intellij.util.io.zip.JBZipFile;
 import gnu.trove.TIntLongHashMap;
 import gnu.trove.TIntObjectHashMap;
@@ -73,11 +73,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     : SequentialTaskExecutor.createSequentialApplicationPoolExecutor("shared-index-loader", ProcessIOExecutorService.INSTANCE);
 
   @Override
-  public void disposeIndexChunkData(@NotNull ID<?, ?> indexId, int chunkId) {
-
-  }
-
-  @Override
   public <Value, Key> void processChunks(@NotNull ID<Key, Value> indexId, @NotNull Processor<UpdatableIndex<Key, Value, FileContent>> processor) {
     ConcurrentMap<Integer, SharedIndexChunk> map = myChunkMap.get(indexId);
     if (map == null) return;
@@ -117,6 +112,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
         for (SharedIndexChunk chunk : toRemove) {
           myChunkMap.get(chunk.getIndexName()).remove(chunk.getChunkId(), chunk);
+          chunk.close();
         }
       }
     });
@@ -151,11 +147,17 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   private void attachChunk(@NotNull ChunkDescriptor chunkDescriptor,
                            @NotNull Project project) throws IOException {
-    for (SharedIndexChunk chunk : registerChunk(chunkDescriptor)) {
+    bindChunkToProject(registerChunk(chunkDescriptor), project);
+  }
+
+  private boolean bindChunkToProject(@NotNull Collection<SharedIndexChunk> chunkCollection,
+                                     @NotNull Project project) {
+    for (SharedIndexChunk chunk : chunkCollection) {
       ConcurrentMap<Integer, SharedIndexChunk> chunks = myChunkMap.computeIfAbsent(chunk.getIndexName(), __ -> new ConcurrentHashMap<>());
       chunk.addProject(project);
       chunks.put(chunk.getChunkId(), chunk);
     }
+    return !chunkCollection.isEmpty();
   }
 
   @NotNull
@@ -175,7 +177,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                                @NotNull IndexInfrastructureVersion ideVersion) {
     Path tempChunk = null;
     try {
-      tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
 
       if (!chunkIsNotRegistered(descriptor)) {
         return;
@@ -183,6 +184,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
       long ms = System.currentTimeMillis();
       try {
+        tempChunk = getSharedIndexConfigurationRoot().resolve(descriptor.getChunkUniqueId() + "_temp.zip");
         descriptor.downloadChunk(tempChunk, indicator);
         SharedIndexStorageUtil.appendToSharedIndexStorage(tempChunk, getSharedIndexStorage(), descriptor, ideVersion);
       } finally {
@@ -279,7 +281,14 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     if (chunkId == 0) {
       throw new RuntimeException("chunk " + chunkRootName + " is not present");
     }
+    return registerChunk(chunkId);
+  }
+
+  @NotNull
+  private List<SharedIndexChunk> registerChunk(int chunkId) throws IOException {
     ContentHashEnumerator enumerator;
+    String chunkRootName = myChunkDescriptorEnumerator.valueOf(chunkId);
+    LOG.assertTrue(chunkRootName != null);
     Path chunkRoot = myReadSystem.getPath(chunkRootName);
     synchronized (myChunkEnumerators) {
       enumerator = myChunkEnumerators.get(chunkId);

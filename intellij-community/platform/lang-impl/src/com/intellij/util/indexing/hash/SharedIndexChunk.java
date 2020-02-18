@@ -44,7 +44,6 @@ public class SharedIndexChunk<K, V> {
 
   void close() {
     myIndex.dispose();
-    SharedIndexChunkConfiguration.getInstance().disposeIndexChunkData(myIndexName, myChunkId);
   }
 
   public @NotNull ID<?, ?> getIndexName() {
