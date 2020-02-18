@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import kotlin.coroutines.Continuation
 
 abstract class CheckerSink {
