@@ -16,10 +16,14 @@ import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule
 import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
 import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeSharedImmutableChecker
 import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeThrowsChecker
+import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeTopLevelSingletonChecker
 
 object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker()),
-    additionalDeclarationCheckers = listOf(NativeThrowsChecker, NativeSharedImmutableChecker)
+    additionalDeclarationCheckers = listOf(
+        NativeThrowsChecker, NativeSharedImmutableChecker,
+        NativeTopLevelSingletonChecker
+    )
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)
