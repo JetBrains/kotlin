@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirGetter.Companion.toGetter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter.Companion.toSetter
+import org.jetbrains.kotlin.descriptors.commonizer.utils.NonThreadSafeInterner
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 interface CirProperty : CirFunctionOrProperty {
@@ -69,20 +70,37 @@ interface CirPropertyAccessor {
     val isInline: Boolean
 }
 
-data class CirGetter(
+@Suppress("DataClassPrivateConstructor")
+data class CirGetter private constructor(
     override val annotations: List<CirAnnotation>,
     override val isDefault: Boolean,
     override val isExternal: Boolean,
     override val isInline: Boolean
 ) : CirPropertyAccessor {
     companion object {
-        val DEFAULT_NO_ANNOTATIONS = CirGetter(emptyList(), isDefault = true, isExternal = false, isInline = false)
+        private val interner = NonThreadSafeInterner<CirGetter>()
+
+        val DEFAULT_NO_ANNOTATIONS = interner.intern(
+            CirGetter(
+                annotations = emptyList(),
+                isDefault = true,
+                isExternal = false,
+                isInline = false
+            )
+        )
 
         fun PropertyGetterDescriptor.toGetter() =
             if (isDefault && annotations.isEmpty())
                 DEFAULT_NO_ANNOTATIONS
             else
-                CirGetter(annotations.map(CirAnnotation.Companion::create), isDefault, isExternal, isInline)
+                interner.intern(
+                    CirGetter(
+                        annotations = annotations.map(CirAnnotation.Companion::create),
+                        isDefault = isDefault,
+                        isExternal = isExternal,
+                        isInline = isInline
+                    )
+                )
     }
 }
 
