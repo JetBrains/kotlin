@@ -5,7 +5,7 @@ public final enum class EnumMembers : R|kotlin/Enum<ft<test/EnumMembers, test/En
 
     public final field isFirst: R|kotlin/Boolean|
 
-    public open operator fun first(): R|kotlin/Boolean|
+    public open fun first(): R|kotlin/Boolean|
 
     private constructor(isFirst: R|kotlin/Boolean|): R|test/EnumMembers|
 

@@ -5,21 +5,21 @@ FILE fqName:<root> fileName:/fakeOverridesForJavaStaticMembers.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in a.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[a.Base]'
-    FUN FAKE_OVERRIDE name:publicStaticMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override,operator]
+    FUN FAKE_OVERRIDE name:publicStaticMethod visibility:public modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun publicStaticMethod (): kotlin.Unit [operator] declared in a.Base
+        public open fun publicStaticMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:protectedStaticMethod visibility:protected/*protected static*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override,operator]
+    FUN FAKE_OVERRIDE name:protectedStaticMethod visibility:protected/*protected static*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
-        protected/*protected static*/ open fun protectedStaticMethod (): kotlin.Unit [operator] declared in a.Base
+        protected/*protected static*/ open fun protectedStaticMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:packagePrivateStaticMethod visibility:public/*package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override,operator]
+    FUN FAKE_OVERRIDE name:packagePrivateStaticMethod visibility:public/*package*/ modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
-        public/*package*/ open fun packagePrivateStaticMethod (): kotlin.Unit [operator] declared in a.Base
+        public/*package*/ open fun packagePrivateStaticMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:privateStaticMethod visibility:private modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override,operator]
+    FUN FAKE_OVERRIDE name:privateStaticMethod visibility:private modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
       overridden:
-        private open fun privateStaticMethod (): kotlin.Unit [operator] declared in a.Base
+        private open fun privateStaticMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

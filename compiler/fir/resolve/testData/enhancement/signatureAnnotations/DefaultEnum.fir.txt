@@ -1,11 +1,11 @@
 public/*package*/ open class A : R|kotlin/Any| {
-    public open operator fun a(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(HELLO)) arg: R|ft<Signs, Signs?>!| = R|/Signs.HELLO|): R|ft<Signs, Signs?>!|
+    public open fun a(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(HELLO)) arg: R|ft<Signs, Signs?>!| = R|/Signs.HELLO|): R|ft<Signs, Signs?>!|
 
-    public open operator fun bar(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(X)) arg: R|ft<Signs, Signs?>!| = R|/Signs.X|): R|ft<Signs, Signs?>!|
+    public open fun bar(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(X)) arg: R|ft<Signs, Signs?>!| = R|/Signs.X|): R|ft<Signs, Signs?>!|
 
-    public open operator fun baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Signs, Signs?>!|): R|ft<Signs, Signs?>!|
+    public open fun baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Signs, Signs?>!|): R|ft<Signs, Signs?>!|
 
-    public open operator fun bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Mixed, Mixed?>!| = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<Mixed, Mixed?>!|
+    public open fun bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Mixed, Mixed?>!| = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<Mixed, Mixed?>!|
 
     public/*package*/ constructor(): R|A|
 

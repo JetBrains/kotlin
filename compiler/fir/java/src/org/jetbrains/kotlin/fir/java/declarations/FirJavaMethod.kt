@@ -22,6 +22,20 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
+import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
+import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
+import org.jetbrains.kotlin.util.OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
+import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
+import org.jetbrains.kotlin.util.OperatorNameConventions.GET
+import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
+import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
+import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.SET
+import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_OPERATION_NAMES
 import kotlin.properties.Delegates
 
 @UseExperimental(FirImplementationDetail::class)
@@ -55,6 +69,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
     annotations,
 )
 
+private val ALL_JAVA_OPERATION_NAMES =
+    UNARY_OPERATION_NAMES + BINARY_OPERATION_NAMES + ASSIGNMENT_OPERATIONS + DELEGATED_PROPERTY_OPERATORS +
+            EQUALS + COMPARE_TO + CONTAINS + INVOKE + ITERATOR + GET + SET + NEXT + HAS_NEXT
+
 @FirBuilderDsl
 class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
     lateinit var visibility: Visibility
@@ -69,7 +87,9 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
             isExpect = false
             isActual = false
             isOverride = false
-            isOperator = true // All Java methods with name that allows to use it in operator form are considered operators
+            // Approximation: all Java methods with name that allows to use it in operator form are considered operators
+            // We need here more detailed checks (see modifierChecks.kt)
+            isOperator = name in ALL_JAVA_OPERATION_NAMES || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
             isInfix = false
             isInline = false
             isTailRec = false
