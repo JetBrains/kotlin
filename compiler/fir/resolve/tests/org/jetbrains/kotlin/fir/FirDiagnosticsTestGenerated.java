@@ -1461,6 +1461,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/nullability.kt");
         }
 
+        @TestMetadata("orInWhenBranch.kt")
+        public void testOrInWhenBranch() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/orInWhenBranch.kt");
+        }
+
         @TestMetadata("smartCastInInit.kt")
         public void testSmartCastInInit() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartCastInInit.kt");

@@ -137,8 +137,10 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         val allTypes = types.flatMapTo(mutableSetOf()) { it }
         val commonTypes = allTypes.toMutableSet()
         types.forEach { commonTypes.retainAll(it) }
-        val differentTypes = allTypes - commonTypes
-        context.commonSuperTypeOrNull(differentTypes.toList())?.let { commonTypes += it }
+        val differentTypes = types.mapNotNull { (it - commonTypes).takeIf { it.isNotEmpty() } }
+        if (differentTypes.size == types.size) {
+            context.commonSuperTypeOrNull(differentTypes.flatten())?.let { commonTypes += it }
+        }
         return commonTypes
     }
 }
