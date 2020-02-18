@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -32,6 +33,7 @@ class FirResolvedQualifierBuilder : FirAnnotationContainerBuilder, FirExpression
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var packageFqName: FqName
     var relativeClassFqName: FqName? = null
+    var symbol: FirClassLikeSymbol<*>? = null
     var safe: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 
@@ -42,6 +44,7 @@ class FirResolvedQualifierBuilder : FirAnnotationContainerBuilder, FirExpression
             annotations,
             packageFqName,
             relativeClassFqName,
+            symbol,
             safe,
             typeArguments,
         )

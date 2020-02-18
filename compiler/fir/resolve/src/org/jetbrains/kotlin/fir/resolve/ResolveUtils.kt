@@ -240,13 +240,9 @@ fun createKPropertyType(
 }
 
 fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifier): FirTypeRef {
-    val classId = resolvedQualifier.classId
+    val classSymbol = resolvedQualifier.symbol
     val resultType = resolvedQualifier.resultType
-    if (classId != null) {
-        val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId)
-            ?: return buildErrorTypeRef {
-                diagnostic = FirSimpleDiagnostic("No type for qualifier", DiagnosticKind.Other)
-            }
+    if (classSymbol != null) {
         val declaration = classSymbol.phasedFir
         if (declaration !is FirTypeAlias || resolvedQualifier.typeArguments.isEmpty()) {
             typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }

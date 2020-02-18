@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -24,6 +25,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
     abstract val classId: ClassId?
+    abstract val symbol: FirClassLikeSymbol<*>?
     abstract val safe: Boolean
     abstract val typeArguments: List<FirTypeProjection>
 

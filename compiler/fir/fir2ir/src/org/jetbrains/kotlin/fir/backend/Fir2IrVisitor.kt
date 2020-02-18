@@ -1442,9 +1442,8 @@ class Fir2IrVisitor(
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Any?): IrElement {
-        val classId = resolvedQualifier.classId
-        if (classId != null) {
-            val classSymbol = ConeClassLikeLookupTagImpl(classId).toSymbol(session)!!
+        val classSymbol = resolvedQualifier.symbol
+        if (classSymbol != null) {
             return resolvedQualifier.convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
                     startOffset, endOffset,

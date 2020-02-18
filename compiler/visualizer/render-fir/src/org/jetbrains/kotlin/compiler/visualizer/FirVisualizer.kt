@@ -429,8 +429,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
-            resolvedQualifier.classId?.let {
-                val fir = symbolProvider.getClassLikeSymbolByFqName(it)?.fir
+            resolvedQualifier.symbol?.let {
+                val fir = it.fir
                 if (fir is FirClass) {
                     data.append(fir.classKind.name.toLowerCase()).append(" ")
                     data.append((fir as? FirRegularClass)?.name ?: Name.special("<anonymous>"))

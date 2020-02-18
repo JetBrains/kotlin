@@ -14,5 +14,5 @@ FILE: callableReferenceToLocalClass.kt
         }
 
         lval datas: R|kotlin/collections/List<Data>| = Null(null)!!
-        lval xs: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/myMap]> = R|<local>/datas|.<Inapplicable(INAPPLICABLE): [/myMap]>#(Q|Data|::<Unresolved name: x>#)
+        lval xs: R|kotlin/collections/List<kotlin/Int>| = R|<local>/datas|.R|/myMap|<R|Data|, R|kotlin/Int|>(Q|Data|::R|/Data.x|)
     }

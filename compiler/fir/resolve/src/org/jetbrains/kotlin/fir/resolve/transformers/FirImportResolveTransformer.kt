@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
@@ -73,14 +74,14 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
         prefixSize--
     }
 
-    if (currentPackage == fqName) return PackageOrClass(currentPackage, null)
+    if (currentPackage == fqName) return PackageOrClass(currentPackage, null, null)
     val relativeClassFqName =
         FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
 
     val classId = ClassId(currentPackage, relativeClassFqName, false)
-    if (symbolProvider.getClassLikeSymbolByFqName(classId) == null) return null
+    val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return null
 
-    return PackageOrClass(currentPackage, relativeClassFqName)
+    return PackageOrClass(currentPackage, relativeClassFqName, symbol)
 }
 
-data class PackageOrClass(val packageFqName: FqName, val relativeClassFqName: FqName?)
+data class PackageOrClass(val packageFqName: FqName, val relativeClassFqName: FqName?, val classSymbol: FirClassLikeSymbol<*>?)

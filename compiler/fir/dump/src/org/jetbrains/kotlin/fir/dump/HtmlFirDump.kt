@@ -1411,11 +1411,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(resolvedQualifier: FirResolvedQualifier) {
         resolved {
-            val symbolProvider = session.firSymbolProvider
-            val classId = resolvedQualifier.classId
-            if (classId != null) {
-                symbolRef(symbolProvider.getClassLikeSymbolByFqName(classId)) {
-                    fqn(classId.relativeClassName)
+            val symbol = resolvedQualifier.symbol
+            if (symbol != null) {
+                symbolRef(symbol) {
+                    fqn(resolvedQualifier.classId?.relativeClassName ?: FqName("<???>"))
                 }
             } else {
                 fqn(resolvedQualifier.packageFqName)

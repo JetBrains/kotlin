@@ -124,7 +124,7 @@ class FirTowerResolver(
         }
 
 
-        if (resolvedQualifier.classId != null) {
+        if (resolvedQualifier.symbol != null) {
             val typeRef = resolvedQualifier.typeRef
             // NB: yet built-in Unit is used for "no-value" type
             if (info.callKind == CallKind.CallableReference) {

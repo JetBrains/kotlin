@@ -119,8 +119,7 @@ class FirDoubleColonExpressionResolver(
     }
 
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
-        val classId = classId ?: return null
-        var fir = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
+        var fir = symbol?.fir ?: return null
         while (fir is FirTypeAlias) {
             fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         }
