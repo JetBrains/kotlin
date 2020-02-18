@@ -23,6 +23,7 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
 import org.jetbrains.kotlin.idea.configuration.addStdlibToJavaModuleInfo
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
 import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
@@ -76,6 +77,6 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
     companion object {
         private const val NAME = "maven"
         const val TEST_LIB_ID = "kotlin-test"
-        private const val PRESENTABLE_TEXT = "Java with Maven"
+        private val PRESENTABLE_TEXT = KotlinMavenBundle.message("configure.java.with.maven")
     }
 }
