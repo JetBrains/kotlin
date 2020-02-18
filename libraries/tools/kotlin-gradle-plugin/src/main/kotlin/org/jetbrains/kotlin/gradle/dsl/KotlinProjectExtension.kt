@@ -21,11 +21,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -91,17 +88,19 @@ open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
     open fun target(body: KotlinWithJavaTarget<KotlinJsOptions>.() -> Unit) = target.run(body)
 }
 
-open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
+open class KotlinJsProjectExtension :
+    KotlinSingleTargetExtension(),
+    KotlinJsCompilerTypeHolder {
     lateinit var irPreset: KotlinJsIrSingleTargetPreset
 
     lateinit var legacyPreset: KotlinJsSingleTargetPreset
 
     override lateinit var target: KotlinJsTargetDsl
 
-    internal lateinit var defaultCompilerType: JsCompilerType
+    override lateinit var defaultJsCompilerType: JsCompilerType
 
     open fun js(
-        compiler: JsCompilerType = defaultCompilerType,
+        compiler: JsCompilerType = defaultJsCompilerType,
         body: KotlinJsTargetDsl.() -> Unit
     ) {
         val target: KotlinJsTargetDsl = when (compiler) {
@@ -133,7 +132,7 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
 
     open fun js(
         body: KotlinJsTargetDsl.() -> Unit
-    ) = js(compiler = defaultCompilerType, body = body)
+    ) = js(compiler = defaultJsCompilerType, body = body)
 
     @Deprecated("Use js instead", ReplaceWith("js(body)"))
     open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
