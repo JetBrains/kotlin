@@ -14542,6 +14542,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 public void testSingleVariable() throws Exception {
                     runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/singleVariable.kt");
                 }
+
+                @TestMetadata("uninitializedWithGetter.kt")
+                public void testUninitializedWithGetter() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter.kt");
+                }
+
+                @TestMetadata("uninitializedWithGetter2.kt")
+                public void testUninitializedWithGetter2() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter2.kt");
+                }
+
+                @TestMetadata("uninitializedWithGetter3.kt")
+                public void testUninitializedWithGetter3() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter3.kt");
+                }
             }
         }
 

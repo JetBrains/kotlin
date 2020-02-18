@@ -1,0 +1,7 @@
+// "Change to val" "true"
+class Test {
+    val foo: Int
+        get() {
+            return 1
+        }
+}
