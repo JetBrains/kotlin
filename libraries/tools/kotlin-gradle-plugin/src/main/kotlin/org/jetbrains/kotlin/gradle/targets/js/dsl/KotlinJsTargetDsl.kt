@@ -52,6 +52,8 @@ interface KotlinJsTargetDsl : KotlinTarget {
 
     fun produceExecutable()
 
+    fun useCommonJs()
+
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script

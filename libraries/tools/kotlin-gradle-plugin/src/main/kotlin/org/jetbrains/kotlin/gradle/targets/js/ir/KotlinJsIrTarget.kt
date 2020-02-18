@@ -128,7 +128,7 @@ constructor(
         }
     }
 
-    fun useCommonJs() {
+    override fun useCommonJs() {
         compilations.all {
             it.compileKotlinTask.configureCommonJsOptions()
 
