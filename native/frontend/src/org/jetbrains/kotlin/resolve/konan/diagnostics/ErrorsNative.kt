@@ -24,6 +24,8 @@ object ErrorsNative {
     val INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
     @JvmField
     val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    @JvmField
+    val VARIABLE_IN_TOP_LEVEL_SINGLETON_WITHOUT_THERAD_LOCAL = DiagnosticFactory0.create<KtElement>(Severity.WARNING)
 
     init {
         Errors.Initializer.initializeFactoryNames(ErrorsNative::class.java)
