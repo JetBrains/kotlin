@@ -231,9 +231,9 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
     val stack = ArrayDeque<TypeArgumentMarker>()
 
     when (type) {
-        is FlexibleType -> {
-            stack.push(createTypeArgument(type.lowerBound, TypeVariance.INV))
-            stack.push(createTypeArgument(type.upperBound, TypeVariance.INV))
+        is FlexibleTypeMarker -> {
+            stack.push(createTypeArgument(type.lowerBound(), TypeVariance.INV))
+            stack.push(createTypeArgument(type.upperBound(), TypeVariance.INV))
         }
         else -> stack.push(createTypeArgument(type, TypeVariance.INV))
     }
@@ -253,9 +253,9 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
         result.add(typeProjection)
 
         when (val projectedType = typeProjection.getType()) {
-            is FlexibleType -> {
-                addArgumentsToStack(projectedType.lowerBound)
-                addArgumentsToStack(projectedType.upperBound)
+            is FlexibleTypeMarker -> {
+                addArgumentsToStack(projectedType.lowerBound())
+                addArgumentsToStack(projectedType.upperBound())
             }
             else -> addArgumentsToStack(projectedType)
         }

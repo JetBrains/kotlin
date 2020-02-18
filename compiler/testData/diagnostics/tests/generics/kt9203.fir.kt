@@ -7,5 +7,5 @@ import java.util.stream.IntStream
 fun main() {
     val xs = IntStream.range(0, 10).mapToObj { it.toString() }
             .collect(Collectors.toList())
-    <!UNRESOLVED_REFERENCE!>xs[0]<!>
+    xs[0]
 }
