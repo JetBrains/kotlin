@@ -342,9 +342,7 @@ private open class AppleArchiveTask @Inject constructor(target: AppleTarget, exe
         get() = arrayOf(
             "-destination", "generic/platform=iOS",
             "-archivePath", xcarchivePath,
-            "-allowProvisioningUpdates",
-            "CODE_SIGN_STYLE=Automatic",
-            "DEVELOPMENT_TEAM=$teamID"
+            "-allowProvisioningUpdates"
         )
     override val xcodeScheme: String = target.name
 }
