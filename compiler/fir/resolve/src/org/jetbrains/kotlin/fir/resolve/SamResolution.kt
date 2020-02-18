@@ -150,18 +150,8 @@ class FirSamResolverImpl(
             }
         }
 
-        val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
-        val substitutedReturnType =
-            ConeClassLikeTypeImpl(
-                firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false,
-            )
-
         return buildSimpleFunction {
             session = firSession
-            returnTypeRef = buildResolvedTypeRef {
-                source = null
-                type = substitutedReturnType
-            }
             name = classId.shortClassName
             status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
                 isExpect = firRegularClass.isExpect
@@ -175,6 +165,19 @@ class FirSamResolverImpl(
                 isTailRec = false
             }
             this.symbol = symbol
+            typeParameters += newTypeParameters.map { it.build() }
+
+            val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
+            val substitutedReturnType =
+                ConeClassLikeTypeImpl(
+                    firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false,
+                )
+
+            returnTypeRef = buildResolvedTypeRef {
+                source = null
+                type = substitutedReturnType
+            }
+
             valueParameters += buildValueParameter {
                 session = firSession
                 returnTypeRef = buildResolvedTypeRef {
@@ -188,7 +191,7 @@ class FirSamResolverImpl(
                 isVararg = false
             }
 
-            typeParameters += newTypeParameters.map { it.build() }
+
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
     }
