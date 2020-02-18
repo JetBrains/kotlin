@@ -703,7 +703,6 @@ object Filtering : TemplateGroupBase() {
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
-
         doc { "Appends all elements not matching the given [predicate] to the given [destination]." }
         typeParam("C : TCollection")
         returns("C")
@@ -730,6 +729,7 @@ object Filtering : TemplateGroupBase() {
         include(Iterables, Sequences, ArraysOfObjects)
     } builder {
         doc { "Returns a list containing all elements that are not `null`." }
+        sample("samples.collections.Collections.Filtering.filterNotNull")
         typeParam("T : Any")
         returns("List<T>")
         toNullableT = true
