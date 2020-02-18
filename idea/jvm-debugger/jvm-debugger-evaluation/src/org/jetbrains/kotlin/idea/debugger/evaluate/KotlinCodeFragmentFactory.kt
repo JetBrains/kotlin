@@ -239,7 +239,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
             if (javaExpression != null && !PsiTreeUtil.hasErrorElements(javaExpression)) {
                 var convertedFragment: KtExpressionCodeFragment? = null
-                project.executeWriteCommand("Convert java expression to kotlin in Evaluate Expression") {
+                project.executeWriteCommand(KotlinDebuggerEvaluationBundle.message("j2k.expression")) {
                     try {
                         val (elementResults, _, conversionContext) = javaExpression.convertToKotlin() ?: return@executeWriteCommand
                         val newText = elementResults.singleOrNull()?.text
