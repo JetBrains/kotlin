@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast

@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.inference.hasNullableSuperType
+import org.jetbrains.kotlin.fir.resolve.correspondingSupertypesCache
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds

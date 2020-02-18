@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags

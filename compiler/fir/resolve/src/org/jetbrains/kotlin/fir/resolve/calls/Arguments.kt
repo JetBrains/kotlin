@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.impl.FirILTTypeRefPlaceHolder
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator

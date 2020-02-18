@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
-import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe

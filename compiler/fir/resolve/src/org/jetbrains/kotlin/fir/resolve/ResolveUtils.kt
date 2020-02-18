@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) -> VA, postCompute: (VA) -> Unit): V {
@@ -150,21 +148,6 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierS
 
 fun ConeTypeParameterLookupTag.toSymbol(): FirTypeParameterSymbol = this.symbol as FirTypeParameterSymbol
 
-fun ConeClassLikeLookupTag.constructClassType(
-    typeArguments: Array<out ConeKotlinTypeProjection>,
-    isNullable: Boolean,
-): ConeLookupTagBasedType {
-    return ConeClassLikeTypeImpl(this, typeArguments, isNullable)
-}
-
-fun ConeClassifierLookupTag.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
-    return when (this) {
-        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable)
-        is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable)
-        else -> error("! ${this::class}")
-    }
-}
-
 fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is FirTypeParameterSymbol -> {
@@ -200,12 +183,6 @@ fun FirClassifierSymbol<*>.constructType(
             }
         }
 
-fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
-    when (variance) {
-        Variance.INVARIANT -> this
-        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(this)
-        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(this)
-    }
 
 private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProjection> = flatMap {
     it.typeArguments.map { typeArgument ->
@@ -219,81 +196,6 @@ private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProj
         }
     }
 }.toTypedArray()
-
-fun coneFlexibleOrSimpleType(
-    typeContext: ConeInferenceContext?,
-    lowerBound: ConeKotlinType,
-    upperBound: ConeKotlinType,
-): ConeKotlinType {
-    if (lowerBound is ConeFlexibleType) {
-        return coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
-    }
-    if (upperBound is ConeFlexibleType) {
-        return coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
-    }
-    return when {
-        typeContext != null && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> {
-            lowerBound
-        }
-        typeContext == null && lowerBound == upperBound -> {
-            lowerBound
-        }
-        else -> {
-            ConeFlexibleType(lowerBound, upperBound)
-        }
-    }
-}
-
-fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeContext: ConeInferenceContext? = null): T {
-    if (this.nullability == nullability) {
-        return this
-    }
-
-    return when (this) {
-        is ConeClassErrorType -> this
-        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
-        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
-        is ConeFlexibleType -> {
-            if (nullability == ConeNullability.UNKNOWN) {
-                if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
-                    return this
-                }
-            }
-            coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
-        }
-        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
-        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
-        is ConeIntersectionType -> when (nullability) {
-            ConeNullability.NULLABLE -> this.mapTypes {
-                it.withNullability(nullability)
-            }
-            ConeNullability.UNKNOWN -> this // TODO: is that correct?
-            ConeNullability.NOT_NULL -> this
-        } as T
-        is ConeStubType -> ConeStubType(variable, nullability) as T
-        is ConeDefinitelyNotNullType -> when (nullability) {
-            ConeNullability.NOT_NULL -> this
-            ConeNullability.NULLABLE -> original.withNullability(nullability)
-            ConeNullability.UNKNOWN -> original.withNullability(nullability)
-        } as T
-        is ConeIntegerLiteralType -> this
-        else -> error("sealed: ${this::class}")
-    }
-}
-
-
-fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProjection>): T {
-    if (this.typeArguments === arguments) {
-        return this
-    }
-
-    return when (this) {
-        is ConeClassErrorType -> this
-        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable) as T
-        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withArguments(arguments))!! as T
-        else -> error("Not supported: $this: ${this.render()}")
-    }
-}
 
 fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {

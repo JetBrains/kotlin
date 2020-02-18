@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.substitution
 
-import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl

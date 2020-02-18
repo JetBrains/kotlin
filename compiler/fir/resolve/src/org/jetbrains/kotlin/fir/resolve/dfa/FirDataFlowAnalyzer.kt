@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol

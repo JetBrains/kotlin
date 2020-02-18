@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
-import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag

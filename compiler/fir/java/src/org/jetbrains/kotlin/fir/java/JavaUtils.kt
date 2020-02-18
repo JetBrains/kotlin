@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds

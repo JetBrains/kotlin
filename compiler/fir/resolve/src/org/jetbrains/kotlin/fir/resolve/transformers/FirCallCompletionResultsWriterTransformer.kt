@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.returnType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*

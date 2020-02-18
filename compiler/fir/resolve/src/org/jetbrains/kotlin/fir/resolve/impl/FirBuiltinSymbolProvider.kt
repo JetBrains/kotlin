@@ -7,19 +7,21 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
