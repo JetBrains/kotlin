@@ -7,22 +7,17 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.BUILD_DIR
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.BUILD_SETTINGS_FILE_NAME
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.CONFIGURATION
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.FRAMEWORK_SEARCH_PATHS
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.HEADER_SEARCH_PATHS
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.OTHER_CFLAGS
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.PLATFORM_NAME
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.readBuildSettings
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettings.Companion.fromBuildSettingsFile
+import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildTask.Companion.toValidSDK
 import org.jetbrains.kotlin.gradle.utils.newProperty
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -91,12 +86,12 @@ open class PodGenerateSpecTask : DefaultTask() {
  */
 open class PodInstallTask : DefaultTask() {
     @get:Nested
-    internal lateinit var settings: CocoapodsExtension
+    internal lateinit var cocoapodsExtension: CocoapodsExtension
 
     @get:OutputDirectory
     internal val podsDirectoryProvider: Provider<File> = project.provider {
         project.projectDir
-            .resolve(settings.xcodeproj)
+            .resolve(cocoapodsExtension.xcodeproj)
             .parentFile
             .resolve("Pods")
     }
@@ -104,13 +99,13 @@ open class PodInstallTask : DefaultTask() {
     @get:OutputDirectory
     internal val xcWorkspaceDirProvider: Provider<File> = project.provider {
         project.projectDir
-            .resolve(settings.xcodeproj.replace("xcodeproj", "xcworkspace"))
+            .resolve(cocoapodsExtension.xcodeproj.replace("xcodeproj", "xcworkspace"))
     }
 
 
     @TaskAction
     fun invoke() {
-        val podfileDir = project.projectDir.resolve(settings.podfile).parentFile
+        val podfileDir = project.projectDir.resolve(cocoapodsExtension.podfile).parentFile
         val podInstallProcess = ProcessBuilder("pod", "install").apply { directory(podfileDir) }.start()
         val podInstallRetCode = podInstallProcess.waitFor()
         if (podInstallRetCode != 0) throw GradleException("Unable to run 'pod install', return code $podInstallRetCode")
@@ -125,7 +120,7 @@ open class PodInstallTask : DefaultTask() {
     }
 }
 
-open class PodBuildSettingsTask : DefaultTask() {
+open class PodSetupBuildTask : DefaultTask() {
     @get:Nested
     internal lateinit var cocoapodsExtension: CocoapodsExtension
 
@@ -135,8 +130,12 @@ open class PodBuildSettingsTask : DefaultTask() {
             .resolve(cocoapodsExtension.xcodeproj.replace("xcodeproj", "xcworkspace"))
     }
 
+    @Internal
+    lateinit var kotlinNativeTarget: KotlinNativeTarget
+
     @get:OutputFile
-    internal val buildSettingsFileProvider: Provider<File> = project.provider { project.buildDir.resolve(BUILD_SETTINGS_FILE_NAME) }
+    internal val buildSettingsFileProvider: Provider<File> =
+        project.provider { project.buildDir.resolve(kotlinNativeTarget.toBuildSettingsFileName) }
 
     @TaskAction
     fun invoke() {
@@ -151,7 +150,9 @@ open class PodBuildSettingsTask : DefaultTask() {
         val buildSettingsProcess = ProcessBuilder(
             "xcodebuild", "-showBuildSettings",
             "-workspace", xcWorkspaceDirProvider.get().name,
-            "-scheme", project.name.asValidFrameworkName()
+            "-scheme", project.name.asValidFrameworkName(),
+            "-configuration", DEFAULT_CONFIGURATION,
+            "-sdk", kotlinNativeTarget.toValidSDK
         ).apply {
             directory(xcWorkspaceDir)
         }.start()
@@ -161,6 +162,8 @@ open class PodBuildSettingsTask : DefaultTask() {
             "Unable to run 'xcodebuild -showBuildSettings " +
                     "-workspace ${xcWorkspaceDirProvider.get().name} " +
                     "-scheme ${project.name.asValidFrameworkName()} " +
+                    "-configuration $DEFAULT_CONFIGURATION " +
+                    "-sdk ${kotlinNativeTarget.toValidSDK}' " +
                     "return code $buildSettingsRetCode"
         )
 
@@ -173,28 +176,23 @@ open class PodBuildSettingsTask : DefaultTask() {
             .map { it.first.trim() to it.second.trim() }
             .toMap()
 
-        PodBuildSettings(
-            buildParameters[PLATFORM_NAME]!!,
-            buildParameters[BUILD_DIR]!!,
-            buildParameters[CONFIGURATION]!!,
-            buildParameters[OTHER_CFLAGS],
-            buildParameters[HEADER_SEARCH_PATHS],
-            buildParameters[FRAMEWORK_SEARCH_PATHS]
-        ).settingsToFile(project)
-
+        PodBuildSettings.fromBuildSettingsMap(buildParameters).settingsToFile(buildSettingsFileProvider.get())
     }
 
     companion object {
+        private const val BUILD_SETTINGS_FILE_PREFIX: String = "build-settings"
+        private const val DEFAULT_CONFIGURATION: String = "Release"
+
+        internal val KotlinNativeTarget.toBuildSettingsFileName: String
+            get() = "${BUILD_SETTINGS_FILE_PREFIX}-$disambiguationClassifier.txt"
 
     }
-
 }
-
 
 /**
  * The task compile pod sources and cinterop there artifacts.
  */
-open class PodBuildDependenciesTask : DefaultTask() {
+open class PodBuildTask : DefaultTask() {
     @get:Nested
     internal lateinit var cocoapodsExtension: CocoapodsExtension
 
@@ -205,22 +203,26 @@ open class PodBuildDependenciesTask : DefaultTask() {
     }
 
     @get:InputFile
-    internal val buildSettingsFileProvider: Provider<File> = project.provider { project.buildDir.resolve(BUILD_SETTINGS_FILE_NAME) }
+    internal lateinit var buildSettingsFileProvider: Provider<File>
+
+    @Internal
+    lateinit var kotlinNativeTarget: KotlinNativeTarget
 
     @get:OutputFile
-    internal val buildDirHashFileProvider: Provider<File> = project.provider { project.buildDir.resolve(BUILD_DIR_HASH_SUM_FILE_NAME) }
+    internal val buildDirHashFileProvider: Provider<File> =
+        project.provider { project.buildDir.resolve(kotlinNativeTarget.toBuildDirHashSumFileName) }
 
     @TaskAction
     fun invoke() {
         val xcWorkspaceDir = xcWorkspaceDirProvider.get().parentFile
 
-        val podBuildSettings = readBuildSettings(project)
+        val podBuildSettings = fromBuildSettingsFile(buildSettingsFileProvider.get())
 
         val podBuildProcess = ProcessBuilder(
             "xcodebuild", "-workspace", xcWorkspaceDirProvider.get().name,
             "-scheme", project.name.asValidFrameworkName(),
             "-configuration", podBuildSettings.configuration,
-            "-sdk", podBuildSettings.target
+            "-sdk", kotlinNativeTarget.toValidSDK
         ).apply {
             directory(xcWorkspaceDir)
             inheritIO()
@@ -231,17 +233,17 @@ open class PodBuildDependenciesTask : DefaultTask() {
             "Unable to run 'xcodebuild " +
                     "-workspace ${xcWorkspaceDirProvider.get().name} " +
                     "-scheme ${project.name.asValidFrameworkName()} " +
-                    "-configuration ${podBuildSettings.configuration}" +
-                    "-sdk ${podBuildSettings.target}' " +
+                    "-configuration ${podBuildSettings.configuration} " +
+                    "-sdk ${kotlinNativeTarget.toValidSDK}' " +
                     "return code $podBuildRetCode"
         )
         buildDirHashFileProvider.get().writeText(getFileChecksumStr(project.file(podBuildSettings.buildDir)))
     }
 
     companion object {
-        const val BUILD_DIR_HASH_SUM_FILE_NAME: String = "build-dir-hash.txt"
+        private const val BUILD_DIR_HASH_SUM_FILE_PREFIX: String = "build-dir-hash"
 
-        fun getFileChecksumStr(file: File): String {
+        private fun getFileChecksumStr(file: File): String {
             val digest = MessageDigest.getInstance("SHA-1")
             file.walkTopDown().forEach { file ->
                 val byteArray = ByteArray(1024)
@@ -253,10 +255,26 @@ open class PodBuildDependenciesTask : DefaultTask() {
                     }
                 }
             }
-
             val buildDirHashSumStr = BigInteger(1, digest.digest()).toString(16).padStart(32, '0')
             return buildDirHashSumStr
         }
+
+        internal val KotlinNativeTarget.toBuildDirHashSumFileName: String
+            get() = "$BUILD_DIR_HASH_SUM_FILE_PREFIX-$disambiguationClassifier.txt"
+
+        internal val KotlinNativeTarget.toValidSDK: String
+            get() {
+                return when (konanTarget) {
+                    KonanTarget.IOS_X64 -> "iphonesimulator"
+                    KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iphoneos"
+                    KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
+                    KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
+                    KonanTarget.TVOS_X64 -> "appletvsimulator"
+                    KonanTarget.TVOS_ARM64 -> "appletvos"
+                    KonanTarget.MACOS_X64 -> "macosx"
+                    else -> throw Error("Bad target ${konanTarget.name}")
+                }
+            }
     }
 }
 
@@ -268,8 +286,7 @@ internal data class PodBuildSettings(
     internal val headerPaths: String? = null,
     internal val frameworkPaths: String? = null
 ) {
-    fun settingsToFile(project: Project) {
-        val buildSettingsFile = project.buildDir.resolve(BUILD_SETTINGS_FILE_NAME)
+    fun settingsToFile(buildSettingsFile: File) {
         buildSettingsFile.writeText(
             """
                 $PLATFORM_NAME = $target
@@ -284,7 +301,6 @@ internal data class PodBuildSettings(
 
 
     companion object {
-        const val BUILD_SETTINGS_FILE_NAME: String = "build-settings.txt"
         const val BUILD_DIR: String = "BUILD_DIR"
         const val PLATFORM_NAME: String = "PLATFORM_NAME"
         const val CONFIGURATION: String = "CONFIGURATION"
@@ -293,8 +309,7 @@ internal data class PodBuildSettings(
         const val FRAMEWORK_SEARCH_PATHS: String = "FRAMEWORK_SEARCH_PATHS"
 
 
-        fun readBuildSettings(project: Project): PodBuildSettings {
-            val buildSettingsFile = project.buildDir.resolve(BUILD_SETTINGS_FILE_NAME)
+        fun fromBuildSettingsFile(buildSettingsFile: File): PodBuildSettings {
             val buildSettingsMap = buildSettingsFile.readLines()
                 .asSequence()
                 .filter { it.matches("^(.+) = (.+)$".toRegex()) }
@@ -311,6 +326,16 @@ internal data class PodBuildSettings(
             )
         }
 
+        fun fromBuildSettingsMap(buildSettingsMap: Map<String, String>): PodBuildSettings {
+            return PodBuildSettings(
+                buildSettingsMap[PLATFORM_NAME]!!,
+                buildSettingsMap[BUILD_DIR]!!,
+                buildSettingsMap[CONFIGURATION]!!,
+                buildSettingsMap[OTHER_CFLAGS],
+                buildSettingsMap[HEADER_SEARCH_PATHS],
+                buildSettingsMap[FRAMEWORK_SEARCH_PATHS]
+            )
+        }
     }
 }
 
