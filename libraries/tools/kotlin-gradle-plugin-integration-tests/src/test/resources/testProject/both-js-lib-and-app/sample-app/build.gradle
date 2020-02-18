@@ -18,7 +18,7 @@ repositories {
 }
 
 kotlin {
-    js('nodeJs', '<js-compiler-type>')
+    js('nodeJs')
 
     sourceSets {
         commonMain {

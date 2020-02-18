@@ -20,7 +20,7 @@ repositories {
 }
 
 kotlin {
-    js('nodeJs', '<js-compiler-type>')
+    js('nodeJs')
 
     targets {
         all {
