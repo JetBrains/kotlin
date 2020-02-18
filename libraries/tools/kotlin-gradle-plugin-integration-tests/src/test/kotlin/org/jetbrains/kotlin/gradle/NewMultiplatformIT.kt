@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -238,6 +239,176 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val jsCompiledFilePath = kotlinClassesDir("app-js") + "app-js.js"
                 assertFileContains(jsCompiledFilePath, "lib.expectedFun", "lib.id")
+            }
+        }
+    }
+
+    @Test
+    fun testLibAndAppJsLegacy() = doTestLibAndAppJsBothCompilers(
+        "sample-lib",
+        "sample-app",
+        JsCompilerType.legacy
+    )
+
+    @Test
+    fun testLibAndAppJsIr() = doTestLibAndAppJsBothCompilers(
+        "sample-lib",
+        "sample-app",
+        JsCompilerType.ir
+    )
+
+    @Test
+    fun testLibAndAppJsBoth() = doTestLibAndAppJsBothCompilers(
+        "sample-lib",
+        "sample-app",
+        JsCompilerType.both
+    )
+
+    @Test
+    fun testLibAndAppWithGradleKotlinDslJsLegacy() = doTestLibAndAppJsBothCompilers(
+        "sample-lib-gradle-kotlin-dsl",
+        "sample-app-gradle-kotlin-dsl",
+        JsCompilerType.legacy
+    )
+
+    @Test
+    fun testLibAndAppWithGradleKotlinDslJsIr() = doTestLibAndAppJsBothCompilers(
+        "sample-lib-gradle-kotlin-dsl",
+        "sample-app-gradle-kotlin-dsl",
+        JsCompilerType.ir
+    )
+
+    @Test
+    fun testLibAndAppWithGradleKotlinDslJsBoth() = doTestLibAndAppJsBothCompilers(
+        "sample-lib-gradle-kotlin-dsl",
+        "sample-app-gradle-kotlin-dsl",
+        JsCompilerType.both
+    )
+
+    private fun doTestLibAndAppJsBothCompilers(
+        libProjectName: String,
+        appProjectName: String,
+        jsCompilerType: JsCompilerType
+    ) {
+        val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "both-js-lib-and-app")
+        val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "both-js-lib-and-app")
+
+        val compileTasksNames =
+            listOf("NodeJs", "Metadata").map { ":compileKotlin$it" }
+
+        with(libProject) {
+            build(
+                "publish",
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
+            ) {
+                assertSuccessful()
+                assertTasksExecuted(*compileTasksNames.toTypedArray(), ":nodeJsJar", ":metadataJar")
+
+                val groupDir = projectDir.resolve("repo/com/example")
+                val jsExtension = if (jsCompilerType == JsCompilerType.legacy) "jar" else "klib"
+                val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
+                val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
+
+                listOf(jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
+                    Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
+                }
+
+                val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module").readText()
+                assertFalse(gradleMetadata.contains(ProjectLocalConfigurations.ATTRIBUTE.name))
+
+                listOf(jsJarName, metadataJarName).forEach {
+                    val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))
+                    Assert.assertTrue(
+                        "$pom should contain a name section.",
+                        pom.readText().contains("<name>Sample MPP library</name>")
+                    )
+                    Assert.assertFalse(
+                        "$pom should not contain standard K/N libraries as dependencies.",
+                        pom.readText().contains("<groupId>Kotlin/Native</groupId>")
+                    )
+                }
+
+                when (jsCompilerType) {
+                    JsCompilerType.legacy -> {
+                        val jsJar = ZipFile(groupDir.resolve(jsJarName))
+                        val compiledJs = jsJar.getInputStream(jsJar.getEntry("sample-lib.js")).reader().readText()
+                        Assert.assertTrue("function id(" in compiledJs)
+                        Assert.assertTrue("function idUsage(" in compiledJs)
+                        Assert.assertTrue("function expectedFun(" in compiledJs)
+                        Assert.assertTrue("function main(" in compiledJs)
+                    }
+                    JsCompilerType.ir -> {
+                        groupDir.resolve(jsJarName).exists()
+                    }
+                }
+
+                val metadataJarEntries = ZipFile(groupDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
+                Assert.assertTrue("com/example/lib/CommonKt.kotlin_metadata" in metadataJarEntries)
+            }
+        }
+
+        val libLocalRepoUri = libProject.projectDir.resolve("repo").toURI()
+
+        with(appProject) {
+            setupWorkingDir()
+
+            // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
+            gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
+
+            fun CompiledProject.checkAppBuild() {
+                assertSuccessful()
+                assertTasksExecuted(*compileTasksNames.toTypedArray())
+
+                projectDir.resolve(targetClassesDir("metadata")).run {
+                    Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
+                }
+
+                if (jsCompilerType == JsCompilerType.legacy) {
+                    projectDir.resolve(targetClassesDir("nodeJs")).resolve("sample-app.js").readText().run {
+                        Assert.assertTrue(contains("console.info"))
+                        Assert.assertTrue(contains("function nodeJsMain("))
+                    }
+                }
+            }
+
+            build(
+                "assemble",
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
+            ) {
+                checkAppBuild()
+            }
+
+            if (jsCompilerType == JsCompilerType.both) {
+                listOf(
+                    JsCompilerType.legacy,
+                    JsCompilerType.ir
+                ).forEach {
+                    build(
+                        "assemble",
+                        "--rerun-tasks",
+                        options = defaultBuildOptions().copy(jsCompilerType = it)
+                    ) {
+                        checkAppBuild()
+                    }
+                }
+            }
+
+            // Now run again with a project dependency instead of a module one:
+            libProject.projectDir.copyRecursively(projectDir.resolve(libProject.projectDir.name))
+            gradleSettingsScript().appendText("\ninclude(\"${libProject.projectDir.name}\")")
+            gradleBuildScript().modify { it.replace("\"com.example:sample-lib:1.0\"", "project(\":${libProject.projectDir.name}\")") }
+
+            gradleBuildScript(libProjectName).takeIf { it.extension == "kts" }?.modify {
+                it.replace(Regex("""\.version\(.*\)"""), "")
+            }
+
+            build(
+                "clean",
+                "assemble",
+                "--rerun-tasks",
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
+            ) {
+                checkAppBuild()
             }
         }
     }
