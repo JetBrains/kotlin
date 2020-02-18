@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -72,9 +73,9 @@ class MethodInliner(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
         remapReturn: Boolean,
-        returnLabelOwner: ReturnLabelOwner
+        returnLabels: Map<String, Label?>
     ): InlineResult {
-        return doInline(adapter, remapper, remapReturn, returnLabelOwner, 0)
+        return doInline(adapter, remapper, remapReturn, returnLabels, 0)
     }
 
     private fun recordTransformation(info: TransformationInfo) {
@@ -91,11 +92,11 @@ class MethodInliner(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
         remapReturn: Boolean,
-        returnLabelOwner: ReturnLabelOwner,
+        returnLabels: Map<String, Label?>,
         finallyDeepShift: Int
     ): InlineResult {
         //analyze body
-        var transformedNode = markPlacesForInlineAndRemoveInlinable(node, returnLabelOwner, finallyDeepShift)
+        var transformedNode = markPlacesForInlineAndRemoveInlinable(node, returnLabels, finallyDeepShift)
         if (inliningContext.isInliningLambda && isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) {
             //TODO maybe move reification in one place
             inliningContext.root.inlineMethodReifier.reifyInstructions(transformedNode)
@@ -139,7 +140,9 @@ class MethodInliner(
             )
         }
 
-        processReturns(resultNode, returnLabelOwner, remapReturn, end)
+        if (remapReturn) {
+            processReturns(resultNode, returnLabels, end)
+        }
         //flush transformed node to output
         resultNode.accept(SkipMaxAndEndVisitor(adapter))
         return result
@@ -297,7 +300,7 @@ class MethodInliner(
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
                     //TODO add skipped this and receiver
-                    val lambdaResult = inliner.doInline(localVariablesSorter, varRemapper, true, info, invokeCall.finallyDepthShift)
+                    val lambdaResult = inliner.doInline(localVariablesSorter, varRemapper, true, info.returnLabels, invokeCall.finallyDepthShift)
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
@@ -486,11 +489,11 @@ class MethodInliner(
     }
 
     private fun markPlacesForInlineAndRemoveInlinable(
-        node: MethodNode, returnLabelOwner: ReturnLabelOwner, finallyDeepShift: Int
+        node: MethodNode, returnLabels: Map<String, Label?>, finallyDeepShift: Int
     ): MethodNode {
         val processingNode = prepareNode(node, finallyDeepShift)
 
-        preprocessNodeBeforeInline(processingNode, returnLabelOwner)
+        preprocessNodeBeforeInline(processingNode, returnLabels)
 
         replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode)
 
@@ -765,7 +768,7 @@ class MethodInliner(
         }
     }
 
-    private fun preprocessNodeBeforeInline(node: MethodNode, returnLabelOwner: ReturnLabelOwner) {
+    private fun preprocessNodeBeforeInline(node: MethodNode, returnLabels: Map<String, Label?>) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
         } catch (e: Throwable) {
@@ -787,16 +790,13 @@ class MethodInliner(
 
             if (!isReturnOpcode(insnNode.opcode)) continue
 
-            var insertBeforeInsn = insnNode
-
             // TODO extract isLocalReturn / isNonLocalReturn, see processReturns
             val labelName = getMarkedReturnLabelOrNull(insnNode)
-            if (labelName != null) {
-                if (!returnLabelOwner.isReturnFromMe(labelName)) continue
-                insertBeforeInsn = insnNode.previous
+            if (labelName == null) {
+                localReturnsNormalizer.addLocalReturnToTransform(insnNode, insnNode, frame)
+            } else if (labelName in returnLabels) {
+                localReturnsNormalizer.addLocalReturnToTransform(insnNode, insnNode.previous, frame)
             }
-
-            localReturnsNormalizer.addLocalReturnToTransform(insnNode, insertBeforeInsn, frame)
         }
 
         localReturnsNormalizer.transform(node)
@@ -1001,7 +1001,8 @@ class MethodInliner(
     class PointForExternalFinallyBlocks(
         @JvmField val beforeIns: AbstractInsnNode,
         @JvmField val returnType: Type,
-        @JvmField val finallyIntervalEnd: LabelNode
+        @JvmField val finallyIntervalEnd: LabelNode,
+        @JvmField val jumpTarget: Label?
     )
 
     companion object {
@@ -1115,55 +1116,44 @@ class MethodInliner(
         //process local and global returns (local substituted with goto end-label global kept unchanged)
         @JvmStatic
         fun processReturns(
-            node: MethodNode, returnLabelOwner: ReturnLabelOwner, remapReturn: Boolean, endLabel: Label?
+            node: MethodNode, returnLabels: Map<String, Label?>, endLabel: Label?
         ): List<PointForExternalFinallyBlocks> {
-            if (!remapReturn) {
-                return emptyList()
-            }
             val result = ArrayList<PointForExternalFinallyBlocks>()
             val instructions = node.instructions
             var insnNode: AbstractInsnNode? = instructions.first
             while (insnNode != null) {
                 if (isReturnOpcode(insnNode.opcode)) {
-                    var isLocalReturn = true
                     val labelName = getMarkedReturnLabelOrNull(insnNode)
+                    val returnType = getReturnType(insnNode.opcode)
 
-                    if (labelName != null) {
-                        isLocalReturn = returnLabelOwner.isReturnFromMe(labelName)
-                        //remove global return flag
-                        if (isLocalReturn) {
-                            instructions.remove(insnNode.previous)
-                        }
+                    val isLocalReturn = labelName == null || labelName in returnLabels
+                    val jumpTarget = returnLabels[labelName] ?: endLabel
+
+                    if (isLocalReturn && labelName != null) {
+                        // remove non-local return flag
+                        instructions.remove(insnNode.previous)
                     }
 
-                    if (isLocalReturn && endLabel != null) {
-                        val nop = InsnNode(Opcodes.NOP)
-                        instructions.insert(insnNode, nop)
-
-                        val labelNode = endLabel.info as LabelNode
-                        val jumpInsnNode = JumpInsnNode(Opcodes.GOTO, labelNode)
-                        instructions.insert(nop, jumpInsnNode)
-
+                    if (isLocalReturn && jumpTarget != null) {
+                        val jumpInsnNode = JumpInsnNode(Opcodes.GOTO, jumpTarget.info as LabelNode)
+                        instructions.insertBefore(insnNode, InsnNode(Opcodes.NOP))
+                        if (jumpTarget != endLabel) {
+                            instructions.insertBefore(insnNode, PseudoInsn.FIX_STACK_BEFORE_JUMP.createInsnNode())
+                        }
+                        instructions.insertBefore(insnNode, jumpInsnNode)
                         instructions.remove(insnNode)
                         insnNode = jumpInsnNode
                     }
 
-                    //generate finally block before nonLocalReturn flag/return/goto
                     val label = LabelNode()
                     instructions.insert(insnNode, label)
-                    result.add(
-                        PointForExternalFinallyBlocks(
-                            getInstructionToInsertFinallyBefore(insnNode, isLocalReturn), getReturnType(insnNode.opcode), label
-                        )
-                    )
+                    // generate finally blocks before the non-local return flag or the stack fixup pseudo instruction
+                    val finallyInsertionPoint = if (isLocalReturn && jumpTarget == endLabel) insnNode else insnNode.previous
+                    result.add(PointForExternalFinallyBlocks(finallyInsertionPoint, returnType, label, jumpTarget))
                 }
                 insnNode = insnNode.next
             }
             return result
-        }
-
-        private fun getInstructionToInsertFinallyBefore(nonLocalReturnOrJump: AbstractInsnNode, isLocal: Boolean): AbstractInsnNode {
-            return if (isLocal) nonLocalReturnOrJump else nonLocalReturnOrJump.previous
         }
     }
 }

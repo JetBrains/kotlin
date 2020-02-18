@@ -80,7 +80,7 @@ class TryWithFinallyInfo(val onExit: IrExpression) : TryInfo()
 
 class BlockInfo(val parent: BlockInfo? = null) {
     val variables = mutableListOf<VariableInfo>()
-    private val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
+    val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
 
     fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryWithFinallyInfo>() != null
 
@@ -869,42 +869,39 @@ class ExpressionCodegen(
         return unitValue
     }
 
+    private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
+        if (state.isInlineDisabled) {
+            context.psiErrorBuilder.at(expression, irFunction).report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
+            genThrow(mv, "java/lang/UnsupportedOperationException", "Non-local returns are not allowed with inlining disabled")
+        } else {
+            generateGlobalReturnFlag(mv, label)
+        }
+    }
+
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
         val returnTarget = expression.returnTargetSymbol.owner
-        val owner =
-            returnTarget as? IrFunction
-                ?: (returnTarget as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
-                ?: error("Unsupported IrReturnTarget: $returnTarget")
-        //TODO: should be owner != irFunction
-        val isNonLocalReturn =
-            methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
-        if (isNonLocalReturn && state.isInlineDisabled) {
-            context.psiErrorBuilder.at(expression, owner).report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
-            genThrow(
-                mv, "java/lang/UnsupportedOperationException",
-                "Non-local returns are not allowed with inlining disabled"
-            )
-            return unitValue
-        }
+        val owner = returnTarget as? IrFunction ?: error("Unsupported IrReturnTarget: $returnTarget")
+        // TODO: should be owner != irFunction
+        val isNonLocalReturn = methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
 
         var returnType = if (owner == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(owner)
         var returnIrType = owner.returnType
-
         val unboxedInlineClass = owner.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
         if (unboxedInlineClass != null) {
             returnIrType = unboxedInlineClass
             returnType = unboxedInlineClass.asmType
         }
+
         val afterReturnLabel = Label()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         // In case of non-local return from suspend lambda 'materializeAt' does not box return value, box it manually.
         if (isNonLocalReturn && owner.isInvokeSuspendOfLambda() && expression.value.type.isKotlinResult()) {
             StackValue.boxInlineClass(expression.value.type.toIrBasedKotlinType(), mv)
         }
-        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
+        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, null)
         expression.markLineNumber(startOffset = true)
         if (isNonLocalReturn) {
-            generateGlobalReturnFlag(mv, owner.name.asString())
+            generateGlobalReturnFlagIfPossible(expression, owner.name.asString())
         }
         mv.areturn(returnType)
         mv.mark(afterReturnLabel)
@@ -1012,9 +1009,15 @@ class ExpressionCodegen(
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): PromisedValue {
-        val continueLabel = markNewLabel()
-        val endLabel = Label()
-        // Mark stack depth for break
+        // Spill the stack in case the loop contains inline functions that break/continue
+        // out of it. (The case where a loop is entered with a non-empty stack is rare, but
+        // possible; basically, you need to either use `Array(n) { ... }` or put a `when`
+        // containing a loop as an argument to a function call.)
+        addInlineMarker(mv, true)
+        val continueLabel = markNewLinkedLabel()
+        val endLabel = linkedLabel()
+        // Mark the label as having 0 stack depth, so that `break`/`continue` inside
+        // expressions pop all elements off it before jumping.
         mv.fakeAlwaysFalseIfeq(endLabel)
         loop.condition.markLineNumber(true)
         loop.condition.accept(this, data).coerceToBoolean().jumpIfFalse(endLabel)
@@ -1023,14 +1026,16 @@ class ExpressionCodegen(
         }
         mv.goTo(continueLabel)
         mv.mark(endLabel)
+        addInlineMarker(mv, false)
         return unitValue
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): PromisedValue {
+        // See comments in `visitWhileLoop`
+        addInlineMarker(mv, true)
         val entry = markNewLabel()
-        val endLabel = Label()
-        val continueLabel = Label()
-        // Mark stack depth for break/continue
+        val endLabel = linkedLabel()
+        val continueLabel = linkedLabel()
         mv.fakeAlwaysFalseIfeq(continueLabel)
         mv.fakeAlwaysFalseIfeq(endLabel)
         data.withBlock(LoopInfo(loop, continueLabel, endLabel)) {
@@ -1040,6 +1045,7 @@ class ExpressionCodegen(
         loop.condition.markLineNumber(true)
         loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
         mv.mark(endLabel)
+        addInlineMarker(mv, false)
         return unitValue
     }
 
@@ -1047,26 +1053,32 @@ class ExpressionCodegen(
         endLabel: Label,
         data: BlockInfo,
         nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf(),
-        stop: (ExpressionInfo) -> Boolean = { false }
-    ): ExpressionInfo? {
+        stop: (LoopInfo) -> Boolean
+    ): LoopInfo? {
         return data.handleBlock {
-            if (it is TryWithFinallyInfo) {
-                genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)
-                nestedTryWithoutFinally.clear()
-            } else if (it is TryInfo) {
-                nestedTryWithoutFinally.add(it)
+            when {
+                it is TryWithFinallyInfo -> {
+                    genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)
+                    nestedTryWithoutFinally.clear()
+                }
+                it is TryInfo -> nestedTryWithoutFinally.add(it)
+                it is LoopInfo && stop(it) -> return it
             }
-            return if (stop(it)) it else unwindBlockStack(endLabel, data, nestedTryWithoutFinally, stop)
+            return unwindBlockStack(endLabel, data, nestedTryWithoutFinally, stop)
         }
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): PromisedValue {
         jump.markLineNumber(startOffset = true)
         val endLabel = Label()
-        val stackElement = unwindBlockStack(endLabel, data) { it is LoopInfo && it.loop == jump.loop } as LoopInfo?
-            ?: throw AssertionError("Target label for break/continue not found")
-        mv.fixStackAndJump(if (jump is IrBreak) stackElement.breakLabel else stackElement.continueLabel)
-        mv.mark(endLabel)
+        val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
+        if (stackElement == null) {
+            generateGlobalReturnFlagIfPossible(jump, jump.loop.nonLocalReturnLabel(jump is IrBreak))
+            mv.areturn(Type.VOID_TYPE)
+        } else {
+            mv.fixStackAndJump(if (jump is IrBreak) stackElement.breakLabel else stackElement.continueLabel)
+            mv.mark(endLabel)
+        }
         return unitValue
     }
 
@@ -1214,16 +1226,16 @@ class ExpressionCodegen(
         }
     }
 
-    fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo) {
+    fun generateFinallyBlocksIfNeeded(returnType: Type, afterReturnLabel: Label, data: BlockInfo, jumpLabel: Label?) {
         if (data.hasFinallyBlocks()) {
             if (Type.VOID_TYPE != returnType) {
                 val returnValIndex = frameMap.enterTemp(returnType)
                 mv.store(returnValIndex, returnType)
-                unwindBlockStack(afterReturnLabel, data)
+                unwindBlockStack(afterReturnLabel, data) { it.breakLabel == jumpLabel || it.continueLabel == jumpLabel }
                 mv.load(returnValIndex, returnType)
                 frameMap.leaveTemp(returnType)
             } else {
-                unwindBlockStack(afterReturnLabel, data)
+                unwindBlockStack(afterReturnLabel, data) { it.breakLabel == jumpLabel || it.continueLabel == jumpLabel }
             }
         }
     }

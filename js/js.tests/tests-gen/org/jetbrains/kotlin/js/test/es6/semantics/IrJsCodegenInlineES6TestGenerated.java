@@ -2170,6 +2170,46 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/explicitLocalReturn.kt");
         }
 
+        @TestMetadata("fromArrayGenerator.kt")
+        public void testFromArrayGenerator() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGenerator.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorCatch.kt")
+        public void testFromArrayGeneratorCatch() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorCatch.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorNested.kt")
+        public void testFromArrayGeneratorNested() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorNested.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorWithCapture.kt")
+        public void testFromArrayGeneratorWithCapture() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithCapture.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorWithCatch.kt")
+        public void testFromArrayGeneratorWithCatch() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithCatch.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorWithFinally.kt")
+        public void testFromArrayGeneratorWithFinally() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithFinally.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorWithFinallyX2.kt")
+        public void testFromArrayGeneratorWithFinallyX2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithFinallyX2.kt");
+        }
+
+        @TestMetadata("fromArrayGeneratorWithFinallyX2_2.kt")
+        public void testFromArrayGeneratorWithFinallyX2_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromArrayGeneratorWithFinallyX2_2.kt");
+        }
+
         @TestMetadata("fromInterfaceDefaultGetter.kt")
         public void testFromInterfaceDefaultGetter() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromInterfaceDefaultGetter.kt");
