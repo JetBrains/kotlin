@@ -36,7 +36,6 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
     myBaseIndex = baseIndex;
   }
 
-
   @NotNull
   public FileContentHashIndex getHashIndex() {
     return myHashIndex;
@@ -45,19 +44,29 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   @NotNull
   @Override
   public Computable<Boolean> update(int inputId, @Nullable FileContent content) {
+    Computable<Boolean> sharedIndexUpdate;
+    Computable<Boolean> baseIndexUpdate;
+
     if (content != null) {
       long hashId = FileContentHashIndexExtension.getHashId(content);
       if (hashId != FileContentHashIndexExtension.NULL_HASH_ID &&
           mySharedIndexChunkConfiguration.getChunk(myId, FileContentHashIndexExtension.getIndexId(hashId)) != null) {
-        return () -> Boolean.TRUE;
+        sharedIndexUpdate = () -> Boolean.TRUE;
+        baseIndexUpdate = myBaseIndex.update(inputId, null);
+      } else {
+        sharedIndexUpdate = myHashIndex.update(inputId, content);
+        baseIndexUpdate = ((FileContentHashIndex.HashIndexUpdateComputable)sharedIndexUpdate).isEmptyInput()
+                          ? myBaseIndex.update(inputId, content)
+                          : myBaseIndex.update(inputId, null);
       }
-      //TODO if content == null
-      Computable<Boolean> update = myHashIndex.update(inputId, content);
-      if (!((FileContentHashIndex.HashIndexUpdateComputable)update).isEmptyInput()) return update;
     }
-    return myBaseIndex.update(inputId, content);
-  }
+    else {
+      sharedIndexUpdate = myHashIndex.update(inputId, null);
+      baseIndexUpdate = myBaseIndex.update(inputId, null);
+    }
 
+    return combine(sharedIndexUpdate, baseIndexUpdate);
+  }
 
   @Override
   public void updateWithMap(@NotNull AbstractUpdateData<Key, Value> updateData) throws StorageException {
@@ -186,5 +195,13 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   @Override
   public void flush() throws StorageException {
     myBaseIndex.flush();
+  }
+
+  private static Computable<Boolean> combine(Computable<Boolean> c1, Computable<Boolean> c2) {
+    return () -> {
+      Boolean res1 = c1.get();
+      Boolean val2 = c2.get();
+      return res1 == Boolean.TRUE && val2 == Boolean.TRUE ? Boolean.TRUE : Boolean.FALSE;
+    };
   }
 }
