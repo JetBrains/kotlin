@@ -9,9 +9,11 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
@@ -33,6 +35,9 @@ constructor(
     KotlinJsSubTargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
+
+    val disambiguationClassifierInPlatform: String?
+        get() = disambiguationClassifier?.removeJsCompilerSuffix(JsCompilerType.ir)
 
     var producingType: KotlinJsProducingType? = null
 

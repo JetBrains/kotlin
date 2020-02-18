@@ -40,6 +40,9 @@ constructor(
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
+    val disambiguationClassifierInPlatform: String?
+        get() = disambiguationClassifier?.removeJsCompilerSuffix(JsCompilerType.legacy)
+
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (irTarget == null)
             super.kotlinComponents
