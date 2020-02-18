@@ -307,10 +307,29 @@ class CoroutineCodegenForLambda private constructor(
         val createArgumentTypes =
             if (generateErasedCreate || doNotGenerateInvokeBridge) typeMapper.mapAsmMethod(createCoroutineDescriptor).argumentTypes.asList()
             else parameterTypes
-        var index = 0
-        parameterTypes.withVariableIndices().forEach { (varIndex, type) ->
-            load(varIndex + 1, type)
-            StackValue.coerce(type, createArgumentTypes[index++], this)
+        // invoke is not big arity, but create is. Pass an array to create.
+        if (parameterTypes.size == 22 && createArgumentTypes.size == 1) {
+            iconst(22)
+            newarray(AsmTypes.OBJECT_TYPE)
+            // 0 - this
+            // 1..22 - parameters
+            // 23 - first empy slot
+            val arraySlot = 23
+            store(arraySlot, AsmTypes.OBJECT_TYPE)
+            for ((varIndex, type) in parameterTypes.withVariableIndices()) {
+                load(arraySlot, AsmTypes.OBJECT_TYPE)
+                iconst(varIndex)
+                load(varIndex + 1, type)
+                StackValue.coerce(type, AsmTypes.OBJECT_TYPE, this)
+                astore(AsmTypes.OBJECT_TYPE)
+            }
+            load(arraySlot, AsmTypes.OBJECT_TYPE)
+        } else {
+            var index = 0
+            parameterTypes.withVariableIndices().forEach { (varIndex, type) ->
+                load(varIndex + 1, type)
+                StackValue.coerce(type, createArgumentTypes[index++], this)
+            }
         }
 
         // this.create(..)
