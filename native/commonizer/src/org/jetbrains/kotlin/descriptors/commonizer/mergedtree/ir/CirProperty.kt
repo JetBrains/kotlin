@@ -104,7 +104,8 @@ data class CirGetter private constructor(
     }
 }
 
-data class CirSetter(
+@Suppress("DataClassPrivateConstructor")
+data class CirSetter private constructor(
     override val annotations: List<CirAnnotation>,
     val parameterAnnotations: List<CirAnnotation>,
     override val visibility: Visibility,
@@ -113,22 +114,28 @@ data class CirSetter(
     override val isInline: Boolean
 ) : CirPropertyAccessor, CirDeclarationWithVisibility {
     companion object {
-        fun createDefaultNoAnnotations(visibility: Visibility) = CirSetter(
-            emptyList(),
-            emptyList(),
-            visibility,
-            isDefault = visibility == Visibilities.PUBLIC,
-            isExternal = false,
-            isInline = false
+        private val interner = NonThreadSafeInterner<CirSetter>()
+
+        fun createDefaultNoAnnotations(visibility: Visibility) = interner.intern(
+            CirSetter(
+                annotations = emptyList(),
+                parameterAnnotations = emptyList(),
+                visibility = visibility,
+                isDefault = visibility == Visibilities.PUBLIC,
+                isExternal = false,
+                isInline = false
+            )
         )
 
-        fun PropertySetterDescriptor.toSetter() = CirSetter(
-            annotations.map(CirAnnotation.Companion::create),
-            valueParameters.single().annotations.map(CirAnnotation.Companion::create),
-            visibility,
-            isDefault,
-            isExternal,
-            isInline
+        fun PropertySetterDescriptor.toSetter() = interner.intern(
+            CirSetter(
+                annotations = annotations.map(CirAnnotation.Companion::create),
+                parameterAnnotations = valueParameters.single().annotations.map(CirAnnotation.Companion::create),
+                visibility = visibility,
+                isDefault = isDefault,
+                isExternal = isExternal,
+                isInline = isInline
+            )
         )
     }
 }
