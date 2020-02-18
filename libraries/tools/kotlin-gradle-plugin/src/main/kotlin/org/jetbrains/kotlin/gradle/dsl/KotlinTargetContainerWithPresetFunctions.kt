@@ -49,7 +49,7 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun js(
         name: String = "js",
         configure: KotlinJsTargetDsl.() -> Unit = { }
-    ) = js(name = "js", compiler = defaultJsCompilerType, configure = configure)
+    ) = js(name = name, compiler = defaultJsCompilerType, configure = configure)
 
     fun js(
         compiler: JsCompilerType,
