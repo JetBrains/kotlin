@@ -9,10 +9,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -35,12 +34,37 @@ open class KotlinJsCompilation(
         packageJsonHandlers.add(handler)
     }
 
-    override val defaultSourceSetName: String
-        get() = lowerCamelCaseName(
-            (target as KotlinJsTarget).irTarget?.let {
-                target.disambiguationClassifier
-                    ?.removeJsCompilerSuffix(JsCompilerType.legacy)
-            } ?: target.disambiguationClassifier,
-            compilationName
+    override val apiConfigurationName: String
+        get() = disambiguateNameInPlatform("api")
+
+    override val implementationConfigurationName: String
+        get() = disambiguateNameInPlatform("implementation")
+
+    override val compileOnlyConfigurationName: String
+        get() = disambiguateNameInPlatform("compileOnly")
+
+    override val runtimeOnlyConfigurationName: String
+        get() = disambiguateNameInPlatform("runtimeOnly")
+
+    protected open val disambiguationClassifierInPlatform: String?
+        get() = (target as KotlinJsTarget).disambiguationClassifierInPlatform
+
+    private fun disambiguateNameInPlatform(simpleName: String): String {
+        return lowerCamelCaseName(
+            disambiguationClassifierInPlatform,
+            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            simpleName
         )
+    }
+
+    override val defaultSourceSetName: String
+        get() {
+            val target = target as KotlinJsTarget
+            return lowerCamelCaseName(
+                target.irTarget?.let {
+                    target.disambiguationClassifierInPlatform
+                } ?: target.disambiguationClassifier,
+                compilationName
+            )
+        }
 }
