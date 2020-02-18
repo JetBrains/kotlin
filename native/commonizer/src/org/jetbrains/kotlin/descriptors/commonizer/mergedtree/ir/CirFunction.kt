@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.NonThreadSafeInterner
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
@@ -46,7 +47,7 @@ class CirFunctionImpl(original: SimpleFunctionDescriptor) : CirFunctionOrPropert
     override val isInline = original.isInline
     override val isTailrec = original.isTailrec
     override val isSuspend = original.isSuspend
-    override val valueParameters = original.valueParameters.map(::CirValueParameterImpl)
+    override val valueParameters = original.valueParameters.map(CirValueParameterImpl.Companion::create)
     override val hasStableParameterNames = original.hasStableParameterNames()
     override val hasSynthesizedParameterNames = original.hasSynthesizedParameterNames()
 }
@@ -72,7 +73,7 @@ data class CirCommonValueParameter(
     override val declaresDefaultValue get() = false
 }
 
-class CirValueParameterImpl(original: ValueParameterDescriptor) : CirValueParameter {
+class CirValueParameterImpl private constructor(original: ValueParameterDescriptor) : CirValueParameter {
     override val name = original.name.intern()
     override val annotations = original.annotations.map(CirAnnotation.Companion::create)
     override val returnType = CirType.create(original.returnType!!)
@@ -80,4 +81,45 @@ class CirValueParameterImpl(original: ValueParameterDescriptor) : CirValueParame
     override val declaresDefaultValue = original.declaresDefaultValue()
     override val isCrossinline = original.isCrossinline
     override val isNoinline = original.isNoinline
+
+    // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
+    private var cachedHashCode = 0
+
+    private fun computeHashCode(): Int {
+        var result = name.hashCode()
+        result += 31 * result + annotations.hashCode()
+        result += 31 * result + returnType.hashCode()
+        result += 31 * result + varargElementType.hashCode()
+        result += 31 * result + declaresDefaultValue.hashCode()
+        result += 31 * result + isCrossinline.hashCode()
+        result += 31 * result + isNoinline.hashCode()
+        return result
+    }
+
+    override fun hashCode(): Int {
+        var currentHashCode = cachedHashCode
+        if (currentHashCode != 0) return currentHashCode
+
+        currentHashCode = computeHashCode()
+        cachedHashCode = currentHashCode
+        return currentHashCode
+    }
+
+    override fun equals(other: Any?): Boolean =
+        if (other is CirValueParameterImpl) {
+            name == other.name
+                    && returnType == other.returnType
+                    && annotations == other.annotations
+                    && varargElementType == other.varargElementType
+                    && declaresDefaultValue == other.declaresDefaultValue
+                    && isCrossinline == other.isCrossinline
+                    && isNoinline == other.isNoinline
+        } else
+            false
+
+    companion object {
+        private val interner = NonThreadSafeInterner<CirValueParameterImpl>()
+
+        fun create(original: ValueParameterDescriptor): CirValueParameterImpl = interner.intern(CirValueParameterImpl(original))
+    }
 }

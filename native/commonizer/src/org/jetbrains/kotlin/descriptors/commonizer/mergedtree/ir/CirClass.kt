@@ -90,7 +90,7 @@ class CirClassConstructorImpl(original: ClassConstructorDescriptor) : CirClassCo
         // save only type parameters that are contributed by the constructor itself
         typeParameter.takeIf { it.containingDeclaration == original }?.let(::CirTypeParameterImpl)
     }
-    override val valueParameters = original.valueParameters.map(::CirValueParameterImpl)
+    override val valueParameters = original.valueParameters.map(CirValueParameterImpl.Companion::create)
     override val hasStableParameterNames = original.hasStableParameterNames()
     override val hasSynthesizedParameterNames = original.hasSynthesizedParameterNames()
 }
