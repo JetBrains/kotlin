@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.configureDefaultVersionsResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
@@ -35,6 +36,7 @@ open class KotlinJsPlugin(
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion)
             legacyPreset = KotlinJsSingleTargetPreset(project, kotlinPluginVersion)
+            defaultCompilerType = PropertiesProvider(project).jsCompiler
         }
 
         // Explicitly create configurations for main and test
