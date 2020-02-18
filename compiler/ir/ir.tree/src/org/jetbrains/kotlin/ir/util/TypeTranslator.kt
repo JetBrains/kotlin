@@ -135,7 +135,7 @@ class TypeTranslator(
 
 
         private fun approximateByKotlinRules(ktType: KotlinType): KotlinType {
-            if (ktType.constructor.isDenotable) return ktType
+            if (ktType.constructor.isDenotable && ktType.arguments.isEmpty()) return ktType
 
             return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
                 typeApproximatorForNI.approximateDeclarationType(

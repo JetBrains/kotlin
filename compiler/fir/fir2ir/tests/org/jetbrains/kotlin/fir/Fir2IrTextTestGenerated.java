@@ -1822,6 +1822,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("approximationOfInvariatOutProjectedTypes.kt")
+        public void testApproximationOfInvariatOutProjectedTypes() throws Exception {
+            runTest("compiler/testData/ir/irText/types/approximationOfInvariatOutProjectedTypes.kt");
+        }
+
         @TestMetadata("asOnPlatformType.kt")
         public void testAsOnPlatformType() throws Exception {
             runTest("compiler/testData/ir/irText/types/asOnPlatformType.kt");
