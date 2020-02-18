@@ -103,7 +103,7 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         expressionTypeWithSmartCast: KotlinType,
         c: ResolutionContext<*>
     ) {
-        if (TypeUtils.noExpectedType(c.expectedType)) return
+        if (TypeUtils.noExpectedType(c.expectedType) || c.expectedType is StubType) return
 
         val assertionInfo = RuntimeAssertionInfo.create(
             c.expectedType,
