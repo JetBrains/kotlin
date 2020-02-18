@@ -1,7 +1,7 @@
- /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+/*
+* Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+* Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+*/
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettin
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -179,16 +178,16 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override lateinit var compileDependencyFiles: FileCollection
 
     override val apiConfigurationName: String
-        get() = disambiguateName("api")
+        get() = disambiguateName(API)
 
     override val implementationConfigurationName: String
-        get() = disambiguateName("implementation")
+        get() = disambiguateName(IMPLEMENTATION)
 
     override val compileOnlyConfigurationName: String
-        get() = disambiguateName("compileOnly")
+        get() = disambiguateName(COMPILE_ONLY)
 
     override val runtimeOnlyConfigurationName: String
-        get() = disambiguateName("runtimeOnly")
+        get() = disambiguateName(RUNTIME_ONLY)
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         DefaultKotlinDependencyHandler(this, target.project).run(configure)
@@ -242,24 +241,24 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = Collections.unmodifiableList(_associateWith.toList())
 }
 
- internal val KotlinCompilation<*>.ownModuleName: String
-     get() {
-         val project = target.project
-         val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
-             ?: project.name
-         val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
-         return filterModuleName("$baseName$suffix")
-     }
+internal val KotlinCompilation<*>.ownModuleName: String
+    get() {
+        val project = target.project
+        val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+            ?: project.name
+        val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
+        return filterModuleName("$baseName$suffix")
+    }
 
- internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
-     get() = mutableSetOf<KotlinCompilation<*>>().apply {
-         fun visit(other: KotlinCompilation<*>) {
-             if (add(other)) {
-                 other.associateWith.forEach(::visit)
-             }
-         }
-         associateWith.forEach(::visit)
-     }
+internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
+    get() = mutableSetOf<KotlinCompilation<*>>().apply {
+        fun visit(other: KotlinCompilation<*>) {
+            if (add(other)) {
+                other.associateWith.forEach(::visit)
+            }
+        }
+        associateWith.forEach(::visit)
+    }
 
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
     target: KotlinTarget,
@@ -283,7 +282,7 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
     )
 }
 
- private typealias CompilationsBySourceSet = Map<KotlinSourceSet, Set<KotlinCompilation<*>>>
+private typealias CompilationsBySourceSet = Map<KotlinSourceSet, Set<KotlinCompilation<*>>>
 
 internal object CompilationSourceSetUtil {
     private const val EXT_NAME = "kotlin.compilations.bySourceSets"

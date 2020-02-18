@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 
 open class KotlinJsCompilation(
     target: KotlinTarget,
@@ -35,16 +35,16 @@ open class KotlinJsCompilation(
     }
 
     override val apiConfigurationName: String
-        get() = disambiguateNameInPlatform("api")
+        get() = disambiguateNameInPlatform(API)
 
     override val implementationConfigurationName: String
-        get() = disambiguateNameInPlatform("implementation")
+        get() = disambiguateNameInPlatform(IMPLEMENTATION)
 
     override val compileOnlyConfigurationName: String
-        get() = disambiguateNameInPlatform("compileOnly")
+        get() = disambiguateNameInPlatform(COMPILE_ONLY)
 
     override val runtimeOnlyConfigurationName: String
-        get() = disambiguateNameInPlatform("runtimeOnly")
+        get() = disambiguateNameInPlatform(RUNTIME_ONLY)
 
     protected open val disambiguationClassifierInPlatform: String?
         get() = (target as KotlinJsTarget).disambiguationClassifierInPlatform

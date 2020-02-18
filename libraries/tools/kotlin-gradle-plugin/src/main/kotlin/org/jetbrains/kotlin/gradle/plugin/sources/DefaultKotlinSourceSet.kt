@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
@@ -34,16 +34,16 @@ class DefaultKotlinSourceSet(
 ) : KotlinSourceSet {
 
     override val apiConfigurationName: String
-        get() = disambiguateName("api")
+        get() = disambiguateName(API)
 
     override val implementationConfigurationName: String
-        get() = disambiguateName("implementation")
+        get() = disambiguateName(IMPLEMENTATION)
 
     override val compileOnlyConfigurationName: String
-        get() = disambiguateName("compileOnly")
+        get() = disambiguateName(COMPILE_ONLY)
 
     override val runtimeOnlyConfigurationName: String
-        get() = disambiguateName("runtimeOnly")
+        get() = disambiguateName(RUNTIME_ONLY)
 
     override val apiMetadataConfigurationName: String
         get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
