@@ -420,6 +420,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
             returnType = irConstructor.returnType
         }.apply {
+            // Don't create a default argument stub for the primary constructor
+            irConstructor.valueParameters.forEach { it.defaultValue = null }
             copyParameterDeclarationsFrom(irConstructor)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
@@ -434,6 +436,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         // Add a static bridge method to the primary constructor.
         // This is a placeholder for null-checks and default arguments.
         val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
+        function.valueParameters.forEach { it.transformChildrenVoid() }
         with(context.createIrBuilder(function.symbol)) {
             val argument = function.valueParameters[0]
             function.body = irExprBody(
