@@ -42,7 +42,7 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
       }
 
       MyInfo info = new MyInfo(element, color, provider);
-      NavigateAction.setNavigateAction(info, "Choose color", null);
+      NavigateAction.setNavigateAction(info, "Choose color", null, AllIcons.Actions.Colors);
       return info;
     });
   }
