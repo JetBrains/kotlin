@@ -25,7 +25,7 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle
 import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
@@ -36,7 +36,9 @@ import javax.swing.JComponent
 
 class KotlinFieldBreakpointType :
     JavaBreakpointType<KotlinPropertyBreakpointProperties>,
-    XLineBreakpointType<KotlinPropertyBreakpointProperties>("kotlin-field", KotlinBundle.message("debugger.field.watchpoints.tab.title")),
+    XLineBreakpointType<KotlinPropertyBreakpointProperties>(
+        "kotlin-field", KotlinDebuggerCoreBundle.message("field.watchpoint.tab.title")
+    ),
     KotlinBreakpointType {
     override fun createJavaBreakpoint(
         project: Project,

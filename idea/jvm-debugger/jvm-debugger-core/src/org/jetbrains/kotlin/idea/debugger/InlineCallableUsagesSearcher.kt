@@ -41,7 +41,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
             return ComputedClassNames.EMPTY
         } else {
             val searchResult = hashSetOf<PsiElement>()
-            val declarationName = runReadAction { declaration.name }
+            val declarationName = runReadAction { declaration.name ?: "<error>" }
 
             val task = Runnable {
                 for (reference in ReferencesSearch.search(declaration, getScopeForInlineDeclarationUsages(declaration))) {
@@ -54,7 +54,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
             if (applicationEx.isDispatchThread) {
                 isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(
                     task,
-                    "Compute class names for declaration $declarationName",
+                    KotlinDebuggerCoreBundle.message("find.inline.calls.task.compute.names", declarationName),
                     true,
                     myDebugProcess.project
                 )
@@ -68,7 +68,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
 
             if (!isSuccess) {
                 XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(
-                    "Debugger can skip some executions of $declarationName because the computation of class names was interrupted",
+                    KotlinDebuggerCoreBundle.message("find.inline.calls.task.cancelled", declarationName),
                     MessageType.WARNING
                 ).notify(myDebugProcess.project)
             }
