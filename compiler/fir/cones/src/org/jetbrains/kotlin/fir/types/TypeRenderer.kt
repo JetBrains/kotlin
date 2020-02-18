@@ -15,7 +15,7 @@ fun ConeKotlinType.render(): String {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()}!!"
         is ConeClassErrorType -> "ERROR CLASS: $reason"
-        is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"
+        is ConeCapturedType -> "CapturedType(${constructor.projection.render()})"
         is ConeClassLikeType -> {
             buildString {
                 append(lookupTag.classId.asString())
@@ -45,7 +45,7 @@ fun ConeKotlinType.render(): String {
                 postfix = ")"
             )
         }
-        is ConeStubType -> "stub type: $variable"
+        is ConeStubType -> "Stub: $variable"
         is ConeIntegerLiteralType -> "ILT: $value"
     } + nullabilitySuffix
 }
