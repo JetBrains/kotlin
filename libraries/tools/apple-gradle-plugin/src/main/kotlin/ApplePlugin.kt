@@ -1,4 +1,3 @@
-
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -39,8 +38,10 @@ private class AppleSourceSetFactory(private val project: Project) : NamedDomainO
 }
 
 @Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
-private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override val name: String,
-                                    objects: ObjectFactory) : Named, AppleSourceSet {
+private class DefaultAppleSourceSet(
+    @Suppress("ACCIDENTAL_OVERRIDE") override val name: String,
+    objects: ObjectFactory
+) : Named, AppleSourceSet {
     override val apple: SourceDirectorySet = objects.sourceDirectorySet("$name Apple source", name)
 }
 
@@ -115,7 +116,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
             }
             plist += map
 
-            val file = baseDir.resolve(name + ".plist")
+            val file = baseDir.resolve("$name.plist")
             XMLPlistDriver().write(plist, file)
             return file
         }
@@ -125,7 +126,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
             target.mainStoryboard?.let { plist["UIMainStoryboardFile"] = it }
         }
         val infoPlistFile = writePlist("Info-${target.name}", targetPlist)
-        val testInfoPlistFile = writePlist("Info-${target.name}Tests", emptyMap<String, Any>())
+        val testInfoPlistFile = writePlist("Info-${target.name}Tests", emptyMap())
 
         val vBaseDir = StandardFileSystems.local().refreshAndFindFileByPath(baseDir.path)!!
         val vProjectFile =
@@ -380,16 +381,18 @@ private open class AppleExportIPATask @Inject constructor(
 }
 
 private open class AppleTargetFactory @Inject constructor(
-        private val project: Project,
-        private val objects: ObjectFactory
+    private val project: Project,
+    private val objects: ObjectFactory
 ) : NamedDomainObjectFactory<AppleTarget> {
     override fun create(name: String): AppleTarget = objects.newInstance(DefaultAppleTarget::class.java, project, name)
 }
 
 @Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
-private open class DefaultAppleTarget @Inject constructor(project: Project,
-                                                          @Suppress("ACCIDENTAL_OVERRIDE") final override val name: String,
-                                                          configurations: ConfigurationContainer) : Named, AppleTarget {
+private open class DefaultAppleTarget @Inject constructor(
+    project: Project,
+    @Suppress("ACCIDENTAL_OVERRIDE") final override val name: String,
+    configurations: ConfigurationContainer
+) : Named, AppleTarget {
     override val configuration: Configuration by configurations.register(Names.of(name).withSuffix("implementation"))
     override val sourceSet: AppleSourceSet by project.apple.sourceSets.register("${name}Main") {
         apple.outputDir = project.buildDir.resolve("bin/$name")
@@ -438,15 +441,15 @@ private open class DefaultAppleTarget @Inject constructor(project: Project,
 
 private open class AppleProjectExtensionImpl(project: Project, val intellijProject: com.intellij.openapi.project.Project?) : AppleProjectExtension {
     override val targets: NamedDomainObjectContainer<AppleTarget> =
-            project.container(AppleTarget::class.java, project.objects.newInstance(AppleTargetFactory::class.java, project))
+        project.container(AppleTarget::class.java, project.objects.newInstance(AppleTargetFactory::class.java, project))
 
     override val sourceSets: NamedDomainObjectContainer<AppleSourceSet> =
-            project.container(AppleSourceSet::class.java, AppleSourceSetFactory(project))
+        project.container(AppleSourceSet::class.java, AppleSourceSetFactory(project))
 
     override fun iosApp(configure: AppleTarget.() -> Unit): AppleTarget = iosApp("iosApp", configure)
 
     override fun iosApp(name: String, configure: AppleTarget.() -> Unit): AppleTarget =
-            targets.maybeCreate(name).apply { configure() }
+        targets.maybeCreate(name).apply { configure() }
 }
 
 open class ApplePlugin @Inject constructor(private val execActionFactory: ExecActionFactory) : Plugin<Project>, Disposable {
