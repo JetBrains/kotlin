@@ -463,12 +463,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
 
     private fun IrValueParameter.copyWithTypeErasure(target: IrSimpleFunction, forceBoxing: Boolean = false): IrValueParameter = copyTo(
         target, IrDeclarationOrigin.BRIDGE,
-        type =
-        // SuspendFunction{N} is Function{N+1} at runtime, thus, when we generate a bridge for suspend callable references,
-        // we need to replace the type of its continuation parameter with Any?
-        if (target.isSuspend && type.eraseTypeParameters().getClass()
-                ?.fqNameWhenAvailable == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
-        ) context.irBuiltIns.anyNType else type.eraseTypeParameters().let { if (forceBoxing) it.makeNullable() else it },
+        type = type.eraseTypeParameters().let { if (forceBoxing) it.makeNullable() else it },
         varargElementType = varargElementType?.eraseTypeParameters()
     )
 
