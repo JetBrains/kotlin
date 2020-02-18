@@ -12,7 +12,6 @@ import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
-import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.ide.CommonActionsManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -27,7 +26,6 @@ import com.intellij.ui.CaptionPanel
 import com.intellij.ui.ComboboxSpeedSearch
 import com.intellij.ui.DoubleClickListener
 import com.intellij.ui.border.CustomLineBorder
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.SingleAlarm
 import com.intellij.xdebugger.XDebugSession
@@ -42,12 +40,10 @@ import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreeRestorer
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreeState
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueContainerNode
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueNodeImpl
-import javaslang.control.Either
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.VersionedImplementationProvider
-import org.jetbrains.kotlin.idea.debugger.coroutine.command.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParams
@@ -151,7 +147,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         CreateContentParams(
             CoroutineDebuggerContentInfo.XCOROUTINE_THREADS_CONTENT,
             mainPanel,
-            KotlinBundle.message("debugger.session.tab.xcoroutine.title"),
+            KotlinDebuggerCoroutinesBundle.message("coroutine.view.title"),
             null,
             panel.tree
         )
@@ -159,7 +155,10 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class EmptyNode : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {})
 
     inner class XCoroutinesRootNode(suspendContext: XSuspendContext) :
-        XValueContainerNode<CoroutineGroupContainer>(panel.tree, null, false, CoroutineGroupContainer(suspendContext, "Default group"))
+        XValueContainerNode<CoroutineGroupContainer>(
+            panel.tree, null, false,
+            CoroutineGroupContainer(suspendContext, KotlinDebuggerCoroutinesBundle.message("coroutine.view.default.group"))
+        )
 
     inner class CoroutineGroupContainer(val suspendContext: XSuspendContext, val groupName: String) : XValueContainer() {
         override fun computeChildren(node: XCompositeNode) {
@@ -185,7 +184,8 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                     }
                     node.addChildren(children, true)
                 } else {
-                    node.addChildren(XValueChildrenList.singleton(ErrorNode("Error occurs while fetching information")), true)
+                    val errorNode = ErrorNode(KotlinDebuggerCoroutinesBundle.message("coroutine.view.fetching.error"))
+                    node.addChildren(XValueChildrenList.singleton(errorNode), true)
                 }
             }
         }

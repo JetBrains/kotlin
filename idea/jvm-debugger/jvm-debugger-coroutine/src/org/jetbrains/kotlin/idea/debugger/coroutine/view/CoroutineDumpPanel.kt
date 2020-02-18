@@ -32,6 +32,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.util.PlatformIcons
 import com.intellij.util.ui.EmptyIcon
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import java.awt.BorderLayout
 import java.awt.Color
@@ -61,7 +62,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         })
 
         filterPanel.apply {
-            add(JLabel("Filter:"), BorderLayout.WEST)
+            add(JLabel(KotlinDebuggerCoroutinesBundle.message("coroutine.dump.filter.field")), BorderLayout.WEST)
             add(filterField)
             isVisible = false
         }
@@ -215,8 +216,8 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
     }
 
     private inner class FilterAction : ToggleAction(
-        "Filter",
-        "Show only coroutines containing a specific string",
+        KotlinDebuggerCoroutinesBundle.message("coroutine.dump.filter.action"),
+        KotlinDebuggerCoroutinesBundle.message("coroutine.dump.filter.description"),
         AllIcons.General.Filter
     ), DumbAware {
 
@@ -235,8 +236,8 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
     }
 
     private inner class MergeStackTracesAction : ToggleAction(
-        "Merge Identical Stacktrace",
-        "Group coroutines with identical stacktrace",
+        KotlinDebuggerCoroutinesBundle.message("coroutine.dump.merge.action"),
+        KotlinDebuggerCoroutinesBundle.message("coroutine.dump.merge.description"),
         AllIcons.Actions.Collapseall
     ), DumbAware {
 
@@ -251,23 +252,30 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
     }
 
     private class CopyToClipboardAction(private val myCoroutinesDump: List<CoroutineInfoData>, private val myProject: Project) :
-        DumbAwareAction("Copy to Clipboard", "Copy whole coroutine dump to clipboard", PlatformIcons.COPY_ICON) {
+        DumbAwareAction(
+            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.copy.action"),
+            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.copy.description"),
+            PlatformIcons.COPY_ICON
+        ) {
 
         override fun actionPerformed(e: AnActionEvent) {
             val buf = StringBuilder()
-            buf.append("Full coroutine dump").append("\n\n")
+            buf.append(KotlinDebuggerCoroutinesBundle.message("coroutine.dump.full.title")).append("\n\n")
             for (state in myCoroutinesDump) {
                 buf.append(state.stringStackTrace).append("\n\n")
             }
             CopyPasteManager.getInstance().setContents(StringSelection(buf.toString()))
 
             group.createNotification(
-                "Full coroutine dump was successfully copied to clipboard",
+                KotlinDebuggerCoroutinesBundle.message("coroutine.dump.full.copied"),
                 MessageType.INFO
             ).notify(myProject)
         }
 
-        private val group = NotificationGroup.toolWindowGroup("Analyze coroutine dump", ToolWindowId.RUN, false)
+        private val group = NotificationGroup.toolWindowGroup(
+            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.copy.analyze"),
+            ToolWindowId.RUN, false
+        )
     }
 
     private class MyToFileExporter(
