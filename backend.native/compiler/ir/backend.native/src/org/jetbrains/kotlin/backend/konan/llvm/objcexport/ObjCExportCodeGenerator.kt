@@ -86,12 +86,12 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
                 generateBlockToKotlinFunctionConverter(bridge)
             }
 
-    private val blockAdapterToFunctionGenerator = BlockAdapterToFunctionGenerator(this.codegen)
+    private val blockGenerator = BlockGenerator(this.codegen)
     private val functionToBlockConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
 
     internal fun kotlinFunctionToBlockConverter(bridge: BlockPointerBridge): LLVMValueRef =
             functionToBlockConverterCache.getOrPut(bridge) {
-                blockAdapterToFunctionGenerator.run {
+                blockGenerator.run {
                     generateConvertFunctionToBlock(bridge)
                 }
             }
