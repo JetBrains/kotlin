@@ -30,5 +30,11 @@ enum class JsCompilerType : Named, Serializable {
     }
 }
 
-fun String.removeCapitalizedJsCompilerSuffix(compilerType: JsCompilerType): String =
-    removeSuffix(compilerType.name.capitalize())
+fun String.removeJsCompilerSuffix(compilerType: JsCompilerType): String {
+    val truncatedString = removeSuffix(compilerType.name)
+    if (this != truncatedString) {
+        return truncatedString
+    }
+
+    return removeSuffix(compilerType.name.capitalize())
+}

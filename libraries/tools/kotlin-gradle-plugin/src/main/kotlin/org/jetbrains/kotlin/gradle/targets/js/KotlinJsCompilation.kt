@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.removeCapitalizedJsCompilerSuffix
+import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -38,7 +38,8 @@ open class KotlinJsCompilation(
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
             (target as KotlinJsTarget).irTarget?.let {
-                target.disambiguationClassifier?.removeCapitalizedJsCompilerSuffix(JsCompilerType.legacy)
+                target.disambiguationClassifier
+                    ?.removeJsCompilerSuffix(JsCompilerType.legacy)
             } ?: target.disambiguationClassifier,
             compilationName
         )
