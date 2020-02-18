@@ -259,11 +259,13 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testMissingDependencyConflictingLibraries() {
         val library1 = copyJarFileWithoutEntry(
             compileLibrary("library1"),
-            "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class"
+            "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class",
+            "a/AAA.class", "a/AAA\$Inner.class", "a/AAA\$Inner\$Inner.class"
         )
         val library2 = copyJarFileWithoutEntry(
             compileLibrary("library2"),
-            "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class"
+            "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class",
+            "a/AAA.class", "a/AAA\$Inner.class", "a/AAA\$Inner\$Inner.class"
         )
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
