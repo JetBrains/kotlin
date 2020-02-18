@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
+import com.intellij.index.SharedIndexExtensions;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
@@ -12,6 +13,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.util.indexing.hash.FileContentHashIndex;
+import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -26,10 +29,12 @@ class UnindexedFilesFinder implements CollectingContentIterator {
   private final Project myProject;
   private final boolean myDoTraceForFilesToBeIndexed = FileBasedIndexImpl.LOG.isTraceEnabled();
   private final FileBasedIndexImpl myFileBasedIndex;
+  private final FileContentHashIndex myFileContentHashIndex;
 
   UnindexedFilesFinder(@NotNull Project project) {
     myProject = project;
     myFileBasedIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance());
+    myFileContentHashIndex = SharedIndexExtensions.areSharedIndexesEnabled() ? myFileBasedIndex.getOrCreateFileContentHashIndex() : null;
   }
 
   @NotNull
@@ -98,6 +103,18 @@ class UnindexedFilesFinder implements CollectingContentIterator {
               final ID<?, ?> indexId = affectedIndexCandidates.get(i);
               try {
                 if (myFileBasedIndex.needsFileContentLoading(indexId) && myFileBasedIndex.shouldIndexFile(fileContent, indexId)) {
+                  if (myFileContentHashIndex != null) {
+
+                    //append existing chunk
+                    int chunkId = myFileContentHashIndex.getAssociatedChunkId(inputId, file);
+                    if (!SharedIndexChunkConfiguration.getInstance().attachExistingChunk(chunkId, myProject)) {
+                      myFileContentHashIndex.update(inputId, null).compute();
+                      for (ID<?, ?> state : IndexingStamp.getNontrivialFileIndexedStates(inputId)) {
+                        myFileBasedIndex.getIndex(state).resetIndexedStateForFile(inputId);
+                      }
+                    }
+
+                  }
                   if (myDoTraceForFilesToBeIndexed) {
                     LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
                   }

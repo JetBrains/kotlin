@@ -274,6 +274,17 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     mySharedIndexExecutor.execute(runnable);
   }
 
+  @Override
+  public boolean attachExistingChunk(int chunkId, @NotNull Project project) {
+    try {
+      return bindChunkToProject(registerChunk(chunkId), project);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      return false;
+    }
+  }
+
   @NotNull
   private List<SharedIndexChunk> registerChunk(@NotNull ChunkDescriptor descriptor) throws IOException {
     String chunkRootName = descriptor.getChunkUniqueId();

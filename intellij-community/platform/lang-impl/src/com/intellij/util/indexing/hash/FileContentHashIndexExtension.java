@@ -132,7 +132,8 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Long,
     return (((long) indexId) << 32) | (internalHashId & 0xffffffffL);
   }
 
-  public static final long NULL_HASH_ID = getHashId(0, -1);
+  public static final int NULL_INDEX_ID = -1;
+  public static final long NULL_HASH_ID = getHashId(0, NULL_INDEX_ID);
 
   private static final Key<Long> HASH_ID_KEY = Key.create("file.content.hash.id");
 

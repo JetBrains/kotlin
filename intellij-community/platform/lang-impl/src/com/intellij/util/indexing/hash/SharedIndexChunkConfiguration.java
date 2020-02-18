@@ -49,4 +49,6 @@ public interface SharedIndexChunkConfiguration {
   void locateIndexes(@NotNull Project project,
                      @NotNull Set<OrderEntry> entries,
                      @NotNull ProgressIndicator indicator);
+
+  boolean attachExistingChunk(int chunkId, @NotNull Project project);
 }
