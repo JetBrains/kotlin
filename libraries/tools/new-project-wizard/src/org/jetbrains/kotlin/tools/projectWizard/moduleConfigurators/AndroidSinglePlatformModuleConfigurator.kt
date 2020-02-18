@@ -59,7 +59,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
                 version = null // Version is already present in the parent buildfile
             )
             +GradleOnlyPluginByNameIR("kotlin-android-extensions")
-            +AndroidConfigIR(configurationData.pomIr.artifactId)
+            +AndroidConfigIR(module.javaPackage(configurationData.pomIr))
             +createRepositories(configurationData).map(::RepositoryIR)
         }
 
