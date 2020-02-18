@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.maven.configuration
 import com.intellij.openapi.module.Module
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJsRuntimeInScope
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -52,6 +53,6 @@ class KotlinJavascriptMavenConfigurator :
 
     companion object {
         private const val NAME = "js maven"
-        private const val PRESENTABLE_TEXT = "JavaScript with Maven"
+        private val PRESENTABLE_TEXT = KotlinMavenBundle.message("configure.javascript.with.maven")
     }
 }
