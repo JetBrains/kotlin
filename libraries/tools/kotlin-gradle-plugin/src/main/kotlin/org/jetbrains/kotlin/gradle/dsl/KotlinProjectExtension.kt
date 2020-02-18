@@ -98,8 +98,10 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
 
     override lateinit var target: KotlinJsTargetDsl
 
+    internal lateinit var defaultCompilerType: JsCompilerType
+
     open fun js(
-        compiler: JsCompilerType = legacy,
+        compiler: JsCompilerType = defaultCompilerType,
         body: KotlinJsTargetDsl.() -> Unit
     ) {
         val target: KotlinJsTargetDsl = when (compiler) {
@@ -131,7 +133,7 @@ open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
 
     open fun js(
         body: KotlinJsTargetDsl.() -> Unit
-    ) = js(compiler = legacy, body = body)
+    ) = js(compiler = defaultCompilerType, body = body)
 
     @Deprecated("Use js instead", ReplaceWith("js(body)"))
     open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
