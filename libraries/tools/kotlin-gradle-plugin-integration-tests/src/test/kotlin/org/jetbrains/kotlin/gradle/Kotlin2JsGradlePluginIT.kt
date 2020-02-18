@@ -53,7 +53,8 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             gradleBuildScript().appendText(
                 """${"\n"}
                 tasks {
-                    compileProductionKotlinJs {
+                    named("compileProductionKotlinJs").configure {
+                        this as org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
                         type = org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
                     }
                 }
