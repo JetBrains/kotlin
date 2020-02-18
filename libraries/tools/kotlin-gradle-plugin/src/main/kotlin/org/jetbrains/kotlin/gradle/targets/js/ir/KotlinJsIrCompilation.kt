@@ -48,7 +48,7 @@ class KotlinJsIrCompilation(
             return lowerCamelCaseName(
                 if ((target as KotlinJsIrTarget).mixedMode)
                     target.disambiguationClassifier
-                        ?.removeCapitalizedJsCompilerSuffix(JsCompilerType.ir)
+                        ?.removeJsCompilerSuffix(JsCompilerType.ir)
                 else
                     target.disambiguationClassifier,
                 compilationName

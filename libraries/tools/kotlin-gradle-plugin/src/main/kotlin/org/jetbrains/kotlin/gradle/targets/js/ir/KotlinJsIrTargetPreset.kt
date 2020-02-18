@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.removeCapitalizedJsCompilerSuffix
+import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsIrTargetPreset(
@@ -61,7 +61,7 @@ class KotlinJsIrSingleTargetPreset(
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
         return if (mixedMode!!) {
             super.provideTargetDisambiguationClassifier(target)
-                ?.removePrefix(target.name.removeCapitalizedJsCompilerSuffix(JsCompilerType.ir))
+                ?.removePrefix(target.name.removeJsCompilerSuffix(JsCompilerType.ir))
                 ?.decapitalize()
         } else {
             null

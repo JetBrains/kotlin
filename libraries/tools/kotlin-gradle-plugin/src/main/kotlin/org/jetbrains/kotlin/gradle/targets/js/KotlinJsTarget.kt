@@ -70,7 +70,7 @@ constructor(
     ): KotlinVariant {
         return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
             irTarget?.let {
-                artifactTargetName = targetName.removeCapitalizedJsCompilerSuffix(JsCompilerType.legacy)
+                artifactTargetName = targetName.removeJsCompilerSuffix(JsCompilerType.legacy)
             }
         }
     }
