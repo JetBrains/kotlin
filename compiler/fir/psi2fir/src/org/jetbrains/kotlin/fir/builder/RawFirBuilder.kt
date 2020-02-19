@@ -44,7 +44,9 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean) : BaseFirBuilder<PsiElement>(session) {
+class RawFirBuilder(
+    session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
+) : BaseFirBuilder<PsiElement>(session) {
 
     fun buildFirFile(file: KtFile): FirFile {
         return file.accept(Visitor(), Unit) as FirFile
@@ -122,21 +124,23 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
         private fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
             convertSafe() ?: buildErrorTypeRef {
                 source = this@toFirOrErrorType?.toFirSourceElement()
-                diagnostic = FirSimpleDiagnostic(if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed", DiagnosticKind.Syntax)
+                diagnostic = FirSimpleDiagnostic(
+                    if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed", DiagnosticKind.Syntax
+                )
             }
 
         // Here we accept lambda as receiver to prevent expression calculation in stub mode
         private fun (() -> KtExpression?).toFirExpression(errorReason: String): FirExpression =
             if (stubMode) buildExpressionStub()
             else with(this()) {
-                convertSafe<FirExpression>() ?: buildErrorExpression(
+                convertSafe() ?: buildErrorExpression(
                     this?.toFirSourceElement(), FirSimpleDiagnostic(errorReason, DiagnosticKind.Syntax),
                 )
             }
 
         private fun KtExpression?.toFirExpression(errorReason: String): FirExpression =
             if (stubMode) buildExpressionStub()
-            else convertSafe<FirExpression>() ?: buildErrorExpression(
+            else convertSafe() ?: buildErrorExpression(
                 this?.toFirSourceElement(), FirSimpleDiagnostic(errorReason, DiagnosticKind.Syntax),
             )
 
@@ -605,7 +609,9 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
                     val primaryConstructor = classOrObject.primaryConstructor
                     val firPrimaryConstructor = declarations.firstOrNull() as? FirConstructor
                     if (primaryConstructor != null && firPrimaryConstructor != null) {
-                        primaryConstructor.valueParameters.zip(firPrimaryConstructor.valueParameters).forEach { (ktParameter, firParameter) ->
+                        primaryConstructor.valueParameters.zip(
+                            firPrimaryConstructor.valueParameters
+                        ).forEach { (ktParameter, firParameter) ->
                             if (ktParameter.hasValOrVar()) {
                                 addDeclaration(ktParameter.toFirProperty(firParameter))
                             }
@@ -948,7 +954,8 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
 
                     val receiver = delegateExpression?.toFirExpression("Should have delegate")
                     generateAccessorsByDelegate(
-                        delegateBuilder,baseSession,
+                        delegateBuilder,
+                        baseSession,
                         member = !property.isTopLevel,
                         extension = property.receiverTypeReference != null,
                         stubMode,
