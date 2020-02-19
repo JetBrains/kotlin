@@ -19,13 +19,13 @@ import javax.swing.JPanel
 
 object ExperimentalFeatures {
     val NewJ2k = ExperimentalFeature(
-        title = "New Java to Kotlin Converter",
+        title = "New Java to Kotlin converter",
         registryKey = "kotlin.experimental.new.j2k",
         enabledByDefault = true
     )
 
     val NewWizard = ExperimentalFeature(
-        title = "New Experimental Project Wizard",
+        title = "New Kotlin project wizard",
         registryKey = "kotlin.experimental.project.wizard",
         enabledByDefault = false,
         shouldBeShown = {
