@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
@@ -194,7 +195,8 @@ open class GradleKotlinJavaFrameworkSupportProvider(
         }
     }
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting the JVM"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.the.jvm")
 }
 
 abstract class GradleKotlinJSFrameworkSupportProvider(
@@ -219,7 +221,8 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.js'"
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
     override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.javascript")
 }
 
 open class GradleKotlinJSBrowserFrameworkSupportProvider(
@@ -229,7 +232,8 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
     override val jsSubTargetName: String
         get() = "browser"
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript for browser"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.browser")
 
     override fun addSupport(
         buildScriptData: BuildScriptDataBuilder,
@@ -292,7 +296,8 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
     override val jsSubTargetName: String
         get() = "nodejs"
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript for Node.js"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.node.js")
 }
 
 open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
@@ -305,8 +310,7 @@ open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSuppor
     override fun getTestDependencies(): List<String> = listOf()
 
     override fun getDescription() =
-        "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules. " +
-                "The targets can be configured in the project's build script."
+        KotlinIdeaGradleBundle.message("description.text.multi.targeted.jvm.js.ios.etc.project.with.shared.code.in.common.modules")
 }
 
 open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFrameworkSupportProvider() {
