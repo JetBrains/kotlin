@@ -98,7 +98,7 @@ private fun ModuleType.createDefaultTarget(
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
 object CustomSingleplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Empty JVM Project"
+    override val title = "Empty Kotlin/JVM Project"
     override val htmlDescription = title
     override val suggestedProjectName = "myKotlinJvmProject"
     override val projectKind = ProjectKind.Singleplatform
@@ -111,8 +111,8 @@ object CustomSingleplatformProjectTemplate : ProjectTemplate() {
 }
 
 object CustomMultiplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Empty MultiPlatform Project"
-    override val htmlDescription = title
+    override val title = "Empty Kotlin Multiplatform Project"
+    override val htmlDescription = "Multiplatform Gradle project without predefined targets"
     override val suggestedProjectName = "myKotlinMultiplatformProject"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -125,7 +125,7 @@ object CustomMultiplatformProjectTemplate : ProjectTemplate() {
 }
 
 object JvmConsoleApplication : ProjectTemplate() {
-    override val title = "Kotlin Console JVM Application"
+    override val title = "Kotlin/JVM Console Application"
     override val htmlDescription = title
     override val suggestedProjectName = "myConsoleApplication"
     override val projectKind = ProjectKind.Singleplatform
@@ -144,7 +144,7 @@ object JvmConsoleApplication : ProjectTemplate() {
 }
 
 object MultiplatformLibrary : ProjectTemplate() {
-    override val title = "Multiplatform Library"
+    override val title = "Kotlin Multiplatform Library"
     @Language("HTML")
     override val htmlDescription = """
         Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms 
@@ -170,9 +170,9 @@ object MultiplatformLibrary : ProjectTemplate() {
 }
 
 object JvmServerJsClient : ProjectTemplate() {
-    override val title: String = "JS client and JVM server"
+    override val title: String = "Web Application with Kotlin/JS Client and Kotlin/JVM Server"
     override val htmlDescription: String =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between JS Client and JVM Server"
+        "Multiplatform Gradle project with client module running on Kotlin/JS and server module on Kotlin/JVM"
     override val suggestedProjectName: String = "myFullStackApplication"
     override val projectKind: ProjectKind = ProjectKind.Multiplatform
     override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
@@ -221,7 +221,7 @@ object AndroidApplication : ProjectTemplate() {
 }
 
 object NativeConsoleApplication : ProjectTemplate() {
-    override val title = "Native Console Application"
+    override val title = "Kotlin/Native Console Application"
     override val htmlDescription = title
     override val suggestedProjectName = "myNativeConsoleApp"
     override val projectKind = ProjectKind.Multiplatform
@@ -247,7 +247,7 @@ object NativeConsoleApplication : ProjectTemplate() {
 
 object JsBrowserApplication : ProjectTemplate() {
     override val title = "Kotlin/JS Frontend Application"
-    override val htmlDescription = title
+    override val htmlDescription = "Gradle project for a Kotlin/JS frontend web application"
     override val suggestedProjectName = "myKotlinJsApplication"
     override val projectKind = ProjectKind.Multiplatform
 

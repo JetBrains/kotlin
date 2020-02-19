@@ -133,11 +133,11 @@
                      restartRequired="false"/>
 
         <registryKey key="kotlin.experimental.new.j2k"
-                     description="New Java to Kotlin Converter"
+                     description="Enable new Java to Kotlin converter"
                      defaultValue="true"
                      restartRequired="false"/>
         <registryKey key="kotlin.experimental.project.wizard"
-                     description="New Experimental Project Wizard"
+                     description="Enable new Kotlin project wizard"
                      defaultValue="false"
                      restartRequired="false"/>
 
