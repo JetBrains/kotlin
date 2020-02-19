@@ -3,6 +3,8 @@
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.rules.TempDirectory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assume
@@ -33,11 +35,7 @@ internal fun jdkItemForTest(url: String,
   url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip")
 )
 
-class JdkDownloaderTest {
-  @get:Rule
-  val fsRule = TempDirectory()
-
-
+class JdkDownloaderTest : LightPlatformTestCase() {
   private val mockTarGZ = jdkItemForTest(packageType = JdkPackageType.TAR_GZ,
                                          url = "https://repo.labs.intellij.net/idea-test-data/jdk-download-test-data.tar.gz",
                                          size = 249,
@@ -54,20 +52,17 @@ class JdkDownloaderTest {
                                        size = 604,
                                        sha256 = "1cf15536c1525f413190fd53243f343511a17e6ce7439ccee4dc86f0d34f9e81")
 
-  @Test
-  fun `unpacking tar gz`() = testUnpacking(mockTarGZ) { dir ->
+  fun `test unpacking tar gz`() = testUnpacking(mockTarGZ) { dir ->
     assertThat(File(dir, "TheApp/FooBar.app/theApp")).isFile()
     assertThat(File(dir, "TheApp/QPCV/ggg.txt")).isFile()
   }
 
-  @Test
-  fun `unpacking tar gz cut dirs`() = testUnpacking(mockTarGZ.copy(unpackPrefixFilter = "TheApp/FooBar.app")) { dir ->
+  fun `test unpacking tar gz cut dirs`() = testUnpacking(mockTarGZ.copy(unpackPrefixFilter = "TheApp/FooBar.app")) { dir ->
     assertThat(File(dir, "theApp")).isFile()
     assertThat(File(dir, "ggg.txt")).doesNotExist()
   }
 
-  @Test
-  fun `unpacking tar gz cut dirs 2`() {
+  fun `test unpacking tar gz cut dirs 2`() {
     Assume.assumeTrue(SystemInfo.isMac || SystemInfo.isLinux)
 
     testUnpacking(mockTarGZ2.copy(unpackPrefixFilter = "this/jdk")) { dir ->
@@ -78,14 +73,12 @@ class JdkDownloaderTest {
     }
   }
 
-  @Test
-  fun `unpacking tar gz cut dirs complex prefix`() = testUnpacking(mockTarGZ.copy(unpackPrefixFilter = "./TheApp/FooBar.app")) { dir ->
+  fun `test unpacking tar gz cut dirs complex prefix`() = testUnpacking(mockTarGZ.copy(unpackPrefixFilter = "./TheApp/FooBar.app")) { dir ->
     assertThat(File(dir, "theApp")).isFile()
     assertThat(File(dir, "ggg.txt")).doesNotExist()
   }
 
-  @Test
-  fun `unpacking tar gz cut dirs and prefix`() = testUnpacking(
+  fun `test unpacking tar gz cut dirs and prefix`() = testUnpacking(
     mockTarGZ.copy(
       unpackPrefixFilter = "TheApp/FooBar.app")
   ) { dir ->
@@ -93,38 +86,24 @@ class JdkDownloaderTest {
     assertThat(File(dir, "ggg.txt")).doesNotExist()
   }
 
-  @Test(expected = Exception::class)
-  fun `unpacking targz invalid size`() = testUnpacking(mockTarGZ.copy(archiveSize = 234234)) { dir ->
-    assertThat(File(dir, "TheApp/FooBar.app/theApp")).isFile()
-    assertThat(File(dir, "TheApp/QPCV/ggg.txt")).isFile()
+  fun `test unpacking targz invalid size`() = expectsException {
+    testUnpacking(mockTarGZ.copy(archiveSize = 234234))
   }
 
-  @Test(expected = Exception::class)
-  fun `unpacking targz invalid checksum`() = testUnpacking(mockTarGZ.copy(sha256 = "234234")) { dir ->
-    assertThat(File(dir, "TheApp/FooBar.app/theApp")).isFile()
-    assertThat(File(dir, "TheApp/QPCV/ggg.txt")).isFile()
-  }
+  fun `test unpacking targz invalid checksum`() = expectsException { testUnpacking(mockTarGZ.copy(sha256 = "234234")) }
 
-  @Test
-  fun `unpacking zip`() = testUnpacking(mockZip) { dir ->
+  fun `test unpacking zip`() = testUnpacking(mockZip) { dir ->
     assertThat(File(dir, "folder/readme2")).isDirectory()
     assertThat(File(dir, "folder/file")).isFile()
   }
 
-  @Test(expected = Exception::class)
-  fun `unpacking zip invalid size`() = testUnpacking(mockZip.copy(archiveSize = 234)) { dir ->
-    assertThat(File(dir, "folder/readme2")).isDirectory()
-    assertThat(File(dir, "folder/file")).isFile()
+  fun `test unpacking zip invalid size`() = expectsException {
+    testUnpacking(mockZip.copy(archiveSize = 234))
   }
 
-  @Test(expected = Exception::class)
-  fun `unpacking zip invalid checksum`() = testUnpacking(mockZip.copy(sha256 = "234")) { dir ->
-    assertThat(File(dir, "folder/readme2")).isDirectory()
-    assertThat(File(dir, "folder/file")).isFile()
-  }
+  fun `test unpacking zip invalid checksum`() = expectsException { testUnpacking(mockZip.copy(sha256 = "234")) }
 
-  @Test
-  fun `unpacking zip cut dirs and wrong prefix`() = testUnpacking(
+  fun `test unpacking zip cut dirs and wrong prefix`() = testUnpacking(
     mockZip.copy(
       unpackPrefixFilter = "wrong")
   ) { dir ->
@@ -132,8 +111,7 @@ class JdkDownloaderTest {
     assertThat(File(dir, "folder/file")).doesNotExist()
   }
 
-  @Test
-  fun `unpacking zip cut dirs and prefix`() = testUnpacking(
+  fun `test unpacking zip cut dirs and prefix`() = testUnpacking(
     mockZip.copy(
       unpackPrefixFilter = "folder")
   ) { dir ->
@@ -141,8 +119,7 @@ class JdkDownloaderTest {
     assertThat(File(dir, "file")).isFile()
   }
 
-  @Test
-  fun `unpacking zip and prefix`() = testUnpacking(
+  fun `test unpacking zip and prefix`() = testUnpacking(
     mockZip.copy(
       unpackPrefixFilter = "folder/file")
   ) { dir ->
@@ -150,10 +127,24 @@ class JdkDownloaderTest {
     assertThat(File(dir, "folder/file")).doesNotExist()
   }
 
-  private inline fun testUnpacking(item: JdkItem, resultDir: (File) -> Unit) {
-    val dir = fsRule.newFolder()
-    JdkInstaller.installJdk(
-      JdkInstallRequest(item, dir), null, null)
-    resultDir(dir)
+  private fun testUnpacking(item: JdkItem, resultDir: (File) -> Unit = { error("must not reach here") }) {
+    val dir = createTempDir()
+    try {
+      JdkInstaller.getInstance().installJdk(JdkInstallRequest(item, dir), null, null)
+      resultDir(dir)
+    }
+    finally {
+      FileUtil.delete(dir)
+    }
+  }
+
+  private fun expectsException(action: () -> Unit) {
+    try {
+      action()
+      error("Exception was expected")
+    }
+    catch (t: Exception) {
+      return
+    }
   }
 }

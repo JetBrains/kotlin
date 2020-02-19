@@ -48,7 +48,7 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
 
     /// prepare the JDK to be installed (e.g. create home dir, write marker file)
     val request = runTaskAndReportError(project, "Preparing JDK target folder...", "Failed to prepare JDK installation to $jdkHome") {
-      JdkInstaller.prepareJdkInstallation(jdkItem, jdkHome)
+      JdkInstaller.getInstance().prepareJdkInstallation(jdkItem, jdkHome)
     } ?: return
 
     sdkCreatedCallback.accept(newDownloadTask(request, project))
@@ -92,7 +92,7 @@ internal interface JdkDownloaderBase {
       override fun getPlannedHomeDir() = request.targetDir.absolutePath
       override fun getPlannedVersion() = request.item.versionString
       override fun doDownload(indicator: ProgressIndicator) {
-        JdkInstaller.installJdk(request, indicator, project)
+        JdkInstaller.getInstance().installJdk(request, indicator, project)
       }
     }
   }

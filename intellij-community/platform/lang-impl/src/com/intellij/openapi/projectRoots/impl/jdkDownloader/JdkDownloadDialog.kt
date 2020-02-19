@@ -82,7 +82,7 @@ class JdkDownloadDialog(
     )
 
     fun selectInstallPath(newVersion: JdkItem) {
-      installDirTextField.text = JdkInstaller.defaultInstallDir(newVersion)
+      installDirTextField.text = JdkInstaller.getInstance().defaultInstallDir(newVersion)
       selectedItem = newVersion
     }
 
@@ -108,7 +108,7 @@ class JdkDownloadDialog(
     super.doValidate()?.let { return it }
 
     val path = selectedPath
-    val (_, error) = JdkInstaller.validateInstallDir(path)
+    val (_, error) = JdkInstaller.getInstance().validateInstallDir(path)
     return error?.let { ValidationInfo(error, installDirTextField) }
   }
 

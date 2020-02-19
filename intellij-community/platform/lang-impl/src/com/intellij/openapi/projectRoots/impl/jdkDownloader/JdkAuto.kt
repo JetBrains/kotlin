@@ -75,8 +75,9 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
           override fun getDownloadDescription() = jdkToDownload.fullPresentationText
 
           override fun createTask(indicator: ProgressIndicator): SdkDownloadTask {
-            val homeDir = JdkInstaller.defaultInstallDir(jdkToDownload)
-            val request = JdkInstaller.prepareJdkInstallation(jdkToDownload, homeDir)
+            val jdkInstaller = JdkInstaller.getInstance()
+            val homeDir = jdkInstaller.defaultInstallDir(jdkToDownload)
+            val request = jdkInstaller.prepareJdkInstallation(jdkToDownload, homeDir)
             return newDownloadTask(request, project)
           }
         }

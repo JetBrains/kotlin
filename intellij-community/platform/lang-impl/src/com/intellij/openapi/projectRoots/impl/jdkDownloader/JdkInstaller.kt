@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing
 import com.google.common.io.Files
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -44,7 +45,12 @@ interface JdkInstallerListener {
   fun onJdkDownloadFinished(request: JdkInstallRequest, project: Project?) { }
 }
 
-object JdkInstaller {
+class JdkInstaller {
+  companion object {
+    @JvmStatic
+    fun getInstance() = service<JdkInstaller>()
+  }
+
   private val LOG = logger<JdkInstaller>()
 
   fun defaultInstallDir(newVersion: JdkItem) : String {
@@ -85,11 +91,7 @@ object JdkInstaller {
   }
 
   fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?, project: Project?) {
-    if (Extensions.getRootArea() != null) {
-      for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
-        listener.onJdkDownloadStarted(request, project)
-      }
-    }
+    JDK_INSTALL_LISTENER_EP_NAME.extensions.forEach { it.onJdkDownloadStarted(request, project) }
 
     val item = request.item
     indicator?.text = "Installing ${item.fullPresentationText}..."
@@ -144,12 +146,7 @@ object JdkInstaller {
     }
     finally {
       FileUtil.delete(downloadFile)
-
-      if (Extensions.getRootArea() != null) {
-        for (listener in JDK_INSTALL_LISTENER_EP_NAME.extensions) {
-          listener.onJdkDownloadFinished(request, project)
-        }
-      }
+      JDK_INSTALL_LISTENER_EP_NAME.extensions.forEach { it.onJdkDownloadFinished(request, project) }
     }
   }
 
