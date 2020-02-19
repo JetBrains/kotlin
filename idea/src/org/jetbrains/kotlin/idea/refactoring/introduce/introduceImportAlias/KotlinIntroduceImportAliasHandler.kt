@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
     const val REFACTORING_NAME = "Introduce Import Alias"
@@ -83,7 +84,13 @@ object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
             }
         }
 
-        val suggestionsName = KotlinNameSuggester.suggestNamesByFqName(fqName, validator = validator)
+        val suggestionsName = KotlinNameSuggester.suggestNamesByFqName(
+            fqName,
+            validator = validator,
+            defaultName = { fqName.asString().replace('.', '_') })
+        checkWithAttachment(suggestionsName.isNotEmpty(), { "Unable to build any suggestion name for $fqName" }) {
+            it.withAttachment("file.kt", file.text)
+        }
         val newName = suggestionsName.first()
         suggestedImportAliasNames = suggestionsName
         val newDirective = ImportInsertHelperImpl.addImport(project, file, fqName, false, Name.identifier(newName))
