@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.junit.Test
 
 class WorkersIT : BaseGradleIT() {
@@ -13,7 +13,7 @@ class WorkersIT : BaseGradleIT() {
     fun testParallelTasks() {
         parallelTasksImpl(
             isParallel = true,
-            jsCompilerType = JsCompilerType.legacy
+            jsCompilerType = KotlinJsCompilerType.legacy
         )
     }
 
@@ -21,7 +21,7 @@ class WorkersIT : BaseGradleIT() {
     fun testParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = true,
-            jsCompilerType = JsCompilerType.ir
+            jsCompilerType = KotlinJsCompilerType.ir
         )
     }
 
@@ -29,7 +29,7 @@ class WorkersIT : BaseGradleIT() {
     fun testNoParallelTasks() {
         parallelTasksImpl(
             isParallel = false,
-            jsCompilerType = JsCompilerType.legacy
+            jsCompilerType = KotlinJsCompilerType.legacy
         )
     }
 
@@ -37,13 +37,13 @@ class WorkersIT : BaseGradleIT() {
     fun testNoParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = false,
-            jsCompilerType = JsCompilerType.ir
+            jsCompilerType = KotlinJsCompilerType.ir
         )
     }
 
     private fun parallelTasksImpl(
         isParallel: Boolean,
-        jsCompilerType: JsCompilerType
+        jsCompilerType: KotlinJsCompilerType
     ) =
         with(Project("new-mpp-parallel")) {
             val options = defaultBuildOptions().copy(
@@ -64,7 +64,7 @@ class WorkersIT : BaseGradleIT() {
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
                     kotlinClassesDir(sourceSet = "js/main") +
-                            if (jsCompilerType == JsCompilerType.ir) "default/manifest" else "new-mpp-parallel.js"
+                            if (jsCompilerType == KotlinJsCompilerType.ir) "default/manifest" else "new-mpp-parallel.js"
                 )
                 expectedKotlinOutputFiles.forEach { assertFileExists(it) }
                 assertSubstringCount("Loaded GradleKotlinCompilerWork", 1)

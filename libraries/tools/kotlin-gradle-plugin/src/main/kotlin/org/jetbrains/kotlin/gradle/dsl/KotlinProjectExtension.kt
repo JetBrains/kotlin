@@ -22,7 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -111,10 +111,10 @@ open class KotlinJsProjectExtension :
             _target = value
         }
 
-    override lateinit var defaultJsCompilerType: JsCompilerType
+    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
 
     open fun js(
-        compiler: JsCompilerType = defaultJsCompilerType,
+        compiler: KotlinJsCompilerType = defaultJsCompilerType,
         body: KotlinJsTargetDsl.() -> Unit
     ) {
         if (_target == null) {

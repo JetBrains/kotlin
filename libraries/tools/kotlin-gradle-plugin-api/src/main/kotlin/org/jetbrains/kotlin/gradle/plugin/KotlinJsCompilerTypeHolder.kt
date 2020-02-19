@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 interface KotlinJsCompilerTypeHolder {
-    val defaultJsCompilerType: JsCompilerType
+    val defaultJsCompilerType: KotlinJsCompilerType
 }

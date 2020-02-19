@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 
-fun jsCompilerType(compilerType: JsCompilerType) =
-    "\n${JsCompilerType.jsCompilerProperty}=$compilerType"
+fun jsCompilerType(compilerType: KotlinJsCompilerType) =
+    "\n${KotlinJsCompilerType.jsCompilerProperty}=$compilerType"
