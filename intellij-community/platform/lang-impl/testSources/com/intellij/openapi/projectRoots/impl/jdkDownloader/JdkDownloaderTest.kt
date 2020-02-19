@@ -31,7 +31,8 @@ internal fun jdkItemForTest(url: String,
     unpackedSize = 10 * size,
     unpackPrefixFilter = prefix,
     archiveFileName = url.split("/").last(),
-    installFolderName = url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip")
+    installFolderName = url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip"),
+    sharedIndexAliases = listOf()
   )
 }
 

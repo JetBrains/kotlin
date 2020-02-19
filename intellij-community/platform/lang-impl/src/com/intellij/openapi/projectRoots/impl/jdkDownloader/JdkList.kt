@@ -118,7 +118,9 @@ data class JdkItem(
   val unpackPrefixFilter: String,
 
   val archiveFileName: String,
-  val installFolderName: String
+  val installFolderName: String,
+
+  val sharedIndexAliases: List<String>
 ) : Comparable<JdkItem> {
 
   /**
@@ -299,7 +301,9 @@ object JdkListParser {
                         unpackPrefixFilter = pkg["unpack_prefix_filter"]?.asText() ?: continue,
 
                         unpackedSize = pkg["unpacked_size"]?.asLong() ?: continue,
-                        installFolderName = pkg["install_folder_name"]?.asText() ?: continue
+                        installFolderName = pkg["install_folder_name"]?.asText() ?: continue,
+
+                        sharedIndexAliases = (item["shared_index_aliases"] as? ArrayNode)?.mapNotNull { it.asText() } ?: listOf()
       )
     }
 
