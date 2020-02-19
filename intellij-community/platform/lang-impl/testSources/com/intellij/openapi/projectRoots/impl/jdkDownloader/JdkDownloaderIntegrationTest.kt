@@ -38,10 +38,13 @@ class JdkDownloaderIntegrationTest : BasePlatformTestCase() {
         return@repeat
       }
 
-      //must return cached value
+      //must return cached JdkItem objects
       packs.forEach { p1 ->
         packs.forEach { p2 ->
-          Assert.assertSame(p1, p2)
+          Assert.assertEquals(p1.size, p2.size)
+          for (i in p1.indices) {
+            Assert.assertSame(p1[i], p2[i])
+          }
         }
       }
       return

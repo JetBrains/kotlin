@@ -98,10 +98,12 @@ data class JdkItem(
 
   val isDefaultItem: Boolean = false,
 
+  /** there are some JdkList items that are not shown in the downloader but suggested for JdkAuto **/
+  val isVisibleOnUI: Boolean,
+
   val jdkMajorVersion: Int,
   val jdkVersion: String,
   private val jdkVendorVersion: String?,
-  private val vendorVersion: String?,
   val suggestedSdkName: String,
 
   val arch: String,
@@ -130,9 +132,7 @@ data class JdkItem(
     if (cmp != 0) return -cmp
     cmp = VersionComparatorUtil.compare(this.jdkVersion, other.jdkVersion)
     if (cmp != 0) return -cmp
-    cmp = VersionComparatorUtil.compare(this.jdkVendorVersion, other.jdkVendorVersion)
-    if (cmp != 0) return cmp
-    return VersionComparatorUtil.compare(this.vendorVersion, other.vendorVersion)
+    return VersionComparatorUtil.compare(this.jdkVendorVersion, other.jdkVendorVersion)
   }
 
   val versionPresentationText: String
@@ -196,6 +196,8 @@ data class JdkPredicate(
    *         { "type": "or"|"and", "items": [ {same as before}, ...] }
    * or
    *         { "type": "not", "item": { same as before } }
+   * or
+   *         { "type": "const", "value": true | false  }
    */
   fun testPredicate(filter: JsonNode?): Boolean? {
     //no filter means predicate is true
@@ -218,6 +220,10 @@ data class JdkPredicate(
     if (type == "not") {
       val subResult = testPredicate(filter["item"]) ?: return null
       return !subResult
+    }
+
+    if (type == "const") {
+      return filter["value"]?.asBoolean()
     }
 
     if (type == "build_number_range") {
@@ -277,11 +283,11 @@ object JdkListParser {
 
       result += JdkItem(product = product,
                         isDefaultItem = item["default"]?.let { filters.testPredicate(it) == true } ?: false,
+                        isVisibleOnUI = item["listed"]?.let { filters.testPredicate(it) == true } ?: true,
 
                         jdkMajorVersion = item["jdk_version_major"]?.asInt() ?: continue,
                         jdkVersion = item["jdk_version"]?.asText() ?: continue,
                         jdkVendorVersion = item["jdk_vendor_version"]?.asText(),
-                        vendorVersion = item["vendor_version"]?.asText(),
                         suggestedSdkName = item["suggested_sdk_name"]?.asText() ?: continue,
 
                         arch = pkg["arch"]?.asText() ?: continue,
@@ -334,7 +340,7 @@ class JdkListDownloader {
    * Lists all entries suitable for UI download, there can be some unlisted entries that are ignored here by intent
    */
   fun downloadForUI(progress: ProgressIndicator?, feedUrl: String? = null) : List<JdkItem> {
-    return downloadJdksListWithCache(feedUrl, progress)
+    return downloadJdksListWithCache(feedUrl, progress).filter { it.isVisibleOnUI }
   }
 
   private val jdksListCache = CachedValueWithTTL<List<JdkItem>>(15 to TimeUnit.MINUTES)

@@ -79,9 +79,23 @@ class JdkListTest {
   }
 
   @Test
+  fun `parse feed with default bool const true`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.putObject("default").put("type", "const").put("value", true) }
+    assertSingleItemForEachOS(json) { this.returns(true) { it.isDefaultItem } }
+  }
+
+  @Test
   fun `parse feed with default bool false`() {
     val json = loadTestData("feed-v1.json")
     json.patchEveryProduct { it.put("default", false) }
+    assertSingleItemForEachOS(json) { this.returns(false) { it.isDefaultItem } }
+  }
+
+  @Test
+  fun `parse feed with default bool const false`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.putObject("default").put("type", "const").put("value", false) }
     assertSingleItemForEachOS(json) { this.returns(false) { it.isDefaultItem } }
   }
 
@@ -104,6 +118,47 @@ class JdkListTest {
     val json = loadTestData("feed-v1.json")
     json.patchEveryPackage { it.put("package_type", "unexpected_jet_jar") }
     assertNoItemsForEachOS(json)
+  }
+
+  @Test
+  fun `visible_for_ui is missing`() {
+    val json = loadTestData("feed-v1.json")
+    assertSingleItemForEachOS(json) { this.returns(true) { it.isVisibleOnUI } }
+  }
+
+  @Test
+  fun `visible_for_ui is false`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.put("listed", false) }
+    assertSingleItemForEachOS(json) { this.returns(false) { it.isVisibleOnUI } }
+  }
+
+  @Test
+  fun `visible_for_ui is true`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.put("listed", true) }
+    assertSingleItemForEachOS(json) { this.returns(true) { it.isVisibleOnUI } }
+  }
+
+  @Test
+  fun `visible_for_ui is const true`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.putObject("listed").put("type", "const").put("value", true) }
+    assertSingleItemForEachOS(json) { this.returns(true) { it.isVisibleOnUI } }
+  }
+
+  @Test
+  fun `visible_for_ui is buildRange`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.putObject("listed").buildRange(since = "192.1") }
+    assertSingleItemForEachOS(json) { this.returns(true) { it.isVisibleOnUI } }
+  }
+
+  @Test
+  fun `visible_for_ui is !buildRange`() {
+    val json = loadTestData("feed-v1.json")
+    json.patchEveryProduct { it.putObject("listed").buildRange(until = "192.1") }
+    assertSingleItemForEachOS(json) { this.returns(false) { it.isVisibleOnUI } }
   }
 
   private inline fun assertSingleItemForEachOS(json: ObjectNode, assert: ObjectAssert<JdkItem>.() -> Unit = {}) = assertForEachOS(json) {
@@ -230,6 +285,27 @@ class JdkListTest {
   fun `filter true`() {
     assertPredicate(om.nodeFactory.booleanNode(true), "192.100", true)
     assertPredicate(om.nodeFactory.booleanNode(false), "192.100", false)
+  }
+
+  @Test
+  fun `filter const true`() {
+    assertPredicate(om.nodeFactory.objectNode().put("type", "const").put("value", true), "192.100", true)
+    assertPredicate(om.nodeFactory.objectNode().put("type", "const").put("value", false), "192.100", false)
+  }
+
+  @Test
+  fun `filter unknown type`() {
+    assertPredicate(om.nodeFactory.objectNode().put("type", "wtf"), "192.100", null)
+  }
+
+  @Test
+  fun `filter array`() {
+    assertPredicate(om.nodeFactory.arrayNode().add("type"), "192.100", null)
+  }
+
+  @Test
+  fun `filter obj`() {
+    assertPredicate(om.nodeFactory.objectNode().put("x", "type"), "192.100", null)
   }
 
   private fun assertPredicate(obj: JsonNode, ideBuild: String, expected: Boolean?) {

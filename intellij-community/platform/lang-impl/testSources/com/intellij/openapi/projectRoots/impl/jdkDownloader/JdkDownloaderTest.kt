@@ -5,35 +5,35 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.rules.TempDirectory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assume
-import org.junit.Rule
-import org.junit.Test
 import java.io.File
 
 internal fun jdkItemForTest(url: String,
                             packageType: JdkPackageType,
                             size: Long,
                             sha256: String,
-                            prefix: String = "") = JdkItem(
-  JdkProduct("Vendor", null, null),
-  false,
-  123,
-  "123.123",
-  null,
-  null,
-  "suggested",
-  "jetbrains-hardware",
-  packageType,
-  url,
-  sha256,
-  size,
-  10 * size,
-  prefix,
-  url.split("/").last(),
-  url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip")
-)
+                            prefix: String = ""): JdkItem {
+  val product = JdkProduct(vendor = "Vendor", product = null, flavour = null)
+  return JdkItem(
+    product,
+    isDefaultItem = false,
+    isVisibleOnUI = true,
+    jdkMajorVersion = 123,
+    jdkVersion = "123.123",
+    jdkVendorVersion = null,
+    suggestedSdkName = "suggested",
+    arch = "jetbrains-hardware",
+    packageType = packageType,
+    url = url,
+    sha256 = sha256,
+    archiveSize = size,
+    unpackedSize = 10 * size,
+    unpackPrefixFilter = prefix,
+    archiveFileName = url.split("/").last(),
+    installFolderName = url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip")
+  )
+}
 
 class JdkDownloaderTest : LightPlatformTestCase() {
   private val mockTarGZ = jdkItemForTest(packageType = JdkPackageType.TAR_GZ,
