@@ -91,8 +91,9 @@ private fun ConeKotlinType.enhanceConeKotlinType(
                 session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
             )
 
-            when (this) {
-                is ConeRawType -> ConeRawType(lowerResult, upperResult)
+            when {
+                lowerResult === lowerBound && upperResult === upperBound -> this
+                this is ConeRawType -> ConeRawType(lowerResult, upperResult)
                 else -> coneFlexibleOrSimpleType(
                     session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
                 )
@@ -165,6 +166,8 @@ private fun ConeKotlinType.enhanceInflexibleType(
     val effectiveQualifiers = qualifiers(index)
     val enhancedTag = originalTag.enhanceMutability(effectiveQualifiers, position)
 
+    var wereChangesInArgs = false
+
     val enhancedArguments = if (this is RawType) {
         // TODO: Support enhancing for raw types
         typeArguments
@@ -178,12 +181,18 @@ private fun ConeKotlinType.enhanceInflexibleType(
                 require(arg is ConeKotlinType) { "Should be invariant type: $arg" }
                 globalArgIndex += arg.subtreeSize()
 
-                arg.enhanceConeKotlinType(session, qualifiers, globalArgIndex)
+                arg.enhanceConeKotlinType(session, qualifiers, globalArgIndex).also {
+                    if (it !== arg) {
+                        wereChangesInArgs = true
+                    }
+                }
             }
         }.toTypedArray()
     }
 
     val enhancedNullability = getEnhancedNullability(effectiveQualifiers, position)
+
+    if (!wereChangesInArgs && originalTag == enhancedTag && enhancedNullability == isNullable) return this
 
     val enhancedType = enhancedTag.constructType(enhancedArguments, enhancedNullability)
 
