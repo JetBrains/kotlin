@@ -63,5 +63,9 @@ open class KotlinJsPlugin(
                     )
                 }
             }
+
+        // Also create predefined source sets
+        kotlinExtension.sourceSets.maybeCreate(MAIN_COMPILATION_NAME)
+        kotlinExtension.sourceSets.maybeCreate(TEST_COMPILATION_NAME)
     }
 }
