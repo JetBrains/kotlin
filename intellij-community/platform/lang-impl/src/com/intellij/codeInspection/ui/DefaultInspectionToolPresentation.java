@@ -17,6 +17,8 @@ import com.intellij.configurationStore.JbXmlOutputter;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.NonBlockingReadAction;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
@@ -136,25 +138,27 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   @Nullable
   @Override
   public HighlightSeverity getSeverity(@NotNull RefElement element) {
-    final PsiElement psiElement = ((RefElement)element.getRefManager().getRefinedElement(element)).getPointer().getContainingFile();
-    if (psiElement != null) {
-      final GlobalInspectionContextImpl context = getContext();
-      final String shortName = getSeverityDelegateName();
-      final Tools tools = context.getTools().get(shortName);
-      if (tools != null) {
-        for (ScopeToolState state : tools.getTools()) {
-          InspectionToolWrapper toolWrapper = state.getTool();
-          if (toolWrapper == getToolWrapper()) {
-            return context.getCurrentProfile().getErrorLevel(HighlightDisplayKey.find(shortName), psiElement).getSeverity();
+    return ReadAction.nonBlocking(() -> {
+      final PsiElement psiElement = ((RefElement)element.getRefManager().getRefinedElement(element)).getPointer().getContainingFile();
+      if (psiElement != null) {
+        final GlobalInspectionContextImpl context = getContext();
+        final String shortName = getSeverityDelegateName();
+        final Tools tools = context.getTools().get(shortName);
+        if (tools != null) {
+          for (ScopeToolState state : tools.getTools()) {
+            InspectionToolWrapper toolWrapper = state.getTool();
+            if (toolWrapper == getToolWrapper()) {
+              return context.getCurrentProfile().getErrorLevel(HighlightDisplayKey.find(shortName), psiElement).getSeverity();
+            }
           }
         }
-      }
 
-      final InspectionProfile profile = InspectionProjectProfileManager.getInstance(context.getProject()).getCurrentProfile();
-      final HighlightDisplayLevel level = profile.getErrorLevel(HighlightDisplayKey.find(shortName), psiElement);
-      return level.getSeverity();
-    }
-    return null;
+        final InspectionProfile profile = InspectionProjectProfileManager.getInstance(context.getProject()).getCurrentProfile();
+        final HighlightDisplayLevel level = profile.getErrorLevel(HighlightDisplayKey.find(shortName), psiElement);
+        return level.getSeverity();
+      }
+      return null;
+    }).executeSynchronously();
   }
 
   @Override
