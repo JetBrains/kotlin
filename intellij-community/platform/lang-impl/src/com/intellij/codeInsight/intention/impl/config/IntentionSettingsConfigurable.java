@@ -100,7 +100,9 @@ public class IntentionSettingsConfigurable implements SearchableConfigurable, Ma
 
   @Override
   public void selectIntention(@NotNull String familyName) {
-    myPanel.selectIntention(familyName);
+    if (myPanel != null) {
+      myPanel.selectIntention(familyName);
+    }
   }
 
   public static String getDisplayNameText() {
