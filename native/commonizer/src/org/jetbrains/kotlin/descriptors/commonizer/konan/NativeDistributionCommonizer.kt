@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KoltinLibraryWriterImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
@@ -215,7 +216,13 @@ class NativeDistributionCommonizer(
         manifestData: NativeSensitiveManifestData,
         destination: File
     ) {
-        val library = KoltinLibraryWriterImpl(KFile(destination.path), manifestData.uniqueName, manifestData.versions, nopack = true)
+        val library = KoltinLibraryWriterImpl(
+            KFile(destination.path),
+            manifestData.uniqueName,
+            manifestData.versions,
+            BuiltInsPlatform.NATIVE,
+            nopack = true
+        )
         library.addMetadata(metadata)
         manifestData.applyTo(library.base as BaseWriterImpl)
         library.commit()

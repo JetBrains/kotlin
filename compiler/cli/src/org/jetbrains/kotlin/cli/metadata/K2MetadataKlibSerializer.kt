@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
@@ -89,7 +90,8 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             configuration[CommonConfigurationKeys.MODULE_NAME]!!,
             nopack = true,
             manifestProperties = null,
-            dataFlowGraph = null
+            dataFlowGraph = null,
+            builtInsPlatform = BuiltInsPlatform.COMMON
         )
     }
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
@@ -504,7 +505,8 @@ fun serializeModuleIntoKlib(
         moduleName = moduleName,
         nopack = nopack,
         output = klibPath,
-        versions = versions
+        versions = versions,
+        builtInsPlatform = BuiltInsPlatform.JS
     )
 }
 

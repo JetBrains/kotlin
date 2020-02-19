@@ -15,6 +15,7 @@ const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_INTEROP = "interop"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
+const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
 
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
