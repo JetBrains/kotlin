@@ -17,6 +17,7 @@
 package com.intellij.refactoring.inline;
 
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.find.FindBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.InlineHandler;
 import com.intellij.lang.refactoring.InlineHandlers;
@@ -46,7 +47,7 @@ import java.util.*;
 /**
  * @author ven
  */
-@SuppressWarnings({"UtilityClassWithoutPrivateConstructor"})
+@SuppressWarnings("UtilityClassWithoutPrivateConstructor")
 public class GenericInlineHandler {
 
   private static final Logger LOG = Logger.getInstance(GenericInlineHandler.class);
@@ -65,7 +66,8 @@ public class GenericInlineHandler {
     }
     else {
       final Ref<Collection<? extends PsiReference>> usagesRef = new Ref<>();
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> usagesRef.set(ReferencesSearch.search(element).findAll()), "Find Usages", false, element.getProject());
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> usagesRef.set(ReferencesSearch.search(element).findAll()),
+                                                                        FindBundle.message("find.usages.dialog.title"), false, element.getProject());
       allReferences = usagesRef.get();
     }
 
@@ -81,10 +83,7 @@ public class GenericInlineHandler {
 
     HashSet<PsiElement> elements = new HashSet<>();
     for (PsiReference reference : allReferences) {
-      PsiElement refElement = reference.getElement();
-      if (refElement != null) {
-        elements.add(refElement);
-      }
+      elements.add(reference.getElement());
     }
     if (!settings.isOnlyOneReferenceToInline()) {
       elements.add(element);
@@ -186,7 +185,6 @@ public class GenericInlineHandler {
                                       final Map<Language, InlineHandler.Inliner> inliners,
                                       final MultiMap<PsiElement, String> conflicts) {
     final PsiElement referenceElement = reference.getElement();
-    if (referenceElement == null) return;
     final Language language = referenceElement.getLanguage();
     final InlineHandler.Inliner inliner = inliners.get(language);
     if (inliner != null) {
@@ -220,7 +218,6 @@ public class GenericInlineHandler {
     Arrays.sort(usages, (usage1, usage2) -> {
       final PsiElement element1 = usage1.getElement();
       final PsiElement element2 = usage2.getElement();
-      if (element1 == null || element2 == null) return 0;
       return element2.getTextRange().getStartOffset() - element1.getTextRange().getStartOffset();
     });
     return usages;
