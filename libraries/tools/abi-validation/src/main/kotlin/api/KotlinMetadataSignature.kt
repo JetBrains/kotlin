@@ -5,6 +5,8 @@
 package kotlinx.validation.api
 
 import kotlinx.metadata.jvm.*
+import org.objectweb.asm.tree.FieldNode
+import org.objectweb.asm.tree.MethodNode
 
 data class ClassBinarySignature(
     val name: String,
@@ -81,6 +83,9 @@ data class MethodBinarySignature(
     }
 }
 
+fun MethodNode.toMethodBinarySignature() =
+        MethodBinarySignature(JvmMethodSignature(name, desc), isPublishedApi(), AccessFlags(access))
+
 data class FieldBinarySignature(
     override val jvmMember: JvmFieldSignature,
     override val isPublishedApi: Boolean,
@@ -94,6 +99,9 @@ data class FieldBinarySignature(
             ?: takeIf { access.isStatic }?.let { super.findMemberVisibility(classVisibility?.companionVisibilities) }
     }
 }
+
+fun FieldNode.toFieldBinarySignature() =
+        FieldBinarySignature(JvmFieldSignature(name, desc), isPublishedApi(), AccessFlags(access))
 
 private val MemberBinarySignature.kind: Int
     get() = when (this) {

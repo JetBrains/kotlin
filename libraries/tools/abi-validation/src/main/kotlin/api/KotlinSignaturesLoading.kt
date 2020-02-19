@@ -5,39 +5,32 @@
 
 package kotlinx.validation.api
 
-import kotlinx.metadata.jvm.JvmFieldSignature
-import kotlinx.metadata.jvm.JvmMethodSignature
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 import java.io.InputStream
 import java.util.jar.JarFile
 
-fun main(args: Array<String>) {
-    val src = args[0]
-    println(src)
-    println("------------------\n");
-    getBinaryAPI(JarFile(src)).filterOutNonPublic().dump()
-}
 
-
-fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
+private fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
     !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
 }
 
-fun getBinaryAPI(jar: JarFile, visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
-    getBinaryAPI(jar.classEntries().map { entry -> jar.getInputStream(entry) }, visibilityFilter)
+fun JarFile.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
+        classEntries().map { entry -> getInputStream(entry) }.loadApiFromJvmClasses(visibilityFilter)
 
-fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
-    val classNodes = classStreams.map { it.use { stream ->
+fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
+    val classNodes = map {
+        it.use { stream ->
             val classNode = ClassNode()
             ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
             classNode
-    }}
+        }
+    }
 
     val visibilityMapNew = classNodes.readKotlinVisibilities().filterKeys(visibilityFilter)
 
     return classNodes
-        .map { with(it) {
+        .map { classNode -> with(classNode) {
                 val metadata = kotlinMetadata
                 val mVisibility = visibilityMapNew[name]
                 val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
@@ -45,14 +38,16 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityFilter: (String)
                 val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
                 val memberSignatures = (
-                        fields.map { with(it) { FieldBinarySignature(JvmFieldSignature(name, desc), isPublishedApi(), AccessFlags(access)) } } +
-                        methods.map { with(it) { MethodBinarySignature(JvmMethodSignature(name, desc), isPublishedApi(), AccessFlags(access)) } }
+                    fields.map { it.toFieldBinarySignature() } +
+                    methods.map { it.toMethodBinarySignature() }
                 ).filter {
                     it.isEffectivelyPublic(classAccess, mVisibility)
                 }
 
-                ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess,
-                                     isEffectivelyPublic(mVisibility), metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata)
+                ClassBinarySignature(
+                    name, superName, outerClassName, supertypes, memberSignatures, classAccess,
+                    isEffectivelyPublic(mVisibility),
+                    metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata)
                 )
         }}
         .asIterable()
@@ -60,8 +55,7 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityFilter: (String)
 }
 
 
-
-fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: List<String> = emptyList()): List<ClassBinarySignature> {
+fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList()): List<ClassBinarySignature> {
     val nonPublicPaths = nonPublicPackages.map { it.replace('.', '/') + '/' }
     val classByName = associateBy { it.name }
 
@@ -83,22 +77,32 @@ fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: List<String
         if (nonPublicSupertypes.isEmpty())
             return this
 
-        val inheritedStaticSignatures = nonPublicSupertypes.flatMap { it.memberSignatures.filter { it.access.isStatic }}
+        val inheritedStaticSignatures =
+            nonPublicSupertypes.flatMap { it.memberSignatures.filter { it.access.isStatic } }
 
         // not covered the case when there is public superclass after chain of private superclasses
-        return this.copy(memberSignatures = memberSignatures + inheritedStaticSignatures, supertypes = supertypes - superName)
+        return this.copy(
+            memberSignatures = memberSignatures + inheritedStaticSignatures,
+            supertypes = supertypes - superName
+        )
     }
 
     return filter { !it.isInNonPublicPackage() && it.isPublicAndAccessible() }
         .map { it.flattenNonPublicBases() }
-        .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty()}
+        .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty() }
 }
 
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
-fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T = to.apply { this@dump.forEach {
-        append(it.signature).appendln(" {")
-        it.memberSignatures.sortedWith(MEMBER_SORT_ORDER).forEach { append("\t").appendln(it.signature) }
-        appendln("}\n")
-}}
-
+fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
+    forEach { classApi ->
+        with(to) {
+            append(classApi.signature).appendln(" {")
+            classApi.memberSignatures
+                    .sortedWith(MEMBER_SORT_ORDER)
+                    .forEach { append("\t").appendln(it.signature) }
+            appendln("}\n")
+        }
+    }
+    return to
+}
