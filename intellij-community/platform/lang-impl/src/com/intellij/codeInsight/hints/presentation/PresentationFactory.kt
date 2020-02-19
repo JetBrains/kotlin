@@ -243,19 +243,56 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
 
   @Contract(pure = true)
   fun reference(base: InlayPresentation, onClickAction: () -> Unit): InlayPresentation {
-    val noHighlightReference = onClick(base, MouseButton.Middle) { _, _ ->
-      onClickAction()
+    return reference(
+      base = base,
+      onClickAction = Runnable { onClickAction() },
+      clickButtonsWithoutHover = EnumSet.of(MouseButton.Middle),
+      clickButtonsWithHover = EnumSet.of(MouseButton.Left, MouseButton.Middle),
+      hoverPredicate = { isControlDown(it) }
+    )
+  }
+
+  @Contract(pure = true)
+  fun referenceOnHover(base: InlayPresentation, onClickAction: Runnable): InlayPresentation {
+    return changeOnHover(
+      base,
+      onHover = {
+        onClick(
+          base = withReferenceAttributes(base),
+          buttons = EnumSet.of(MouseButton.Left, MouseButton.Middle),
+          onClick = { _, _ ->
+            onClickAction.run()
+          }
+        )
+      },
+      onHoverPredicate = { true }
+    )
+  }
+
+  @Contract(pure = true)
+  private fun reference(
+    base: InlayPresentation,
+    onClickAction: Runnable,
+    clickButtonsWithoutHover: EnumSet<MouseButton>,
+    clickButtonsWithHover: EnumSet<MouseButton>,
+    hoverPredicate: (MouseEvent) -> Boolean
+  ): InlayPresentation {
+    val noHighlightReference = onClick(base, clickButtonsWithoutHover) { _, _ ->
+      onClickAction.run()
     }
     return changeOnHover(noHighlightReference, {
-      val withRefAttributes = attributes(noHighlightReference) {
-        val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
-        attributes.effectType = null // With underlined looks weird
-        it.with(attributes)
+      return@changeOnHover onClick(withReferenceAttributes(noHighlightReference), clickButtonsWithHover) { _, _ ->
+        onClickAction.run()
       }
-      onClick(withRefAttributes, EnumSet.of(MouseButton.Left, MouseButton.Middle)) { _, _ ->
-        onClickAction()
-      }
-    }, { isControlDown(it) })
+    }, hoverPredicate)
+  }
+
+  private fun withReferenceAttributes(noHighlightReference: InlayPresentation): AttributesTransformerPresentation {
+    return attributes(noHighlightReference) {
+      val attributes = attributesOf(EditorColors.REFERENCE_HYPERLINK_COLOR)
+      attributes.effectType = null // With underlined looks weird
+      it.with(attributes)
+    }
   }
 
   @Contract(pure = true)
