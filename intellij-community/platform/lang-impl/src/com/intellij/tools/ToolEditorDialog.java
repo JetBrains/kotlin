@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.tools;
 
 import com.intellij.execution.filters.RegexpFilter;
@@ -19,7 +19,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.changes.RefreshablePanel;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.AbstractTitledSeparatorWithIcon;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
@@ -33,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -177,7 +175,7 @@ public class ToolEditorDialog extends DialogWrapper {
     };
   }
 
-  private class InsertMacroActionListener implements ActionListener {
+  private static class InsertMacroActionListener implements ActionListener {
     private final JTextField myTextField;
 
     InsertMacroActionListener(JTextField textField) {
@@ -186,18 +184,7 @@ public class ToolEditorDialog extends DialogWrapper {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      MacrosDialog dialog = new MacrosDialog(myProject);
-      if (dialog.showAndGet() && dialog.getSelectedMacro() != null) {
-        String macro = dialog.getSelectedMacro().getName();
-        int position = myTextField.getCaretPosition();
-        try {
-          myTextField.getDocument().insertString(position, "$" + macro + "$", null);
-          myTextField.setCaretPosition(position + macro.length() + 2);
-        }
-        catch (BadLocationException ignored) {
-        }
-      }
-      IdeFocusManager.findInstance().requestFocus(myTextField, true);
+      MacrosDialog.show(myTextField);
     }
   }
 
