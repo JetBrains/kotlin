@@ -117,29 +117,31 @@ open class KotlinJsProjectExtension :
         compiler: JsCompilerType = defaultJsCompilerType,
         body: KotlinJsTargetDsl.() -> Unit
     ) {
-        val target: KotlinJsTargetDsl = when (compiler) {
-            legacy -> legacyPreset
-                .also { it.irPreset = null }
-                .createTarget("js")
-            ir -> irPreset
-                .also { it.mixedMode = false }
-                .createTarget("js")
-            both -> legacyPreset
-                .also {
-                    irPreset.mixedMode = true
-                    it.irPreset = irPreset
-                }
-                .createTarget(
-                    lowerCamelCaseName(
-                        "js",
-                        legacy.name
+        if (_target == null) {
+            val target: KotlinJsTargetDsl = when (compiler) {
+                legacy -> legacyPreset
+                    .also { it.irPreset = null }
+                    .createTarget("js")
+                ir -> irPreset
+                    .also { it.mixedMode = false }
+                    .createTarget("js")
+                both -> legacyPreset
+                    .also {
+                        irPreset.mixedMode = true
+                        it.irPreset = irPreset
+                    }
+                    .createTarget(
+                        lowerCamelCaseName(
+                            "js",
+                            legacy.name
+                        )
                     )
-                )
+            }
+
+            this._target = target
+
+            target.project.components.addAll(target.components)
         }
-
-        this._target = target
-
-        target.project.components.addAll(target.components)
 
         target.run(body)
     }
