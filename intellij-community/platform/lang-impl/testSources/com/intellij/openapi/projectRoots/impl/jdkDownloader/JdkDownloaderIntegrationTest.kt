@@ -10,20 +10,41 @@ class JdkDownloaderIntegrationTest : BasePlatformTestCase() {
   @Test
   fun `test default model can be downloaded and parsed`() {
     lateinit var lastError: Throwable
-    run {
-      repeat(5) {
-        val result = runCatching {
-          val data = JdkListDownloader.downloadForUI(null)
-          Assert.assertTrue(data.isNotEmpty())
-        }
-        if (result.isSuccess) return
-        lastError = result.exceptionOrNull()!!
-
-        if (lastError.message?.startsWith("Failed to download list of available JDKs") == true) {
-          Thread.sleep(5000)
-        }
-        else throw lastError
+    repeat(5) {
+      val result = runCatching {
+        val data = JdkListDownloader.getInstance().downloadForUI(null)
+        Assert.assertTrue(data.isNotEmpty())
       }
+      if (result.isSuccess) return
+      lastError = result.exceptionOrNull()!!
+
+      if (lastError.message?.startsWith("Failed to download list of available JDKs") == true) {
+        Thread.sleep(5000)
+      }
+      else throw lastError
+    }
+    throw RuntimeException("Failed to download JDK list within several tries", lastError)
+  }
+
+  @Test
+  fun `test default model is cached`() {
+    lateinit var lastError: Throwable
+    repeat(5) {
+
+      val downloader = JdkListDownloader.getInstance()
+      val packs = List(10) { runCatching { downloader.downloadForUI(null) }.getOrNull() }.filterNotNull()
+
+      if (packs.size < 3) {
+        return@repeat
+      }
+
+      //must return cached value
+      packs.forEach { p1 ->
+        packs.forEach { p2 ->
+          Assert.assertSame(p1, p2)
+        }
+      }
+      return
     }
     throw RuntimeException("Failed to download JDK list within several tries", lastError)
   }

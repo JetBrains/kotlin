@@ -41,7 +41,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
         indicator.pushState()
         indicator.text = "Downloading JDK list..."
         try {
-          JdkListDownloader.downloadModelForJdkInstaller(indicator)
+          JdkListDownloader.getInstance().downloadModelForJdkInstaller(indicator)
         } catch(e: ProcessCanceledException) {
           throw e
         } catch (t: Throwable) {

@@ -5,8 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.google.common.collect.ImmutableList
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
@@ -22,6 +27,10 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.lang.RuntimeException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /** describes vendor + product part of the UI **/
 data class JdkProduct(
@@ -292,7 +301,12 @@ object JdkListParser {
   }
 }
 
-object JdkListDownloader {
+class JdkListDownloader {
+  companion object {
+    @JvmStatic
+    fun getInstance() = service<JdkListDownloader>()
+  }
+
   private val feedUrl: String
     get() {
       val registry = runCatching { Registry.get("jdk.downloader.url").asString() }.getOrNull()
@@ -313,13 +327,28 @@ object JdkListDownloader {
    * Entries are sorter from the best suggested to the worst suggested items.
    */
   fun downloadModelForJdkInstaller(progress: ProgressIndicator?): List<JdkItem> {
-    return downloadForUI(progress)
+    return downloadJdksListWithCache(feedUrl, progress)
   }
 
   /**
    * Lists all entries suitable for UI download, there can be some unlisted entries that are ignored here by intent
    */
-  fun downloadForUI(progress: ProgressIndicator?, feedUrl: String = JdkListDownloader.feedUrl): List<JdkItem> {
+  fun downloadForUI(progress: ProgressIndicator?, feedUrl: String? = null) : List<JdkItem> {
+    return downloadJdksListWithCache(feedUrl, progress)
+  }
+
+  private val jdksListCache = CachedValueWithTTL<List<JdkItem>>(15 to TimeUnit.MINUTES)
+
+  private fun downloadJdksListWithCache(feedUrl: String?, progress: ProgressIndicator?): List<JdkItem> {
+    @Suppress("NAME_SHADOWING")
+    val feedUrl = feedUrl ?: this.feedUrl
+
+    return jdksListCache.getOrCompute(feedUrl, listOf()) {
+      downloadJdksListNoCache(feedUrl, progress)
+    }
+  }
+
+  private fun downloadJdksListNoCache(feedUrl: String, progress: ProgressIndicator?): List<JdkItem> {
     // download XZ packed version of the data (several KBs packed, several dozen KBs unpacked) and process it in-memory
     val rawDataXZ = try {
       downloadJdkList(feedUrl, progress)
@@ -353,10 +382,58 @@ object JdkListDownloader {
         SystemInfo.isLinux -> "linux"
         else -> error("Unsupported OS")
       }
-      return JdkListParser.parseJdkList(json, JdkPredicate(ApplicationInfoImpl.getShadowInstance().build, expectedOS))
+      return ImmutableList.copyOf(JdkListParser.parseJdkList(json, JdkPredicate(ApplicationInfoImpl.getShadowInstance().build, expectedOS)))
     }
     catch (t: Throwable) {
       throw RuntimeException("Failed to process the downloaded list of available JDKs from $feedUrl. ${t.message}", t)
+    }
+  }
+}
+
+private class CachedValueWithTTL<T : Any>(
+  private val ttl: Pair<Int, TimeUnit>
+) {
+  private val lock = ReentrantReadWriteLock()
+  private var cachedUrl: String? = null
+  private var value: T? = null
+  private var computed = 0L
+
+  private fun now() = System.currentTimeMillis()
+  private operator fun Long.plus(ttl: Pair<Int, TimeUnit>): Long = this + ttl.second.toMillis(ttl.first.toLong())
+
+  private inline fun readValueOrNull(expectedUrl: String, onValue: (T) -> Unit) {
+    if (cachedUrl != expectedUrl) {
+      return
+    }
+
+    val value = this.value
+    if (value != null && computed + ttl > now()) {
+      onValue(value)
+    }
+  }
+
+  fun getOrCompute(url: String, defaultOrFailure: T, compute: () -> T): T {
+    lock.read {
+      readValueOrNull(url) { return it }
+    }
+
+    lock.write {
+      //double checked
+      readValueOrNull(url) { return it }
+
+      val value = runCatching(compute).getOrElse {
+        if (it is ProcessCanceledException) {
+          throw it
+        }
+        Logger.getInstance(javaClass).warn("Failed to compute value. ${it.message}", it)
+        defaultOrFailure
+      }
+
+      ProgressManager.checkCanceled()
+      this.value = value
+      computed = now()
+      cachedUrl = url
+      return value
     }
   }
 }
