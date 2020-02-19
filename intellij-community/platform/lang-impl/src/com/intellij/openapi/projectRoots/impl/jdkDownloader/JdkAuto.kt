@@ -17,6 +17,7 @@ import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType.notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType
 import com.intellij.openapi.projectRoots.impl.MockSdk
+import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ui.configuration.*
 import com.intellij.openapi.roots.ui.configuration.SdkDetector.DetectedSdkListener
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup
@@ -40,8 +41,18 @@ class JdkAutoHints : BaseState() {
 }
 
 @State(name = "Java.Jdks")
-class JdkAutoHintService : SimplePersistentStateComponent<JdkAutoHints>(JdkAutoHints()) {
+class JdkAutoHintService(
+  private val project: Project
+) : SimplePersistentStateComponent<JdkAutoHints>(JdkAutoHints()) {
+
+  override fun loadState(state: JdkAutoHints) {
+    super.loadState(state)
+
+    UnknownSdkTracker.getInstance(project).updateUnknownSdks()
+  }
+
   companion object {
+    @JvmStatic
     fun getInstance(project: Project) : JdkAutoHintService = project.service()
   }
 }
