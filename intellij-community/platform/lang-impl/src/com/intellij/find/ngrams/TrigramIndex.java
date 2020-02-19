@@ -22,8 +22,6 @@ package com.intellij.find.ngrams;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.ThreadLocalCachedIntArray;
 import com.intellij.openapi.util.text.TrigramBuilder;
-import com.intellij.psi.impl.cache.impl.id.IdIndex;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
@@ -103,6 +101,12 @@ public class TrigramIndex extends ScalarIndexExtension<Integer> implements Custo
   public boolean hasSnapshotMapping() {
     return true;
   }
+
+  @Override
+  public boolean needsForwardIndexWhenSharing() {
+    return false;
+  }
+
   private static final ThreadLocalCachedIntArray spareBufferLocal = new ThreadLocalCachedIntArray();
 
   @NotNull
