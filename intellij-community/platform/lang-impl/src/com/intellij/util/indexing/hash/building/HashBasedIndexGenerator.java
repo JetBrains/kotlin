@@ -39,16 +39,19 @@ public class HashBasedIndexGenerator<K, V> {
 
   private final AtomicBoolean myIsEmpty = new AtomicBoolean(true);
 
+  private final boolean myCreateForwardIndex;
+
   private InvertedIndex<K, V, FileContent> myIndex;
 
   public HashBasedIndexGenerator(@NotNull FileBasedIndexExtension<K, V> indexExtension, @NotNull Path outRoot) {
-    this(indexExtension.getKeyDescriptor(), indexExtension.getValueExternalizer(), indexExtension, outRoot);
+    this(indexExtension.getKeyDescriptor(), indexExtension.getValueExternalizer(), indexExtension, outRoot, true);
   }
 
   public HashBasedIndexGenerator(@NotNull KeyDescriptor<K> keyDescriptor,
                                  @NotNull DataExternalizer<V> valueExternalizer,
                                  @NotNull FileBasedIndexExtension<K, V> originalExtension,
-                                 @NotNull Path outRoot) {
+                                 @NotNull Path outRoot,
+                                 boolean createForwardIndex) {
     ID<K, V> indexId = originalExtension.getName();
     myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
     myStorageFile = getSharedIndexPath(outRoot, indexId).resolve(indexId.getName());
@@ -63,6 +66,7 @@ public class HashBasedIndexGenerator<K, V> {
     else {
       myInputFilter = filter;
     }
+    myCreateForwardIndex = createForwardIndex;
   }
 
   @NotNull
@@ -96,8 +100,9 @@ public class HashBasedIndexGenerator<K, V> {
     FileBasedIndexExtension<K, V> originalExtension = myExtension.myOriginalExtension;
     boolean isSingleEntryIndex = originalExtension instanceof SingleEntryFileBasedIndexExtension;
     Path forwardIndexPath = myStorageFile.getParent().resolve(myStorageFile.getFileName() + ".forward");
-    ForwardIndex forwardIndex = isSingleEntryIndex ? null : new PersistentMapBasedForwardIndex(forwardIndexPath, false);
-    ForwardIndexAccessor<K, V> forwardIndexAccessor = isSingleEntryIndex ? null : new MapForwardIndexAccessor<>(new InputMapExternalizer<>(originalExtension));
+    boolean createForwardIndex = myCreateForwardIndex && !isSingleEntryIndex;
+    ForwardIndex forwardIndex = createForwardIndex ? new PersistentMapBasedForwardIndex(forwardIndexPath, false) : null;
+    ForwardIndexAccessor<K, V> forwardIndexAccessor = createForwardIndex ? new MapForwardIndexAccessor<>(new InputMapExternalizer<>(originalExtension)) : null;
     myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, indexStorage, forwardIndex, forwardIndexAccessor) {
       @NotNull
       @Override

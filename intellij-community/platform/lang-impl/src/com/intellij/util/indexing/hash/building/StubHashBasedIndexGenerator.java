@@ -2,6 +2,7 @@
 package com.intellij.util.indexing.hash.building;
 
 import com.google.common.collect.Maps;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexExtension;
@@ -26,17 +27,14 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
 
   private final Path myStubIndicesRoot;
 
-  private StubHashBasedIndexGenerator(@NotNull SerializedStubTreeDataExternalizer externalizer,
-                                      @NotNull StubUpdatingIndex index,
+  private StubHashBasedIndexGenerator(@NotNull StubUpdatingIndex index,
                                       @NotNull Path stubIndicesRoot,
                                       @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
-    super(EnumeratorIntegerDescriptor.INSTANCE, externalizer, index, stubIndicesRoot.getParent());
+    super(index, stubIndicesRoot.getParent());
     myStubIndicesRoot = stubIndicesRoot;
 
     for (StubIndexExtension<?, ?> stubIndexExtension : stubIndexExtensions) {
-      FileBasedIndexExtension<?, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);
-      HashBasedIndexGenerator<?, Void> hashBasedIndexGenerator = createGenerator(extension);
-      myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), hashBasedIndexGenerator);
+      myStubIndexesGeneratorMap.put(stubIndexExtension.getKey(), createGenerator(stubIndexExtension));
     }
   }
 
@@ -46,7 +44,6 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
                                                    @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
     StubForwardIndexExternalizer<?> forwardIndexExternalizer = StubForwardIndexExternalizer.createFileLocalExternalizer(serializationManager);
     return new StubHashBasedIndexGenerator(
-      new SerializedStubTreeDataExternalizer(true, serializationManager, forwardIndexExternalizer),
       new StubUpdatingIndex(forwardIndexExternalizer, serializationManager),
       stubIndicesRoot,
       stubIndexExtensions
@@ -54,8 +51,9 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
   }
 
   @NotNull
-  private <K, V> HashBasedIndexGenerator<K, V> createGenerator(FileBasedIndexExtension<K, V> extension) {
-    return new HashBasedIndexGenerator<>(extension.getKeyDescriptor(), extension.getValueExternalizer(), extension, myStubIndicesRoot);
+  private <K, V extends PsiElement> HashBasedIndexGenerator<K, Void> createGenerator(StubIndexExtension<K, V> stubIndexExtension) {
+    FileBasedIndexExtension<K, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);
+    return new HashBasedIndexGenerator<>(extension.getKeyDescriptor(), extension.getValueExternalizer(), extension, myStubIndicesRoot, false);
   }
 
   @NotNull

@@ -64,7 +64,7 @@ public class IndexesExporter {
       PathKt.delete(chunkRoot);
       PathKt.delete(zipFile);
       PathKt.createDirectories(chunkRoot);
-      IndexInfrastructureVersion version = exportIndexesChunkImpl(chunk, chunkRoot, zipFile, indicator, rootDisposable, errorsCollector);
+      IndexInfrastructureVersion version = exportIndexesChunkImpl(chunk, chunkRoot, zipFile, indicator, errorsCollector);
       errorsCollector.report();
       return version;
     } catch (Exception e) {
@@ -85,7 +85,6 @@ public class IndexesExporter {
                                                             @NotNull Path chunkRoot,
                                                             @NotNull Path zipFile,
                                                             @NotNull ProgressIndicator indicator,
-                                                            @NotNull Disposable rootDisposable,
                                                             @NotNull ErrorsCollector errorsCollector) throws Exception {
 
     List<FileBasedIndexExtension<?, ?>> exportableFileBasedIndexExtensions = FileBasedIndexExtension
