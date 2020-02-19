@@ -310,7 +310,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     });
 
     final SearchScope searchScope = actionHandler.getSelectedScope();
-    ShowUsagesTable table = new ShowUsagesTable();
+    final AtomicInteger outOfScopeUsages = new AtomicInteger();
+    ShowUsagesTable table = new ShowUsagesTable(new ShowUsagesTableCellRenderer(usageView, outOfScopeUsages, searchScope));
     AsyncProcessIcon processIcon = new AsyncProcessIcon("xxx");
 
     addUsageNodes(usageView.getRoot(), usageView, new ArrayList<>());
@@ -318,8 +319,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     List<Usage> usages = new ArrayList<>();
     Set<UsageNode> visibleNodes = new LinkedHashSet<>();
     List<UsageNode> data = collectData(usages, visibleNodes, usageView, presentation);
-    AtomicInteger outOfScopeUsages = new AtomicInteger();
-    table.setTableModel(usageView, data, outOfScopeUsages, searchScope);
+    table.setTableModel(data);
 
     boolean isPreviewMode =
       Boolean.TRUE == PreviewManager.SERVICE.preview(project, UsagesPreviewPanelProvider.ID, Pair.create(usageView, table), false);
@@ -366,8 +366,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       }
 
       rebuildTable(
-        usageView, copy, nodes, table, popup, presentation, popupPosition, minWidth, !processIcon.isDisposed(),
-        outOfScopeUsages, searchScope
+        usageView, copy, nodes, table, popup, presentation, popupPosition, minWidth, !processIcon.isDisposed()
       );
     });
 
@@ -780,9 +779,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                    @NotNull UsageViewPresentation presentation,
                                    @NotNull RelativePoint popupPosition,
                                    @NotNull IntRef minWidth,
-                                   boolean findUsagesInProgress,
-                                   @NotNull AtomicInteger outOfScopeUsages,
-                                   @NotNull SearchScope searchScope) {
+                                   boolean findUsagesInProgress) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     boolean shouldShowMoreSeparator = usages.contains(ShowUsagesTable.MORE_USAGES_SEPARATOR);
@@ -805,7 +802,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }
 
     List<UsageNode> data = collectData(usages, nodes, usageView, presentation);
-    ShowUsagesTable.MyModel tableModel = table.setTableModel(usageView, data, outOfScopeUsages, searchScope);
+    ShowUsagesTable.MyModel tableModel = table.setTableModel(data);
     List<UsageNode> existingData = tableModel.getItems();
 
     int row = table.getSelectedRow();

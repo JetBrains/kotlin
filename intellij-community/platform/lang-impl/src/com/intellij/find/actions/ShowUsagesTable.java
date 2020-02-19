@@ -9,7 +9,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.popup.util.PopupUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.ScrollingUtil;
 import com.intellij.ui.SpeedSearchBase;
 import com.intellij.ui.SpeedSearchComparator;
@@ -43,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 class ShowUsagesTable extends JBTable implements DataProvider {
@@ -51,7 +49,10 @@ class ShowUsagesTable extends JBTable implements DataProvider {
   static final Usage USAGES_OUTSIDE_SCOPE_SEPARATOR = new UsageAdapter();
   private static final int MARGIN = 2;
 
-  ShowUsagesTable() {
+  private final ShowUsagesTableCellRenderer myRenderer;
+
+  ShowUsagesTable(@NotNull ShowUsagesTableCellRenderer renderer) {
+    myRenderer = renderer;
     ScrollingUtil.installActions(this);
     HintUpdateSupply.installDataContextHintUpdateSupply(this);
   }
@@ -202,10 +203,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
   }
 
   @NotNull
-  MyModel setTableModel(@NotNull UsageViewImpl usageView,
-                        @NotNull final List<UsageNode> data,
-                        @NotNull AtomicInteger outOfScopeUsages,
-                        @NotNull SearchScope searchScope) {
+  MyModel setTableModel(@NotNull final List<UsageNode> data) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     final int columnCount = calcColumnCount(data);
     MyModel model = getModel() instanceof MyModel ? (MyModel)getModel() : null;
@@ -213,11 +211,10 @@ class ShowUsagesTable extends JBTable implements DataProvider {
       model = new MyModel(data, columnCount);
       setModel(model);
 
-      ShowUsagesTableCellRenderer renderer = new ShowUsagesTableCellRenderer(usageView, outOfScopeUsages, searchScope);
       for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
         TableColumn column = getColumnModel().getColumn(i);
         column.setPreferredWidth(0);
-        column.setCellRenderer(renderer);
+        column.setCellRenderer(myRenderer);
       }
     }
     return model;
