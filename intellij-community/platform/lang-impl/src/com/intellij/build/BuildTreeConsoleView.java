@@ -1123,7 +1123,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     }
 
     private boolean maybeExpand(TreePath path) {
-      if (path == null) return false;
+      if (myTree == null || path == null) return false;
       Object last = path.getLastPathComponent();
       if (last instanceof DefaultMutableTreeNode) {
         DefaultMutableTreeNode mutableTreeNode = (DefaultMutableTreeNode)last;
