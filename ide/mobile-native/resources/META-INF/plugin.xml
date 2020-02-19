@@ -89,6 +89,7 @@
     <customHeaderProvider implementation="com.jetbrains.mobile.bridging.MobileKonanFrameworkHeaderProvider"/>
     <!-- swift -->
     <swiftSourceModuleProvider implementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftSourceModuleProvider"/>
+    <swiftCustomIncludePathProvider implementation="com.jetbrains.swift.codeinsight.resolve.module.MobileXCTestPathProvider"/>
     <customHeaderProvider implementation="com.jetbrains.swift.bridging.MobileSwiftBridgeHeaderProvider"/>
   </extensions>
 
