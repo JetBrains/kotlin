@@ -223,7 +223,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
         get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.InlineClasses)
 
     override fun tearDown() {
-        resetProjectSettings(LanguageVersion.KOTLIN_1_3)
+        resetProjectSettings(LanguageVersion.LATEST_STABLE)
         FacetManager.getInstance(module).getFacetByType(KotlinFacetType.TYPE_ID)?.let {
             FacetUtil.deleteFacet(it)
         }
