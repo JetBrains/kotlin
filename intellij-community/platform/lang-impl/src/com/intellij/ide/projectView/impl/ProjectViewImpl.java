@@ -470,8 +470,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private static final DataKey<ProjectViewImpl> DATA_KEY = DataKey.create("com.intellij.ide.projectView.impl.ProjectViewImpl");
 
   private DefaultActionGroup myActionGroup;
-  private String mySavedPaneId = getDefaultViewId();
-  private String mySavedPaneSubId;
+  private @Nullable String mySavedPaneId = null;
+  private @Nullable String mySavedPaneSubId;
   @NonNls private static final String ELEMENT_NAVIGATOR = "navigator";
   @NonNls private static final String ELEMENT_PANES = "panes";
   @NonNls private static final String ELEMENT_PANE = "pane";
@@ -697,12 +697,18 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     String selectID = null;
     String selectSubID = null;
 
+    String savedPaneId = mySavedPaneId;
+    if (savedPaneId == null) {
+      savedPaneId = getDefaultViewId();
+      mySavedPaneSubId = null;
+    }
+
     // try to find saved selected view...
     for (Content content : contents) {
       String id = content.getUserData(ID_KEY);
       String subId = content.getUserData(SUB_ID_KEY);
       if (id != null &&
-          id.equals(mySavedPaneId) &&
+          id.equals(savedPaneId) &&
           StringUtil.equals(subId, mySavedPaneSubId)) {
         selectID = id;
         selectSubID = subId;
@@ -1526,10 +1532,11 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     Element navigatorElement = parentNode.getChild(ELEMENT_NAVIGATOR);
     if (navigatorElement != null) {
       mySavedPaneId = navigatorElement.getAttributeValue(ATTRIBUTE_CURRENT_VIEW);
-      mySavedPaneSubId = navigatorElement.getAttributeValue(ATTRIBUTE_CURRENT_SUBVIEW);
       if (mySavedPaneId == null) {
-        mySavedPaneId = getDefaultViewId();
         mySavedPaneSubId = null;
+      }
+      else {
+        mySavedPaneSubId = navigatorElement.getAttributeValue(ATTRIBUTE_CURRENT_SUBVIEW);
       }
 
       try {
@@ -1545,14 +1552,19 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   }
 
-  @NotNull
-  public static String getDefaultViewId() {
+  @Override
+  public @NotNull String getDefaultViewId() {
     //noinspection SpellCheckingInspection
     if ("AndroidStudio".equals(PlatformUtils.getPlatformPrefix()) && !Boolean.getBoolean("studio.projectview")) {
       // the default in Android Studio unless studio.projectview is set: issuetracker.google.com/37091465
       return "AndroidView";
     }
     else {
+      for (AbstractProjectViewPane extension : AbstractProjectViewPane.EP_NAME.getExtensions(myProject)) {
+        if (extension.isDefaultPane(myProject)) {
+          return extension.getId();
+        }
+      }
       return ProjectViewPane.ID;
     }
   }
@@ -1587,11 +1599,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     AbstractProjectViewPane currentPane = getCurrentProjectViewPane();
     if (currentPane != null) {
       String subId = currentPane.getSubId();
-      if (subId != null || !currentPane.getId().equals(getDefaultViewId())) {
-        navigatorElement.setAttribute(ATTRIBUTE_CURRENT_VIEW, currentPane.getId());
-        if (subId != null) {
-          navigatorElement.setAttribute(ATTRIBUTE_CURRENT_SUBVIEW, subId);
-        }
+      navigatorElement.setAttribute(ATTRIBUTE_CURRENT_VIEW, currentPane.getId());
+      if (subId != null) {
+        navigatorElement.setAttribute(ATTRIBUTE_CURRENT_SUBVIEW, subId);
       }
     }
 

@@ -133,8 +133,11 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
   public abstract @NotNull String getId();
 
-  @Nullable
-  public final String getSubId() {
+  public boolean isDefaultPane(@SuppressWarnings("unused") @NotNull Project project) {
+    return false;
+  }
+
+  public final @Nullable String getSubId() {
     return mySubId;
   }
 
