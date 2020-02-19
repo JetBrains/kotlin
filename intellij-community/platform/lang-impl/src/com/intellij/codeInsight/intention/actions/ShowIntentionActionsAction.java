@@ -49,12 +49,6 @@ public class ShowIntentionActionsAction extends BaseCodeInsightAction implements
       presentation.setEnabledAndVisible(true);
       return;
     }
-    else if (project != null && DumbService.isDumb(project)) {
-      DumbService.getInstance(project).showDumbModeNotification(
-        ApplicationBundle.message("intentions.are.not.available.message"));
-      presentation.setEnabledAndVisible(false);
-      return;
-    }
     super.update(event);
   }
 
@@ -62,6 +56,12 @@ public class ShowIntentionActionsAction extends BaseCodeInsightAction implements
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project == null) return;
+
+    if (!LightEdit.owns(project) && DumbService.isDumb(project)) {
+      DumbService.getInstance(project).showDumbModeNotification(
+        ApplicationBundle.message("intentions.are.not.available.message"));
+      return;
+    }
 
     Editor editor = getEditor(e.getDataContext(), project, false);
     if (editor == null) return;
