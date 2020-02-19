@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.calculateSAM
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassImplBuilder
@@ -134,7 +133,6 @@ fun deserializeClassToSymbol(
                 ClassId.fromString(nameResolver.getQualifiedClassName(it))
             }
         }
-        calculateSAM()
     }.build().also {
         (it.annotations as MutableList<FirAnnotationCall>) += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
     }

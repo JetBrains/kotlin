@@ -458,7 +458,6 @@ class DeclarationsConverter(
                     generateValuesFunction(baseSession, context.packageFqName, context.className)
                     generateValueOfFunction(baseSession, context.packageFqName, context.className)
                 }
-                calculateSAM()
             }.build()
         }
     }

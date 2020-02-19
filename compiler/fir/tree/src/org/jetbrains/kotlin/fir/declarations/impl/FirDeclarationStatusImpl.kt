@@ -121,12 +121,6 @@ open class FirDeclarationStatusImpl(
             this[STATIC] = value
         }
 
-    override var isNotSAM: Boolean
-        get() = this[NOT_SAM]
-        set(value) {
-            this[NOT_SAM] = value
-        }
-
     private enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -142,8 +136,7 @@ open class FirDeclarationStatusImpl(
         COMPANION(0x800),
         DATA(0x1000),
         SUSPEND(0x2000),
-        STATIC(0x4000),
-        NOT_SAM(0x8000)
+        STATIC(0x4000)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
