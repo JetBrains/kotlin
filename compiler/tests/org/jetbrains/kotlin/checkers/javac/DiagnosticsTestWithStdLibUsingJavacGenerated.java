@@ -1361,6 +1361,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/extensionReceiver_after.kt");
             }
 
+            @TestMetadata("externalArguments.kt")
+            public void testExternalArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/externalArguments.kt");
+            }
+
             @TestMetadata("intersectingInfo.kt")
             public void testIntersectingInfo() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/intersectingInfo.kt");
@@ -1507,6 +1512,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
 
                 public void testAllFilesPresentInWhen() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/when"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("kt36818.kt")
+                public void testKt36818() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/when/kt36818.kt");
                 }
 
                 @TestMetadata("withSubject.kt")

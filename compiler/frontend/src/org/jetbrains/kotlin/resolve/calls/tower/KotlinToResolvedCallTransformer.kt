@@ -318,13 +318,15 @@ class KotlinToResolvedCallTransformer(
                 )
             }
 
-            updateRecordedType(
-                argumentExpression,
-                parameter,
-                newContext,
-                constantConvertedArgument?.unknownIntegerType?.unwrap(),
-                resolvedCall.isReallySuccess()
-            )
+            if (!valueArgument.isExternal()) {
+                updateRecordedType(
+                    argumentExpression,
+                    parameter,
+                    newContext,
+                    constantConvertedArgument?.unknownIntegerType?.unwrap(),
+                    resolvedCall.isReallySuccess()
+                )
+            }
         }
     }
 
