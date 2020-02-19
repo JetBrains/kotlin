@@ -35,10 +35,7 @@ abstract class AppleInstaller(
             it.workingDirectory = File(commandLine.exePath).parentFile.parent
             it.isPassParentEnvs = false
         }
-        val platform = AppleSdkManager.getInstance().findPlatformByType(
-            if (device is AppleSimulator) ApplePlatform.Type.IOS_SIMULATOR
-            else ApplePlatform.Type.IOS
-        )!!
+        val platform = AppleSdkManager.getInstance().findPlatformByType(platformType)!!
 
         val configurator =
             if (configuration is MobileTestRunConfiguration) {
@@ -64,6 +61,7 @@ abstract class AppleInstaller(
         return commandLine
     }
 
+    protected abstract val platformType: ApplePlatform.Type
     protected open val rawDevice: AMDevice get() = throw IllegalStateException()
     protected open val rawSimulator: SimulatorRuntime get() = throw IllegalStateException()
 
@@ -76,6 +74,7 @@ class ApplePhysicalDeviceInstaller(
     appBundle: File,
     raw: AMDevice
 ) : AppleInstaller(configuration, environment, appBundle) {
+    override val platformType: ApplePlatform.Type = ApplePlatform.Type.IOS
     override val rawDevice: AMDevice = raw
 }
 
@@ -85,5 +84,6 @@ class AppleSimulatorInstaller(
     appBundle: File,
     raw: SimulatorConfiguration
 ) : AppleInstaller(configuration, environment, appBundle) {
+    override val platformType: ApplePlatform.Type = ApplePlatform.Type.IOS_SIMULATOR
     override val rawSimulator: SimulatorRuntime = raw.runtime
 }
