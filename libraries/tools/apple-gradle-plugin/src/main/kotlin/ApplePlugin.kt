@@ -228,8 +228,9 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
             val testTargetSettings = mapOf(
                 BuildSettingNames.INFOPLIST_FILE to testInfoPlistFile.toRelativeString(baseDir),
                 BuildSettingNames.PRODUCT_BUNDLE_IDENTIFIER to getQualifiedName(target.name) + "Tests",
-                BuildSettingNames.TEST_HOST to "$(BUILT_PRODUCTS_DIR)/${target.name}.app/${target.name}",
-                BuildSettingNames.PRODUCT_NAME to "$(TARGET_NAME)",
+                BuildSettingNames.TEST_HOST to "$(BUILT_PRODUCTS_DIR)/${project.name}.app/${project.name}",
+                BuildSettingNames.PRODUCT_NAME to "${project.name}Tests",
+                BuildSettingNames.PRODUCT_MODULE_NAME to "${project.name}Tests",
                 "BUNDLE_LOADER" to "$(TEST_HOST)",
                 "ENABLE_TESTABILITY" to "YES"
             )
