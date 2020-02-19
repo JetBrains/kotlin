@@ -28,6 +28,19 @@ interface KotlinTargetContainerWithJsPresetFunctions :
         )
 
     fun js(
+        name: String,
+        compiler: String,
+        configure: KotlinJsTargetDsl.() -> Unit = { }
+    ) = js(
+        name = name,
+        compiler = KotlinJsCompilerType.byArgument(compiler)
+            ?: throw IllegalArgumentException(
+                "Unable to find $compiler setting. Use [${KotlinJsCompilerType.values().toList().joinToString()}]"
+            ),
+        configure = configure
+    )
+
+    fun js(
         name: String = "js",
         configure: KotlinJsTargetDsl.() -> Unit = { }
     ) = js(name = name, compiler = defaultJsCompilerType, configure = configure)
@@ -42,4 +55,26 @@ interface KotlinTargetContainerWithJsPresetFunctions :
     fun js(name: String, configure: Closure<*>) = js(name = name) { ConfigureUtil.configure(configure, this) }
     fun js(compiler: KotlinJsCompilerType, configure: Closure<*>) = js(compiler = compiler) { ConfigureUtil.configure(configure, this) }
     fun js(configure: Closure<*>) = js { ConfigureUtil.configure(configure, this) }
+
+    fun js(
+        name: String,
+        compiler: KotlinJsCompilerType,
+        configure: Closure<*>
+    ) = js(
+        name = name,
+        compiler = compiler
+    ) {
+        ConfigureUtil.configure(configure, this)
+    }
+
+    fun js(
+        name: String,
+        compiler: String,
+        configure: Closure<*>
+    ) = js(
+        name = name,
+        compiler = compiler
+    ) {
+        ConfigureUtil.configure(configure, this)
+    }
 }
