@@ -555,7 +555,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     });
   }
 
-  private static void prepareCSS(HTMLEditorKit editorKit) {
+  private static void prepareCSS(@NotNull HTMLEditorKit editorKit) {
     boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
     Color documentationColor = EditorColorsManager.getInstance().getSchemeForCurrentUITheme().getColor(COLOR_KEY);
     Color borderColor = newLayout ? UIUtil.getTooltipSeparatorColor() : ColorUtil.mix(documentationColor, BORDER_COLOR, 0.5);
@@ -598,7 +598,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       editorKit.getStyleSheet().addRule("td { margin: 2px 0 3.5px 0; padding: 0 0 0 0; }");
     }
     editorKit.getStyleSheet().addRule("th { text-align: left; }");
-    editorKit.getStyleSheet().addRule(".section { color: " + ColorUtil.toHtmlColor(SECTION_COLOR) + "; padding-right: 4px}");
+    editorKit.getStyleSheet().addRule(".section { color: " + ColorUtil.toHtmlColor(SECTION_COLOR) + "; padding-right: 4px; white-space:nowrap;}");
   }
 
   private static Color getLinkColor() {
