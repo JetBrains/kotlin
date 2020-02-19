@@ -4,6 +4,7 @@ package com.intellij.ide.util.projectWizard;
 import com.intellij.BundleBase;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -320,8 +321,9 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
     }
 
     final FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    myLocationField.addBrowseFolderListener("Select Base Directory", "Select base directory for the project", null, descriptor);
-    return LabeledComponent.create(myLocationField, BundleBase.replaceMnemonicAmpersand("&Location"), BorderLayout.WEST);
+    myLocationField.addBrowseFolderListener(IdeBundle.message("directory.project.location.title"),
+                                            IdeBundle.message("directory.project.location.description"), null, descriptor);
+    return LabeledComponent.create(myLocationField, BundleBase.replaceMnemonicAmpersand(IdeBundle.message("directory.project.location.label")), BorderLayout.WEST);
   }
 
   @NotNull
