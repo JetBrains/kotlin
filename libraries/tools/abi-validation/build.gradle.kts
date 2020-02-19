@@ -11,6 +11,12 @@ repositories {
     gradlePluginPortal()
 }
 
+sourceSets {
+    test {
+        java.srcDir("src/test/kotlin")
+    }
+}
+
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("stdlib-jdk8"))
@@ -27,6 +33,19 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.apply {
         languageVersion = "1.3"
         jvmTarget = "1.8"
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks {
+    test {
+        systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
+        systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
+        jvmArgs("-ea")
     }
 }
 
