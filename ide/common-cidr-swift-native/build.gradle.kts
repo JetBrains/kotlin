@@ -9,6 +9,7 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
+val ijProductBranch: (String) -> Int by ultimateTools
 
 val isStandaloneBuild: Boolean by rootProject.extra
 val useAppCodeForCommon: Boolean by rootProject.extra
@@ -36,14 +37,17 @@ dependencies {
     compileOnly(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
 
     if (!isStandaloneBuild) {
+        val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+        val ideBranch = ijProductBranch(ideVersion)
         val localDependencies = Class.forName("LocalDependenciesKt")
         val intellijDep = localDependencies
             .getMethod("intellijDep", Project::class.java, String::class.java)
             .invoke(null, project, null) as String
+        val includeJars = arrayOf("trove4j", "external-system-rt", if (ideBranch <= 193) "objenesis-3.0.1" else "objenesis-3.1", "kryo-2.24.0")
         compileOnly(intellijDep) {
             localDependencies
                 .getMethod("includeJars", ModuleDependency::class.java, Array<String>::class.java, Project::class.java)
-                .invoke(null, this, arrayOf("trove4j", "external-system-rt", "objenesis-3.0.1", "kryo-2.24.0"), null)
+                .invoke(null, this, includeJars, null)
         }
     }
 }
