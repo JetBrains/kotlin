@@ -23,6 +23,7 @@ import com.intellij.ui.AbstractTitledSeparatorWithIcon;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.fields.ExtendableTextField;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
@@ -33,8 +34,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ToolEditorDialog extends DialogWrapper {
@@ -51,12 +50,9 @@ public class ToolEditorDialog extends DialogWrapper {
   private JTextField myNameField;
   private ComboBox<String> myGroupCombo;
   private JTextField myDescriptionField;
-  private TextFieldWithBrowseButton myProgramField;
-  private JButton myInsertCommandMacroButton;
+  private ExtendableTextFieldWithBrowseButton myProgramField;
   private RawCommandLineEditor myArgumentsField;
-  private JButton myInsertParametersMacroButton;
-  private TextFieldWithBrowseButton myWorkingDirField;
-  private JButton myInsertWorkingDirectoryMacroButton;
+  private ExtendableTextFieldWithBrowseButton myWorkingDirField;
   private JPanel myAdditionalOptionsPanel;
   private AbstractTitledSeparatorWithIcon myAdvancedOptionsSeparator;
   private JPanel myAdvancedOptionsPanel;
@@ -175,26 +171,13 @@ public class ToolEditorDialog extends DialogWrapper {
     };
   }
 
-  private static class InsertMacroActionListener implements ActionListener {
-    private final JTextField myTextField;
-
-    InsertMacroActionListener(JTextField textField) {
-      myTextField = textField;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      MacrosDialog.show(myTextField);
-    }
-  }
-
   private void addListeners() {
     addProgramBrowseAction(myProgramField);
     addWorkingDirectoryBrowseAction(myWorkingDirField);
 
-    myInsertCommandMacroButton.addActionListener(new InsertMacroActionListener(myProgramField.getTextField()));
-    myInsertParametersMacroButton.addActionListener(new InsertMacroActionListener(myArgumentsField.getTextField()));
-    myInsertWorkingDirectoryMacroButton.addActionListener(new InsertMacroActionListener(myWorkingDirField.getTextField()));
+    MacrosDialog.addTextFieldExtension((ExtendableTextField)myProgramField.getTextField());
+    MacrosDialog.addTextFieldExtension((ExtendableTextField)myArgumentsField.getTextField());
+    MacrosDialog.addTextFieldExtension((ExtendableTextField)myWorkingDirField.getTextField());
 
     myUseConsoleCheckbox.addChangeListener(new ChangeListener() {
       @Override
@@ -290,5 +273,11 @@ public class ToolEditorDialog extends DialogWrapper {
   private static String convertString(String s) {
     if (s != null && s.trim().isEmpty()) return null;
     return s;
+  }
+
+  private static class ExtendableTextFieldWithBrowseButton extends TextFieldWithBrowseButton {
+    ExtendableTextFieldWithBrowseButton() {
+      super(new ExtendableTextField(10));
+    }
   }
 }
