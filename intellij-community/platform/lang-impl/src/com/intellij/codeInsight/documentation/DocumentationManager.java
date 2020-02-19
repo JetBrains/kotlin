@@ -777,10 +777,6 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     component.startWait();
     if (wasEmpty) {
       component.setText(CodeInsightBundle.message("javadoc.fetching.progress"), collector.element, collector.provider);
-      AbstractPopup jbPopup = (AbstractPopup)getDocInfoHint();
-      if (jbPopup != null) {
-        jbPopup.setDimensionServiceKey(null);
-      }
     }
 
     ModalityState modality = ModalityState.defaultModalityState();
