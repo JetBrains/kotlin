@@ -35,8 +35,8 @@ import kotlin.concurrent.write
 /** describes vendor + product part of the UI **/
 data class JdkProduct(
   val vendor: String,
-  private val product: String?,
-  private val flavour: String?
+  val product: String?,
+  val flavour: String?
 ) : Comparable<JdkProduct> {
 
   private fun String?.compareToIgnoreCase(other: String?): Int {
@@ -53,20 +53,6 @@ data class JdkProduct(
     cmp = this.product.compareToIgnoreCase(other.product)
     if (cmp != 0) return cmp
     return this.flavour.compareToIgnoreCase(other.flavour)
-  }
-
-  fun matchesVendor(predicate: String) : Boolean {
-    val cases = sequence {
-      yield(vendor)
-      if (product == null) return@sequence
-      yield(product)
-      yield("$vendor-$product")
-      if (flavour == null) return@sequence
-      yield("$product-$flavour")
-      yield("$vendor-$product-$flavour")
-    }
-    val match = predicate.trim()
-    return cases.any { it.equals(match, ignoreCase = true) }
   }
 
   val vendorPathText: String
@@ -122,6 +108,25 @@ data class JdkItem(
 
   val sharedIndexAliases: List<String>
 ) : Comparable<JdkItem> {
+
+  fun matchesVendor(predicate: String) : Boolean {
+    val cases = sequence {
+      yield(product.vendor)
+
+      yield(suggestedSdkName.split("-").dropLast(1).joinToString("-"))
+      if (product.product != null) {
+        yield(product.product)
+        yield("${product.vendor}-${product.product}")
+        if (product.flavour != null) {
+          yield("${product.product}-${product.flavour}")
+          yield("${product.vendor}-${product.product}-${product.flavour}")
+        }
+      }
+    }
+
+    val match = predicate.trim()
+    return cases.any { it.equals(match, ignoreCase = true) }
+  }
 
   /**
    * Returns versionString for the Java Sdk object in specific format

@@ -3,9 +3,9 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkLocalSdkFix
 import com.intellij.util.lang.JavaVersion
+import java.util.function.Predicate
 
 
 interface JdkRequirement {
@@ -42,10 +42,10 @@ object JdkRequirements {
     }
   }
 
-  fun parseRequirement(request: UnknownSdk) : JdkRequirement? {
-    val nameFilter = request.sdkName?.let { parseRequirement(it) }
-    val homePredicate = request.sdkHomePredicate
-    val versionStringPredicate = request.sdkVersionStringPredicate
+  fun parseRequirement(namePredicate: String?,
+                       versionStringPredicate: Predicate<String>?,
+                       homePredicate: Predicate<String>?) : JdkRequirement? {
+    val nameFilter = namePredicate?.let { parseRequirement(it) }
 
     if (versionStringPredicate == null && nameFilter == null) {
       // if no other requirements were specified, and the name filter failed,
@@ -136,7 +136,7 @@ object JdkRequirements {
         return object : JdkRequirement {
           override fun matches(sdk: Sdk) = false /*TODO[jo]: no vendor information*/
           override fun matches(sdk: UnknownSdkLocalSdkFix) = false /*TODO[jo]: no vendor information*/
-          override fun matches(sdk: JdkItem) = matcher.matchVersion(sdk.versionString) && sdk.product.matchesVendor(vendor)
+          override fun matches(sdk: JdkItem) = matcher.matchVersion(sdk.versionString) && sdk.matchesVendor(vendor)
           override fun toString() = "JdkRequirement { $vendor && $matcher }"
         }
       }

@@ -3,6 +3,10 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.BaseState
+import com.intellij.openapi.components.SimplePersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
@@ -19,7 +23,28 @@ import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdk
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.lang.JavaVersion
+import com.intellij.util.text.nullize
+import com.intellij.util.xmlb.annotations.XCollection
 import org.jetbrains.jps.model.java.JdkVersionDetector
+import java.io.File
+
+class JdkAutoHint: BaseState() {
+  val name by string()
+  val path by string()
+  val version by string()
+}
+
+class JdkAutoHints : BaseState() {
+  @get:XCollection
+  val jdks by list<JdkAutoHint>()
+}
+
+@State(name = "Java.Jdks")
+class JdkAutoHintService : SimplePersistentStateComponent<JdkAutoHints>(JdkAutoHints()) {
+  companion object {
+    fun getInstance(project: Project) : JdkAutoHintService = project.service()
+  }
+}
 
 class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
   private val LOG = logger<JdkAuto>()
@@ -52,10 +77,52 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
         }
       }
 
+      private fun resolveHint(sdk: UnknownSdk) : JdkAutoHint? {
+        if (sdk.sdkType != sdkType) return null
+
+        project ?: return null
+        val sdkName = sdk.sdkName ?: return null
+
+        return JdkAutoHintService
+          .getInstance(project)
+          .state
+          .jdks.singleOrNull { it.name.equals(sdkName, ignoreCase = true) }
+      }
+
+      private fun parseSdkRequirement(sdk: UnknownSdk): JdkRequirement? {
+        val hint = resolveHint(sdk)
+
+        val namePredicate = hint?.version?.trim()?.toLowerCase()?.nullize(true) ?: sdk.sdkName
+
+        return JdkRequirements.parseRequirement(
+          namePredicate = namePredicate,
+          versionStringPredicate = sdk.sdkVersionStringPredicate,
+          homePredicate = sdk.sdkHomePredicate
+        )
+      }
+
+      private fun resolveHintPath(sdk: UnknownSdk, indicator: ProgressIndicator) :UnknownSdkLocalSdkFix? {
+        val hint = resolveHint(sdk)
+        val path = hint?.path ?: return null
+        indicator.text = "Resolving hint path: $path..."
+        if (!File(path).isDirectory) return null
+
+        val version = runCatching {
+          sdkType.getVersionString(hint.path)
+        }.getOrNull() ?: return null
+
+        return object : UnknownSdkLocalSdkFix {
+          override fun getExistingSdkHome(): String = path
+          override fun getVersionString(): String = version
+          override fun getSuggestedSdkName() = sdkType.suggestSdkName(null, hint.path)
+          override fun toString() = "resolved to hint $version, $path"
+        }
+      }
+
       override fun proposeDownload(sdk: UnknownSdk, indicator: ProgressIndicator): UnknownSdkDownloadableSdkFix? {
         if (sdk.sdkType != sdkType) return null
 
-        val req = JdkRequirements.parseRequirement(sdk) ?: return null
+        val req = parseSdkRequirement(sdk) ?: return null
         LOG.info("Looking for a possible download for ${sdk.sdkType.presentableName} with name ${sdk}")
 
         //we select the newest matching version for a possible fix
@@ -101,7 +168,10 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
       override fun proposeLocalFix(sdk: UnknownSdk, indicator: ProgressIndicator): UnknownSdkLocalSdkFix? {
         if (sdk.sdkType != sdkType) return null
 
-        val req = JdkRequirements.parseRequirement(sdk) ?: return null
+        val hintMatch = resolveHintPath(sdk, indicator)
+        if (hintMatch != null) return hintMatch
+
+        val req = parseSdkRequirement(sdk) ?: return null
         LOG.info("Looking for a local SDK for ${sdk.sdkType.presentableName} with name ${sdk}")
 
         fun List<JavaLocalSdkFix>.pickBestMatch() = this.maxBy { it.version }

@@ -28,6 +28,26 @@ class JdkDownloaderIntegrationTest : BasePlatformTestCase() {
   }
 
   @Test
+  fun `test default model should have JBR`() {
+    lateinit var lastError: Throwable
+    repeat(5) {
+      val result = runCatching {
+        val data = JdkListDownloader.getInstance().downloadModelForJdkInstaller(null)
+        val jbr = data.filter { it.matchesVendor("jbr") }
+        Assert.assertTrue(jbr.isNotEmpty())
+      }
+      if (result.isSuccess) return
+      lastError = result.exceptionOrNull()!!
+
+      if (lastError.message?.startsWith("Failed to download list of available JDKs") == true) {
+        Thread.sleep(5000)
+      }
+      else throw lastError
+    }
+    throw RuntimeException("Failed to download JDK list within several tries", lastError)
+  }
+
+  @Test
   fun `test default model is cached`() {
     lateinit var lastError: Throwable
     repeat(5) {
