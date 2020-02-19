@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
@@ -116,7 +117,7 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
         project: Project
     ) {
         val notification = NotificationData(
-            "Kotlin Build Script",
+            KotlinIdeaGradleBundle.message("title.kotlin.build.script"),
             message.text,
             when (message.severity) {
                 KotlinDslScriptModel.Severity.WARNING -> NotificationCategory.WARNING

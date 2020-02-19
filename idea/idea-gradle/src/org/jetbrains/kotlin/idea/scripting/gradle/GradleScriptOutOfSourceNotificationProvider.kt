@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
 class GradleScriptOutOfSourceNotificationProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
@@ -25,16 +26,18 @@ class GradleScriptOutOfSourceNotificationProvider(private val project: Project) 
         if (isInAffectedGradleProjectFiles(project, file.path)) return null
 
         return EditorNotificationPanel().apply {
-            text("The associated Gradle Project isn't imported.")
-            createActionLabel("Load script configuration") {
+            text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
+            val loadScriptConfigurationText = KotlinIdeaGradleBundle.message("action.label.text.load.script.configuration")
+            createActionLabel(loadScriptConfigurationText) {
                 ScriptConfigurationManager.getInstance(project).forceReloadConfiguration(file, loaderForOutOfProjectScripts)
             }
             val link = createActionLabel("") {}
             link.setIcon(AllIcons.General.ContextHelp)
             link.setUseIconAsLink(true)
-            link.toolTipText = "The external Gradle project needs to be imported to get this script analyzed. <br/>" +
-                    "You can import the related Gradle project or click \"Load script configuration\" " +
-                    "to get code insight without importing."
+            link.toolTipText = KotlinIdeaGradleBundle.message(
+                "tool.tip.text.the.external.gradle.project.needs.to.be.imported.to.get.this.script.analyzed",
+                loadScriptConfigurationText
+            )
         }
     }
 
