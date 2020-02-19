@@ -83,7 +83,7 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
                      Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
                      int offset = getOffsetToPreserve(editor);
                      view.selectElement(createdElement);
-                     if (offset != -1 && editor != null) {
+                     if (offset != -1 && editor != null && !editor.isDisposed()) {
                        editor.getCaretModel().moveToOffset(offset);
                      }
                      postProcess(createdElement, selectedTemplateName.get(), builder.getCustomProperties());
