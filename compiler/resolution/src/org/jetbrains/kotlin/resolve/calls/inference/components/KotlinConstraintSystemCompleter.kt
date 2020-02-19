@@ -167,9 +167,11 @@ class KotlinConstraintSystemCompleter(
 
         val builtIns = (variable as TypeVariableTypeConstructor).builtIns
         val csBuilder = (c as NewConstraintSystemImpl).getBuilder()
+
+        val expectedTypeVariable = postponedAtom.expectedType?.constructor?.takeIf { it in c.allTypeVariables } ?: variable
         val atomToAnalyze = when (postponedAtom) {
             is PostponedCallableReferenceAtom -> postponedAtom.preparePostponedAtomWithTypeVariableAsExpectedType(
-                c, csBuilder, variable,
+                c, csBuilder, expectedTypeVariable,
                 condition = { true },
                 isSuitable = KotlinType::isBuiltinFunctionalTypeOrSubtype,
                 typeVariableCreator = { TypeVariableForCallableReferenceReturnType(builtIns, "_Q") },
@@ -180,7 +182,7 @@ class KotlinConstraintSystemCompleter(
                 }
             )
             is LambdaWithTypeVariableAsExpectedTypeAtom -> postponedAtom.preparePostponedAtomWithTypeVariableAsExpectedType(
-                c, csBuilder, variable,
+                c, csBuilder, expectedTypeVariable,
                 condition = { it.atom.parametersTypes?.all { type -> type != null } != true },
                 isSuitable = KotlinType::isBuiltinFunctionalType,
                 typeVariableCreator = { TypeVariableForLambdaReturnType(postponedAtom.atom, builtIns, "_R") },
