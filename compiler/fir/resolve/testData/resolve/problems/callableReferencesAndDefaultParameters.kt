@@ -5,5 +5,5 @@ class A {
 inline fun <T> T.myLet(block: (T) -> Unit) {}
 
 fun test(a: A, s: String) {
-    s.<!INAPPLICABLE_CANDIDATE!>myLet<!>(a::foo)
+    s.myLet(a::foo)
 }

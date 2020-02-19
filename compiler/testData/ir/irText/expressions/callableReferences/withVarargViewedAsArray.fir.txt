@@ -72,5 +72,5 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
         FUNCTION_REFERENCE 'public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<kotlin.Number>, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testArrayAndDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useStringArray]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<kotlin.Array<kotlin.String>, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
+      CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        fn: FUNCTION_REFERENCE 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>

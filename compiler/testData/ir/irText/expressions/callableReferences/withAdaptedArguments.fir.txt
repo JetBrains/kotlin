@@ -47,11 +47,11 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:testDefault visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testDefault visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testDefault (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction2<kotlin.Int, kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
+      RETURN type=kotlin.Nothing from='public final fun testDefault (): kotlin.String declared in <root>'
+        CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          fn: FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
   FUN name:testVararg visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testVararg (): IrErrorType declared in <root>'
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testCoercionToUnit (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/coerceToUnit]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction2<kotlin.Int, kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
+          FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
   FUN name:testImportedObjectMember visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testImportedObjectMember (): IrErrorType declared in <root>'

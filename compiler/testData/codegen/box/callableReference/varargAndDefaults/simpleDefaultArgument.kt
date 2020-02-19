@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(x: String, y: String = "K"): String = x + y
 
