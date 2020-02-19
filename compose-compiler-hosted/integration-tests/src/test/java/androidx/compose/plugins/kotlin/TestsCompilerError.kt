@@ -16,4 +16,4 @@
 
 package androidx.compose.plugins.kotlin
 
-class TestsCompilerError(@Suppress("unused") val original: Throwable) : Throwable()
+class TestsCompilerError(val original: Throwable) : Throwable(original)
