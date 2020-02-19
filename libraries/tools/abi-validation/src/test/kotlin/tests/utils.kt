@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.tools.tests
+package kotlinx.validation.api.tests
 
-import org.jetbrains.kotlin.tools.*
+import kotlinx.validation.api.*
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.fail
