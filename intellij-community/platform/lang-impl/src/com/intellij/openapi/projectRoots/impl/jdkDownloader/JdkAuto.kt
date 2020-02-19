@@ -12,6 +12,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.SdkType
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType.notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType
+import com.intellij.openapi.projectRoots.impl.MockSdk
 import com.intellij.openapi.roots.ui.configuration.*
 import com.intellij.openapi.roots.ui.configuration.SdkDetector.DetectedSdkListener
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup
@@ -20,7 +21,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.jps.model.java.JdkVersionDetector
 
-private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
+class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
   private val LOG = logger<JdkAuto>()
 
   override fun supportsResolution(sdkTypeId: SdkTypeId) = notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType().value(sdkTypeId)
@@ -28,7 +29,10 @@ private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
   override fun createResolver(project: Project?, indicator: ProgressIndicator): UnknownSdkLookup? {
     if (!Registry.`is`("jdk.auto.setup")) return null
     if (ApplicationManager.getApplication().isUnitTestMode) return null
+    return createResolverImpl(project, indicator)
+  }
 
+  fun createResolverImpl(project: Project?, indicator: ProgressIndicator): UnknownSdkLookup? {
     val sdkType = SdkType.getAllTypes()
                     .singleOrNull(notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType()::value) ?: return null
 
@@ -107,19 +111,23 @@ private class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
 
       private fun tryUsingExistingSdk(req: JdkRequirement, sdkType: SdkType, indicator: ProgressIndicator): List<JavaLocalSdkFix> {
         indicator.text = "Checking existing SDKs..."
-        return runReadAction { ProjectJdkTable.getInstance().allJdks }
-          .filter { it.sdkType == sdkType }
-          .filter { runCatching { req.matches(it) }.getOrNull() == true }
-          //TODO: Existing SDK can be still downloading, thus we will skip it here :(
-          .filter { runCatching { sdkType.isValidSdkHome(it.homePath) }.getOrNull() == true }
-          .filter { runCatching { it.versionString != null }.getOrNull() == true }
-          .mapNotNull {
-            val homeDir = it.homePath ?: return@mapNotNull null
-            val versionString = it.versionString ?: return@mapNotNull null
-            val version = JavaVersion.tryParse(versionString) ?: return@mapNotNull null
-            val suggestedName = JdkUtil.suggestJdkName(versionString) ?: return@mapNotNull null
-            JavaLocalSdkFix(homeDir, version, suggestedName)
-          }
+
+        val result = mutableListOf<JavaLocalSdkFix>()
+        for (it in runReadAction { ProjectJdkTable.getInstance().allJdks }) {
+          if (it.sdkType != sdkType) continue
+
+          val homeDir = runCatching { it.homePath }.getOrNull() ?: continue
+          val versionString = runCatching { it.versionString }.getOrNull() ?: continue
+          val version = runCatching { JavaVersion.tryParse(versionString) }.getOrNull() ?: continue
+          val suggestedName = runCatching { JdkUtil.suggestJdkName(versionString) }.getOrNull() ?: continue
+
+          if (it !is MockSdk && runCatching { sdkType.isValidSdkHome(it.homePath) }.getOrNull() != true) continue
+          if (runCatching { req.matches(it) }.getOrNull() != true) continue
+
+          result += JavaLocalSdkFix(homeDir, version, suggestedName)
+        }
+
+        return result
       }
     }
   }

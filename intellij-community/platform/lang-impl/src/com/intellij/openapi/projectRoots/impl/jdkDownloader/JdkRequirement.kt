@@ -47,6 +47,12 @@ object JdkRequirements {
     val homePredicate = request.sdkHomePredicate
     val versionStringPredicate = request.sdkVersionStringPredicate
 
+    if (versionStringPredicate == null && nameFilter == null) {
+      // if no other requirements were specified, and the name filter failed,
+      // we should not attempt any other suggestions - e.g. for `IDEA jdk`
+      return null
+    }
+
     return object: JdkRequirement {
       override fun matches(sdk: Sdk): Boolean {
         if (nameFilter != null) {
