@@ -1442,6 +1442,7 @@ public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
 /**
  * Returns a list containing only distinct elements from the given collection.
  * 
+ * Among equal elements of the given collection, only the first one will be present in the resulting list.
  * The elements in the resulting list are in the same order as they were in the source collection.
  * 
  * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
@@ -1454,6 +1455,7 @@ public fun <T> Iterable<T>.distinct(): List<T> {
  * Returns a list containing only elements from the given collection
  * having distinct keys returned by the given [selector] function.
  * 
+ * Among elements of the given collection with equal keys, only the first one will be present in the resulting list.
  * The elements in the resulting list are in the same order as they were in the source collection.
  * 
  * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy

@@ -9828,6 +9828,7 @@ public fun CharArray.withIndex(): Iterable<IndexedValue<Char>> {
 /**
  * Returns a list containing only distinct elements from the given array.
  * 
+ * Among equal elements of the given array, only the first one will be present in the resulting list.
  * The elements in the resulting list are in the same order as they were in the source array.
  * 
  * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy
@@ -9928,6 +9929,7 @@ public fun CharArray.distinct(): List<Char> {
  * Returns a list containing only elements from the given array
  * having distinct keys returned by the given [selector] function.
  * 
+ * Among elements of the given array with equal keys, only the first one will be present in the resulting list.
  * The elements in the resulting list are in the same order as they were in the source array.
  * 
  * @sample samples.collections.Collections.Transformations.distinctAndDistinctBy

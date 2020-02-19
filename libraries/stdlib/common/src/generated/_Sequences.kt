@@ -975,6 +975,7 @@ public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
 /**
  * Returns a sequence containing only distinct elements from the given sequence.
  * 
+ * Among equal elements of the given sequence, only the first one will be present in the resulting sequence.
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  *
  * The operation is _intermediate_ and _stateful_.
@@ -989,6 +990,7 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
  * Returns a sequence containing only elements from the given sequence
  * having distinct keys returned by the given [selector] function.
  * 
+ * Among elements of the given sequence with equal keys, only the first one will be present in the resulting sequence.
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  *
  * The operation is _intermediate_ and _stateful_.
