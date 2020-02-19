@@ -161,14 +161,15 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedPropertySymbol>()
         }
 
-        // Move $$delegatedProperties array
-        val delegatedPropertyArray = irClass.declarations.filterIsInstance<IrField>()
-            .singleOrNull { it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE }
-        if (delegatedPropertyArray != null) {
-            irClass.declarations.remove(delegatedPropertyArray)
-            defaultImplsIrClass.declarations.add(0, delegatedPropertyArray)
-            delegatedPropertyArray.parent = defaultImplsIrClass
-            delegatedPropertyArray.initializer?.patchDeclarationParents(defaultImplsIrClass)
+        // Move $$delegatedProperties array and $assertionsDisabled field
+        for (field in irClass.declarations.filterIsInstance<IrField>()) {
+            if (field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE && field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD)
+                continue
+
+            irClass.declarations.remove(field)
+            defaultImplsIrClass.declarations.add(0, field)
+            field.parent = defaultImplsIrClass
+            field.initializer?.patchDeclarationParents(defaultImplsIrClass)
         }
     }
 
