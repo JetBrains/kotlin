@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.fullText
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.htmlText
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
@@ -39,7 +40,7 @@ class CreateModuleOrTargetPopup private constructor(
     }
 
     private inner class ChooseModuleOrMppModuleStep : BaseListPopupStep<ModuleConfigurator>(
-        "Module Type",
+        KotlinNewProjectWizardBundle.message("step.module.type"),
         buildList {
             if (allowMultiplatform) +MppModuleConfigurator
             +JvmSinglePlatformModuleConfigurator
@@ -67,7 +68,7 @@ class CreateModuleOrTargetPopup private constructor(
         targetConfiguratorGroup: TargetConfiguratorGroupWithSubItems,
         showTitle: Boolean
     ) : BaseListPopupStep<DisplayableSettingItem>(
-        "Target".takeIf { showTitle },
+        KotlinNewProjectWizardBundle.message("step.target").takeIf { showTitle },
         targetConfiguratorGroup.subItems.filter { it.needToShow() }
     ) {
         override fun getIconFor(value: DisplayableSettingItem): Icon? = when (value) {
