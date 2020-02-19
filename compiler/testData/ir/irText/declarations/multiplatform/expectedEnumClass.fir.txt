@@ -10,14 +10,14 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.FOO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FOO modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
     ENUM_ENTRY name:BAR
       class: CLASS ENUM_ENTRY name:BAR modality:FINAL visibility:private superTypes:[<root>.MyEnum]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.BAR
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:BAR modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
       $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
@@ -71,21 +71,21 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.FOO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FOO modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
     ENUM_ENTRY name:BAR
       class: CLASS ENUM_ENTRY name:BAR modality:FINAL visibility:private superTypes:[<root>.MyEnum]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.BAR
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:BAR modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
     ENUM_ENTRY name:BAZ
       class: CLASS ENUM_ENTRY name:BAZ modality:FINAL visibility:private superTypes:[<root>.MyEnum]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.BAZ
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:BAZ modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
       $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum

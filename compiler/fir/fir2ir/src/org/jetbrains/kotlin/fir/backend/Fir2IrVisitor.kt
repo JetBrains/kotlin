@@ -404,16 +404,25 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrDelegatingConstructorCall? {
+    private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrCallWithIndexedArgumentsBase? {
         val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         val constructorSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
             ?: return null
         return convertWithOffsets { startOffset, endOffset ->
-            IrDelegatingConstructorCallImpl(
-                startOffset, endOffset,
-                constructedIrType,
-                declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-            ).apply {
+            val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
+            if (constructorSymbol.fir.isFromEnumClass) {
+                IrEnumConstructorCallImpl(
+                    startOffset, endOffset,
+                    constructedIrType,
+                    irConstructorSymbol
+                )
+            } else {
+                IrDelegatingConstructorCallImpl(
+                    startOffset, endOffset,
+                    constructedIrType,
+                    irConstructorSymbol
+                )
+            }.apply {
                 for ((index, argument) in arguments.withIndex()) {
                     val argumentExpression = argument.toIrExpression()
                     putValueArgument(index, argumentExpression)

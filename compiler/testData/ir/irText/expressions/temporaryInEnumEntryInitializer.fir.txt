@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.En.ENTRY
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.String?) [primary] declared in <root>.En'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.String?) [primary] declared in <root>.En'
               x: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String? origin=null
                 $this: CALL 'public final fun <get-n> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.En]'

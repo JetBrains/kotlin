@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/values.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Enum.A
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Enum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Enum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:A modality:FINAL visibility:private superTypes:[<root>.Enum]'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.Enum) returnType:kotlin.Array<<root>.Enum>
       $this: VALUE_PARAMETER name:<this> type:<root>.Enum

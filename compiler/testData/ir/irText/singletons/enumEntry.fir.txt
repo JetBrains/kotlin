@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.ENTRY
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.Z]'
         FUN name:test visibility:public modality:FINAL <> ($this:<root>.Z.ENTRY) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY
