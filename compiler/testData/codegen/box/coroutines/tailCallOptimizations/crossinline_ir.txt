@@ -33,7 +33,6 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2 {
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2
     public method <init>(p0: Sink): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
@@ -42,7 +41,6 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1 {
     synthetic final field $this$inlined: SourceCrossinline
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
     public method <init>(p0: SourceCrossinline): void
-    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
@@ -66,7 +64,6 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1 {
     inner class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef): void
     public method close(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable): void
-    public @org.jetbrains.annotations.Nullable method send$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method send(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
@@ -326,7 +323,6 @@ public final class CrossinlineKt$range$$inlined$source$1 {
     synthetic final field $start$inlined: int
     inner class CrossinlineKt$range$$inlined$source$1
     public method <init>(p0: int, p1: int): void
-    public @org.jetbrains.annotations.Nullable method consume$$forInline(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 

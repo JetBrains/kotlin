@@ -11,21 +11,18 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.anyOfOverriddenFunctionsReturnsNonUnit
 import org.jetbrains.kotlin.backend.jvm.codegen.isKnownToBeTailCall
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -35,72 +32,60 @@ internal val tailCallOptimizationPhase = makeIrFilePhase(
     "Add or move returns to suspension points on tail-call positions"
 )
 
-// TODO: Make this lowering common
-private class TailCallOptimizationLowering(private val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+// Find all tail-calls inside suspend function. We should add IrReturn before them, so the codegen will generate
+// code which is understandable by old BE's tail-call optimizer.
+private class TailCallOptimizationLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        visitFile(irFile)
-    }
+        irFile.transformChildren(object : IrElementTransformer<TailCallOptimizationData?> {
+            override fun visitFunction(declaration: IrFunction, data: TailCallOptimizationData?) =
+                super.visitFunction(declaration, TailCallOptimizationData(declaration))
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitFunction(function: IrFunction) {
-        if (!function.isSuspend || function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || function.isKnownToBeTailCall()) return
-        // Disable tail-call optimization for functions, returning Unit and overriding function, returning non-unit.
-        if (function.returnType.isUnit() && function.anyOfOverriddenFunctionsReturnsNonUnit()) return
-
-        val tailCalls = mutableSetOf<IrCall>()
-
-        // Find all tail-calls inside suspend function.
-        // We should add IrReturn before them, so the codegen will generate code, which is understandable by old BE's tail-call optimizer.
-        // This function collect all possible tail-calls, if they are not prepended by IrReturns, so we can prepend them.
-        // If the call has IrReturn before it, we do not need to add another one.
-        // If the call is inside a branch of `when` statement (or `if`, which is lowered to `when`), go through the branches and
-        // find tail-calls there.
-        fun findCallsOnTailPositionWithoutImmediateReturn(statement: IrStatement, immediateReturn: Boolean = false) {
-            when (statement) {
-                is IrCall -> if (statement.isSuspend && !immediateReturn) {
-                    tailCalls += statement
-                }
-                is IrBlock -> findCallsOnTailPositionWithoutImmediateReturn(
-                    statement.statements.findTailCall(function.returnType.isUnit()) ?: return
+            override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {
+                val transformed = super.visitCall(expression, data) as IrExpression
+                return if (data == null || expression !in data.tailCalls) transformed else IrReturnImpl(
+                    expression.startOffset, expression.endOffset, context.irBuiltIns.nothingType, data.function.symbol,
+                    if (data.returnsUnit) transformed.coerceToUnit() else transformed
                 )
-                is IrWhen -> for (branch in statement.branches) {
-                    findCallsOnTailPositionWithoutImmediateReturn(branch.result)
-                }
-                is IrReturn -> findCallsOnTailPositionWithoutImmediateReturn(statement.value, immediateReturn = true)
-                is IrTypeOperatorCall -> if (statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-                    findCallsOnTailPositionWithoutImmediateReturn(statement.argument)
-                }
-                else -> {
-                    // Not a call, or something containing a tail-call, break
-                    // TODO: Support binary logical operations and elvis, though. KT-23826 and KT-23825
-                }
+            }
+        }, null)
+    }
+
+    private fun IrExpression.coerceToUnit() = IrTypeOperatorCallImpl(
+        startOffset, endOffset, context.irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, this
+    )
+}
+
+private class TailCallOptimizationData(val function: IrFunction) {
+    val returnsUnit = function.returnType.isUnit()
+    val tailCalls = mutableSetOf<IrCall>()
+
+    // Collect all tail calls, including those nested in `when`s, which are not arguments to `return`s.
+    private fun findCallsOnTailPositionWithoutImmediateReturn(statement: IrStatement, immediateReturn: Boolean = false) {
+        when {
+            statement is IrCall && statement.isSuspend && !immediateReturn && (returnsUnit || statement.type == function.returnType) ->
+                tailCalls += statement
+            statement is IrBlock ->
+                statement.statements.findTailCall(returnsUnit)?.let(::findCallsOnTailPositionWithoutImmediateReturn)
+            statement is IrWhen ->
+                statement.branches.forEach { findCallsOnTailPositionWithoutImmediateReturn(it.result) }
+            statement is IrReturn ->
+                findCallsOnTailPositionWithoutImmediateReturn(statement.value, immediateReturn = true)
+            statement is IrTypeOperatorCall && statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ->
+                findCallsOnTailPositionWithoutImmediateReturn(statement.argument)
+            // TODO: Support binary logical operations and elvis, though. KT-23826 and KT-23825
+        }
+    }
+
+    init {
+        if (function.isSuspend && function.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && !function.isKnownToBeTailCall() &&
+            // See `disableTailCallOptimizationForFunctionReturningUnit` in `generateStateMachineForNamedFunction`:
+            !(returnsUnit && function.anyOfOverriddenFunctionsReturnsNonUnit())
+        ) {
+            when (val body = function.body) {
+                is IrBlockBody -> body.statements.findTailCall(returnsUnit)?.let(::findCallsOnTailPositionWithoutImmediateReturn)
+                is IrExpressionBody -> findCallsOnTailPositionWithoutImmediateReturn(body.expression)
             }
         }
-
-        when (val body = function.body) {
-            null -> return
-            is IrBlockBody -> findCallsOnTailPositionWithoutImmediateReturn(
-                body.statements.findTailCall(function.returnType.isUnit()) ?: return
-            )
-            is IrExpressionBody -> findCallsOnTailPositionWithoutImmediateReturn(body.expression)
-            else -> error("Unexpected $body")
-        }
-
-        function.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(call: IrCall): IrExpression {
-                if (call !in tailCalls) return call
-                if (!function.returnType.isUnit() && call.type != function.returnType) return call
-                // Replace ARETURN with { POP, GETSTATIC kotlin/Unit.INSTANCE, ARETURN } during codegen later.
-                // Otherwise, additional CHECKCAST will break tail-call optimization
-                if (function.returnType.isUnit()) {
-                    context.suspendTailCallsWithUnitReplacement += call.attributeOwnerId
-                }
-                return IrReturnImpl(call.startOffset, call.endOffset, context.irBuiltIns.nothingType, function.symbol, call)
-            }
-        })
     }
 }
 
