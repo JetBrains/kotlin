@@ -24,7 +24,7 @@ import java.util.List;
 class MobileSwiftBridgingUtil {
     @NotNull
     static SwiftGlobalSymbols buildBridgedSymbols(@NotNull SwiftModule module) {
-        List<VirtualFile> headers = module.getBridgedHeaders();
+        List<VirtualFile> headers = module.getBridgingHeaders();
         if (headers.isEmpty()) return SwiftGlobalSymbols.EMPTY;
 
         OCResolveConfiguration configuration = module.getConfiguration();
@@ -40,7 +40,7 @@ class MobileSwiftBridgingUtil {
             PsiFile file = psiManager.findFile(header);
             if (!(file instanceof OCFile)) continue;
 
-            OCInclusionContext context = OCInclusionContext.beforePCHFileContext(configuration, SwiftLanguageKind.SWIFT, file);
+            OCInclusionContext context = OCInclusionContext.beforePCHFileContext(configuration, SwiftLanguageKind.INSTANCE, file);
             FileSymbolTable table = FileSymbolTable.forFile(header, context);
             if (table == null) continue;
 

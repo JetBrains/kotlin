@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtConstructor
 class KotlinInitializerSwiftUsageSearcher : KotlinUsageSearcher<SwiftInitializerSymbol, KtConstructor<*>>() {
     override fun SearchParameters.getTarget(): KtConstructor<*>? = getUnwrappedTarget() as? KtConstructor<*>
     override fun KtConstructor<*>.toLightSymbols(): List<SwiftInitializerSymbol> =
-        findSymbols(SwiftLanguageKind.SWIFT).filterIsInstance<SwiftInitializerSymbol>()
+        findSymbols(SwiftLanguageKind).filterIsInstance<SwiftInitializerSymbol>()
 
     override fun createWrapper(target: KtConstructor<*>, symbol: SwiftInitializerSymbol) = KtSwiftSymbolPsiWrapper(target, symbol)
     override val SwiftInitializerSymbol.word: String? get() = this.targetClass?.name

@@ -7,7 +7,6 @@ package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.cidr.lang.symbols.OCResolveContext
 import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.SwiftExpression
 import com.jetbrains.swift.psi.types.SwiftType
@@ -44,14 +43,13 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
 
     override fun getNameInfo(): SwiftParameterNameInfo = SwiftParameterNameInfo.create(name, null, true)
 
-    override fun getParent(): SwiftCallableSymbol? = context
-
     //todo [medvedev]???
     override fun isVariadic(): Boolean = false
 
     override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(swiftType)
 
-    override fun getNameWithParent(context: OCResolveContext): String = name
+    override val swiftAttributes: SwiftAttributesInfo
+        get() = super<KtSwiftImmediateSymbol>.swiftAttributes
 
     override val initializer: SwiftExpression?
         get() = null

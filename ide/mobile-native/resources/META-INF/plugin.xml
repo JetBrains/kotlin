@@ -14,14 +14,6 @@
   <depends>com.intellij.modules.mobile.ide</depends>
   <depends>org.jetbrains.kotlin</depends>
 
-  <application-components>
-    <!-- swift -->
-    <component>
-      <interface-class>com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleIOCache</interface-class>
-      <implementation-class>com.jetbrains.swift.codeinsight.resolve.module.MobileSwiftModuleIOCache</implementation-class>
-    </component>
-  </application-components>
-
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
@@ -31,6 +23,7 @@
     <applicationService serviceImplementation="com.jetbrains.mobile.execution.testing.AppleXCTestLocator"
                         serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
 
+    <applicationService serviceImplementation="com.jetbrains.cidr.execution.JBDeviceFramework" preload="true"/>
     <programRunner implementation="com.jetbrains.mobile.execution.MobileRunner" order="first"/>
 
     <executionTargetProvider implementation="com.jetbrains.mobile.execution.DeviceExecutionTargetProvider"/>
@@ -46,6 +39,8 @@
                         serviceImplementation="com.jetbrains.swift.MobileSwiftCompilerSettings"/>
     <!--<applicationService serviceInterface="com.jetbrains.swift.codeinsight.highlighting.SwiftSourceKitAnnotator$Producer"
                         serviceImplementation="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator$Producer"/>-->
+    <applicationService serviceInterface="com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleIOCache"
+                        serviceImplementation="com.jetbrains.swift.codeinsight.resolve.module.MobileSwiftModuleIOCache"/>
 
     <applicationService serviceImplementation="com.jetbrains.swift.SwiftSettings"/>
 

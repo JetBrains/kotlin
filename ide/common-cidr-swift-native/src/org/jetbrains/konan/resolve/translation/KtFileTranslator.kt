@@ -68,10 +68,10 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
 
     companion object {
         internal fun isSupported(context: OCInclusionContext): Boolean =
-            context.languageKind.let { it == SwiftLanguageKind.SWIFT || it is CLanguageKind }
+            context.languageKind.let { it == SwiftLanguageKind || it is CLanguageKind }
 
         internal fun createTranslator(context: OCInclusionContext): KtFileTranslator<*, *> = when (context.languageKind) {
-            SwiftLanguageKind.SWIFT -> KtSwiftSymbolTranslator(context.project)
+            SwiftLanguageKind -> KtSwiftSymbolTranslator(context.project)
             is CLanguageKind -> KtOCSymbolTranslator(context.project)
             else -> throw UnsupportedOperationException("Unsupported language kind ${context.languageKind}")
         }

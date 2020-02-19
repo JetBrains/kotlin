@@ -11,6 +11,7 @@ import com.jetbrains.swift.codeinsight.resolve.SwiftGlobalSymbols
 import com.jetbrains.swift.codeinsight.resolve.SwiftGlobalSymbolsImpl
 import com.jetbrains.swift.codeinsight.resolve.SwiftModule
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
+import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
@@ -21,22 +22,22 @@ abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderB
     protected abstract fun konanBridgeFile(): KonanBridgeVirtualFile?
 
     override fun isSourceModule(): Boolean = true
-    override fun getBridgeFile(name: String): VirtualFile? = null
-    override fun getBridgedHeaders(): List<VirtualFile> = emptyList()
+    override fun getSwiftInterfaceHeader(name: String): VirtualFile? = null
+    override fun getBridgingHeaders(): List<VirtualFile> = emptyList()
     override fun getDependencies(): List<SwiftModule> = emptyList()
 
     override fun getSymbol(): SwiftModuleSymbol? {
         val bridgeFile = konanBridgeFile() ?: return null
 
         val name = name
-        val props = SymbolProps(project, bridgeFile, name, 0, SwiftAttributesInfo.EMPTY, null, null)
+        val props = SymbolProps(SwiftContext.interned(bridgeFile, project), name, 0, SwiftAttributesInfo.EMPTY, null)
         return SwiftSourceModuleSymbol(props, name)
     }
 
     override fun buildModuleCache(): SwiftGlobalSymbols {
         val file = konanBridgeFile() ?: return SwiftGlobalSymbols.EMPTY
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return SwiftGlobalSymbols.EMPTY
-        val context = OCInclusionContext.empty(SwiftLanguageKind.SWIFT, psiFile)
+        val context = OCInclusionContext.empty(SwiftLanguageKind, psiFile)
         val table = FileSymbolTable.forFile(file, context)?.takeIf { !it.isEmpty } ?: return SwiftGlobalSymbols.EMPTY
 
         val bridgedSymbols = SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC, this)

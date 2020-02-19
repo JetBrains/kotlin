@@ -1,8 +1,10 @@
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 package org.jetbrains.konan.resolve.symbols.serialization
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.FileSymbolTableSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.SerializerProvider
+import com.jetbrains.swift.symbols.impl.registerProjectAndFileOwnerSerializer
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.objenesis.instantiator.ObjectInstantiator
@@ -19,10 +21,10 @@ class KtSerializer : SerializerProvider {
         serializer.registerFieldSerializer(KtOCInterfaceSymbol.InterfaceState::class.java, KtOCInterfaceSymbol::InterfaceState)
         serializer.registerFieldSerializer(KtOCProtocolSymbol.ProtocolState::class.java, KtOCProtocolSymbol::ProtocolState)
 
-        serializer.registerProjectAndFileOwnerSerializer(KtSwiftParameterSymbol::class.java, ::KtSwiftParameterSymbol)
-        serializer.registerProjectAndFileOwnerSerializer(KtSwiftMethodSymbol::class.java, ::KtSwiftMethodSymbol)
-        serializer.registerProjectAndFileOwnerSerializer(KtSwiftInitializerSymbol::class.java, ::KtSwiftInitializerSymbol)
-        serializer.registerProjectAndFileOwnerSerializer(KtSwiftPropertySymbol::class.java, ::KtSwiftPropertySymbol)
+        serializer.registerProjectAndFileOwnerSerializer(::KtSwiftParameterSymbol)
+        serializer.registerProjectAndFileOwnerSerializer(::KtSwiftMethodSymbol)
+        serializer.registerProjectAndFileOwnerSerializer(::KtSwiftInitializerSymbol)
+        serializer.registerProjectAndFileOwnerSerializer(::KtSwiftPropertySymbol)
 
         serializer.registerSwiftLazySymbolSerializer(KtSwiftClassSymbol::class.java, ::KtSwiftClassSymbol)
         serializer.registerSwiftLazySymbolSerializer(KtSwiftProtocolSymbol::class.java, ::KtSwiftProtocolSymbol)

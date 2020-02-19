@@ -12,8 +12,6 @@ import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileType
 
 class KonanKNMSymbolTableProvider : SymbolTableProvider() {
-    override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {}
-
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = false
 
     override fun calcTableUsingPSI(psiFile: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable = empty(virtualFile)

@@ -17,7 +17,7 @@ class MobileSwiftBridgeHeaderProvider : CustomHeaderProvider() {
             val config = configuration ?: return@registerProvider null
             SwiftModuleManager.getInstance(config.project)
                 .getSourceModule(config)
-                ?.getBridgeFile(OCIncludeHelpers.adjustHeaderName(headerName))
+                ?.getSwiftInterfaceHeader(OCIncludeHelpers.adjustHeaderName(headerName))
         }
 
         registerProvider(HeaderSearchStage.AFTER_END) { headerName, configuration ->
@@ -32,7 +32,7 @@ class MobileSwiftBridgeHeaderProvider : CustomHeaderProvider() {
 
             SwiftModuleManager.getInstance(config.project)
                 .getModule(config, moduleName, true)
-                ?.getBridgeFile(name)
+                ?.getSwiftInterfaceHeader(name)
         }
     }
 
@@ -58,7 +58,7 @@ class MobileSwiftBridgeHeaderProvider : CustomHeaderProvider() {
         val headerName = OCIncludeHelpers.adjustHeaderName(items[2])
 
         val config = GradleAppleWorkspace.getInstance(project).getConfiguration(targetName) ?: return null
-        return SwiftModuleManager.getInstance(project).getSourceModule(config)?.getBridgeFile(headerName)
+        return SwiftModuleManager.getInstance(project).getSourceModule(config)?.getSwiftInterfaceHeader(headerName)
     }
 
     companion object {

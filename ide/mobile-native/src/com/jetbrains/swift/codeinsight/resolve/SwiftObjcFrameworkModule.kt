@@ -4,7 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Processor
-import com.jetbrains.cidr.lang.modulemap.resolve.ModuleMapResolveService
+import com.jetbrains.cidr.lang.modulemap.resolve.ModuleMapManager
+import com.jetbrains.cidr.lang.modulemap.resolve.ModuleMapWalker
 import com.jetbrains.cidr.lang.modulemap.symbols.ModuleMapModuleSymbol
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.headerRoots.AppleFramework
@@ -25,13 +26,13 @@ class SwiftObjcFrameworkModule(
     private val files: List<VirtualFile> by lazy {
         val result = mutableListOf<VirtualFile>()
 
-        val service = ModuleMapResolveService.getInstance(project)
-        service.processModules(
-            framework.name,
-            ModuleMapResolveService.ProcessingState(configuration),
-            visitExportedModules = false,
-            processor = Processor { module: ModuleMapModuleSymbol ->
-                result += service.getIncludeHeaders(module, configuration)
+        val cache = ModuleMapManager.getInstance(project).cacheFor(configuration)
+        ModuleMapWalker.buildModuleProcessor(project)
+            .setConfiguration(configuration)
+            .setModule(framework.name)
+            .notVisitExportedModules()
+            .process(Processor { module: ModuleMapModuleSymbol ->
+                result += cache.getIncludeHeaders(module)
                 return@Processor true
             })
 
@@ -52,9 +53,9 @@ class SwiftObjcFrameworkModule(
 
     override fun buildModuleCache(): SwiftGlobalSymbols = MobileSwiftBridgingUtil.buildBridgedSymbols(this)
 
-    override fun getBridgeFile(name: String): VirtualFile? = null
+    override fun getSwiftInterfaceHeader(name: String): VirtualFile? = null
 
-    override fun getBridgedHeaders(): List<VirtualFile> = files
+    override fun getBridgingHeaders(): List<VirtualFile> = files
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -33,10 +33,6 @@ class KtSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(project: Project, file: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
         KtFileTranslator.isSupported(inclusionContext) && getBridgeFile(inclusionContext) != null && isSource(project, file)
 
-    override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {
-        if (file != null && isSource(file)) KtModificationCount.getInstance(project).inc()
-    }
-
     //todo[medvedev] proper check for out of code block modification
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = true
 

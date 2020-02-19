@@ -32,8 +32,8 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses() =
         setOf(AppleProjectModelBuilder::class.java, AppleProjectExtension::class.java, Unit::class.java)
 
-    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData> =
-        super.createModule(gradleModule, projectDataNode).also { mainModuleNode ->
+    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? =
+        super.createModule(gradleModule, projectDataNode)?.also { mainModuleNode ->
             val externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) ?: return@also
             val apple = resolverCtx.getExtraProject(gradleModule, AppleProjectModel::class.java) ?: return@also
             val sourceSetMap = projectDataNode.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS)!!

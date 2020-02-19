@@ -25,10 +25,6 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(project: Project, virtualFile: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
         KtFileTranslator.isSupported(inclusionContext) && isSource(project, virtualFile)
 
-    override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {
-        //nothing here
-    }
-
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = false
 
     override fun calcTableUsingPSI(file: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
@@ -52,7 +48,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         project: Project,
         indicator: ProgressIndicator,
         allFiles: Collection<VirtualFile>
-    ): OCSymbolTablesBuildingActivity.TaskProvider<*>? {
+    ): OCSymbolTablesBuildingActivity.AdditionalTaskProvider<*>? {
         return null
     }
 }

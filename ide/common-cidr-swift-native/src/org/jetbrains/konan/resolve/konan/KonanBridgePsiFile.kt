@@ -19,6 +19,7 @@ import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContextUtil
 import com.jetbrains.cidr.lang.psi.OCConfigurationOwner
 import com.jetbrains.cidr.lang.psi.OCParsedLanguageAndConfiguration
+import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 
 class KonanBridgePsiFile(val target: KonanTarget, provider: SingleRootFileViewProvider) :
     LightPsiFileBase(provider, OCLanguage.getInstance()), PsiFile, OCConfigurationOwner {
@@ -31,10 +32,10 @@ class KonanBridgePsiFile(val target: KonanTarget, provider: SingleRootFileViewPr
 
     override fun getFileType(): FileType = OCFileType.INSTANCE
 
-    override fun getKind(): OCLanguageKind = CLanguageKind.OBJ_C
+    override fun getRootKind(config: OCResolveConfiguration?): OCLanguageKind = CLanguageKind.OBJ_C
 
     override fun getParsedLanguageAndConfiguration(): OCParsedLanguageAndConfiguration? {
         val configuration = OCInclusionContextUtil.getResolveRootAndActiveConfiguration(virtualFile, project).configuration
-        return OCParsedLanguageAndConfiguration(configuration, kind)
+        return OCParsedLanguageAndConfiguration(configuration, getRootKind(configuration))
     }
 }

@@ -19,6 +19,7 @@ import com.jetbrains.cidr.lang.workspace.OCWorkspace
 import com.jetbrains.mobile.bridging.MobileKonanSwiftModule
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftSourceModuleFile
 import com.jetbrains.swift.psi.SwiftFile
+import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftBridgeVirtualFile
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
@@ -36,7 +37,7 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
 
     private val cachedBridgedSymbols: CachedValue<SwiftGlobalSymbols> = CachedValuesManager.getManager(project).createCachedValue(
         {
-            val tracker = FileSymbolTablesCache.getInstance(project).ocOutOfBlockModificationTracker
+            val tracker = FileSymbolTablesCache.getInstance(project).outOfBlockModificationTracker
             val lazySymbols = SwiftLazyBridgedSymbols(this) {
                 MobileSwiftBridgingUtil.buildBridgedSymbols(this)
             }
@@ -47,7 +48,7 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
         }, false
     )
 
-    override fun getBridgeFile(path: String): VirtualFile? = when {
+    override fun getSwiftInterfaceHeader(path: String): VirtualFile? = when {
         FileUtil.pathsEqual(path, "${target.name}-Swift.h") ->
             SwiftBridgeVirtualFile.forTarget(MobileBridgeTarget(target), path, project)
         else -> null
@@ -58,7 +59,7 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
     override fun getName(): String = config.name
 
     override fun getSymbol(): SwiftModuleSymbol = name.let { name ->
-        val props = SymbolProps(project, SwiftSourceModuleFile(name), name, 0, SwiftAttributesInfo.EMPTY, null, null)
+        val props = SymbolProps(SwiftContext.interned(SwiftSourceModuleFile(name), project), name, 0, SwiftAttributesInfo.EMPTY, null)
         return SwiftSourceModuleSymbol(props, name)
     }
 
@@ -95,5 +96,5 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
         sources as? List<VirtualFile> ?: sources.toList()
     }
 
-    override fun getBridgedHeaders(): List<VirtualFile> = listOfNotNull(GradleAppleWorkspace.getInstance(project).getBridgingHeader(config))
+    override fun getBridgingHeaders(): List<VirtualFile> = listOfNotNull(GradleAppleWorkspace.getInstance(project).getBridgingHeader(config))
 }

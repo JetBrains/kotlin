@@ -6,8 +6,8 @@
 package com.jetbrains.mobile.execution
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.jetbrains.cidr.execution.CidrProgramParameters
 import com.jetbrains.cidr.execution.OCCommandLineConfigurator
 import com.jetbrains.cidr.execution.OCInstaller
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice
@@ -31,7 +31,7 @@ abstract class AppleInstaller(
         val device = myEnvironment.executionTarget as AppleDevice
         val commandLine = device.install(bundle, project)
 
-        val params = SimpleProgramParameters().also {
+        val params = CidrProgramParameters().also {
             it.workingDirectory = File(commandLine.exePath).parentFile.parent
             it.isPassParentEnvs = false
         }

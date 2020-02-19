@@ -125,7 +125,7 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
                     }
                 }
 
-                result.add(Pair.create(resolveConfiguration, getToolchainModuleNames(resolveConfiguration)));
+                result.add(Pair.create(resolveConfiguration, getAvailableSwiftModuleNames(resolveConfiguration)));
             }
         });
         return result;
@@ -133,7 +133,7 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
 
     @Override
     @NotNull
-    public List<String> getToolchainModuleNames(@NotNull OCResolveConfiguration configuration) {
+    public List<String> getAvailableSwiftModuleNames(@NotNull OCResolveConfiguration configuration) {
         AppleSdk sdk = getSdk();
         if (sdk == null) return Collections.emptyList();
 

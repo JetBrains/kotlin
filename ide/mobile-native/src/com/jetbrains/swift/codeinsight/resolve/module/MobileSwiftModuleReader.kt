@@ -3,10 +3,10 @@ package com.jetbrains.swift.codeinsight.resolve.module
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Version
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLog
+import com.jetbrains.cidr.lang.modulemap.AllowedModules
 import com.jetbrains.cidr.lang.toolchains.CidrCompilerSwitches
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
@@ -14,50 +14,48 @@ import com.jetbrains.cidr.xcode.frameworks.AppleSdk
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
 import com.jetbrains.swift.codeinsight.resolve.MobileSwiftModuleManager
 import com.jetbrains.swift.codeinsight.resolve.SwiftLibraryModule
+import com.jetbrains.swift.lang.SwiftNames
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import java.util.*
 import kotlin.collections.HashSet
 
 class MobileSwiftModuleReader : SwiftModuleReaderImpl<OCResolveConfiguration>() {
+    override fun createModuleInfo(configuration: OCResolveConfiguration, moduleName: String): ModuleInfo =
+            ModuleInfo(moduleName,
+                    MobileSwiftModuleManager.getAppleSdkInfo(configuration),
+                    AppleSdkManager.getInstance().findSdksForPlatform(ApplePlatform.Type.IOS_SIMULATOR).firstOrNull()
+                            ?.versionString,
+                    null,
+                    null)
+
     override fun doReadModule(
         configuration: OCResolveConfiguration,
         moduleName: String,
         customArgs: List<String>
     ): SwiftLibraryModule {
-
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            if (!SwiftCacheBuilder.shouldBuildModule(moduleName)) return emptyModule(configuration, moduleName)
+        if (ApplicationManager.getApplication().isUnitTestMode &&
+                moduleName != SwiftNames.SWIFT_MODULE &&
+                !AllowedModules.allowedModules.contains(moduleName)) {
+            return emptyModule(configuration, moduleName)
         }
 
         val project = configuration.project
+        val moduleInfo = createModuleInfo(configuration, moduleName)
 
-        val sdkInfo: SdkInfo? = MobileSwiftModuleManager.getAppleSdkInfo(configuration)
-        val deploymentTarget = AppleSdkManager.getInstance().findSdksForPlatform(ApplePlatform.Type.IOS_SIMULATOR).firstOrNull()
-            ?.versionString // XcodeMetaData.getBuildSettings(configuration)?.deploymentTarget
-        val llvmTargetTripleOsVersion = null //XcodeMetaData.getBuildSettings(configuration)?.llvmTargetTripleOsVersion
-        val llvmTargetTripleSuffix = null // XcodeMetaData.getBuildSettings(configuration)?.llvmTargetTripleSuffix
-        val moduleInfo = ModuleInfo(moduleName, sdkInfo, deploymentTarget, llvmTargetTripleOsVersion, llvmTargetTripleSuffix)
-
-        when (sdkInfo) {
-            null -> {
-                val files: List<SwiftLibraryModuleFile> = tryCustomModule(moduleInfo, configuration, project, customArgs)
-                return SwiftLibraryModule(moduleInfo, configuration, files)
-            }
-            else -> {
-                if (!isSwiftSupported(sdkInfo, deploymentTarget)) return emptyModule(configuration, moduleName)
-
-                val files: List<VirtualFile> = tryMemoryCacheOrFallbackToInstalledCache(configuration, moduleInfo, customArgs)
-                return SwiftLibraryModule(moduleInfo, configuration, files)
-            }
+        val files = when (moduleInfo.sdkInfo) {
+            null -> tryCustomModule(moduleInfo, configuration, project, customArgs)
+            else -> tryMemoryCache(configuration, moduleInfo)
+                    ?: tryInstalledCache(moduleInfo)
+                    ?: tryIOCacheOrReadFromSourceKit(configuration, moduleInfo, customArgs)
         }
+
+        return SwiftLibraryModule(moduleInfo, configuration, files)
     }
 
-    private fun tryCustomModule(
-        moduleInfo: ModuleInfo,
-        configuration: OCResolveConfiguration,
-        project: Project,
-        customArgs: List<String>
-    ): List<SwiftLibraryModuleFile> {
+    private fun tryCustomModule(moduleInfo: ModuleInfo,
+                                configuration: OCResolveConfiguration,
+                                project: Project,
+                                customArgs: List<String>): List<SwiftLibraryModuleFile> {
 
         val inMemoryModuleCache = SwiftInMemoryModuleCache.getInstance(project)
 
@@ -65,55 +63,35 @@ class MobileSwiftModuleReader : SwiftModuleReaderImpl<OCResolveConfiguration>() 
             return cachedCustomModule
         }
 
-        val files = readCustomModule(moduleInfo, configuration, customArgs)
-
+        val content = readCustomModule(moduleInfo, configuration, customArgs)
+        val files = convertToVirtualFiles(moduleInfo, content)
         return inMemoryModuleCache.cacheOrGet(moduleInfo, files)
     }
 
-    private fun tryMemoryCacheOrFallbackToInstalledCache(
-        configuration: OCResolveConfiguration,
-        moduleInfo: ModuleInfo,
-        customArgs: List<String>
-    ): List<VirtualFile> {
+    private fun tryMemoryCache(configuration: OCResolveConfiguration, moduleInfo: ModuleInfo): List<VirtualFile>? {
         if (moduleInfo.sdkInfo == null) {
             OCLog.LOG.error("sdk info must not be null")
-            return Collections.emptyList()
+            return emptyList()
         }
 
         val project = configuration.project
         val inMemoryModuleCache = SwiftInMemoryModuleCache.getInstance(project)
 
-        inMemoryModuleCache.get(moduleInfo)?.let { cached ->
-            return cached
-        }
-
-        return tryInstalledCacheOrFallbackToIOCache(configuration, moduleInfo, customArgs)
+        return inMemoryModuleCache.get(moduleInfo)
     }
 
-    private fun tryInstalledCacheOrFallbackToIOCache(
-        configuration: OCResolveConfiguration,
-        moduleInfo: ModuleInfo,
-        customArgs: List<String>
-    ): List<VirtualFile> {
-        myIOCache.readModuleInInstalledModuleCache(moduleInfo)?.let { prebuiltFiles ->
-            if (prebuiltFiles.isNotEmpty()) {
-                return prebuiltFiles
-            }
-        }
-
-        return tryIOCacheOrFallbackToSourceKit(configuration, moduleInfo, customArgs)
+    private fun tryInstalledCache(moduleInfo: ModuleInfo): List<VirtualFile>? {
+        return myIOCache.readModuleInInstalledModuleCache(moduleInfo)
     }
 
-    private fun tryIOCacheOrFallbackToSourceKit(
-        configuration: OCResolveConfiguration,
-        moduleInfo: ModuleInfo,
-        customArgs: List<String>
-    ): List<VirtualFile> {
-        myIOCache.readModule(moduleInfo)?.let { cachedFiles ->
-            if (cachedFiles.isNotEmpty()) {
-                return cachedFiles
-            }
-        }
+    private fun tryIOCacheOrReadFromSourceKit(configuration: OCResolveConfiguration,
+                                              moduleInfo: ModuleInfo,
+                                              customArgs: List<String>): List<VirtualFile> {
+        myIOCache.readModule(moduleInfo)
+                ?.takeIf { cachedFiles -> cachedFiles.isNotEmpty() }
+                ?.let { cachedFiles ->
+                    return cachedFiles
+                }
 
         val project = configuration.project
         val args = prepareArgsForSDK(moduleInfo, project)
@@ -121,7 +99,8 @@ class MobileSwiftModuleReader : SwiftModuleReaderImpl<OCResolveConfiguration>() 
         val content: SwiftModuleContent? = invokeReadingAndWait(moduleInfo, customArgs + args)
 
         if (content == null || SwiftEmptyModules.isEmptyContent(moduleInfo, content)) {
-            val files = readCustomModule(moduleInfo, configuration, args)
+            val customModuleContent = readCustomModule(moduleInfo, configuration, args)
+            val files = convertToVirtualFiles(moduleInfo, customModuleContent)
             SwiftInMemoryModuleCache.getInstance(project).cacheOrGet(moduleInfo, files)
             return files
         }
@@ -132,24 +111,9 @@ class MobileSwiftModuleReader : SwiftModuleReaderImpl<OCResolveConfiguration>() 
         return SwiftInMemoryModuleCache.getInstance(project).cacheOrGet(moduleInfo, files)
     }
 
-    private fun isSwiftSupported(sdkInfo: SdkInfo, deploymentTarget: String?): Boolean {
-        if (deploymentTarget != null) {
-            val version = Version.parseVersion(deploymentTarget)
-            if (version != null && ("ios" == sdkInfo.platform && version.lessThan(7) ||
-                        "macosx" == sdkInfo.platform && version.lessThan(10, 9))
-            ) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    private fun readCustomModule(
-        moduleInfo: ModuleInfo,
-        configuration: OCResolveConfiguration,
-        initialArgs: List<String>
-    ): List<SwiftLibraryModuleFile> {
+    private fun readCustomModule(moduleInfo: ModuleInfo,
+                                 configuration: OCResolveConfiguration,
+                                 initialArgs: List<String>): SwiftModuleContent? {
         val args = ArrayList(initialArgs)
 
         val configurations: Set<String> = collectFrameworks(configuration)
@@ -158,13 +122,12 @@ class MobileSwiftModuleReader : SwiftModuleReaderImpl<OCResolveConfiguration>() 
             args.add(c)
         }
 
-        val switches = configuration.getCompilerSettings(SwiftLanguageKind.SWIFT).compilerSwitches?.getList(CidrCompilerSwitches.Format.RAW)
+        val switches = configuration.getCompilerSettings(SwiftLanguageKind).compilerSwitches?.getList(CidrCompilerSwitches.Format.RAW)
         if (switches != null) {
             args.addAll(switches)
         }
 
-        val content: SwiftModuleContent? = invokeReadingAndWait(moduleInfo, args)
-        return convertToVirtualFiles(moduleInfo, content)
+        return invokeReadingAndWait(moduleInfo, args)
     }
 
     private fun prepareArgsForSDK(

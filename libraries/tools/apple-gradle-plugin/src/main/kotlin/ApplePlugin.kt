@@ -5,10 +5,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.openapi.vfs.local.CoreLocalVirtualFile
-import com.jetbrains.cidr.xcode.CoreXcodeApplicationEnvironment
-import com.jetbrains.cidr.xcode.CoreXcodeProjectEnvironment
-import com.jetbrains.cidr.xcode.XcodeBase
-import com.jetbrains.cidr.xcode.XcodeInstallation
+import com.jetbrains.cidr.xcode.*
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
 import com.jetbrains.cidr.xcode.frameworks.AppleProductType
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
@@ -460,7 +457,7 @@ open class ApplePlugin @Inject constructor(private val execActionFactory: ExecAc
                 println("Using Xcode: $xcodePath")
 
                 val applicationEnvironment = CoreXcodeApplicationEnvironment(this, false)
-                XcodeBase.getInstance().setInstallation(XcodeInstallation(File(xcodePath)))
+                XcodeSettingsBase.INSTANCE.setSelectedXcodePath(xcodePath)
                 CoreXcodeProjectEnvironment(this, applicationEnvironment).project
             }
             else -> null
