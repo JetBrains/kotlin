@@ -1204,7 +1204,7 @@ public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination
 }
 
 /**
- * Returns a [HashSet] of all elements.
+ * Returns a new [HashSet] of all elements.
  */
 public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
     return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))
@@ -1225,7 +1225,7 @@ public fun <T> Iterable<T>.toList(): List<T> {
 }
 
 /**
- * Returns a [MutableList] filled with all elements of this collection.
+ * Returns a new [MutableList] filled with all elements of this collection.
  */
 public fun <T> Iterable<T>.toMutableList(): MutableList<T> {
     if (this is Collection<T>)
@@ -1234,7 +1234,7 @@ public fun <T> Iterable<T>.toMutableList(): MutableList<T> {
 }
 
 /**
- * Returns a [MutableList] filled with all elements of this collection.
+ * Returns a new [MutableList] filled with all elements of this collection.
  */
 public fun <T> Collection<T>.toMutableList(): MutableList<T> {
     return ArrayList(this)
@@ -1496,7 +1496,7 @@ public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a mutable set containing all distinct elements from the given collection.
+ * Returns a new [MutableSet] containing all distinct elements from the given collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
  */

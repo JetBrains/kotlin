@@ -19,7 +19,7 @@ object SetOps : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a mutable set containing all distinct ${f.element.pluralize()} from the given ${f.collection}.
+            Returns a new [MutableSet] containing all distinct ${f.element.pluralize()} from the given ${f.collection}.
 
             The returned set preserves the element iteration order of the original ${f.collection}.
             """

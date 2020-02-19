@@ -2057,70 +2057,70 @@ public actual fun CharArray.toTypedArray(): Array<Char> {
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun <T : Comparable<T>> Array<out T>.toSortedSet(): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun ByteArray.toSortedSet(): java.util.SortedSet<Byte> {
     return toCollection(java.util.TreeSet<Byte>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun ShortArray.toSortedSet(): java.util.SortedSet<Short> {
     return toCollection(java.util.TreeSet<Short>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun IntArray.toSortedSet(): java.util.SortedSet<Int> {
     return toCollection(java.util.TreeSet<Int>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun LongArray.toSortedSet(): java.util.SortedSet<Long> {
     return toCollection(java.util.TreeSet<Long>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun FloatArray.toSortedSet(): java.util.SortedSet<Float> {
     return toCollection(java.util.TreeSet<Float>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun DoubleArray.toSortedSet(): java.util.SortedSet<Double> {
     return toCollection(java.util.TreeSet<Double>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun BooleanArray.toSortedSet(): java.util.SortedSet<Boolean> {
     return toCollection(java.util.TreeSet<Boolean>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun CharArray.toSortedSet(): java.util.SortedSet<Char> {
     return toCollection(java.util.TreeSet<Char>())
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all elements.
+ * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */

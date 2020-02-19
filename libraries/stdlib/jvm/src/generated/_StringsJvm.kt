@@ -25,7 +25,7 @@ public actual inline fun CharSequence.elementAt(index: Int): Char {
 }
 
 /**
- * Returns a [SortedSet][java.util.SortedSet] of all characters.
+ * Returns a new [SortedSet][java.util.SortedSet] of all characters.
  */
 public fun CharSequence.toSortedSet(): java.util.SortedSet<Char> {
     return toCollection(java.util.TreeSet<Char>())

@@ -731,7 +731,7 @@ public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destinatio
 }
 
 /**
- * Returns a [HashSet] of all characters.
+ * Returns a new [HashSet] of all characters.
  */
 public fun CharSequence.toHashSet(): HashSet<Char> {
     return toCollection(HashSet<Char>(mapCapacity(length)))
@@ -749,7 +749,7 @@ public fun CharSequence.toList(): List<Char> {
 }
 
 /**
- * Returns a [MutableList] filled with all characters of this char sequence.
+ * Returns a new [MutableList] filled with all characters of this char sequence.
  */
 public fun CharSequence.toMutableList(): MutableList<Char> {
     return toCollection(ArrayList<Char>(length))
