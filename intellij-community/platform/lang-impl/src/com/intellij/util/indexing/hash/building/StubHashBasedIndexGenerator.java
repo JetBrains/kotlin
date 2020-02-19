@@ -11,7 +11,6 @@ import com.intellij.util.indexing.impl.EmptyInputDataDiffBuilder;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.MapReduceIndex;
 import com.intellij.util.indexing.impl.UpdateData;
-import com.intellij.util.io.EnumeratorIntegerDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
   private StubHashBasedIndexGenerator(@NotNull StubUpdatingIndex index,
                                       @NotNull Path stubIndicesRoot,
                                       @NotNull List<StubIndexExtension<?, ?>> stubIndexExtensions) {
-    super(index, stubIndicesRoot.getParent());
+    super(index, stubIndicesRoot.getParent(), true);
     myStubIndicesRoot = stubIndicesRoot;
 
     for (StubIndexExtension<?, ?> stubIndexExtension : stubIndexExtensions) {
@@ -53,7 +52,7 @@ public class StubHashBasedIndexGenerator extends HashBasedIndexGenerator<Integer
   @NotNull
   private <K, V extends PsiElement> HashBasedIndexGenerator<K, Void> createGenerator(StubIndexExtension<K, V> stubIndexExtension) {
     FileBasedIndexExtension<K, Void> extension = StubIndexImpl.wrapStubIndexExtension(stubIndexExtension);
-    return new HashBasedIndexGenerator<>(extension.getKeyDescriptor(), extension.getValueExternalizer(), extension, myStubIndicesRoot, false);
+    return new HashBasedIndexGenerator(extension, myStubIndicesRoot, false);
   }
 
   @NotNull

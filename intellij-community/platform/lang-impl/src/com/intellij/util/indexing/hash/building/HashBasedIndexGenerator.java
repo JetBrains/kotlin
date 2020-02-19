@@ -2,17 +2,12 @@
 package com.intellij.util.indexing.hash.building;
 
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.*;
 import com.intellij.util.indexing.impl.forward.ForwardIndex;
 import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
-import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -43,15 +38,15 @@ public class HashBasedIndexGenerator<K, V> {
 
   private InvertedIndex<K, V, FileContent> myIndex;
 
-  public HashBasedIndexGenerator(@NotNull FileBasedIndexExtension<K, V> indexExtension, @NotNull Path outRoot) {
-    this(indexExtension.getKeyDescriptor(), indexExtension.getValueExternalizer(), indexExtension, outRoot, true);
+  public HashBasedIndexGenerator(@NotNull FileBasedIndexExtension<K, V> indexExtension, @NotNull Path outRoot, boolean createForwardIndex) {
+    this(indexExtension.getKeyDescriptor(), indexExtension.getValueExternalizer(), indexExtension, outRoot, createForwardIndex);
   }
 
-  public HashBasedIndexGenerator(@NotNull KeyDescriptor<K> keyDescriptor,
-                                 @NotNull DataExternalizer<V> valueExternalizer,
-                                 @NotNull FileBasedIndexExtension<K, V> originalExtension,
-                                 @NotNull Path outRoot,
-                                 boolean createForwardIndex) {
+  private HashBasedIndexGenerator(@NotNull KeyDescriptor<K> keyDescriptor,
+                                  @NotNull DataExternalizer<V> valueExternalizer,
+                                  @NotNull FileBasedIndexExtension<K, V> originalExtension,
+                                  @NotNull Path outRoot,
+                                  boolean createForwardIndex) {
     ID<K, V> indexId = originalExtension.getName();
     myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
     myStorageFile = getSharedIndexPath(outRoot, indexId).resolve(indexId.getName());

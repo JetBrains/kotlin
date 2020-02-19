@@ -95,7 +95,7 @@ public class IndexesExporter {
       .collect(Collectors.toList());
 
     List<HashBasedIndexGenerator<?, ?>> fileBasedGenerators = ContainerUtil.map(exportableFileBasedIndexExtensions,
-                                                                                ex -> new HashBasedIndexGenerator<>(ex, chunkRoot));
+                                                                                ex -> new HashBasedIndexGenerator<>(ex, chunkRoot, true));
 
     List<StubIndexExtension<?, ?>> exportableStubIndexExtensions = StubIndexExtension.EP_NAME.getExtensionList();
 
