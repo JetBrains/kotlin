@@ -15,6 +15,7 @@ import com.intellij.openapi.util.component1
 import com.intellij.openapi.util.component2
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
 private val isJUnitEnabled by lazy { isPluginEnabled("JUnit") }
 private val isTestNgEnabled by lazy { isPluginEnabled("TestNG-J") }
@@ -33,6 +34,8 @@ internal fun canRunJvmTests() = isJUnitEnabled || isTestNgEnabled
 internal fun getTestClassForJvm(location: Location<*>): PsiClass? {
     val leaf = location.psiElement ?: return null
 
+    if (leaf.language != KotlinLanguage.INSTANCE) return null
+
     if (isJUnitEnabled) {
         KotlinJUnitRunConfigurationProducer.getTestClass(leaf)?.let { return it }
     }
@@ -46,6 +49,8 @@ internal fun getTestClassForJvm(location: Location<*>): PsiClass? {
 
 internal fun getTestMethodForJvm(location: Location<*>): PsiMethod? {
     val leaf = location.psiElement ?: return null
+
+    if (leaf.language != KotlinLanguage.INSTANCE) return null
 
     if (isJUnitEnabled) {
         KotlinJUnitRunConfigurationProducer.getTestMethod(leaf)?.let { return it }
