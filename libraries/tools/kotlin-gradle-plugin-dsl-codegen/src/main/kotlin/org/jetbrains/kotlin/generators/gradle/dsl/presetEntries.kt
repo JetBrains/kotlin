@@ -7,100 +7,17 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Presets
 import org.jetbrains.kotlin.generators.gradle.dsl.NativeFQNames.Targets
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
-internal open class KotlinPresetEntry(
+internal class KotlinPresetEntry(
     val presetName: String,
     val presetType: TypeName,
     val targetType: TypeName
-) {
-    open fun typeNames(): Set<TypeName> = setOf(presetType, targetType)
+)
 
-    open fun generatePresetFunctions(
-        getPresetsExpression: String,
-        configureOrCreateFunctionName: String
-    ): String {
-        val presetName = presetName
-        return """
-    fun $presetName(
-        name: String = "$presetName",
-        configure: ${targetType.renderShort()}.() -> Unit = { }
-    ): ${targetType.renderShort()} =
-        $configureOrCreateFunctionName(
-            name,
-            $getPresetsExpression.getByName("$presetName") as ${presetType.renderShort()},
-            configure
-        )
-
-    fun $presetName() = $presetName("$presetName") { }
-    fun $presetName(name: String) = $presetName(name) { }
-    fun $presetName(name: String, configure: Closure<*>) = $presetName(name) { ConfigureUtil.configure(configure, this) }
-    fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
-""".trimIndent()
-    }
-}
-
-internal class KotlinJsPresetEntry(
-    presetName: String,
-    presetType: TypeName,
-    targetType: TypeName
-) : KotlinPresetEntry(
-    presetName,
-    presetType,
-    targetType
-) {
-    override fun typeNames(): Set<TypeName> {
-        return setOf(
-            typeName(JsCompilerType::class.qualifiedName!!),
-            typeName("org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName"),
-            presetType,
-            targetType
-        )
-    }
-
-    override fun generatePresetFunctions(
-        getPresetsExpression: String,
-        configureOrCreateFunctionName: String
-    ): String {
-        val presetName = presetName
-        return """
-    fun $presetName(
-        name: String = "$presetName",
-        compiler: JsCompilerType = defaultJsCompilerType,
-        configure: ${targetType.renderShort()}.() -> Unit = { }
-    ): ${targetType.renderShort()} =
-        $configureOrCreateFunctionName(
-            lowerCamelCaseName(name, if (compiler == JsCompilerType.both) JsCompilerType.legacy.name else null),
-            $getPresetsExpression.getByName(
-                lowerCamelCaseName(
-                    "$presetName",
-                    if (compiler == JsCompilerType.legacy) null else compiler.name
-                )
-            ) as ${presetType.renderShort()},
-            configure
-        )
-    
-    fun $presetName(
-        name: String = "$presetName",
-        configure: ${targetType.renderShort()}.() -> Unit = { }
-    ) = $presetName(name = name, compiler = defaultJsCompilerType, configure = configure)
-    
-    fun $presetName(
-        compiler: JsCompilerType,
-        configure: ${targetType.renderShort()}.() -> Unit = { }
-    ) = $presetName(name = "$presetName", compiler = compiler, configure = configure)
-
-    fun $presetName() = $presetName(name = "$presetName") { }
-    fun $presetName(name: String) = $presetName(name = name) { }
-    fun $presetName(name: String, configure: Closure<*>) = $presetName(name = name) { ConfigureUtil.configure(configure, this) }
-    fun $presetName(compiler: JsCompilerType, configure: Closure<*>) = $presetName(compiler = compiler) { ConfigureUtil.configure(configure, this) }
-    fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
-""".trimIndent()
-    }
-}
+internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
 
 internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 
@@ -122,13 +39,6 @@ internal val jvmPresetEntry = KotlinPresetEntry(
     "jvm",
     typeName("$MPP_PACKAGE.KotlinJvmTargetPreset"),
     typeName("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget")
-)
-
-internal val jsPresetEntry = KotlinJsPresetEntry(
-    "js",
-    // need for commonization KotlinJsTargetPreset and KotlinJsIrTargetPreset
-    typeName("org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset", "org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl"),
-    typeName("org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl")
 )
 
 internal val androidPresetEntry = KotlinPresetEntry(
@@ -160,6 +70,5 @@ internal val nativePresetEntries = HostManager().targets
 
 internal val allPresetEntries = listOf(
     jvmPresetEntry,
-    jsPresetEntry,
     androidPresetEntry
 ) + nativePresetEntries

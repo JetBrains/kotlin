@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 open class KotlinMultiplatformExtension :
     KotlinProjectExtension(),
     KotlinTargetContainerWithPresetFunctions,
-    KotlinTargetContainerWithNativeShortcuts
-{
+    KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithNativeShortcuts {
     override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
         internal set
 
@@ -81,9 +81,9 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         else -> {
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +
-                        "To configure it, access it by name in `kotlin.targets`" +
-                        " or use the preset function '${existingTarget.preset?.name}'."
-                            .takeIf { existingTarget.preset != null } ?: "."
+                "To configure it, access it by name in `kotlin.targets`" +
+                " or use the preset function '${existingTarget.preset?.name}'."
+                    .takeIf { existingTarget.preset != null } ?: "."
             )
         }
     }
