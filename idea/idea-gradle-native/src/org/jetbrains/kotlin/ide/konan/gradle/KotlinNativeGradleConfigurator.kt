@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ide.konan.gradle
 
+import org.jetbrains.kotlin.ide.konan.KotlinGradleNativeBundle
 import org.jetbrains.kotlin.ide.konan.hasKotlinNativeRuntimeInScope
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
@@ -37,6 +38,6 @@ open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
 
     companion object {
         const val NAME = "KotlinNative"
-        const val PRESENTABLE_TEXT = "Native"
+        val PRESENTABLE_TEXT = KotlinGradleNativeBundle.message("native.gradle.name.short")
     }
 }
