@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.hash;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
@@ -18,14 +19,31 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
 
 @ApiStatus.Internal
 public class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<Key, Value> {
+  private static final Logger LOG = Logger.getInstance(HashBasedMapReduceIndex.class);
+
   HashBasedMapReduceIndex(@NotNull SharedIndexChunk chunk,
                           @NotNull SharedIndexExtension<Key, Value> sharedExtension,
                           @NotNull FileBasedIndexExtension<Key, Value> originalExtension,
                           @NotNull FileContentHashIndex hashIndex) throws IOException {
     super(originalExtension, createStorage(chunk.getPath(), originalExtension, sharedExtension, hashIndex.getHashIdToFileIdsFunction(chunk.getChunkId())), null, null, null, null);
+  }
+
+  @Override
+  public @NotNull Map<Key, Value> getIndexedFileData(int fileId) throws StorageException {
+    if (getExtension() instanceof SingleEntryFileBasedIndexExtension || hasForwardIndex()) {
+      return super.getIndexedFileData(fileId);
+    }
+    LOG.error("Shared index chunk for " + getExtension().getName() + " doesn't have forward index. Index data might be incomplete");
+    return Collections.emptyMap();
+  }
+
+  private boolean hasForwardIndex() {
+    return getForwardIndex() != null;
   }
 
   private static <Key, Value> IndexStorage<Key, Value> createStorage(@NotNull Path baseFile,
