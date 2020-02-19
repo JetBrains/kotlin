@@ -10,7 +10,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
@@ -319,7 +318,7 @@ class ModuleInfo(
 
     private fun checkProductionOnTest(library: ExportableOrderEntry, productionOnTest: Boolean?) {
         if (productionOnTest == null) return
-        val actualFlag = (library as? ModuleOrderEntryImpl)?.isProductionOnTestDependency
+        val actualFlag = (library as? ModuleOrderEntry)?.isProductionOnTestDependency
         if (actualFlag == null) {
             projectInfo.messageCollector.report(
                 "Module '${module.name}': Dependency '${library.presentableName}' has no productionOnTest property"

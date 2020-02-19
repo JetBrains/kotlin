@@ -11,7 +11,6 @@ import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
@@ -92,7 +91,7 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
         }
         is ModuleOrderEntry -> {
             val module = orderEntry.module ?: return emptyList()
-            if (forProduction && orderEntry is ModuleOrderEntryImpl && orderEntry.isProductionOnTestDependency) {
+            if (forProduction && orderEntry.isProductionOnTestDependency) {
                 listOfNotNull(module.testSourceInfo())
             } else {
                 module.toInfos()
@@ -131,7 +130,7 @@ private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
             || !forProduction
             // this is needed for Maven/Gradle projects with "production-on-test" dependency
-            || this is ModuleOrderEntryImpl && isProductionOnTestDependency
+            || this is ModuleOrderEntry && isProductionOnTestDependency
             || scope.isForProductionCompile
 }
 

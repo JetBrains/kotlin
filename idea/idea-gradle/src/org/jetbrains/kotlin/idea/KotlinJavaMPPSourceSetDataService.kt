@@ -15,7 +15,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleOrderEntry
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
 import org.jetbrains.kotlin.idea.configuration.kotlinSourceSet
@@ -48,7 +47,7 @@ class KotlinJavaMPPSourceSetDataService : AbstractProjectDataService<GradleSourc
 
             val moduleEntries = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()
             moduleEntries.filter { isTestModuleById(it.moduleName, toImport) }.forEach { moduleOrderEntry ->
-                (moduleOrderEntry as? ModuleOrderEntryImpl)?.isProductionOnTestDependency = true
+                moduleOrderEntry.isProductionOnTestDependency = true
             }
             val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>()
             libraryEntries.forEach { libraryEntry ->
