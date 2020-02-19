@@ -171,7 +171,7 @@ extra["versions.completion-ranking-kotlin"] = "0.0.2"
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3.70-eap-14546"
+    extra["versions.kotlin-native"] = "1.3.70-eap-14571"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
