@@ -34,9 +34,7 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Long, Void> {
 
   public int getAssociatedChunkId(int fileId, VirtualFile file) {
     try {
-      Map<Long, Void> data = getIndexedFileData(fileId);
-      if (data.isEmpty()) return FileContentHashIndexExtension.NULL_INDEX_ID;
-      return FileContentHashIndexExtension.getIndexId(data.keySet().iterator().next());
+      return FileContentHashIndexExtension.getIndexId(getHashId(fileId));
     }
     catch (StorageException e) {
       LOG.error(e);
