@@ -48,7 +48,7 @@ public class UnknownSdkTracker {
   public UnknownSdkTracker(@NotNull Project project) {
     myProject = project;
     myUpdateQueue = new MergingUpdateQueue(getClass().getSimpleName(),
-                                           200,
+                                           700,
                                            true,
                                            null,
                                            myProject,
