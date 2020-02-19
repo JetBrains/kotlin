@@ -75,6 +75,11 @@ class KotlinFunctionCallUsage(
 
         changeNameIfNeeded(changeInfo, element)
 
+        if (element.valueArgumentList == null && changeInfo.isParameterSetOrOrderChanged && element.lambdaArguments.isNotEmpty()) {
+            element.calleeExpression?.let {
+                element.addAfter(KtPsiFactory(element).createCallArguments("()"), it)
+            }
+        }
         if (element.valueArgumentList != null) {
             if (changeInfo.isParameterSetOrOrderChanged) {
                 result = updateArgumentsAndReceiver(changeInfo, element, allUsages)

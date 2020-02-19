@@ -2339,6 +2339,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/removeFunctionFirstParameter.kt");
         }
 
+        @TestMetadata("removeFunctionLastLambdaParameter.kt")
+        public void testRemoveFunctionLastLambdaParameter() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/removeFunctionLastLambdaParameter.kt");
+        }
+
         @TestMetadata("removeFunctionSecondParameter1.kt")
         public void testRemoveFunctionSecondParameter1() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/removeFunctionSecondParameter1.kt");
