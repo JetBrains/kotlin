@@ -470,7 +470,7 @@ public class GradleProjectResolverUtil {
         if (sourceFound[0] && docFound[0]) {
           return FileVisitResult.TERMINATE;
         }
-        return super.visitFile(file, attrs);
+        return super.visitFile(sourceCandidate, attrs);
       }
     });
   }
