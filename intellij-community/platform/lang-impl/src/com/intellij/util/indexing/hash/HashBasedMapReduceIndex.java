@@ -11,7 +11,7 @@ import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.indexing.impl.UpdatableValueContainer;
 import com.intellij.util.indexing.impl.ValueContainerInputRemapping;
 import com.intellij.util.indexing.provided.SharedIndexExtension;
-import com.intellij.util.io.PersistentEnumeratorBase;
+import com.intellij.util.io.InlineKeyDescriptor;
 import com.intellij.util.io.PersistentHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +92,7 @@ public class HashBasedMapReduceIndex<Key, Value> extends VfsAwareMapReduceIndex<
     }
 
     private boolean doProcessKeys(@NotNull Processor<? super Key> processor) throws IOException {
-      return myMap instanceof PersistentHashMap && PersistentEnumeratorBase.inlineKeyStorage(myKeyDescriptor)
+      return myMap instanceof PersistentHashMap && myKeyDescriptor instanceof InlineKeyDescriptor
              // process keys and check that they're already present in map because we don't have separated key storage we must check keys
              ? ((PersistentHashMap<Key, UpdatableValueContainer<Value>>)myMap).processKeysWithExistingMapping(processor)
              // optimization: process all keys, some of them might be already deleted but we don't care. We just read key storage file here
