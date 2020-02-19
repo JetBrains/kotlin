@@ -19,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.ui.GridBag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Collections;
+import java.util.List;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.normalizePath;
 
@@ -158,7 +160,8 @@ public class ExternalSystemTaskSettingsControl implements ExternalSystemSettings
   public void apply(@NotNull ExternalSystemTaskExecutionSettings settings) {
     String projectPath = myProjectPathField.getText();
     settings.setExternalProjectPath(projectPath);
-    settings.setTaskNames(StringUtil.split(myTasksTextField.getText(), " "));
+    List<String> tasks = ParametersListUtil.parse(myTasksTextField.getText(), true, true);
+    settings.setTaskNames(tasks);
     settings.setVmOptions(myVmOptionsEditor.getText());
     settings.setScriptParameters(myArgumentsEditor.getText());
     settings.setPassParentEnvs(myEnvVariablesComponent.isPassParentEnvs());

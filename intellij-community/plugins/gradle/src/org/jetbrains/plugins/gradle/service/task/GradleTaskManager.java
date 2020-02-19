@@ -23,6 +23,7 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.*;
+import com.intellij.util.execution.ParametersListUtil;
 import org.gradle.api.Task;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.CancellationTokenSource;
@@ -74,9 +75,13 @@ public class GradleTaskManager implements ExternalSystemTaskManager<GradleExecut
                            @Nullable GradleExecutionSettings settings,
                            @Nullable final String jvmParametersSetup,
                            @NotNull final ExternalSystemTaskNotificationListener listener) throws ExternalSystemException {
+    final List<String> tasks = taskNames.stream()
+      .flatMap(s -> ParametersListUtil.parse(s, false, true).stream())
+      .collect(Collectors.toList());
+
     if (ExternalSystemApiUtil.isInProcessMode(GradleConstants.SYSTEM_ID)) {
       for (GradleTaskManagerExtension gradleTaskManagerExtension : GradleTaskManagerExtension.EP_NAME.getExtensions()) {
-        if (gradleTaskManagerExtension.executeTasks(id, taskNames, projectPath, settings, jvmParametersSetup, listener)) {
+        if (gradleTaskManagerExtension.executeTasks(id, tasks, projectPath, settings, jvmParametersSetup, listener)) {
           return;
         }
       }
@@ -90,31 +95,14 @@ public class GradleTaskManager implements ExternalSystemTaskManager<GradleExecut
     Function<ProjectConnection, Void> f = connection -> {
       try {
         setupGradleScriptDebugging(effectiveSettings);
-        appendInitScriptArgument(taskNames, jvmParametersSetup, effectiveSettings);
+        appendInitScriptArgument(tasks, jvmParametersSetup, effectiveSettings);
         try {
           for (GradleBuildParticipant buildParticipant : effectiveSettings.getExecutionWorkspace().getBuildParticipants()) {
             effectiveSettings.withArguments(GradleConstants.INCLUDE_BUILD_CMD_OPTION, buildParticipant.getProjectPath());
           }
 
-          List<String> args = new SmartList<>();
-          for (Iterator<String> iterator = effectiveSettings.getArguments().iterator(); iterator.hasNext(); ) {
-            String arg = iterator.next();
-            if ("--args".equals(arg) && iterator.hasNext()) {
-              args.add("--args");
-              args.add(iterator.next());
-            }
-          }
-          String[] tasksArray;
-          if (!args.isEmpty()) {
-            // todo append --args only after JavaExec tasks
-            tasksArray = taskNames.stream().flatMap(task -> concat(Collections.singletonList(task), args).stream()).toArray(String[]::new);
-          }
-          else {
-            tasksArray = ArrayUtilRt.toStringArray(taskNames);
-          }
-
           BuildLauncher launcher = myHelper.getBuildLauncher(id, connection, effectiveSettings, listener);
-          launcher.forTasks(tasksArray);
+          launcher.forTasks(ArrayUtil.toStringArray(tasks));
 
           launcher.withCancellationToken(cancellationTokenSource.token());
           launcher.run();

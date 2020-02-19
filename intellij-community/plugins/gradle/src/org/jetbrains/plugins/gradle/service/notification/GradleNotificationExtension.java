@@ -57,7 +57,9 @@ public class GradleNotificationExtension implements ExternalSystemNotificationEx
       if (cause != null) {
         String name = cause.getClass().getName();
         if (name.startsWith("groovy.lang.") || // Gradle Groovy DSL errors should be handled by GradleBuildScriptErrorParser
-            name.startsWith("org.gradle.")) {
+            name.startsWith("org.gradle.") &&
+            !name.startsWith("org.gradle.cli") // display Gradle CLI parser errors like "Unknown command-line option"
+        ) {
           return ((ExternalSystemException)unwrapped).getQuickFixes().length == 0;
         }
       }

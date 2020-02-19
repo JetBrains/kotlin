@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.build.*
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
@@ -67,74 +68,22 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
   }
 
   private fun assertExecutionTree(viewManager: TestViewManager, expected: String, ignoreTasksOrder: Boolean) {
+    viewManager.waitForPendingBuilds()
     val recentBuild = viewManager.getRecentBuild()
     val buildView = viewManager.getBuildsMap()[recentBuild]
-    val eventView = buildView!!.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
-    eventView!!.addFilter { true }
+    assertExecutionTree(buildView!!, expected, ignoreTasksOrder)
+  }
+
+  private fun assertExecutionTreeNode(
+    viewManager: TestViewManager,
+    nodeText: String,
+    consoleTextChecker: (String?) -> Unit,
+    assertSelected: Boolean
+  ) {
     viewManager.waitForPendingBuilds()
-    val treeStringPresentation = runInEdtAndGet {
-      val tree = eventView.tree
-      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-      PlatformTestUtil.waitWhileBusy(tree)
-      return@runInEdtAndGet PlatformTestUtil.print(tree, false)
-    }
-    if (ignoreTasksOrder) {
-      assertSameElements(buildTasksNodesAsList(treeStringPresentation.trim()), buildTasksNodesAsList(expected.trim()))
-    }
-    else {
-      assertEquals(expected.trim(), treeStringPresentation.trim())
-    }
-  }
-
-  private fun buildTasksNodesAsList(treeStringPresentation: String): List<String> {
-    val list = mutableListOf<String>()
-    val buffer = StringBuilder()
-    for (line in treeStringPresentation.lineSequence()) {
-      if (line.startsWith(" -") || line.startsWith("  :") || line.startsWith("  -")) {
-        list.add(buffer.toString())
-        buffer.clear()
-      }
-      buffer.appendln(line)
-    }
-    if (buffer.isNotEmpty()) {
-      list.add(buffer.toString())
-    }
-    return list
-  }
-
-  private fun assertExecutionTreeNode(viewManager: TestViewManager,
-                                      nodeText: String,
-                                      consoleTextChecker: (String?) -> Unit,
-                                      assertSelected: Boolean) {
     val recentBuild = viewManager.getRecentBuild()
     val buildView = viewManager.getBuildsMap()[recentBuild]
-    val eventView = buildView!!.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
-    eventView!!.addFilter { true }
-    viewManager.waitForPendingBuilds()
-
-    val tree = eventView.tree
-    val node = runInEdtAndGet {
-      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-      PlatformTestUtil.waitWhileBusy(tree)
-
-      TreeUtil.findNode(tree.model.root as DefaultMutableTreeNode) {
-        val userObject = it.userObject
-        userObject is ExecutionNode && userObject.name == nodeText
-      }
-    }
-    if (!assertSelected && node != tree.selectionPath?.lastPathComponent) {
-      edt {
-        TreeUtil.selectNode(tree, node)
-        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-        PlatformTestUtil.waitWhileBusy(tree)
-      }
-    }
-    val selectedPathComponent = tree.selectionPath!!.lastPathComponent
-    if (node != selectedPathComponent) {
-      assertEquals(node.toString(), selectedPathComponent.toString())
-    }
-    val selectedNodeConsoleText = runInEdtAndGet { eventView.selectedNodeConsoleText }
-    consoleTextChecker.invoke(selectedNodeConsoleText)
+    assertExecutionTreeNode(buildView!!, nodeText, consoleTextChecker, assertSelected)
   }
 
   interface TestViewManager : ViewManager {
@@ -184,5 +133,80 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
 
   override fun handleImportFailure(errorMessage: String, errorDetails: String?) {
     // do not fail tests with failed builds
+  }
+
+  companion object {
+    fun assertExecutionTree(buildView: BuildView, expected: String, ignoreTasksOrder: Boolean) {
+      val eventView = buildView.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
+      eventView!!.addFilter { true }
+      val treeStringPresentation = runInEdtAndGet {
+        val tree = eventView.tree
+        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+        PlatformTestUtil.waitWhileBusy(tree)
+        return@runInEdtAndGet PlatformTestUtil.print(tree, false)
+      }
+      if (ignoreTasksOrder) {
+        assertSameElements(
+          buildTasksNodesAsList(treeStringPresentation.trim()),
+          buildTasksNodesAsList(expected.trim())
+        )
+      }
+      else {
+        assertEquals(expected.trim(), treeStringPresentation.trim())
+      }
+    }
+
+    fun assertExecutionTreeNode(
+      buildView: BuildView,
+      nodeText: String,
+      consoleTextChecker: (String?) -> Unit,
+      assertSelected: Boolean
+    ) {
+      val eventView = buildView.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
+      eventView!!.addFilter { true }
+      val tree = eventView.tree
+      val node = runInEdtAndGet {
+        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+        PlatformTestUtil.waitWhileBusy(tree)
+
+        TreeUtil.findNode(tree.model.root as DefaultMutableTreeNode) {
+          val userObject = it.userObject
+          userObject is ExecutionNode && userObject.name == nodeText
+        }
+      }
+      val selectedPathComponent =
+      if (!assertSelected && node != tree.selectionPath?.lastPathComponent) {
+        runInEdtAndGet {
+          TreeUtil.selectNode(tree, node)
+          //TreeUtil.selectPath(tree, TreeUtil.getPathFromRoot(node!!)).waitFor(5000)
+          PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+          PlatformTestUtil.waitWhileBusy(tree)
+          tree.selectionPath!!.lastPathComponent
+        }
+      } else {
+        tree.selectionPath!!.lastPathComponent
+      }
+      if (node != selectedPathComponent) {
+        assertEquals(node.toString(), selectedPathComponent.toString())
+      }
+      val selectedNodeConsoleText = runInEdtAndGet { eventView.selectedNodeConsoleText }
+      consoleTextChecker.invoke(selectedNodeConsoleText)
+    }
+
+    private fun buildTasksNodesAsList(treeStringPresentation: String): List<String> {
+      val list = mutableListOf<String>()
+      val buffer = StringBuilder()
+      for (line in treeStringPresentation.lineSequence()) {
+        if (line.startsWith(" -") || line.startsWith("  :") || line.startsWith("  -")) {
+          list.add(buffer.toString())
+          buffer.clear()
+        }
+        buffer.appendln(line)
+      }
+      if (buffer.isNotEmpty()) {
+        list.add(buffer.toString())
+      }
+      return list
+    }
   }
 }

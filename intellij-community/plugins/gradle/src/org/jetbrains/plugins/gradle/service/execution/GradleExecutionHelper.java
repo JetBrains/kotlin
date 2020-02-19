@@ -162,16 +162,9 @@ public class GradleExecutionHelper {
       String loggableArgs = StringUtil.join(obfuscatePasswordParameters(settings.getArguments()), " ");
       LOG.info("Passing command-line args to Gradle Tooling API: " + loggableArgs);
 
-      // filter nulls, empty strings and '--args' arguments
-      for (Iterator<String> iterator = settings.getArguments().iterator(); iterator.hasNext(); ) {
-        String arg = iterator.next();
-        if(StringUtil.isEmpty(arg)) continue;
-        if("--args".equals(arg) && iterator.hasNext()) {
-          iterator.next();
-        } else {
-          filteredArgs.add(arg);
-        }
-      }
+      // filter nulls and empty strings
+      filteredArgs.addAll(ContainerUtil.mapNotNull(settings.getArguments(), s -> StringUtil.isEmpty(s) ? null : s));
+
       // TODO remove this replacement when --tests option will become available for tooling API
       replaceTestCommandOptionWithInitScript(filteredArgs);
     }

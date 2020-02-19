@@ -58,6 +58,7 @@ import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.*;
+import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
@@ -399,6 +400,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       ((ConsoleViewImpl)console).flushDeferredText();
       return ((ConsoleViewImpl)console).getText();
     }
+    if (myConsoleViewHandler.myView.isViewVisible(ConsoleViewHandler.EMPTY_CONSOLE_NAME)) {
+      return "";
+    }
     return null;
   }
 
@@ -421,7 +425,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         ExecutionNode updatedRoot = executionNode.reportChildMessageKind(eventKind);
         if (updatedRoot != null) {
           scheduleUpdate(updatedRoot, true);
-        } else {
+        }
+        else {
           scheduleUpdate(executionNode, false);
         }
       }
@@ -737,8 +742,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     return node;
   }
 
-  private void invokeLater(@NotNull Runnable task) {
-    myTreeModel.getInvoker().invokeLater(task);
+  @ApiStatus.Internal
+  public Promise<?> invokeLater(@NotNull Runnable task) {
+    return myTreeModel.getInvoker().invokeLater(task);
   }
 
   private static class ConsoleViewHandler implements Disposable {
