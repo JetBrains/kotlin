@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerTypeHolder
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import java.io.File
 
@@ -15,29 +14,25 @@ fun main() {
     generateKotlinTargetContainerWithPresetFunctionsInterface()
 }
 
-private val parentInterfaces = listOf(
-    KotlinTargetsContainerWithPresets::class,
-    KotlinJsCompilerTypeHolder::class
-)
+private val parentInterface = KotlinTargetsContainerWithPresets::class
 
 private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
     val functions = allPresetEntries.map {
-        it.generatePresetFunctions(presetsProperty, "configureOrCreate")
+        generatePresetFunctions(it, presetsProperty, "configureOrCreate")
     }
 
-    val parentInterfaceNames =
-        parentInterfaces.map { typeName(it.java.canonicalName) }
-
+    val parentInterfaceName =
+        typeName(parentInterface.java.canonicalName)
 
     val className =
         typeName("org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions")
 
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
-        .plus(parentInterfaceNames)
+        .plus(parentInterfaceName)
         .plus(typeName(ConfigureUtil::class.java.canonicalName))
         .plus(typeName(Closure::class.java.canonicalName))
         .filter { it.packageName() != className.packageName() }
@@ -51,7 +46,7 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         "package ${className.packageName()}",
         imports,
         generatedCodeWarning,
-        "interface ${className.renderShort()} : ${parentInterfaceNames.joinToString { it.renderShort() }} {",
+        "interface ${className.renderShort()} : ${parentInterfaceName.renderShort()} {",
         functions.joinToString("\n\n") { it.indented(4) },
         "}"
     ).joinToString("\n\n")
@@ -59,4 +54,28 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"]
     val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
+}
+
+private fun generatePresetFunctions(
+    presetEntry: KotlinPresetEntry,
+    getPresetsExpression: String,
+    configureOrCreateFunctionName: String
+): String {
+    val presetName = presetEntry.presetName
+    return """
+    fun $presetName(
+        name: String = "$presetName",
+        configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
+    ): ${presetEntry.targetType.renderShort()} =
+        $configureOrCreateFunctionName(
+            name,
+            $getPresetsExpression.getByName("$presetName") as ${presetEntry.presetType.renderShort()},
+            configure
+        )
+
+    fun $presetName() = $presetName("$presetName") { }
+    fun $presetName(name: String) = $presetName(name) { }
+    fun $presetName(name: String, configure: Closure<*>) = $presetName(name) { ConfigureUtil.configure(configure, this) }
+    fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
+""".trimIndent()
 }
