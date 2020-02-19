@@ -55,7 +55,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();
-    myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this);
+    myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this, storeOnlySingleValue);
     myIndexingTrace = DebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
 
     if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {

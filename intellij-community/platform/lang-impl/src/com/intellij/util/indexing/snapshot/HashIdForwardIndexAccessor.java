@@ -6,6 +6,7 @@ import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
 import com.intellij.util.indexing.impl.forward.AbstractMapForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.IntForwardIndexAccessor;
+import com.intellij.util.indexing.impl.forward.SingleEntryIndexForwardIndexAccessor;
 import com.intellij.util.io.EnumeratorIntegerDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,10 +18,12 @@ public class HashIdForwardIndexAccessor<Key, Value, Input>
   extends AbstractMapForwardIndexAccessor<Key, Value, Integer>
   implements IntForwardIndexAccessor<Key, Value> {
   private final UpdatableSnapshotInputMappingIndex<Key, Value, Input> mySnapshotInputMappingIndex;
+  private final boolean myIsSingleEntryIndex;
 
-  HashIdForwardIndexAccessor(@NotNull UpdatableSnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappingIndex) {
+  HashIdForwardIndexAccessor(@NotNull UpdatableSnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappingIndex, boolean isSingleEntryIndex) {
     super(EnumeratorIntegerDescriptor.INSTANCE);
     mySnapshotInputMappingIndex = snapshotInputMappingIndex;
+    myIsSingleEntryIndex = isSingleEntryIndex;
   }
 
   @Nullable
@@ -32,7 +35,9 @@ public class HashIdForwardIndexAccessor<Key, Value, Input>
   @NotNull
   @Override
   public InputDataDiffBuilder<Key, Value> getDiffBuilderFromInt(int inputId, int hashId) throws IOException {
-    return new MapInputDataDiffBuilder<>(inputId, convertToMap(hashId));
+    return myIsSingleEntryIndex
+           ? new SingleEntryIndexForwardIndexAccessor.SingleValueDiffBuilder(inputId, convertToMap(hashId))
+           : new MapInputDataDiffBuilder<>(inputId, convertToMap(hashId));
   }
 
   @Override
