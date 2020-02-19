@@ -8,8 +8,6 @@ import com.intellij.util.indexing.impl.forward.ForwardIndex;
 import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -23,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HashBasedIndexGenerator<K, V> {
   @NotNull
-  private final FakeIndexExtension<K, V> myExtension;
+  private final FileBasedIndexExtension<K, V> myExtension;
 
   @NotNull
   private final FileBasedIndex.InputFilter myInputFilter;
@@ -38,17 +36,9 @@ public class HashBasedIndexGenerator<K, V> {
 
   private InvertedIndex<K, V, FileContent> myIndex;
 
-  public HashBasedIndexGenerator(@NotNull FileBasedIndexExtension<K, V> indexExtension, @NotNull Path outRoot, boolean createForwardIndex) {
-    this(indexExtension.getKeyDescriptor(), indexExtension.getValueExternalizer(), indexExtension, outRoot, createForwardIndex);
-  }
-
-  private HashBasedIndexGenerator(@NotNull KeyDescriptor<K> keyDescriptor,
-                                  @NotNull DataExternalizer<V> valueExternalizer,
-                                  @NotNull FileBasedIndexExtension<K, V> originalExtension,
-                                  @NotNull Path outRoot,
-                                  boolean createForwardIndex) {
+  public HashBasedIndexGenerator(@NotNull FileBasedIndexExtension<K, V> originalExtension, @NotNull Path outRoot, boolean createForwardIndex) {
     ID<K, V> indexId = originalExtension.getName();
-    myExtension = new FakeIndexExtension<>(keyDescriptor, valueExternalizer, originalExtension);
+    myExtension = originalExtension;
     myStorageFile = getSharedIndexPath(outRoot, indexId).resolve(indexId.getName());
 
     FileBasedIndex.InputFilter filter = originalExtension.getInputFilter();
@@ -92,12 +82,13 @@ public class HashBasedIndexGenerator<K, V> {
       }
     };
 
-    FileBasedIndexExtension<K, V> originalExtension = myExtension.myOriginalExtension;
-    boolean isSingleEntryIndex = originalExtension instanceof SingleEntryFileBasedIndexExtension;
+    boolean isSingleEntryIndex = myExtension instanceof SingleEntryFileBasedIndexExtension;
     Path forwardIndexPath = myStorageFile.getParent().resolve(myStorageFile.getFileName() + ".forward");
     boolean createForwardIndex = myCreateForwardIndex && !isSingleEntryIndex;
     ForwardIndex forwardIndex = createForwardIndex ? new PersistentMapBasedForwardIndex(forwardIndexPath, false) : null;
-    ForwardIndexAccessor<K, V> forwardIndexAccessor = createForwardIndex ? new MapForwardIndexAccessor<>(new InputMapExternalizer<>(originalExtension)) : null;
+    ForwardIndexAccessor<K, V> forwardIndexAccessor = createForwardIndex
+                                                      ? new MapForwardIndexAccessor<>(new InputMapExternalizer<>(myExtension))
+                                                      : null;
     myIndex = new MapReduceIndex<K, V, FileContent>(myExtension, indexStorage, forwardIndex, forwardIndexAccessor) {
       @NotNull
       @Override
@@ -172,78 +163,12 @@ public class HashBasedIndexGenerator<K, V> {
     return myIsEmpty.get();
   }
 
+  @NotNull
   public FileBasedIndexExtension<K, V> getExtension() {
     return myExtension;
   }
 
   public InvertedIndex<K, V, FileContent> getIndex() {
     return myIndex;
-  }
-
-  private static final class FakeIndexExtension<K, V> extends FileBasedIndexExtension<K, V> {
-    @NotNull
-    private final KeyDescriptor<K> myKeyDescriptor;
-    @NotNull
-    private final DataExternalizer<V> myValueExternalizer;
-    @NotNull
-    private final FileBasedIndexExtension<K, V> myOriginalExtension;
-
-    private FakeIndexExtension(@NotNull KeyDescriptor<K> descriptor,
-                               @NotNull DataExternalizer<V> externalizer,
-                               @NotNull FileBasedIndexExtension<K, V> originalExtension) {
-      myKeyDescriptor = descriptor;
-      myValueExternalizer = externalizer;
-      myOriginalExtension = originalExtension;
-    }
-
-    @NotNull
-    @Override
-    public ID<K, V> getName() {
-      return myOriginalExtension.getName();
-    }
-
-    @NotNull
-    @Override
-    public FileBasedIndex.InputFilter getInputFilter() {
-      return myOriginalExtension.getInputFilter();
-    }
-
-    @Override
-    public boolean dependsOnFileContent() {
-      return true;
-    }
-
-    @Override
-    public int getCacheSize() {
-      return myOriginalExtension.getCacheSize();
-    }
-
-    @Override
-    public boolean keyIsUniqueForIndexedFile() {
-      return myOriginalExtension.keyIsUniqueForIndexedFile();
-    }
-
-    @NotNull
-    @Override
-    public DataIndexer<K, V, FileContent> getIndexer() {
-      return myOriginalExtension.getIndexer();
-    }
-
-    @NotNull
-    @Override
-    public KeyDescriptor<K> getKeyDescriptor() {
-      return myKeyDescriptor;
-    }
-
-    @NotNull
-    @Override
-    public DataExternalizer<V> getValueExternalizer() {
-      return myValueExternalizer;
-    }
-
-    @Override
-    public int getVersion() {
-      return myOriginalExtension.getVersion();
-    }
   }
 }
