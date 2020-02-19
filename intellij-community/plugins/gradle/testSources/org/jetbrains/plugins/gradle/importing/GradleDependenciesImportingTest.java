@@ -16,6 +16,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -34,6 +35,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -311,17 +314,17 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     final VirtualFile depTestsJar = createProjectJarSubFile("lib/dep/dep/1.0/dep-1.0-tests.jar");
     final VirtualFile depNonJar = createProjectSubFile("lib/dep/dep/1.0/dep-1.0.someExt");
 
-    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom","" +
-                                                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                                                       "<project\n" +
-                                                       "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
-                                                       "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                                                       "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
-                                                       "  <groupId>dep</groupId>\n" +
-                                                       "  <artifactId>dep</artifactId>\n" +
-                                                       "  <version>1.0</version>\n" +
-                                                       "\n" +
-                                                       "</project>\n");
+    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom", "" +
+                                                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                                        "<project\n" +
+                                                        "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
+                                                        "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                                        "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+                                                        "  <groupId>dep</groupId>\n" +
+                                                        "  <artifactId>dep</artifactId>\n" +
+                                                        "  <version>1.0</version>\n" +
+                                                        "\n" +
+                                                        "</project>\n");
     importProject(
       "allprojects {\n" +
       "  apply plugin: 'java'\n" +
@@ -402,7 +405,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     moduleLibDeps.addAll(getModuleLibDeps("project.p1", "Gradle: dep_1"));
     moduleLibDeps.addAll(getModuleLibDeps("project.p2", "Gradle: dep"));
     moduleLibDeps.addAll(getModuleLibDeps("project.p2", "Gradle: dep_1"));
-    for (LibraryOrderEntry libDep: moduleLibDeps) {
+    for (LibraryOrderEntry libDep : moduleLibDeps) {
       libs.add(libDep.getLibrary());
       assertFalse("Dependency be project level: " + libDep.toString(), libDep.isModuleLevel());
     }
@@ -431,14 +434,14 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     final List<LibraryOrderEntry> moduleLibDepsP1 = getModuleLibDeps("project.p1", "Gradle: dep");
     final boolean isGradleNewerThen_2_4 = GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("2.4")) > 0;
-    for (LibraryOrderEntry libDep: moduleLibDepsP1) {
+    for (LibraryOrderEntry libDep : moduleLibDepsP1) {
       assertEquals("Dependency must be " + (isGradleNewerThen_2_4 ? "module" : "project") + " level: " + libDep.toString(),
                    isGradleNewerThen_2_4, libDep.isModuleLevel());
       assertEquals("Wrong library dependency", depP1Jar.getUrl(), libDep.getLibrary().getUrls(OrderRootType.CLASSES)[0]);
     }
 
     final List<LibraryOrderEntry> moduleLibDepsP2 = getModuleLibDeps("project.p2", "Gradle: dep");
-    for (LibraryOrderEntry libDep: moduleLibDepsP2) {
+    for (LibraryOrderEntry libDep : moduleLibDepsP2) {
       assertEquals("Dependency must be " + (isGradleNewerThen_2_4 ? "module" : "project") + " level: " + libDep.toString(),
                    isGradleNewerThen_2_4, libDep.isModuleLevel());
       assertEquals("Wrong library dependency", depP2Jar.getUrl(), libDep.getLibrary().getUrls(OrderRootType.CLASSES)[0]);
@@ -448,17 +451,17 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
   @Test
   public void testProjectWithUnresolvedDependency() throws Exception {
     final VirtualFile depJar = createProjectJarSubFile("lib/dep/dep/1.0/dep-1.0.jar");
-    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom","" +
-                                                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                                                       "<project\n" +
-                                                       "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
-                                                       "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                                                       "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
-                                                       "  <groupId>dep</groupId>\n" +
-                                                       "  <artifactId>dep</artifactId>\n" +
-                                                       "  <version>1.0</version>\n" +
-                                                       "\n" +
-                                                       "</project>\n");
+    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom", "" +
+                                                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                                        "<project\n" +
+                                                        "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
+                                                        "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                                        "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+                                                        "  <groupId>dep</groupId>\n" +
+                                                        "  <artifactId>dep</artifactId>\n" +
+                                                        "  <version>1.0</version>\n" +
+                                                        "\n" +
+                                                        "</project>\n");
     importProject(
       "apply plugin: 'java'\n" +
       "\n" +
@@ -851,7 +854,8 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
       assertModuleModuleDepScope("project.project2", "project.project1", DependencyScope.COMPILE);
     }
     else {
-      assertModuleModuleDepScope("project.project2", "project.project1", DependencyScope.PROVIDED, DependencyScope.TEST, DependencyScope.RUNTIME);
+      assertModuleModuleDepScope("project.project2", "project.project1", DependencyScope.PROVIDED, DependencyScope.TEST,
+                                 DependencyScope.RUNTIME);
     }
     if (GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("2.0")) > 0) {
       assertMergedModuleCompileLibDepScope("project.project2", "Gradle: org.hamcrest:hamcrest-core:1.3");
@@ -1640,7 +1644,7 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
       "    }\n" +
       "\n" +
       "    artifactTypes.getByName(\"jar\") {\n" +
-      "        attributes.attribute(processed, false);\n" +
+      "        attributes.attribute(processed, false) \n" +
       "    }\n" +
       "\n" +
       "    registerTransform(Unzip) {\n" +
@@ -1720,14 +1724,23 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertThat(regularLibFromGradleCache.getRootFiles(OrderRootType.CLASSES))
       .hasSize(1)
       .allSatisfy(file -> assertEquals("junit-4.12.jar", file.getName()));
-    assertThat(regularLibFromGradleCache.getRootFiles(OrderRootType.SOURCES))
-      .hasSize(1)
-      .allSatisfy(file -> assertEquals("junit-4.12-sources.jar", file.getName()));
-    assertThat(regularLibFromGradleCache.getRootFiles(JavadocOrderRootType.getInstance()))
-      .hasSize(1)
-      .allSatisfy(file -> assertEquals("junit-4.12-javadoc.jar", file.getName()));
-  }
 
+    String binaryPath = PathUtil.getLocalPath(regularLibFromGradleCache.getRootFiles(OrderRootType.CLASSES)[0]);
+    Ref<Boolean> sourceFound = Ref.create(false);
+    Ref<Boolean> docFound = Ref.create(false);
+    checkIfSourcesOrJavadocsCanBeAttached(binaryPath, sourceFound, docFound);
+
+    if (sourceFound.get()) {
+      assertThat(regularLibFromGradleCache.getRootFiles(OrderRootType.SOURCES))
+        .hasSize(1)
+        .allSatisfy(file -> assertEquals("junit-4.12-sources.jar", file.getName()));
+    }
+    if (docFound.get()) {
+      assertThat(regularLibFromGradleCache.getRootFiles(JavadocOrderRootType.getInstance()))
+        .hasSize(1)
+        .allSatisfy(file -> assertEquals("junit-4.12-javadoc.jar", file.getName()));
+    }
+  }
 
   @Test
   @TargetVersions("6.1+")
@@ -1845,5 +1858,41 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
           }
         }
       });
+  }
+
+  private static void checkIfSourcesOrJavadocsCanBeAttached(String binaryPath,
+                                                            Ref<Boolean> sourceFound,
+                                                            Ref<Boolean> docFound) throws IOException {
+    Path binaryFileParent = Paths.get(binaryPath).getParent();
+    Path grandParentFile = binaryFileParent.getParent();
+    Files.walkFileTree(grandParentFile, EnumSet.noneOf(FileVisitOption.class), 2, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        if (binaryFileParent.equals(dir)) {
+          return FileVisitResult.SKIP_SUBTREE;
+        }
+        return super.preVisitDirectory(dir, attrs);
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path sourceCandidate, BasicFileAttributes attrs) throws IOException {
+        if (!sourceCandidate.getParent().getParent().equals(grandParentFile)) {
+          return FileVisitResult.SKIP_SIBLINGS;
+        }
+        if (attrs.isRegularFile()) {
+          String candidateFileName = sourceCandidate.getFileName().toString();
+          if (!sourceFound.get() && endsWith(candidateFileName, "-sources.jar")) {
+            sourceFound.set(true);
+          }
+          else if (!docFound.get() && endsWith(candidateFileName, "-javadoc.jar")) {
+            docFound.set(true);
+          }
+        }
+        if (sourceFound.get() && docFound.get()) {
+          return FileVisitResult.TERMINATE;
+        }
+        return super.visitFile(sourceCandidate, attrs);
+      }
+    });
   }
 }
