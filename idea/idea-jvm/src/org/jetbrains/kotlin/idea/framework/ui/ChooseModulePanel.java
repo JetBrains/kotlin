@@ -26,6 +26,7 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.Function;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
@@ -78,13 +79,15 @@ public class ChooseModulePanel {
         allModulesRadioButton.addActionListener(listener);
 
         if (modulesWithKtFiles.size() > 2) {
-            allModulesWithKtNames.setHtmlText("<html>" + XmlUtil.escape(modulesWithKtFiles.get(0).getName()) + ", " +
-                                              XmlUtil.escape(modulesWithKtFiles.get(1).getName()) +
-                                              " and <a href=\"#\">" + (modulesWithKtFiles.size() - 2) + " other modules</a>");
+            String firstName = modulesWithKtFiles.get(0).getName();
+            String secondName = modulesWithKtFiles.get(1).getName();
+            String message = KotlinJvmBundle.message("choose.module.modules", firstName, secondName, modulesWithKtFiles.size() - 2);
+            allModulesWithKtNames.setHtmlText("<html>" + message);
             allModulesWithKtNames.addHyperlinkListener(new HyperlinkListener() {
                 @Override
                 public void hyperlinkUpdate(HyperlinkEvent event) {
-                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<Module>("Modules with Kotlin Files", modulesWithKtFiles) {
+                    String title = KotlinJvmBundle.message("choose.module.modules.with.kotlin");
+                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<Module>(title, modulesWithKtFiles) {
                         @NotNull
                         @Override
                         public String getTextFor(Module value) {
