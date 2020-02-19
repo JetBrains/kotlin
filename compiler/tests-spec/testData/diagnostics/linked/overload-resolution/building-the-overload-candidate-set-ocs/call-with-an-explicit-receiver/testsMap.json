@@ -1,7 +1,123 @@
 {
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart cast for the property available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": true
+        }
+      ]
+    }
+  },
   "6": {
     "pos": {
+      "4": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 6,
+          "description": "sets of extension callables declared in the package scope",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of declared in the package scope and star-imported extension callables",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 10,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "The sets of non-extension member callables named f of type T;",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of non-extension member callables only",
+          "unexpectedBehaviour": false
+        }
+      ],
       "2": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt",
+          "unexpectedBehaviour": true
+        },
         {
           "specVersion": "0.1-268",
           "casesNumber": 2,
@@ -48,39 +164,14 @@
           "unexpectedBehaviour": true
         }
       ],
-      "1": [
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 1,
-          "description": "set of non-extension member callables only",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 3,
-          "description": "The sets of non-extension member callables named f of type T;",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 3,
-          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 5,
-          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 1,
-          "description": "sets of non-extension member callables only",
-          "unexpectedBehaviour": false
-        }
-      ],
       "3": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-268",
           "casesNumber": 3,
@@ -92,42 +183,6 @@
           "specVersion": "0.1-268",
           "casesNumber": 1,
           "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
-          "unexpectedBehaviour": false
-        }
-      ],
-      "4": [
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 1,
-          "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 6,
-          "description": "sets of extension callables declared in the package scope",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 1,
-          "description": "sets of declared in the package scope and star-imported extension callables",
-          "unexpectedBehaviour": false
-        }
-      ],
-      "5": [
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 1,
-          "description": "set of star-imported extension callables",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-268",
-          "casesNumber": 1,
-          "description": "sets of declared in the package scope and star-imported extension callables",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt",
           "unexpectedBehaviour": false
         }
       ],

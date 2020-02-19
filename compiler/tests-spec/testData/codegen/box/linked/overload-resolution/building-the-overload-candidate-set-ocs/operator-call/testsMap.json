@@ -1,0 +1,68 @@
+{
+  "2": {
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Extension callables, declared in the package scope, for for-loop operator iterator call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Star-imported extension callables for for-loop operator iterator call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Non-extension member callables for for-loop operator iterator call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Star-imported extension callables for delegated properties call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Explicitly imported extension callables for delegated properties call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Extension callables, declared in the package scope, for delegated properties call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Non-extension member callables for delegated properties call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Local extension callables for for-loop operator iterator call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Explicitly imported extension callables for for-loop operator iterator call",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "local extension callables for delegated properties call",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

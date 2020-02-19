@@ -1,0 +1,73 @@
+{
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart case for property `plus` available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 8,
+          "description": "properties available through the invoke convention are non-eligible for operator calls",
+          "unexpectedBehaviour": true
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "properties available through the invoke convention are non-eligible for operator calls",
+          "unexpectedBehaviour": true
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Extension callables declared in the package scope",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "Star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 10,
+          "description": "Non-extension member callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "Star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "Non-extension member callables",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Explicitly imported extension callables",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
