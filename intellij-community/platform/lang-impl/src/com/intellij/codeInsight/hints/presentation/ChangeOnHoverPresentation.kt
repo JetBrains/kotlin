@@ -38,10 +38,10 @@ class ChangeOnHoverPresentation(
   }
 
   override fun mouseExited() {
-    super.mouseExited()
     if (state.isInside) {
       state = State(false)
     }
+    super.mouseExited()
   }
 
   data class State(val isInside: Boolean)
