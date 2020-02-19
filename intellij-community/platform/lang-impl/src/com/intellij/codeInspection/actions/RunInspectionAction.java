@@ -212,7 +212,7 @@ public class RunInspectionAction extends GotoActionBase implements DataProvider 
           }
         });
         if (hasFixAll) {
-          actions.add(new AbstractAction("Fix All") {
+          actions.add(new AbstractAction(IdeBundle.message("goto.inspection.action.fix.all")) {
             @Override
             public void actionPerformed(ActionEvent e) {
               InspectionToolWrapper wrapper = getToolWrapper();
