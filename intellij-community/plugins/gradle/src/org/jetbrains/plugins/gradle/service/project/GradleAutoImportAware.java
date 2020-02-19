@@ -8,6 +8,7 @@ import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettin
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.CompilerProjectExtension;
@@ -126,6 +127,8 @@ public class GradleAutoImportAware implements ExternalSystemAutoImportAware {
                                   FileUtil.pathsEqual(projectSettings.getExternalProjectPath(), projectPath)
                                   ? projectSettings.getModules() : ContainerUtil.set(projectPath);
     for (String path : subProjectPaths) {
+      ProgressManager.checkCanceled();
+
       try {
         Files.walkFileTree(Paths.get(path), EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
           @Override

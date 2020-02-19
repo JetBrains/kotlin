@@ -11,6 +11,8 @@ import com.intellij.openapi.vfs.newvfs.events.*
 
 abstract class AsyncFileChangeListenerBase : AsyncFileListener {
 
+  protected open val processRecursively: Boolean = true
+
   protected abstract fun init()
 
   protected abstract fun apply()
@@ -35,7 +37,20 @@ abstract class AsyncFileChangeListenerBase : AsyncFileListener {
     }
   }
 
-  private fun updateRecursively(f: VirtualFile, event: VFileEvent) {
+  private fun process(f: VirtualFile, event: VFileEvent) {
+    when (processRecursively) {
+      true -> processRecursively(f, event)
+      else -> processFile(f, event)
+    }
+  }
+
+  private fun processFile(f: VirtualFile, event: VFileEvent) {
+    if (isRelevant(f.path)) {
+      updateFile(f, event)
+    }
+  }
+
+  private fun processRecursively(f: VirtualFile, event: VFileEvent) {
     VfsUtilCore.visitChildrenRecursively(f, object : VirtualFileVisitor<Void>() {
       override fun visitFile(f: VirtualFile): Boolean {
         if (isRelevant(f.path)) {
@@ -59,36 +74,36 @@ abstract class AsyncFileChangeListenerBase : AsyncFileListener {
           val oldFile = each.file
           val parent = oldFile.parent
           before {
-            updateRecursively(oldFile, each)
+            process(oldFile, each)
           }
           after {
             val newName = each.newValue as String
             val newFile = parent?.findChild(newName)
-            if (newFile != null) updateRecursively(newFile, each)
+            if (newFile != null) process(newFile, each)
           }
         }
         is VFileMoveEvent -> {
           val oldFile = each.file
           val name = oldFile.name
           before {
-            updateRecursively(oldFile, each)
+            process(oldFile, each)
           }
           after {
             val newFile = each.newParent.findChild(name)
-            if (newFile != null) updateRecursively(newFile, each)
+            if (newFile != null) process(newFile, each)
           }
         }
         is VFileCopyEvent -> after {
           val newFile = each.newParent.findChild(each.newChildName)
-          if (newFile != null) updateRecursively(newFile, each)
+          if (newFile != null) process(newFile, each)
         }
         is VFileCreateEvent -> after {
           val file = each.file
-          if (file != null) updateRecursively(file, each)
+          if (file != null) process(file, each)
         }
         is VFileDeleteEvent, is VFileContentChangeEvent -> before {
           val file = each.file
-          if (file != null) updateRecursively(file, each)
+          if (file != null) process(file, each)
         }
       }
     }

@@ -6,25 +6,18 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
-import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
+import com.intellij.openapi.externalSystem.autoimport.changes.AsyncFilesChangesProviderImpl
+import com.intellij.openapi.externalSystem.autoimport.changes.FilesChangesListener
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
-import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import com.intellij.psi.ExternalChangeAction
 import com.intellij.util.LocalTimeCounter.currentTime
 import org.jetbrains.annotations.ApiStatus
 import java.io.File
@@ -45,6 +38,8 @@ class ProjectSettingsTracker(
   private val settingsFilesCRC = AtomicReference(emptyMap<String, Long>())
 
   private val applyChangesOperation = AnonymousParallelOperationTrace(debugName = "Apply changes operation")
+
+  private fun collectSettingsFiles() = projectAware.settingsFiles + settingsFilesCRC.get().keys
 
   private fun calculateSettingsFilesCRC(): Map<String, Long> {
     val localFileSystem = LocalFileSystem.getInstance()
@@ -129,14 +124,27 @@ class ProjectSettingsTracker(
     invokeLater {
       val fileDocumentManager = FileDocumentManager.getInstance()
       fileDocumentManager.saveAllDocuments()
-      val localFileSystem = LocalFileSystem.getInstance()
-      val settingsFiles = projectAware.settingsFiles.map { File(it) }
-      localFileSystem.refreshIoFiles(settingsFiles, isAsyncAllowed(), false, callback)
+      submitSettingsFilesCollection { settingsPaths ->
+        val localFileSystem = LocalFileSystem.getInstance()
+        val settingsFiles = settingsPaths.map { File(it) }
+        localFileSystem.refreshIoFiles(settingsFiles, isAsyncAllowed(), false, callback)
+      }
     }
   }
 
+  private fun submitSettingsFilesCollection(action: (Set<String>) -> Unit) {
+    if (!isAsyncAllowed()) {
+      action(collectSettingsFiles())
+      return
+    }
+    ReadAction.nonBlocking<Set<String>> { collectSettingsFiles() }
+      .expireWith(parentDisposable)
+      .finishOnUiThread(ModalityState.defaultModalityState(), action)
+      .submit(projectTracker.backgroundExecutor)
+  }
+
   private fun submitSettingsFilesCRCCalculation(action: (Map<String, Long>) -> Unit) {
-    if (ApplicationManager.getApplication().isHeadlessEnvironment) {
+    if (!isAsyncAllowed()) {
       action(calculateSettingsFilesCRC())
       return
     }
@@ -175,105 +183,31 @@ class ProjectSettingsTracker(
   }
 
   init {
-    val settingsListener = ProjectDocumentSettingsListener()
-    val eventMulticaster = EditorFactory.getInstance().eventMulticaster
-    eventMulticaster.addDocumentListener(settingsListener, parentDisposable)
-  }
-
-  init {
-    val settingsListener = ProjectVirtualFileSettingsListener()
-    val fileManager = VirtualFileManager.getInstance()
-    fileManager.addAsyncFileListener(settingsListener, parentDisposable)
+    AsyncFilesChangesProviderImpl(projectTracker.backgroundExecutor, ::collectSettingsFiles)
+      .subscribe(ProjectSettingsListener(), parentDisposable)
   }
 
   data class State(var isDirty: Boolean = true, var settingsFiles: Map<String, Long> = emptyMap())
 
-  private inner class ProjectVirtualFileSettingsListener : AsyncFileChangeListenerBase() {
-    private val delegate = ProjectSettingsListener()
-
-    override fun isRelevant(path: String) = delegate.isRelevant(path)
-
-    override fun updateFile(file: VirtualFile, event: VFileEvent) {
-      if (event.isFromSave) return
-      val modificationType = if (event.isFromRefresh) EXTERNAL else INTERNAL
-      delegate.updateFile(file.path, file.modificationStamp, modificationType)
-    }
-
-    override fun init() = delegate.init()
-
-    override fun apply() = delegate.apply()
-  }
-
-  private inner class ProjectDocumentSettingsListener : DocumentListener {
-    private val bulkUpdateOperation = CompoundParallelOperationTrace<Document>(debugName = "Bulk document update operation")
-    private val delegate = ProjectSettingsListener()
-
-    private fun isExternalModification() =
-      ApplicationManager.getApplication().hasWriteAction(ExternalChangeAction::class.java)
-
-    override fun documentChanged(event: DocumentEvent) {
-      if (isExternalModification()) return
-      val document = event.document
-      val fileDocumentManager = FileDocumentManager.getInstance()
-      val file = fileDocumentManager.getFile(document) ?: return
-      when (bulkUpdateOperation.isOperationCompleted()) {
-        true -> {
-          delegate.init()
-          if (!delegate.isRelevant(file.path)) return
-          delegate.updateFile(file.path, document.modificationStamp, INTERNAL)
-          delegate.apply()
-        }
-        else -> {
-          if (!delegate.isRelevant(file.path)) return
-          delegate.updateFile(file.path, document.modificationStamp, INTERNAL)
-        }
-      }
-    }
-
-    override fun bulkUpdateStarting(document: Document) {
-      bulkUpdateOperation.startTask(document)
-    }
-
-    override fun bulkUpdateFinished(document: Document) {
-      bulkUpdateOperation.finishTask(document)
-    }
-
-    init {
-      bulkUpdateOperation.beforeOperation { delegate.init() }
-      bulkUpdateOperation.afterOperation { delegate.apply() }
-    }
-  }
-
-  private inner class ProjectSettingsListener {
-    @Volatile
+  private inner class ProjectSettingsListener : FilesChangesListener {
     private var hasRelevantChanges = false
 
-    @Volatile
-    private var settingsFilesSnapshot: Set<String> = emptySet()
-
-    fun isRelevant(path: String): Boolean {
-      val isRelevant = path in settingsFilesSnapshot
-      hasRelevantChanges = hasRelevantChanges || isRelevant
-      return isRelevant
-    }
-
-    fun updateFile(path: String, modificationStamp: Long, type: ModificationType) {
+    override fun onFileChange(path: String, modificationStamp: Long, modificationType: ModificationType) {
       hasRelevantChanges = true
-      logModificationAsDebug(path, modificationStamp, type)
+      logModificationAsDebug(path, modificationStamp, modificationType)
       if (applyChangesOperation.isOperationCompleted()) {
-        status.markModified(currentTime(), type)
+        status.markModified(currentTime(), modificationType)
       }
       else {
         status.markDirty(currentTime())
       }
     }
 
-    fun init() {
+    override fun init() {
       hasRelevantChanges = false
-      settingsFilesSnapshot = projectAware.settingsFiles + settingsFilesCRC.get().keys
     }
 
-    fun apply() {
+    override fun apply() {
       if (hasRelevantChanges) {
         submitSettingsFilesCRCCalculation { newSettingsFilesCRC ->
           if (!hasChanges(newSettingsFilesCRC)) {
