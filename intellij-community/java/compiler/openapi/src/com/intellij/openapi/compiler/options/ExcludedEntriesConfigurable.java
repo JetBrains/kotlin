@@ -123,7 +123,7 @@ public final class ExcludedEntriesConfigurable implements UnnamedConfigurable, N
 
     @Override
     protected JButton[] createButtons(){
-      final JButton addButton = new JButton(IdeBundle.message("button.add"));
+      final JButton addButton = new JButton(CompilerBundle.message("button.add"));
       addButton.addActionListener(
         new ActionListener() {
           @Override

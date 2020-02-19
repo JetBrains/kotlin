@@ -17,7 +17,6 @@ package com.intellij.packaging.impl.elements;
 
 import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.packaging.artifacts.Artifact;
@@ -53,7 +52,7 @@ public class LibraryElementType extends ComplexPackagingElementType<LibraryPacka
   @NotNull
   public List<? extends LibraryPackagingElement> chooseAndCreate(@NotNull ArtifactEditorContext context, @NotNull Artifact artifact,
                                                                   @NotNull CompositePackagingElement<?> parent) {
-    final List<Library> selected = context.chooseLibraries(ProjectBundle.message("dialog.title.packaging.choose.library"));
+    final List<Library> selected = context.chooseLibraries(CompilerBundle.message("dialog.title.packaging.choose.library"));
     final List<LibraryPackagingElement> elements = new ArrayList<>();
     for (Library library : selected) {
       elements.add(new LibraryPackagingElement(library.getTable().getTableLevel(), library.getName(), null));
