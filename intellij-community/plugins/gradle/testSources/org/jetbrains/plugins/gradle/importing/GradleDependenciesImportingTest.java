@@ -8,12 +8,14 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter;
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -23,6 +25,9 @@ import org.gradle.util.GradleVersion;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.GradleManager;
+import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
+import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.Test;
@@ -1765,34 +1770,41 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
                          "dependencies {\n" +
                          "    libConf 'test:aLib:1.0-SNAPSHOT'\n" +
                          "}\n" +
-                         "task copyALibToGradleUserHome() {\n" +
+                         "task moveALibToGradleUserHome() {\n" +
                          "    dependsOn publishToMavenLocal\n" +
                          "    doLast {\n" +
                          "        repositories.add(repositories.mavenLocal())\n" +
                          "        def libArtifact = configurations.libConf.singleFile\n" +
-                         "        def libRepoFolder = libArtifact.parentFile.parentFile.parentFile\n" +
-                         "        copy {\n" +
-                         "            from libRepoFolder\n" +
-                         "            into new File(gradle.gradleUserHomeDir, 'caches/ij_test_repo/test')\n" +
-                         "        }\n" +
+                         "        def libRepoFolder = libArtifact.parentFile.parentFile\n" +
+                         "        ant.move file: libRepoFolder,\n" +
+                         "                 todir: new File(gradle.gradleUserHomeDir, '/caches/ij_test_repo/test')\n" +
                          "    }\n" +
+                         "}\n" +
+                         "task removeALibFromGradleUserHome(type: Delete) {\n" +
+                         "    delete new File(gradle.gradleUserHomeDir, '/caches/ij_test_repo/test')\n" +
+                         "    followSymlinks = true" +
                          "}");
     importProject(new GradleBuildScriptBuilderEx()
                     .generate());
     assertModules("project",
                   "project.aLib", "project.aLib.main", "project.aLib.test");
 
-    runTask(":aLib:copyALibToGradleUserHome");
-    importProject(new GradleBuildScriptBuilderEx()
-                    .withJavaPlugin()
-                    .withIdeaPlugin()
-                    .addRepository(" maven { url new File(gradle.gradleUserHomeDir, 'caches/ij_test_repo')} ")
-                    .addDependency("implementation 'test:aLib:1.0-SNAPSHOT-1'")
-                    .addPrefix("idea.module {\n" +
-                               "  downloadJavadoc = true\n" +
-                               "  downloadSources = false\n" +
-                               "}")
-                    .generate());
+    runTask(":aLib:moveALibToGradleUserHome");
+    try {
+      importProject(new GradleBuildScriptBuilderEx()
+                      .withJavaPlugin()
+                      .withIdeaPlugin()
+                      .addRepository(" maven { url new File(gradle.gradleUserHomeDir, 'caches/ij_test_repo')} ")
+                      .addDependency("implementation 'test:aLib:1.0-SNAPSHOT-1'")
+                      .addPrefix("idea.module {\n" +
+                                 "  downloadJavadoc = true\n" +
+                                 "  downloadSources = false\n" +
+                                 "}")
+                      .generate());
+    }
+    finally {
+      runTask(":aLib:removeALibFromGradleUserHome");
+    }
 
     assertModules("project", "project.main", "project.test",
                   "project.aLib", "project.aLib.main", "project.aLib.test");
@@ -1817,11 +1829,21 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
   }
 
   private void runTask(String task) {
-    ExternalSystemTaskExecutionSettings settings = new ExternalSystemTaskExecutionSettings();
-    settings.setExternalProjectPath(getProjectPath());
-    settings.setTaskNames(Collections.singletonList(task));
-    settings.setExternalSystemIdString(GradleConstants.SYSTEM_ID.getId());
-    ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, myProject, GradleConstants.SYSTEM_ID, null,
-                               ProgressExecutionMode.NO_PROGRESS_SYNC);
+    ExternalSystemTaskId taskId = ExternalSystemTaskId.create(GradleConstants.SYSTEM_ID, ExternalSystemTaskType.EXECUTE_TASK, myProject);
+    String projectPath = getProjectPath();
+    GradleExecutionSettings settings = new GradleManager().getExecutionSettingsProvider().fun(new Pair<>(myProject, projectPath));
+    new GradleTaskManager().executeTasks(
+      taskId, Collections.singletonList(task), projectPath, settings, null,
+      new ExternalSystemTaskNotificationListenerAdapter() {
+        @Override
+        public void onTaskOutput(@NotNull ExternalSystemTaskId id, @NotNull String text, boolean stdOut) {
+          if (stdOut) {
+            System.out.print(text);
+          }
+          else {
+            System.err.print(text);
+          }
+        }
+      });
   }
 }
