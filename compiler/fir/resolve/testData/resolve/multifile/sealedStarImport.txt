@@ -1,6 +1,6 @@
 FILE: test.kt
     public sealed class Test : R|kotlin/Any| {
-        public constructor(): R|test/Test| {
+        private constructor(): R|test/Test| {
             super<R|kotlin/Any|>()
         }
 

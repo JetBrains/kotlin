@@ -464,7 +464,7 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
             fun defaultVisibility() = when {
                 // TODO: object / enum is HIDDEN (?)
                 owner is KtObjectDeclaration || owner.hasModifier(ENUM_KEYWORD) -> Visibilities.PRIVATE
-                owner.hasModifier(SEALED_KEYWORD) -> Visibilities.PUBLIC
+                owner.hasModifier(SEALED_KEYWORD) -> Visibilities.PRIVATE
                 else -> Visibilities.UNKNOWN
             }
 
