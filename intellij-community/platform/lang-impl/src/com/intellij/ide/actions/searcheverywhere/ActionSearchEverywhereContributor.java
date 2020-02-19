@@ -172,6 +172,9 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
     if (selected instanceof BooleanOptionDescription) {
       final BooleanOptionDescription option = (BooleanOptionDescription)selected;
       option.setOptionState(!option.isOptionEnabled());
+      if (selected instanceof BooleanOptionDescription.RequiresRebuild) {
+        myModel.rebuildActions();
+      }
       return false;
     }
 

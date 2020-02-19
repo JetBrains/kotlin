@@ -45,6 +45,7 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,6 +101,10 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     myContextComponent = component;
     myEditor = editor;
     myModality = modalityState;
+    buildActions();
+  }
+
+  private void buildActions() {
     ActionGroup mainMenu = (ActionGroup)myActionManager.getActionOrStub(IdeActions.GROUP_MAIN_MENU);
     ActionGroup keymapOthers = (ActionGroup)myActionManager.getActionOrStub("Other.KeymapGroup");
     assert mainMenu != null && keymapOthers != null;
@@ -158,6 +163,12 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
 
   @Override
   public void saveInitialCheckBoxState(boolean state) {
+  }
+
+  @ApiStatus.Internal
+  public void rebuildActions() {
+    myActionGroups.clear();
+    buildActions();
   }
 
   public static class MatchedValue {
