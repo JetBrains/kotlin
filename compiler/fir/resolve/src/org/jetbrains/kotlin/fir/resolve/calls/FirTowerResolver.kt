@@ -106,7 +106,6 @@ class FirTowerResolver(
 
     private suspend fun runResolverForQualifierReceiver(
         info: CallInfo,
-        collector: CandidateCollector,
         resolvedQualifier: FirResolvedQualifier,
         manager: TowerResolveManager
     ) {
@@ -129,11 +128,11 @@ class FirTowerResolver(
             // NB: yet built-in Unit is used for "no-value" type
             if (info.callKind == CallKind.CallableReference) {
                 if (info.stubReceiver != null || typeRef !is FirImplicitBuiltinTypeRef) {
-                    runResolverForExpressionReceiver(info, collector, resolvedQualifier, manager)
+                    runResolverForExpressionReceiver(info, resolvedQualifier, manager)
                 }
             } else {
                 if (typeRef !is FirImplicitBuiltinTypeRef) {
-                    runResolverForExpressionReceiver(info, collector, resolvedQualifier, manager)
+                    runResolverForExpressionReceiver(info, resolvedQualifier, manager)
                 }
             }
         }
@@ -142,7 +141,6 @@ class FirTowerResolver(
 
     private suspend fun runResolverForNoReceiver(
         info: CallInfo,
-        collector: CandidateCollector,
         manager: TowerResolveManager
     ) {
         val shouldProcessExtensionsBeforeMembers =
@@ -243,7 +241,6 @@ class FirTowerResolver(
 
     private suspend fun runResolverForExpressionReceiver(
         info: CallInfo,
-        collector: CandidateCollector,
         receiver: FirExpression,
         manager: TowerResolveManager
     ) {
@@ -349,7 +346,6 @@ class FirTowerResolver(
 
     private suspend fun runResolverForSuperReceiver(
         info: CallInfo,
-        collector: CandidateCollector,
         superTypeRef: FirTypeRef,
         manager: TowerResolveManager
     ) {
@@ -480,16 +476,16 @@ class FirTowerResolver(
 
 
         when (val receiver = info.explicitReceiver) {
-            is FirResolvedQualifier -> manager.enqueueResolverTask { runResolverForQualifierReceiver(info, collector, receiver, manager) }
-            null -> manager.enqueueResolverTask { runResolverForNoReceiver(info, collector, manager) }
+            is FirResolvedQualifier -> manager.enqueueResolverTask { runResolverForQualifierReceiver(info, receiver, manager) }
+            null -> manager.enqueueResolverTask { runResolverForNoReceiver(info, manager) }
             else -> run {
                 if (receiver is FirQualifiedAccessExpression) {
                     val calleeReference = receiver.calleeReference
                     if (calleeReference is FirSuperReference) {
-                        return@run manager.enqueueResolverTask { runResolverForSuperReceiver(info, collector, receiver.typeRef, manager) }
+                        return@run manager.enqueueResolverTask { runResolverForSuperReceiver(info, receiver.typeRef, manager) }
                     }
                 }
-                manager.enqueueResolverTask { runResolverForExpressionReceiver(info, collector, receiver, manager) }
+                manager.enqueueResolverTask { runResolverForExpressionReceiver(info, receiver, manager) }
             }
         }
         manager.runTasks()
