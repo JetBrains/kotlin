@@ -43,7 +43,7 @@ dependencies {
     if (intellijUltimateEnabled) {
         compileOnly(nodeJSPlugin())
         compileOnly(intellijUltimateDep()) {
-            includeJars("trove4j", "openapi", "platform-api", "platform-impl", "idea", "util", "jdom", "extensions")
+            includeJars("trove4j", "platform-api", "platform-impl", "idea", "util", "jdom", "extensions")
         }
 
         Platform[191].orLower {
@@ -55,6 +55,10 @@ dependencies {
             compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
             compile(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
             compile(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
+        }
+
+        Platform[193].orLower {
+            compileOnly(intellijUltimateDep()) { includeJars("openapi") }
         }
 
         Platform[193].orHigher {

@@ -93,7 +93,6 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
 
         val ijPlatformDependencies = mutableListOf(
             "idea",
-            "openapi",
             "platform-api",
             "platform-impl",
             "util",
@@ -108,6 +107,12 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
                 "platform-core-ui",
                 "platform-util-ui",
                 "platform-util-ex"
+            )
+        }
+
+        if (ideBranch <= 193) {
+            ijPlatformDependencies += listOf(
+                "openapi"
             )
         }
 
