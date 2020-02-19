@@ -94,6 +94,7 @@ public class GradleCommandLineOptionsProvider {
     options.addOption(OptionBuilder.withLongOpt("no-rebuild").withDescription("Do not rebuild project dependencies.").create());
 
     // Environment options, https://docs.gradle.org/current/userguide/command_line_interface.html#environment_options
+    options.addOption(OptionBuilder.withLongOpt("build-file").withDescription("Specifies the build file.").hasArg().create('b'));
     options.addOption(OptionBuilder.withLongOpt("settings-file").withDescription("Specifies the settings file.").hasArg().create('c'));
     options.addOption(OptionBuilder.withLongOpt("gradle-user-home").withDescription(
       "Specifies the Gradle user home directory. The default is the .gradle directory in the user's home directory.").hasArg().create('g'));
@@ -127,10 +128,11 @@ public class GradleCommandLineOptionsProvider {
                         .withDescription("Continues task execution after a task failure.")
                         .create());
 
-    // Do not uncomment the following options. These options does not supported via tooling API.
-    //options.addOption(OptionBuilder.withLongOpt("build-file").withDescription("Specifies the build file.").hasArg().create('b'));
-    //options.addOption(OptionBuilder.withLongOpt("help").withDescription("Shows a help message.").create('h'));
-    //options.addOption(OptionBuilder.withLongOpt("version").withDescription("Prints version info.").create('v'));
+    // Do not uncomment the following options. These options does not supported via tooling API,
+    // https://github.com/gradle/gradle/blob/v6.2.0/subprojects/tooling-api/src/main/java/org/gradle/tooling/LongRunningOperation.java#L149-L154
+    //
+    // options.addOption(OptionBuilder.withLongOpt("help").withDescription("Shows a help message.").create('h'));
+    // options.addOption(OptionBuilder.withLongOpt("version").withDescription("Prints version info.").create('v'));
 
     ourOptions = options;
   }

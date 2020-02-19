@@ -42,6 +42,7 @@ class GradleCommandLineOptionsProviderTest {
     assertNotNull(options.getOption("no-rebuild"))
 
     // Environment options
+    assertEquals("build-file", options.getOption("b").longOpt)
     assertEquals("settings-file", options.getOption("c").longOpt)
     assertEquals("gradle-user-home", options.getOption("g").longOpt)
     assertEquals("project-dir", options.getOption("p").longOpt)
@@ -56,7 +57,6 @@ class GradleCommandLineOptionsProviderTest {
     assertNotNull(options.getOption("continue"))
 
     // These options does not supported via tooling API.
-    assertNull(options.getOption("build-file"))
     assertNull(options.getOption("help"))
     assertNull(options.getOption("version"))
   }
