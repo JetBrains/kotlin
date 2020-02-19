@@ -2,7 +2,7 @@
 package com.intellij.compiler.options;
 
 import com.intellij.ide.util.ElementsChooser;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.Validator;
 import com.intellij.openapi.compiler.options.ExcludedEntriesConfigurable;
@@ -49,10 +49,10 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
     myConfiguration = ValidationConfiguration.getInstance(myProject);
     myExcludedConfigurable = createExcludedConfigurable(project);
 
-    myValidatorsPanel.setBorder(IdeBorderFactory.createTitledBorder(CompilerBundle.message("settings.validators"), false, JBUI.insetsTop(8)).setShowLine(false));
-    myValidators.getEmptyText().setText(CompilerBundle.message("no.validators"));
+    myValidatorsPanel.setBorder(IdeBorderFactory.createTitledBorder(JavaCompilerBundle.message("settings.validators"), false, JBUI.insetsTop(8)).setShowLine(false));
+    myValidators.getEmptyText().setText(JavaCompilerBundle.message("no.validators"));
 
-    myExcludedEntriesPanel.setBorder(IdeBorderFactory.createTitledBorder(CompilerBundle.message("settings.exclude.from.validation"), false, JBUI.insetsTop(8)).setShowLine(false));
+    myExcludedEntriesPanel.setBorder(IdeBorderFactory.createTitledBorder(JavaCompilerBundle.message("settings.exclude.from.validation"), false, JBUI.insetsTop(8)).setShowLine(false));
   }
 
   private static ExcludedEntriesConfigurable createExcludedConfigurable(@NotNull Project project) {
@@ -81,7 +81,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
 
   @Override
   public String getDisplayName() {
-    return CompilerBundle.message("validation.display.name");
+    return JavaCompilerBundle.message("validation.display.name");
   }
 
   @Override

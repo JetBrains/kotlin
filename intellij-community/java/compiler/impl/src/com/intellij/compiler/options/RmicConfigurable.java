@@ -17,7 +17,7 @@ package com.intellij.compiler.options;
 
 import com.intellij.compiler.impl.rmiCompiler.RmicConfiguration;
 import com.intellij.compiler.server.BuildManager;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -66,7 +66,7 @@ public class RmicConfigurable implements SearchableConfigurable, Configurable.No
 
   @Override
   public String getDisplayName() {
-    return CompilerBundle.message("rmi.compiler.description");
+    return JavaCompilerBundle.message("rmi.compiler.description");
   }
 
   @Override

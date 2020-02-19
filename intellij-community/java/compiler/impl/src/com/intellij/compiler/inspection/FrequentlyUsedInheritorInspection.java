@@ -5,7 +5,7 @@ import com.intellij.codeInspection.*;
 import com.intellij.compiler.CompilerReferenceService;
 import com.intellij.compiler.backwardRefs.CompilerReferenceServiceEx;
 import com.intellij.compiler.backwardRefs.ReferenceIndexUnavailableException;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -85,7 +85,7 @@ public final class FrequentlyUsedInheritorInspection extends AbstractBaseJavaLoc
 
     return new ProblemDescriptor[]{manager
       .createProblemDescriptor(highlightingElement,
-                               CompilerBundle.message("class.can.have.more.common.super.class"),
+                               JavaCompilerBundle.message("class.can.have.more.common.super.class"),
                                isOnTheFly,
                                topInheritorsQuickFix.toArray(LocalQuickFix.EMPTY_ARRAY),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};

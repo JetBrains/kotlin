@@ -2,7 +2,7 @@
 package com.intellij.packaging.impl.elements
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.compiler.CompilerBundle
+import com.intellij.openapi.compiler.JavaCompilerBundle
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModulePointer
 import com.intellij.openapi.project.Project
@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import javax.swing.Icon
 
 class ProductionModuleSourceElementType private constructor() : ModuleElementTypeBase<ProductionModuleSourcePackagingElement>(
-  "module-source", CompilerBundle.message("element.type.name.module.source")) {
+  "module-source", JavaCompilerBundle.message("element.type.name.module.source")) {
 
   override fun isSuitableModule(modulesProvider: ModulesProvider, module: Module): Boolean {
     return modulesProvider.getRootModel(module).getSourceRootUrls(false).isNotEmpty()
@@ -20,7 +20,7 @@ class ProductionModuleSourceElementType private constructor() : ModuleElementTyp
   override fun createEmpty(project: Project) = ProductionModuleSourcePackagingElement(project)
   override fun getCreateElementIcon(): Icon = AllIcons.Nodes.Package
   override fun getElementIcon(module: Module?): Icon = AllIcons.Nodes.Package
-  override fun getElementText(moduleName: String) = CompilerBundle.message("node.text.0.module.sources", moduleName)
+  override fun getElementText(moduleName: String) = JavaCompilerBundle.message("node.text.0.module.sources", moduleName)
 
   companion object {
     @JvmField

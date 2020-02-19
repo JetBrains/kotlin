@@ -10,7 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -78,7 +78,7 @@ public abstract class BuildArtifactsBeforeRunTaskProviderBase<T extends BuildArt
     chooser.setPreferredSize(JBUI.size(400, 300));
 
     DialogBuilder builder = new DialogBuilder(myProject);
-    builder.setTitle(CompilerBundle.message("build.artifacts.before.run.selector.title"));
+    builder.setTitle(JavaCompilerBundle.message("build.artifacts.before.run.selector.title"));
     builder.setDimensionServiceKey("#BuildArtifactsBeforeRunChooser");
     builder.addOkAction();
     builder.addCancelAction();

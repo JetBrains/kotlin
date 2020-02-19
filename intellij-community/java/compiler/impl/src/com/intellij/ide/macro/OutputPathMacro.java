@@ -3,7 +3,7 @@ package com.intellij.ide.macro;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -27,7 +27,7 @@ public final class OutputPathMacro extends Macro {
   @NotNull
   @Override
   public String getDescription() {
-    return CompilerBundle.message("macro.output.path");
+    return JavaCompilerBundle.message("macro.output.path");
   }
 
   @Override

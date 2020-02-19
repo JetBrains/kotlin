@@ -4,7 +4,7 @@ package com.intellij.compiler.actions;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
@@ -67,7 +67,7 @@ public class CompileAction extends CompileActionBase {
 
     String elementDescription = null;
     if (module != null) {
-      elementDescription = CompilerBundle.message("action.compile.description.module", module.getName());
+      elementDescription = JavaCompilerBundle.message("action.compile.description.module", module.getName());
     }
     else {
       PsiPackage aPackage = null;
@@ -110,7 +110,7 @@ public class CompileAction extends CompileActionBase {
       }
       else {
         forFiles = true;
-        elementDescription = CompilerBundle.message("action.compile.description.selected.files");
+        elementDescription = JavaCompilerBundle.message("action.compile.description.selected.files");
       }
     }
 

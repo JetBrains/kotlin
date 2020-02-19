@@ -10,7 +10,7 @@ import com.intellij.compiler.MalformedPatternException;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.ide.PowerSaveMode;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -82,7 +82,7 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
     ));
 
     /*"All source files located in the generated sources output directory WILL BE EXCLUDED from annotation processing. " +*/
-    myWarningLabel.setText(CompilerBundle.message("settings.warning"));
+    myWarningLabel.setText(JavaCompilerBundle.message("settings.warning"));
     myWarningLabel.setFont(myWarningLabel.getFont().deriveFont(Font.BOLD));
 
     myPatternLegendLabel.setForeground(new JBColor(Gray._50, Gray._130));
@@ -172,11 +172,11 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
     myResourcePatternsField.setText(patternsToString(configuration.getResourceFilePatterns()));
 
     if (PowerSaveMode.isEnabled()) {
-      myEnableAutomakeLegendLabel.setText(CompilerBundle.message("disabled.in.power.save.mode"));
+      myEnableAutomakeLegendLabel.setText(JavaCompilerBundle.message("disabled.in.power.save.mode"));
       myEnableAutomakeLegendLabel.setFont(myEnableAutomakeLegendLabel.getFont().deriveFont(Font.BOLD));
     }
     else {
-      myEnableAutomakeLegendLabel.setText(CompilerBundle.message("only.works.while.not.running.debugging"));
+      myEnableAutomakeLegendLabel.setText(JavaCompilerBundle.message("only.works.while.not.running.debugging"));
       myEnableAutomakeLegendLabel.setFont(myEnableAutomakeLegendLabel.getFont().deriveFont(Font.PLAIN));
     }
   }
@@ -268,7 +268,8 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
       }
 
       throw new ConfigurationException(
-        CompilerBundle.message("error.compiler.configurable.malformed.patterns", pattersnsWithErrors.toString()), CompilerBundle.message("bad.resource.patterns.dialog.title")
+        JavaCompilerBundle.message("error.compiler.configurable.malformed.patterns", pattersnsWithErrors.toString()), JavaCompilerBundle
+        .message("bad.resource.patterns.dialog.title")
       );
     }
   }
@@ -306,7 +307,7 @@ public class CompilerUIConfigurable implements SearchableConfigurable, Configura
 
   @Override
   public String getDisplayName() {
-    return CompilerBundle.message("configurable.CompilerUIConfigurable.display.name");
+    return JavaCompilerBundle.message("configurable.CompilerUIConfigurable.display.name");
   }
 
   @Override

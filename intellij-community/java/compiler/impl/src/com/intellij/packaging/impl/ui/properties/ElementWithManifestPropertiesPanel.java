@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.ui.properties;
 
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.Messages;
@@ -49,7 +49,7 @@ public abstract class ElementWithManifestPropertiesPanel<E extends CompositeElem
     myClasspathField.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Messages.showTextAreaDialog(myClasspathField.getTextField(), CompilerBundle.message("edit.classpath"), "classpath-attribute-editor");
+        Messages.showTextAreaDialog(myClasspathField.getTextField(), JavaCompilerBundle.message("edit.classpath"), "classpath-attribute-editor");
       }
     });
     myClasspathField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
@@ -91,7 +91,7 @@ public abstract class ElementWithManifestPropertiesPanel<E extends CompositeElem
                file.getName().equalsIgnoreCase(ManifestFileUtil.MANIFEST_FILE_NAME));
       }
     };
-    descriptor.setTitle(CompilerBundle.message("specify.path.to.manifest.mf.file"));
+    descriptor.setTitle(JavaCompilerBundle.message("specify.path.to.manifest.mf.file"));
     final VirtualFile file = FileChooser.chooseFile(descriptor, myContext.getProject(), null);
     if (file == null) return;
 
@@ -120,8 +120,8 @@ public abstract class ElementWithManifestPropertiesPanel<E extends CompositeElem
 
   @Override
   public void reset() {
-    myTitleLabel.setText(CompilerBundle.message("0.manifest.properties", myElement.getName()));
-    myManifestNotFoundLabel.setText(CompilerBundle.message("meta.inf.manifest.mf.file.not.found.in.0", myElement.getName()));
+    myTitleLabel.setText(JavaCompilerBundle.message("0.manifest.properties", myElement.getName()));
+    myManifestNotFoundLabel.setText(JavaCompilerBundle.message("meta.inf.manifest.mf.file.not.found.in.0", myElement.getName()));
     updateManifest();
   }
 

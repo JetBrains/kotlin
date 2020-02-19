@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.options;
 
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.pom.java.LanguageLevel;
@@ -59,14 +59,14 @@ public class TargetOptionsComponent extends JPanel {
 
     myTable = new JBTable(new ModuleOptionsTableModel());
     myTable.setRowHeight(JBUIScale.scale(22));
-    myTable.getEmptyText().setText(CompilerBundle.message("settings.all.modules.will.be.compiled.with.project.bytecode.version"));
+    myTable.getEmptyText().setText(JavaCompilerBundle.message("settings.all.modules.will.be.compiled.with.project.bytecode.version"));
 
     TableColumn moduleColumn = myTable.getColumnModel().getColumn(0);
-    moduleColumn.setHeaderValue(CompilerBundle.message("settings.module.column"));
+    moduleColumn.setHeaderValue(JavaCompilerBundle.message("settings.module.column"));
     moduleColumn.setCellRenderer(new ModuleTableCellRenderer());
 
     TableColumn targetLevelColumn = myTable.getColumnModel().getColumn(1);
-    String columnTitle = CompilerBundle.message("settings.target.bytecode.version");
+    String columnTitle = JavaCompilerBundle.message("settings.target.bytecode.version");
     targetLevelColumn.setHeaderValue(columnTitle);
     targetLevelColumn.setCellEditor(new TargetLevelCellEditor());
     targetLevelColumn.setCellRenderer(new TargetLevelCellRenderer());
@@ -77,9 +77,9 @@ public class TargetOptionsComponent extends JPanel {
 
     new TableSpeedSearch(myTable);
 
-    add(new JLabel(CompilerBundle.message("settings.project.bytecode.version")), constraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NONE));
+    add(new JLabel(JavaCompilerBundle.message("settings.project.bytecode.version")), constraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NONE));
     add(myCbProjectTargetLevel, constraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NONE));
-    add(new JLabel(CompilerBundle.message("settings.per.module.bytecode.version")), constraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NONE));
+    add(new JLabel(JavaCompilerBundle.message("settings.per.module.bytecode.version")), constraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NONE));
     JPanel tableComp = ToolbarDecorator.createDecorator(myTable)
       .disableUpAction()
       .disableDownAction()
@@ -96,8 +96,8 @@ public class TargetOptionsComponent extends JPanel {
     combo.setEditor(new BasicComboBoxEditor() {
       @Override
       protected JTextField createEditorComponent() {
-        JBTextField editor = new JBTextField(CompilerBundle.message("settings.same.as.language.level"), 12);
-        editor.getEmptyText().setText(CompilerBundle.message("settings.same.as.language.level"));
+        JBTextField editor = new JBTextField(JavaCompilerBundle.message("settings.same.as.language.level"), 12);
+        editor.getEmptyText().setText(JavaCompilerBundle.message("settings.same.as.language.level"));
         editor.setBorder(null);
         return editor;
       }
@@ -158,7 +158,7 @@ public class TargetOptionsComponent extends JPanel {
         comp.setHorizontalAlignment(SwingConstants.CENTER);
         if ("".equals(value)) {
           comp.setForeground(JBColor.GRAY);
-          comp.setText(CompilerBundle.message("settings.same.as.language.level"));
+          comp.setText(JavaCompilerBundle.message("settings.same.as.language.level"));
         }
         else {
           comp.setForeground(table.getForeground());

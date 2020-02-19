@@ -2,7 +2,7 @@
 package com.intellij.packaging.impl.elements;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModulePointer;
 import com.intellij.openapi.project.Project;
@@ -17,7 +17,7 @@ public class TestModuleOutputElementType extends ModuleOutputElementTypeBase<Tes
   public static final TestModuleOutputElementType ELEMENT_TYPE = new TestModuleOutputElementType();
 
   private TestModuleOutputElementType() {
-    super("module-test-output", CompilerBundle.message("element.type.name.module.test.output"));
+    super("module-test-output", JavaCompilerBundle.message("element.type.name.module.test.output"));
   }
 
   @NotNull
@@ -44,7 +44,7 @@ public class TestModuleOutputElementType extends ModuleOutputElementTypeBase<Tes
   @NotNull
   @Override
   public String getElementText(@NotNull String moduleName) {
-    return CompilerBundle.message("node.text.0.test.compile.output", moduleName);
+    return JavaCompilerBundle.message("node.text.0.test.compile.output", moduleName);
   }
 
   @Override

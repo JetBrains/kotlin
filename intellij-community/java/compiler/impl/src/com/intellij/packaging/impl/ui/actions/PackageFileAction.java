@@ -18,7 +18,7 @@ package com.intellij.packaging.impl.ui.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -48,7 +48,7 @@ public class PackageFileAction extends AnAction {
   }
 
   public PackageFileAction() {
-    super(CompilerBundle.lazyMessage("action.name.package.file"), CompilerBundle.lazyMessage("action.description.package.file"), null);
+    super(JavaCompilerBundle.lazyMessage("action.name.package.file"), JavaCompilerBundle.lazyMessage("action.description.package.file"), null);
   }
 
   @Override
@@ -59,7 +59,8 @@ public class PackageFileAction extends AnAction {
       final List<VirtualFile> files = getFilesToPackage(e, project);
       if (!files.isEmpty()) {
         visible = true;
-        e.getPresentation().setText(files.size() == 1 ? CompilerBundle.message("action.name.package.file") : CompilerBundle.message("action.name.package.files"));
+        e.getPresentation().setText(files.size() == 1 ? JavaCompilerBundle.message("action.name.package.file") : JavaCompilerBundle
+          .message("action.name.package.files"));
       }
     }
 
@@ -109,7 +110,7 @@ public class PackageFileAction extends AnAction {
         fileNames.append("'").append(file.getName()).append("'");
       }
       String time = Holder.TIME_FORMAT.format(Clock.getTime());
-      final String statusText = CompilerBundle.message("status.text.file.has.been.packaged", files.size(), fileNames, time);
+      final String statusText = JavaCompilerBundle.message("status.text.file.has.been.packaged", files.size(), fileNames, time);
       final StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
       if (statusBar != null) {
         statusBar.setInfo(statusText);

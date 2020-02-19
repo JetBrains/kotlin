@@ -16,7 +16,7 @@
 package com.intellij.packaging.impl.elements;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModulePointer;
 import com.intellij.openapi.module.ModulePointerManager;
@@ -50,7 +50,7 @@ public abstract class ModuleElementTypeBase<E extends ModulePackagingElementBase
   public List<? extends PackagingElement<?>> chooseAndCreate(@NotNull ArtifactEditorContext context, @NotNull Artifact artifact,
                                                                        @NotNull CompositePackagingElement<?> parent) {
     List<Module> suitableModules = getSuitableModules(context);
-    List<Module> selected = context.chooseModules(suitableModules, CompilerBundle.message("dialog.title.packaging.choose.module"));
+    List<Module> selected = context.chooseModules(suitableModules, JavaCompilerBundle.message("dialog.title.packaging.choose.module"));
 
     final List<PackagingElement<?>> elements = new ArrayList<>();
     final ModulePointerManager pointerManager = ModulePointerManager.getInstance(context.getProject());

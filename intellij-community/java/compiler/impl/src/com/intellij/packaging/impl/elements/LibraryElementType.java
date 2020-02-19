@@ -15,7 +15,7 @@
  */
 package com.intellij.packaging.impl.elements;
 
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -35,7 +35,7 @@ public class LibraryElementType extends ComplexPackagingElementType<LibraryPacka
   public static final LibraryElementType LIBRARY_ELEMENT_TYPE = new LibraryElementType();
 
   LibraryElementType() {
-    super("library", CompilerBundle.message("element.type.name.library.files"));
+    super("library", JavaCompilerBundle.message("element.type.name.library.files"));
   }
 
   @Override
@@ -52,7 +52,7 @@ public class LibraryElementType extends ComplexPackagingElementType<LibraryPacka
   @NotNull
   public List<? extends LibraryPackagingElement> chooseAndCreate(@NotNull ArtifactEditorContext context, @NotNull Artifact artifact,
                                                                   @NotNull CompositePackagingElement<?> parent) {
-    final List<Library> selected = context.chooseLibraries(CompilerBundle.message("dialog.title.packaging.choose.library"));
+    final List<Library> selected = context.chooseLibraries(JavaCompilerBundle.message("dialog.title.packaging.choose.library"));
     final List<LibraryPackagingElement> elements = new ArrayList<>();
     for (Library library : selected) {
       elements.add(new LibraryPackagingElement(library.getTable().getTableLevel(), library.getName(), null));

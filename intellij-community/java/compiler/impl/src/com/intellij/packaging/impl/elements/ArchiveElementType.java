@@ -15,7 +15,7 @@
  */
 package com.intellij.packaging.impl.elements;
 
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.packaging.elements.CompositePackagingElement;
@@ -32,7 +32,7 @@ import javax.swing.*;
 
 class ArchiveElementType extends CompositePackagingElementType<ArchivePackagingElement> {
   ArchiveElementType() {
-    super("archive", CompilerBundle.message("element.type.name.archive"));
+    super("archive", JavaCompilerBundle.message("element.type.name.archive"));
   }
 
   @Override
@@ -59,8 +59,8 @@ class ArchiveElementType extends CompositePackagingElementType<ArchivePackagingE
   @Override
   public CompositePackagingElement<?> createComposite(CompositePackagingElement<?> parent, @Nullable String baseName, @NotNull ArtifactEditorContext context) {
     final String initialValue = PackagingElementFactoryImpl.suggestFileName(parent, baseName != null ? baseName : "archive", ".jar");
-    final String path = Messages.showInputDialog(context.getProject(), CompilerBundle.message("enter.archive.name"),
-                                                 CompilerBundle.message("title.new.archive"), null, initialValue, new FilePathValidator());
+    final String path = Messages.showInputDialog(context.getProject(), JavaCompilerBundle.message("enter.archive.name"),
+                                                 JavaCompilerBundle.message("title.new.archive"), null, initialValue, new FilePathValidator());
     if (path == null) return null;
     return PackagingElementFactoryImpl.createDirectoryOrArchiveWithParents(path, true);
   }

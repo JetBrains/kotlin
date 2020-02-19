@@ -94,7 +94,7 @@ public final class CompilerCacheManager implements Disposable {
       for (final File child : children) {
         final boolean deleteOk = FileUtil.delete(child);
         if (!deleteOk) {
-          context.addMessage(CompilerMessageCategory.ERROR, CompilerBundle.message("compiler.error.failed.to.delete", child.getPath()), null, -1, -1);
+          context.addMessage(CompilerMessageCategory.ERROR, JavaCompilerBundle.message("compiler.error.failed.to.delete", child.getPath()), null, -1, -1);
         }
       }
     }

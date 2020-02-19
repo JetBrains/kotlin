@@ -3,7 +3,7 @@ package com.intellij.compiler.impl;
 
 import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ public final class ProblemsViewPanel extends NewErrorTreeViewPanel {
   public ProblemsViewPanel(@NotNull Project project) {
     super(project, null, false, true, null);
 
-    myTree.getEmptyText().setText(CompilerBundle.message("no.compilation.problems.found"));
+    myTree.getEmptyText().setText(JavaCompilerBundle.message("no.compilation.problems.found"));
     setProgress("", 0.0f); // hack: this will pre-initialize progress UI
   }
 

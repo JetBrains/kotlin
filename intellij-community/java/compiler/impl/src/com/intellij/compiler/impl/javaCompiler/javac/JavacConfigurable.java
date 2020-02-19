@@ -17,7 +17,7 @@ package com.intellij.compiler.impl.javaCompiler.javac;
 
 import com.intellij.compiler.impl.javaCompiler.CompilerModuleOptionsComponent;
 import com.intellij.compiler.options.ComparingUtils;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -44,7 +44,7 @@ public class JavacConfigurable implements Configurable{
   public JavacConfigurable(Project project, final JpsJavaCompilerOptions javacSettings) {
     myProject = project;
     myJavacSettings = javacSettings;
-    myAdditionalOptionsField.setDialogCaption(CompilerBundle.message("java.compiler.option.additional.command.line.parameters"));
+    myAdditionalOptionsField.setDialogCaption(JavaCompilerBundle.message("java.compiler.option.additional.command.line.parameters"));
     myAdditionalOptionsField.setDescriptor(null, false);
   }
 

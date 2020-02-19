@@ -9,7 +9,7 @@ import com.intellij.compiler.impl.javaCompiler.javac.JavacCompiler;
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.options.ExcludeEntryDescription;
 import com.intellij.openapi.compiler.options.ExcludedEntriesConfiguration;
@@ -945,7 +945,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
       }
       if (!ok) {
         final String initialPatternString = patternsToString(getRegexpPatterns());
-        final String message = CompilerBundle.message(
+        final String message = JavaCompilerBundle.message(
           "message.resource.patterns.format.changed",
           ApplicationNamesInfo.getInstance().getProductName(),
           initialPatternString,
@@ -953,7 +953,7 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
           CommonBundle.getCancelButtonText()
         );
         final String wildcardPatterns = Messages.showInputDialog(
-          myProject, message, CompilerBundle.message("pattern.conversion.dialog.title"), Messages.getWarningIcon(), initialPatternString, new InputValidator() {
+          myProject, message, JavaCompilerBundle.message("pattern.conversion.dialog.title"), Messages.getWarningIcon(), initialPatternString, new InputValidator() {
           @Override
           public boolean checkInput(String inputString) {
             return true;
@@ -977,8 +977,8 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
             }
 
             if (malformedPatterns.length() > 0) {
-              Messages.showErrorDialog(CompilerBundle.message("error.bad.resource.patterns", malformedPatterns.toString()),
-                                       CompilerBundle.message("bad.resource.patterns.dialog.title"));
+              Messages.showErrorDialog(JavaCompilerBundle.message("error.bad.resource.patterns", malformedPatterns.toString()),
+                                       JavaCompilerBundle.message("bad.resource.patterns.dialog.title"));
               removeWildcardPatterns();
               return false;
             }

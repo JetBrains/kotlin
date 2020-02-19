@@ -16,7 +16,7 @@
 package com.intellij.packaging.impl.elements;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.packaging.elements.CompositePackagingElement;
@@ -32,7 +32,7 @@ import javax.swing.*;
 class DirectoryElementType extends CompositePackagingElementType<DirectoryPackagingElement> {
 
   DirectoryElementType() {
-    super("directory", CompilerBundle.message("element.type.name.directory"));
+    super("directory", JavaCompilerBundle.message("element.type.name.directory"));
   }
 
   @Override
@@ -58,8 +58,8 @@ class DirectoryElementType extends CompositePackagingElementType<DirectoryPackag
   @Override
   public CompositePackagingElement<?> createComposite(CompositePackagingElement<?> parent, String baseName, @NotNull ArtifactEditorContext context) {
     final String initialValue = PackagingElementFactoryImpl.suggestFileName(parent, baseName != null ? baseName : "folder", "");
-    String path = Messages.showInputDialog(context.getProject(), CompilerBundle.message("dialog.message.enter.directory.name"),
-                                           CompilerBundle.message("title.new.directory"), null, initialValue, new FilePathValidator());
+    String path = Messages.showInputDialog(context.getProject(), JavaCompilerBundle.message("dialog.message.enter.directory.name"),
+                                           JavaCompilerBundle.message("title.new.directory"), null, initialValue, new FilePathValidator());
     if (path == null) return null;
     return PackagingElementFactoryImpl.createDirectoryOrArchiveWithParents(path, false);
   }

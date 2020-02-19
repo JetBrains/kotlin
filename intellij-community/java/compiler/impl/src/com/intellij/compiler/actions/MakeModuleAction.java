@@ -16,7 +16,7 @@
 package com.intellij.compiler.actions;
 
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -64,7 +64,7 @@ public class MakeModuleAction extends CompileActionBase {
       String text = actionName;
       for (int i = 0; i < modules.length; i++) {
         if (text.length() > 30) {
-          text = CompilerBundle.message("action.make.selected.modules.text");
+          text = JavaCompilerBundle.message("action.make.selected.modules.text");
           break;
         }
         Module toMake = modules[i];

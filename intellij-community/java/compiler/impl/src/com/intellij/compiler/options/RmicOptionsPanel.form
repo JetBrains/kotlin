@@ -21,7 +21,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="messages/CompilerBundle" key="rmic.option.enable.rmi.stubs"/>
+              <text resource-bundle="messages/JavaCompilerBundle" key="rmic.option.enable.rmi.stubs"/>
             </properties>
           </component>
           <component id="70faa" class="javax.swing.JCheckBox" binding="myCbGenerateIiopStubs">
@@ -29,7 +29,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="messages/CompilerBundle" key="rmic.option.generate.iiop.stubs"/>
+              <text resource-bundle="messages/JavaCompilerBundle" key="rmic.option.generate.iiop.stubs"/>
             </properties>
           </component>
           <component id="3d38f" class="javax.swing.JCheckBox" binding="myCbDebuggingInfo">
@@ -38,7 +38,7 @@
             </constraints>
             <properties>
               <selected value="false"/>
-              <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.generate.debugging.info"/>
+              <text resource-bundle="messages/JavaCompilerBundle" key="java.compiler.option.generate.debugging.info"/>
             </properties>
           </component>
           <component id="90803" class="javax.swing.JCheckBox" binding="myCbGenerateNoWarnings">
@@ -46,7 +46,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.generate.no.warnings"/>
+              <text resource-bundle="messages/JavaCompilerBundle" key="java.compiler.option.generate.no.warnings"/>
             </properties>
           </component>
         </children>
@@ -64,7 +64,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.additional.command.line.parameters"/>
+              <text resource-bundle="messages/JavaCompilerBundle" key="java.compiler.option.additional.command.line.parameters"/>
             </properties>
           </component>
           <component id="479c2" class="com.intellij.ui.RawCommandLineEditor" binding="myAdditionalOptionsField">

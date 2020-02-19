@@ -5,7 +5,7 @@ import com.intellij.history.LocalHistory;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.task.ProjectTaskManager;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public class CompileProjectAction extends CompileActionBase {
         if (!result.isAborted() && !project.isDisposed()) {
           String text = getTemplatePresentation().getText();
           LocalHistory.getInstance().putSystemLabel(
-            project, CompilerBundle.message(result.hasErrors() ? "rebuild.lvcs.label.with.errors" : "rebuild.lvcs.label.no.errors", text));
+            project, JavaCompilerBundle.message(result.hasErrors() ? "rebuild.lvcs.label.with.errors" : "rebuild.lvcs.label.no.errors", text));
         }
       });
   }

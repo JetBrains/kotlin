@@ -19,7 +19,7 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.compiler.OutputParser;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -155,7 +155,7 @@ public class JavacOutputParser extends OutputParser {
     }
 
     if(line.endsWith("java.lang.OutOfMemoryError")) {
-      addMessage(callback, CompilerMessageCategory.ERROR, CompilerBundle.message("error.javac.out.of.memory"));
+      addMessage(callback, CompilerMessageCategory.ERROR, JavaCompilerBundle.message("error.javac.out.of.memory"));
       return true;
     }
 
@@ -208,7 +208,7 @@ public class JavacOutputParser extends OutputParser {
       myParserActions.add(new JavacParserAction(createMatcher(resourceBundleValue)) {
         @Override
         protected void doExecute(final String line, String parsedData, final Callback callback) {
-          callback.setProgressText(CompilerBundle.message("progress.compiling.class", parsedData));
+          callback.setProgressText(JavaCompilerBundle.message("progress.compiling.class", parsedData));
         }
       });
     }
@@ -216,7 +216,7 @@ public class JavacOutputParser extends OutputParser {
       myParserActions.add(new JavacParserAction(createMatcher(resourceBundleValue)) {
         @Override
         protected void doExecute(final String line, @Nullable String parsedData, final Callback callback) {
-          callback.setProgressText(CompilerBundle.message("progress.loading.classes"));
+          callback.setProgressText(JavaCompilerBundle.message("progress.loading.classes"));
         }
       });
     }

@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.deployment;
 
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -33,8 +33,8 @@ public class DeploymentUtilImpl extends DeploymentUtil {
   }
 
   private static String createCopyErrorMessage(final File fromFile, final File toFile) {
-    return CompilerBundle.message("message.text.error.copying.file.to.file", FileUtil.toSystemDependentName(fromFile.getPath()),
-                              FileUtil.toSystemDependentName(toFile.getPath()));
+    return JavaCompilerBundle.message("message.text.error.copying.file.to.file", FileUtil.toSystemDependentName(fromFile.getPath()),
+                                      FileUtil.toSystemDependentName(toFile.getPath()));
   }
 
   @Override
@@ -42,17 +42,17 @@ public class DeploymentUtilImpl extends DeploymentUtil {
   public String getConfigFileErrorMessage(final ConfigFile configFile) {
     if (configFile.getVirtualFile() == null) {
       String path = FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(configFile.getUrl()));
-      return CompilerBundle.message("mesage.text.deployment.descriptor.file.not.exist", path);
+      return JavaCompilerBundle.message("mesage.text.deployment.descriptor.file.not.exist", path);
     }
     PsiFile psiFile = configFile.getPsiFile();
     if (psiFile == null || !psiFile.isValid()) {
-      return CompilerBundle.message("message.text.deployment.description.invalid.file");
+      return JavaCompilerBundle.message("message.text.deployment.description.invalid.file");
     }
 
     if (psiFile instanceof XmlFile) {
       XmlDocument document = ((XmlFile)psiFile).getDocument();
       if (document == null || document.getRootTag() == null) {
-        return CompilerBundle.message("message.text.xml.file.invalid", FileUtil.toSystemDependentName(
+        return JavaCompilerBundle.message("message.text.xml.file.invalid", FileUtil.toSystemDependentName(
           VfsUtilCore.urlToPath(configFile.getUrl())));
       }
     }

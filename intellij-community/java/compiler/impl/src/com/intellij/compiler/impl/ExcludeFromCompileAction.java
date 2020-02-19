@@ -10,7 +10,7 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.options.ExcludeEntryDescription;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatusManager;
@@ -26,7 +26,7 @@ class ExcludeFromCompileAction extends AnAction {
   private final NewErrorTreeViewPanel myErrorTreeView;
 
   ExcludeFromCompileAction(Project project, NewErrorTreeViewPanel errorTreeView) {
-    super(CompilerBundle.message("actions.exclude.from.compile.text"));
+    super(JavaCompilerBundle.message("actions.exclude.from.compile.text"));
     myProject = project;
     myErrorTreeView = errorTreeView;
   }

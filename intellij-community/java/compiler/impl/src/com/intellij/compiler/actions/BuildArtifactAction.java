@@ -22,7 +22,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -201,13 +201,13 @@ public class BuildArtifactAction extends DumbAwareAction {
           message = "The output directories of the following artifacts contains source roots:\n" +
                     info + "Do you want to continue and clear these directories?";
         }
-        final int answer = Messages.showYesNoDialog(myProject, message, CompilerBundle.message("clean.artifacts"), null);
+        final int answer = Messages.showYesNoDialog(myProject, message, JavaCompilerBundle.message("clean.artifacts"), null);
         if (answer != Messages.YES) {
           return;
         }
       }
 
-      new Task.Backgroundable(myProject, CompilerBundle.message("cleaning.artifacts"), true) {
+      new Task.Backgroundable(myProject, JavaCompilerBundle.message("cleaning.artifacts"), true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           List<File> deleted = new ArrayList<>();
@@ -215,8 +215,8 @@ public class BuildArtifactAction extends DumbAwareAction {
             indicator.checkCanceled();
             File file = pair.getFirst();
             if (!FileUtil.delete(file)) {
-              Holder.NOTIFICATION_GROUP.createNotification(CompilerBundle.message("cannot.clean.0.artifact", pair.getSecond().getName()),
-                                                           CompilerBundle.message("cannot.delete.0", file.getAbsolutePath()), NotificationType.ERROR, null).notify(myProject);
+              Holder.NOTIFICATION_GROUP.createNotification(JavaCompilerBundle.message("cannot.clean.0.artifact", pair.getSecond().getName()),
+                                                           JavaCompilerBundle.message("cannot.delete.0", file.getAbsolutePath()), NotificationType.ERROR, null).notify(myProject);
             }
             else {
               deleted.add(file);

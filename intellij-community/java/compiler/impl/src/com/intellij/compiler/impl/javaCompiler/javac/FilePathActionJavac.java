@@ -16,7 +16,7 @@
 package com.intellij.compiler.impl.javaCompiler.javac;
 
 import com.intellij.compiler.OutputParser;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -54,7 +54,7 @@ public class FilePathActionJavac extends JavacParserAction {
     final FileType fileType = FileTypeManager.getInstance().getFileTypeByFileName(name);
     if (StdFileTypes.JAVA.equals(fileType)) {
       callback.fileProcessed(filePath);
-      callback.setProgressText(CompilerBundle.message("progress.parsing.file", name));
+      callback.setProgressText(JavaCompilerBundle.message("progress.parsing.file", name));
     }
     else if (StdFileTypes.CLASS.equals(fileType)) {
       callback.fileGenerated(filePath);

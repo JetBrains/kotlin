@@ -20,7 +20,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.deployment.DeploymentUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -71,7 +71,7 @@ public class PackageFileWorker {
   public static ActionCallback startPackagingFiles(final Project project, final List<? extends VirtualFile> files,
                                                    final Artifact[] artifacts, final boolean packIntoArchives) {
     final ActionCallback callback = new ActionCallback();
-    ProgressManager.getInstance().run(new Task.Backgroundable(project, CompilerBundle.message("packaging.files")) {
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, JavaCompilerBundle.message("packaging.files")) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {
@@ -83,8 +83,8 @@ public class PackageFileWorker {
               }
               catch (IOException e) {
                 LOG.info(e);
-                String message = CompilerBundle.message("message.tect.package.file.io.error", e.toString());
-                Notifications.Bus.notify(new Notification("Package File", CompilerBundle.message("cannot.package.file"), message, NotificationType.ERROR));
+                String message = JavaCompilerBundle.message("message.tect.package.file.io.error", e.toString());
+                Notifications.Bus.notify(new Notification("Package File", JavaCompilerBundle.message("cannot.package.file"), message, NotificationType.ERROR));
               }
             });
             callback.setDone();

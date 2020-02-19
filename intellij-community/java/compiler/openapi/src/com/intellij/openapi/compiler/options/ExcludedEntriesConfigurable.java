@@ -4,7 +4,7 @@ package com.intellij.openapi.compiler.options;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.ide.IdeBundle;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable.NoScroll;
@@ -123,7 +123,7 @@ public final class ExcludedEntriesConfigurable implements UnnamedConfigurable, N
 
     @Override
     protected JButton[] createButtons(){
-      final JButton addButton = new JButton(CompilerBundle.message("button.add"));
+      final JButton addButton = new JButton(JavaCompilerBundle.message("button.add"));
       addButton.addActionListener(
         new ActionListener() {
           @Override
@@ -231,8 +231,8 @@ public final class ExcludedEntriesConfigurable implements UnnamedConfigurable, N
     @Override
     protected JComponent createMainComponent(){
       final String[] names = {
-        CompilerBundle.message("exclude.from.compile.table.path.column.name"),
-        CompilerBundle.message("exclude.from.compile.table.recursively.column.name")
+        JavaCompilerBundle.message("exclude.from.compile.table.path.column.name"),
+        JavaCompilerBundle.message("exclude.from.compile.table.recursively.column.name")
       };
       // Create a model of the data.
       TableModel dataModel = new AbstractTableModel() {
@@ -303,7 +303,7 @@ public final class ExcludedEntriesConfigurable implements UnnamedConfigurable, N
       myExcludedTable = new JBTable(dataModel);
       myExcludedTable.setEnableAntialiasing(true);
 
-      myExcludedTable.getEmptyText().setText(CompilerBundle.message("no.excludes"));
+      myExcludedTable.getEmptyText().setText(JavaCompilerBundle.message("no.excludes"));
       myExcludedTable.setPreferredScrollableViewportSize(new Dimension(300, myExcludedTable.getRowHeight() * 6));
       myExcludedTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
       myExcludedTable.setDefaultRenderer(Object.class, new MyObjectRenderer());

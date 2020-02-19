@@ -8,7 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileStatusNotification;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -53,7 +53,7 @@ public class UnloadedModulesCompilationCheckinHandler extends CheckinHandler {
       return null;
     }
 
-    return new BooleanCommitOption(myCheckinPanel, CompilerBundle.message("checkbox.text.compile.affected.unloaded.modules"), false,
+    return new BooleanCommitOption(myCheckinPanel, JavaCompilerBundle.message("checkbox.text.compile.affected.unloaded.modules"), false,
                                    () -> getSettings().COMPILE_AFFECTED_UNLOADED_MODULES_BEFORE_COMMIT,
                                    value -> getSettings().COMPILE_AFFECTED_UNLOADED_MODULES_BEFORE_COMMIT = value);
   }
@@ -96,10 +96,11 @@ public class UnloadedModulesCompilationCheckinHandler extends CheckinHandler {
     if (result.get() == BuildResult.SUCCESSFUL) {
       return ReturnResult.COMMIT;
     }
-    String message = CompilerBundle.message("dialog.message.compilation.of.unloaded.modules.failed");
-    int answer = Messages.showYesNoCancelDialog(myProject, XmlStringUtil.wrapInHtml(message), CompilerBundle.message("dialog.title.compilation.failed"),
-                                                CompilerBundle.message("button.text.checkin.handler.commit"),
-                                                CompilerBundle.message("button.text.checkin.handler.show.errors"),
+    String message = JavaCompilerBundle.message("dialog.message.compilation.of.unloaded.modules.failed");
+    int answer = Messages.showYesNoCancelDialog(myProject, XmlStringUtil.wrapInHtml(message), JavaCompilerBundle
+                                                  .message("dialog.title.compilation.failed"),
+                                                JavaCompilerBundle.message("button.text.checkin.handler.commit"),
+                                                JavaCompilerBundle.message("button.text.checkin.handler.show.errors"),
                                                 CommonBundle.getCancelButtonText(), null);
 
     if (answer == Messages.CANCEL) {

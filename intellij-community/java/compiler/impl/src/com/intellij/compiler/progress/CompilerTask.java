@@ -14,7 +14,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -146,8 +146,8 @@ public final class CompilerTask extends Task.Backgroundable {
   @Override
   public NotificationInfo getNotificationInfo() {
     return new NotificationInfo(myErrorCount > 0? "Compiler (errors)" : "Compiler (success)",
-                                CompilerBundle.message("compilation.finished"),
-                                CompilerBundle.message("0.errors.1.warnings", myErrorCount, myWarningCount), true);
+                                JavaCompilerBundle.message("compilation.finished"),
+                                JavaCompilerBundle.message("0.errors.1.warnings", myErrorCount, myWarningCount), true);
   }
 
   private CloseListener myCloseListener;
@@ -613,8 +613,8 @@ public final class CompilerTask extends Task.Backgroundable {
         if (!myIndicator.isCanceled() && shouldAskUser()) {
           int result = Messages.showOkCancelDialog(
             myProject,
-            CompilerBundle.message("warning.compiler.running.on.toolwindow.close"),
-            CompilerBundle.message("compiler.running.dialog.title"),
+            JavaCompilerBundle.message("warning.compiler.running.on.toolwindow.close"),
+            JavaCompilerBundle.message("compiler.running.dialog.title"),
             Messages.getQuestionIcon()
           );
           if (result != Messages.OK) {

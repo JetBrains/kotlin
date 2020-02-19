@@ -16,7 +16,7 @@
 package com.intellij.compiler;
 
 import com.intellij.ide.IconLayerProvider;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -56,7 +56,7 @@ public class CompilerIconLayerProvider implements IconLayerProvider {
   @NotNull
   @Override
   public String getLayerDescription() {
-    return CompilerBundle.message("node.excluded.flag.tooltip");
+    return JavaCompilerBundle.message("node.excluded.flag.tooltip");
   }
 
   public static boolean isExcluded(final VirtualFile vFile, final Project project) {

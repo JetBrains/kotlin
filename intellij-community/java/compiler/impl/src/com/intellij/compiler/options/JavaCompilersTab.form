@@ -22,7 +22,7 @@
             </constraints>
             <properties>
               <labelFor value="99748"/>
-              <text resource-bundle="messages/CompilerBundle" key="option.use.compiler.text"/>
+              <text resource-bundle="messages/JavaCompilerBundle" key="option.use.compiler.text"/>
             </properties>
           </component>
           <component id="99748" class="javax.swing.JComboBox" binding="myCompiler">
@@ -62,7 +62,7 @@
         </constraints>
         <properties>
           <margin top="2" left="2" bottom="2" right="2"/>
-          <text resource-bundle="messages/CompilerBundle" key="settings.use.release.option.for.cross.compilation"/>
+          <text resource-bundle="messages/JavaCompilerBundle" key="settings.use.release.option.for.cross.compilation"/>
         </properties>
       </component>
     </children>

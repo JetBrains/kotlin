@@ -19,7 +19,7 @@ import com.intellij.compiler.options.CompilerConfigurable;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 */
 class CompilerPropertiesAction extends AnAction {
   CompilerPropertiesAction() {
-    super(CompilerBundle.lazyMessage("action.compiler.properties.text"), AllIcons.General.Settings);
+    super(JavaCompilerBundle.lazyMessage("action.compiler.properties.text"), AllIcons.General.Settings);
   }
 
   @Override

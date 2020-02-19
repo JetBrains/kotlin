@@ -5,7 +5,7 @@ import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
 import com.intellij.compiler.server.BuildManager;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.options.CompositeConfigurable;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -74,7 +74,7 @@ public class JavaCompilersTab extends CompositeConfigurable<Configurable> implem
 
   @Override
   public String getDisplayName() {
-    return CompilerBundle.message("java.compiler.description");
+    return JavaCompilerBundle.message("java.compiler.description");
   }
 
   @NotNull

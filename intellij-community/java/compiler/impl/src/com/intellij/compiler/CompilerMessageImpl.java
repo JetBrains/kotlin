@@ -15,7 +15,7 @@
  */
 package com.intellij.compiler;
 
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -96,7 +96,7 @@ public final class CompilerMessageImpl implements CompilerMessage {
   @Override
   public String getExportTextPrefix() {
     if (getLine() >= 0) {
-      return CompilerBundle.message("compiler.results.export.text.prefix", getLine());
+      return JavaCompilerBundle.message("compiler.results.export.text.prefix", getLine());
     }
     return "";
   }

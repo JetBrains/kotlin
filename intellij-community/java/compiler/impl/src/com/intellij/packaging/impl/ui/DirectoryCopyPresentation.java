@@ -17,7 +17,7 @@ package com.intellij.packaging.impl.ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
-import com.intellij.openapi.compiler.CompilerBundle;
+import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -63,7 +63,7 @@ public class DirectoryCopyPresentation extends PackagingElementPresentation {
         commentAttributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
       }
     }
-    presentationData.addText(CompilerBundle.message("node.text.0.directory.content", mySourceFileName), mainAttributes);
+    presentationData.addText(JavaCompilerBundle.message("node.text.0.directory.content", mySourceFileName), mainAttributes);
     presentationData.addText(" (" + mySourcePath + ")", commentAttributes);
   }
 
