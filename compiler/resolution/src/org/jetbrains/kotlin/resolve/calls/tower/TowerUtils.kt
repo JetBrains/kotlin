@@ -27,7 +27,7 @@ private val INAPPLICABLE_STATUSES = setOf(
 )
 
 val ResolutionCandidateApplicability.isSuccess: Boolean
-    get() = this <= ResolutionCandidateApplicability.RESOLVED_WITH_ERROR
+    get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
 
 val CallableDescriptor.isSynthesized: Boolean
     get() = (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)

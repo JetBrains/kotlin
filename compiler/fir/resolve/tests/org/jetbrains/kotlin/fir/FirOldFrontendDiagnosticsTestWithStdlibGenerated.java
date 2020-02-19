@@ -1908,6 +1908,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @TestMetadata("checkLowPriorityIsResolvedSuccessfully.kt")
+            public void testCheckLowPriorityIsResolvedSuccessfully() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/checkLowPriorityIsResolvedSuccessfully.kt");
+            }
+
             @TestMetadata("exactAnnotation.kt")
             public void testExactAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/exactAnnotation.kt");
