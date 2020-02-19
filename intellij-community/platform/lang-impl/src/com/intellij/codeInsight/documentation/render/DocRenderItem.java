@@ -6,9 +6,7 @@ import com.intellij.codeInsight.documentation.DocFontSizePopup;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -154,6 +152,20 @@ class DocRenderItem {
     if (task.getAsBoolean()) keeper.restorePosition(false);
   }
 
+  static DocRenderItem getItemAroundOffset(@NotNull Editor editor, int offset) {
+    Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
+    if (items == null || items.isEmpty()) return null;
+    Document document = editor.getDocument();
+    if (offset < 0 || offset > document.getTextLength()) return null;
+    int line = document.getLineNumber(offset);
+    return items.stream().filter(i -> {
+      if (!i.isValid()) return false;
+      int startLine = document.getLineNumber(i.highlighter.getStartOffset());
+      int endLine = document.getLineNumber(i.highlighter.getEndOffset());
+      return line >= startLine - 1 && line <= endLine + 1;
+    }).min(Comparator.comparingInt(i -> i.highlighter.getStartOffset())).orElse(null);
+  }
+
   private DocRenderItem(@NotNull Editor editor, @NotNull TextRange textRange, @NotNull String textToRender) {
     this.editor = editor;
     this.textToRender = textToRender;
@@ -222,7 +234,7 @@ class DocRenderItem {
     return updated;
   }
 
-  private boolean toggle(@Nullable Collection<Runnable> foldingTasks) {
+  boolean toggle(@Nullable Collection<Runnable> foldingTasks) {
     if (!(editor instanceof EditorEx)) return false;
     FoldingModelEx foldingModel = ((EditorEx)editor).getFoldingModel();
     if (foldRegion == null) {
@@ -396,9 +408,10 @@ class DocRenderItem {
     private final DocRenderItem item;
 
     private ToggleRenderingAction(DocRenderItem item) {
-      super(CodeInsightBundle.message("doc.toggle.rendered.presentation"));
+      copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_TOGGLE_RENDERED_DOC));
       this.item = item;
     }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       if (item.isValid()) {
