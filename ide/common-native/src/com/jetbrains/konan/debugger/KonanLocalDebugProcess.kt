@@ -8,6 +8,7 @@ package com.jetbrains.konan.debugger
 import com.intellij.execution.filters.ConsoleFilterProvider
 import com.intellij.execution.filters.TextConsoleBuilder
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.ProjectScope
@@ -22,30 +23,26 @@ import com.jetbrains.cidr.execution.debugger.backend.LLFrame
 import com.jetbrains.cidr.execution.debugger.backend.LLThread
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler
 
+fun wrapInKotlinHandlers(cidrHandlers: Array<XBreakpointHandler<*>>, project: Project): Array<XBreakpointHandler<*>> {
+    val handlers = mutableListOf<XBreakpointHandler<*>>()
+
+    for (handler in cidrHandlers) {
+        if (handler is CidrBreakpointHandler) { // other handlers are irrelevant in Kotlin context
+            handlers.add(KonanBreakpointHandler(handler, project))
+        }
+    }
+
+    return handlers.toTypedArray()
+}
+
 open class KonanLocalDebugProcess(
     parameters: RunParameters,
     session: XDebugSession,
     consoleBuilder: TextConsoleBuilder,
     backendFilterProvider: ConsoleFilterProvider,
-    useCidrBreakpoints: Boolean = false
+    private val useCidrBreakpoints: Boolean = false
 ) : CidrLocalDebugProcess(parameters, session, consoleBuilder, backendFilterProvider) {
     private val sourcesIndex = HashMap<String, VirtualFile?>()
-
-    private val breakpointHandlers: Array<XBreakpointHandler<*>>
-
-    init {
-        val handlers = mutableListOf<XBreakpointHandler<*>>()
-
-        for (handler in super.getBreakpointHandlers()) {
-            if (useCidrBreakpoints) {
-                handlers.add(handler)
-            } else if (handler is CidrBreakpointHandler) { // other handlers are irrelevant in Kotlin context
-                handlers.add(KonanBreakpointHandler(handler, session.project))
-            }
-        }
-
-        breakpointHandlers = handlers.toTypedArray()
-    }
 
     override fun isLibraryFrameFilterSupported(): Boolean = true
 
@@ -58,7 +55,13 @@ open class KonanLocalDebugProcess(
         return KonanExecutionStack(thread, frame, cause, this)
     }
 
-    override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> = breakpointHandlers
+    override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> {
+        return if (useCidrBreakpoints) {
+            super.getBreakpointHandlers()
+        } else {
+            wrapInKotlinHandlers(super.getBreakpointHandlers(), session.project)
+        }
+    }
 
     fun resolveFile(originalFullName: String): VirtualFile? {
         synchronized(sourcesIndex) {
