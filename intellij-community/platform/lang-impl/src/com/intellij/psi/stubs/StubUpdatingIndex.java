@@ -147,7 +147,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
                 serializedStubTree = SerializedStubTree.serializeStub(
                   rootStub,
                   mySerializationManager,
-                  StubForwardIndexExternalizer.getIdeUsedExternalizer(mySerializationManager)
+                  myStubIndexesExternalizer
                 );
                 if (DebugAssertions.DEBUG) {
                   Stub deserialized = serializedStubTree.getStub(mySerializationManager);
