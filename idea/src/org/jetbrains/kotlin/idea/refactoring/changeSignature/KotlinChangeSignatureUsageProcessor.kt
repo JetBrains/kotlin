@@ -20,7 +20,6 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
-import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.HashSet
 import com.intellij.util.containers.MultiMap
@@ -262,7 +261,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val oldName = changeInfo.oldName
 
         if (oldName != null) {
-            TextOccurrencesUtil.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.newName, result)
+            BunchedDeprecation.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.newName, result)
         }
 
         val oldParameters = (functionPsi as KtNamedDeclaration).getValueParameters()
