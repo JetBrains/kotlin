@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Y
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]'
         FUN name:f visibility:public modality:FINAL <> ($this:<root>.A.Y) returnType:kotlin.String
           $this: VALUE_PARAMETER name:<this> type:<root>.A.Y
@@ -29,8 +29,8 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Z
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
-              arg: CONST Int type=kotlin.Int value=5
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.A'
+              x: CONST Int type=kotlin.Int value=5
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.A]'
     PROPERTY name:prop1 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]

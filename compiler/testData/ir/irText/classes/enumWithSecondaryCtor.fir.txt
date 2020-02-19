@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test0.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test0'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test0]'
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test0
       BLOCK_BODY
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test1'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test1]'
     ENUM_ENTRY name:ONE
       class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test1]
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
           BLOCK_BODY
-            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
+            DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test2]'
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test2.ZERO) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ZERO

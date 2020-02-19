@@ -405,30 +405,14 @@ class Fir2IrVisitor(
     }
 
     private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrDelegatingConstructorCall? {
-        val constructedClassSymbol = with(typeContext) {
-            (constructedTypeRef as FirResolvedTypeRef).type.typeConstructor()
-        } as? FirClassSymbol<*> ?: return null
         val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
-        // TODO: find delegated constructor correctly
-        val classId = constructedClassSymbol.classId
-        var constructorSymbol: FirConstructorSymbol? = null
-        constructedClassSymbol.buildUseSiteMemberScope(this@Fir2IrVisitor.session, ScopeSession())!!.processFunctionsByName(
-            classId.shortClassName
-        ) {
-            when {
-                it !is FirConstructorSymbol -> {
-                }
-                arguments.size <= it.fir.valueParameters.size && constructorSymbol == null -> {
-                    constructorSymbol = it
-                }
-            }
-        }
-        val foundConstructorSymbol = constructorSymbol ?: return null
+        val constructorSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
+            ?: return null
         return convertWithOffsets { startOffset, endOffset ->
             IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,
                 constructedIrType,
-                declarationStorage.getIrFunctionSymbol(foundConstructorSymbol) as IrConstructorSymbol
+                declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             ).apply {
                 for ((index, argument) in arguments.withIndex()) {
                     val argumentExpression = argument.toIrExpression()
