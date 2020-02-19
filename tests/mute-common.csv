@@ -1,14 +1,4 @@
 Test key, Issue, State (optional: MUTE or FAIL)
-org.jetbrains.kotlin.asJava.classes.UltraLightClassLoadingTestGenerated.testAnnotations, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassLoadingTestGenerated.testInheritance, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassLoadingTestGenerated.testObjects, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassLoadingTestGenerated.testProperties, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassSanityTestGenerated.IdeRegression.testImplementingMutableSet, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassSanityTestGenerated.IdeRegression.testOverridingFinalInternal_extra, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassSanityTestGenerated.IdeRegression.testOverridingInternal, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassSanityTestGenerated.IdeRegression.testOverridingInternal_extra, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightClassSanityTestGenerated.IdeRegression.testOverridingProtected_extra, KT-36717
-org.jetbrains.kotlin.asJava.classes.UltraLightFacadeClassTestGenerated.testProperties, KT-36717
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces, FLAKY ERROR: Incompatible types. Found: 'E' required: 'E'
@@ -18,8 +8,6 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTes
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testWeb, KT-35095
 org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[1: Gradle-4.9, KotlinGradlePlugin-latest stable], Stable on windows
 org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testSingleAndroidTarget[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], Stable on windows
-org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.IdeRegression.testImplementingMutableSet, KT-36717
-org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.IdeRegression.testOverridingInternal, KT-36717
 org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.testJvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls, Always red
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleBuildFileHighlightingTest.testKtsInJsProject, "Diagnostic's list should be empty" error
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule

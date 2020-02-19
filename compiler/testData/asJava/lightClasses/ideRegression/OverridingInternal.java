@@ -1,5 +1,5 @@
 public final class C extends p.A implements p.I {
-    private final int ip = 5;
+    private final int ip;
 
     public int getAp$light_idea_test_case() { /* compiled code */ }
 
