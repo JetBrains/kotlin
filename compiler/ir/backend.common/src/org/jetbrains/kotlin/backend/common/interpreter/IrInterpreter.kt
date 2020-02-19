@@ -102,6 +102,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 is IrStringConcatenation -> interpretStringConcatenation(this, data)
                 is IrFunctionExpression -> interpretFunctionExpression(this, data)
                 is IrFunctionReference -> interpretFunctionReference(this, data)
+                is IrComposite -> interpretComposite(this, data)
 
                 else -> TODO("${this.javaClass} not supported")
             }
@@ -521,23 +522,22 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretStatements(statements: List<IrStatement>, data: Frame): Code {
-        val newFrame = data.copy()
-
         var code = Code.NEXT
         val iterator = statements.iterator()
         while (code == Code.NEXT && iterator.hasNext()) {
-            code = iterator.next().interpret(newFrame)
+            code = iterator.next().interpret(data)
         }
-        data.pushReturnValue(newFrame)
         return code
     }
 
     private suspend fun interpretBlock(block: IrBlock, data: Frame): Code {
-        return interpretStatements(block.statements, data)
+        val newFrame = data.copy()
+        return interpretStatements(block.statements, newFrame).apply { data.pushReturnValue(newFrame) }
     }
 
     private suspend fun interpretBody(body: IrBody, data: Frame): Code {
-        return interpretStatements(body.statements, data)
+        val newFrame = data.copy()
+        return interpretStatements(body.statements, newFrame).apply { data.pushReturnValue(newFrame) }
     }
 
     private suspend fun interpretReturn(expression: IrReturn, data: Frame): Code {
@@ -803,5 +803,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretFunctionReference(reference: IrFunctionReference, data: Frame): Code {
         data.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
         return Code.NEXT
+    }
+
+    private suspend fun interpretComposite(expression: IrComposite, data: Frame): Code {
+        return when (expression.origin) {
+            IrStatementOrigin.DESTRUCTURING_DECLARATION -> interpretStatements(expression.statements, data)
+            else -> TODO("${expression.origin} not implemented")
+        }
     }
 }
