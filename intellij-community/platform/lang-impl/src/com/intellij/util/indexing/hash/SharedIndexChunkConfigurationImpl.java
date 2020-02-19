@@ -18,6 +18,10 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.stubs.StubIndexExtension;
+import com.intellij.psi.stubs.StubIndexImpl;
+import com.intellij.psi.stubs.StubIndexKey;
+import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.SameThreadExecutor;
@@ -324,8 +328,8 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
     Set<String> emptyStubIndexNames = EmptyIndexEnumerator.readEmptyStubIndexes(chunkRoot);
 
     List<SharedIndexChunk> result = new ArrayList<>();
-    for (Path child : Files.newDirectoryStream(chunkRoot)) {
-      ID<?, ?> id = ID.findByName(child.getFileName().toString());
+    for (Path indexDir : Files.newDirectoryStream(chunkRoot)) {
+      ID<?, ?> id = ID.findByName(indexDir.getFileName().toString());
       if (id != null) {
         FileBasedIndexExtension<?, ?> extension = FileBasedIndexExtension.EXTENSION_POINT_NAME.findFirstSafe(ex -> ex.getName().equals(id));
         if (extension != null) {
@@ -340,9 +344,36 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
                                                         ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex());
           result.add(chunk);
         }
+        if (id.equals(StubUpdatingIndex.INDEX_ID)) {
+          result.addAll(registerStubIndexChunks(indexDir, emptyStubIndexNames, chunkId, timestamp));
+        }
       }
     }
 
+    return result;
+  }
+
+  private static List<SharedIndexChunk> registerStubIndexChunks(@NotNull Path stubIndexDir,
+                                                                @NotNull Set<String> emptyStubIndexNames,
+                                                                int chunkId,
+                                                                long timestamp) throws IOException {
+    List<SharedIndexChunk> result = new ArrayList<>();
+    for (Path stubIndexExDir : Files.newDirectoryStream(stubIndexDir)) {
+      ID<?, ?> id = ID.findByName(stubIndexExDir.getFileName().toString());
+      if (id instanceof StubIndexKey) {
+        FileBasedIndexExtension<?, ?> extension = StubIndexImpl.wrapStubIndexExtension(StubIndexExtension.EP_NAME.findFirstSafe(ex -> ex.getKey().equals(id)));
+        SharedIndexExtension sharedExtension = SharedIndexExtensions.findExtension(extension);
+        SharedIndexChunk chunk = new SharedIndexChunk(stubIndexDir,
+                                                      id,
+                                                      chunkId,
+                                                      timestamp,
+                                                      emptyStubIndexNames.contains(id.getName()),
+                                                      sharedExtension,
+                                                      extension,
+                                                      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getOrCreateFileContentHashIndex());
+        result.add(chunk);
+      }
+    }
     return result;
   }
 

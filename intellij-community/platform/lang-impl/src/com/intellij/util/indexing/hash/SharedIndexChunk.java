@@ -46,11 +46,11 @@ public class SharedIndexChunk<K, V> {
     myIndex.dispose();
   }
 
-  public @NotNull ID<?, ?> getIndexName() {
+  @NotNull ID<?, ?> getIndexName() {
     return myIndexName;
   }
 
-  public @NotNull Path getPath() {
+  @NotNull Path getPath() {
     return myChunkRoot.resolve(myIndexName.getName());
   }
 
