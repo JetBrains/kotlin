@@ -237,6 +237,8 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
 
         fun replaceImports(file: KtFile, imports: List<ImportPath>) {
+            val manager = PsiDocumentManager.getInstance(file.project)
+            manager.getDocument(file)?.let { manager.commitDocument(it) }
             val importList = file.importList ?: return
             val oldImports = importList.imports
             val psiFactory = KtPsiFactory(file.project)
