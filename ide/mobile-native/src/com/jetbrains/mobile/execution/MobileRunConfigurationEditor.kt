@@ -27,7 +27,7 @@ open class MobileRunConfigurationEditor(
         MobileRunConfiguration,
         MobileBuildConfigurationHelper>(project, helper) {
 
-    private lateinit var modulesComboBox: ModulesComboBox
+    protected lateinit var modulesComboBox: ModulesComboBox
 
     private lateinit var executableEditor: CidrRunConfigurationExecutableEditor<
             MobileBuildConfiguration,

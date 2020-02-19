@@ -15,7 +15,12 @@ class MobileTestRunConfigurationEditor(project: Project, helper: MobileBuildConf
     MobileRunConfigurationEditor(project, helper, modulePredicate) {
 
     override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
+        val isModuleChanged = runConfiguration.module != modulesComboBox.selectedModule
+
         super.applyEditorTo(runConfiguration)
-        (runConfiguration as MobileTestRunConfiguration).recreateTestData() // TODO do this only when module is changed
+
+        if (isModuleChanged) {
+            (runConfiguration as MobileTestRunConfiguration).recreateTestData()
+        }
     }
 }
