@@ -201,20 +201,22 @@ class DocRenderer implements EditorCustomElementRenderer {
       catch (BadLocationException ignored) {}
       PsiElement owner = myItem.getOwner();
       if (owner != null && location != null) {
+        DocumentationManager documentationManager = DocumentationManager.getInstance(project);
         if (QuickDocUtil.getActiveDocComponent(project) == null) {
           Point inlayPosition = Objects.requireNonNull(myItem.inlay.getBounds()).getLocation();
           Point relativePosition = getEditorPaneLocationWithinInlay();
           editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT,
                              new Point(inlayPosition.x + relativePosition.x + location.x,
                                        inlayPosition.y + relativePosition.y + location.y + location.height));
+          documentationManager.showJavaDocInfo(editor, owner, owner, () -> {
+            editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
+          }, "", false, true);
         }
-        DocumentationManager documentationManager = DocumentationManager.getInstance(project);
-        documentationManager.showJavaDocInfo(editor, owner, owner, () -> {
-          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
-        }, "", false, true);
         DocumentationComponent component = QuickDocUtil.getActiveDocComponent(project);
         if (component != null) {
-          component.startWait();
+          if (!documentationManager.hasActiveDockedDocWindow()) {
+            component.startWait();
+          }
           documentationManager.navigateByLink(component, event.getDescription());
         }
         if (documentationManager.getDocInfoHint() == null) {
