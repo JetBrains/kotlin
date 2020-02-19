@@ -17,7 +17,7 @@ class InlineInlayRendererTest : LightPlatformCodeInsightTestCase() {
     val c1 = constrained(2)
     val renderer = InlineInlayRenderer(listOf(c1))
     val c2 = constrained(1)
-    renderer.addOrUpdate(listOf(c2), editor, factory())
+    renderer.addOrUpdate(listOf(c1, c2), editor, factory())
     val arranged = renderer.getConstrainedPresentations()
     assertEquals(listOf(c2, c1), arranged)
   }
@@ -33,7 +33,7 @@ class InlineInlayRendererTest : LightPlatformCodeInsightTestCase() {
     val c6 = constrained(1)
     renderer.addOrUpdate(listOf(c5, c6), editor, factory())
     val arranged = renderer.getConstrainedPresentations()
-    assertEquals(listOf(c6, c5, c1, c2, c3, c4), arranged)
+    assertEquals(listOf(c6, c5), arranged)
   }
 
 
@@ -49,7 +49,7 @@ class InlineInlayRendererTest : LightPlatformCodeInsightTestCase() {
     val c6 = constrained(1)
     renderer.addOrUpdate(listOf(c3, c4, c5, c6), editor, factory())
     val arranged = renderer.getConstrainedPresentations()
-    assertEquals(listOf(c6, c5, c1, c2, c3, c4), arranged)
+    assertEquals(listOf(c6, c5, c3, c4), arranged)
   }
 
   fun testNonSortedInitially() {

@@ -130,7 +130,6 @@ object InlayHintsUtils {
       val oldPriority = oldEl.priority
       when {
         newPriority > oldPriority -> {
-          updatedPresentations.add(oldEl)
           oldIndex++
           if (oldIndex == oldSize) {
             break@loop
@@ -164,9 +163,6 @@ object InlayHintsUtils {
     }
     for (i in newIndex until newSize) {
       updatedPresentations.add(new[i])
-    }
-    for (i in oldIndex until oldSize) {
-      updatedPresentations.add(old[i])
     }
     return updatedPresentations
   }

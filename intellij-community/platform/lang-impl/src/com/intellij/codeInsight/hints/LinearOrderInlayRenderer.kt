@@ -10,10 +10,7 @@ import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.util.SmartList
 import org.jetbrains.annotations.TestOnly
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.Point
-import java.awt.Rectangle
+import java.awt.*
 import java.awt.event.MouseEvent
 
 /**
@@ -55,6 +52,7 @@ abstract class LinearOrderInlayRenderer<Constraint : Any>(
                            factory: InlayPresentationFactory) {
     // TODO [roman.ivanov] here can be handled 1 old to 1 new situation without complex algorithms and allocations
     val tmp = produceUpdatedRootList(sorted, presentations, editor, factory)
+    val oldSize = dimension()
     presentations = tmp
     _listener?.let {
       cachedPresentation.removeListener(it)
@@ -63,8 +61,14 @@ abstract class LinearOrderInlayRenderer<Constraint : Any>(
     _listener?.let {
       cachedPresentation.addListener(it)
     }
-    cachedPresentation.fireContentChanged()
+    val newSize = dimension()
+    if (oldSize != newSize) {
+      cachedPresentation.fireSizeChanged(oldSize, newSize)
+    }
+    cachedPresentation.fireContentChanged(Rectangle(newSize))
   }
+
+  private fun dimension() = Dimension(cachedPresentation.width, cachedPresentation.height)
 
 
   override fun paint(inlay: Inlay<*>, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
@@ -76,6 +80,10 @@ abstract class LinearOrderInlayRenderer<Constraint : Any>(
 
   override fun calcWidthInPixels(inlay: Inlay<*>): Int {
     return cachedPresentation.width
+  }
+
+  override fun calcHeightInPixels(inlay: Inlay<*>): Int {
+    return cachedPresentation.height
   }
 
   // this should not be shown anywhere

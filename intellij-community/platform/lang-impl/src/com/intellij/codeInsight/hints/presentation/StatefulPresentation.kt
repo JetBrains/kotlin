@@ -66,19 +66,19 @@ abstract class StatefulPresentation<S: Any?>(
   override fun updateState(previousPresentation: InlayPresentation): Boolean {
     if (previousPresentation !is StatefulPresentation<*>) return true
     val previousState = previousPresentation._state
-    var changed = false
+    var changedState = false
     if (previousState != _state) {
       val previousMark = previousPresentation.stateMark
       if (stateMark == previousMark) {
         val castedPrevious = stateMark.cast(previousState, previousMark)
         if (castedPrevious != null) {
           updateStateAndPresentation(castedPrevious)
-          changed = true
+          changedState = true
         }
       }
     }
-    currentPresentation.updateState(previousPresentation.currentPresentation)
-    return changed
+    val underlineChanged = currentPresentation.updateState(previousPresentation.currentPresentation)
+    return changedState || underlineChanged
   }
 
   /**
