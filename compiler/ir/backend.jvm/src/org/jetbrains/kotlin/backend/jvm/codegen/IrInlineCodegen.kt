@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
@@ -87,11 +83,9 @@ class IrInlineCodegen(
             super.genValueAndPut(irValueParameter, argumentExpression, parameterType, codegen, blockInfo)
         }
 
-        if (irValueParameter.isInlineParameter(
-                /*after transformation inlinable lambda parameter with default value would have nullable type: check default value type first*/
-                irValueParameter.defaultValue?.expression?.type ?: irValueParameter.type
-            ) && isInlineIrExpression(argumentExpression)
-        ) {
+        // after transformation inlinable lambda parameter with default value would have nullable type: check default value type first
+        val isInlineParameter = irValueParameter.isInlineParameter(irValueParameter.defaultValue?.expression?.type ?: irValueParameter.type)
+        if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             val boundReceiver = argumentExpression.statements.filterIsInstance<IrVariable>().singleOrNull()
@@ -107,9 +101,14 @@ class IrInlineCodegen(
             val kind = when (irValueParameter.origin) {
                 IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION -> ValueKind.DEFAULT_MASK
                 IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> ValueKind.METHOD_HANDLE_IN_DEFAULT
-                else -> if (argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE)
-                    ValueKind.DEFAULT_PARAMETER
-                else ValueKind.CAPTURED
+                else -> when {
+                    argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE ->
+                        ValueKind.DEFAULT_PARAMETER
+                    // TODO ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND?
+                    isInlineParameter && irValueParameter.type.isSuspendFunctionTypeOrSubtype() ->
+                        ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+                    else -> ValueKind.GENERAL
+                }
             }
 
             val onStack = when {
@@ -130,11 +129,7 @@ class IrInlineCodegen(
 
 
             //TODO support default argument erasure
-            if (!processDefaultMaskOrMethodHandler(
-                    onStack,
-                    kind
-                )
-            ) {
+            if (!processDefaultMaskOrMethodHandler(onStack, kind)) {
                 val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toKotlinType())
                 putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, kind)
             }
