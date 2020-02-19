@@ -95,7 +95,21 @@ open class KotlinJsProjectExtension :
 
     lateinit var legacyPreset: KotlinJsSingleTargetPreset
 
-    override lateinit var target: KotlinJsTargetDsl
+    // target is public property
+    // Users can write kotlin.target and it should work
+    // So call of target should init default canfiguration
+    private var _target: KotlinJsTargetDsl? = null
+
+    override var target: KotlinJsTargetDsl
+        get() {
+            if (_target == null) {
+                js {}
+            }
+            return _target!!
+        }
+        set(value) {
+            _target = value
+        }
 
     override lateinit var defaultJsCompilerType: JsCompilerType
 
@@ -123,7 +137,7 @@ open class KotlinJsProjectExtension :
                 )
         }
 
-        this.target = target
+        this._target = target
 
         target.project.components.addAll(target.components)
 
