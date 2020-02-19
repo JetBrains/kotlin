@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
     testGroup("compiler/tests", "compiler/testData") {
-        testClass<AbstractDiagnosticsTest> {
+        testClass<AbstractDiagnosticsTestWithFirValidation>(suiteTestClassName = "DiagnosticsTestGenerated") {
             model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
             model("codegen/box/diagnostics")
         }

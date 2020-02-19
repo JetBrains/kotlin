@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.fir.AbstractFirOldFrontendDiagnosticsTest
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -80,6 +84,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         } catch (t: Throwable) {
             throw TestsCompilerError(t)
         }
+    }
+
+    protected open fun shouldValidateFirTestData(testDataFile: File): Boolean {
+        return false
     }
 
     private fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>) {
@@ -242,32 +250,36 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         performAdditionalChecksAfterDiagnostics(
             testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
         )
-        checkOriginalAndFirTestdataIdentity(testDataFile)
-    }
-
-    private class DiagnosticsFullTextMessageCollector : MessageCollector {
-
-
-        override fun clear() {
-            TODO("Not yet implemented")
-        }
-
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-            TODO("Not yet implemented")
-        }
-
-        override fun hasErrors(): Boolean {
-            TODO("Not yet implemented")
+        if (shouldValidateFirTestData(testDataFile)) {
+            checkFirTestdata(testDataFile, files)
         }
     }
 
-    private fun checkOriginalAndFirTestdataIdentity(testDataFile: File) {
+    private fun checkFirTestdata(testDataFile: File, files: List<TestFile>) {
         val firTestDataFile = File(testDataFile.absolutePath.replace(".kt", ".fir.kt"))
-        if (!firTestDataFile.exists()) return
+        val firFailFile = File(testDataFile.absolutePath.replace(".kt", ".fir.fail"))
+        when {
+            firFailFile.exists() -> return
+            firTestDataFile.exists() -> checkOriginalAndFirTestdataIdentity(testDataFile, firTestDataFile)
+            else -> runFirTestAndGenerateTestData(testDataFile, firTestDataFile, files)
+        }
+    }
+
+    private fun checkOriginalAndFirTestdataIdentity(testDataFile: File, firTestDataFile: File) {
         val originalTestData = loadTestDataWithoutDiagnostics(testDataFile)
         val firTestData = loadTestDataWithoutDiagnostics(firTestDataFile)
         val message = "Original and fir test data doesn't identical. Please, add changes from ${testDataFile.name} to ${firTestDataFile.name}"
         TestCase.assertEquals(message, originalTestData, firTestData)
+    }
+
+    private fun runFirTestAndGenerateTestData(testDataFile: File, firTestDataFile: File, files: List<TestFile>) {
+        val testRunner = object : AbstractFirOldFrontendDiagnosticsTest() {
+            init {
+                environment = this@AbstractDiagnosticsTest.environment
+            }
+        }
+        FileUtil.copy(testDataFile, firTestDataFile)
+        testRunner.analyzeAndCheckUnhandled(firTestDataFile, files)
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
