@@ -32,7 +32,6 @@ import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.GraphicsUtil;
 import com.intellij.util.ui.JBHtmlEditorKit;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -157,7 +156,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     boolean newInstance = false;
     if (myPane == null || Boolean.TRUE.equals(inlay.getUserData(RECREATE_COMPONENT) != null)) {
       newInstance = true;
-      myPane = new JEditorPane(UIUtil.HTML_MIME, "") {
+      myPane = new JEditorPane() {
         @Override
         public void repaint(long tm, int x, int y, int width, int height) {
           myRepaintRequested = true;

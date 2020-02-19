@@ -180,7 +180,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     myIsEmpty = true;
     myStoreSize = storeSize;
 
-    myEditorPane = new JEditorPane(UIUtil.HTML_MIME, "") {
+    myEditorPane = new JEditorPane() {
       {
         enableEvents(AWTEvent.KEY_EVENT_MASK);
       }
