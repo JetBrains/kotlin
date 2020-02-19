@@ -25,13 +25,13 @@ import com.intellij.task.ProjectTaskContext
 import com.intellij.task.ProjectTaskManager
 import com.intellij.task.ProjectTaskNotification
 import com.intellij.task.ProjectTaskResult
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.LOG as log
 
 class RunScratchAction : ScratchAction(
-    KotlinBundle.message("scratch.run.button"),
+    KotlinJvmBundle.message("scratch.run.button"),
     AllIcons.Actions.Execute
 ) {
 

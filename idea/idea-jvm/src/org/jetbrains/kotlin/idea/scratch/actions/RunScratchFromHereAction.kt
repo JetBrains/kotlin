@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 
 class RunScratchFromHereAction : ScratchAction(
-    KotlinBundle.message("scratch.run.from.here.button"),
+    KotlinJvmBundle.message("scratch.run.from.here.button"),
     AllIcons.Diff.ArrowRight
 ) {
 

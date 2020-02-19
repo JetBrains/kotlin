@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ide.konan
+package org.jetbrains.kotlin.idea
 
 import com.intellij.CommonBundle
 import org.jetbrains.annotations.NonNls
@@ -11,9 +11,9 @@ import org.jetbrains.annotations.PropertyKey
 import org.jetbrains.kotlin.idea.core.util.KotlinBundleBase
 import java.util.*
 
-object KotlinGradleNativeBundle : KotlinBundleBase() {
+object KotlinJvmBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.ide.konan.KotlinGradleNativeBundle"
+    private const val BUNDLE = "org.jetbrains.kotlin.idea.KotlinJvmBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 

@@ -53,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.FileIndexUtilsKt;
@@ -208,17 +209,20 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
 
         Module module = getConfigurationModule().getModule();
         if (module == null) {
-            throw new RuntimeConfigurationError("Module not specified");
+            throw new RuntimeConfigurationError(KotlinJvmBundle.message("run.configuration.error.no.module"));
         }
         if (StringUtil.isEmpty(MAIN_CLASS_NAME)) {
-            throw new RuntimeConfigurationError("No main class specified");
+            throw new RuntimeConfigurationError(KotlinJvmBundle.message("run.configuration.error.no.main.class"));
         }
         PsiClass psiClass = JavaExecutionUtil.findMainClass(module, MAIN_CLASS_NAME);
         if (psiClass == null) {
-            throw new RuntimeConfigurationWarning("Class '" + MAIN_CLASS_NAME + "' not found in module " + getConfigurationModule().getModuleName());
+            String moduleName = getConfigurationModule().getModuleName();
+            throw new RuntimeConfigurationWarning(
+                    KotlinJvmBundle.message("run.configuration.error.class.not.found", MAIN_CLASS_NAME, moduleName)
+            );
         }
         if (findMainFun(psiClass) == null) {
-            throw new RuntimeConfigurationWarning("The class " + MAIN_CLASS_NAME + " has no main method");
+            throw new RuntimeConfigurationWarning(KotlinJvmBundle.message("run.configuration.error.class.no.main.method", MAIN_CLASS_NAME));
         }
     }
 
@@ -398,9 +402,9 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
             //noinspection ConstantConditions
             FqName classFqName = new FqName(psiClass.getQualifiedName());
             if (psiClass instanceof KtLightClassForSourceDeclaration) {
-                return String.format("Function 'main' not found in class '%s'", classFqName);
+                return KotlinJvmBundle.message("run.configuration.error.main.not.found", classFqName);
             }
-            return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
+            return KotlinJvmBundle.message("run.configuration.error.main.not.found.top.level", classFqName.parent());
         }
 
         private static void setupModulePath(JavaParameters params, JavaRunConfigurationModule module) {

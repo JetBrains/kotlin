@@ -28,6 +28,7 @@ import com.intellij.util.PathUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
 import javax.swing.*;
 import java.io.File;
@@ -83,20 +84,22 @@ public class FileUIUtils {
 
             if (existentFiles.size() == 1) {
                 File conflictingFile = existentFiles.iterator().next().getValue();
-                message = String.format("File \"%s\" already exists in %s.\nDo you want to overwrite it?", conflictingFile.getName(),
-                                        conflictingFile.getParentFile().getAbsolutePath());
+                message = KotlinJvmBundle.message(
+                        "file.exists.single",
+                        conflictingFile.getName(), conflictingFile.getParentFile().getAbsolutePath())
+                ;
             }
             else {
                 Collection<File> conflictFiles = CollectionsKt.map(existentFiles, Map.Entry::getValue);
-                message = String.format("Files already exist:\n%s\nDo you want to overwrite them?", StringUtil.join(conflictFiles, "\n"));
+                message = KotlinJvmBundle.message("file.exists", StringUtil.join(conflictFiles, "\n"));
             }
 
             int replaceIfExist = Messages.showYesNoDialog(
                     null,
                     message,
-                    messagesTitle + ". Replace File",
-                    "Overwrite",
-                    "Cancel",
+                    messagesTitle + KotlinJvmBundle.message("file.overwrite.title"),
+                    KotlinJvmBundle.message("file.overwrite.overwrite"),
+                    KotlinJvmBundle.message("file.overwrite.cancel"),
                     Messages.getWarningIcon());
 
             if (replaceIfExist != JOptionPane.YES_OPTION) {
@@ -107,8 +110,8 @@ public class FileUIUtils {
         for (Map.Entry<File, File> sourceToTarget : targetFiles.entrySet()) {
             try {
                 String destinationPath = sourceToTarget.getValue().getParentFile().getAbsolutePath();
-                if (!ProjectWizardUtil.createDirectoryIfNotExists("Destination folder", destinationPath, false)) {
-                    Messages.showErrorDialog(String.format("Error during folder creating '%s'", destinationPath), messagesTitle + ". Error");
+                if (!ProjectWizardUtil.createDirectoryIfNotExists(KotlinJvmBundle.message("file.destination.folder"), destinationPath, false)) {
+                    Messages.showErrorDialog(KotlinJvmBundle.message("file.error.new.folder", destinationPath), messagesTitle);
                     return null;
                 }
 
@@ -116,7 +119,7 @@ public class FileUIUtils {
                 LocalFileSystem.getInstance().refreshAndFindFileByIoFile(sourceToTarget.getValue());
             }
             catch (IOException e) {
-                Messages.showErrorDialog("Error with copy file " + sourceToTarget.getKey().getName(), messagesTitle + ". Error");
+                Messages.showErrorDialog(KotlinJvmBundle.message("file.error.copy", sourceToTarget.getKey().getName()), messagesTitle);
                 return null;
             }
         }
