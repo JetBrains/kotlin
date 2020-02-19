@@ -546,7 +546,18 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:test")
         dependsOn(":compiler:fir:lightTree:test")
     }
-    
+
+    register("firAllTest") {
+        dependsOn(
+            ":compiler:fir:psi2fir:test",
+            ":compiler:fir:lightTree:test",
+            ":compiler:fir:resolve:test",
+            ":compiler:fir:fir2ir:test",
+            ":compiler:firBlackBox:test",
+            ":idea:firTest"
+        )
+    }
+
     register("compilerFrontendVisualizerTest") {
         dependsOn("compiler:visualizer:test")
     }
