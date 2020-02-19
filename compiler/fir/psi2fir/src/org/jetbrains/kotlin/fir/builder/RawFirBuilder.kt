@@ -408,13 +408,14 @@ class RawFirBuilder(
                      *   for correct resolve of super constructor call or just call kotlin.Any constructor
                      *   and convert it to right call at backend, because of it doesn't affects frontend work
                      */
-                    container.superTypeRefs += buildResolvedTypeRef {
+                    delegatedSuperTypeRef = buildResolvedTypeRef {
                         type = ConeClassLikeTypeImpl(
                             implicitEnumType.type.lookupTag,
                             delegatedSelfTypeRef?.coneTypeUnsafe<ConeKotlinType>()?.let { arrayOf(it) } ?: emptyArray(),
                             isNullable = false,
                         )
                     }
+                    container.superTypeRefs += delegatedSuperTypeRef
                 }
                 this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
                     container.superTypeRefs += implicitAnnotationType

@@ -410,12 +410,18 @@ class Fir2IrVisitor(
             ?: return null
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-            if (constructorSymbol.fir.isFromEnumClass) {
+            if (constructorSymbol.fir.isFromEnumClass || constructorSymbol.fir.returnTypeRef.isEnum) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
                     irConstructorSymbol
-                )
+                ).apply {
+                    val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
+                    if (typeArguments?.isNotEmpty() == true) {
+                        val irType = (typeArguments.first() as ConeTypedProjection).type.toIrType(session, declarationStorage, irBuiltIns)
+                        putTypeArgument(0, irType)
+                    }
+                }
             } else {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,

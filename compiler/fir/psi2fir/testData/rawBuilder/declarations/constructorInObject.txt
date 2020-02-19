@@ -10,7 +10,7 @@ FILE: constructorInObject.kt
     }
     public? final? enum class B : R|kotlin/Enum<B>| {
         private constructor(): R|B| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<B>|>()
         }
 
         public final static enum entry X: R|B| = object : R|B| {

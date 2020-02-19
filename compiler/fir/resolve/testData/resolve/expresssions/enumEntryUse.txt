@@ -1,7 +1,7 @@
 FILE: enumEntryUse.kt
     public final enum class TestEnum : R|kotlin/Enum<TestEnum>| {
         private constructor(): R|TestEnum| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<TestEnum>|>()
         }
 
         public final static enum entry FIRST: R|TestEnum| = object : R|TestEnum| {

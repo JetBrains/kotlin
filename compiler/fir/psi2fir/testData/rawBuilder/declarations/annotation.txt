@@ -26,7 +26,7 @@ FILE: annotation.kt
     }
     @base() public? final? enum class My : R|kotlin/Enum<My>| {
         private constructor(): R|My| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<My>|>()
         }
 
         public final static enum entry FIRST: R|My| = @base() object : R|My| {

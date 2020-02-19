@@ -1,7 +1,7 @@
 FILE: main.kt
     public final enum class E : R|kotlin/Enum<E>| {
         private constructor(): R|E| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<E>|>()
         }
 
         public final static enum entry A: R|E| = object : R|E| {

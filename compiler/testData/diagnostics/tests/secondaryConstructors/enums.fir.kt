@@ -6,7 +6,7 @@ enum class A {
     constructor(x: Int)
     constructor(x: Int, y: Int): this(x+y)
     constructor(x: Double): this(x.toInt(), 1)
-    constructor(x: String): <!INAPPLICABLE_CANDIDATE!>super<!>(x, 1)
+    constructor(x: String): super(x, 1)
 }
 
 enum class B(x: Int) {
@@ -14,7 +14,7 @@ enum class B(x: Int) {
 
     constructor(x: Int, y: Int): this(x+y)
     constructor(x: Double): this(x.toInt(), 1)
-    constructor(x: String): <!INAPPLICABLE_CANDIDATE!>super<!>(x, 1)
+    constructor(x: String): super(x, 1)
 }
 
 enum class C {

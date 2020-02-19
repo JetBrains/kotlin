@@ -157,6 +157,11 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
         val function = symbol.fir
+        if (function is FirConstructor && function.returnTypeRef.isEnum) {
+            // NB: we do not check kotlin.Enum constructor calls, because we do not pass arguments there
+            candidate.argumentMapping = mapOf()
+            return
+        }
 
         val mapping = mapArguments(callInfo.arguments, function)
         val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()

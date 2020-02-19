@@ -3,7 +3,8 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Enum
     CONSTRUCTOR visibility:private <> () returnType:<root>.Enum [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+          <E>: <root>.Enum
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Enum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Enum>]'
     ENUM_ENTRY name:A
       class: CLASS ENUM_ENTRY name:A modality:FINAL visibility:private superTypes:[<root>.Enum]

@@ -398,13 +398,14 @@ class DeclarationsConverter(
 
                 when {
                     modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) -> {
-                        superTypeRefs += buildResolvedTypeRef {
+                        delegatedSuperTypeRef = buildResolvedTypeRef {
                             type = ConeClassLikeTypeImpl(
                                 implicitEnumType.type.lookupTag,
                                 arrayOf(selfType.coneTypeUnsafe()),
                                 isNullable = false
                             )
                         }
+                        superTypeRefs += delegatedSuperTypeRef!!
                     }
                     modifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> {
                         superTypeRefs += implicitAnnotationType

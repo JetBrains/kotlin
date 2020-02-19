@@ -63,7 +63,7 @@ FILE: qualifierPriority.kt
         public get(): R|kotlin/Unit|
     public final enum class G : R|kotlin/Enum<G>| {
         private constructor(): R|G| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<G>|>()
         }
 
         public final static enum entry H: R|G| = object : R|G| {
