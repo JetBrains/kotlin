@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.impl;
 
 import com.intellij.ide.CompositeSelectInTarget;
@@ -53,8 +53,10 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
                                       @Nullable final String subviewId,
                                       final VirtualFile virtualFile,
                                       final boolean requestFocus) {
-    final ProjectView projectView = ProjectView.getInstance(project);
-    if (projectView == null) return ActionCallback.REJECTED;
+    ProjectView projectView = ProjectView.getInstance(project);
+    if (projectView == null) {
+      return ActionCallback.REJECTED;
+    }
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       AbstractProjectViewPane pane = projectView.getProjectViewPaneById(ObjectUtils.chooseNotNull(viewId, ProjectViewImpl.getDefaultViewId()));
@@ -66,14 +68,15 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
                                         ? createPointer((PsiElement)toSelect)::getElement
                                         : () -> toSelect;
 
-    ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-    final ToolWindow projectViewToolWindow = windowManager.getToolWindow(ToolWindowId.PROJECT_VIEW);
-    if (projectViewToolWindow == null) return ActionCallback.REJECTED;
+    ToolWindow projectViewToolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW);
+    if (projectViewToolWindow == null) {
+      return ActionCallback.REJECTED;
+    }
 
     ActionCallback result = new ActionCallback();
-    final Runnable runnable = () -> {
-      Runnable r = () -> projectView.selectCB(toSelectSupplier.get(), virtualFile, requestFocus).notify(result);
-      projectView.changeViewCB(ObjectUtils.chooseNotNull(viewId, ProjectViewImpl.getDefaultViewId()), subviewId).doWhenProcessed(r);
+    Runnable runnable = () -> {
+      projectView.changeViewCB(ObjectUtils.chooseNotNull(viewId, projectView.getDefaultViewId()), subviewId)
+        .doWhenProcessed(() -> projectView.selectCB(toSelectSupplier.get(), virtualFile, requestFocus).notify(result));
     };
 
     if (requestFocus) {

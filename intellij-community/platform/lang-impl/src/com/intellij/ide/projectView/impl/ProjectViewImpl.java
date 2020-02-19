@@ -683,7 +683,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     for (AbstractProjectViewPane pane : myUninitializedPanes) {
       doAddPane(pane);
     }
-    final Content[] contents = getContentManager().getContents();
+
+    Content[] contents = getContentManager().getContents();
     for (int i = 1; i < contents.length; i++) {
       Content content = contents[i];
       Content prev = contents[i - 1];
@@ -698,8 +699,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     // try to find saved selected view...
     for (Content content : contents) {
-      final String id = content.getUserData(ID_KEY);
-      final String subId = content.getUserData(SUB_ID_KEY);
+      String id = content.getUserData(ID_KEY);
+      String subId = content.getUserData(SUB_ID_KEY);
       if (id != null &&
           id.equals(mySavedPaneId) &&
           StringUtil.equals(subId, mySavedPaneSubId)) {
@@ -1129,11 +1130,10 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
         subId = pane.getSubId();
       }
     }
-    else {
-      if (subId != null) {
-        LOG.error("View doesn't have subviews: " + viewId + "; subId:" + subId + "; project: " + myProject);
-      }
+    else if (subId != null) {
+      LOG.error("View doesn't have subviews: " + viewId + "; subId:" + subId + "; project: " + myProject);
     }
+
     if (viewId.equals(myCurrentViewId) && Objects.equals(subId, myCurrentViewSubId)) {
       return ActionCallback.REJECTED;
     }
@@ -1241,12 +1241,13 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (currentProjectViewPane == null) { // can happen if not initialized yet
         return null;
       }
-      NodeDescriptor descriptor = TreeUtil.getLastUserObject(NodeDescriptor.class, currentProjectViewPane.getSelectedPath());
+      NodeDescriptor<?> descriptor = TreeUtil.getLastUserObject(NodeDescriptor.class, currentProjectViewPane.getSelectedPath());
       if (descriptor == null) {
         return null;
       }
+
       return descriptor instanceof AbstractTreeNode
-             ? ((AbstractTreeNode)descriptor).getValue()
+             ? ((AbstractTreeNode<?>)descriptor).getValue()
              : descriptor.getElement();
     }
 
@@ -1537,6 +1538,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       catch (InvalidDataException ignored) {
       }
     }
+
     Element panesElement = parentNode.getChild(ELEMENT_PANES);
     if (panesElement != null) {
       readPaneState(panesElement);
@@ -1556,15 +1558,14 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   private void readPaneState(@NotNull Element panesElement) {
-    final List<Element> paneElements = panesElement.getChildren(ELEMENT_PANE);
-
+    List<Element> paneElements = panesElement.getChildren(ELEMENT_PANE);
     for (Element paneElement : paneElements) {
       String paneId = paneElement.getAttributeValue(ATTRIBUTE_ID);
       if (StringUtil.isEmptyOrSpaces(paneId)) {
         continue;
       }
 
-      final AbstractProjectViewPane pane = myId2Pane.get(paneId);
+      AbstractProjectViewPane pane = myId2Pane.get(paneId);
       if (pane != null) {
         try {
           pane.readExternal(paneElement);
@@ -1764,7 +1765,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     if (myAbbreviatePackageNames.isEnabled(paneId)) myAbbreviatePackageNames.setSelected(abbreviatePackageNames);
   }
 
-  private static class SelectionInfo {
+  private static final class SelectionInfo {
     private final Object @NotNull [] myElements;
 
     private SelectionInfo(Object @NotNull [] elements) {
@@ -1775,6 +1776,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (viewPane == null) {
         return;
       }
+
       AbstractTreeBuilder treeBuilder = viewPane.getTreeBuilder();
       JTree tree = viewPane.myTree;
       if (treeBuilder != null) {

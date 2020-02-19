@@ -71,8 +71,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   private static final Logger LOG = Logger.getInstance(AbstractProjectViewPane.class);
   public static final ExtensionPointName<AbstractProjectViewPane> EP_NAME = ExtensionPointName.create("com.intellij.projectViewPane");
 
-  @NotNull
-  protected final Project myProject;
+  protected final @NotNull Project myProject;
   protected DnDAwareTree myTree;
   protected AbstractTreeStructure myTreeStructure;
   private AbstractTreeBuilder myTreeBuilder;
@@ -128,14 +127,11 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   protected final void fireTreeChangeListener() {
   }
 
-  @NotNull
-  public abstract String getTitle();
+  public abstract @NotNull String getTitle();
 
-  @NotNull
-  public abstract Icon getIcon();
+  public abstract @NotNull Icon getIcon();
 
-  @NotNull
-  public abstract String getId();
+  public abstract @NotNull String getId();
 
   @Nullable
   public final String getSubId() {
@@ -160,8 +156,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     return false;
   }
 
-  @NotNull
-  protected String getManualOrderOptionText() {
+  protected @NotNull String getManualOrderOptionText() {
     return IdeBundle.message("action.manual.order");
   }
 
@@ -754,7 +749,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     return true;
   }
 
-  private class MyDragSource implements DnDSource {
+  private final class MyDragSource implements DnDSource {
     @Override
     public boolean canStartDragging(DnDAction action, Point dragOrigin) {
       if ((action.getActionId() & DnDConstants.ACTION_COPY_OR_MOVE) == 0) return false;
