@@ -251,10 +251,12 @@ class DiagnosticReporterByTrackingStrategy(
                 )
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
                 val call = if (call.callElement is KtBinaryExpression) null else call
-                smartCastManager.checkAndRecordPossibleCast(
-                    dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
-                    recordExpressionType = false
-                )
+                if (!expressionArgument.valueArgument.isExternal()) {
+                    smartCastManager.checkAndRecordPossibleCast(
+                        dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
+                        recordExpressionType = false
+                    )
+                } else null
             }
             is ReceiverExpressionKotlinCallArgument -> {
                 trace.markAsReported()

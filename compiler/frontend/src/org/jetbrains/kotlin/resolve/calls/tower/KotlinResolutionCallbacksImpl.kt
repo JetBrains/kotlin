@@ -130,7 +130,7 @@ class KotlinResolutionCallbacksImpl(
             return createSimplePSICallArgument(
                 trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
                 CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
-                dataFlowValueFactory
+                dataFlowValueFactory, outerCallContext.call
             )
         }
 

@@ -303,7 +303,8 @@ internal fun createSimplePSICallArgument(
     contextForArgument.scope.ownerDescriptor, valueArgument,
     contextForArgument.dataFlowInfo, typeInfoForArgument,
     contextForArgument.languageVersionSettings,
-    contextForArgument.dataFlowValueFactory
+    contextForArgument.dataFlowValueFactory,
+    contextForArgument.call,
 )
 
 internal fun createSimplePSICallArgument(
@@ -314,7 +315,8 @@ internal fun createSimplePSICallArgument(
     dataFlowInfoBeforeThisArgument: DataFlowInfo,
     typeInfoForArgument: KotlinTypeInfo,
     languageVersionSettings: LanguageVersionSettings,
-    dataFlowValueFactory: DataFlowValueFactory
+    dataFlowValueFactory: DataFlowValueFactory,
+    call: Call
 ): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
@@ -331,10 +333,10 @@ internal fun createSimplePSICallArgument(
             // so we use a fast-path here to avoid calling transformToReceiverWithSmartCastInfo function
             ReceiverValueWithSmartCastInfo(expressionReceiver, emptySet(), isStable = true)
         } else {
+            val useDataFlowInfoBeforeArgument = call.callType == Call.CallType.CONTAINS
             transformToReceiverWithSmartCastInfo(
                 ownerDescriptor, bindingContext,
-                // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
-                typeInfoForArgument.dataFlowInfo,
+                if (useDataFlowInfoBeforeArgument) dataFlowInfoBeforeThisArgument else typeInfoForArgument.dataFlowInfo,
                 expressionReceiver,
                 languageVersionSettings,
                 dataFlowValueFactory
