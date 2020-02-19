@@ -976,6 +976,11 @@ public class CliTestGenerated extends AbstractCliTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js-dce"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
+        @TestMetadata("dceExtraHelp.args")
+        public void testDceExtraHelp() throws Exception {
+            runTest("compiler/testData/cli/js-dce/dceExtraHelp.args");
+        }
+
         @TestMetadata("dceHelp.args")
         public void testDceHelp() throws Exception {
             runTest("compiler/testData/cli/js-dce/dceHelp.args");
@@ -994,11 +999,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("invalidFilename.args")
         public void testInvalidFilename() throws Exception {
             runTest("compiler/testData/cli/js-dce/invalidFilename.args");
-        }
-
-        @TestMetadata("jsExtraHelp.args")
-        public void testJsExtraHelp() throws Exception {
-            runTest("compiler/testData/cli/js-dce/jsExtraHelp.args");
         }
 
         @TestMetadata("nonExistingSourcePath.args")
