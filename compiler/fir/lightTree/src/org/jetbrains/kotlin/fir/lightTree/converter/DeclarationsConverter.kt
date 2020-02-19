@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class DeclarationsConverter(
     session: FirSession,
-    val baseScopeProvider: FirScopeProvider,
+    private val baseScopeProvider: FirScopeProvider,
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
@@ -377,7 +377,7 @@ class DeclarationsConverter(
                 isInline = modifiers.hasInline()
             }
 
-            val classBuilder = if(status.modality == Modality.SEALED) {
+            val classBuilder = if (status.modality == Modality.SEALED) {
                 FirSealedClassBuilder()
             } else {
                 FirClassImplBuilder()
@@ -523,17 +523,13 @@ class DeclarationsConverter(
     private fun convertEnumEntry(enumEntry: LighterASTNode, classWrapper: ClassWrapper): FirEnumEntry {
         var modifiers = Modifier()
         lateinit var identifier: String
-        var hasInitializerList = false
         val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
         var classBodyNode: LighterASTNode? = null
         enumEntry.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.asText
-                INITIALIZER_LIST -> {
-                    hasInitializerList = true
-                    enumSuperTypeCallEntry += convertInitializerList(it)
-                }
+                INITIALIZER_LIST -> enumSuperTypeCallEntry += convertInitializerList(it)
                 CLASS_BODY -> classBodyNode = it
             }
         }
@@ -758,8 +754,12 @@ class DeclarationsConverter(
         val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
         val delegatedType =
             if (classWrapper.isObjectLiteral() || classWrapper.isInterface()) when {
-                isThis -> buildErrorTypeRef { diagnostic = FirSimpleDiagnostic("Constructor in object", DiagnosticKind.ConstructorInObject) }
-                else -> buildErrorTypeRef { diagnostic = FirSimpleDiagnostic("No super type", DiagnosticKind.Syntax) }
+                isThis -> buildErrorTypeRef {
+                    diagnostic = FirSimpleDiagnostic("Constructor in object", DiagnosticKind.ConstructorInObject)
+                }
+                else -> buildErrorTypeRef {
+                    diagnostic = FirSimpleDiagnostic("No super type", DiagnosticKind.Syntax)
+                }
             }
             else when {
                 isThis -> classWrapper.delegatedSelfTypeRef
@@ -871,15 +871,18 @@ class DeclarationsConverter(
                 }
                 status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
 
-                val receiver = delegateExpression?.let { expressionConverter.getAsFirExpression<FirExpression>(it, "Incorrect delegate expression") }
+                val receiver = delegateExpression?.let {
+                    expressionConverter.getAsFirExpression<FirExpression>(it, "Incorrect delegate expression")
+                }
                 generateAccessorsByDelegate(
-                    delegateBuilder,baseSession,
+                    delegateBuilder,
+                    baseSession,
                     member = false,
                     extension = false,
                     stubMode,
                     receiver
                 )
-            }else {
+            } else {
                 this.isLocal = false
                 receiverTypeRef = receiverType
                 symbol = FirPropertySymbol(callableIdForName(propertyName))
@@ -904,11 +907,13 @@ class DeclarationsConverter(
                 val receiver = delegateExpression?.let {
                     expressionConverter.getAsFirExpression<FirExpression>(it, "Should have delegate")
                 }
-                generateAccessorsByDelegate(delegateBuilder, baseSession,
+                generateAccessorsByDelegate(
+                    delegateBuilder, baseSession,
                     member = parentNode?.tokenType != KT_FILE,
                     extension = receiverType != null,
                     stubMode,
-                    receiver)
+                    receiver
+                )
             }
             annotations += modifiers.annotations
         }
@@ -1127,7 +1132,7 @@ class DeclarationsConverter(
                 typeParameters += firTypeParameters
             }
 
-            valueParametersList?.let { valueParameters += convertValueParameters(it).map { it.firValueParameter } }
+            valueParametersList?.let { list -> valueParameters += convertValueParameters(list).map { it.firValueParameter } }
             body = convertFunctionBody(block, expression)
             context.firFunctionTargets.removeLast()
         }.build().also {
@@ -1161,7 +1166,9 @@ class DeclarationsConverter(
         }
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-            return DeclarationsConverter(baseSession, baseScopeProvider, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
+            return DeclarationsConverter(
+                baseSession, baseScopeProvider, stubMode, blockTree, context
+            ).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(
                 buildExpressionStub().toReturn()
@@ -1224,7 +1231,9 @@ class DeclarationsConverter(
      */
     private fun convertExplicitDelegation(explicitDelegation: LighterASTNode): FirDelegatedTypeRef {
         lateinit var firTypeRef: FirTypeRef
-        var firExpression: FirExpression? = buildErrorExpression(explicitDelegation.toFirSourceElement(), FirSimpleDiagnostic("Should have delegate", DiagnosticKind.Syntax))
+        var firExpression: FirExpression? = buildErrorExpression(
+            explicitDelegation.toFirSourceElement(), FirSimpleDiagnostic("Should have delegate", DiagnosticKind.Syntax)
+        )
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
