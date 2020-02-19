@@ -6,12 +6,15 @@ import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil;
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -25,9 +28,7 @@ import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.EditorMarkupModelImpl;
 import com.intellij.openapi.editor.impl.event.MarkupModelListener;
-import com.intellij.openapi.editor.markup.AnalyzerStatus;
-import com.intellij.openapi.editor.markup.ErrorStripeRenderer;
-import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -41,16 +42,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.ui.ErrorsConfigurableProvider;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiCompiledElement;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.TextIcon;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.JBValue;
 import com.intellij.util.ui.UIUtil;
@@ -389,7 +386,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   public AnalyzerStatus getStatus(Editor editor) {
     if (PowerSaveMode.isEnabled()) {
       return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
-                                  "Code analysis is disabled in power save mode", this::initActions);
+                                  "Code analysis is disabled in power save mode", this::getUIController);
     }
     else {
       DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
@@ -397,7 +394,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       Font editorFont = editor.getComponent().getFont();
       Font font = editorFont.deriveFont(Font.PLAIN, editorFont.getSize() - JBUIScale.scale(2));
 
-      StringBuilder statusText = new StringBuilder();
+      StringBuilder statusTextBuilder = new StringBuilder();
       int currentSeverityErrors = 0;
 
       int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
@@ -410,8 +407,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
             name = StringUtil.pluralize(name);
           }
 
-          if (currentSeverityErrors > 0) statusText.append(", ");
-          statusText.append(count).append(" ").append(name);
+          if (currentSeverityErrors > 0) statusTextBuilder.append(", ");
+          statusTextBuilder.append(count).append(" ").append(name);
           currentSeverityErrors += count;
 
           statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
@@ -439,89 +436,173 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
         }
 
-        if (!status.errorAnalyzingFinished) statusText.append(" found so far");
-        return new AnalyzerStatus(statusIcon, statusText.toString(), this::initActions).withNavigation();
+        if (!status.errorAnalyzingFinished) statusTextBuilder.append(" found so far");
+        return new AnalyzerStatus(statusIcon, statusTextBuilder.toString(), this::getUIController).withNavigation();
       }
       else {
         if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
           TextIcon icon = new TextIcon("OFF", editor.getColorsScheme().getDefaultForeground(), null, 0);
           icon.setFont(font);
 
-          statusText.append("No analysis has been performed:<br/>").append(status.reasonWhyDisabled);
-          return new AnalyzerStatus(new LayeredIcon(icon), statusText.toString(), this::initActions);
+          statusTextBuilder.append("No analysis has been performed:<br/>").append(status.reasonWhyDisabled);
+          return new AnalyzerStatus(new LayeredIcon(icon), statusTextBuilder.toString(), this::getUIController);
         }
         else if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
           TextIcon icon = new TextIcon("Indexing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
           icon.setFont(font);
-          statusText.append("Code analysis has been suspended:<br/>").append(status.reasonWhySuspended);
-          return new AnalyzerStatus(new LayeredIcon(icon), statusText.toString(), this::initActions);
+          statusTextBuilder.append("Code analysis has been suspended:<br/>").append(status.reasonWhySuspended);
+          return new AnalyzerStatus(new LayeredIcon(icon), statusTextBuilder.toString(), this::getUIController);
         }
         else if (status.errorAnalyzingFinished) {
-          return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found", this::initActions);
+          return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found", this::getUIController);
         }
         else {
           TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
           icon.setFont(font);
-          return new AnalyzerStatus(new LayeredIcon(icon), "No problems found so far", this::initActions);
+          return new AnalyzerStatus(new LayeredIcon(icon), "No problems found so far", this::getUIController);
         }
       }
     }
   }
 
-  private AnAction initActions() {
-    MenuAction menuAction = new MenuAction();
+  private UIController myCurrentController; // This is cache. Don't access directly. Only via method below.
 
-    if (myProject != null) { // Configure inspections
-      menuAction.add(new DumbAwareAction(EditorBundle.message("hector.configure.inspections")) {
-        @Override
-        public void update(@NotNull AnActionEvent e) {
-          e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-          if (!myProject.isDisposed()) {
-            Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(myProject, ErrorsConfigurableProvider.class);
-            if (projectConfigurable != null) {
-              ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
-            }
-          }
-        }
-      });
+  private AnalyzerController getUIController() {
+    PsiFile psiFile = getPsiFile();
+    if (myCurrentController == null || myCurrentController.myPsiFile != psiFile) {
+      myCurrentController = new UIController(psiFile);
     }
 
-    menuAction.add(DaemonEditorPopup.createGotoGroup());
+    return myCurrentController;
+  }
 
-    if (myProject != null) { // Import popup
-      ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
-      PsiFile psiFile = ObjectUtils.notNull(getPsiFile()); // First in-the-method condition makes this fine.
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      assert virtualFile != null;
-      boolean notInLibrary = !fileIndex.isInLibrary(virtualFile) || fileIndex.isInContent(virtualFile);
+  private class UIController implements AnalyzerController {
+    private final PsiFile myPsiFile;
+    private final boolean notInLibrary;
+    private final AnAction myMenuAction;
+    private final List<LanguageHighlightLevel> myLevelsList;
 
-      if (notInLibrary) {
-        menuAction.addAll(Separator.create(), new DumbAwareAction() {
+    private UIController(PsiFile psiFile) {
+      myPsiFile = psiFile;
+
+      if (psiFile != null) {
+        ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        assert virtualFile != null;
+        notInLibrary = !fileIndex.isInLibrary(virtualFile) || fileIndex.isInContent(virtualFile);
+      }
+      else notInLibrary = true;
+
+      myMenuAction = initActions();
+      myLevelsList = initLevels();
+    }
+
+    private AnAction initActions() {
+      MenuAction result = new MenuAction();
+      if (myProject != null) { // Configure inspections
+        result.add(new DumbAwareAction(EditorBundle.message("hector.configure.inspections")) {
           @Override
           public void update(@NotNull AnActionEvent e) {
-            String actionText = myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile) ? "Don't show import tooltip": "Show import tooltip";
-            e.getPresentation().setText(actionText);
+            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
           }
 
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
-            boolean hintEnabled = myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile);
-            myDaemonCodeAnalyzer.setImportHintsEnabled(psiFile, !hintEnabled);
+            if (!myProject.isDisposed()) {
+              Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(myProject, ErrorsConfigurableProvider.class);
+              if (projectConfigurable != null) {
+                ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
+              }
+            }
           }
         });
       }
+
+      result.add(DaemonEditorPopup.createGotoGroup());
+
+      if (myProject != null) { // Import popup
+        result.addAll(Separator.create(), new DumbAwareAction() {
+          @Override
+          public void update(@NotNull AnActionEvent e) {
+            String actionText = myDaemonCodeAnalyzer.isImportHintsEnabled(myPsiFile) ? "Don't show import tooltip": "Show import tooltip";
+            e.getPresentation().setText(actionText);
+            e.getPresentation().setEnabled(notInLibrary);
+          }
+
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            boolean hintEnabled = myDaemonCodeAnalyzer.isImportHintsEnabled(myPsiFile);
+            myDaemonCodeAnalyzer.setImportHintsEnabled(myPsiFile, !hintEnabled);
+          }
+        });
+      }
+      return result;
     }
 
-    return menuAction;
+    private List<LanguageHighlightLevel> initLevels() {
+      List<LanguageHighlightLevel> result = new ArrayList<>();
+      if (myProject != null && !myProject.isDisposed()) {
+        FileViewProvider viewProvider = myPsiFile.getViewProvider();
+        HighlightingLevelManager hlManager = HighlightingLevelManager.getInstance(myProject);
+        for (Language language : viewProvider.getLanguages()) {
+          PsiFile psiRoot = viewProvider.getPsi(language);
+          result.add(new LanguageHighlightLevel(language, getAHLevel(hlManager.shouldHighlight(psiRoot), hlManager.shouldInspect(psiRoot))));
+        }
+      }
+      return result;
+    }
+
+    @NotNull
+    @Override
+    public AnAction getActionMenu() {
+      return myMenuAction;
+    }
+
+    @Override
+    @NotNull
+    public List<AHLevel> getAvailableLevels() {
+      return notInLibrary ? Arrays.asList(AHLevel.values()) : Arrays.asList(AHLevel.NONE, AHLevel.ERRORS);
+    }
+
+    @NotNull
+    @Override
+    public List<LanguageHighlightLevel> getHighlightLevels() {
+      return Collections.unmodifiableList(myLevelsList);
+    }
+
+    @Override
+    public void setHighLightLevel(@NotNull LanguageHighlightLevel level) {
+      if (myProject != null && !myProject.isDisposed() && !myLevelsList.contains(level)) {
+        FileViewProvider viewProvider = myPsiFile.getViewProvider();
+
+        PsiElement root = viewProvider.getPsi(level.getLanguage());
+        if (level.getLevel() == AHLevel.NONE) {
+          HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_HIGHLIGHTING);
+        }
+        else if (level.getLevel() == AHLevel.ERRORS) {
+          HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_INSPECTION);
+        }
+        else {
+          HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.FORCE_HIGHLIGHTING);
+        }
+
+        myLevelsList.replaceAll(l -> l.getLanguage().equals(level.getLanguage()) ? level : l);
+
+        InjectedLanguageManager.getInstance(myProject).dropFileCaches(myPsiFile);
+        myDaemonCodeAnalyzer.restart();
+      }
+    }
   }
 
   private static class MenuAction extends DefaultActionGroup implements HintManagerImpl.ActionToIgnore {
     private MenuAction() {
       setPopup(true);
     }
+  }
+
+  private static AHLevel getAHLevel(boolean highlight, boolean inspect) {
+    if (!highlight && !inspect) return AHLevel.NONE;
+    else if (highlight && !inspect) return AHLevel.ERRORS;
+    else return AHLevel.ALL;
   }
 }
