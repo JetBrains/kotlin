@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.PackageCodegenImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
@@ -45,6 +46,16 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
         )
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+
+        irProviders.map {
+            if (it is DeclarationStubGenerator) {
+                for (descriptor in symbolTable.functionDescriptorsWithNonClassParent()) {
+                    val parentClass = it.generateOrGetFacadeClass(descriptor)
+                    assert(parentClass != null)
+                    descriptor.owner.parent = parentClass!!
+                }
+            }
+        }
         JvmBackendFacade.doGenerateFilesInternal(
             state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions
         )
