@@ -56,7 +56,7 @@ private abstract class AppleTask @Inject constructor(
         get() = System.getProperty("xcodeProjBaseDir")?.let(::File) ?: project.buildDir.resolve("tmp/apple/${target.name}")
 
     protected val teamIDOrNull: String?
-        @Input get() = project.findProperty("apple.teamID")?.toString()
+        @Input @Optional get() = project.apple.teamID
 
     protected val teamID: String
         get() = teamIDOrNull
@@ -439,6 +439,8 @@ private open class DefaultAppleTarget @Inject constructor(
 }
 
 private open class AppleProjectExtensionImpl(project: Project, val intellijProject: com.intellij.openapi.project.Project?) : AppleProjectExtension {
+    override var teamID: String? = null
+
     override val targets: NamedDomainObjectContainer<AppleTarget> =
         project.container(AppleTarget::class.java, project.objects.newInstance(AppleTargetFactory::class.java, project))
 

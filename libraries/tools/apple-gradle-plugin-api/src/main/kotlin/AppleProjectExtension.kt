@@ -3,6 +3,7 @@ import org.gradle.api.Project
 import java.io.Serializable
 
 interface AppleProjectExtension : Serializable {
+    var teamID: String?
     val targets: NamedDomainObjectContainer<AppleTarget>
     val sourceSets: NamedDomainObjectContainer<AppleSourceSet>
 
