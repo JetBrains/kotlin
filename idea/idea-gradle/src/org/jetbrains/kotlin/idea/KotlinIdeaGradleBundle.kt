@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.AbstractBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
+import org.jetbrains.kotlin.util.AbstractKotlinBundle
 
 @NonNls
 private const val BUNDLE = "messages.KotlinIdeaGradleBundle"
 
-object KotlinIdeaGradleBundle : AbstractBundle(BUNDLE) {
+object KotlinIdeaGradleBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
     fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 }
