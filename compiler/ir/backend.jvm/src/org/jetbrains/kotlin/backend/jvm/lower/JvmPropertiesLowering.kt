@@ -55,7 +55,7 @@ class JvmPropertiesLowering(private val context: JvmBackendContext) : IrElementT
                 addIfNotNull(declaration.getter)
                 addIfNotNull(declaration.setter)
 
-                if (declaration.annotations.isNotEmpty()) {
+                if (!declaration.isFakeOverride && declaration.annotations.isNotEmpty()) {
                     add(createSyntheticMethodForAnnotations(declaration))
                 }
             }
