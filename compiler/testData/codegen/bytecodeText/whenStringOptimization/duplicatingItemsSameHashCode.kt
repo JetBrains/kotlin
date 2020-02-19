@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
-import kotlin.test.assertEquals
+// TODO KT-36846 Generate TABLESWITCH/LOOKUPSWITCH in case of matching hashCodes in JVM_IR
 
 fun foo(x : String) : String {
     assert("abz]".hashCode() == "aby|".hashCode())

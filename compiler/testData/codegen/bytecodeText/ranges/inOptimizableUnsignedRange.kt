@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36829 Optimize 'in' expressions in JVM_IR
 
 fun testUIntRangeLiteral(a: UInt, b: UInt) = 42u in a .. b
 
