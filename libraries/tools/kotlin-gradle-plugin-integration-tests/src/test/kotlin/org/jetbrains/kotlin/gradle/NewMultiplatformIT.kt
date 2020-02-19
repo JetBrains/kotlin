@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -247,42 +248,42 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testLibAndAppJsLegacy() = doTestLibAndAppJsBothCompilers(
         "sample-lib",
         "sample-app",
-        JsCompilerType.legacy
+        legacy
     )
 
     @Test
     fun testLibAndAppJsIr() = doTestLibAndAppJsBothCompilers(
         "sample-lib",
         "sample-app",
-        JsCompilerType.ir
+        ir
     )
 
     @Test
     fun testLibAndAppJsBoth() = doTestLibAndAppJsBothCompilers(
         "sample-lib",
         "sample-app",
-        JsCompilerType.both
+        both
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsLegacy() = doTestLibAndAppJsBothCompilers(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsCompilerType.legacy
+        legacy
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsIr() = doTestLibAndAppJsBothCompilers(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsCompilerType.ir
+        ir
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsBoth() = doTestLibAndAppJsBothCompilers(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        JsCompilerType.both
+        both
     )
 
     private fun doTestLibAndAppJsBothCompilers(
@@ -294,7 +295,17 @@ class NewMultiplatformIT : BaseGradleIT() {
         val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "both-js-lib-and-app")
 
         val compileTasksNames =
-            listOf("NodeJs", "Metadata").map { ":compileKotlin$it" }
+            listOf(
+                *(if (jsCompilerType != both) {
+                    arrayOf("NodeJs")
+                } else {
+                    arrayOf(
+                        "NodeJs${legacy.name.capitalize()}",
+                        "NodeJs${ir.name.capitalize()}",
+                    )
+                }),
+                "Metadata"
+            ).map { ":compileKotlin$it" }
 
         with(libProject) {
             build(
@@ -302,10 +313,10 @@ class NewMultiplatformIT : BaseGradleIT() {
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
                 assertSuccessful()
-                assertTasksExecuted(*compileTasksNames.toTypedArray(), ":nodeJsJar", ":metadataJar")
+                assertTasksExecuted(*compileTasksNames.toTypedArray(), ":metadataJar")
 
                 val groupDir = projectDir.resolve("repo/com/example")
-                val jsExtension = if (jsCompilerType == JsCompilerType.legacy) "jar" else "klib"
+                val jsExtension = if (jsCompilerType == legacy) "jar" else "klib"
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
                 val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
 
@@ -329,7 +340,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
 
                 when (jsCompilerType) {
-                    JsCompilerType.legacy -> {
+                    legacy -> {
                         val jsJar = ZipFile(groupDir.resolve(jsJarName))
                         val compiledJs = jsJar.getInputStream(jsJar.getEntry("sample-lib.js")).reader().readText()
                         Assert.assertTrue("function id(" in compiledJs)
@@ -337,7 +348,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         Assert.assertTrue("function expectedFun(" in compiledJs)
                         Assert.assertTrue("function main(" in compiledJs)
                     }
-                    JsCompilerType.ir -> {
+                    ir -> {
                         groupDir.resolve(jsJarName).exists()
                     }
                 }
@@ -355,15 +366,23 @@ class NewMultiplatformIT : BaseGradleIT() {
             // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
-            fun CompiledProject.checkAppBuild() {
+            fun CompiledProject.checkAppBuild(compilerType: JsCompilerType) {
                 assertSuccessful()
-                assertTasksExecuted(*compileTasksNames.toTypedArray())
+                val compileTaskNames = if (jsCompilerType == compilerType) {
+                    compileTasksNames.toTypedArray()
+                } else {
+                    arrayOf(
+                        ":compileKotlinNodeJs",
+                        ":compileKotlinMetadata"
+                    )
+                }
+                assertTasksExecuted(*compileTaskNames)
 
                 projectDir.resolve(targetClassesDir("metadata")).run {
                     Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
                 }
 
-                if (jsCompilerType == JsCompilerType.legacy) {
+                if (jsCompilerType == legacy) {
                     projectDir.resolve(targetClassesDir("nodeJs")).resolve("sample-app.js").readText().run {
                         Assert.assertTrue(contains("console.info"))
                         Assert.assertTrue(contains("function nodeJsMain("))
@@ -375,20 +394,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                 "assemble",
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
-                checkAppBuild()
+                checkAppBuild(jsCompilerType)
             }
 
-            if (jsCompilerType == JsCompilerType.both) {
+            if (jsCompilerType == both) {
                 listOf(
-                    JsCompilerType.legacy,
-                    JsCompilerType.ir
+                    legacy,
+                    ir
                 ).forEach {
                     build(
                         "assemble",
                         "--rerun-tasks",
                         options = defaultBuildOptions().copy(jsCompilerType = it)
                     ) {
-                        checkAppBuild()
+                        checkAppBuild(it)
                     }
                 }
             }
@@ -408,7 +427,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 "--rerun-tasks",
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
-                checkAppBuild()
+                checkAppBuild(jsCompilerType)
             }
         }
     }
