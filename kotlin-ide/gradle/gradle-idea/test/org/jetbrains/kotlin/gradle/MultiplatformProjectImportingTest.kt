@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.gradle
 
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleOrderEntry
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
@@ -43,7 +43,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         val depOrderEntry = getModule(moduleName)
             .rootManager
             .orderEntries
-            .filterIsInstance<ModuleOrderEntryImpl>()
+            .filterIsInstance<ModuleOrderEntry>()
             .first { it.moduleName == depModuleName }
         assert(depOrderEntry.isProductionOnTestDependency == expected)
     }
