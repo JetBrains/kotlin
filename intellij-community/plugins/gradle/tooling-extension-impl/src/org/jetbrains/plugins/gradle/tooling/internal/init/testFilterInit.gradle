@@ -41,6 +41,7 @@ gradle.taskGraph.beforeTask { Task task ->
 
   if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
     try {
+      task.outputs.upToDateWhen { false }
       if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
         def filter = task.getFilter()
         filter.setIncludePatterns(new String[0])

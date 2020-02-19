@@ -24,6 +24,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ import static org.jetbrains.plugins.gradle.settings.TestRunner.*;
  * @author Vladislav.Soroka
  */
 public abstract class GradleTestRunConfigurationProducer extends RunConfigurationProducer<ExternalSystemRunConfiguration> {
-  private static final List<String> TEST_SOURCE_SET_TASKS = Arrays.asList("cleanTest", "test");
+  private static final List<String> TEST_SOURCE_SET_TASKS = Collections.singletonList("test");
 
   protected static final Logger LOG = Logger.getInstance(GradleTestRunConfigurationProducer.class);
 
@@ -179,8 +180,7 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
         if (FileUtil.isAncestor(sourceFolder, sourcePath, false)) {
           String testName = testData.getTestName();
           String testTaskName = testData.getTestTaskName();
-          String clearTestTaskName = testData.getCleanTestTaskName();
-          List<String> tasks = ContainerUtil.newArrayList(clearTestTaskName, testTaskName);
+          List<String> tasks = new SmartList<>(testTaskName);
           testTasks.add(new TasksToRun.Impl(testName, tasks));
         }
       }
@@ -235,7 +235,7 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
 
     if (taskNode == null) return ContainerUtil.emptyList();
     String taskName = StringUtil.trimStart(taskNode.getData().getName(), taskPrefix);
-    tasks = Arrays.asList("clean" + StringUtil.capitalize(taskName), taskName);
+    tasks = Collections.singletonList(taskName);
     return ContainerUtil.map(tasks, task -> taskPrefix + task);
   }
 
