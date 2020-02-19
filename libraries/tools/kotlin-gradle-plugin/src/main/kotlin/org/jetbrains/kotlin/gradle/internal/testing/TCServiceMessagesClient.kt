@@ -432,6 +432,7 @@ internal open class TCServiceMessagesClient(
 
             descriptor = object : DefaultTestSuiteDescriptor(id, fullName) {
                 override fun getDisplayName(): String = fullNameWithoutRoot
+                override fun getClassName(): String? = fullNameWithoutRoot
                 override fun getOwnerBuildOperationId(): Any? = rootOperationId
                 override fun getParent(): TestDescriptorInternal = reportingParent.descriptor
                 override fun toString(): String = displayName
