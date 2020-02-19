@@ -10,7 +10,7 @@ import java.io.Serializable
 
 // For Gradle attributes
 @Suppress("EnumEntryName")
-enum class JsCompilerType : Named, Serializable {
+enum class KotlinJsCompilerType : Named, Serializable {
     legacy,
     ir,
     both;
@@ -24,13 +24,13 @@ enum class JsCompilerType : Named, Serializable {
     companion object {
         const val jsCompilerProperty = "kotlin.js.compiler"
 
-        fun byArgument(argument: String): JsCompilerType? =
-            JsCompilerType
+        fun byArgument(argument: String): KotlinJsCompilerType? =
+            KotlinJsCompilerType
                 .values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }
 
-fun String.removeJsCompilerSuffix(compilerType: JsCompilerType): String {
+fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.name)
     if (this != truncatedString) {
         return truncatedString

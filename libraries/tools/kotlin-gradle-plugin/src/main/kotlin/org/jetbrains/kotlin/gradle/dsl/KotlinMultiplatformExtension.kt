@@ -23,7 +23,7 @@ open class KotlinMultiplatformExtension :
     override lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
 
-    override lateinit var defaultJsCompilerType: JsCompilerType
+    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
         internal set
 
     @Suppress("unused") // DSL

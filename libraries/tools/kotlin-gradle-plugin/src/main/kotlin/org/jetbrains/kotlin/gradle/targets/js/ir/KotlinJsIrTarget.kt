@@ -9,7 +9,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
@@ -36,7 +36,7 @@ constructor(
         internal set
 
     val disambiguationClassifierInPlatform: String?
-        get() = disambiguationClassifier?.removeJsCompilerSuffix(JsCompilerType.ir)
+        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.ir)
 
     var producingType: KotlinJsProducingType? = null
 

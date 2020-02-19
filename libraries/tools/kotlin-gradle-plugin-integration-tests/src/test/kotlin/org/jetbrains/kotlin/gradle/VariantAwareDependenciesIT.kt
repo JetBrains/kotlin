@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 
@@ -42,7 +42,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.jar")
             }
 
-            gradleProperties().appendText(jsCompilerType(JsCompilerType.ir))
+            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.ir))
 
             testResolveAllConfigurations(
                 subproject = innerProject.projectName,

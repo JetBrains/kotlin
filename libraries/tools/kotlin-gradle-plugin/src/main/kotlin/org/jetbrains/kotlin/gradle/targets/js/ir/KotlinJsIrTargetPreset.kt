@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
@@ -45,7 +45,7 @@ open class KotlinJsIrTargetPreset(
     companion object {
         val PRESET_NAME = lowerCamelCaseName(
             "js",
-            JsCompilerType.ir.name
+            KotlinJsCompilerType.ir.name
         )
     }
 }
@@ -61,7 +61,7 @@ class KotlinJsIrSingleTargetPreset(
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
         return if (mixedMode!!) {
             super.provideTargetDisambiguationClassifier(target)
-                ?.removePrefix(target.name.removeJsCompilerSuffix(JsCompilerType.ir))
+                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.ir))
                 ?.decapitalize()
         } else {
             null

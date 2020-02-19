@@ -6,8 +6,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.internals.*
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.JsCompilerType.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -289,7 +289,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     private fun doTestLibAndAppJsBothCompilers(
         libProjectName: String,
         appProjectName: String,
-        jsCompilerType: JsCompilerType
+        jsCompilerType: KotlinJsCompilerType
     ) {
         val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "both-js-lib-and-app")
         val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "both-js-lib-and-app")
@@ -366,7 +366,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
-            fun CompiledProject.checkAppBuild(compilerType: JsCompilerType) {
+            fun CompiledProject.checkAppBuild(compilerType: KotlinJsCompilerType) {
                 assertSuccessful()
                 val compileTaskNames = if (jsCompilerType == compilerType) {
                     compileTasksNames.toTypedArray()

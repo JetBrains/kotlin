@@ -41,7 +41,7 @@ constructor(
         internal set
 
     val disambiguationClassifierInPlatform: String?
-        get() = disambiguationClassifier?.removeJsCompilerSuffix(JsCompilerType.legacy)
+        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.legacy)
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (irTarget == null)
@@ -73,7 +73,7 @@ constructor(
     ): KotlinVariant {
         return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
             irTarget?.let {
-                artifactTargetName = targetName.removeJsCompilerSuffix(JsCompilerType.legacy)
+                artifactTargetName = targetName.removeJsCompilerSuffix(KotlinJsCompilerType.legacy)
             }
         }
     }
@@ -198,7 +198,7 @@ constructor(
     companion object {
         val jsCompilerAttribute = Attribute.of(
             "org.jetbrains.kotlin.js.compiler",
-            JsCompilerType::class.java
+            KotlinJsCompilerType::class.java
         )
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
