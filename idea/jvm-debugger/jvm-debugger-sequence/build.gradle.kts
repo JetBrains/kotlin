@@ -7,7 +7,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(project(":idea:ide-common"))
 
-    compileOnly(toolsJar())
+    compileOnly(project(":dependencies:tools-jar-api"))
     compileOnly(intellijDep())
     Platform[192].orHigher {
         compileOnly(intellijPluginDep("java"))

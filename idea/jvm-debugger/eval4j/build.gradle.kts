@@ -7,10 +7,10 @@ dependencies {
     compile(kotlinStdlib())
     compile(project(":compiler:backend"))
 
-    compileOnly(toolsJar())
+    compileOnly(project(":dependencies:tools-jar-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
-    testCompileOnly(toolsJar())
+    testCompileOnly(project(":dependencies:tools-jar-api"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
     testCompile(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }

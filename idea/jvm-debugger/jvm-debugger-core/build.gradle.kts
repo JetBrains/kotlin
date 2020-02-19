@@ -11,7 +11,7 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
 
-    compileOnly(toolsJar())
+    compileOnly(project(":dependencies:tools-jar-api"))
     compileOnly(intellijDep())
     
     Platform[192].orHigher {
