@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.LighterASTTokenNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
@@ -638,14 +637,12 @@ class DeclarationsConverter(
             extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
         }
 
-        val status = FirDeclarationStatusImpl(
-            if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
-            Modality.FINAL
-        ).apply {
+        val explicitVisibility = if (primaryConstructor != null) modifiers.getVisibility() else null
+        val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility, Modality.FINAL).apply {
             isExpect = modifiers.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
-            isFromSealedClass = classWrapper.isSealed()
+            isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.PRIVATE
             isFromEnumClass = classWrapper.isEnum()
         }
 
@@ -711,11 +708,12 @@ class DeclarationsConverter(
             }
             else classWrapper.delegatedSelfTypeRef
 
-        val status = FirDeclarationStatusImpl(modifiers.getVisibility(), Modality.FINAL).apply {
+        val explicitVisibility = modifiers.getVisibility()
+        val status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
             isExpect = modifiers.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
-            isFromSealedClass = classWrapper.isSealed()
+            isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.PRIVATE
             isFromEnumClass = classWrapper.isEnum()
         }
 

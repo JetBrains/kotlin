@@ -472,11 +472,12 @@ class RawFirBuilder(
                 else -> Visibilities.UNKNOWN
             }
 
-            val status = FirDeclarationStatusImpl(this?.visibility ?: defaultVisibility(), Modality.FINAL).apply {
+            val explicitVisibility = this?.visibility
+            val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
                 isExpect = this@toFirConstructor?.hasExpectModifier() ?: false
                 isActual = this@toFirConstructor?.hasActualModifier() ?: false
                 isInner = owner.hasModifier(INNER_KEYWORD)
-                isFromSealedClass = owner.hasModifier(SEALED_KEYWORD)
+                isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.PRIVATE
                 isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
             }
             return buildPrimaryConstructor {
@@ -846,11 +847,12 @@ class RawFirBuilder(
                 source = this@toFirConstructor.toFirSourceElement()
                 session = baseSession
                 returnTypeRef = delegatedSelfTypeRef
-                status = FirDeclarationStatusImpl(visibility, Modality.FINAL).apply {
+                val explicitVisibility = visibility
+                status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
                     isExpect = hasExpectModifier()
                     isActual = hasActualModifier()
                     isInner = owner.hasModifier(INNER_KEYWORD)
-                    isFromSealedClass = owner.hasModifier(SEALED_KEYWORD)
+                    isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.PRIVATE
                     isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                 }
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
