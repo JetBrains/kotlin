@@ -78,7 +78,6 @@ class Element(val name: String, kind: Kind) : AbstractElement {
             val overrides = !result.add(field)
             if (overrides) {
                 val existingField = result.first { it == field }
-                if (field.name != "symbol" && field.type == existingField.type) println("Duplicate [element: $this, field: $field]")
                 existingField.fromParent = true
                 existingField.needsSeparateTransform = existingField.needsSeparateTransform || field.needsSeparateTransform
             }
