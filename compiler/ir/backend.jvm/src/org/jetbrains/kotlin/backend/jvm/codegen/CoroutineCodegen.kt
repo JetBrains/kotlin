@@ -116,6 +116,8 @@ internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspen
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
     when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+        JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
+        JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE,
         JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
         JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
         JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,

@@ -652,7 +652,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         function.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
                         function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
                         function.origin == JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE ||
-                        function.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
+                        function.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
+                        function.origin == JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
 
             private fun skip(function: IrFunction) =
                 !function.isSuspend ||
