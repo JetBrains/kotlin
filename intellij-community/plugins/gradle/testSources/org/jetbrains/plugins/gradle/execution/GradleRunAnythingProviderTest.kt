@@ -198,12 +198,12 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
         "successful",
         {
           assertThat(it).matches(
-            "(\\d+):(\\d+):(\\d+): Executing tasks 'taskWithArgs --my_args='test args' --quiet'...\n" +
+            "(\\d+):(\\d+):(\\d+)( AM| PM)?: Executing tasks 'taskWithArgs --my_args='test args' --quiet'...\n" +
             "\n" +
             "(?:Starting Gradle Daemon...\n" +
             "Gradle Daemon started in .* ms\n)?" +
             "test args\n" +
-            "(\\d+):(\\d+):(\\d+): Tasks execution finished 'taskWithArgs --my_args='test args' --quiet'.\n"
+            "(\\d+):(\\d+):(\\d+)( AM| PM)?: Tasks execution finished 'taskWithArgs --my_args='test args' --quiet'.\n"
           )
         }
       )
@@ -249,12 +249,12 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
         "successful",
         {
           assertThat(it).matches(
-            "(\\d+):(\\d+):(\\d+): Executing tasks 'taskWithArgs --my_args=test_args --quiet'...\n" +
+            "(\\d+):(\\d+):(\\d+)( AM| PM)?: Executing tasks 'taskWithArgs --my_args=test_args --quiet'...\n" +
             "\n" +
             "(?:Starting Gradle Daemon...\n" +
             "Gradle Daemon started in .* ms\n)?" +
             "test_args\n" +
-            "(\\d+):(\\d+):(\\d+): Tasks execution finished 'taskWithArgs --my_args=test_args --quiet'.\n"
+            "(\\d+):(\\d+):(\\d+)( AM| PM)?: Tasks execution finished 'taskWithArgs --my_args=test_args --quiet'.\n"
           )
         }
       )
@@ -271,12 +271,12 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
         "successful",
         {
           assertThat(it).matches(
-            "(\\d+):(\\d+):(\\d+): Executing tasks 'taskWithArgs --my_args test_args --quiet'...\n" +
+            "(\\d+):(\\d+):(\\d+)( AM| PM)?: Executing tasks 'taskWithArgs --my_args test_args --quiet'...\n" +
             "\n" +
             "(?:Starting Gradle Daemon...\n" +
             "Gradle Daemon started in .* ms\n)?" +
             "test_args\n" +
-            "(\\d+):(\\d+):(\\d+): Tasks execution finished 'taskWithArgs --my_args test_args --quiet'.\n"
+            "(\\d+):(\\d+):(\\d+)( AM| PM)?: Tasks execution finished 'taskWithArgs --my_args test_args --quiet'.\n"
           )
         }
       )
