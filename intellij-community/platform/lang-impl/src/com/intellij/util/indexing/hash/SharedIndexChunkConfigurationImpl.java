@@ -87,7 +87,7 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   }
 
   public SharedIndexChunkConfigurationImpl() throws IOException {
-    myChunkDescriptorEnumerator = new SynchronizedPersistentStringEnumerator(getSharedIndexConfigurationRoot().resolve("descriptors"));
+    myChunkDescriptorEnumerator = new PersistentStringEnumerator(getSharedIndexConfigurationRoot().resolve("descriptors"));
 
     myReadSystem = UncompressedZipFileSystem.create(getSharedIndexStorage());
     Disposer.register(ApplicationManager.getApplication(), () -> {
