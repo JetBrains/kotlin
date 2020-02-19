@@ -21292,6 +21292,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 public void testSmartCastOnReceiver() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/smartCastOnReceiver.kt");
                 }
+
+                @TestMetadata("stabilityOfSmartcastsAgainstGenericFunctions.kt")
+                public void testStabilityOfSmartcastsAgainstGenericFunctions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/stabilityOfSmartcastsAgainstGenericFunctions.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope")
