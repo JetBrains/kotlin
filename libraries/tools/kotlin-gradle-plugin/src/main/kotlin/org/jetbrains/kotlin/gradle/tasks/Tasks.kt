@@ -548,7 +548,10 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     internal val friendDependencies: List<String>
         get() {
             val filter = libraryFilter
-            return friendPaths.filter { filter(File(it)) }
+            return friendPaths.filter {
+                val file = File(it)
+                file.exists() && filter(file)
+            }
         }
 
     @Suppress("unused")
@@ -605,7 +608,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             .filter { it.exists() && libraryFilter(it) }
             .map { it.canonicalPath }
 
-        args.libraries = (dependencies + friendDependencies).distinct().let {
+        args.libraries = dependencies.distinct().let {
             if (it.isNotEmpty())
                 it.joinToString(File.pathSeparator) else
                 null

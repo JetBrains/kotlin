@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.util.*
@@ -211,7 +212,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
                 // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
                 files(
                     provider {
-                        listOfNotNull(tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archiveFile)
+                        listOfNotNull(tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archivePathCompatible)
                     }
                 )
             } else files()
