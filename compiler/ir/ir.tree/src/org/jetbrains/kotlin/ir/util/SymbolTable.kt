@@ -830,6 +830,17 @@ open class SymbolTable(private val signaturer: IdSignatureComposer) : ReferenceS
             else ->
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
+
+    fun functionDescriptorsWithNonClassParent(): Set<WrappedFunctionDescriptorWithContainerSource> {
+        val result = mutableSetOf<WrappedFunctionDescriptorWithContainerSource>()
+        for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
+            if (descriptor is WrappedFunctionDescriptorWithContainerSource
+                && descriptor.owner.parent !is IrClass) {
+                result.add(descriptor)
+            }
+        }
+        return result
+    }
 }
 
 inline fun <T, D : DeclarationDescriptor> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {
