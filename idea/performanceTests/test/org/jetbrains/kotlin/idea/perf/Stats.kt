@@ -20,8 +20,8 @@ typealias StatInfos = Map<String, Any>?
 
 class Stats(
     val name: String = "",
-    val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
-    val acceptanceStabilityLevel: Int = 25
+    private val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
+    private val acceptanceStabilityLevel: Int = 25
 ) : Closeable {
 
     private val perfTestRawDataMs = mutableListOf<Long>()
@@ -124,7 +124,8 @@ class Stats(
         setUp: (TestData<SV, TV>) -> Unit = { },
         test: (TestData<SV, TV>) -> Unit,
         tearDown: (TestData<SV, TV>) -> Unit = { },
-        profileEnabled: Boolean = false
+        profileEnabled: Boolean = false,
+        checkStability: Boolean = true
     ) {
 
         val warmPhaseData = PhaseData(
@@ -161,10 +162,13 @@ class Stats(
                     val stable = stabilityPercentage <= acceptanceStabilityLevel
                     printTestStarted(stabilityName)
                     printStatValue(stabilityName, stabilityPercentage)
-                    if (stable) {
+                    if (stable or !checkStability) {
                         printTestFinished(stabilityName)
                     } else {
-                        printTestFailed(stabilityName, "stability above $stabilityPercentage %")
+                        printTestFailed(
+                            stabilityName,
+                            "$testName stability is $stabilityPercentage %, above accepted level of $acceptanceStabilityLevel %"
+                        )
                     }
                 }
             } else {

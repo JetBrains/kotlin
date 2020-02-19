@@ -152,8 +152,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
         assertTrue("path $path does not exist, check README.md", File(projectPath).exists())
 
-        val warmUpIterations = if (fast) 0 else 1
-        val iterations = if (fast) 1 else 3
+        val warmUpIterations = if (fast) 0 else 5
+        val iterations = if (fast) 1 else 5
         val projectManagerEx = ProjectManagerEx.getInstanceEx()
 
         var lastProject: Project? = null
@@ -164,6 +164,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             stats(stats)
             warmUpIterations(warmUpIterations)
             iterations(iterations)
+            checkStability(!fast)
             test {
                 val project = if (!simpleModule) {
                     val project = loadProjectWithName(name = name, path = path)

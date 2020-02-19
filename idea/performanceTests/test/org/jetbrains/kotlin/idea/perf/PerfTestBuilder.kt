@@ -14,6 +14,7 @@ class PerfTestBuilder<SV, TV> {
     private lateinit var test: (TestData<SV, TV>) -> Unit
     private var tearDown: (TestData<SV, TV>) -> Unit = { }
     private var profileEnabled: Boolean = false
+    private var checkStability: Boolean = true
 
     fun run() {
         stats.perfTest(
@@ -23,7 +24,8 @@ class PerfTestBuilder<SV, TV> {
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profileEnabled = profileEnabled
+            profileEnabled = profileEnabled,
+            checkStability = checkStability
         )
     }
 
@@ -57,6 +59,10 @@ class PerfTestBuilder<SV, TV> {
 
     fun profileEnabled(profileEnabled: Boolean) {
         this.profileEnabled = profileEnabled
+    }
+
+    fun checkStability(checkStability: Boolean) {
+        this.checkStability = checkStability
     }
 }
 
