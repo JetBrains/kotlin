@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugi
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
@@ -35,10 +36,10 @@ class TemplatesComponent(
     private val templateSettingsComponent = TemplateSettingsComponent(valuesReadingContext) {
         if (MessagesEx.showOkCancelDialog(
                 component,
-                "Do you want to remove selected template from module",
-                "Remove selected template",
-                "Remove",
-                "Cancel",
+                KotlinNewProjectWizardBundle.message("editor.remove.template.description"),
+                KotlinNewProjectWizardBundle.message("editor.remove.template.title"),
+                KotlinNewProjectWizardBundle.message("editor.remove.button.remove"),
+                KotlinNewProjectWizardBundle.message("editor.remove.button.cancel"),
                 null
             ) == Messages.OK
         ) {
@@ -81,9 +82,9 @@ class ChooseTemplateComponent(
     private val onTemplateChosen: (Template) -> Unit
 ) : DynamicComponent(valuesReadingContext) {
     private enum class State(val text: String) {
-        MODULE_SELECTED_AND_TEMPLATES_AVAILABLE("You can configure a template for selected module"),
-        MODULE_SELECTED_AND_NO_TEMPLATES_AVAILABLE("No templates available for selected module"),
-        NO_MODULE_SELECTED("Please select a module to configure")
+        MODULE_SELECTED_AND_TEMPLATES_AVAILABLE(KotlinNewProjectWizardBundle.message("editor.template.can.configure.template")),
+        MODULE_SELECTED_AND_NO_TEMPLATES_AVAILABLE(KotlinNewProjectWizardBundle.message("editor.template.no.templates.available")),
+        NO_MODULE_SELECTED(KotlinNewProjectWizardBundle.message("editor.template.select.module"))
     }
 
     override val component: JPanel = object : JPanel() {
@@ -129,7 +130,7 @@ class ChooseTemplateComponent(
         statusText.clear()
         statusText.appendText(state.text)
         if (state == State.MODULE_SELECTED_AND_TEMPLATES_AVAILABLE) {
-            statusText.appendSecondaryText("Configure", SimpleTextAttributes.LINK_ATTRIBUTES) {
+            statusText.appendSecondaryText(KotlinNewProjectWizardBundle.message("editor.configure"), SimpleTextAttributes.LINK_ATTRIBUTES) {
                 showDialog()
             }
         }
@@ -139,7 +140,7 @@ class ChooseTemplateComponent(
     private fun showDialog() {
         val availableTemplates = availableTemplates
         if (availableTemplates.isEmpty()) {
-            MessagesEx.error(null, "No templates available for the selected module")
+            MessagesEx.error(null, KotlinNewProjectWizardBundle.message("editor.template.no.templates.available"))
         } else {
             val dialog = TemplateListDialog(availableTemplates, component)
             if (dialog.showAndGet()) {
@@ -176,7 +177,7 @@ private class TemplateListDialog(
         get() = templatesList.selectedValue
 
     init {
-        title = "Choose a template to configure"
+        title = KotlinNewProjectWizardBundle.message("editor.template.choose")
         init()
         if (values.isNotEmpty()) {
             templateDescriptionComponent.updateSelectedTemplate(values.first())
@@ -200,7 +201,7 @@ class TemplateDescriptionComponent(
     onRemoveButtonClicked: () -> Unit = {}
 ) : Component() {
     private val removeButton = if (needRemoveButton) {
-        hyperlinkLabel("Remove template", onClick = onRemoveButtonClicked)
+        hyperlinkLabel(KotlinNewProjectWizardBundle.message("editor.template.remove"), onClick = onRemoveButtonClicked)
     } else null
 
     private val titleLabel = label("", bold = true) {

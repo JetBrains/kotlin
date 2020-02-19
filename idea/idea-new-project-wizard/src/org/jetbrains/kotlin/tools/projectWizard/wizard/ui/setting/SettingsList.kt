@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 import com.intellij.ui.components.panels.VerticalLayout
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PanelWithStatusText
@@ -12,7 +13,7 @@ class SettingsList(
     settings: List<SettingReference<*, *>>,
     private val valuesReadingContext: ValuesReadingContext
 ) : DynamicComponent(valuesReadingContext) {
-    private val panel = PanelWithStatusText(VerticalLayout(5), "This module has no settings to configure")
+    private val panel = PanelWithStatusText(VerticalLayout(5), KotlinNewProjectWizardBundle.message("editor.no.configurable.settings"))
 
     private var settingComponents: List<Component> = emptyList()
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePla
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.BorderLayout
@@ -70,7 +71,7 @@ class SourcesetDependenciesSettingsComponent(
 private class ChooseModuleDialog(modules: List<Module>, parent: JComponent) : DialogWrapper(parent, false) {
     private val list = ImmutableSingleSelectableListWithIcon(
         values = modules,
-        emptyMessage = "There are no dependencies to add",
+        emptyMessage = KotlinNewProjectWizardBundle.message("editor.no.dependencies.to.add"),
         renderValue = { value ->
             renderModule(value)
         }
@@ -79,7 +80,7 @@ private class ChooseModuleDialog(modules: List<Module>, parent: JComponent) : Di
     override fun createCenterPanel() = panel {
         preferredSize = Dimension(preferredSize.width, 300)
         add(
-            label("Please select the modules to add as dependencies:")
+            label(KotlinNewProjectWizardBundle.message("editor.select.dependency.modules"))
                 .bordered(
                     needLineBorder = false,
                     needInnerEmptyBorder = false,
@@ -94,7 +95,7 @@ private class ChooseModuleDialog(modules: List<Module>, parent: JComponent) : Di
         get() = list.selectedValue
 
     init {
-        title = "Choose Modules"
+        title = KotlinNewProjectWizardBundle.message("editor.choose.modules")
         init()
     }
 }

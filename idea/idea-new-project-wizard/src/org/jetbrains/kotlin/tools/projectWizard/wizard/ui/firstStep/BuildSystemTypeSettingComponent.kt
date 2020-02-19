@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
@@ -28,7 +29,7 @@ class BuildSystemTypeSettingComponent(
     override val uiComponent: DropDownComponent<BuildSystemType> = DropDownComponent(
         valuesReadingContext,
         setting.type.values,
-        labelText = "Build System",
+        labelText = KotlinNewProjectWizardBundle.message("setting.build.system.label"),
         filter = { value -> setting.type.filter(valuesReadingContext, reference, value) },
         validator = setting.validator,
         iconProvider = BuildSystemType::icon,

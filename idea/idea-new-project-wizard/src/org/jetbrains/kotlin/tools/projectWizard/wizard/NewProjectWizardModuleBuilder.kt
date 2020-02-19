@@ -57,8 +57,11 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
         private const val DEFAULT_GROUP_ID = "me.user"
-        private val projectNameValidator = StringValidators.shouldBeValidIdentifier("Project name", setOf('-', '_'))
-        private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
+        private val projectNameValidator = StringValidators.shouldBeValidIdentifier(
+            KotlinNewProjectWizardBundle.message("editor.entity.project.name"),
+            setOf('-', '_')
+        )
+        private val INVALID_PROJECT_NAME_MESSAGE = KotlinNewProjectWizardBundle.message("error.invalid.project.name")
     }
 
     override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
@@ -88,7 +91,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             phases = GenerationPhase.startingFrom(GenerationPhase.FIRST_STEP)
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }
-            Messages.showErrorDialog(project, errorMessages, "The following errors arose during project generation")
+            Messages.showErrorDialog(project, errorMessages, KotlinNewProjectWizardBundle.message("error.following"))
         }.isSuccess
         if (success) {
             val projectCreationStats = ProjectCreationStats(
@@ -179,7 +182,7 @@ abstract class WizardStep(protected val wizard: IdeWizard, private val phase: Ge
             is Success<*> -> true
             is Failure -> {
                 val messages = result.errors.joinToString(separator = "\n") { it.message }
-                throw ConfigurationException(messages, "Validation Error")
+                throw ConfigurationException(messages, KotlinNewProjectWizardBundle.message("error.validation"))
             }
         }
 }
