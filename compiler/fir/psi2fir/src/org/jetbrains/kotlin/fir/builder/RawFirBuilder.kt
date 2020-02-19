@@ -472,6 +472,8 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
                 isExpect = this@toFirConstructor?.hasExpectModifier() ?: false
                 isActual = this@toFirConstructor?.hasActualModifier() ?: false
                 isInner = owner.hasModifier(INNER_KEYWORD)
+                isFromSealedClass = owner.hasModifier(SEALED_KEYWORD)
+                isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
             }
             return buildPrimaryConstructor {
                 source = constructorSource
@@ -842,6 +844,8 @@ class RawFirBuilder(session: FirSession, val baseScopeProvider: FirScopeProvider
                     isExpect = hasExpectModifier()
                     isActual = hasActualModifier()
                     isInner = owner.hasModifier(INNER_KEYWORD)
+                    isFromSealedClass = owner.hasModifier(SEALED_KEYWORD)
+                    isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                 }
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
                 delegatedConstructor = getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef, hasPrimaryConstructor)

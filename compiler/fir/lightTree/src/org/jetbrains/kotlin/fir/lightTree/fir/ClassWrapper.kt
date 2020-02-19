@@ -40,11 +40,11 @@ class ClassWrapper(
         return classKind == ClassKind.OBJECT
     }
 
-    private fun isSealed(): Boolean {
+    fun isSealed(): Boolean {
         return modifiers.hasModality(Modality.SEALED)
     }
 
-    private fun isEnum(): Boolean {
+    fun isEnum(): Boolean {
         return modifiers.isEnum()
     }
 

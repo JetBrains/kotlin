@@ -645,6 +645,8 @@ class DeclarationsConverter(
             isExpect = modifiers.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
+            isFromSealedClass = classWrapper.isSealed()
+            isFromEnumClass = classWrapper.isEnum()
         }
 
         return PrimaryConstructor(
@@ -713,6 +715,8 @@ class DeclarationsConverter(
             isExpect = modifiers.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
+            isFromSealedClass = classWrapper.isSealed()
+            isFromEnumClass = classWrapper.isEnum()
         }
 
         val target = FirFunctionTarget(labelName = null, isLambda = false)

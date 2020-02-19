@@ -263,6 +263,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
     }
 
+    @TestMetadata("sealedClass.kt")
+    public void testSealedClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/sealedClass.kt");
+    }
+
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/simpleClass.kt");
