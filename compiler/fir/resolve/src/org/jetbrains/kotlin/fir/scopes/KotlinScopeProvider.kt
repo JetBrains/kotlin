@@ -47,7 +47,10 @@ class KotlinScopeProvider(
                     if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                     val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                     if (symbol is FirRegularClassSymbol) {
-                        symbol.fir.scope(substitutor(symbol, useSiteSuperType, useSiteSession), useSiteSession, scopeSession)
+                        symbol.fir.scope(
+                            substitutor(symbol, useSiteSuperType, useSiteSession),
+                            useSiteSession, scopeSession, skipPrivateMembers = true
+                        )
                     } else {
                         null
                     }
@@ -80,10 +83,15 @@ class KotlinScopeProvider(
 data class ConeSubstitutionScopeKey(val substitutor: ConeSubstitutor) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
 fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
-    return scope(ConeSubstitutor.Empty, useSiteSession, scopeSession)
+    return scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
 }
 
-fun FirClass<*>.scope(substitutor: ConeSubstitutor, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
+internal fun FirClass<*>.scope(
+    substitutor: ConeSubstitutor,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    skipPrivateMembers: Boolean
+): FirScope {
     val basicScope = scopeProvider.getUseSiteMemberScope(
         this, useSiteSession, scopeSession
     )
@@ -92,6 +100,6 @@ fun FirClass<*>.scope(substitutor: ConeSubstitutor, useSiteSession: FirSession, 
     return scopeSession.getOrBuild(
         this, ConeSubstitutionScopeKey(substitutor)
     ) {
-        FirClassSubstitutionScope(useSiteSession, basicScope, scopeSession, substitutor)
+        FirClassSubstitutionScope(useSiteSession, basicScope, scopeSession, substitutor, skipPrivateMembers)
     }
 }

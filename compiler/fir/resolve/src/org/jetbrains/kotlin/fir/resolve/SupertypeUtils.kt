@@ -94,9 +94,11 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
             // to determine parameter types properly (e.g. String, String instead of K, V)
             val javaTypeParameters = javaClass.typeParameters
             val javaSubstitution = createSubstitution(javaTypeParameters, typeArguments, session)
-            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution)
+            FirClassSubstitutionScope(
+                session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution, skipPrivateMembers = true
+            )
         } else {
-            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution)
+            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution, skipPrivateMembers = true)
         }
     }
 }

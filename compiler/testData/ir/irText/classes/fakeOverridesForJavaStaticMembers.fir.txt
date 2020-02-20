@@ -17,10 +17,6 @@ FILE fqName:<root> fileName:/fakeOverridesForJavaStaticMembers.kt
       overridden:
         public/*package*/ open fun packagePrivateStaticMethod (): kotlin.Unit declared in a.Base
       $this: VALUE_PARAMETER name:<this> type:a.Base
-    FUN FAKE_OVERRIDE name:privateStaticMethod visibility:private modality:OPEN <> ($this:a.Base) returnType:kotlin.Unit [fake_override]
-      overridden:
-        private open fun privateStaticMethod (): kotlin.Unit declared in a.Base
-      $this: VALUE_PARAMETER name:<this> type:a.Base
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

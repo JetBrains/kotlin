@@ -33,7 +33,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 else -> emptyMap()
             }
 
-            fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession)
+            fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession, skipPrivateMembers = false)
         }
         is ConeTypeParameterType -> {
             // TODO: support LibraryTypeParameterSymbol or get rid of it

@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
@@ -33,7 +31,8 @@ class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteMemberScope: FirScope,
     scopeSession: ScopeSession,
-    private val substitutor: ConeSubstitutor
+    private val substitutor: ConeSubstitutor,
+    private val skipPrivateMembers: Boolean
 ) : FirScope() {
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
@@ -43,8 +42,9 @@ class FirClassSubstitutionScope(
 
     constructor(
         session: FirSession, useSiteMemberScope: FirScope, scopeSession: ScopeSession,
-        substitution: Map<FirTypeParameterSymbol, ConeKotlinType>
-    ) : this(session, useSiteMemberScope, scopeSession, substitutorByMap(substitution))
+        substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+        skipPrivateMembers: Boolean
+    ) : this(session, useSiteMemberScope, scopeSession, substitutorByMap(substitution), skipPrivateMembers)
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
@@ -101,6 +101,7 @@ class FirClassSubstitutionScope(
             is FirConstructorSymbol -> return original
             else -> throw AssertionError("Should not be here")
         }
+        if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
 
         val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(member)
 
@@ -170,6 +171,7 @@ class FirClassSubstitutionScope(
     private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
+        if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
 
         val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
         val newReceiverType = receiverType?.substitute()
@@ -187,6 +189,7 @@ class FirClassSubstitutionScope(
     private fun createFakeOverrideField(original: FirFieldSymbol): FirFieldSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
+        if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
         val newReturnType = returnType.substitute() ?: return original
@@ -197,6 +200,7 @@ class FirClassSubstitutionScope(
     private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir as FirSyntheticProperty
+        if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
         val newReturnType = returnType.substitute()

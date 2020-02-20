@@ -206,7 +206,7 @@ class Fir2IrVisitor(
                         declarations += irFunction.setParentByParentStack().withFunction {
                             setFunctionContent(irFunction.descriptor, originalFunction, firOverriddenSymbol = baseSymbol)
                         }
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION) {
+                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.visibility != Visibilities.PRIVATE) {
                         // Trivial fake override case
                         val fakeOverrideSymbol =
                             FirClassSubstitutionScope.createFakeOverrideFunction(session, originalFunction, functionSymbol)
@@ -234,7 +234,7 @@ class Fir2IrVisitor(
                         declarations += irProperty.setParentByParentStack().withProperty {
                             setPropertyContent(irProperty.descriptor, originalProperty, firOverriddenSymbol = baseSymbol)
                         }
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION) {
+                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.visibility != Visibilities.PRIVATE) {
                         // Trivial fake override case
                         val fakeOverrideSymbol =
                             FirClassSubstitutionScope.createFakeOverrideProperty(session, originalProperty, propertySymbol)
