@@ -322,8 +322,13 @@ class Fir2IrDeclarationStorage(
         }.declareSupertypesAndTypeParameters(anonymousObject)
     }
 
+    // TODO: change index default to -1
     private fun getIrTypeParameter(typeParameter: FirTypeParameter, index: Int = 0): IrTypeParameter {
         return typeParameterCache[typeParameter] ?: typeParameter.run {
+            // Yet I don't want to enable this requirement because it breaks some tests
+            // However, if we get here it *should* mean that type parameter index is given explicitly
+            // At this moment (20.02.2020) this requirement breaks 11/355 Fir2IrText tests
+            // require(index != -1)
             val descriptor = WrappedTypeParameterDescriptor()
             val origin = IrDeclarationOrigin.DEFINED
             val irTypeParameter =
