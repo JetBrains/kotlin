@@ -45,7 +45,7 @@ private val CHANGED_FILES_KEY = Key<LinkedHashMap<ComponentStoreImpl, LinkedHash
 private val CHANGED_SCHEMES_KEY = Key<LinkedHashMap<SchemeChangeApplicator, LinkedHashSet<SchemeChangeEvent>>>("CHANGED_SCHEMES_KEY")
 
 /**
- * This service is temporary allowed to be overriden to support reloading of new project model entities. It should be removed after merging
+ * This service is temporary allowed to be overridden to support reloading of new project model entities. It should be removed after merging
  * new project model modules to community project.
  */
 @ApiStatus.Internal
@@ -319,17 +319,18 @@ fun askToRestart(store: IComponentStore, notReloadableComponents: Collection<Str
     message.append("reload project?")
   }
 
-  if (Messages.showYesNoDialog(message.toString(), "$storeName Files Changed", Messages.getQuestionIcon()) == Messages.YES) {
-    if (changedStorages != null) {
-      for (storage in changedStorages) {
-        if (storage is StateStorageBase<*>) {
-          storage.disableSaving()
-        }
+  if (Messages.showYesNoDialog(message.toString(), "$storeName Files Changed", Messages.getQuestionIcon()) != Messages.YES) {
+    return false
+  }
+
+  if (changedStorages != null) {
+    for (storage in changedStorages) {
+      if (storage is StateStorageBase<*>) {
+        storage.disableSaving()
       }
     }
-    return true
   }
-  return false
+  return true
 }
 
 internal enum class ReloadComponentStoreStatus {
