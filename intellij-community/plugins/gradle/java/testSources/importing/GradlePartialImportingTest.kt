@@ -51,6 +51,8 @@ class GradlePartialImportingTest : BuildViewMessagesImportingTestCase() {
       "prop1=val1_inc\n" +
       "prop2=val2_inc\n"
     )
+
+    cleanupBeforeReImport()
     ExternalSystemUtil.refreshProject(
       projectPath,
       ImportSpecBuilder(myProject, SYSTEM_ID)
@@ -91,6 +93,8 @@ class GradlePartialImportingTest : BuildViewMessagesImportingTestCase() {
       "prop1=error\n" +
       "prop2=val22\n"
     )
+
+    cleanupBeforeReImport()
     ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(myProject, SYSTEM_ID).use(ProgressExecutionMode.MODAL_SYNC))
 
     if (currentGradleBaseVersion >= GradleVersion.version("4.8")) {
@@ -110,6 +114,11 @@ class GradlePartialImportingTest : BuildViewMessagesImportingTestCase() {
       )
       assertReceivedModels(mapOf("prop1" to "error"), mapOf("prop2" to "val22"))
     }
+  }
+
+  private fun cleanupBeforeReImport() {
+    myProject.getService(ModelConsumer::class.java).projectLoadedModels.clear()
+    myProject.getService(ModelConsumer::class.java).buildFinishedModels.clear()
   }
 
   private fun createAndImportTestProject() {
@@ -261,7 +270,6 @@ internal class TestProjectModelContributor() : ProjectModelContributor {
     resolverContext: ProjectResolverContext
   ) {
     val modelConsumer = resolverContext.externalSystemTaskId.findProject()!!.getService(ModelConsumer::class.java)
-    modelConsumer.clear()
     toolingModelsProvider.projects().forEach {
       modelConsumer.projectLoadedModels.add(it to toolingModelsProvider.getProjectModel(it, ProjectLoadedModel::class.java)!!)
       modelConsumer.buildFinishedModels.add(it to toolingModelsProvider.getProjectModel(it, BuildFinishedModel::class.java)!!)
@@ -272,12 +280,7 @@ internal class TestProjectModelContributor() : ProjectModelContributor {
 internal data class ModelConsumer(
   val projectLoadedModels: MutableList<Pair<Project, ProjectLoadedModel>> = mutableListOf(),
   val buildFinishedModels: MutableList<Pair<Project, BuildFinishedModel>> = mutableListOf()
-) {
-  fun clear() {
-    projectLoadedModels.clear()
-    buildFinishedModels.clear()
-  }
-}
+)
 
 data class ProjectLoadedModel(val map: Map<*, *>) : Serializable
 data class BuildFinishedModel(val map: Map<*, *>) : Serializable
