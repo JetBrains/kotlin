@@ -195,7 +195,7 @@ public abstract class AnalysisProblemsViewPanel extends SimpleToolWindowPanel im
 
   @NotNull
   protected Icon getStatusIcon() {
-    return AllIcons.General.Warning;
+    return AllIcons.Toolwindows.Problems;
   }
 
   protected void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group) {

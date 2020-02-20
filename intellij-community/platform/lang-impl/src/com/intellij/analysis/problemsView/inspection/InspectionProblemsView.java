@@ -47,7 +47,7 @@ public class InspectionProblemsView implements PersistentStateComponent<Inspecti
   private final Alarm myAlarm;
 
   @NotNull
-  private Icon myCurrentIcon = AllIcons.General.Warning;
+  private Icon myCurrentIcon = AllIcons.Toolwindows.NoEvents;
   private boolean myAnalysisIsBusy;
 
   private Notification myNotification;
