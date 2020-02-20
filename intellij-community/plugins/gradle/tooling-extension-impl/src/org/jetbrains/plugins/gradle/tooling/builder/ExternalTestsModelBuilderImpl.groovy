@@ -72,7 +72,6 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
       def defaultExternalTestSourceMapping = new DefaultExternalTestSourceMapping()
       defaultExternalTestSourceMapping.testName = task.name
       defaultExternalTestSourceMapping.testTaskPath = task.path
-      defaultExternalTestSourceMapping.cleanTestTaskPath = taskProjectPath + ":" + cleanTestTaskName
       defaultExternalTestSourceMapping.sourceFolders = sourceFolders
       testSourceMappings.add(defaultExternalTestSourceMapping)
     }

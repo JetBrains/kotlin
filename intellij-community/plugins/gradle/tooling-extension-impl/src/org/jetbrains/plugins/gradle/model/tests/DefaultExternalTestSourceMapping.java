@@ -12,8 +12,6 @@ public class DefaultExternalTestSourceMapping implements ExternalTestSourceMappi
   private String testName;
   @Nullable
   private String testTaskPath;
-  @Nullable
-  private String cleanTestTaskPath;
   @NotNull
   private Set<String> sourceFolders = Collections.emptySet();
 
@@ -49,17 +47,6 @@ public class DefaultExternalTestSourceMapping implements ExternalTestSourceMappi
     this.testTaskPath = testTaskPath;
   }
 
-  @NotNull
-  @Override
-  public String getCleanTestTaskPath() {
-    assert cleanTestTaskPath != null;
-    return cleanTestTaskPath;
-  }
-
-  public void setCleanTestTaskPath(@NotNull String cleanTestTaskPath) {
-    this.cleanTestTaskPath = cleanTestTaskPath;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -69,7 +56,6 @@ public class DefaultExternalTestSourceMapping implements ExternalTestSourceMappi
 
     if (testName != null ? !testName.equals(mapping.testName) : mapping.testName != null) return false;
     if (testTaskPath != null ? !testTaskPath.equals(mapping.testTaskPath) : mapping.testTaskPath != null) return false;
-    if (cleanTestTaskPath != null ? !cleanTestTaskPath.equals(mapping.cleanTestTaskPath) : mapping.cleanTestTaskPath != null) return false;
     if (!sourceFolders.equals(mapping.sourceFolders)) return false;
 
     return true;
@@ -79,7 +65,6 @@ public class DefaultExternalTestSourceMapping implements ExternalTestSourceMappi
   public int hashCode() {
     int result = testName != null ? testName.hashCode() : 0;
     result = 31 * result + (testTaskPath != null ? testTaskPath.hashCode() : 0);
-    result = 31 * result + (cleanTestTaskPath != null ? cleanTestTaskPath.hashCode() : 0);
     result = 31 * result + sourceFolders.hashCode();
     return result;
   }

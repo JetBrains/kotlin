@@ -237,9 +237,8 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
       for (ExternalTestSourceMapping testSourceMapping : externalTestsModel.getTestSourceMappings()) {
         String testName = testSourceMapping.getTestName();
         String testTaskName = testSourceMapping.getTestTaskPath();
-        String cleanTestTaskName = testSourceMapping.getCleanTestTaskPath();
         Set<String> sourceFolders = testSourceMapping.getSourceFolders();
-        TestData testData = new TestData(GradleConstants.SYSTEM_ID, testName, testTaskName, cleanTestTaskName, sourceFolders);
+        TestData testData = new TestData(GradleConstants.SYSTEM_ID, testName, testTaskName, sourceFolders);
         ideModule.createChild(ProjectKeys.TEST, testData);
       }
     }

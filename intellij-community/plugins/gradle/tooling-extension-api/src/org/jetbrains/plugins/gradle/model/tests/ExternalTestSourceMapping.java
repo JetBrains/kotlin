@@ -15,8 +15,5 @@ public interface ExternalTestSourceMapping extends Serializable {
   String getTestTaskPath();
 
   @NotNull
-  String getCleanTestTaskPath();
-
-  @NotNull
   Set<String> getSourceFolders();
 }

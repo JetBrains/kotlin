@@ -98,7 +98,6 @@ public class ExternalTestsSerializationService implements SerializationService<E
         if (isAdded) {
           writeString(writer, "testName", testSourceMapping.getTestName());
           writeString(writer, "testTaskPath", testSourceMapping.getTestTaskPath());
-          writeString(writer, "cleanTestTaskPath", testSourceMapping.getCleanTestTaskPath());
           writeStrings(writer, "sourceFolders", testSourceMapping.getSourceFolders());
         }
         writer.stepOut();
@@ -146,7 +145,6 @@ public class ExternalTestsSerializationService implements SerializationService<E
           DefaultExternalTestSourceMapping mapping = new DefaultExternalTestSourceMapping();
           mapping.setTestName(readString(reader, "testName"));
           mapping.setTestTaskPath(assertNotNull(readString(reader, "testTaskPath")));
-          mapping.setCleanTestTaskPath(assertNotNull(readString(reader, "cleanTestTaskPath")));
           mapping.setSourceFolders(readStringSet(reader));
           return mapping;
         }
