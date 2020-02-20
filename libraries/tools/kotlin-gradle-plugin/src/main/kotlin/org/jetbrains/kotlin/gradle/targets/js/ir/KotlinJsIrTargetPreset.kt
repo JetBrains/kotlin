@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsIrTargetPreset(
@@ -28,7 +25,28 @@ open class KotlinJsIrTargetPreset(
         get() = KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode)
+        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
+            if (!mixedMode) {
+                project.whenEvaluated {
+                    if (!isBrowserConfigured && !isNodejsConfigured) {
+                        project.logger.warn(
+                            """
+                                Choose sub target (or both), for which js is necessary
+                                In next releases it will be error
+                                Use
+                                kotlin {
+                                    js {
+                                        // Affect in which tests are executed and final dist (in browser is only one bundle file)
+                                        browser()
+                                        nodejs()
+                                    }
+                                }
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+        }
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =

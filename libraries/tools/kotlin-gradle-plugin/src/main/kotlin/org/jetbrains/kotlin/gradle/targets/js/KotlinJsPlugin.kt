@@ -39,6 +39,23 @@ open class KotlinJsPlugin(
             defaultJsCompilerType = PropertiesProvider(project).jsCompiler
         }
 
+        project.afterEvaluate {
+            checkNotNull(kotlinExtension._target) {
+                """
+                    Need to initialize js target.
+                    Use 
+                    kotlin {
+                        js {
+                            // Choose sub target (or both), for which js is necessary
+                            // Affect in which tests are executed and final dist (in browser is only one bundle file)
+                            browser()
+                            nodejs()
+                        }
+                    }
+                """.trimIndent()
+            }
+        }
+
         // Explicitly create configurations for main and test
         // It is because in single platform we want to declare dependencies with methods not with strings in Kotlin DSL
         // implementation("foo") instead of "implementation"("foo")

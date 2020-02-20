@@ -61,7 +61,8 @@ constructor(
 
     override val browser by browserLazyDelegate
 
-    override val isBrowserConfigured: Boolean = browserLazyDelegate.isInitialized()
+    override val isBrowserConfigured: Boolean
+        get() = browserLazyDelegate.isInitialized()
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
@@ -82,7 +83,8 @@ constructor(
 
     override val nodejs by nodejsLazyDelegate
 
-    override val isNodejsConfigured: Boolean = nodejsLazyDelegate.isInitialized()
+    override val isNodejsConfigured: Boolean
+        get() = nodejsLazyDelegate.isInitialized()
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
