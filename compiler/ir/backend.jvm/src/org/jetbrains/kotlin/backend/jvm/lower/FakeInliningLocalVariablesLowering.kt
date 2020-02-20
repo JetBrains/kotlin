@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -61,7 +62,8 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
             body = irBlockBody {
                 // Create temporary variable, but make sure it's origin is `DEFINED` so that
                 // it will materialize in the code.
-                createTmpVariable(irInt(0), name, origin = IrDeclarationOrigin.DEFINED)
+                // Also, do not forget to remove $$forInline suffix, otherwise, IDE will not be able to navigate to inline function.
+                createTmpVariable(irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED)
                 if (body is IrExpressionBody) {
                     +irReturn((body as IrExpressionBody).expression)
                 } else {
