@@ -138,4 +138,11 @@ org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL
 org.jetbrains.kotlin.idea.script.ScriptConfigurationHighlightingTestGenerated.Highlighting.testCustomJavaHome, No Java
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Function.testExternalFunctionalInterface, NJ2K in 201
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_19604, NJ2K in 201
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_19606, NJ2K in 201
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_32702, NJ2K in 201
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.ObjectLiteral.testKt_36149, NJ2K in 201
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Types.testCapturedWildcardTypeAsLambdaParameter, NJ2K in 201
+org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Types.testUnusedCapturedWildcardTypeInSAM, NJ2K in 201
 org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is visible when reference is under renaming`, Extensions API changed
