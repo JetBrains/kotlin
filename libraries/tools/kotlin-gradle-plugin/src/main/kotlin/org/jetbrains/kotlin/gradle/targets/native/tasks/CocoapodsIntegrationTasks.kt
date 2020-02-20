@@ -88,6 +88,9 @@ open class PodInstallTask : DefaultTask() {
     @get:Nested
     internal lateinit var cocoapodsExtension: CocoapodsExtension
 
+    @get:Input
+    internal lateinit var podspecFileProvider: Provider<File>
+
     @get:OutputDirectory
     internal val podsDirectoryProvider: Provider<File> = project.provider {
         project.projectDir
@@ -271,7 +274,7 @@ open class PodBuildTask : DefaultTask() {
                     KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
                     KonanTarget.TVOS_X64 -> "appletvsimulator"
                     KonanTarget.TVOS_ARM64 -> "appletvos"
-                    KonanTarget.MACOS_X64 -> "macosx"
+                    KonanTarget.MACOS_X64 -> "macosx10.15"
                     else -> throw Error("Bad target ${konanTarget.name}")
                 }
             }

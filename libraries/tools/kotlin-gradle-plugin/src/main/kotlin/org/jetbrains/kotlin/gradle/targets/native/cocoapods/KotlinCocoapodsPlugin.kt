@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.DefFileTask
 import org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
+import org.jetbrains.kotlin.gradle.tasks.PodspecTask
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -169,11 +170,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val dummyFrameworkTask = project.tasks.create("generateDummyFramework", DummyFrameworkTask::class.java) {
-            it.settings = cocoapodsExtension
-        }
+        val dummyFrameworkTask = project.tasks.getByPath("generateDummyFramework")
 
-        project.tasks.register("podspec", PodGenerateSpecTask::class.java) {
+        project.tasks.register("podspec", PodspecTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
             it.cocoapodsExtension = cocoapodsExtension
@@ -215,6 +214,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     interop.defFile = defTask.outputFile
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
+                    if (project.findProperty(TARGET_PROPERTY) == null && project.findProperty(CONFIGURATION_PROPERTY) == null) {
+                        interopTask.dependsOn(project.tasks.getByPath(target.toBuildDependenciesTaskName))
+                    }
+
                     project.findProperty(CFLAGS_PROPERTY)?.toString()?.let { args ->
                         // Xcode quotes around paths with spaces.
                         // Here and below we need to split such paths taking this into account.
@@ -230,6 +233,21 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     // Show a human-readable error messages if the interop is created
                     // but there are no parameters set by Xcode or manually by user (KT-31062).
                     interopTask.doFirst { _ ->
+                        if (project.findProperty(TARGET_PROPERTY) == null && project.findProperty(CONFIGURATION_PROPERTY) == null) {
+                            val podBuildTask = project.tasks.getByPath(target.toBuildDependenciesTaskName) as PodBuildTask
+                            val buildSettings = PodBuildSettings.fromBuildSettingsFile(podBuildTask.buildSettingsFileProvider.get())
+                            buildSettings.cflags?.let { args ->
+                                // Xcode quotes around paths with spaces.
+                                // Here and below we need to split such paths taking this into account.
+                                interop.compilerOpts.addAll(args.splitQuotedArgs())
+                            }
+                            buildSettings.headerPaths?.let { args ->
+                                interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
+                            }
+                            buildSettings.frameworkPaths?.let { args ->
+                                interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+                            }
+                        }
                         val hasCompilerOpts = interop.compilerOpts.isNotEmpty()
                         val hasHeaderSearchPath = interop.includeDirs.let {
                             !it.headerFilterDirs.isEmpty || !it.allHeadersDirs.isEmpty
@@ -251,13 +269,20 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun registerDummyFrameworkTask(
+        project: Project,
+        cocoapodsExtension: CocoapodsExtension
+    ) {
+        project.tasks.register("generateDummyFramework", DummyFrameworkTask::class.java) {
+            it.settings = cocoapodsExtension
+        }
+    }
+
     private fun registerPodGenerateSpecTask(
         project: Project,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val dummyFrameworkTask = project.tasks.create("generateDummyFramework", DummyFrameworkTask::class.java) {
-            it.settings = cocoapodsExtension
-        }
+        val dummyFrameworkTask = project.tasks.getByPath("generateDummyFramework")
 
         project.tasks.register("podGenerateSpec", PodGenerateSpecTask::class.java) {
             it.group = TASK_GROUP
@@ -267,7 +292,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
-
     private fun registerPodInstallTask(
         project: Project
     ) {
@@ -276,6 +300,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register(POD_INSTALL_TASK_NAME, PodInstallTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Invokes `pod install` call within Podfile location directory"
+            it.podspecFileProvider = podGenerateSpecTask.outputFile
             it.cocoapodsExtension = podGenerateSpecTask.cocoapodsExtension
             it.dependsOn(podGenerateSpecTask)
         }
@@ -420,13 +445,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             val cocoapodsExtension = CocoapodsExtension(this)
 
             kotlinExtension.addExtension(EXTENSION_NAME, cocoapodsExtension)
-//            createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
+            createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
+            registerDummyFrameworkTask(project, cocoapodsExtension)
+            createPodspecGenerationTask(project, cocoapodsExtension)
+            createSyncTask(project, kotlinExtension)
             registerPodGenerateSpecTask(project, cocoapodsExtension)
             registerPodInstallTask(project)
             registerPodSetupBuildTasks(project, kotlinExtension, cocoapodsExtension)
             registerPodBuildTasks(project, kotlinExtension, cocoapodsExtension)
-            setupCinterops(project, kotlinExtension, cocoapodsExtension)
             registerPodImportTask(project, kotlinExtension)
+            createInterops(project, kotlinExtension, cocoapodsExtension)
+//            setupCinterops(project, kotlinExtension, cocoapodsExtension)
         }
     }
 

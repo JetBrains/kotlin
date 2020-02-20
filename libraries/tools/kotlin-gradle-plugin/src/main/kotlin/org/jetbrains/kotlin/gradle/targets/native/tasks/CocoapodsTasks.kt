@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.wrapper.Wrapper
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.utils.newProperty
 import java.io.File
 
 /**
@@ -28,20 +30,17 @@ open class PodspecTask : DefaultTask() {
 
     private val specName = project.name.asValidFrameworkName()
 
-    @OutputFile
-    val outputFile: File = project.projectDir.resolve("$specName.podspec")
-
-    @Input
-    val frameworkNameProvider: Provider<String> = project.provider { settings.frameworkName }
+    @get:OutputFile
+    internal val outputFile: Property<File> = project.newProperty { project.buildDir.resolve("$specName.podspec") }
 
     @get:Nested
-    internal lateinit var settings: CocoapodsExtension
+    internal lateinit var cocoapodsExtension: CocoapodsExtension
 
     // TODO: Handle Framework name customization - rename the framework during sync process.
     @TaskAction
     fun generate() {
-        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile).path
-        val dependencies = settings.pods.map { pod ->
+        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.get().parentFile).path
+        val dependencies = cocoapodsExtension.pods.map { pod ->
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
@@ -61,19 +60,19 @@ open class PodspecTask : DefaultTask() {
         val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
 
-        outputFile.writeText(
+        outputFile.get().writeText(
             """
             |Pod::Spec.new do |spec|
             |    spec.name                     = '$specName'
-            |    spec.version                  = '${settings.version}'
-            |    spec.homepage                 = '${settings.homepage.orEmpty()}'
+            |    spec.version                  = '${cocoapodsExtension.version}'
+            |    spec.homepage                 = '${cocoapodsExtension.homepage.orEmpty()}'
             |    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
-            |    spec.authors                  = '${settings.authors.orEmpty()}'
-            |    spec.license                  = '${settings.license.orEmpty()}'
-            |    spec.summary                  = '${settings.summary.orEmpty()}'
+            |    spec.authors                  = '${cocoapodsExtension.authors.orEmpty()}'
+            |    spec.license                  = '${cocoapodsExtension.license.orEmpty()}'
+            |    spec.summary                  = '${cocoapodsExtension.summary.orEmpty()}'
             |
             |    spec.static_framework         = true
-            |    spec.vendored_frameworks      = "$frameworkDir/${frameworkNameProvider.get()}.framework"
+            |    spec.vendored_frameworks      = "$frameworkDir/${cocoapodsExtension.frameworkName}.framework"
             |    spec.libraries                = "c++"
             |    spec.module_name              = "#{spec.name}_umbrella"
             |
@@ -96,7 +95,7 @@ open class PodspecTask : DefaultTask() {
             |            :shell_path => '/bin/sh',
             |            :script => <<-SCRIPT
             |                set -ev
-            |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
+            |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/../"
             |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
             |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
             |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
@@ -112,10 +111,10 @@ open class PodspecTask : DefaultTask() {
 
         logger.quiet(
             """
-            Generated a podspec file at: ${outputFile.absolutePath}.
+            Generated a podspec file at: ${outputFile.get().absolutePath}.
             To include it in your Xcode project, add the following dependency snippet in your Podfile:
 
-                pod '$specName', :path => '${outputFile.parentFile.absolutePath}'
+                pod '$specName', :path => '${outputFile.get().parentFile.absolutePath}'
 
             """.trimIndent()
         )
