@@ -71,10 +71,10 @@ abstract class Template : SettingsOwner {
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
-    fun initDefaultValuesFor(module: Module, context: Context) {
+    fun ValuesReadingContext.initDefaultValuesFor(module: Module, context: Context) {
         withSettingsOf(module) {
             settings.forEach { setting ->
-                val defaultValue = setting.defaultValue ?: return@forEach
+                val defaultValue = setting.savedOrDefaultValue ?: return@forEach
                 context.settingContext[setting.reference] = defaultValue
             }
         }

@@ -55,8 +55,10 @@ class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
             // TODO do not use settingContext directly
             context.settingContext[setting] = value
         }
-        allModules().forEach { module ->
-            module.initDefaultValuesForSettings(valuesReadingContext.context)
+        read {
+            allModules().forEach { module ->
+                module.apply { initDefaultValuesForSettings(valuesReadingContext.context) }
+            }
         }
     }
 

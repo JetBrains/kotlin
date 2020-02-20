@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
+import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
@@ -40,5 +41,14 @@ open class ValuesReadingContext(
     val <V : Any, T : SettingType<V>> PluginSettingReference<V, T>.pluginSetting: Setting<V, T>
         get() = context.settingContext.getPluginSetting(this)
 
+    fun <V : Any> Setting<V, SettingType<V>>.getSavedValueForSetting(): V? {
+        if (!isSavable || this !is PluginSetting<*, *>) return null
+        val serializer = type.serializer.safeAs<SerializerImpl<V>>() ?: return null
+        val savedValue = service<SettingSavingWizardService>()!!.getSettingValue(path) ?: return null
+        return serializer.fromString(savedValue)
+    }
+
+    val <V : Any> Setting<V, SettingType<V>>.savedOrDefaultValue: V?
+        get() = getSavedValueForSetting() ?: defaultValue
 
 }

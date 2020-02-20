@@ -44,7 +44,7 @@ class Module(
                     is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference.notRequiredSettingValue
                     else -> null
                 }
-                    ?: setting.defaultValue
+                    ?: setting.savedOrDefaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
             }.fold()
@@ -54,7 +54,7 @@ class Module(
         org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
             template.settings.map { setting ->
                 val value = setting.reference.notRequiredSettingValue
-                    ?: setting.defaultValue
+                    ?: setting.savedOrDefaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
             }.fold()
@@ -86,9 +86,9 @@ class Module(
             else -> "Module"
         }
 
-    fun initDefaultValuesForSettings(context: Context) {
-        configurator.safeAs<ModuleConfiguratorWithSettings>()?.initDefaultValuesFor(this, context)
-        template?.initDefaultValuesFor(this, context)
+    fun ValuesReadingContext.initDefaultValuesForSettings(context: Context) {
+        configurator.safeAs<ModuleConfiguratorWithSettings>()?.initDefaultValuesFor(this@Module, context)
+        template?.apply { initDefaultValuesFor(this@Module, context) }
     }
 
     companion object {

@@ -29,7 +29,9 @@ class IdeWizard(
     private val allSettings = plugins.flatMap { it.declaredSettings }
 
     init {
-        context.settingContext.initPluginSettings(allSettings)
+        with(valuesReadingContext) {
+            context.settingContext.apply { initPluginSettings(allSettings) }
+        }
     }
 
     var projectPath by setting(StructurePlugin::projectPath.reference)

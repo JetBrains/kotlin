@@ -65,6 +65,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
 
     private var wizardContext: WizardContext? = null
+    private var pomValuesAreSet: Boolean = false
 
     override fun getModuleType(): ModuleType<*> = NewProjectWizardModuleType()
     override fun getParentGroup(): String = KotlinTemplatesFactory.KOTLIN_PARENT_GROUP_NAME
@@ -137,7 +138,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     }
 
     private fun updateProjectNameAndPomDate(settingsStep: SettingsStep) {
-        if (wizard.artifactId != null || wizard.groupId != null) return
+        if (pomValuesAreSet) return
         val suggestedProjectName = with(wizard.valuesReadingContext) {
             ProjectTemplatesPlugin::template.settingValue.suggestedProjectName.decapitalize()
         }
@@ -150,6 +151,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
         wizard.artifactId = suggestedProjectName
         wizard.groupId = suggestGroupId()
+        pomValuesAreSet = true
     }
 
     private fun suggestGroupId(): String {

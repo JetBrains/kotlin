@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
+import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
 abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager, private val isUnitTestMode: Boolean) {
@@ -28,6 +29,18 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
             }
         }.fold(ValidationResult.OK, ValidationResult::and).toResult()
 
+    private fun ValuesReadingContext.saveSettingValues(phases: Set<GenerationPhase>) {
+        for (setting in pluginSettings) {
+            if (setting.neededAtPhase !in phases) continue
+            if (!setting.isSavable) continue
+            val serializer = setting.type.serializer as? SerializerImpl<Any> ?: continue
+            service<SettingSavingWizardService>()!!.saveSettingValue(
+                setting.path,
+                serializer.toString(setting.reference.settingValue)
+            )
+        }
+    }
+
     open fun apply(
         services: List<WizardService>,
         phases: Set<GenerationPhase>,
@@ -36,6 +49,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         context.checkAllRequiredSettingPresent(phases).ensure()
         val taskRunningContext = TaskRunningContext(context, servicesManager.withServices(services), isUnitTestMode)
         taskRunningContext.validate(phases).ensure()
+        taskRunningContext.saveSettingValues(phases)
         val (tasksSorted) = context.sortTasks().map { tasks ->
             tasks.groupBy { it.phase }.toList().sortedBy { it.first }.flatMap { it.second }
         }

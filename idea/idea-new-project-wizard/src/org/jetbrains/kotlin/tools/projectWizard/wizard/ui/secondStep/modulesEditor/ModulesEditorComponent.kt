@@ -41,7 +41,7 @@ class ModulesEditorComponent(
             }
         )
 
-    private val model = TargetsModel(tree, ::value, valuesReadingContext.context, uiEditorUsagesStats)
+    private val model = TargetsModel(tree, ::value, valuesReadingContext, uiEditorUsagesStats)
 
     override fun onInit() {
         super.onInit()

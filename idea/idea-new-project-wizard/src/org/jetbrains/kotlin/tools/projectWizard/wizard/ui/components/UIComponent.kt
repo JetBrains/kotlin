@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ErrorAwareComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.IdeaBasedComponentValidator
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -83,5 +82,7 @@ abstract class UIComponent<V : Any>(
     }
 }
 
-fun <V : Any> UIComponent<V>.valueForSetting(setting: Setting<V, SettingType<V>>): V? =
-    setting.defaultValue ?: getUiValue()
+fun <V : Any> ValuesReadingContext.valueForSetting(
+    uiComponent: UIComponent<V>,
+    setting: Setting<V, SettingType<V>>
+): V? = setting.savedOrDefaultValue ?: uiComponent.getUiValue()

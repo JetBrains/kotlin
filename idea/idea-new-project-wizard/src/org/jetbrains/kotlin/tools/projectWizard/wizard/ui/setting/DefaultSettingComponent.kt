@@ -65,7 +65,7 @@ class VersionSettingComponent(
 
     override fun onInit() {
         super.onInit()
-        val values = setting.defaultValue?.let(::listOf).orEmpty()
+        val values = read { setting.savedOrDefaultValue }?.let(::listOf).orEmpty()
         comboBox.model = DefaultComboBoxModel<Version>(values.toTypedArray())
 
         if (values.isNotEmpty()) {

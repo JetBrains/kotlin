@@ -24,6 +24,7 @@ import java.nio.file.Path
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
+        isSavable = true
         filter = { _, type ->
             val service = service<BuildSystemAvailabilityWizardService>()!!
             service.isAvailable(type)

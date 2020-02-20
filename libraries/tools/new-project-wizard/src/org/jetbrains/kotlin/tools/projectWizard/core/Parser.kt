@@ -10,7 +10,11 @@ import kotlin.reflect.full.isSubclassOf
 data class ParsingState(
     val idToTemplate: Map<String, Template>,
     val settingValues: Map<SettingReference<*, *>, Any>
-) : ComputeContextState
+) : ComputeContextState {
+    companion object {
+        val EMPTY = ParsingState(emptyMap(), emptyMap())
+    }
+}
 
 fun ParsingState.withSettings(newSettings: List<Pair<SettingReference<*, *>, Any>>) =
     copy(settingValues = settingValues + newSettings)

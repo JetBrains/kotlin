@@ -16,7 +16,8 @@ object IdeaServices {
     val PROJECT_INDEPENDENT: List<IdeaWizardService> = listOf(
         IdeaFileSystemWizardService(),
         IdeaBuildSystemAvailabilityWizardService(),
-        IdeaKotlinVersionProviderService()
+        IdeaKotlinVersionProviderService(),
+        IdeaSettingSavingWizardService()
     )
 
     fun createScopeDependent(project: Project, model: ModifiableModuleModel) = listOf(
