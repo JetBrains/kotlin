@@ -197,37 +197,31 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
 
   public boolean checkValid() {
     if (myLocationField == null) return true;
-    final String projectName = myLocationField.getText();
 
-    if (projectName.trim().isEmpty()) {
-      setErrorText("Project name can't be empty");
+    String projectPath = myLocationField.getText().trim();
+    if (projectPath.isEmpty()) {
+      setErrorText(IdeBundle.message("new.dir.project.error.empty"));
       return false;
     }
     try {
-      Paths.get(myLocationField.getText().trim());
+      Paths.get(projectPath);
     }
     catch (InvalidPathException e) {
-      setErrorText("Invalid project directory path");
+      setErrorText(IdeBundle.message("new.dir.project.error.invalid"));
       return false;
     }
+
     if (myProjectGenerator != null) {
-      final String baseDirPath = myLocationField.getTextField().getText();
-      ValidationResult validationResult = myProjectGenerator.validate(baseDirPath);
-      final ValidationInfo peerValidationResult = getPeer().validate();
+      ValidationResult validationResult = myProjectGenerator.validate(projectPath);
       if (!validationResult.isOk()) {
         setErrorText(validationResult.getErrorMessage());
         return false;
-      } else if (peerValidationResult != null) {
+      }
+
+      ValidationInfo peerValidationResult = getPeer().validate();
+      if (peerValidationResult != null) {
         setErrorText(peerValidationResult.message);
         return false;
-      }
-      if (myProjectGenerator instanceof WebProjectTemplate) {
-        final ProjectGeneratorPeer<T> peer = getPeer();
-        final ValidationInfo validationInfo = peer.validate();
-        if (validationInfo != null) {
-          setErrorText(validationInfo.message);
-          return false;
-        }
       }
     }
 
