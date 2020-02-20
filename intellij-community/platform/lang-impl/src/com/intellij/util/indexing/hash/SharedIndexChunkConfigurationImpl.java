@@ -26,6 +26,7 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.SameThreadExecutor;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.building.EmptyIndexEnumerator;
@@ -290,13 +291,24 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
 
   @Override
   public boolean attachExistingChunk(int chunkId, @NotNull Project project) {
-    try {
-      return bindChunkToProject(registerChunk(chunkId), project);
+    if (chunkId == FileContentHashIndexExtension.NULL_INDEX_ID) return true;
+    boolean isChunkLoaded;
+    synchronized (myChunkEnumerators) {
+      isChunkLoaded = myChunkEnumerators.containsKey(chunkId);
     }
-    catch (IOException e) {
-      LOG.error(e);
-      return false;
+    List<@NotNull SharedIndexChunk> chunkIndexes;
+    if (isChunkLoaded) {
+      chunkIndexes = ContainerUtil.mapNotNull(myChunkMap.values(), m -> m.get(chunkId));
+    } else {
+      try {
+        chunkIndexes = registerChunk(chunkId);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+        return false;
+      }
     }
+    return bindChunkToProject(chunkIndexes, project);
   }
 
   @NotNull
