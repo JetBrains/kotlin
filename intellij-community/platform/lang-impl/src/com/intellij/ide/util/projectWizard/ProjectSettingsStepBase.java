@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.projectWizard;
 
 import com.intellij.BundleBase;
@@ -203,14 +203,10 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
       setErrorText("Project name can't be empty");
       return false;
     }
-    final String text = myLocationField.getText().trim();
-    if (text.indexOf('$') >= 0) {
-      setErrorText("Project directory name must not contain the $ character");
-      return false;
-    }
     try {
-      Paths.get(text);
-    } catch (InvalidPathException e) {
+      Paths.get(myLocationField.getText().trim());
+    }
+    catch (InvalidPathException e) {
       setErrorText("Invalid project directory path");
       return false;
     }
