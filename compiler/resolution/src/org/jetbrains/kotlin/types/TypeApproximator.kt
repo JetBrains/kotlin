@@ -115,7 +115,8 @@ class TypeApproximator(builtIns: KotlinBuiltIns) : AbstractTypeApproximator(Clas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
         val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
-        return approximateToSuperType(baseType.unwrap(), configuration) ?: baseType.unwrap()
+        val preparedType = if (local) baseType.unwrap() else substituteAlternativesInPublicType(baseType)
+        return approximateToSuperType(preparedType, configuration) ?: preparedType
     }
 
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types

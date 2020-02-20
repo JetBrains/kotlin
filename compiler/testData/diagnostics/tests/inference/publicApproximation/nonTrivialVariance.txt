@@ -1,0 +1,71 @@
+package
+
+public fun </*0*/ S : Bound1> intersect(/*0*/ vararg elements: S /*kotlin.Array<out S>*/): S
+public fun test(/*0*/ first: First, /*1*/ second: Second): kotlin.Unit
+public fun test1(/*0*/ first: First, /*1*/ second: Second): Inv<Inv<Bound1>>
+public fun test10(/*0*/ first: First, /*1*/ second: Second): Out<Out<Out<Bound1>>>
+public fun test11(/*0*/ first: First, /*1*/ second: Second): Inv<Out<Out<Bound1>>>
+public fun test12(/*0*/ first: First, /*1*/ second: Second): Inv<Out<In<Bound1>>>
+public fun test13(/*0*/ first: First, /*1*/ second: Second): Inv<In<Out<Bound1>>>
+public fun test14(/*0*/ first: First, /*1*/ second: Second): Inv<In<In<Bound1>>>
+public fun test15(/*0*/ first: First, /*1*/ second: Second): Out<Inv<Out<Bound1>>>
+public fun test16(/*0*/ first: First, /*1*/ second: Second): Out<Out<In<Bound1>>>
+public fun test17(/*0*/ first: First, /*1*/ second: Second): Out<In<Out<Bound1>>>
+public fun test18(/*0*/ first: First, /*1*/ second: Second): In<Out<Out<Bound1>>>
+public fun test2(/*0*/ first: First, /*1*/ second: Second): Inv<In<Bound1>>
+public fun test3(/*0*/ first: First, /*1*/ second: Second): Inv<Out<Bound1>>
+public fun test4(/*0*/ first: First, /*1*/ second: Second): In<Inv<Bound1>>
+public fun test5(/*0*/ first: First, /*1*/ second: Second): In<In<Bound1>>
+public fun test6(/*0*/ first: First, /*1*/ second: Second): In<Out<Bound1>>
+public fun test7(/*0*/ first: First, /*1*/ second: Second): Out<Inv<Bound1>>
+public fun test8(/*0*/ first: First, /*1*/ second: Second): Out<In<Bound1>>
+public fun test9(/*0*/ first: First, /*1*/ second: Second): Out<Out<Bound1>>
+
+public interface Bound1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Bound2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object First : Bound1, Bound2 {
+    private constructor First()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class In</*0*/ in I> {
+    public constructor In</*0*/ in I>(/*0*/ arg: I)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ prop: T)
+    public final val prop: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Out</*0*/ out O> {
+    public constructor Out</*0*/ out O>(/*0*/ arg: O)
+    public final val arg: O
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Second : Bound1, Bound2 {
+    private constructor Second()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

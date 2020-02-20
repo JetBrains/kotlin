@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -605,6 +606,21 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is KotlinType, this::errorMessage)
         val descriptor = constructor.declarationDescriptor
         return descriptor is ClassDescriptor && (descriptor.kind == ClassKind.INTERFACE || descriptor.kind == ClassKind.ANNOTATION_CLASS)
+    }
+
+    override fun createTypeWithAlternativeForIntersectionResult(
+        firstCandidate: KotlinTypeMarker,
+        secondCandidate: KotlinTypeMarker,
+    ): KotlinTypeMarker {
+        require(firstCandidate is KotlinType, this::errorMessage)
+        require(secondCandidate is KotlinType, this::errorMessage)
+
+        firstCandidate.constructor.safeAs<IntersectionTypeConstructor>()?.let { intersectionConstructor ->
+            val intersectionTypeWithAlternative = intersectionConstructor.setAlternative(secondCandidate).createType()
+            return if (firstCandidate.isMarkedNullable) intersectionTypeWithAlternative.makeNullableAsSpecified(true)
+            else intersectionTypeWithAlternative
+
+        } ?: error("Expected intersection type, found $firstCandidate")
     }
 }
 

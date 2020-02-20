@@ -164,6 +164,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
 
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
+
+    fun createTypeWithAlternativeForIntersectionResult(
+        firstCandidate: KotlinTypeMarker,
+        secondCandidate: KotlinTypeMarker
+    ): KotlinTypeMarker
 }
 
 

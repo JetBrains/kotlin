@@ -10226,6 +10226,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/tooEagerSmartcast.kt");
         }
 
+        @TestMetadata("topLevelIntersection.kt")
+        public void testTopLevelIntersection() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/topLevelIntersection.kt");
+        }
+
         @TestMetadata("tryNumberLowerBoundsBeforeUpperBounds.kt")
         public void testTryNumberLowerBoundsBeforeUpperBounds() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/tryNumberLowerBoundsBeforeUpperBounds.kt");
@@ -11019,6 +11024,84 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             @TestMetadata("platformNothingAsUsefulConstraint.kt")
             public void testPlatformNothingAsUsefulConstraint() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/platformNothingAsUsefulConstraint.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/publicApproximation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PublicApproximation extends AbstractFirOldFrontendDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPublicApproximation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/publicApproximation"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("approximatedIntersectionMorePreciseThanBound.kt")
+            public void testApproximatedIntersectionMorePreciseThanBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/approximatedIntersectionMorePreciseThanBound.kt");
+            }
+
+            @TestMetadata("chainedLambdas.kt")
+            public void testChainedLambdas() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/chainedLambdas.kt");
+            }
+
+            @TestMetadata("declarationTypes.kt")
+            public void testDeclarationTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/declarationTypes.kt");
+            }
+
+            @TestMetadata("intersectionAfterSmartCastInLambdaReturn.kt")
+            public void testIntersectionAfterSmartCastInLambdaReturn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/intersectionAfterSmartCastInLambdaReturn.kt");
+            }
+
+            @TestMetadata("intersectionAlternative.kt")
+            public void testIntersectionAlternative() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/intersectionAlternative.kt");
+            }
+
+            @TestMetadata("intersectionLocations.kt")
+            public void testIntersectionLocations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/intersectionLocations.kt");
+            }
+
+            @TestMetadata("lambdaReturnArgumentCall.kt")
+            public void testLambdaReturnArgumentCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/lambdaReturnArgumentCall.kt");
+            }
+
+            @TestMetadata("lambdaReturnTypeApproximation.kt")
+            public void testLambdaReturnTypeApproximation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/lambdaReturnTypeApproximation.kt");
+            }
+
+            @TestMetadata("nonTrivialVariance.kt")
+            public void testNonTrivialVariance() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/nonTrivialVariance.kt");
+            }
+
+            @TestMetadata("parameterInBound.kt")
+            public void testParameterInBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/parameterInBound.kt");
+            }
+
+            @TestMetadata("projections.kt")
+            public void testProjections() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/projections.kt");
+            }
+
+            @TestMetadata("smartCastInLambdaReturnAfterIntersection.kt")
+            public void testSmartCastInLambdaReturnAfterIntersection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/smartCastInLambdaReturnAfterIntersection.kt");
+            }
+
+            @TestMetadata("twoIntersections.kt")
+            public void testTwoIntersections() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/publicApproximation/twoIntersections.kt");
             }
         }
 

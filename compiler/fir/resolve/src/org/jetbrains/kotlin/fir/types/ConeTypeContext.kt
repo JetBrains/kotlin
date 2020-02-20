@@ -557,4 +557,11 @@ class ConeTypeCheckerContext(
         else
             ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
 
+    override fun createTypeWithAlternativeForIntersectionResult(
+        firstCandidate: KotlinTypeMarker,
+        secondCandidate: KotlinTypeMarker
+    ): KotlinTypeMarker {
+        TODO("Not yet implemented")
+    }
+
 }

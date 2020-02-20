@@ -106,12 +106,16 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
         }
 
         if (typeConstructor is IntersectionTypeConstructor) {
-            var thereIsChanges = false
+            fun updateNullability(substituted: UnwrappedType) =
+                if (type.isMarkedNullable) substituted.makeNullableAsSpecified(true) else substituted
+
+            substituteNotNullTypeWithConstructor(typeConstructor)?.let { return updateNullability(it) }
+            var thereAreChanges = false
             val newTypes = typeConstructor.supertypes.map {
-                substitute(it.unwrap(), keepAnnotation, runCapturedChecks)?.apply { thereIsChanges = true } ?: it.unwrap()
+                substitute(it.unwrap(), keepAnnotation, runCapturedChecks)?.apply { thereAreChanges = true } ?: it.unwrap()
             }
-            if (!thereIsChanges) return null
-            return intersectTypes(newTypes).let { if (type.isMarkedNullable) it.makeNullableAsSpecified(true) else it }
+            if (!thereAreChanges) return null
+            return updateNullability(intersectTypes(newTypes))
         }
 
         // simple classifier type

@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 
 class ResultTypeResolver(
@@ -65,6 +64,10 @@ class ResultTypeResolver(
     ): KotlinTypeMarker? {
         if (firstCandidate == null || secondCandidate == null) return firstCandidate ?: secondCandidate
 
+        specialResultForIntersectionType(firstCandidate, secondCandidate)?.let { intersectionWithAlternative ->
+            return intersectionWithAlternative
+        }
+
         if (isSuitableType(firstCandidate, variableWithConstraints)) return firstCandidate
 
         return if (isSuitableType(secondCandidate, variableWithConstraints)) {
@@ -73,6 +76,22 @@ class ResultTypeResolver(
             firstCandidate
         }
     }
+
+    private fun Context.specialResultForIntersectionType(
+        firstCandidate: KotlinTypeMarker,
+        secondCandidate: KotlinTypeMarker,
+    ): KotlinTypeMarker? {
+        if (firstCandidate.typeConstructor() is IntersectionTypeConstructor) {
+            if (!AbstractTypeChecker.isSubtypeOf(this, firstCandidate.toPublicType(), secondCandidate.toPublicType())) {
+                return createTypeWithAlternativeForIntersectionResult(firstCandidate, secondCandidate)
+            }
+        }
+
+        return null
+    }
+
+    private fun KotlinTypeMarker.toPublicType(): KotlinTypeMarker =
+        typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.PublicDeclaration) ?: this
 
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
         val filteredConstraints = variableWithConstraints.constraints.filter { isProperType(it.type) }
