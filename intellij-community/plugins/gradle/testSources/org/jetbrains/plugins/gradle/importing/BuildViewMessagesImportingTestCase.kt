@@ -2,12 +2,13 @@
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.build.*
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.replaceService
 import com.intellij.testFramework.runInEdtAndGet
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.util.ui.tree.TreeUtil
 import junit.framework.TestCase
@@ -29,6 +30,14 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     myProject.replaceService(SyncViewManager::class.java, syncViewManager, testRootDisposable)
     buildViewManager = TestBuildViewManager(myProject)
     myProject.replaceService(BuildViewManager::class.java, buildViewManager, testRootDisposable)
+  }
+
+  override fun tearDown() {
+    RunAll()
+      .append(ThrowableRunnable { syncViewManager.waitForPendingBuilds() })
+      .append(ThrowableRunnable { buildViewManager.waitForPendingBuilds() })
+      .append(ThrowableRunnable { super.tearDown() })
+      .run()
   }
 
   protected fun assertSyncViewTreeEquals(executionTreeText: String) {
@@ -175,17 +184,17 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
         }
       }
       val selectedPathComponent =
-      if (!assertSelected && node != tree.selectionPath?.lastPathComponent) {
-        runInEdtAndGet {
-          TreeUtil.selectNode(tree, node)
-          //TreeUtil.selectPath(tree, TreeUtil.getPathFromRoot(node!!)).waitFor(5000)
-          PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-          PlatformTestUtil.waitWhileBusy(tree)
+        if (!assertSelected && node != tree.selectionPath?.lastPathComponent) {
+          runInEdtAndGet {
+            TreeUtil.selectNode(tree, node)
+            PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+            PlatformTestUtil.waitWhileBusy(tree)
+            tree.selectionPath!!.lastPathComponent
+          }
+        }
+        else {
           tree.selectionPath!!.lastPathComponent
         }
-      } else {
-        tree.selectionPath!!.lastPathComponent
-      }
       if (node != selectedPathComponent) {
         assertEquals(node.toString(), selectedPathComponent.toString())
       }
