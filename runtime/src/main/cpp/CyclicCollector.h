@@ -4,9 +4,9 @@
 struct ObjHeader;
 
 void cyclicInit();
-void cyclicDeinit();
+void cyclicDeinit(bool enabled);
 void cyclicAddWorker(void* worker);
-void cyclicRemoveWorker(void* worker);
+void cyclicRemoveWorker(void* worker, bool enabled);
 void cyclicAddAtomicRoot(ObjHeader* obj);
 void cyclicRemoveAtomicRoot(ObjHeader* obj);
 void cyclicMutateAtomicRoot(ObjHeader* newValue);

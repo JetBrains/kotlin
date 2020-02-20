@@ -1760,7 +1760,7 @@ void deinitMemory(MemoryState* memoryState) {
    if (atomicGet(&pendingDeinit) > 1) {
      checkLeaks = false;
    }
-   cyclicDeinit();
+   cyclicDeinit(g_hasCyclicCollector);
 #endif  // USE_CYCLIC_GC
   }
   // Actual GC only implemented in strict memory model at the moment.
@@ -2897,7 +2897,8 @@ void Kotlin_native_internal_GC_collect(KRef) {
 
 void Kotlin_native_internal_GC_collectCyclic(KRef) {
 #if USE_CYCLIC_GC
-  cyclicScheduleGarbageCollect();
+  if (g_hasCyclicCollector)
+    cyclicScheduleGarbageCollect();
 #else
   ThrowIllegalArgumentException();
 #endif
@@ -3067,7 +3068,7 @@ void GC_RegisterWorker(void* worker) {
 
 void GC_UnregisterWorker(void* worker) {
 #if USE_CYCLIC_GC
-  cyclicRemoveWorker(worker);
+  cyclicRemoveWorker(worker, g_hasCyclicCollector);
 #endif  // USE_CYCLIC_GC
 }
 

@@ -140,11 +140,11 @@ class CyclicCollector {
     toRelease_.clear();
   }
 
-  void terminate() {
+  void terminate(bool enabled) {
     {
       Locker locker(&lock_);
       terminateCollector_ = true;
-      shallRunCollector_ = true;
+      if (enabled) shallRunCollector_ = true;
       CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
     }
     // TODO: improve waiting for collector termination.
@@ -322,12 +322,14 @@ class CyclicCollector {
     if (mainWorker_ == nullptr) mainWorker_ = worker;
   }
 
-  void removeWorker(void* worker) {
+  void removeWorker(void* worker, bool enabled) {
     suggestLockRelease();
     Locker lock(&lock_);
     // When exiting the worker - we shall collect the cyclic garbage here.
-    shallRunCollector_ = true;
-    CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
+    if (enabled) {
+      shallRunCollector_ = true;
+      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
+    }
     currentAliveWorkers_--;
   }
 
@@ -436,11 +438,11 @@ void cyclicInit() {
 #endif
 }
 
-void cyclicDeinit() {
+void cyclicDeinit(bool enabled) {
 #if WITH_WORKERS
   RuntimeAssert(cyclicCollector != nullptr, "Must be inited");
   auto* local = cyclicCollector;
-  local->terminate();
+  local->terminate(enabled);
   cyclicCollector = nullptr;
   // Workaround data race with threads non-atomically reading and then using [cyclicCollector].
   // konanDestructInstance(local);
@@ -458,11 +460,11 @@ void cyclicAddWorker(void* worker) {
 #endif  // WITH_WORKERS
 }
 
-void cyclicRemoveWorker(void* worker) {
+void cyclicRemoveWorker(void* worker, bool enabled) {
 #if WITH_WORKERS
   auto* local = cyclicCollector;
   if (local)
-    local->removeWorker(worker);
+    local->removeWorker(worker, enabled);
 #endif  // WITH_WORKERS
 }
 
