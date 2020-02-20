@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.xml
 
 import com.intellij.configurationStore.DataWriter
@@ -37,9 +37,6 @@ class XmlElementStorageTest {
   }
 
   private class MyXmlElementStorage(private val element: Element) : XmlElementStorage("", "root") {
-    override val isUseVfsForWrite: Boolean
-      get() = false
-
     var savedElement: Element? = null
 
     override fun loadLocalData() = element

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.components.*
@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit
 
 internal fun createComponentInfo(component: Any, stateSpec: State?, serviceDescriptor: ServiceDescriptor?): ComponentInfo {
   return when (component) {
+    is PersistentStateComponentWithModificationTracker<*> -> ComponentWithStateModificationTrackerInfo(component, stateSpec, serviceDescriptor?.configurationSchemaKey)
     is ModificationTracker -> ComponentWithModificationTrackerInfo(component, stateSpec, serviceDescriptor?.configurationSchemaKey)
-    is PersistentStateComponentWithModificationTracker<*> -> ComponentWithStateModificationTrackerInfo(component, stateSpec!!, serviceDescriptor?.configurationSchemaKey)
     else -> {
       val componentInfo = ComponentInfoImpl(component, stateSpec)
-      if (stateSpec != null && !stateSpec.storages.isEmpty() && stateSpec.storages.all(::isUseSaveThreshold)) {
+      if (stateSpec != null && stateSpec.storages.isNotEmpty() && stateSpec.storages.all(::isUseSaveThreshold)) {
         componentInfo.lastSaved = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
       }
       componentInfo
@@ -65,7 +65,7 @@ private abstract class ModificationTrackerAwareComponentInfo : ComponentInfo() {
 }
 
 private class ComponentWithStateModificationTrackerInfo(override val component: PersistentStateComponentWithModificationTracker<*>,
-                                                        override val stateSpec: State,
+                                                        override val stateSpec: State?,
                                                         override val configurationSchemaKey: String?) : ModificationTrackerAwareComponentInfo() {
   override val currentModificationCount: Long
     get() = component.stateModificationCount

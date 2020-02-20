@@ -42,6 +42,7 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.CalledInAwt
 import org.jetbrains.annotations.TestOnly
 import java.io.IOException
+import java.lang.UnsupportedOperationException
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -95,7 +96,14 @@ abstract class ComponentStoreImpl : IComponentStore {
     try {
       @Suppress("DEPRECATION")
       if (component is PersistentStateComponent<*>) {
-        componentName = initPersistenceStateComponent(component, getStateSpec(component), serviceDescriptor)
+        val stateSpec = getStateSpec(component.javaClass)
+        if (stateSpec == null) {
+          val info = createComponentInfo(component, stateSpec, serviceDescriptor)
+          initComponent(info, null, ThreeState.NO)
+        }
+        else {
+          componentName = initPersistenceStateComponent(component, stateSpec, serviceDescriptor)
+        }
         component.initializeComponent()
       }
       else if (component is com.intellij.openapi.util.JDOMExternalizable) {
@@ -187,7 +195,7 @@ abstract class ComponentStoreImpl : IComponentStore {
         if (info.isModificationTrackingSupported) {
           currentModificationCount = info.currentModificationCount
           if (currentModificationCount == info.lastModificationCount) {
-            SAVE_MOD_LOG.debug { "${if (isUseModificationCount) "Skip " else ""}$name: modificationCount ${currentModificationCount} equals to last saved" }
+            SAVE_MOD_LOG.debug { "${if (isUseModificationCount) "Skip " else ""}$name: modificationCount $currentModificationCount equals to last saved" }
             if (isUseModificationCount) {
               continue
             }
@@ -352,34 +360,60 @@ abstract class ComponentStoreImpl : IComponentStore {
   private fun initComponent(info: ComponentInfo, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
     @Suppress("UNCHECKED_CAST")
     val component = info.component as PersistentStateComponent<Any>
-    return when {
-      loadPolicy == StateLoadPolicy.NOT_LOAD -> {
-        @Suppress("UNCHECKED_CAST")
-        component.noStateLoaded()
-        false
-      }
-      doInitComponent(info, component, changedStorages, reloadData) -> {
-        // if component was initialized, update lastModificationCount
-        info.updateModificationCount()
-        true
-      }
-      else -> false
+    if (loadPolicy == StateLoadPolicy.NOT_LOAD) {
+      @Suppress("UNCHECKED_CAST")
+      component.noStateLoaded()
+      return false
     }
+
+    if (info.stateSpec == null) {
+      val configurationSchemaKey = info.configurationSchemaKey
+                                   ?: throw UnsupportedOperationException("configurationSchemaKey must be specified for ${component.javaClass.name}")
+      return initComponentWithoutStateSpec(component, configurationSchemaKey)
+    }
+
+    if (doInitComponent(info, component, changedStorages, reloadData)) {
+      // if component was initialized, update lastModificationCount
+      info.updateModificationCount()
+      return true
+    }
+    return false
+  }
+
+  protected fun initComponentWithoutStateSpec(component: PersistentStateComponent<Any>, configurationSchemaKey: String): Boolean {
+    // default state not supported for read-only components
+    if (loadPolicy != StateLoadPolicy.LOAD) {
+      component.noStateLoaded()
+      return false
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    val stateClass: Class<Any> = ComponentSerializationUtil.getStateClass(component.javaClass)
+    val storage = getReadOnlyStorage(component.javaClass, stateClass, configurationSchemaKey)
+
+    val state = storage.getState(component, "", stateClass, null, reload = false)
+    if (state == null) {
+      component.noStateLoaded()
+    }
+    else {
+      component.loadState(state)
+    }
+    return true
+  }
+
+  protected open fun getReadOnlyStorage(componentClass: Class<Any>, stateClass: Class<Any>, configurationSchemaKey: String): StateStorage {
+    throw UnsupportedOperationException()
   }
 
   private fun doInitComponent(info: ComponentInfo, component: PersistentStateComponent<Any>, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
-    val stateSpec = info.stateSpec!!
-
-    val name = stateSpec.name
     @Suppress("UNCHECKED_CAST")
     val stateClass: Class<Any> = when (component) {
       is PersistenceStateAdapter -> component.component::class.java as Class<Any>
       else -> ComponentSerializationUtil.getStateClass(component.javaClass)
     }
-    if (!stateSpec.defaultStateAsResource && LOG.isDebugEnabled && getDefaultState(component, name, stateClass) != null) {
-      LOG.error("$name has default state, but not marked to load it")
-    }
 
+    val stateSpec = info.stateSpec!!
+    val name = stateSpec.name
     val defaultState = if (stateSpec.defaultStateAsResource) getDefaultState(component, name, stateClass) else null
     if (loadPolicy == StateLoadPolicy.LOAD || info.stateSpec?.allowLoadInTests == true) {
       val storageChooser = component as? StateStorageChooserEx
@@ -426,8 +460,9 @@ abstract class ComponentStoreImpl : IComponentStore {
     return true
   }
 
-  private fun isStorageChanged(changedStorages: Set<StateStorage>, storage: StateStorage) =
-    changedStorages.contains(storage) || storage is ExternalStorageWithInternalPart && changedStorages.contains(storage.internalStorage)
+  private fun isStorageChanged(changedStorages: Set<StateStorage>, storage: StateStorage): Boolean {
+    return changedStorages.contains(storage) || storage is ExternalStorageWithInternalPart && changedStorages.contains(storage.internalStorage)
+  }
 
   protected open fun doCreateStateGetter(reloadData: Boolean,
                                          storage: StateStorage,
@@ -527,7 +562,7 @@ abstract class ComponentStoreImpl : IComponentStore {
    * empty list if nothing to reload
    * list of not reloadable components (reload is not performed)
    */
-  fun reload(changedStorages: Set<StateStorage>): Collection<String>? {
+  open fun reload(changedStorages: Set<StateStorage>): Collection<String>? {
     if (changedStorages.isEmpty()) {
       return emptySet()
     }

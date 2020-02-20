@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.SimplePersistentStateComponent
-import com.intellij.openapi.components.State
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -29,22 +28,18 @@ import com.intellij.util.xmlb.annotations.XCollection
 import org.jetbrains.jps.model.java.JdkVersionDetector
 import java.io.File
 
-class JdkAutoHint: BaseState() {
+private class JdkAutoHint: BaseState() {
   val name by string()
   val path by string()
   val version by string()
 }
 
-class JdkAutoHints : BaseState() {
+private class JdkAutoHints : BaseState() {
   @get:XCollection
   val jdks by list<JdkAutoHint>()
 }
 
-@State(name = "Java.Jdks")
-class JdkAutoHintService(
-  private val project: Project
-) : SimplePersistentStateComponent<JdkAutoHints>(JdkAutoHints()) {
-
+private class JdkAutoHintService(private val project: Project) : SimplePersistentStateComponent<JdkAutoHints>(JdkAutoHints()) {
   override fun loadState(state: JdkAutoHints) {
     super.loadState(state)
 
@@ -57,9 +52,9 @@ class JdkAutoHintService(
   }
 }
 
-class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
-  private val LOG = logger<JdkAuto>()
+private val LOG = logger<JdkAuto>()
 
+class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
   override fun supportsResolution(sdkTypeId: SdkTypeId) = notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType().value(sdkTypeId)
 
   override fun createResolver(project: Project?, indicator: ProgressIndicator): UnknownSdkLookup? {

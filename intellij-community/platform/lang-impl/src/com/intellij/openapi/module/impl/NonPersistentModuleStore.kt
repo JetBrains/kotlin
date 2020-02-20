@@ -36,18 +36,8 @@ private object NonPersistentStateStorageManager : StateStorageManager {
 }
 
 private object NonPersistentStateStorage : StateStorage {
-  override val isUseVfsForWrite: Boolean = false
   override fun <T : Any> getState(component: Any?, componentName: String, stateClass: Class<T>, mergeInto: T?, reload: Boolean): T? = null
   override fun hasState(componentName: String, reloadData: Boolean): Boolean = false
-  override fun createSaveSessionProducer(): SaveSessionProducer? = NonPersistentSaveSessionProducer
+  override fun createSaveSessionProducer(): SaveSessionProducer? = null
   override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<in String>) = Unit
-}
-
-private object NonPersistentSaveSessionProducer : SaveSessionProducer {
-  override fun setState(component: Any?, componentName: String, state: Any?): Unit = Unit
-  override fun createSaveSession(): SaveSession? = NonPersistentSaveSession
-}
-
-private object NonPersistentSaveSession : SaveSession {
-  override fun save(): Unit = Unit
 }
