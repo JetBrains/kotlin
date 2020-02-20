@@ -4,6 +4,7 @@ package com.intellij.codeInsight.documentation.render;
 import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.QuickDocUtil;
+import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -32,6 +33,7 @@ import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.GraphicsUtil;
 import com.intellij.util.ui.JBHtmlEditorKit;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -40,6 +42,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.html.ImageView;
+import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.ImageObserver;
@@ -56,6 +59,10 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static final int LEFT_INSET = 12;
   private static final int RIGHT_INSET = 20;
   private static final int TOP_BOTTOM_INSETS = 8;
+
+  private static StyleSheet ourCachedStyleSheet;
+  private static String ourCachedStyleSheetLaf = "non-existing";
+  private static String ourCachedStyleSheetFont = "non-existing";
 
   private final DocRenderItem myItem;
   private boolean myRepaintRequested;
@@ -275,22 +282,35 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   private static JBHtmlEditorKit createEditorKit() {
     JBHtmlEditorKit editorKit = new JBHtmlEditorKit(true);
-    String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
-    editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule("h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }");
-    editorKit.getStyleSheet().addRule("a { color: #" + ColorUtil.toHex(JBUI.CurrentTheme.Link.linkColor()) + "; text-decoration: none;}");
-    editorKit.getStyleSheet().addRule("p { padding: 1px 0 2px 0; }");
-    editorKit.getStyleSheet().addRule("ol { padding: 0 16px 0 0; }");
-    editorKit.getStyleSheet().addRule("ul { padding: 0 16px 0 0; }");
-    editorKit.getStyleSheet().addRule("li { padding: 1px 0 2px 0; }");
-    editorKit.getStyleSheet().addRule("table p { padding-bottom: 0}");
-    editorKit.getStyleSheet().addRule("td { margin: 4px 0 0 0; padding: 0; }");
-    editorKit.getStyleSheet().addRule("th { text-align: left; }");
-    editorKit.getStyleSheet().addRule(".grayed { color: #909090; display: inline;}");
-    editorKit.getStyleSheet().addRule(".section { color: " + ColorUtil.toHtmlColor(DocumentationComponent.SECTION_COLOR) +
-                                      "; padding-right: 4px}");
+    editorKit.getStyleSheet().addStyleSheet(getStyleSheet());
     return editorKit;
+  }
+
+  private static StyleSheet getStyleSheet() {
+    UIManager.LookAndFeelInfo lookAndFeel = LafManager.getInstance().getCurrentLookAndFeel();
+    String lafName = lookAndFeel == null ? null : lookAndFeel.getName();
+    String editorFontName = EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName();
+    if (!Objects.equals(lafName, ourCachedStyleSheetLaf) || !Objects.equals(editorFontName, ourCachedStyleSheetFont)) {
+      String escapedFontName = StringUtil.escapeQuotes(editorFontName);
+      ourCachedStyleSheet = StartupUiUtil.createStyleSheet(
+        "code {font-family:\"" + escapedFontName + "\"}" +
+        "pre {font-family:\"" + escapedFontName + "\"}" +
+        "h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }" +
+        "a { color: #" + ColorUtil.toHex(JBUI.CurrentTheme.Link.linkColor()) + "; text-decoration: none;}" +
+        "p { padding: 1px 0 2px 0; }" +
+        "ol { padding: 0 16px 0 0; }" +
+        "ul { padding: 0 16px 0 0; }" +
+        "li { padding: 1px 0 2px 0; }" +
+        "table p { padding-bottom: 0}" +
+        "td { margin: 4px 0 0 0; padding: 0; }" +
+        "th { text-align: left; }" +
+        ".grayed { color: #909090; display: inline;}" +
+        ".section { color: #" + ColorUtil.toHex(DocumentationComponent.SECTION_COLOR) + "; padding-right: 4px}"
+      );
+      ourCachedStyleSheetLaf = lafName;
+      ourCachedStyleSheetFont = editorFontName;
+    }
+    return ourCachedStyleSheet;
   }
 
   private static Color getColorFromRegistry(String key) {
