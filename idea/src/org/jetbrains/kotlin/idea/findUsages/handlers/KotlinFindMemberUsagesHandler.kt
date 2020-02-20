@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.debugger.readAction
-import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.findUsages.*
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -313,8 +310,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
 
         private const val DISABLE_ONCE = "DISABLE_ONCE"
         private const val DISABLE = "DISABLE"
-        private const val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT =
-            "<p>Find usages for data class components and destruction declarations<br/>could be <a href=\"$DISABLE_ONCE\">disabled once</a> or <a href=\"$DISABLE\">disabled for a project</a>.</p>"
+        private val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT = KotlinFindUsagesBundle.message(
+            "text.find.usages.for.data.class.components.and.destruction.declarations",
+            DISABLE_ONCE,
+            DISABLE
+        )
+
         private const val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TIMEOUT = 5000
 
         private val FIND_USAGES_ONES_FOR_DATA_CLASS_KEY = Key<Boolean>("FIND_USAGES_ONES")

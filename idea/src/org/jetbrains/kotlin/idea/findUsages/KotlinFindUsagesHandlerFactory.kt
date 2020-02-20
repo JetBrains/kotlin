@@ -61,7 +61,12 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
             is KtParameter -> {
                 if (!forHighlightUsages) {
                     if (element.hasValOrVar()) {
-                        val declarationsToSearch = checkSuperMethods(element, null, "find usages of")
+                        val declarationsToSearch = checkSuperMethods(
+                            element,
+                            null,
+                            KotlinFindUsagesBundle.message("action.text.find.usages.of")
+                        )
+
                         return handlerForMultiple(element, declarationsToSearch)
                     }
                     val function = element.ownerFunction
@@ -93,7 +98,12 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                     return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
                 }
 
-                val declarationsToSearch = checkSuperMethods(declaration, null, "find usages of")
+                val declarationsToSearch = checkSuperMethods(
+                    declaration,
+                    null,
+                    KotlinFindUsagesBundle.message("action.text.find.usages.of")
+                )
+
                 return handlerForMultiple(declaration, declarationsToSearch)
             }
 

@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.RenderingUtilsKt;
 import org.jetbrains.kotlin.psi.KtDeclaration;
@@ -110,7 +111,7 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
         KotlinFunctionFindUsagesOptions options = getFindUsagesOptions();
         if (isActual) {
             expectedUsages = addCheckboxToPanel(
-                    "Expected functions",
+                    KotlinFindUsagesBundle.message("checkbox.name.expected.functions"),
                     options.getSearchExpected(),
                     optionsPanel,
                     false
