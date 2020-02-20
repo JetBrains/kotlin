@@ -1,9 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.projectWizard;
 
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,9 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WebProjectSettingsStepWrapper implements SettingsStep {
-  private static final Function<Pair<String, JComponent>, LabeledComponent> PAIR_LABELED_COMPONENT_FUNCTION =
-    pair -> LabeledComponent.create(pair.getSecond(), pair.getFirst());
-
   private final List<Pair<String, JComponent>> myFields = new ArrayList<>();
   private final List<JComponent> myComponents = new ArrayList<>();
 
@@ -29,8 +25,8 @@ public class WebProjectSettingsStepWrapper implements SettingsStep {
     return null;
   }
 
-  public List<LabeledComponent> getFields() {
-    return ContainerUtil.map(myFields, PAIR_LABELED_COMPONENT_FUNCTION);
+  public List<LabeledComponent<? extends JComponent>> getFields() {
+    return ContainerUtil.map(myFields, pair -> LabeledComponent.create(pair.second, pair.first));
   }
 
   @Override

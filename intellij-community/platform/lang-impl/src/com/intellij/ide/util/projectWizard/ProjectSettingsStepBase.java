@@ -190,7 +190,7 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
   }
 
   private void checkWebProjectValid() {
-    if (myProjectGenerator instanceof WebProjectTemplate && !((WebProjectTemplate)myProjectGenerator).postponeValidation()) {
+    if (myProjectGenerator instanceof WebProjectTemplate && !((WebProjectTemplate<?>)myProjectGenerator).postponeValidation()) {
       checkValid();
     }
   }
@@ -235,7 +235,7 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
       getPeer().buildUI(settingsStep);
     }
     else if (myProjectGenerator instanceof TemplateProjectDirectoryGenerator) {
-      ((TemplateProjectDirectoryGenerator)myProjectGenerator).buildUI(settingsStep);
+      ((TemplateProjectDirectoryGenerator<?>)myProjectGenerator).buildUI(settingsStep);
     }
     else {
       return createContentPanelWithAdvancedSettingsPanel();
@@ -245,14 +245,14 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
     if (settingsStep.isEmpty()) return createContentPanelWithAdvancedSettingsPanel();
 
     final JPanel jPanel = new JPanel(new VerticalFlowLayout(0, 5));
-    List<LabeledComponent> labeledComponentList = new ArrayList<>();
+    List<LabeledComponent<? extends JComponent>> labeledComponentList = new ArrayList<>();
     labeledComponentList.add(createLocationComponent());
     labeledComponentList.addAll(settingsStep.getFields());
 
     final JPanel scrollPanel = new JPanel(new BorderLayout());
     scrollPanel.add(jPanel, BorderLayout.NORTH);
 
-    for (LabeledComponent component : labeledComponentList) {
+    for (LabeledComponent<? extends JComponent> component : labeledComponentList) {
       component.setLabelLocation(BorderLayout.WEST);
       jPanel.add(component);
     }
