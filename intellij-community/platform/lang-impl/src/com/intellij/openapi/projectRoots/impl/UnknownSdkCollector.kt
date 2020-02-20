@@ -7,13 +7,14 @@ import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager.checkCanceled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.SdkType
-import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.openapi.roots.ModuleJdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.util.concurrency.AppExecutorUtil
 import java.util.*
 import java.util.function.Consumer
@@ -115,6 +116,8 @@ class UnknownSdkCollector(private val myProject: Project) {
     EP_NAME.forEachExtensionSafe {
       val contrib = try {
         it.contributeUnknownSdks(myProject)
+      } catch (e: ProcessCanceledException) {
+        throw e
       } catch (t: Throwable) {
         LOG.warn("Failed to contribute SDKs with ${it.javaClass.name}. ${t.message}", t)
         listOf<UnknownSdk>()
