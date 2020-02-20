@@ -8,7 +8,6 @@ import com.intellij.openapi.wm.impl.status.widget.StatusBarEditorBasedWidgetFact
 import com.intellij.ui.UIBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class InspectionProfileWidgetFactory extends StatusBarEditorBasedWidgetFactory {
   @Override
@@ -22,7 +21,7 @@ public class InspectionProfileWidgetFactory extends StatusBarEditorBasedWidgetFa
   }
 
   @Override
-  public @Nullable StatusBarWidget createWidget(@NotNull Project project) {
+  public @NotNull StatusBarWidget createWidget(@NotNull Project project) {
     return new TogglePopupHintsPanel(project);
   }
 

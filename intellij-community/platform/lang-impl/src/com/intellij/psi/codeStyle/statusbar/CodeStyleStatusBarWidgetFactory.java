@@ -27,9 +27,8 @@ public class CodeStyleStatusBarWidgetFactory extends StatusBarEditorBasedWidgetF
     return CodeStyleStatusBarWidget.WIDGET_ID;
   }
 
-  @Nullable
   @Override
-  public StatusBarWidget createWidget(@NotNull Project project) {
+  public @NotNull StatusBarWidget createWidget(@NotNull Project project) {
     return new CodeStyleStatusBarWidget(project);
   }
 
