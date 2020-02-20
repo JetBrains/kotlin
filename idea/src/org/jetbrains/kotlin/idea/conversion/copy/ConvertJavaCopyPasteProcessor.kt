@@ -377,7 +377,7 @@ fun runPostProcessing(
                         processor.updateState(0, phase, description)
                     }
             },
-            "Convert Java to Kotlin",
+            KotlinCopyBundle.message("text.convert.java.to.kotlin"),
             true,
             project
         )

@@ -134,7 +134,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
         }
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-            task, "Adding imports ...", true, project
+            task, KotlinCopyBundle.message("text.adding.imports"), true, project
         )
     }
 
@@ -229,7 +229,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
         }
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-            task, "Resolving references ...", true, project
+            task, KotlinCopyBundle.message("text.resolving.references"), true, project
         )
 
     }
