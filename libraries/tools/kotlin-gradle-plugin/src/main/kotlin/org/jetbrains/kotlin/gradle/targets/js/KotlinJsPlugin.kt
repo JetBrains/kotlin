@@ -44,12 +44,10 @@ open class KotlinJsPlugin(
             if (kotlinExtension._target == null) {
                 project.logger.warn(
                     """
-                        Need to initialize js target.
-                        Use 
+                        Please initialize the Kotlin/JS target. Use:
                         kotlin {
                             js {
-                                // Choose sub target (or both), for which js is necessary
-                                // Affect in which tests are executed and final dist (in browser is only one bundle file)
+                                // To build distributions for and run tests on browser or Node.js use one or both of:
                                 browser()
                                 nodejs()
                             }

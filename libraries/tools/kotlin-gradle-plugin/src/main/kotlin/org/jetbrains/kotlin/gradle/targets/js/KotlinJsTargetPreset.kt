@@ -45,12 +45,11 @@ open class KotlinJsTargetPreset(
                 if (!isBrowserConfigured && !isNodejsConfigured) {
                     project.logger.warn(
                         """
-                            Choose sub target (or both), for which js is necessary
-                            In next releases it will be error
-                            Use
+                            Please choose a JavaScript environment to build distributions and run tests.
+                            Not choosing any of them will be an error in the future releases.
                             kotlin {
                                 js {
-                                    // Affect in which tests are executed and final dist (in browser is only one bundle file)
+                                    // To build distributions for and run tests on browser or Node.js use one or both of:
                                     browser()
                                     nodejs()
                                 }
