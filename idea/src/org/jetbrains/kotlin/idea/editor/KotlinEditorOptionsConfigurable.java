@@ -15,13 +15,13 @@ public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEdit
     public KotlinEditorOptionsConfigurable() {
         super(KotlinEditorOptions.getInstance());
         KotlinEditorOptions instance = KotlinEditorOptions.getInstance();
-        checkBox("Convert pasted Java code to Kotlin",
+        checkBox(KotlinEditorBundle.message("checkbox.title.convert.pasted.java.code.to.kotlin"),
                  instance::isEnableJavaToKotlinConversion,
                  instance::setEnableJavaToKotlinConversion);
-        checkBox("Don't show Java to Kotlin conversion dialog on paste",
+        checkBox(KotlinEditorBundle.message("checkbox.title.don.t.show.java.to.kotlin.conversion.dialog.on.paste"),
                  instance::isDonTShowConversionDialog,
                  instance::setDonTShowConversionDialog);
-        checkBox("Auto add val keyword to data/inline class constructor parameters",
+        checkBox(KotlinEditorBundle.message("checkbox.title.auto.add.val.keyword.to.data.inline.class.constructor.parameters"),
                  instance::isAutoAddValKeywordToDataClassParameters,
                  instance::setAutoAddValKeywordToDataClassParameters);
     }
@@ -29,7 +29,7 @@ public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEdit
     @Override
     public JComponent createComponent() {
         JComponent component = super.createComponent();
-        component.setBorder(IdeBorderFactory.createTitledBorder("Kotlin"));
+        component.setBorder(IdeBorderFactory.createTitledBorder(KotlinEditorBundle.message("title.kotlin")));
         return component;
     }
 }
