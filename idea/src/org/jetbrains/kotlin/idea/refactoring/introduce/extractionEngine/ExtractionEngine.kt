@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -57,7 +58,10 @@ class ExtractionEngine(
     ) {
         val project = extractionData.project
 
-        val analysisResult = helper.adjustExtractionData(extractionData).performAnalysis()
+        val adjustExtractionData = helper.adjustExtractionData(extractionData)
+        val analysisResult = ActionUtil.underModalProgress(project, "Analyze extraction data...") {
+            adjustExtractionData.performAnalysis()
+        }
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode && analysisResult.status != AnalysisResult.Status.SUCCESS) {
             throw BaseRefactoringProcessor.ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
