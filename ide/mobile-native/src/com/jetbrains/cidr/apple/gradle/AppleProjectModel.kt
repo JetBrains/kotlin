@@ -11,7 +11,7 @@ interface AppleTargetModel : Serializable {
     val name: String
     val sourceFolders: Set<File>
     val testFolders: Set<File>
-    val buildDir: File
+    val editableXcodeProjectDir: File
     val bridgingHeader: File?
 }
 
@@ -20,6 +20,6 @@ internal data class AppleTargetModelImpl(
     override val name: String,
     override val sourceFolders: Set<File>,
     override val testFolders: Set<File>,
-    override val buildDir: File,
+    override val editableXcodeProjectDir: File,
     override val bridgingHeader: File?
 ) : AppleTargetModel

@@ -37,7 +37,7 @@ class AppleXcodeProjectFileProvider : XcodeProjectFileProvider {
 
     companion object {
         fun findXcodeProjFile(target: AppleTargetModel): File =
-            target.buildDir.resolve("${target.name}.xcodeproj")
+            target.editableXcodeProjectDir.resolve("${target.name}.xcodeproj")
 
         @Synchronized
         private fun generateXcodeProject(project: Project, target: AppleTargetModel): File? {

@@ -44,7 +44,7 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
                 val testModuleId = moduleId + "Test"
 
                 val targetModel = AppleTargetModelImpl(
-                    target.name, target.sourceFolders, target.testFolders, target.buildDir, target.bridgingHeader
+                    target.name, target.sourceFolders, target.testFolders, target.editableXcodeProjectDir, target.bridgingHeader
                 )
 
                 fun addSourceSet(id: String, suffix: String, type: ExternalSystemSourceType, dirs: Set<File>) {

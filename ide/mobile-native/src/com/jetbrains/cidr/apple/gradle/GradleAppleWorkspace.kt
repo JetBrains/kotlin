@@ -198,7 +198,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
                 for (testFolder in data.target.testFolders) {
                     addContent(Element("testFolder").addContent(testFolder.path))
                 }
-                setAttribute("buildDir", data.target.buildDir.path)
+                setAttribute("editableXcodeProjectDir", data.target.editableXcodeProjectDir.path)
             })
         }
         for (target in konanFrameworkTargets.values) {
@@ -218,7 +218,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
                 name = configElement.getAttributeValue("targetName") ?: continue,
                 sourceFolders = configElement.getChildren("sourceFolder").mapTo(mutableSetOf()) { File(it.text) },
                 testFolders = configElement.getChildren("testFolder").mapTo(mutableSetOf()) { File(it.text) },
-                buildDir = configElement.getAttributeValue("buildDir")?.let { File(it) } ?: continue,
+                editableXcodeProjectDir = configElement.getAttributeValue("editableXcodeProjectDir")?.let { File(it) } ?: continue,
                 bridgingHeader = configElement.getChild("bridgingHeader")?.let { File(it.text) }
             ), newDisposable)
         }
