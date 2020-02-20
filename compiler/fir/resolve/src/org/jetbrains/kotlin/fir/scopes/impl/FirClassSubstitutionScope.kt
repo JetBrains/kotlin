@@ -95,6 +95,7 @@ class FirClassSubstitutionScope(
     }
 
     private fun createFakeOverrideFunction(original: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
+        if (substitutor == ConeSubstitutor.Empty) return original
         val member = when (original) {
             is FirNamedFunctionSymbol -> original.fir
             is FirConstructorSymbol -> return original
@@ -146,15 +147,10 @@ class FirClassSubstitutionScope(
 
         val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters)
 
-        var wereChangesInTypeParameters = false
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {
             for (boundTypeRef in oldTypeParameter.bounds) {
                 val typeForBound = boundTypeRef.coneTypeUnsafe<ConeKotlinType>()
                 val substitutedBound = typeForBound.substitute()
-                if (substitutedBound != null) {
-                    wereChangesInTypeParameters = true
-                }
-
                 newTypeParameter.bounds +=
                     buildResolvedTypeRef {
                         source = boundTypeRef.source
@@ -172,6 +168,7 @@ class FirClassSubstitutionScope(
     }
 
     private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
+        if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
 
         val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
@@ -188,6 +185,7 @@ class FirClassSubstitutionScope(
     }
 
     private fun createFakeOverrideField(original: FirFieldSymbol): FirFieldSymbol {
+        if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
@@ -197,6 +195,7 @@ class FirClassSubstitutionScope(
     }
 
     private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
+        if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir as FirSyntheticProperty
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
