@@ -191,7 +191,43 @@ class RunnerFactoryWithMuteInDatabase : ParametersRunnerFactory {
             override fun isIgnored(child: FrameworkMethod): Boolean {
                 return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child, name)
             }
+
+            override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
+                notifier.withMuteFailureListener(method.declaringClass, parametrizedMethodKey(method, name)) {
+                    super.runChild(method, notifier)
+                }
+            }
         }
+    }
+}
+
+private fun parametrizedMethodKey(child: FrameworkMethod, parametersName: String): String {
+    return child.method.name + parametersName
+}
+
+private inline fun RunNotifier.withMuteFailureListener(
+    declaredClass: Class<*>,
+    methodKey: String,
+    crossinline run: () -> Unit,
+) {
+    val doAutoMute = DO_AUTO_MUTE
+    if (doAutoMute == null) {
+        run()
+        return
+    }
+
+    val muteFailureListener = object : RunListener() {
+        override fun testFailure(failure: Failure) {
+            doAutoMute.muteTest(testKey(declaredClass, methodKey))
+            super.testFailure(failure)
+        }
+    }
+
+    try {
+        addListener(muteFailureListener)
+        run()
+    } finally {
+        removeListener(muteFailureListener)
     }
 }
 
@@ -201,24 +237,8 @@ class RunnerWithIgnoreInDatabase(klass: Class<*>?) : BlockJUnit4ClassRunner(klas
     }
 
     override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
-        val doAutoMute = DO_AUTO_MUTE
-        if (doAutoMute == null) {
+        notifier.withMuteFailureListener(method.declaringClass, method.name) {
             super.runChild(method, notifier)
-            return
-        }
-
-        val muteFailureListener = object : RunListener() {
-            override fun testFailure(failure: Failure) {
-                doAutoMute.muteTest(testKey(method.declaringClass, method.name))
-                super.testFailure(failure)
-            }
-        }
-
-        try {
-            notifier.addListener(muteFailureListener)
-            super.runChild(method, notifier)
-        } finally {
-            notifier.removeListener(muteFailureListener)
         }
     }
 }
@@ -237,7 +257,7 @@ fun isIgnoredInDatabaseWithLog(child: FrameworkMethod, parametersName: String): 
         return true
     }
 
-    val methodWithParametersKey = child.method.name + parametersName
+    val methodWithParametersKey = parametrizedMethodKey(child, parametersName)
     if (isMutedInDatabase(child.declaringClass, methodWithParametersKey)) {
         System.err.println(mutedMessage(testKey(child.declaringClass, methodWithParametersKey)))
         return true
