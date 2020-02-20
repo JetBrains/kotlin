@@ -876,7 +876,7 @@ fun checkSuperMethods(
         val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
 
         val message = KotlinBundle.message(
-            "x.overrides.y.in.class.list",
+            "override.declaration.x.overrides.y.in.class.list",
             DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
             "\n${superClassDescriptions.joinToString(separator = "")}",
             actionString

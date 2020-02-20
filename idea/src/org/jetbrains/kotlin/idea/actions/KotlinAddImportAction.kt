@@ -186,7 +186,7 @@ class KotlinAddImportAction internal constructor(
     }
 
     private fun getVariantSelectionPopup(): BaseListPopupStep<AutoImportVariant> {
-        return object : BaseListPopupStep<AutoImportVariant>(KotlinBundle.message("imports.chooser.title"), variants) {
+        return object : BaseListPopupStep<AutoImportVariant>(KotlinBundle.message("action.add.import.chooser.title"), variants) {
             override fun isAutoSelectionEnabled() = false
 
             override fun isSpeedSearchEnabled() = true

@@ -82,7 +82,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         return if (isExtension || declaration.canRefactor()) declaration else null
     }
 
-    override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
+    override fun getFamilyName(): String = KotlinBundle.message("fix.create.from.usage.family")
 
     override fun getText(): String {
         val element = element ?: return ""

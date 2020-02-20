@@ -85,8 +85,8 @@ class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<PsiE
         val elementName = elementDescriptor!!.name
         return NavigationPopupDescriptor(
             superDeclarations,
-            KotlinBundle.message("navigation.title.super.declaration", elementName),
-            KotlinBundle.message("navigation.findUsages.title.super.declaration", elementName),
+            KotlinBundle.message("overridden.marker.overrides.choose.implementation.title", elementName),
+            KotlinBundle.message("overridden.marker.overrides.choose.implementation.find.usages", elementName),
             KtFunctionPsiElementCellRenderer()
         )
     }

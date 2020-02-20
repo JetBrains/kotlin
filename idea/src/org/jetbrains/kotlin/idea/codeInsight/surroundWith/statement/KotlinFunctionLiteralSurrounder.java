@@ -62,6 +62,6 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
 
     @Override
     public String getTemplateDescription() {
-        return KotlinBundle.message("surround.with.function.template");
+        return "{ }";
     }
 }

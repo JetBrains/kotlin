@@ -37,7 +37,7 @@ object CreateLocalVariableActionFactory : KotlinSingleIntentionActionFactory() {
             .firstOrNull() as? KtElement ?: return null
 
         return object : CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {
-            override fun getText(): String = KotlinBundle.message("create.local.variable.from.usage", propertyName)
+            override fun getText(): String = KotlinBundle.message("fix.create.from.usage.local.variable", propertyName)
 
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 val assignment = refExpr.getAssignmentByLHS()

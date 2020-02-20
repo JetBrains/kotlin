@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 public class KotlinSurrounderUtils {
-    public static String SURROUND_WITH = KotlinIdeaCoreBundle.message("hint.text.surround.with");
-    public static String SURROUND_WITH_ERROR = KotlinIdeaCoreBundle.message("hint.text.surround.with.cannot.perform.action");
+    public static String SURROUND_WITH = KotlinIdeaCoreBundle.message("surround.with.title");
+    public static String SURROUND_WITH_ERROR = KotlinIdeaCoreBundle.message("surround.with.error.cannot.perform.action");
 
     private KotlinSurrounderUtils() {
     }

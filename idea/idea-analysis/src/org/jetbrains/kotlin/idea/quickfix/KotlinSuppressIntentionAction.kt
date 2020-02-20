@@ -50,8 +50,8 @@ class KotlinSuppressIntentionAction private constructor(
         kind: AnnotationHostKind
     ) : this(suppressAt as PsiElement, suppressKey, kind)
 
-    override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
-    override fun getText() = KotlinBundle.message("suppress.warning.for", suppressKey, kind.kind, kind.name)
+    override fun getFamilyName() = KotlinBundle.message("intention.suppress.family")
+    override fun getText() = KotlinBundle.message("intention.suppress.text", suppressKey, kind.kind, kind.name)
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid
 

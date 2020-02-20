@@ -339,7 +339,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 .filter { overridenDescriptor -> overridenDescriptor.modality == Modality.ABSTRACT }
                 .mapTo(ArrayList()) { overridenDescriptor ->
                     KotlinBundle.message(
-                        "x.implements.y",
+                        "override.declaration.x.implements.y",
                         formatFunction(declarationDescriptor, true),
                         formatClass(declarationDescriptor.containingDeclaration, true),
                         formatFunction(overridenDescriptor, true),

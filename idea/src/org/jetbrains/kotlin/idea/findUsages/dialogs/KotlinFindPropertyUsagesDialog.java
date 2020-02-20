@@ -85,13 +85,13 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
 
         readAccesses = addCheckboxToPanel(
-                KotlinBundle.message("find.what.property.readers.checkbox"),
+                KotlinBundle.message("find.declaration.property.readers.checkbox"),
                 options.isReadAccess,
                 findWhatPanel,
                 true
         );
         writeAccesses = addCheckboxToPanel(
-                KotlinBundle.message("find.what.property.writers.checkbox"),
+                KotlinBundle.message("find.declaration.property.writers.checkbox"),
                 options.isWriteAccess,
                 findWhatPanel,
                 true
@@ -116,8 +116,8 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         if (isOpen || isAbstract) {
             overrideUsages = addCheckboxToPanel(
                     isAbstract
-                    ? KotlinBundle.message("find.what.implementing.properties.checkbox")
-                    : KotlinBundle.message("find.what.overriding.properties.checkbox"),
+                    ? KotlinBundle.message("find.declaration.implementing.properties.checkbox")
+                    : KotlinBundle.message("find.declaration.overriding.properties.checkbox"),
                     FindSettings.getInstance().isSearchOverloadedMethods(),
                     optionsPanel,
                     false
