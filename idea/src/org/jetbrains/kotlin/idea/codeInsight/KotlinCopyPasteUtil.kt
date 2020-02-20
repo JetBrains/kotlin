@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.hint.HintManagerImpl
@@ -18,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.LightweightHint
 import com.intellij.util.ArrayUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -47,8 +47,7 @@ object ReviewAddedImports {
                 removeImports(project, file, importsToBeDeleted)
                 return
             }
-            val notificationText = CodeInsightBundle
-                .message("copy.paste.reference.notification", imported.size)
+            val notificationText = KotlinBundle.message("copy.paste.reference.notification", imported.size)
             ApplicationManager.getApplication().invokeLater(
                 Runnable {
                     showHint(
@@ -82,7 +81,7 @@ object ReviewAddedImports {
         importedClasses: Set<String>
     ) {
         val dialog = RestoreReferencesDialog(project, ArrayUtil.toObjectArray(importedClasses))
-        dialog.title = CodeInsightBundle.message("dialog.import.on.paste.title3")
+        dialog.title = KotlinBundle.message("dialog.import.on.paste.title3")
         if (dialog.showAndGet()) {
             removeImports(project, file, dialog.selectedElements.map { it as String }.toSortedSet())
         }
