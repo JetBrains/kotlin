@@ -732,8 +732,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }
     data.addAll(visibleNodes);
     if (data.isEmpty()) {
-      String progressText = StringUtil.escapeXmlEntities(UsageViewManagerImpl.getProgressTitle(presentation));
-      data.add(createStringNode(progressText));
+      data.add(createStringNode(UsageViewBundle.message("progress.searching")));
     }
     data.sort(Holder.USAGE_NODE_COMPARATOR);
     return data;
