@@ -32,7 +32,7 @@ class InlineFunctionHyperLinkInfo(
             val list = JBList(inlineInfo)
             list.cellRenderer = InlineInfoCellRenderer()
             val popup = JBPopupFactory.getInstance().createListPopupBuilder(list)
-                .setTitle("Navigate to")
+                .setTitle(KotlinFiltersBundle.message("title.navigate.to"))
                 .setItemChoosenCallback {
                     val fileInfo = list.selectedValue as InlineInfo
                     OpenFileHyperlinkInfo(project, fileInfo.file, fileInfo.line).navigate(project)
@@ -53,8 +53,11 @@ class InlineFunctionHyperLinkInfo(
     }
 
     sealed class InlineInfo(val prefix: String, val file: VirtualFile, val line: Int) {
-        class CallSiteInfo(file: VirtualFile, line: Int) : InlineInfo("inline function call site", file, line)
-        class InlineFunctionBodyInfo(file: VirtualFile, line: Int) : InlineInfo("inline function body", file, line)
+        class CallSiteInfo(file: VirtualFile, line: Int) :
+            InlineInfo(KotlinFiltersBundle.message("text.inline.function.call.site"), file, line)
+
+        class InlineFunctionBodyInfo(file: VirtualFile, line: Int) :
+            InlineInfo(KotlinFiltersBundle.message("text.inline.function.body"), file, line)
     }
 
     private class InlineInfoCellRenderer : SimpleColoredComponent(), ListCellRenderer<InlineInfo> {
