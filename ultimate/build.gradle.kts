@@ -178,6 +178,9 @@ dependencies {
         testCompile(intellijUltimatePluginDep("junit"))
         testRuntime(intellijUltimatePluginDep("coverage"))
         testRuntime(intellijUltimatePluginDep("maven"))
+        if (Platform[201].orHigher()) {
+            testRuntime(intellijUltimatePluginDep("repository-search"))
+        }
         testRuntime(intellijUltimatePluginDep("android"))
         testRuntime(intellijUltimatePluginDep("testng"))
         testRuntime(intellijUltimatePluginDep("IntelliLang"))
