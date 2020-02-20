@@ -66,6 +66,10 @@ dependencies {
 
     Ide.IJ {
         testRuntime(intellijPluginDep("maven"))
+
+        if (Ide.IJ201.orHigher()) {
+            testRuntime(intellijPluginDep("repository-search"))
+        }
     }
 
     testRuntime(intellijPluginDep("testng"))

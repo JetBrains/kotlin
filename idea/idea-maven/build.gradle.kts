@@ -35,6 +35,10 @@ dependencies {
     if (Ide.IJ()) {
         testCompileOnly(intellijPluginDep("maven"))
         testRuntime(intellijPluginDep("maven"))
+
+        if (Ide.IJ201.orHigher()) {
+            testRuntime(intellijPluginDep("repository-search"))
+        }
     }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
