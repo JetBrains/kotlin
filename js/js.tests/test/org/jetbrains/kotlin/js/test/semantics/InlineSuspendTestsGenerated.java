@@ -43,6 +43,11 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
+    public void testDoubleRegenerationWithNonSuspendingLambda_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/doubleRegenerationWithNonSuspendingLambda.kt", "kotlin.coroutines");
+    }
+
     @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
     public void testInlineOrdinaryOfCrossinlineSuspend_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineOrdinaryOfCrossinlineSuspend.kt", "kotlin.coroutines");
