@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.nodejs.cli
 
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
@@ -35,7 +36,7 @@ class NodeJsConfigData(
 ) : KotlinJSRunConfigurationData
 
 private class KotlinNodeJsRunConfigurationProducer :
-        RunConfigurationProducer<NodeJsRunConfiguration>(NodeJsRunConfigurationType.getInstance()),
+        RunConfigurationProducer<NodeJsRunConfiguration>(NodeJsRunConfigurationType.getInstance() as ConfigurationType),
         KotlinJSRunConfigurationDataProvider<NodeJsConfigData> {
     private val ConfigurationContext?.isAcceptable: Boolean
         get() {
