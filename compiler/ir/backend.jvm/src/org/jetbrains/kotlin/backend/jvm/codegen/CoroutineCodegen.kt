@@ -113,6 +113,10 @@ internal fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
 internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspend && name.asString() == "invoke" &&
         parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
+// Wrapper of suspend main is always tail-call and it is not generated as suspend function.
+private fun IrFunction.isInvokeOfSuspendMainWrapper(): Boolean = !isSuspend && name.asString() == "invoke" &&
+        parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
     when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
@@ -125,7 +129,7 @@ internal fun IrFunction.isKnownToBeTailCall(): Boolean =
         IrDeclarationOrigin.BRIDGE,
         IrDeclarationOrigin.BRIDGE_SPECIAL,
         IrDeclarationOrigin.DELEGATED_MEMBER -> true
-        else -> isInvokeOfSuspendCallableReference()
+        else -> isInvokeOfSuspendMainWrapper() || isInvokeOfSuspendCallableReference()
     }
 
 internal fun IrFunction.shouldNotContainSuspendMarkers(): Boolean =

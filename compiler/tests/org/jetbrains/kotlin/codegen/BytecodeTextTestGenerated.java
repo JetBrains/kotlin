@@ -1371,6 +1371,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendMain.kt")
+        public void testSuspendMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/suspendMain.kt");
+        }
+
         @TestMetadata("throwOnFailure.kt")
         public void testThrowOnFailure() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/throwOnFailure.kt");
