@@ -1,8 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.inspection;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.util.registry.RegistryValueListener;
@@ -13,6 +15,18 @@ import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class ProblemsViewToolWindowFactory implements ToolWindowFactory, DumbAware {
+  public ProblemsViewToolWindowFactory() {
+    RegistryValue value = readRegistryValue();
+    value.addListener(new RegistryValueListener() {
+      @Override
+      public void afterValueChanged(@NotNull RegistryValue value) {
+        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+          wakeup(project, value);
+        }
+      }
+    }, ApplicationManager.getApplication());
+  }
+
   @Override
   public boolean shouldBeAvailable(@NotNull Project project) {
     return readRegistryValue().asBoolean();
@@ -28,12 +42,6 @@ public class ProblemsViewToolWindowFactory implements ToolWindowFactory, DumbAwa
     //((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerFeedbackAction());
 
     RegistryValue value = readRegistryValue();
-    value.addListener(new RegistryValueListener() {
-      @Override
-      public void afterValueChanged(@NotNull RegistryValue value) {
-        wakeup(project, value);
-      }
-    }, project);
     wakeup(project, value);
   }
 
