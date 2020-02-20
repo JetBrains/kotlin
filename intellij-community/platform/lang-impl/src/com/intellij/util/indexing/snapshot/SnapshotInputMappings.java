@@ -7,6 +7,7 @@ import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.CompressionUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
@@ -51,7 +52,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
 
     boolean storeOnlySingleValue = indexExtension instanceof SingleEntryFileBasedIndexExtension;
     myMapExternalizer = storeOnlySingleValue ? null : new InputMapExternalizer<>(indexExtension);
-    myValueExternalizer = storeOnlySingleValue ? indexExtension.getValueExternalizer() : null;
+    myValueExternalizer = storeOnlySingleValue ? new NullableDataExternalizer<>(indexExtension.getValueExternalizer()) : null;
 
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();
@@ -126,7 +127,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       return AbstractForwardIndexAccessor.serializeToByteSeq(data, myMapExternalizer, data.size());
     } else {
       assert myValueExternalizer != null;
-      return AbstractForwardIndexAccessor.serializeToByteSeq(data.values().iterator().next(), myValueExternalizer, data.size());
+      return AbstractForwardIndexAccessor.serializeToByteSeq(ContainerUtil.getFirstItem(data.values()), myValueExternalizer, data.size());
     }
   }
 
