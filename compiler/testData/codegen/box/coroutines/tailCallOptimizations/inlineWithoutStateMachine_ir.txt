@@ -1,7 +1,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class InlineWithoutStateMachineKt$box$1 {
-    private field $result: kotlin.jvm.internal.Ref$ObjectRef
+    synthetic final @org.jetbrains.annotations.NotNull field $result: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     private field label: int

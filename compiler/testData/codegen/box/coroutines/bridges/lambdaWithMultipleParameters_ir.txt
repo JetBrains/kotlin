@@ -1,12 +1,12 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
-    private field a: java.lang.String
-    private field b: long
-    private field c: long
-    private field d: long
-    private field e: long
-    private field f: long
+    synthetic final @org.jetbrains.annotations.NotNull field a: java.lang.String
+    synthetic final field b: long
+    synthetic final field c: long
+    synthetic final field d: long
+    synthetic final field e: long
+    synthetic final field f: long
     private field label: int
     inner class LambdaWithMultipleParametersKt$box$1
     inner class LambdaWithMultipleParametersKt$box$1$1
@@ -18,7 +18,7 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1 {
-    private field $res: kotlin.jvm.internal.Ref$ObjectRef
+    synthetic final @org.jetbrains.annotations.NotNull field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     private field label: int
     inner class LambdaWithMultipleParametersKt$box$1

@@ -178,7 +178,18 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 addField("p\$", it.type)
             }
 
-            val parametersFields = info.function.valueParameters.map { addField(it.name, it.type) }
+            val parametersFields = info.function.valueParameters.map {
+                addField {
+                    name = it.name
+                    type = it.type
+                    origin = if (it.isCrossinline)
+                        LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
+                    else
+                        LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                    isFinal = true
+                    visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                }
+            }
             val parametersWithoutArguments = parametersFields.withIndex()
                 .mapNotNull { (i, field) -> if (info.reference.getValueArgument(i) == null) field else null }
             val parametersWithArguments = parametersFields.withIndex()
