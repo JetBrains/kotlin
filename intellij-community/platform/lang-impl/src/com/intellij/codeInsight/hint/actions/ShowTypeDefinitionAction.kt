@@ -89,7 +89,7 @@ open class ShowTypeDefinitionAction : ShowRelatedElementsActionBase() {
           TypeDeclarationProvider.EP_NAME.extensions().asSequence()
             .mapNotNull { provider ->
               ReadAction.compute<List<PsiElement>?, Throwable> {
-                provider.getSymbolTypeDeclarations(element)?.mapNotNull { it.navigationElement }
+                provider.getSymbolTypeDeclarations(element)?.mapNotNull { it?.navigationElement }
               }
             }
             .firstOrNull()
