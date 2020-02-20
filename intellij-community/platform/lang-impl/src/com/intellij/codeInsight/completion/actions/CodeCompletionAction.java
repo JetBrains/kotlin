@@ -19,13 +19,14 @@ package com.intellij.codeInsight.completion.actions;
 import com.intellij.codeInsight.completion.CodeCompletionFeatures;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.featureStatistics.FeatureUsageTracker;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
  *  @author peter
  */
-public class CodeCompletionAction extends BaseCodeCompletionAction {
+public class CodeCompletionAction extends BaseCodeCompletionAction implements LightEditCompatible {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
