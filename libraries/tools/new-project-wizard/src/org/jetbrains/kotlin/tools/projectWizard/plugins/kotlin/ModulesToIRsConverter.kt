@@ -3,8 +3,10 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.GradleModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -102,7 +104,7 @@ class ModulesToIRsConverter(
             +module.sourcesets.flatMap { sourceset ->
                 sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
             }
-            with(configurator) { +createModuleIRs(data, module) }
+            with(configurator) { +createModuleIRs(this@createSinglePlatformModule, data, module) }
             addIfNotNull(
                 configurator.createStdlibType(data, module)?.let { stdlibType ->
                     KotlinStdlibDependencyIR(
@@ -160,7 +162,7 @@ class ModulesToIRsConverter(
         }
 
         val targetModuleIrs = module.subModules.map { target ->
-            createTargetSourceset(target, modulePath)
+            createTargetModule(target, modulePath)
         }
 
         return BuildFileIR(
@@ -179,7 +181,8 @@ class ModulesToIRsConverter(
         ).asSingletonList().asSuccess()
     }
 
-    private fun ReadingContext.createTargetSourceset(target: Module, modulePath: Path): MultiplatformModuleIR {
+    private fun ReadingContext.createTargetModule(target: Module, modulePath: Path): MultiplatformModuleIR {
+        data.writingContext.mutateProjectStructureByModuleConfigurator(target, modulePath)
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
             val sourcesetIrs = buildList<BuildSystemIR> {
@@ -208,7 +211,7 @@ class ModulesToIRsConverter(
         return MultiplatformModuleIR(
             target.name,
             modulePath,
-            with(target.configurator) { createModuleIRs(data, target) },
+            with(target.configurator) { createModuleIRs(this@createTargetModule, data, target) },
             target.template,
             target,
             sourcesetss
@@ -219,8 +222,13 @@ class ModulesToIRsConverter(
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = with(module.configurator) {
-        rootBuildFileIrs += createRootBuildFileIrs(data)
-        runArbitraryTask(data, module, modulePath)
+        compute {
+            rootBuildFileIrs += createRootBuildFileIrs(data)
+            runArbitraryTask(data, module, modulePath).ensure()
+            if (this@with is GradleModuleConfigurator) {
+                GradlePlugin::settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
+            }
+        }
     }
 
     private fun ReadingContext.createBuildFileIRs(
@@ -239,7 +247,7 @@ class ModulesToIRsConverter(
                 }
             }
         addIfNotNull(kotlinPlugin)
-        +with(module.configurator) { createBuildFileIRs(data, module) }
+        +with(module.configurator) { createBuildFileIRs(this@createBuildFileIRs, data, module) }
     }
 
     private fun SourcesetDependency.toIR(type: DependencyType): DependencyIR = with(data) {

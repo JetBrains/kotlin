@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
+    kotlin("android") version "1.3.61"
     id("kotlin-android-extensions")
 }
 group = "testGroupId"
@@ -13,8 +13,8 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.core:core-ktx:1.1.0")
+    implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
     implementation(kotlin("stdlib-jdk7"))
 }

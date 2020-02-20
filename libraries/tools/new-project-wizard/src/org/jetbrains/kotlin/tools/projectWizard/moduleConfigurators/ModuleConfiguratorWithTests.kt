@@ -39,18 +39,25 @@ interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
 
     fun defaultTestFramework(): KotlinTestFramework
 
-    override fun ReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    override fun createModuleIRs(
+        readingContext: ReadingContext,
+        configurationData: ModuleConfigurationData,
+        module: Module
+    ): List<BuildSystemIR> =
         withSettingsOf(module) {
-            testFramework.reference.settingValue.dependencyNames.map { dependencyName ->
-                KotlinArbitraryDependencyIR(
-                    dependencyName,
-                    isInMppModule = module.kind
-                        .let { it == ModuleKind.multiplatform || it == ModuleKind.target },
-                    version = KotlinPlugin::version.propertyValue,
-                    dependencyType = DependencyType.TEST
-                )
+            with(readingContext) {
+                testFramework.reference.settingValue.dependencyNames.map { dependencyName ->
+                    KotlinArbitraryDependencyIR(
+                        dependencyName,
+                        isInMppModule = module.kind
+                            .let { it == ModuleKind.multiplatform || it == ModuleKind.target },
+                        version = KotlinPlugin::version.propertyValue,
+                        dependencyType = DependencyType.TEST
+                    )
+                }
             }
         }
+
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = listOf(testFramework)
 }

@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PluginManagementRepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.SettingsGradleFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
@@ -35,6 +37,8 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     val gradleVersions by property<List<Version>>(emptyList())
 
     val gradleProperties by listProperty<Pair<String, String>>()
+
+    val settingsGradleFileIRs by listProperty<BuildSystemIR>()
 
     val createGradlePropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
@@ -105,6 +109,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
 
 
     val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+        runAfter(KotlinPlugin::createModules)
         runAfter(KotlinPlugin::createPluginRepositories)
         isAvailable = isGradle
         withAction {
@@ -115,11 +120,12 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                 if (isNotEmpty()) {
                     +RepositoryIR(DefaultRepository.MAVEN_CENTRAL)
                 }
-            }
+            }.map(::PluginManagementRepositoryIR)
+
             val settingsGradleIR = SettingsGradleFileIR(
                 StructurePlugin::name.settingValue,
                 allModulesPaths.map { path -> path.joinToString(separator = "") { ":$it" } },
-                repositories
+                repositories + GradlePlugin::settingsGradleFileIRs.propertyValue
             )
             val buildFileText = createBuildFile().printBuildFile { settingsGradleIR.render(this) }
             service<FileSystemWizardService>().createFile(

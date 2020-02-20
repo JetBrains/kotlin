@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KClass
 
 
 sealed class ModuleCondifuratorSettingsEnvironment {
@@ -205,13 +204,18 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val suggestedModuleName: String? get() = null
     val canContainSubModules: Boolean get() = false
 
-    fun ReadingContext.createBuildFileIRs(
+    fun createBuildFileIRs(
+        readingContext: ReadingContext,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
-    fun ReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    fun createModuleIRs(
+        readingContext: ReadingContext,
+        configurationData: ModuleConfigurationData,
+        module: Module
+    ): List<BuildSystemIR> =
         emptyList()
 
     fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
@@ -266,4 +270,8 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
                 configurator
             }
     }
+}
+
+interface GradleModuleConfigurator : ModuleConfigurator {
+    fun ReadingContext.createSettingsGradleIRs(module: Module): List<BuildSystemIR> = emptyList()
 }

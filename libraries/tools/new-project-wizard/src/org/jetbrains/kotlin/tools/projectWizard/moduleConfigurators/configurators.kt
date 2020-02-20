@@ -43,7 +43,6 @@ enum class TargetJvmVersion(val value: String) : DisplayableSettingItem {
         get() = value
 }
 
-interface AndroidModuleConfigurator : ModuleConfigurator
 
 interface ModuleConfiguratorWithModuleType : ModuleConfigurator {
     val moduleType: ModuleType
@@ -89,11 +88,19 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
         )
 
 
-    override fun ReadingContext.createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    override fun createBuildFileIRs(
+        readingContext: ReadingContext,
+        configurationData: ModuleConfigurationData,
+        module: Module
+    ): List<BuildSystemIR> =
         buildList {
             +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
 
-            val targetVersionValue = withSettingsOf(module) { JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value }
+            val targetVersionValue = withSettingsOf(module) {
+                with(readingContext) {
+                    JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
+                }
+            }
             when {
                 configurationData.buildSystemType.isGradle -> {
                     +GradleConfigureTaskIR(

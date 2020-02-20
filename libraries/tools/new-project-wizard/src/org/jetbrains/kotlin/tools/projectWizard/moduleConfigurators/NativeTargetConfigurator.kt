@@ -74,7 +74,8 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
         }
     }
 
-    override fun ReadingContext.createBuildFileIRs(
+    override fun createBuildFileIRs(
+        readingContext: ReadingContext,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> = buildList {

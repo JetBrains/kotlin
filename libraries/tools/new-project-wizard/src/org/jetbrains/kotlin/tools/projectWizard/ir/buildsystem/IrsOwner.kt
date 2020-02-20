@@ -20,6 +20,9 @@ inline fun <reified I : BuildSystemIR> IrsOwner.irsOfType(): List<I> =
 inline fun <reified I : BuildSystemIR> IrsOwner.irsOfTypeOrNull() =
     irsOfType<I>().takeIf { it.isNotEmpty() }
 
+inline fun <reified I : BuildSystemIR> List<BuildSystemIR>.irsOfTypeOrNull() =
+    filterIsInstance<I>().takeIf { it.isNotEmpty() }
+
 
 inline fun <reified T : BuildSystemIR> IrsOwner.firstIrOfType() =
     irs.firstOrNull { ir -> ir is T } as T?

@@ -123,10 +123,3 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
         }
     }
 }
-
-object AndroidTargetConfigurator : TargetConfigurator,
-    SimpleTargetConfigurator,
-    AndroidModuleConfigurator,
-    SingleCoexistenceTargetConfigurator {
-    override val moduleSubType = ModuleSubType.android
-}

@@ -7,12 +7,14 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
 interface AndroidIR : GradleIR
 
 //TODO parematrize
-data class AndroidConfigIR(val javaPackage: JavaPackage) : AndroidIR, FreeIR {
+data class AndroidConfigIR(val javaPackage: JavaPackage?) : AndroidIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
         sectionCall("android", needIndent = true) {
             call("compileSdkVersion") { +"29" }; nlIndented() // TODO dehardcode
             sectionCall("defaultConfig", needIndent = true) {
-                assignmentOrCall("applicationId") { +javaPackage.asCodePackage().quotified }; nlIndented()
+                if (javaPackage != null) {
+                    assignmentOrCall("applicationId") { +javaPackage.asCodePackage().quotified }; nlIndented()
+                }
                 call("minSdkVersion") { +"24" }; nlIndented()  // TODO dehardcode
                 call("targetSdkVersion") { +"29" }; nlIndented() // TODO dehardcode
                 assignmentOrCall("versionCode") { +"1" }; nlIndented()
