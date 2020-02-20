@@ -9,5 +9,5 @@ fun main() {
     var y: Number? = null
     y = 2
     { y = 1 }
-    Test.foo(<!SMARTCAST_IMPOSSIBLE, SMARTCAST_IMPOSSIBLE!>y<!>)
+    Test.foo(y)
 }

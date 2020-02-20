@@ -152,9 +152,7 @@ sealed class UnstableSmartCast(
             targetType: UnwrappedType,
             isReceiver: Boolean = false, // for reproducing OI behaviour
         ): UnstableSmartCast {
-            return if (isReceiver)
-                UnstableSmartCastResolutionError(argument, targetType)
-            else UnstableSmartCastDiagnosticError(argument, targetType)
+            return UnstableSmartCastResolutionError(argument, targetType)
         }
     }
 }

@@ -12,7 +12,7 @@ class Cls {
 
     fun test(s: String) {
         if (s.ext is B)
-            take(<!NI;SMARTCAST_IMPOSSIBLE, SMARTCAST_IMPOSSIBLE!>s.ext<!>)
+            take(<!OI;SMARTCAST_IMPOSSIBLE!>s.ext<!>)
     }
 }
 
