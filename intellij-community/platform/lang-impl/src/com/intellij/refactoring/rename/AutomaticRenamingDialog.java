@@ -34,8 +34,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * @author dsl
@@ -133,7 +133,7 @@ public class AutomaticRenamingDialog extends DialogWrapper {
       String newName = myNewNames[i];
       if (myShouldRename[i] && !RenameUtil.isValidName(myProject, myRenames[i], newName)) {
         getOKAction().setEnabled(false);
-        setErrorText("Identifier \'" + newName + "\' is invalid");
+        setErrorText(RefactoringBundle.message("automatic.renaming.dialog.identifier.invalid.error", newName));
         return;
       }
     }
@@ -388,7 +388,7 @@ public class AutomaticRenamingDialog extends DialogWrapper {
     private final AbstractTableModel myModel;
 
     public RenameSelectedAction(JTable table, final AbstractTableModel model) {
-      super("Rename Selected");
+      super(RefactoringBundle.message("automatic.renaming.dialog.rename.selected.title"));
       myTable = table;
       myModel = model;
     }
@@ -397,7 +397,8 @@ public class AutomaticRenamingDialog extends DialogWrapper {
     public void actionPerformed(@NotNull AnActionEvent e) {
       int[] selectedRows = myTable.getSelectedRows();
       String initial = (String)myModel.getValueAt(selectedRows[0], NEW_NAME_COLUMN);
-      String newName = Messages.showInputDialog(myTable, "New name", "Rename Selected", null, initial, new InputValidatorEx() {
+      String newName = Messages.showInputDialog(myTable, RefactoringBundle.message("automatic.renaming.dialog.new.name.label"),
+                                                RefactoringBundle.message("automatic.renaming.dialog.rename.selected.title"), null, initial, new InputValidatorEx() {
         @Override
         public boolean checkInput(String inputString) {
           return getErrorText(inputString) == null;

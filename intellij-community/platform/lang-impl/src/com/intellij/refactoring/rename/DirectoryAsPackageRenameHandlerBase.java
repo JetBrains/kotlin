@@ -99,23 +99,20 @@ public abstract class DirectoryAsPackageRenameHandlerBase<T extends PsiDirectory
               moduleDirs = null;
             }
           }
-          final String promptMessage = "Package \'" +
-                                       aPackage.getName() +
-                                       "\' contains directories in libraries which cannot be renamed. Do you want to rename " +
-                                       (moduleDirs == null ? "current directory" : "current module directories");
           if (projectDirectories.length > 0) {
             int ret = Messages
-              .showYesNoCancelDialog(project, promptMessage + " or all directories in project?", RefactoringBundle.message("warning.title"),
-                          RefactoringBundle.message("rename.current.directory"),
-                            RefactoringBundle.message("rename.directories"), CommonBundle.getCancelButtonText(),
-                          Messages.getWarningIcon());
+              .showYesNoCancelDialog(project, RefactoringBundle.message("rename.package.with.lib.multiple.message", aPackage.getName(), moduleDirs == null ? 1 : 2),
+                                     RefactoringBundle.message("warning.title"),
+                                     RefactoringBundle.message("rename.current.directory"),
+                                     RefactoringBundle.message("rename.directories"), CommonBundle.getCancelButtonText(),
+                                     Messages.getWarningIcon());
             if (ret == Messages.CANCEL) return;
             renameDirs(project, nameSuggestionContext, editor, psiDirectory, aPackage,
                        ret == Messages.YES ? (moduleDirs == null ? new PsiDirectory[]{psiDirectory} : moduleDirs) : projectDirectories);
           }
           else {
-            if (Messages.showOkCancelDialog(project, promptMessage + "?", RefactoringBundle.message("warning.title"),
-                                    Messages.getWarningIcon()) == Messages.OK) {
+            if (Messages.showOkCancelDialog(project, RefactoringBundle.message("rename.package.with.lib.message", aPackage.getName(), moduleDirs == null ? 1 : 2), RefactoringBundle.message("warning.title"),
+                                            Messages.getWarningIcon()) == Messages.OK) {
               renameDirs(project, nameSuggestionContext, editor, psiDirectory, aPackage, psiDirectory);
             }
           }

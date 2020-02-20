@@ -206,11 +206,11 @@ public abstract class BaseRefactoringProcessor implements Runnable {
       return;
     }
     if (DumbService.isDumb(myProject)) {
-      DumbService.getInstance(myProject).showDumbModeNotification("Refactoring is not available until indices are ready");
+      DumbService.getInstance(myProject).showDumbModeNotification(RefactoringBundle.message("refactoring.dumb.mode.notification"));
       return;
     }
     if (!refProcessCanceled.isNull()) {
-      Messages.showErrorDialog(myProject, "Index corruption detected. Please retry the refactoring - indexes will be rebuilt automatically", RefactoringBundle.message("error.title"));
+      Messages.showErrorDialog(myProject, RefactoringBundle.message("refactoring.index.corruption.notifiction"), RefactoringBundle.message("error.title"));
       return;
     }
 
@@ -410,7 +410,8 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     final Ref<Usage[]> convertUsagesRef = new Ref<>();
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> ApplicationManager.getApplication().runReadAction(
-        () -> convertUsagesRef.set(UsageInfo2UsageAdapter.convert(usageInfos))), "Preprocess Usages", true, myProject)) return;
+        () -> convertUsagesRef.set(UsageInfo2UsageAdapter.convert(usageInfos))),
+      RefactoringBundle.message("refactoring.preprocess.usages.progress"), true, myProject)) return;
 
     if (convertUsagesRef.isNull()) return;
 
@@ -480,7 +481,8 @@ public abstract class BaseRefactoringProcessor implements Runnable {
         }
       };
 
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(prepareHelpersRunnable, "Prepare ...", false, myProject);
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(prepareHelpersRunnable,
+                                                                        RefactoringBundle.message("refactoring.prepare.progress"), false, myProject);
 
       Runnable performRefactoringRunnable = () -> {
         final String refactoringId = getRefactoringId();

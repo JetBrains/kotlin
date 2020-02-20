@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.refactoring.RefactoringBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,6 +103,6 @@ public class RefactoringQuickListPopupAction extends QuickSwitchSchemeAction {
 
   @Override
   protected String getPopupTitle(@NotNull AnActionEvent e) {
-    return "Refactor This";
+    return RefactoringBundle.message("refactor.this.title");
   }
 }

@@ -166,13 +166,13 @@ public class ConflictsDialog extends DialogWrapper{
 
 
     MyShowConflictsInUsageViewAction() {
-      super("Show Conflicts in View");
+      super(RefactoringBundle.message("action.show.conflicts.in.view.text"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
       final UsageViewPresentation presentation = new UsageViewPresentation();
-      final String codeUsagesString = "Conflicts";
+      final String codeUsagesString = RefactoringBundle.message("conflicts.tab.name");
       presentation.setCodeUsagesString(codeUsagesString);
       presentation.setTabName(codeUsagesString);
       presentation.setTabText(codeUsagesString);

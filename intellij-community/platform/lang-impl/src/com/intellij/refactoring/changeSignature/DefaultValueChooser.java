@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MultiLineLabelUI;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.RadioUpDownListener;
 import com.intellij.ui.EditorTextField;
 
@@ -51,10 +52,10 @@ public class DefaultValueChooser extends DialogWrapper{
     myLeaveBlankRadioButton.addActionListener(actionListener);
     myFeelLuckyRadioButton.addActionListener(actionListener);
     myUseValueRadioButton.addActionListener(actionListener);
-    setTitle("Default value for parameter \"" + name + "\" needed");
+    setTitle(RefactoringBundle.message("change.signature.default.value.chooser.title", name));
     myLeaveBlankRadioButton.setSelected(true);
     myValueEditor.setEnabled(false);
-    myFeelLuckyDescription.setText("In calls to this method, if exactly one variable of the correct type is found, use it. Otherwise leave blank.");
+    myFeelLuckyDescription.setText(RefactoringBundle.message("change.signature.default.value.description"));
     myFeelLuckyDescription.setUI(new MultiLineLabelUI());
     myBlankDescription.setUI(new MultiLineLabelUI());
     myValueEditor.setText(defaultValue);
