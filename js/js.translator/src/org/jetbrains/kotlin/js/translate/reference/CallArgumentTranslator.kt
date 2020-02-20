@@ -233,7 +233,7 @@ class CallArgumentTranslator private constructor(
         val arguments = resolvedArgument.arguments
         if (arguments.isEmpty()) {
             return if (shouldWrapVarargInArray) {
-                return toArray(varargElementType, listOf()).wrapInUArray(varargElementType)
+                return toArray(varargElementType, mutableListOf()).wrapInUArray(varargElementType)
             } else {
                 null
             }

@@ -1,5 +1,6 @@
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JS_IR
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals
@@ -34,15 +35,16 @@ fun C.extensionBoth(i: Int, s: String = "", vararg t: String) {
     memberBoth(i, s, *t)
 }
 
-fun test(f: (Int) -> Unit, p: Int) = f(p)
+fun test(f: C.(Int) -> Unit, p: Int) = C(p).f(p)
 
 fun box(): String {
-    test(C(42)::memberVararg, 42)
-    test(C(42)::memberDefault, 42)
-    test(C(42)::memberBoth, 42)
-    test(C(42)::extensionVararg, 42)
-    test(C(42)::extensionDefault, 42)
-    test(C(42)::extensionBoth, 42)
+
+    test(C::memberVararg, 43)
+    test(C::memberDefault, 43)
+    test(C::memberBoth, 43)
+    test(C::extensionVararg, 43)
+    test(C::extensionDefault, 43)
+    test(C::extensionBoth, 43)
 
     return "OK"
 }

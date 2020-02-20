@@ -1,6 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +NewInference
-// DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND_FIR: JVM_IR
 
 fun sum(vararg args: Int): Int {
