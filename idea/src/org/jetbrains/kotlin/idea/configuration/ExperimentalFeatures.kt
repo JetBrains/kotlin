@@ -20,13 +20,13 @@ import javax.swing.JPanel
 
 object ExperimentalFeatures {
     val NewJ2k = RegistryExperimentalFeature(
-        title = "New Java to Kotlin converter",
+        title = KotlinConfigurationBundle.message("feature.text.new.java.to.kotlin.converter"),
         registryKey = "kotlin.experimental.new.j2k",
         enabledByDefault = true
     )
 
     val NewWizard = object : RegistryExperimentalFeature(
-        title = "New Kotlin project wizard",
+        title = KotlinConfigurationBundle.message("feature.text.new.experimental.project.wizard"),
         registryKey = "kotlin.experimental.project.wizard",
         enabledByDefault = false
     ) {

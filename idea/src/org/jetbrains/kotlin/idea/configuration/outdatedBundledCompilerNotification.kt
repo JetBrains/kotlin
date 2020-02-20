@@ -45,8 +45,11 @@ fun notifyOutdatedBundledCompilerIfNecessary(project: Project) {
 
     Notifications.Bus.notify(
         Notification(
-            OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID, OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID, message,
-            NotificationType.WARNING, NotificationListener { notification, event ->
+            OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID,
+            KotlinConfigurationBundle.message("title.outdated.bundled.kotlin.compiler"),
+            message,
+            NotificationType.WARNING,
+            NotificationListener { notification, event ->
                 if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
                     when {
                         "update" == event.description -> {
@@ -127,10 +130,10 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
     modulesStr = modulesStr.removeSuffix("<br/>")
 
     return """
-        <p>The compiler bundled to Kotlin plugin ($bundledCompilerVersion) is older than external compiler used for building modules:</p>
+        <p>${KotlinConfigurationBundle.message("text.the.compiler.bundled.to.kotlin.plugin", bundledCompilerVersion)}</p>
         <ul>$modulesStr</ul>
-        <p>This may cause different set of errors and warnings reported in IDE.</p>
-        <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>"""
+        <p>${KotlinConfigurationBundle.message("text.this.may.cause.different.set.of.errors.and.warnings.reported.in.ide.p")}</p>
+        <p><a href="update">${KotlinConfigurationBundle.message("action.text.update")}</a>  <a href="ignore">${KotlinConfigurationBundle.message("action.text.ignore")}</a></p>"""
         .trimIndent().lines().joinToString(separator = "").replace("<br/>", "\n")
 }
 

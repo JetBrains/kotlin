@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.configuration.ui
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.NonEmptyInputValidator
 import com.intellij.ui.AddEditRemovePanel
+import org.jetbrains.kotlin.idea.configuration.KotlinConfigurationBundle
 import org.jetbrains.kotlin.name.FqNameUnsafe
 
 class NotPropertyListPanel(data: MutableList<FqNameUnsafe>) : AddEditRemovePanel<FqNameUnsafe>(MyTableModel(), data) {
@@ -21,8 +22,8 @@ class NotPropertyListPanel(data: MutableList<FqNameUnsafe>) : AddEditRemovePanel
 
     override fun editItem(fqName: FqNameUnsafe): FqNameUnsafe? {
         val result = Messages.showInputDialog(
-            this, "Enter fully-qualified method name:",
-            "Edit exclusion",
+            this, KotlinConfigurationBundle.message("message.enter.fully.qualified.method.name"),
+            KotlinConfigurationBundle.message("title.edit.exclusion"),
             Messages.getQuestionIcon(),
             fqName.asString(),
             NonEmptyInputValidator()
@@ -39,8 +40,8 @@ class NotPropertyListPanel(data: MutableList<FqNameUnsafe>) : AddEditRemovePanel
 
     override fun addItem(): FqNameUnsafe? {
         val result = Messages.showInputDialog(
-            this, "Enter fully-qualified method name:",
-            "Add exclusion",
+            this, KotlinConfigurationBundle.message("message.enter.fully.qualified.method.name"),
+            KotlinConfigurationBundle.message("text.add.exclusion"),
             Messages.getQuestionIcon(),
             "",
             NonEmptyInputValidator()
@@ -57,7 +58,7 @@ class NotPropertyListPanel(data: MutableList<FqNameUnsafe>) : AddEditRemovePanel
 
     class MyTableModel : AddEditRemovePanel.TableModel<FqNameUnsafe>() {
         override fun getField(o: FqNameUnsafe, columnIndex: Int) = o.asString()
-        override fun getColumnName(columnIndex: Int) = "Method"
+        override fun getColumnName(columnIndex: Int) = KotlinConfigurationBundle.message("name.method")
         override fun getColumnCount() = 1
     }
 }

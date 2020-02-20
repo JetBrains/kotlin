@@ -11,6 +11,7 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.PlatformVersion;
 import org.jetbrains.kotlin.idea.configuration.ExperimentalFeaturesPanel;
+import org.jetbrains.kotlin.idea.configuration.KotlinConfigurationBundle;
 import org.jetbrains.kotlin.idea.util.VersioningKt;
 
 import javax.swing.*;
@@ -40,7 +41,7 @@ public class KotlinLanguageConfigurationForm {
         if (KotlinPluginUtil.isPatched()) {
             @SuppressWarnings("deprecation")
             String pluginVersionFromIdea = KotlinPluginUtil.getPluginVersionFromIdea();
-            currentVersion.setText(pluginVersion + " (Patched! Original: " + pluginVersionFromIdea + ")");
+            currentVersion.setText(KotlinConfigurationBundle.message("text.patched.original", pluginVersion, pluginVersionFromIdea));
         } else {
             currentVersion.setText(pluginVersion);
         }
@@ -106,7 +107,7 @@ public class KotlinLanguageConfigurationForm {
     private void showVerifierDisabledStatus() {
         //noinspection UnresolvedPropertyKey
         if (!Registry.is("kotlin.plugin.update.verifier.enabled", true)) {
-            verifierDisabledText.setText("(verifier disabled)");
+            verifierDisabledText.setText(KotlinConfigurationBundle.message("message.verifier.disabled"));
         }
         else {
             verifierDisabledText.setText("");
