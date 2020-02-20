@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.*;
 import com.intellij.util.Alarm;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,8 +56,8 @@ public abstract class UsagesPanel extends JPanel implements Disposable, DataProv
     setToComponent(createLabel(getInitialPositionText()));
   }
 
-  public abstract String getInitialPositionText();
-  public abstract String getCodeUsagesString();
+  public abstract @Nls String getInitialPositionText();
+  public abstract @Nls String getCodeUsagesString();
 
 
   void cancelCurrentFindRequest() {
