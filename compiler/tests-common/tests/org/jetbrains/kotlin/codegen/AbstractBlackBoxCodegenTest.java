@@ -59,9 +59,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     @Override
     protected void doMultiFileTest(
         @NotNull File wholeFile,
-        @NotNull List<TestFile> files
+        @NotNull List<? extends TestFile> files
     ) throws Exception {
-        doMultiFileTest(wholeFile, files, false);
+        doMultiFileTest(wholeFile, (List<TestFile>)files, false);
     }
 
     private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {

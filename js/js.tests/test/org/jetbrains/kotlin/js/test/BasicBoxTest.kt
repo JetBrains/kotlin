@@ -141,10 +141,10 @@ abstract class BasicBoxTest(
                     .map { it.name to it }.toMap()
 
             fun TestModule.allTransitiveDependencies(): Set<String> {
-                return dependencies.toSet() + dependencies.flatMap { modules[it]!!.allTransitiveDependencies() }
+                return dependenciesSymbols.toSet() + dependenciesSymbols.flatMap { modules[it]!!.allTransitiveDependencies() }
             }
 
-            val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
+            val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependenciesSymbols.mapNotNull { modules[it] } }
 
             val testPackage = if (runPlainBoxFunction) null else testFactory.testPackage
 
@@ -159,9 +159,9 @@ abstract class BasicBoxTest(
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
-                val dependencies = module.dependencies.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val dependencies = module.dependenciesSymbols.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
                 val allDependencies = module.allTransitiveDependencies().map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
-                val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val friends = module.friendsSymbols.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 val dceOutputFileName = module.outputFileName(dceOutputDir) + ".js"
@@ -863,12 +863,10 @@ abstract class BasicBoxTest(
     }
 
     private class TestModule(
-            val name: String,
+            name: String,
             dependencies: List<String>,
             friends: List<String>
-    ) {
-        val dependencies = dependencies.toMutableList()
-        val friends = friends.toMutableList()
+    ): KotlinBaseTest.TestModule(name, dependencies, friends) {
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
         val files = mutableListOf<TestFile>()

@@ -5,20 +5,28 @@
 
 package org.jetbrains.kotlin.visualizer
 
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<Void?, Void?>() {
+abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule?, KotlinBaseTest.TestFile>() {
     lateinit var replacement: Pair<String, String>
 
-    override fun createTestModule(name: String): Void? = null
+    override fun createTestModule(
+        name: String,
+        dependencies: MutableList<String>,
+        friends: MutableList<String>
+    ): TestModule? = null
 
-    override fun createTestFile(module: Void?, fileName: String?, text: String?, directives: MutableMap<String, String>?): Void? = null
 
-    override fun doMultiFileTest(file: File, modules: MutableMap<String, ModuleAndDependencies>?, files: MutableList<Void?>) {
+    override fun createTestFile(module: TestModule?, fileName: String?, text: String?, directives: MutableMap<String, String>?): TestFile? =
+        null
+
+
+    override fun doMultiFileTest(file: File, files: List<TestFile>) {
         val environment = createEnvironment(file)
         doVisualizerTest(file, environment)
     }

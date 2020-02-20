@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.name.FqName
@@ -29,12 +30,12 @@ import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void, Void>() {
+abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule, KotlinBaseTest.TestFile>() {
     override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
 
     override fun isKotlinSourceRootNeeded(): Boolean = true
 
-    override fun doMultiFileTest(file: File, modules: MutableMap<String, ModuleAndDependencies>, files: MutableList<Void>) {
+    override fun doMultiFileTest(file: File, files: List<TestFile>) {
         val environment = createEnvironment(file)
         val expectedFile = KotlinTestUtils.replaceExtension(file, "java")
         val allowFrontendExceptions = InTextDirectivesUtils.isDirectiveDefined(file.readText(), "// ALLOW_FRONTEND_EXCEPTION")
@@ -47,9 +48,18 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void
         )
     }
 
-    override fun createTestModule(name: String): Void? = null
+    override fun createTestModule(
+        name: String,
+        dependencies: MutableList<String>,
+        friends: MutableList<String>
+    ): TestModule? = null
 
-    override fun createTestFile(module: Void?, fileName: String, text: String, directives: Map<String, String>): Void? = null
+    override fun createTestFile(
+        module: TestModule?,
+        fileName: String,
+        text: String,
+        directives: Map<String, String>
+    ): TestFile? = null
 
     companion object {
         fun findLightClass(allowFrontendExceptions: Boolean, environment: KotlinCoreEnvironment, fqname: String): PsiClass? {

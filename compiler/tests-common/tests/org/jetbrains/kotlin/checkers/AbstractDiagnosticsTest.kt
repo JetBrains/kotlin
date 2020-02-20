@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
@@ -191,7 +192,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val actualText = StringBuilder()
         for (testFile in files) {
-            val module = testFile.module
+            val module: KotlinBaseTest.TestModule? = testFile.module
             val isCommonModule = modules[module]!!.platform.isCommon()
             val implementingModules =
                 if (!isCommonModule) emptyList()

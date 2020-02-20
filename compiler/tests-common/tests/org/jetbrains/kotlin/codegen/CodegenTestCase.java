@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
+import org.jetbrains.kotlin.test.KotlinBaseTest;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.clientserver.TestProxy;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
@@ -74,7 +74,7 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
-public abstract class CodegenTestCase extends KtUsefulTestCase {
+public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
     private static final String DEFAULT_JVM_TARGET = System.getProperty("kotlin.test.default.jvm.target");
     public static final String BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port");
@@ -778,37 +778,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return TargetBackend.JVM;
     }
 
-    public static class TestFile implements Comparable<TestFile> {
-        public final String name;
-        public final String content;
-
-        public TestFile(@NotNull String name, @NotNull String content) {
-            this.name = name;
-            this.content = content;
-        }
-
-        @Override
-        public int compareTo(@NotNull TestFile o) {
-            return name.compareTo(o.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof TestFile && ((TestFile) obj).name.equals(name);
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
-    protected void doTest(String filePath) throws Exception {
+    @Override
+    protected void doTest(@NotNull String filePath) throws Exception {
         File file = new File(filePath);
 
         String expectedText = KotlinTestUtils.doLoadFile(file);
@@ -816,18 +787,20 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
         }
 
-        List<TestFile> testFiles = createTestFiles(file, expectedText);
+        List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
         doMultiFileTest(file, testFiles);
     }
 
-    protected void doTestWithCoroutinesPackageReplacement(String filePath, String packageName) throws Exception {
+    @Override
+    protected void doTestWithCoroutinesPackageReplacement(@NotNull String filePath, @NotNull String packageName) throws Exception {
         this.coroutinesPackage = packageName;
         doTest(filePath);
     }
 
+    @Override
     @NotNull
-    private List<TestFile> createTestFiles(File file, String expectedText) {
+    protected List<TestFile> createTestFilesFromFile(File file, String expectedText) {
         List testFiles = TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
@@ -878,13 +851,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }
 
         return dir;
-    }
-
-    protected void doMultiFileTest(
-            @NotNull File wholeFile,
-            @NotNull List<TestFile> files
-    ) throws Exception {
-        throw new UnsupportedOperationException("Multi-file test cases are not supported in this test");
     }
 
     protected void callBoxMethodAndCheckResult(URLClassLoader classLoader, String className)

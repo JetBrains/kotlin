@@ -15,7 +15,7 @@ import java.util.*
 import java.util.regex.MatchResult
 
 abstract class AbstractWriteSignatureTest : CodegenTestCase() {
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile)
         compile(files)
         try {

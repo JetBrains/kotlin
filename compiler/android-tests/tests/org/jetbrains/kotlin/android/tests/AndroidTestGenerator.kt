@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import java.io.File
 import java.util.regex.Pattern
 
@@ -34,7 +35,7 @@ private data class OldPackageAndNew(val oldFqName: FqName, val newFqName: FqName
 
 internal fun patchFilesAndAddTest(
     testFile: File,
-    testFiles: List<CodegenTestCase.TestFile>,
+    testFiles: List<KotlinBaseTest.TestFile>,
     filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
 ): FqName? {
     if (testFiles.any { it.name.endsWith(".java") }) {

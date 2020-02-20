@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
@@ -74,26 +75,24 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         super.tearDown()
     }
 
-    override fun createTestModule(name: String): TestModule =
-        TestModule(name)
+    override fun createTestModule(
+        name: String,
+        dependencies: List<String>,
+        friends: List<String>
+    ): TestModule =
+        TestModule(name, dependencies, friends)
 
     override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile =
         TestFile(module, fileName, text, directives)
 
+
     override fun doMultiFileTest(
-        file: File,
-        modules: @JvmSuppressWildcards Map<String, ModuleAndDependencies>,
-        testFiles: List<TestFile>
+        wholeFile: File,
+        files: List<TestFile>
     ) {
-        for (moduleAndDependencies in modules.values) {
-            moduleAndDependencies.module.getDependencies().addAll(moduleAndDependencies.dependencies.map { name ->
-                modules[name]?.module ?: error("Dependency not found: $name for module ${moduleAndDependencies.module.name}")
-            })
-        }
+        environment = createEnvironment(wholeFile)
 
-        environment = createEnvironment(file)
-
-        analyzeAndCheck(file, testFiles)
+        analyzeAndCheck(wholeFile, files)
     }
 
     protected abstract fun analyzeAndCheck(testDataFile: File, files: List<TestFile>)
@@ -122,16 +121,9 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         return ktFiles
     }
 
-    class TestModule(val name: String) : Comparable<TestModule> {
+    class TestModule(name: String, dependencies: List<String>, friends: List<String>) :
+        KotlinBaseTest.TestModule(name, dependencies, friends) {
         lateinit var languageVersionSettings: LanguageVersionSettings
-
-        private val dependencies = ArrayList<TestModule>()
-
-        fun getDependencies(): MutableList<TestModule> = dependencies
-
-        override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
-
-        override fun toString(): String = name
     }
 
     inner class TestFile(
@@ -139,7 +131,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val fileName: String,
         textWithMarkers: String,
         val directives: Map<String, String>
-    ) {
+    ) : KotlinBaseTest.TestFile(fileName, textWithMarkers) {
         val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
         private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
         val actualDiagnostics: MutableList<ActualDiagnostic> = mutableListOf()

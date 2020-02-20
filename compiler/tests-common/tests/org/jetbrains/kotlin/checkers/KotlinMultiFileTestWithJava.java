@@ -18,17 +18,16 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.test.*;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+import org.jetbrains.kotlin.test.KotlinBaseTest;
 
 import java.io.File;
 import java.util.*;
 
 import static org.jetbrains.kotlin.script.ScriptTestUtilKt.loadScriptingPlugin;
 
-public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
+public abstract class KotlinMultiFileTestWithJava<M extends KotlinBaseTest.TestModule, F extends KotlinBaseTest.TestFile> extends KotlinBaseTest<F> {
     protected File javaFilesDir;
     private File kotlinSourceRoot;
-    protected String coroutinesPackage;
 
     @Override
     public void setUp() throws Exception {
@@ -38,7 +37,6 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         if (isKotlinSourceRootNeeded()) {
             kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
         }
-        coroutinesPackage = "";
     }
 
     public class ModuleAndDependencies {
@@ -54,8 +52,14 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
     }
 
     @NotNull
-    protected Boolean isScriptingNeeded(@NotNull File file) {
+    private static Boolean isScriptingNeeded(@NotNull File file) {
         return file.getName().endsWith(KotlinParserDefinition.STD_SCRIPT_EXT);
+    }
+
+    @Override
+    @NotNull
+    public List<F> createTestFilesFromFile(@NotNull File file, String expectedText) {
+        return createTestFiles(file, expectedText, new HashMap<>());
     }
 
     @NotNull
@@ -142,34 +146,19 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         return new File(filePath);
     }
 
-    protected void doTest(String filePath) throws Exception {
+    @Override
+    protected void doTest(@NotNull String filePath) throws Exception {
         File file = createTestFileFromPath(filePath);
         String expectedText = KotlinTestUtils.doLoadFile(file);
-
+        //TODO: move to proper tests
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "// SKIP_JAVAC")) return;
 
-        Map<String, ModuleAndDependencies> modules = new HashMap<>();
-        List<F> testFiles = createTestFiles(file, expectedText, modules);
-
-        doMultiFileTest(file, modules, testFiles);
+        super.doTest(file.getPath());
     }
 
-    protected void doTestWithCoroutinesPackageReplacement(String filePath, String coroutinesPackage) throws Exception {
-        File file = new File(filePath);
-        String expectedText = KotlinTestUtils.doLoadFile(file);
-        expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
-        this.coroutinesPackage = coroutinesPackage;
-        Map<String, ModuleAndDependencies> modules = new HashMap<>();
-        List<F> testFiles = createTestFiles(file, expectedText, modules);
-
-        doMultiFileTest(file, modules, testFiles);
-    }
-
-    protected abstract M createTestModule(@NotNull String name);
+    protected abstract M createTestModule(@NotNull String name, List<String> dependencies, List<String> friends);
 
     protected abstract F createTestFile(M module, String fileName, String text, Map<String, String> directives);
-
-    protected abstract void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<F> files) throws Exception;
 
     protected List<F> createTestFiles(File file, String expectedText, Map<String, ModuleAndDependencies> modules) {
         return TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactory<M, F>() {
@@ -193,7 +182,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
 
             @Override
             public M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
-                M module = createTestModule(name);
+                M module = createTestModule(name, dependencies, friends);
                 ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies, friends));
                 assert oldValue == null : "Module " + name + " declared more than once";
 

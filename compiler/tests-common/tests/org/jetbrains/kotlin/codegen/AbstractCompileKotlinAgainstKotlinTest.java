@@ -49,9 +49,9 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) {
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) {
         boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
-        doTwoFileTest(files, !isIgnored);
+        doTwoFileTest((List<TestFile>) files, !isIgnored);
     }
 
     @NotNull

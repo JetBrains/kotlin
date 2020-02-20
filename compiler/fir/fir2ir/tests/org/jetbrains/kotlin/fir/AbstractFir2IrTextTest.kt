@@ -36,26 +36,24 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         buildFragmentAndTestIt(wholeFile, testFiles)
     }
 
-    override fun doTest(filePath: String?) {
-        if (filePath != null) {
-            val originalTextPath = filePath.replace(".kt", ".txt")
-            val firTextPath = filePath.replace(".kt", ".fir.txt")
-            val originalText = File(originalTextPath)
-            val firText = File(firTextPath)
-            if (originalText.exists() && firText.exists()) {
-                val originalLines = originalText.readLines()
-                val firLines = firText.readLines()
-                TestCase.assertFalse(
-                    "Dumps via FIR & via old FE are the same. Please delete .fir.txt dump and add // FIR_IDENTICAL to test source",
-                    firLines.withIndex().all { (index, line) ->
-                        val trimmed = line.trim()
-                        val originalTrimmed = originalLines.getOrNull(index)?.trim()
-                        trimmed.isEmpty() && originalTrimmed?.isEmpty() != false || trimmed == originalTrimmed
-                    } && originalLines.withIndex().all { (index, line) ->
-                        index < firLines.size || line.trim().isEmpty()
-                    }
-                )
-            }
+    override fun doTest(filePath: String) {
+        val originalTextPath = filePath.replace(".kt", ".txt")
+        val firTextPath = filePath.replace(".kt", ".fir.txt")
+        val originalText = File(originalTextPath)
+        val firText = File(firTextPath)
+        if (originalText.exists() && firText.exists()) {
+            val originalLines = originalText.readLines()
+            val firLines = firText.readLines()
+            TestCase.assertFalse(
+                "Dumps via FIR & via old FE are the same. Please delete .fir.txt dump and add // FIR_IDENTICAL to test source",
+                firLines.withIndex().all { (index, line) ->
+                    val trimmed = line.trim()
+                    val originalTrimmed = originalLines.getOrNull(index)?.trim()
+                    trimmed.isEmpty() && originalTrimmed?.isEmpty() != false || trimmed == originalTrimmed
+                } && originalLines.withIndex().all { (index, line) ->
+                    index < firLines.size || line.trim().isEmpty()
+                }
+            )
         }
         super.doTest(filePath)
     }

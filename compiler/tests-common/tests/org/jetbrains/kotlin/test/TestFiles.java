@@ -11,10 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
 
@@ -37,20 +39,20 @@ public class TestFiles {
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     @NotNull
-    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
+    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
         return createTestFiles(testFileName, expectedText, factory, false, "");
     }
 
     @NotNull
-    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
+    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
         return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
     }
 
     @NotNull
-    public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory,
+    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
             boolean preserveLocations, String coroutinesPackage) {
         Map<String, String> directives = KotlinTestUtils.parseDirectives(expectedText);
-
+        Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
         Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
         boolean hasModules = false;
@@ -71,6 +73,8 @@ public class TestFiles {
                     moduleName = moduleName.trim();
                     hasModules = true;
                     module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
+                    M oldValue = modules.put(moduleName, module);
+                    assert oldValue == null : "Module with name " + moduleName + " already present in file";
                 }
 
                 String fileName = matcher.group(4);
@@ -101,6 +105,10 @@ public class TestFiles {
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
             M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
+            if (supportModule != null) {
+                M oldValue = modules.put(supportModule.name, supportModule);
+                assert oldValue == null : "Module with name " + supportModule.name + " already present in file";
+            }
 
             boolean isReleaseCoroutines =
                     !coroutinesPackage.contains("experimental") &&
@@ -118,6 +126,23 @@ public class TestFiles {
                             directives
                     ));
         }
+
+        for (M module : modules.values()) {
+            if (module != null) {
+                module.getDependencies().addAll(module.dependenciesSymbols.stream().map(name -> {
+                    M dep = modules.get(name);
+                    assert dep != null : "Dependency not found:" + name + "for module " + module.name;
+                    return dep;
+                }).collect(Collectors.toList()));
+
+                module.getFriends().addAll(module.friendsSymbols.stream().map(name -> {
+                    M dep = modules.get(name);
+                    assert dep != null : "Dependency not found:" + name + "for module " + module.name;
+                    return dep;
+                }).collect(Collectors.toList()));
+            }
+        }
+
 
         return testFiles;
     }
@@ -152,10 +177,10 @@ public class TestFiles {
         M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
     }
 
-    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void, F> {
+    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<KotlinBaseTest.TestModule, F> {
         @Override
         public final F createFile(
-                @Nullable Void module,
+                @Nullable KotlinBaseTest.TestModule module,
                 @NotNull String fileName,
                 @NotNull String text,
                 @NotNull Map<String, String> directives
@@ -167,7 +192,7 @@ public class TestFiles {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
 
         @Override
-        public Void createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
+        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
             return null;
         }
     }

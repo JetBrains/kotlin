@@ -55,8 +55,8 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
 public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) throws Exception {
-        compile(files);
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) throws Exception {
+        compile((List<TestFile>)files);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 

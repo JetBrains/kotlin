@@ -102,7 +102,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val content = javaLines.joinToString(separator = "\n")
         if (InTextDirectivesUtils.isDirectiveDefined(content, "SKIP_IN_FIR_TEST")) return
 
-        val srcFiles = TestFiles.createTestFiles<Void, File>(
+        val srcFiles = TestFiles.createTestFiles(
             javaFile.name, FileUtil.loadFile(javaFile, true),
             object : TestFiles.TestFileFactoryNoModules<File>() {
                 override fun create(fileName: String, text: String, directives: Map<String, String>): File {
