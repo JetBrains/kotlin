@@ -141,14 +141,13 @@ open class FunctionCodegen(
             // This is suspend lambda parameter of inline function
             origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
             // This is just a template for inliner
+            origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
             // Continuations are generated for suspendImpls
             parentAsClass.functions.none {
                 it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX &&
                         it.attributeOwnerId == (this as? IrAttributeContainer)?.attributeOwnerId
-            } &&
-            // $$forInline functions never have a continuation
-            origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+            }
 
     private fun continuationClass() =
         irFunction.body!!.statements.firstIsInstance<IrClass>()

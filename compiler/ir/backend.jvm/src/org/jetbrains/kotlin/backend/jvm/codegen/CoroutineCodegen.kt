@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -17,11 +18,11 @@ import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonito
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -130,6 +131,15 @@ internal fun IrFunction.isKnownToBeTailCall(): Boolean =
 
 internal fun IrFunction.shouldNotContainSuspendMarkers(): Boolean =
     isInvokeSuspendOfContinuation() || isKnownToBeTailCall()
+
+internal fun IrExpression?.isReadOfCrossinline(): Boolean = when (this) {
+    is IrGetValue -> (symbol.owner as? IrValueParameter)?.isCrossinline == true
+    is IrGetField -> symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
+    else -> false
+}
+
+internal fun IrExpression?.isReadOfInlineLambda(): Boolean = isReadOfCrossinline() ||
+        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isNoinline == false)
 
 internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = IrErrorExpressionImpl(
     UNDEFINED_OFFSET,

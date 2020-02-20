@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendForInlineOfLambda
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfLambda
+import org.jetbrains.kotlin.backend.jvm.codegen.isReadOfCrossinline
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor.Factory.BIG_ARITY
@@ -679,13 +680,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private class SuspendLambdaInfo(val reference: IrFunctionReference) {
         val function = reference.symbol.owner
         val arity = (reference.type as IrSimpleType).arguments.size - 1
-        val capturesCrossinline = function.valueParameters.any {
-            when (val argument = reference.getValueArgument(it.index)) {
-                is IrGetValue -> (argument.symbol.owner as? IrValueParameter)?.isCrossinline == true
-                is IrGetField -> argument.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
-                else -> false
-            }
-        }
+        val capturesCrossinline = function.valueParameters.any { reference.getValueArgument(it.index).isReadOfCrossinline() }
         lateinit var constructor: IrConstructor
     }
 }

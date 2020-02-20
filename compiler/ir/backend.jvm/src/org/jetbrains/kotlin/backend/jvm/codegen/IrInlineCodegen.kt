@@ -241,10 +241,12 @@ class IrExpressionLambdaImpl(
     override val lambdaClassType: Type =
         context.getLocalClassType(reference) ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
-    override val capturedVars: List<CapturedParamDesc> =
-        reference.getArgumentsWithIr().map { (param, _) ->
-            capturedParamDesc(param.name.asString(), typeMapper.mapType(param.type))
+    private val capturedParameters: Map<CapturedParamDesc, IrValueParameter> =
+        reference.getArgumentsWithIr().associate { (param, _) ->
+            capturedParamDesc(param.name.asString(), typeMapper.mapType(param.type)) to param
         }
+
+    override val capturedVars: List<CapturedParamDesc> = capturedParameters.keys.toList()
 
     private val loweredMethod = methodSignatureMapper.mapAsmMethod(function.suspendFunctionViewOrStub(context))
 
@@ -271,6 +273,9 @@ class IrExpressionLambdaImpl(
     override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
         return function.suspendFunctionViewOrStub(context).descriptor
     }
+
+    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
+        capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
 }
 
 class IrDefaultLambda(
