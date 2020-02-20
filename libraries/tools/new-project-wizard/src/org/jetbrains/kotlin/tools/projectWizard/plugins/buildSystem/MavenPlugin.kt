@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.asSuccess
 import org.jetbrains.kotlin.tools.projectWizard.core.checker
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RootFileModuleStructureIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.ModulesDependencyMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.PluginRepositoryMavenIR
@@ -17,13 +16,13 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
     override val title: String = "Maven"
 
     private val isMaven = checker {
-        rule(BuildSystemPlugin::type.reference shouldBeEqual BuildSystemType.Maven)
+        BuildSystemPlugin::type.settingValue == BuildSystemType.Maven
     }
 
     val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         runBefore(BuildSystemPlugin::createModules)
-        activityChecker = isMaven
+        isAvailable = isMaven
         withAction {
             BuildSystemPlugin::buildFiles.update { buildFiles ->
                 if (buildFiles.size == 1) return@update buildFiles.asSuccess()
@@ -45,7 +44,7 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
     val addBuildSystemPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createPluginRepositories)
         runBefore(BuildSystemPlugin::createModules)
-        activityChecker = isMaven
+        isAvailable = isMaven
 
         withAction {
             val repositories = BuildSystemPlugin::pluginRepositoreis.propertyValue

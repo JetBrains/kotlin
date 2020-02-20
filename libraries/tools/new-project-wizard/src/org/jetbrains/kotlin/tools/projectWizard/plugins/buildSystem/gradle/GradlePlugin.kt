@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     val createGradleWrapper by booleanSetting("Create Gradle Wrapper", GenerationPhase.FIRST_STEP) {
         defaultValue = true
-        checker = isGradle
+        isAvailable = isGradle
     }
 
 
     val version by versionSetting("Gradle Version", GenerationPhase.FIRST_STEP) {
         defaultValue = defaultVersions.first()
-        checker = isGradle
+        isAvailable = isGradle
     }
 
     val gradleVersions by property<List<Version>>(emptyList())
@@ -39,7 +39,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     val createGradlePropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         runBefore(TemplatesPlugin::renderFileTemplates)
-        activityChecker = isGradle
+        isAvailable = isGradle
         withAction {
             TemplatesPlugin::addFileTemplate.execute(
                 FileTemplate(
@@ -63,7 +63,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     val createLocalPropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         runBefore(TemplatesPlugin::renderFileTemplates)
-        activityChecker = isGradle
+        isAvailable = isGradle
         withAction {
             TemplatesPlugin::addFileTemplate.execute(
                 FileTemplate(
@@ -80,17 +80,12 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         }
     }
 
-    private val isGradle = checker {
-        rule(
-            (BuildSystemPlugin::type.reference shouldBeEqual BuildSystemType.GradleKotlinDsl) or
-                    (BuildSystemPlugin::type.reference shouldBeEqual BuildSystemType.GradleGroovyDsl)
-        )
-    }
+    private val isGradle = checker { buildSystemType.isGradle }
 
 
     val initGradleWrapperTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(TemplatesPlugin::renderFileTemplates)
-        activityChecker = isGradle
+        isAvailable = isGradle
         withAction {
             if (!GradlePlugin::createGradleWrapper.reference.settingValue) return@withAction UNIT_SUCCESS
             TemplatesPlugin::addFileTemplate.execute(
@@ -111,7 +106,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
 
     val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createPluginRepositories)
-        activityChecker = isGradle
+        isAvailable = isGradle
         withAction {
             val (createBuildFile, buildFileName) = settingsGradleBuildFileData ?: return@withAction UNIT_SUCCESS
 

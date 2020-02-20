@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
+import org.jetbrains.kotlin.tools.projectWizard.core.checker
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.allModules
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.allIRModules
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 
 class AndroidPlugin(context: Context) : Plugin(context) {
     val androidSdkPath by pathSetting(
@@ -20,15 +22,22 @@ class AndroidPlugin(context: Context) : Plugin(context) {
         neededAtPhase = GenerationPhase.PROJECT_GENERATION
     ) {
         isSavable = true
+        isAvailable = isAndroidContainingProject
         shouldExists()
+    }
+
+    private val isAndroidContainingProject = checker {
+        KotlinPlugin::modules.settingValue
+            .withAllSubModules(includeSourcesets = true)
+            .any { it.configurator is AndroidModuleConfigurator }
     }
 
     val addAndroidSdkToLocalProperties by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(GradlePlugin::createLocalPropertiesFile)
         runAfter(KotlinPlugin::createModules)
-
+        isAvailable = isAndroidContainingProject
         withAction {
-            if (allModules.none { it.originalModule.configurator is AndroidModuleConfigurator }) return@withAction UNIT_SUCCESS
+            if (allIRModules.none { it.originalModule.configurator is AndroidModuleConfigurator }) return@withAction UNIT_SUCCESS
             val path = AndroidPlugin::androidSdkPath.settingValue
             GradlePlugin::localProperties.addValues(
                 "sdk.dir" to path

@@ -21,7 +21,7 @@ dependencies {
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId 'testArtifactId'
+        applicationId 'testGroupId.android'
         minSdkVersion 24
         targetSdkVersion 29
         versionCode 1

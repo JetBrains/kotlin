@@ -33,6 +33,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         for (setting in pluginSettings) {
             if (setting.neededAtPhase !in phases) continue
             if (!setting.isSavable) continue
+            if (!setting.isAvailable(valuesReadingContext)) continue
             val serializer = setting.type.serializer as? SerializerImpl<Any> ?: continue
             service<SettingSavingWizardService>().saveSettingValue(
                 setting.path,
@@ -58,7 +59,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
             .distinctBy { it.path }
             .asSequence()
             .filter { task -> task.phase in phases }
-            .filter { task -> task.checker.check(taskRunningContext) }
+            .filter { task -> task.isAvailable(taskRunningContext) }
             .map { task -> onTaskExecuting(task); task.action(taskRunningContext) }
             .sequenceFailFirst()
             .ignore()

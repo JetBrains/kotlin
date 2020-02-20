@@ -177,7 +177,7 @@ data class InternalSetting<out V : Any, out T : SettingType<V>>(
     override val path: String,
     override val title: String,
     override val defaultValue: V?,
-    override val activityChecker: Checker,
+    override val isAvailable: Checker,
     override val isRequired: Boolean,
     override val isSavable: Boolean,
     override var neededAtPhase: GenerationPhase,
@@ -200,14 +200,16 @@ class TemplateSetting<out V : Any, out T : SettingType<V>>(
 ) : SettingImpl<V, T>(), Setting<V, T> by internal
 
 
+
 abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     private val path: String,
     private val title: String,
     private val neededAtPhase: GenerationPhase
 ) {
-    var checker: Checker = Checker.ALWAYS_AVAILABLE
+    var isAvailable: ReadingContext.() -> Boolean = { true }
     var defaultValue: V? = null
     var isSavable: Boolean = false
+    var isRequired: Boolean? = null
 
     protected var validator = SettingValidator<V> { ValidationResult.OK }
 
@@ -226,8 +228,8 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
         path = path,
         title = title,
         defaultValue = defaultValue,
-        activityChecker = checker,
-        isRequired = defaultValue == null,
+        isAvailable = isAvailable,
+        isRequired = isRequired ?: (defaultValue == null),
         isSavable = isSavable,
         neededAtPhase = neededAtPhase,
         validator = validator,

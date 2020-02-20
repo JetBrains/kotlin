@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
@@ -130,7 +131,7 @@ enum class ProjectKind(override val text: String) : DisplayableSettingItem {
 fun List<Module>.withAllSubModules(includeSourcesets: Boolean = false): List<Module> = buildList {
     fun handleModule(module: Module) {
         +module
-        if (module.kind == ModuleKind.singleplatformJvm
+        if (module.kind != ModuleKind.multiplatform
             || includeSourcesets && module.kind == ModuleKind.multiplatform
         ) {
             module.subModules.forEach(::handleModule)

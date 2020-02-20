@@ -42,7 +42,7 @@ data class PipelineTask(
     val before: List<PipelineTaskReference>,
     val after: List<PipelineTaskReference>,
     val phase: GenerationPhase,
-    val checker: Checker,
+    val isAvailable: Checker,
     val title: String?
 ) : Task() {
     class Builder(
@@ -53,7 +53,7 @@ data class PipelineTask(
         private val before = mutableListOf<PipelineTaskReference>()
         private val after = mutableListOf<PipelineTaskReference>()
 
-        var activityChecker: Checker = Checker.ALWAYS_AVAILABLE
+        var isAvailable: Checker = ALWAYS_AVAILABLE_CHECKER
 
         var title: String? = null
 
@@ -69,7 +69,7 @@ data class PipelineTask(
             this.after.addAll(after)
         }
 
-        fun build(): PipelineTask = PipelineTask(name, action, before, after, phase, activityChecker, title)
+        fun build(): PipelineTask = PipelineTask(name, action, before, after, phase, isAvailable, title)
     }
 
     companion object {

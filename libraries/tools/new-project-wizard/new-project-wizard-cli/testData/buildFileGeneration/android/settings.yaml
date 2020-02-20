@@ -1,3 +1,5 @@
+android:
+  androidSdkPath: androidSdkPath
 kotlin:
   projectKind: Multiplatform
   modules:
