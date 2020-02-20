@@ -134,7 +134,7 @@ class CyclicCollector {
     CHECK_CALL(pthread_create(&gcThread_, nullptr, gcWorkerRoutine, this), "Cannot start collector thread")
   }
 
-  ~CyclicCollector() {
+  void terminate() {
     {
       Locker locker(&lock_);
       terminateCollector_ = true;
@@ -144,6 +144,9 @@ class CyclicCollector {
     // TODO: improve waiting for collector termination.
     while (atomicGet(&terminateCollector_)) {}
     releasePendingUnlocked(nullptr);
+  }
+
+  ~CyclicCollector() {
     pthread_cond_destroy(&cond_);
     pthread_mutex_destroy(&lock_);
     pthread_mutex_destroy(&timestampLock_);
@@ -431,6 +434,7 @@ void cyclicDeinit() {
 #if WITH_WORKERS
   RuntimeAssert(cyclicCollector != nullptr, "Must be inited");
   auto* local = cyclicCollector;
+  local->terminate();
   cyclicCollector = nullptr;
   konanDestructInstance(local);
 #endif  // WITH_WORKERS
