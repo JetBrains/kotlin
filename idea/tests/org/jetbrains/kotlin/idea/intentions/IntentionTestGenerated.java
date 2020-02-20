@@ -5893,6 +5893,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/convertPropertyToFunction"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("annotationUseSiteTarget.kt")
+        public void testAnnotationUseSiteTarget() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyToFunction/annotationUseSiteTarget.kt");
+        }
+
         @TestMetadata("blockBody.kt")
         public void testBlockBody() throws Exception {
             runTest("idea/testData/intentions/convertPropertyToFunction/blockBody.kt");
