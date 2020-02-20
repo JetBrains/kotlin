@@ -21,12 +21,7 @@ class ToolingModelsProviderImpl(private val models: ProjectImportAction.AllModel
   override fun <T> getModel(modelClazz: Class<T>): T? = models.getModel(modelClazz)
   override fun <T> getBuildModel(build: Build, modelClazz: Class<T>): T? = models.getModel(build, modelClazz)
   override fun <T> getProjectModel(project: Project, modelClazz: Class<T>): T? = models.getModel(project, modelClazz)
-  override fun builds(): Stream<Build> = Stream.builder<Build>().add(models.mainBuild).apply {
-    for (it in models.includedBuilds) {
-      this.add(it)
-    }
-  }.build()
-
+  override fun builds(): Stream<Build> = Stream.concat(Stream.of(models.mainBuild), models.includedBuilds.stream())
   override fun projects(): Stream<Project> = builds().map { it.projects }.flatMap(Collection<Project>::stream)
   override fun getBuild(project: Project): Build =
     projectsMap[project] ?: error("Build can not be found for the project: '${project.name}'")
