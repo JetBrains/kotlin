@@ -14,11 +14,11 @@ val intellijUltimateEnabled: Boolean by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 val ideaUltimateSandboxDir: File by rootProject.extra
 
-fun JUnit.configureForKotlin() {
+fun JUnit.configureForKotlin(xmx: String = "1600m") {
     vmParameters = listOf(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
-        "-Xmx1600m",
+        "-Xmx$xmx",
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
         "-Djna.nosys=true",
@@ -34,6 +34,44 @@ fun JUnit.configureForKotlin() {
         "PROJECT_CLASSES_DIRS" to "out/test/org.jetbrains.kotlin.compiler.test"
     )
     workingDirectory = rootDir.toString()
+}
+
+// Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
+fun setupFirRunConfiguration() {
+
+    val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
+    junit.moduleName = "kotlin.compiler.test"
+    junit.pattern = "^(org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)|org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated)\$"
+    junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
+    junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
+
+    rootDir.resolve(".idea/runConfigurations/JPS__Fast_FIR_tests.xml").writeText(
+        """
+            |<component name="ProjectRunConfigurationManager">
+            |  <configuration default="false" name="[JPS] Fast FIR tests" type="JUnit" factoryName="JUnit">
+            |    <module name="${junit.moduleName}" />
+            |    <option name="MAIN_CLASS_NAME" value="" />
+            |    <option name="METHOD_NAME" value="" />
+            |    <option name="TEST_OBJECT" value="pattern" />
+            |    <option name="VM_PARAMETERS" value="${junit.vmParameters}" />
+            |    <option name="PARAMETERS" value="" />
+            |    <option name="WORKING_DIRECTORY" value="${junit.workingDirectory}" />
+            |    <option name="TEST_SEARCH_SCOPE">
+            |      <value defaultName="moduleWithDependencies" />
+            |    </option>
+            |    <envs>
+                   ${junit.envs.entries.joinToString("\n") { (name, value) -> "|      <env name=\"$name\" value=\"$value\" />" }}
+            |    </envs>
+            |    <patterns>
+            |      <pattern testClass="${junit.pattern}" />
+            |    </patterns>
+            |    <method v="2">
+            |      <option name="Make" enabled="true" />
+            |    </method>
+            |  </configuration>
+            |</component>
+        """.trimMargin()
+    )
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -62,6 +100,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     rootProject.afterEvaluate {
+
+        setupFirRunConfiguration()
+
         rootProject.allprojects {
             idea {
                 module {
