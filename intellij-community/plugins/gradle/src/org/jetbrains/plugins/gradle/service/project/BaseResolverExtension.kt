@@ -32,7 +32,9 @@ import kotlin.Int.Companion.MAX_VALUE
 internal class BaseResolverExtension : GradleProjectResolverExtension {
   override fun setProjectResolverContext(projectResolverContext: ProjectResolverContext) {}
   override fun getNext(): GradleProjectResolverExtension? = null
-  override fun setNext(projectResolverExtension: GradleProjectResolverExtension) {}   // should be the last extension in the chain
+  override fun setNext(projectResolverExtension: GradleProjectResolverExtension) {
+    throw AssertionError("should be the last extension in the chain")
+  }
   override fun populateProjectExtraModels(gradleProject: IdeaProject, ideProject: DataNode<ProjectData>) {}
   override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? = null
   override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {}
