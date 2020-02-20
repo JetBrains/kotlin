@@ -7,12 +7,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestFinalEnum1
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestFinalEnum1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestFinalEnum1>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum1]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFinalEnum1.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
-          BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum1]'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum1'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestFinalEnum1) returnType:kotlin.Array<<root>.TestFinalEnum1>
       $this: VALUE_PARAMETER name:<this> type:<root>.TestFinalEnum1
       BLOCK_BODY
@@ -130,12 +126,8 @@ FILE fqName:<root> fileName:/enumClassModality.kt
           <E>: <root>.TestFinalEnum3
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestFinalEnum3 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestFinalEnum3>]'
     ENUM_ENTRY name:X1
-      class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum3]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFinalEnum3.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
-          BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum3'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum3]'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestFinalEnum3'
     FUN name:doStuff visibility:public modality:FINAL <> ($this:<root>.TestFinalEnum3) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestFinalEnum3
       BLOCK_BODY

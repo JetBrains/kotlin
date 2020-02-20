@@ -4,27 +4,9 @@ FILE: enums.kt
             super<R|kotlin/Enum<Order>|>()
         }
 
-        public final static enum entry FIRST: R|Order| = object : R|Order| {
-            public? constructor(): R|anonymous| {
-                super<R|Order|>()
-            }
-
-        }
-
-        public final static enum entry SECOND: R|Order| = object : R|Order| {
-            public? constructor(): R|anonymous| {
-                super<R|Order|>()
-            }
-
-        }
-
-        public final static enum entry THIRD: R|Order| = object : R|Order| {
-            public? constructor(): R|anonymous| {
-                super<R|Order|>()
-            }
-
-        }
-
+        public final static enum entry FIRST: R|Order|
+        public final static enum entry SECOND: R|Order|
+        public final static enum entry THIRD: R|Order|
         public final static fun values(): R|kotlin/Array<Order>| {
         }
 
@@ -95,6 +77,73 @@ FILE: enums.kt
         }
 
         public final static fun valueOf(value: R|kotlin/String|): R|Planet| {
+        }
+
+    }
+    public? final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
+        public? constructor(signature: String = String(()V)): R|PseudoInsn| {
+            super<R|kotlin/Enum<PseudoInsn>|>()
+        }
+
+        public? final? val signature: String = R|<local>/signature|
+            public? get(): String
+
+        public final static enum entry FIX_STACK_BEFORE_JUMP: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>()
+            }
+
+        }
+
+        public final static enum entry FAKE_ALWAYS_TRUE_IFEQ: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>(String(()I))
+            }
+
+        }
+
+        public final static enum entry FAKE_ALWAYS_FALSE_IFEQ: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>(String(()I))
+            }
+
+        }
+
+        public final static enum entry SAVE_STACK_BEFORE_TRY: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>()
+            }
+
+        }
+
+        public final static enum entry RESTORE_STACK_IN_TRY_CATCH: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>()
+            }
+
+        }
+
+        public final static enum entry STORE_NOT_NULL: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>()
+            }
+
+        }
+
+        public final static enum entry AS_NOT_NULL: R|PseudoInsn| = object : R|PseudoInsn| {
+            public? constructor(): R|anonymous| {
+                super<R|PseudoInsn|>(String((Ljava/lang/Object;)Ljava/lang/Object;))
+            }
+
+        }
+
+        public? final? fun emit(): R|kotlin/Unit| {
+        }
+
+        public final static fun values(): R|kotlin/Array<PseudoInsn>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|PseudoInsn| {
         }
 
     }

@@ -4,27 +4,9 @@ FILE: main.kt
             super<R|kotlin/Enum<E>|>()
         }
 
-        public final static enum entry A: R|E| = object : R|E| {
-            private constructor(): R|anonymous| {
-                super<R|E|>()
-            }
-
-        }
-
-        public final static enum entry B: R|E| = object : R|E| {
-            private constructor(): R|anonymous| {
-                super<R|E|>()
-            }
-
-        }
-
-        public final static enum entry C: R|E| = object : R|E| {
-            private constructor(): R|anonymous| {
-                super<R|E|>()
-            }
-
-        }
-
+        public final static enum entry A: R|E|
+        public final static enum entry B: R|E|
+        public final static enum entry C: R|E|
         public final static fun values(): R|kotlin/Array<E>| {
         }
 

@@ -4,27 +4,9 @@ FILE: enums.kt
             super<R|kotlin/Enum<Order>|>()
         }
 
-        public final static enum entry FIRST: R|Order| = object : R|Order| {
-            private constructor(): R|anonymous| {
-                super<R|Order|>()
-            }
-
-        }
-
-        public final static enum entry SECOND: R|Order| = object : R|Order| {
-            private constructor(): R|anonymous| {
-                super<R|Order|>()
-            }
-
-        }
-
-        public final static enum entry THIRD: R|Order| = object : R|Order| {
-            private constructor(): R|anonymous| {
-                super<R|Order|>()
-            }
-
-        }
-
+        public final static enum entry FIRST: R|Order|
+        public final static enum entry SECOND: R|Order|
+        public final static enum entry THIRD: R|Order|
         public final static fun values(): R|kotlin/Array<Order>| {
         }
 

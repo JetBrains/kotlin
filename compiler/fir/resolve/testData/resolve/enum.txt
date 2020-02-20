@@ -52,3 +52,61 @@ FILE: enum.kt
         }
 
     }
+    public final enum class E : R|kotlin/Enum<E>| {
+        public final static enum entry A: R|E|
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+    }
+    public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private constructor(): R|EnumClass| {
+            super<R|kotlin/Enum<EnumClass>|>()
+        }
+
+        public final static enum entry E1: R|EnumClass| = object : R|EnumClass| {
+            private constructor(): R|anonymous| {
+                super<R|EnumClass|>()
+            }
+
+            public final override fun foo(): R|kotlin/Int| {
+                ^foo Int(1)
+            }
+
+            public final override val bar: R|kotlin/String| = String(a)
+                public get(): R|kotlin/String|
+
+        }
+
+        public final static enum entry E2: R|EnumClass| = object : R|EnumClass| {
+            private constructor(): R|anonymous| {
+                super<R|EnumClass|>()
+            }
+
+        }
+
+        public final static enum entry E3: R|EnumClass| = object : R|EnumClass| {
+            private constructor(): R|anonymous| {
+                super<R|EnumClass|>()
+            }
+
+        }
+
+        public abstract fun foo(): R|kotlin/Int|
+
+        public abstract val bar: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final static fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+    }

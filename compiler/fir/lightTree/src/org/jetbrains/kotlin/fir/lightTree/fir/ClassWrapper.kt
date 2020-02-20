@@ -21,6 +21,7 @@ class ClassWrapper(
     private val classKind: ClassKind,
     val hasPrimaryConstructor: Boolean,
     val hasSecondaryConstructor: Boolean,
+    val hasDefaultConstructor: Boolean,
     val delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
     val superTypeCallEntry: MutableList<FirExpression>

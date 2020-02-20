@@ -14,3 +14,24 @@ enum class SomeEnum(val x: Some) {
 
     abstract fun check(y: Some): Boolean
 }
+
+enum class E {
+    A; // no constructor call needed
+    constructor()
+}
+
+enum class EnumClass {
+    E1 {
+        override fun foo() = 1
+        override val bar: String = "a"
+    },
+
+    E2 {
+
+    },
+
+    E3();
+
+    abstract fun foo(): Int
+    abstract val bar: String
+}

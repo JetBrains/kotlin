@@ -66,13 +66,7 @@ FILE: qualifierPriority.kt
             super<R|kotlin/Enum<G>|>()
         }
 
-        public final static enum entry H: R|G| = object : R|G| {
-            private constructor(): R|anonymous| {
-                super<R|G|>()
-            }
-
-        }
-
+        public final static enum entry H: R|G|
         public final fun foo(): R|kotlin/Unit| {
             R|/G.values|()
         }

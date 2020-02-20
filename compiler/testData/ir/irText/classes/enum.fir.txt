@@ -7,19 +7,11 @@ FILE fqName:<root> fileName:/enum.kt
           <E>: <root>.TestEnum1
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum1>]'
     ENUM_ENTRY name:TEST1
-      class: CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum1]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum1.TEST1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
-          BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum1]'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum1'
     ENUM_ENTRY name:TEST2
-      class: CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum1]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum1.TEST2
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
-          BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum1'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum1]'
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum1'
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestEnum1) returnType:kotlin.Array<<root>.TestEnum1>
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum1
       BLOCK_BODY
