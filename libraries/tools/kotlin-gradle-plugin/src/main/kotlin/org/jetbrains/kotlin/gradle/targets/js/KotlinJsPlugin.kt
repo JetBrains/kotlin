@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.configureDefaultVersionsResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -39,20 +40,22 @@ open class KotlinJsPlugin(
             defaultJsCompilerType = PropertiesProvider(project).jsCompiler
         }
 
-        project.afterEvaluate {
-            checkNotNull(kotlinExtension._target) {
-                """
-                    Need to initialize js target.
-                    Use 
-                    kotlin {
-                        js {
-                            // Choose sub target (or both), for which js is necessary
-                            // Affect in which tests are executed and final dist (in browser is only one bundle file)
-                            browser()
-                            nodejs()
+        project.whenEvaluated {
+            if (kotlinExtension._target == null) {
+                project.logger.warn(
+                    """
+                        Need to initialize js target.
+                        Use 
+                        kotlin {
+                            js {
+                                // Choose sub target (or both), for which js is necessary
+                                // Affect in which tests are executed and final dist (in browser is only one bundle file)
+                                browser()
+                                nodejs()
+                            }
                         }
-                    }
-                """.trimIndent()
+                    """.trimIndent()
+                )
             }
         }
 

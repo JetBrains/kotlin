@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
+    kotlin("js").version("<pluginMarkerVersion>").apply(false)
 }
 
 group = "com.example"
