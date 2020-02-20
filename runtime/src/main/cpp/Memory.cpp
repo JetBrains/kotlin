@@ -3078,7 +3078,7 @@ void GC_CollectorCallback(void* worker) {
 #endif   // USE_CYCLIC_GC
 }
 
-KBoolean Kotlin_native_internal_GC_getCyclicCollector() {
+KBoolean Kotlin_native_internal_GC_getCyclicCollector(KRef gc) {
 #if USE_CYCLIC_GC
   return g_hasCyclicCollector;
 #else
@@ -3086,7 +3086,7 @@ KBoolean Kotlin_native_internal_GC_getCyclicCollector() {
 #endif  // USE_CYCLIC_GC
 }
 
-void Kotlin_native_internal_GC_setCyclicCollector(KBoolean value) {
+void Kotlin_native_internal_GC_setCyclicCollector(KRef gc, KBoolean value) {
 #if USE_CYCLIC_GC
   g_hasCyclicCollector = value;
 #else
