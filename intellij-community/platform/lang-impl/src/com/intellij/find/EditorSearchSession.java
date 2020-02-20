@@ -8,6 +8,7 @@ import com.intellij.find.impl.HelpID;
 import com.intellij.find.impl.RegExHelpPopup;
 import com.intellij.find.impl.livePreview.LivePreviewController;
 import com.intellij.find.impl.livePreview.SearchResults;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -609,7 +610,7 @@ public class EditorSearchSession implements SearchSession,
     protected abstract void onClick();
   }
 
-  private class ReplaceAction extends ButtonAction {
+  private class ReplaceAction extends ButtonAction implements LightEditCompatible {
     ReplaceAction() {
       super("Replace", 'p');
     }
@@ -625,7 +626,7 @@ public class EditorSearchSession implements SearchSession,
     }
   }
 
-  private class ReplaceAllAction extends ButtonAction {
+  private class ReplaceAllAction extends ButtonAction implements LightEditCompatible {
     ReplaceAllAction() {
       super("Replace all", 'a');
     }
@@ -641,7 +642,7 @@ public class EditorSearchSession implements SearchSession,
     }
   }
 
-  private class ExcludeAction extends ButtonAction {
+  private class ExcludeAction extends ButtonAction implements LightEditCompatible {
     ExcludeAction() {
       super("", 'l');
     }

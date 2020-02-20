@@ -18,6 +18,7 @@ package com.intellij.find.editorHeaderActions;
 import com.intellij.find.EditorSearchSession;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-public class RestorePreviousSettingsAction extends AnAction implements ShortcutProvider, DumbAware {
+public class RestorePreviousSettingsAction extends AnAction implements ShortcutProvider, DumbAware, LightEditCompatible {
   @Override
   public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();

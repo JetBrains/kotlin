@@ -4,6 +4,7 @@ package com.intellij.find;
 import com.intellij.find.editorHeaderActions.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
@@ -490,12 +491,15 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   }
 
   private void installCloseOnEscapeAction(@NotNull JTextComponent c) {
-    new DumbAwareAction() {
+    new CloseAction() {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         close();
       }
     }.registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_EDITOR_ESCAPE), c);
+  }
+
+  private abstract static class CloseAction extends DumbAwareAction implements LightEditCompatible {
   }
 
   private void installReplaceOnEnterAction(@NotNull JTextComponent c) {

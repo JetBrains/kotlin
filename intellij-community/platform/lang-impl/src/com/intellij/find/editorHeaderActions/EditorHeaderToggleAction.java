@@ -2,6 +2,7 @@
 package com.intellij.find.editorHeaderActions;
 
 import com.intellij.find.SearchSession;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CheckboxAction;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class EditorHeaderToggleAction extends CheckboxAction implements DumbAware {
+public abstract class EditorHeaderToggleAction extends CheckboxAction implements DumbAware, LightEditCompatible {
   protected EditorHeaderToggleAction(@NotNull String text) {
     super(text);
   }

@@ -16,6 +16,7 @@
 package com.intellij.find.editorHeaderActions;
 
 import com.intellij.find.EditorSearchSession;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ShortcutProvider;
 import com.intellij.openapi.actionSystem.ShortcutSet;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class OccurrenceAction extends DumbAwareAction implements ShortcutProvider {
+public abstract class OccurrenceAction extends DumbAwareAction implements ShortcutProvider, LightEditCompatible {
   protected OccurrenceAction(@NotNull String baseActionId, @NotNull Icon icon) {
     ActionUtil.copyFrom(this, baseActionId);
     getTemplatePresentation().setIcon(icon);

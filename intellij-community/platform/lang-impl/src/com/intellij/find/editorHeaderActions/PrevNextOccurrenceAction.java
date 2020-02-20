@@ -2,6 +2,7 @@
 package com.intellij.find.editorHeaderActions;
 
 import com.intellij.find.SearchSession;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Shortcut;
@@ -13,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class PrevNextOccurrenceAction extends DumbAwareAction implements ContextAwareShortcutProvider {
+public abstract class PrevNextOccurrenceAction extends DumbAwareAction implements ContextAwareShortcutProvider,
+                                                                                  LightEditCompatible {
   protected final boolean mySearch;
 
   PrevNextOccurrenceAction(@NotNull String templateActionId, boolean search) {
