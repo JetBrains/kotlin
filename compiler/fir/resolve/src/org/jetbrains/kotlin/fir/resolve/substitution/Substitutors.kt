@@ -120,7 +120,11 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
 }
 
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>): ConeSubstitutor {
-    if (substitution.isEmpty()) return ConeSubstitutor.Empty
+    // If all arguments match parameters, then substitutor isn't needed
+    if (substitution.all { (parameterSymbol, argumentType) ->
+            (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol
+        }
+    ) return ConeSubstitutor.Empty
     return ConeSubstitutorByMap(substitution)
 }
 

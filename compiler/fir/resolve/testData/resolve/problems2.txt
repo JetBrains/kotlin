@@ -9,7 +9,7 @@ FILE: problems2.kt
         }
 
         public final fun intern(obj: R|T|): R|kotlin/Int?| {
-            ^intern this@R|/Interner|.R|FakeOverride</Interner.find: R|kotlin/Int?|>|(R|<local>/obj|)
+            ^intern this@R|/Interner|.R|/Interner.find|(R|<local>/obj|)
         }
 
     }

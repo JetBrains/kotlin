@@ -13,7 +13,7 @@ FILE: genericConstructors.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val myE: R|E| = this@R|/B|.R|FakeOverride</B.id: R|E|>|(R|<local>/e|)
+        public final val myE: R|E| = this@R|/B|.R|/B.id|(R|<local>/e|)
             public get(): R|E|
 
         public final val a: R|A<E>| = R|/A.A|<R|E|>(R|<local>/e|)

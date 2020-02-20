@@ -8,7 +8,7 @@ FILE: genericUsedInFunction.kt
             public get(): R|T|
 
         public final fun foo(): R|T| {
-            ^foo this@R|/Generic|.R|FakeOverride</Generic.value: R|T|>|
+            ^foo this@R|/Generic|.R|/Generic.value|
         }
 
     }

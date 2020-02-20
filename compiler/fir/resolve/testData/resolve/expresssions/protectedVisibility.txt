@@ -91,7 +91,7 @@ FILE: protectedVisibility.kt
             public get(): R|T|
 
         protected open fun foo(): R|T| {
-            ^foo this@R|/Generic|.R|FakeOverride</Generic.x: R|T|>|
+            ^foo this@R|/Generic|.R|/Generic.x|
         }
 
     }

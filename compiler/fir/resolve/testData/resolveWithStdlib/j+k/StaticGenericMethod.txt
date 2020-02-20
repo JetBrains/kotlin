@@ -6,14 +6,14 @@ FILE: User.kt
             super<R|kotlin/Any|>()
         }
 
-        private final var settings: R|T| = this@R|/User|.R|FakeOverride</User.createSettings: R|T|>|()
+        private final var settings: R|T| = this@R|/User|.R|/User.createSettings|()
             private get(): R|T|
             private set(value: R|T|): R|kotlin/Unit|
 
         protected abstract fun createSettings(): R|T|
 
         public final fun foo(): R|kotlin/Unit| {
-            this@R|/User|.R|FakeOverride</User.settings: R|T|>| = Q|StaticOwner|.R|/StaticOwner.newInstance|<R|ft<T, T?>!|>(this@R|/User|.R|FakeOverride</User.settings: R|T|>|.R|kotlin/jvm/javaClass|)
+            this@R|/User|.R|/User.settings| = Q|StaticOwner|.R|/StaticOwner.newInstance|<R|ft<T, T?>!|>(this@R|/User|.R|/User.settings|.R|kotlin/jvm/javaClass|)
         }
 
     }
