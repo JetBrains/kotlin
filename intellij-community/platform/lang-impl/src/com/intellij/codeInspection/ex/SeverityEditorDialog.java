@@ -141,7 +141,8 @@ public class SeverityEditorDialog extends DialogWrapper {
         @Override
         public void run(AnActionButton button) {
           String oldName = myCurrentSelection.getSeverity().getName();
-          String newName = Messages.showInputDialog(myPanel, InspectionsBundle.message("highlight.severity.create.dialog.name.label"), "Edit Severity Name", null, oldName, new InputValidator() {
+          String newName = Messages.showInputDialog(myPanel, InspectionsBundle.message("highlight.severity.create.dialog.name.label"),
+                                                    InspectionsBundle.message("highlight.severity.create.dialog.title"), null, oldName, new InputValidator() {
             @Override
             public boolean checkInput(String inputString) {
               return checkNameExist(inputString);

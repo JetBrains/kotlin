@@ -48,13 +48,13 @@ public class InspectionNodeInfo extends JPanel {
     JPanel titlePanel = new JPanel();
     titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.LINE_AXIS));
     JBLabelDecorator label = JBLabelDecorator.createJBLabelDecorator().setBold(true);
-    label.setText(toolWrapper.getDisplayName() + " inspection");
+    label.setText(InspectionsBundle.message("inspection.node.text", toolWrapper.getDisplayName()));
     titlePanel.add(label);
     titlePanel.add(Box.createHorizontalStrut(JBUIScale.scale(16)));
     if (!enabled) {
       JBLabel enabledLabel = new JBLabel();
       enabledLabel.setForeground(JBColor.GRAY);
-      enabledLabel.setText("Disabled");
+      enabledLabel.setText(InspectionsBundle.message("inspection.node.disabled.state"));
       titlePanel.add(enabledLabel);
     }
 
@@ -87,7 +87,12 @@ public class InspectionNodeInfo extends JPanel {
 
     JButton enableButton = null;
     if (currentProfile.getSingleTool() != null) {
-      enableButton = new JButton((enabled ? "Disable" : "Enable") + " inspection");
+      if (enabled) {
+        enableButton = new JButton(InspectionsBundle.message("disable.inspection.btn.text"));
+      }
+      else {
+        enableButton = new JButton(InspectionsBundle.message("enable.inspection.btn.text"));
+      }
       new ClickListener() {
         @Override
         public boolean onClick(@NotNull MouseEvent event, int clickCount) {

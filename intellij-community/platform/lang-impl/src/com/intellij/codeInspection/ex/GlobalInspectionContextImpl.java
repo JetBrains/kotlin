@@ -640,7 +640,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
                                                   final boolean headlessEnvironment,
                                                   @NotNull final BlockingQueue<? super PsiFile> outFilesToInspect,
                                                   @NotNull final ProgressIndicator progressIndicator) {
-    Task.Backgroundable task = new Task.Backgroundable(getProject(), "Scanning Files to Inspect") {
+    Task.Backgroundable task = new Task.Backgroundable(getProject(), InspectionsBundle.message("scanning.files.to.inspect.progress.text")) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {

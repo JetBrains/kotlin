@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.ui;
 
+import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -44,8 +46,12 @@ public class InspectionViewNavigationPanel extends JPanel implements InspectionT
   }
 
   @NotNull
+  @Nls
   public static String getTitleText(boolean addColon) {
-    return "Select inspection to see problems" + (addColon ? ":" : ".");
+    if (addColon) {
+      return InspectionsBundle.message("inspections.view.select.inspection.label");
+    }
+    return InspectionsBundle.message("inspections.view.nothing.message");
   }
 
   private void resetChildrenNavigation() {

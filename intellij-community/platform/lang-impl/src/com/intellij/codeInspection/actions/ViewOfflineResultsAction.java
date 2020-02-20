@@ -91,8 +91,8 @@ public class ViewOfflineResultsAction extends AnAction {
         return super.getIcon(file);
       }
     }.withFileFilter(f -> f.isDirectory() || StdFileTypes.XML.getDefaultExtension().equals(f.getExtension()))
-      .withTitle("Select Path")
-      .withDescription("Select directory which contains exported inspections results");
+      .withTitle(InspectionsBundle.message("view.offline.inspections.select.path.title"))
+      .withDescription(InspectionsBundle.message("view.offline.inspections.select.path.description"));
     final VirtualFile virtualFile = FileChooser.chooseFile(descriptor, project, null);
     if (virtualFile == null) return;
 

@@ -110,7 +110,7 @@ public abstract class QuickFixAction extends AnAction implements CustomComponent
       TreePath[] paths = tree.getSelectionPaths();
       if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> ReadAction.run(() -> {
         final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        indicator.setText("Checking problem descriptors...");
+        indicator.setText(InspectionsBundle.message("quick.fix.action.checking.problem.progress"));
         descriptors.set(tree.getSelectedDescriptorPacks(true, readOnlyFiles, false, paths));
       }), InspectionsBundle.message("preparing.for.apply.fix"), true, e.getProject())) {
         return;

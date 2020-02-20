@@ -101,7 +101,7 @@ public class LossyEncodingInspection extends LocalInspectionTool {
     }
     if (!isGoodCharset(virtualFile, charset)) {
       LocalQuickFix[] fixes = getFixes(file, virtualFile, charset);
-      descriptors.add(manager.createProblemDescriptor(file, "File was loaded in the wrong encoding: '" + charset + "'", true,
+      descriptors.add(manager.createProblemDescriptor(file, InspectionsBundle.message("inspection.lossy.encoding.description", charset), true,
                                                       ProblemHighlightType.GENERIC_ERROR, isOnTheFly, fixes));
       return false;
     }
@@ -122,7 +122,7 @@ public class LossyEncodingInspection extends LocalInspectionTool {
         @NotNull
         @Override
         public String getFamilyName() {
-          return "Reload in '" + goodCharset.displayName()+"'";
+          return InspectionsBundle.message("reload.file.encoding.family.name", goodCharset.displayName());
         }
 
         @Override
@@ -144,7 +144,7 @@ public class LossyEncodingInspection extends LocalInspectionTool {
         @NotNull
         @Override
         public String getFamilyName() {
-          return "Set project encoding to '" + goodCharset.displayName()+"'";
+          return InspectionsBundle.message("set.project.encoding.family.name", goodCharset.displayName());
         }
 
         @Override
@@ -300,7 +300,7 @@ public class LossyEncodingInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getText() {
-      return "Reload in another encoding";
+      return InspectionsBundle.message("reload.in.another.encoding.text");
     }
 
     @Override
@@ -328,7 +328,7 @@ public class LossyEncodingInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Change file encoding";
+      return InspectionsBundle.message("change.encoding.fix.family.name");
     }
 
     @Override

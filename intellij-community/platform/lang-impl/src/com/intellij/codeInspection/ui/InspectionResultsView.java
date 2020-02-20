@@ -435,7 +435,8 @@ public class InspectionResultsView extends JPanel implements Disposable, DataPro
       final PsiFile file = InjectedLanguageManager.getInstance(getProject()).getTopLevelFile(selectedElement);
       final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
       if (document == null) {
-        return Pair.create(InspectionResultsViewUtil.createLabelForText("Can't open preview for \'" + file.getName() + "\'"), null);
+        return Pair.create(InspectionResultsViewUtil.createLabelForText(
+          InspectionsBundle.message("inspections.view.no.preview.label", file.getName())), null);
       }
 
       if (reuseEditorFor(document)) {

@@ -15,6 +15,7 @@
  */
 package com.intellij.codeInspection.ui;
 
+import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
@@ -30,6 +31,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,21 +79,21 @@ public class InspectionResultsViewUtil {
   @NotNull
   static JComponent getInvalidEntityLabel(@NotNull RefEntity entity) {
     final String name = entity.getName();
-    return createLabelForText("\'" + name + "\' is no longer valid.");
+    return createLabelForText(InspectionsBundle.message("inspections.view.invalid.label", name));
   }
 
   public static JComponent getPreviewIsNotAvailable(@NotNull RefEntity entity) {
     final String name = entity.getQualifiedName();
-    return createLabelForText("Preview is not available for \'" + name + "\'.");
+    return createLabelForText(InspectionsBundle.message("inspections.view.no.preview.label", name));
   }
 
   @NotNull
   static JComponent getApplyingFixLabel(@NotNull InspectionToolWrapper wrapper) {
-    return createLabelForText("Applying quick fix for \'" + wrapper.getDisplayName() + "\'...");
+    return createLabelForText(InspectionsBundle.message("inspections.view.applying.quick.label", wrapper.getDisplayName()));
   }
 
   @NotNull
-  static JLabel createLabelForText(String text) {
+  static JLabel createLabelForText(@Nls String text) {
     final JLabel multipleSelectionLabel = new JBLabel(text);
     multipleSelectionLabel.setVerticalAlignment(SwingConstants.TOP);
     multipleSelectionLabel.setBorder(JBUI.Borders.empty(16, 12, 0, 0));

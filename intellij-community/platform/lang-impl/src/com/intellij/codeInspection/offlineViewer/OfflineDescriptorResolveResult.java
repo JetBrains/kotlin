@@ -241,7 +241,7 @@ public class OfflineDescriptorResolveResult {
       @NotNull
       @Override
       public String getFamilyName() {
-        return "Rerun \'" + wrapper.getDisplayName() + "\' inspection";
+        return InspectionsBundle.message("rerun.inspection.family.name", wrapper.getDisplayName());
       }
 
       @Override

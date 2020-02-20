@@ -2,6 +2,7 @@
 package com.intellij.codeInspection.ui;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.QuickFixAction;
 import com.intellij.codeInspection.ui.actions.suppress.SuppressActionWrapper;
@@ -170,7 +171,12 @@ public class QuickFixPreviewPanelFactory {
       if (fixes.length > MAX_FIX_COUNT) {
         final ComboBoxAction fixComboBox = new ComboBoxAction() {
           {
-            getTemplatePresentation().setText("Apply quick fixes" + (multipleDescriptors ? " to all the problems" : ""));
+            if (multipleDescriptors) {
+              getTemplatePresentation().setText(InspectionsBundle.message("apply.quick.fixes.to.all.action.text"));
+            }
+            else {
+              getTemplatePresentation().setText(InspectionsBundle.message("apply.quick.fixes.action.text"));
+            }
             getTemplatePresentation().setIcon(AllIcons.Actions.IntentionBulb);
             setSmallVariant(false);
           }
