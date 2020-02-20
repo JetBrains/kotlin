@@ -5,7 +5,6 @@ import com.intellij.codeInsight.hints.presentation.MenuOnClickPresentation;
 import com.intellij.codeInsight.hints.presentation.PresentationFactory;
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -46,8 +45,8 @@ public class AddInlayInternalAction extends AnAction implements DumbAware {
     for (int offset : offsets) {
       AtomicReference<Inlay<?>> ref = new AtomicReference<>();
       MenuOnClickPresentation presentation = new MenuOnClickPresentation(new PresentationFactory(editor).text(inlayText), project, () -> {
-        return Collections.singletonList(new AnAction(IdeBundle.lazyMessage("action.AddInlayInternalAction.Anonymous.text.remove"),
-                                                      IdeBundle.lazyMessage("action.AddInlayInternalAction.Anonymous.description.remove.this.inlay"),
+        return Collections.singletonList(new AnAction(InternalActionsBundle.lazyMessage("action.AddInlayInternalAction.Anonymous.text.remove"),
+                                                      InternalActionsBundle.lazyMessage("action.AddInlayInternalAction.Anonymous.description.remove.this.inlay"),
                                                       AllIcons.Actions.Cancel) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e1) {
