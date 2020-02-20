@@ -1299,6 +1299,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
         }
 
+        @TestMetadata("extensionLambdaInDefaultArgument.kt")
+        public void testExtensionLambdaInDefaultArgument() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/extensionLambdaInDefaultArgument.kt");
+        }
+
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
