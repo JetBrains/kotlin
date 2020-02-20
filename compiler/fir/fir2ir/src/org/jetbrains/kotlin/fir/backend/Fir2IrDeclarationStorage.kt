@@ -151,11 +151,11 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
-        superTypes = klass.superTypeRefs.map { superTypeRef ->
-            superTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
-        }
         if (klass is FirRegularClass) {
             setTypeParameters(klass)
+        }
+        superTypes = klass.superTypeRefs.map { superTypeRef ->
+            superTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
         }
         return this
     }
