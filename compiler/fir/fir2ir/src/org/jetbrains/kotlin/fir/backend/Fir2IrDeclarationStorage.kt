@@ -144,6 +144,12 @@ class Fir2IrDeclarationStorage(
         leaveScope(descriptor)
     }
 
+    private fun preCacheTypeParameters(owner: FirTypeParametersOwner) {
+        owner.typeParameters.mapIndexed { index, typeParameter ->
+            getIrTypeParameter(typeParameter, index)
+        }
+    }
+
     private fun IrTypeParametersContainer.setTypeParameters(owner: FirTypeParametersOwner) {
         typeParameters = owner.typeParameters.mapIndexed { index, typeParameter ->
             getIrTypeParameter(typeParameter, index).apply { parent = this@setTypeParameters }
@@ -468,6 +474,7 @@ class Fir2IrDeclarationStorage(
             val containerSource = function.containerSource
             val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
             val updatedOrigin = if (function.symbol.callableId.isKFunctionInvoke()) IrDeclarationOrigin.FAKE_OVERRIDE else origin
+            preCacheTypeParameters(function)
             return function.convertWithOffsets { startOffset, endOffset ->
                 enterScope(descriptor)
                 val result = irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
