@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
+import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,12 +30,18 @@ class UnindexedFilesFinder implements CollectingContentIterator {
   private final Project myProject;
   private final boolean myDoTraceForFilesToBeIndexed = FileBasedIndexImpl.LOG.isTraceEnabled();
   private final FileBasedIndexImpl myFileBasedIndex;
+
   private final FileContentHashIndex myFileContentHashIndex;
+  private final TIntHashSet myAttachedChunks;
+  private final TIntHashSet myInvalidatedChunks;
 
   UnindexedFilesFinder(@NotNull Project project) {
     myProject = project;
     myFileBasedIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance());
+
     myFileContentHashIndex = SharedIndexExtensions.areSharedIndexesEnabled() ? myFileBasedIndex.getOrCreateFileContentHashIndex() : null;
+    myAttachedChunks = SharedIndexExtensions.areSharedIndexesEnabled() ? new TIntHashSet() : null;
+    myInvalidatedChunks = SharedIndexExtensions.areSharedIndexesEnabled() ? new TIntHashSet() : null;
   }
 
   @NotNull
@@ -102,27 +109,45 @@ class UnindexedFilesFinder implements CollectingContentIterator {
             for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
               final ID<?, ?> indexId = affectedIndexCandidates.get(i);
               try {
-                if (myFileBasedIndex.needsFileContentLoading(indexId) && myFileBasedIndex.shouldIndexFile(fileContent, indexId)) {
-                  if (myFileContentHashIndex != null) {
-
+                if (myFileBasedIndex.needsFileContentLoading(indexId)) {
+                  FileBasedIndexImpl.FileIndexingState fileIndexingState = myFileBasedIndex.shouldIndexFile(fileContent, indexId);
+                  if (fileIndexingState == FileBasedIndexImpl.FileIndexingState.UP_TO_DATE && myFileContentHashIndex != null) {
                     //append existing chunk
                     int chunkId = myFileContentHashIndex.getAssociatedChunkId(inputId, file);
-                    if (!SharedIndexChunkConfiguration.getInstance().attachExistingChunk(chunkId, myProject)) {
+                    boolean shouldAttach;
+                    synchronized (myAttachedChunks) {
+                      shouldAttach = myAttachedChunks.add(chunkId);
+                    }
+                    boolean isInvalidatedChunk;
+                    if (shouldAttach) {
+                      if (!SharedIndexChunkConfiguration.getInstance().attachExistingChunk(chunkId, myProject)) {
+                        isInvalidatedChunk = true;
+                        synchronized (myInvalidatedChunks) {
+                          myAttachedChunks.add(chunkId);
+                        }
+                      } else isInvalidatedChunk = false;
+                    } else {
+                      synchronized (myInvalidatedChunks) {
+                        isInvalidatedChunk = myInvalidatedChunks.contains(chunkId);
+                      }
+                    }
+                    if (isInvalidatedChunk) {
                       myFileContentHashIndex.update(inputId, null).compute();
                       for (ID<?, ?> state : IndexingStamp.getNontrivialFileIndexedStates(inputId)) {
                         myFileBasedIndex.getIndex(state).resetIndexedStateForFile(inputId);
                       }
                     }
-
                   }
-                  if (myDoTraceForFilesToBeIndexed) {
-                    LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
+                  if (fileIndexingState == FileBasedIndexImpl.FileIndexingState.SHOULD_INDEX) {
+                    if (myDoTraceForFilesToBeIndexed) {
+                      LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
+                    }
+                    synchronized (myFiles) {
+                      myFiles.add(file);
+                    }
+                    isUptoDate = false;
+                    break;
                   }
-                  synchronized (myFiles) {
-                    myFiles.add(file);
-                  }
-                  isUptoDate = false;
-                  break;
                 }
               }
               catch (RuntimeException e) {
@@ -140,7 +165,7 @@ class UnindexedFilesFinder implements CollectingContentIterator {
         }
 
         for (ID<?, ?> indexId : myFileBasedIndex.getContentLessIndexes(isDirectory)) {
-          if (myFileBasedIndex.shouldIndexFile(fileContent, indexId)) {
+          if (myFileBasedIndex.shouldIndexFile(fileContent, indexId) == FileBasedIndexImpl.FileIndexingState.SHOULD_INDEX) {
             myFileBasedIndex.updateSingleIndex(indexId, file, inputId, new IndexedFileWrapper(fileContent));
           }
         }

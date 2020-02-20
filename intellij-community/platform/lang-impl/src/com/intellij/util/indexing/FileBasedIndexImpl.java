@@ -1166,7 +1166,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       //noinspection ForLoopReplaceableByForEach
       for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
         final ID<?, ?> indexId = affectedIndexCandidates.get(i);
-        if (shouldIndexFile(fc, indexId)) {
+        if (shouldIndexFile(fc, indexId) == FileIndexingState.SHOULD_INDEX) {
           try {
             ProgressManager.checkCanceled();
             if (!updateSingleIndex(indexId, file, inputId, fc)) {
@@ -1491,10 +1491,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return file instanceof VirtualFileWithId ?((VirtualFileWithId)file).getId() : IndexingStamp.INVALID_FILE_ID;
   }
 
-  boolean shouldIndexFile(@NotNull IndexedFile file, @NotNull ID<?, ?> indexId) {
+  FileIndexingState shouldIndexFile(@NotNull IndexedFile file, @NotNull ID<?, ?> indexId) {
     VirtualFile virtualFile = file.getFile();
-    return getInputFilter(indexId).acceptInput(virtualFile) &&
-            (isMock(virtualFile) || !getIndex(indexId).isIndexedStateForFile(((NewVirtualFile) virtualFile).getId(), file));
+    if (!getInputFilter(indexId).acceptInput(virtualFile)) {
+      return FileIndexingState.SHOULD_NOT_INDEX;
+    }
+    return (isMock(virtualFile) || !getIndex(indexId).isIndexedStateForFile(((NewVirtualFile) virtualFile).getId(), file))
+           ? FileIndexingState.SHOULD_INDEX
+           : FileIndexingState.UP_TO_DATE;
   }
 
   static boolean isMock(final VirtualFile file) {
@@ -1587,7 +1591,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return PsiDocumentManager.getInstance(project).getCachedPsiFile(doc);
   }
 
-  static void cleanupProcessedFlag() {
+  @VisibleForTesting
+  public static void cleanupProcessedFlag() {
     final VirtualFile[] roots = ManagingFS.getInstance().getRoots();
     for (VirtualFile root : roots) {
       cleanProcessedFlag(root);
@@ -1712,5 +1717,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       version += SnapshotInputMappings.getVersion();
     }
     return version;
+  }
+
+  @ApiStatus.Internal
+  enum FileIndexingState {
+    SHOULD_INDEX, SHOULD_NOT_INDEX, UP_TO_DATE
   }
 }
