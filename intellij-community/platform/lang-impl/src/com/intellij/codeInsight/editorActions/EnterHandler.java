@@ -600,15 +600,7 @@ public class EnterHandler extends BaseEnterHandler {
 
         if (docProvider != null) {
           if (docProvider.findExistingDocComment(comment) != comment) return comment;
-          String docStub;
-
-          DumbService.getInstance(project).setAlternativeResolveEnabled(true);
-          try {
-            docStub = docProvider.generateDocumentationContentStub(comment);
-          }
-          finally {
-            DumbService.getInstance(project).setAlternativeResolveEnabled(false);
-          }
+          String docStub = DumbService.getInstance(project).computeWithAlternativeResolveEnabled(() -> docProvider.generateDocumentationContentStub(comment));
 
           if (docStub != null && docStub.length() != 0) {
             myOffset = CharArrayUtil.shiftForwardUntil(myDocument.getCharsSequence(), myOffset, LINE_SEPARATOR);

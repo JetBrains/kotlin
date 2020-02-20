@@ -88,24 +88,24 @@ public class PasteHandler extends EditorActionHandler implements EditorTextInser
       return;
     }
 
-    DumbService.getInstance(project).setAlternativeResolveEnabled(true);
-    document.startGuardedBlockChecking();
-    try {
-      for (PasteProvider provider : EP_NAME.getExtensionList()) {
-        if (provider.isPasteEnabled(context)) {
-          provider.performPaste(context);
-          return;
+    DumbService.getInstance(project).runWithAlternativeResolveEnabled(() -> {
+      document.startGuardedBlockChecking();
+      try {
+        for (PasteProvider provider : EP_NAME.getExtensionList()) {
+          if (provider.isPasteEnabled(context)) {
+            provider.performPaste(context);
+            return;
+          }
         }
+        doPaste(editor, project, file, document, transferable);
       }
-      doPaste(editor, project, file, document, transferable);
-    }
-    catch (ReadOnlyFragmentModificationException e) {
-      EditorActionManager.getInstance().getReadonlyFragmentModificationHandler(document).handle(e);
-    }
-    finally {
-      document.stopGuardedBlockChecking();
-      DumbService.getInstance(project).setAlternativeResolveEnabled(false);
-    }
+      catch (ReadOnlyFragmentModificationException e) {
+        EditorActionManager.getInstance().getReadonlyFragmentModificationHandler(document).handle(e);
+      }
+      finally {
+        document.stopGuardedBlockChecking();
+      }
+    });
   }
 
   private static void doPaste(final Editor editor,

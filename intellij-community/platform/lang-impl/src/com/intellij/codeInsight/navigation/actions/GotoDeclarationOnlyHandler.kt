@@ -29,48 +29,47 @@ object GotoDeclarationOnlyHandler : CodeInsightActionHandler {
   override fun invoke(project: Project, editor: Editor, file: PsiFile) {
     FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.declaration.only")
     val dumbService = DumbService.getInstance(project)
-    try {
-      dumbService.isAlternativeResolveEnabled = true
-      val offset = editor.caretModel.offset
-      val elements = ActionUtil.underModalProgress(project,
-                                                   "Resolving Reference...") {
-        findAllTargetElements(project, editor, offset)
-      }
-      if (elements.size == 1) {
-        // simplest case
-        val element = elements[0]
-        val navElement = TargetElementUtil.getInstance().getGotoDeclarationTarget(element, element.navigationElement)
-        if (navElement != null) {
-          gotoTargetElement(navElement, editor, file)
+    dumbService.runWithAlternativeResolveEnabled<RuntimeException> {
+      try {
+        val offset = editor.caretModel.offset
+        val elements = ActionUtil.underModalProgress(project,
+                                                     "Resolving Reference...") {
+          findAllTargetElements(project, editor, offset)
         }
-      }
-      else if (elements.isEmpty()) {
-        // this means either there is really nowhere to go or weird TargetElementUtil didn't return anything
-        val reference = TargetElementUtil.findReference(editor, offset)
-        if (reference != null) {
-          val targets = ActionUtil.underModalProgress(project,
-                                                      "Resolving Reference...") {
-            TargetElementUtil.getInstance().getTargetCandidates(reference)
-          }
-          if (targets.isNotEmpty()) {
-            chooseAmbiguousTarget(editor, file, targets.toArray(PsiElement.EMPTY_ARRAY))
-            return
+        if (elements.size == 1) {
+          // simplest case
+          val element = elements[0]
+          val navElement = TargetElementUtil.getInstance().getGotoDeclarationTarget(element, element.navigationElement)
+          if (navElement != null) {
+            gotoTargetElement(navElement, editor, file)
           }
         }
-        //disable 'no declaration found' notification for keywords
-        if (!isKeywordUnderCaret(project, file, offset)) {
-          HintManager.getInstance().showErrorHint(editor, "Cannot find declaration to go to")
+        else if (elements.isEmpty()) {
+          // this means either there is really nowhere to go or weird TargetElementUtil didn't return anything
+          val reference = TargetElementUtil.findReference(editor, offset)
+          var executed = false
+          if (reference != null) {
+            val targets = ActionUtil.underModalProgress(project,
+                                                        "Resolving Reference...") {
+              TargetElementUtil.getInstance().getTargetCandidates(reference)
+            }
+            if (targets.isNotEmpty()) {
+              chooseAmbiguousTarget(editor, file, targets.toArray(PsiElement.EMPTY_ARRAY))
+              executed = true
+            }
+          }
+          //disable 'no declaration found' notification for keywords
+          if (!executed && !isKeywordUnderCaret(project, file, offset)) {
+            HintManager.getInstance().showErrorHint(editor, "Cannot find declaration to go to")
+          }
+        }
+        else {
+          chooseAmbiguousTarget(editor, file, elements)
         }
       }
-      else {
-        chooseAmbiguousTarget(editor, file, elements)
+      catch (e: IndexNotReadyException) {
+        dumbService.showDumbModeNotification("Navigation is not available here during index update")
       }
-    }
-    catch (e: IndexNotReadyException) {
-      dumbService.showDumbModeNotification("Navigation is not available here during index update")
-    }
-    finally {
-      dumbService.isAlternativeResolveEnabled = false
     }
   }
 

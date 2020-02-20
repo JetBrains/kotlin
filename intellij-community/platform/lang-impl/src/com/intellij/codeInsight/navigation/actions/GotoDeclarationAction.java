@@ -69,47 +69,44 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
 
   @Override
   public void invoke(@NotNull final Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+    DumbService.getInstance(project).runWithAlternativeResolveEnabled(() -> {
+      try {
+        int offset = editor.getCaretModel().getOffset();
+        Pair<PsiElement[], PsiElement> pair = ActionUtil
+          .underModalProgress(project, "Resolving Reference...", () -> doSelectCandidate(project, editor, offset));
+        FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.declaration");
 
-    DumbService.getInstance(project).setAlternativeResolveEnabled(true);
-    try {
-      int offset = editor.getCaretModel().getOffset();
-      Pair<PsiElement[], PsiElement> pair = ActionUtil
-        .underModalProgress(project, "Resolving Reference...", () -> doSelectCandidate(project, editor, offset));
-      FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.declaration");
+        PsiElement[] elements = pair.first;
+        PsiElement usage = pair.second;
 
-      PsiElement[] elements = pair.first;
-      PsiElement usage = pair.second;
-
-      if (elements.length != 1) {
-        if (elements.length == 0) {
-          if (usage != null) {
-            startFindUsages(editor, project, usage);
-            return;
+        if (elements.length != 1) {
+          if (elements.length == 0) {
+            if (usage != null) {
+              startFindUsages(editor, project, usage);
+              return;
+            }
           }
+
+          chooseAmbiguousTarget(project, editor, offset, elements, file);
+          return;
         }
 
-        chooseAmbiguousTarget(project, editor, offset, elements, file);
-        return;
-      }
+        PsiElement element = elements[0];
+        if (element == usage) {
+          startFindUsages(editor, project, element);
+          return;
+        }
 
-      PsiElement element = elements[0];
-      if (element == usage) {
-        startFindUsages(editor, project, element);
-        return;
+        PsiElement navElement = element.getNavigationElement();
+        navElement = TargetElementUtil.getInstance().getGotoDeclarationTarget(element, navElement);
+        if (navElement != null) {
+          gotoTargetElement(navElement, editor, file);
+        }
       }
-
-      PsiElement navElement = element.getNavigationElement();
-      navElement = TargetElementUtil.getInstance().getGotoDeclarationTarget(element, navElement);
-      if (navElement != null) {
-        gotoTargetElement(navElement, editor, file);
+      catch (IndexNotReadyException e) {
+        DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
       }
-    }
-    catch (IndexNotReadyException e) {
-      DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
-    }
-    finally {
-      DumbService.getInstance(project).setAlternativeResolveEnabled(false);
-    }
+    });
   }
 
   @NotNull

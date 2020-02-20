@@ -111,13 +111,8 @@ public class CopyReferenceUtil {
   @Nullable
   static String getQualifiedNameFromProviders(@Nullable PsiElement element) {
     if (element == null) return null;
-    DumbService.getInstance(element.getProject()).setAlternativeResolveEnabled(true);
-    try {
-      return QualifiedNameProviderUtil.getQualifiedName(element);
-    }
-    finally {
-      DumbService.getInstance(element.getProject()).setAlternativeResolveEnabled(false);
-    }
+    return DumbService.getInstance(element.getProject()).computeWithAlternativeResolveEnabled(() ->
+      QualifiedNameProviderUtil.getQualifiedName(element));
   }
 
   static String doCopy(List<? extends PsiElement> elements, @Nullable Editor editor) {

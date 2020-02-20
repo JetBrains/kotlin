@@ -125,27 +125,25 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
                 return null;
               }
 
-              dumbService.setAlternativeResolveEnabled(true);
-              try {
-                for (int i = 0; i < handlers.length; i++) {
-                  ParameterInfoHandler<PsiElement, Object> handler = handlers[i];
-                  PsiElement element = handler.findElementForParameterInfo(context);
-                  if (element != null) {
-                    return (Runnable)() -> {
-                      if (element.isValid()) {
-                        handler.showParameterInfo(element, context);
-                      }
-                    };
+              return dumbService.computeWithAlternativeResolveEnabled(() -> {
+                try {
+                  for (int i = 0; i < handlers.length; i++) {
+                    ParameterInfoHandler<PsiElement, Object> handler = handlers[i];
+                    PsiElement element = handler.findElementForParameterInfo(context);
+                    if (element != null) {
+                      return (Runnable)() -> {
+                        if (element.isValid()) {
+                          handler.showParameterInfo(element, context);
+                        }
+                      };
+                    }
                   }
                 }
-              }
-              catch (IndexNotReadyException e) {
-                indexNotReadyExceptionConsumer.accept(e);
-              }
-              finally {
-                dumbService.setAlternativeResolveEnabled(false);
-              }
-              return null;
+                catch (IndexNotReadyException e) {
+                  indexNotReadyExceptionConsumer.accept(e);
+                }
+                return null;
+              });
             })
               .withDocumentsCommitted(project)
               .expireWhen(() -> editor.getCaretModel().getOffset() != initialOffset)

@@ -113,14 +113,8 @@ public final class ArrangementEngine {
       return;
     }
 
-    final Context<? extends ArrangementEntry> context;
-    DumbService.getInstance(file.getProject()).setAlternativeResolveEnabled(true);
-    try {
-      context = Context.from(rearranger, document, file, ranges, arrangementSettings, settings);
-    }
-    finally {
-      DumbService.getInstance(file.getProject()).setAlternativeResolveEnabled(false);
-    }
+    Context<? extends ArrangementEntry> context =
+    DumbService.getInstance(file.getProject()).computeWithAlternativeResolveEnabled(() -> Context.from(rearranger, document, file, ranges, arrangementSettings, settings));
 
     ApplicationManager.getApplication().runWriteAction(() -> FormatChangedTextUtil.getInstance().runHeavyModificationTask(file.getProject(), document, () -> {
       doArrange(context);

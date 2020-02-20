@@ -108,13 +108,10 @@ public abstract class CreateTemplateInPackageAction<T extends PsiElement> extend
     }
 
     DumbService service = DumbService.getInstance(dir.getProject());
-    service.setAlternativeResolveEnabled(true);
-    try {
-      return doCreate(dir, className, templateName);
-    }
-    finally {
-      service.setAlternativeResolveEnabled(false);
-    }
+    PsiDirectory finalDir = dir;
+    String finalClassName = className;
+    return service.computeWithAlternativeResolveEnabled(() ->
+      doCreate(finalDir, finalClassName, templateName));
   }
 
   protected String removeExtension(String templateName, String className) {

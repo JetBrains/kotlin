@@ -59,25 +59,24 @@ public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements 
 
   @Override
   public void invoke(@NotNull final Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    DumbService.getInstance(project).setAlternativeResolveEnabled(true);
-    try {
-      int offset = editor.getCaretModel().getOffset();
-      PsiElement[] symbolTypes = ActionUtil.underModalProgress(project, "Resolving Reference...",
-                                                               () -> findSymbolTypes(editor, offset));
-      if (symbolTypes == null || symbolTypes.length == 0) return;
-      if (symbolTypes.length == 1) {
-        navigate(project, symbolTypes[0]);
+    DumbService.getInstance(project).runWithAlternativeResolveEnabled(() -> {
+      try {
+        int offset = editor.getCaretModel().getOffset();
+        PsiElement[] symbolTypes = ActionUtil.underModalProgress(project, "Resolving Reference...",
+                                                                 () -> findSymbolTypes(editor, offset));
+        if (symbolTypes == null || symbolTypes.length == 0) return;
+        if (symbolTypes.length == 1) {
+          navigate(project, symbolTypes[0]);
+        }
+        else {
+          NavigationUtil.getPsiElementPopup(symbolTypes, CodeInsightBundle.message("choose.type.popup.title"))
+            .showInBestPositionFor(editor);
+        }
       }
-      else {
-        NavigationUtil.getPsiElementPopup(symbolTypes, CodeInsightBundle.message("choose.type.popup.title")).showInBestPositionFor(editor);
+      catch (IndexNotReadyException e) {
+        DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
       }
-    }
-    catch (IndexNotReadyException e) {
-      DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
-    }
-    finally {
-      DumbService.getInstance(project).setAlternativeResolveEnabled(false);
-    }
+    });
   }
 
   private static void navigate(@NotNull Project project, @NotNull PsiElement symbolType) {

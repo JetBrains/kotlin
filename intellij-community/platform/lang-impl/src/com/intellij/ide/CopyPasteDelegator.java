@@ -134,25 +134,25 @@ public class CopyPasteDelegator implements CopyPasteSupport {
       final PsiElement[] elements = PsiCopyPasteManager.getInstance().getElements(isCopied);
       if (elements == null) return false;
 
-      DumbService.getInstance(myProject).setAlternativeResolveEnabled(true);
-      try {
-        final Module module = LangDataKeys.MODULE.getData(dataContext);
-        PsiElement target = getPasteTarget(dataContext, module);
-        if (isCopied[0]) {
-          pasteAfterCopy(elements, module, target, true);
+      return DumbService.getInstance(myProject).computeWithAlternativeResolveEnabled(() -> {
+        try {
+          final Module module = LangDataKeys.MODULE.getData(dataContext);
+          PsiElement target = getPasteTarget(dataContext, module);
+          if (isCopied[0]) {
+            pasteAfterCopy(elements, module, target, true);
+          }
+          else if (MoveHandler.canMove(elements, target)) {
+            pasteAfterCut(dataContext, elements, target);
+          }
+          else {
+            return false;
+          }
         }
-        else if (MoveHandler.canMove(elements, target)) {
-          pasteAfterCut(dataContext, elements, target);
+        finally {
+          updateView();
         }
-        else {
-          return false;
-        }
-      }
-      finally {
-        DumbService.getInstance(myProject).setAlternativeResolveEnabled(false);
-        updateView();
-      }
-      return true;
+        return true;
+      });
     }
 
     private PsiElement getPasteTarget(@NotNull DataContext dataContext, @Nullable Module module) {
