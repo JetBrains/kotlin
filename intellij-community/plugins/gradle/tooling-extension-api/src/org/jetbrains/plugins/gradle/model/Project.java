@@ -4,6 +4,13 @@ package org.jetbrains.plugins.gradle.model;
 import org.gradle.tooling.model.ProjectModel;
 
 /**
+ * {@link Project} is a "lightweight" model represents a Gradle project.
+ * It can be used to access tooling models built for related Gradle project.
+ *
+ * This is a replacement for {@link org.gradle.tooling.model.idea.IdeaModule}
+ *
+ * @see org.jetbrains.plugins.gradle.service.project.ToolingModelsProvider#getProjectModel(Project, Class)
+ *
  * @author Vladislav.Soroka
  */
 public interface Project extends ProjectModel {

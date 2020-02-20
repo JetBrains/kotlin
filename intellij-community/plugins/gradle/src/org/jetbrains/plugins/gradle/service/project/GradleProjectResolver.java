@@ -48,6 +48,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
@@ -95,10 +96,10 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
                                                   @NotNull final ExternalSystemTaskNotificationListener listener)
     throws ExternalSystemException, IllegalArgumentException, IllegalStateException {
 
-    GradleIncrementalResolverPolicy gradleResolverPolicy = null;
+    GradlePartialResolverPolicy gradleResolverPolicy = null;
     if (resolverPolicy != null) {
-      if (resolverPolicy instanceof GradleIncrementalResolverPolicy) {
-        gradleResolverPolicy = (GradleIncrementalResolverPolicy)resolverPolicy;
+      if (resolverPolicy instanceof GradlePartialResolverPolicy) {
+        gradleResolverPolicy = (GradlePartialResolverPolicy)resolverPolicy;
       }
       else {
         throw new ExternalSystemException("Unsupported project resolver policy: " + resolverPolicy.getClass().getName());
@@ -132,7 +133,9 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
         myHelper.ensureInstalledWrapper(syncTaskId, projectPath, settings, listener, cancellationTokenSource.token());
       }
 
-      final GradleProjectResolverExtension projectResolverChain = createProjectResolverChain(resolverContext, gradleResolverPolicy);
+      Predicate<GradleProjectResolverExtension> extensionsFilter =
+        gradleResolverPolicy != null ? gradleResolverPolicy.getExtensionsFilter() : null;
+      final GradleProjectResolverExtension projectResolverChain = createProjectResolverChain(resolverContext, extensionsFilter);
       final DataNode<ProjectData> projectDataNode = myHelper.execute(
         projectPath, settings, syncTaskId, listener, cancellationTokenSource,
         getProjectDataFunction(resolverContext, projectResolverChain, false));
@@ -142,8 +145,9 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       new GradleBuildSrcProjectsResolver(this, resolverContext, gradleUserHome, settings, listener, syncTaskId, projectResolverChain)
         .discoverAndAppendTo(projectDataNode);
       return projectDataNode;
-    } finally {
-        myCancellationMap.remove(resolverContext.getExternalSystemTaskId(), cancellationTokenSource);
+    }
+    finally {
+      myCancellationMap.remove(resolverContext.getExternalSystemTaskId(), cancellationTokenSource);
     }
   }
 
@@ -251,7 +255,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
           for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
             resolver.buildFinished(exception);
           }
-      });
+        });
       performanceTrace.addTrace(allModels.getPerformanceTrace());
     }
     finally {
@@ -272,18 +276,18 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     extractExternalProjectModels(allModels, resolverCtx, useCustomSerialization);
 
     String projectName = allModels.getMainBuild().getName();
-    ProjectModelBuilderImpl projectModelBuilder = new ProjectModelBuilderImpl(projectName, resolverCtx.getProjectPath());
+    ModifiableGradleProjectModelImpl modifiableGradleProjectModel = new ModifiableGradleProjectModelImpl(projectName, resolverCtx.getProjectPath());
     ToolingModelsProvider modelsProvider = new ToolingModelsProviderImpl(allModels);
     ProjectModelContributor.EP_NAME.forEachExtensionSafe(extension -> {
       resolverCtx.checkCancelled();
       final long starResolveTime = System.currentTimeMillis();
-      extension.accept(projectModelBuilder, modelsProvider, resolverCtx);
+      extension.accept(modifiableGradleProjectModel, modelsProvider, resolverCtx);
       final long resolveTimeInMs = (System.currentTimeMillis() - starResolveTime);
       performanceTrace.logPerformance("Project model contributed by " + extension.getClass().getSimpleName(), resolveTimeInMs);
       LOG.debug(String.format("Project model contributed by `" + extension.getClass().getSimpleName() + "` in %d ms", resolveTimeInMs));
     });
 
-    DataNode<ProjectData> projectDataNode = projectModelBuilder.buildDataNodeGraph();
+    DataNode<ProjectData> projectDataNode = modifiableGradleProjectModel.buildDataNodeGraph();
     DataNode<PerformanceTrace> performanceTraceNode = new DataNode<>(PerformanceTrace.TRACE_NODE_KEY, performanceTrace, projectDataNode);
     projectDataNode.addChild(performanceTraceNode);
 
@@ -393,7 +397,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       tracedResolverChain.populateModuleExtraModels(ideaModule, moduleDataNode);
     }
     mergeSourceSetContentRoots(moduleMap, resolverCtx);
-    if(resolverCtx.isResolveModulePerSourceSet()) {
+    if (resolverCtx.isResolveModulePerSourceSet()) {
       mergeLibraryAndModuleDependencyData(resolverCtx, projectDataNode, resolverCtx.getGradleUserHome(), gradleHomeDir, gradleVersion);
     }
 
@@ -733,10 +737,10 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
   @NotNull
   private static GradleProjectResolverExtension createProjectResolverChain(@Nullable DefaultProjectResolverContext resolverContext,
-                                                                           @Nullable GradleIncrementalResolverPolicy policy) {
+                                                                           @Nullable Predicate<? super GradleProjectResolverExtension> extensionsFilter) {
     Stream<GradleProjectResolverExtension> extensions = GradleProjectResolverUtil.createProjectResolvers(resolverContext);
-    if (policy != null) {
-      extensions = extensions.filter(policy.getExtensionsFilter().or(BaseResolverExtension.class::isInstance));
+    if (extensionsFilter != null) {
+      extensions = extensions.filter(extensionsFilter.or(BaseResolverExtension.class::isInstance));
     }
 
     Deque<GradleProjectResolverExtension> deque = new ArrayDeque<>();

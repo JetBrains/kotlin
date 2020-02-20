@@ -11,6 +11,6 @@ import org.jetbrains.annotations.NotNull;
  * new upcoming {@link com.intellij.workspace}
  */
 @ApiStatus.Experimental
-public interface ProjectModelBuilder extends GradleProjectModel {
-  <T> ProjectModelBuilder addProjectData(@NotNull Key<T> key, @NotNull T data);
+public interface ModifiableGradleProjectModel extends GradleProjectModel {
+  <T> ModifiableGradleProjectModel addProjectData(@NotNull Key<T> key, @NotNull T data);
 }

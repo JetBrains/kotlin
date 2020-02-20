@@ -5,7 +5,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecImpl;
-import com.intellij.openapi.externalSystem.importing.IncrementalDataResolverPolicy;
 import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
@@ -13,7 +12,10 @@ import com.intellij.openapi.externalSystem.model.internal.InternalExternalProjec
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
-import com.intellij.openapi.externalSystem.model.task.*;
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskState;
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.ExternalSystemFacadeManager;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemExecutionAware;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
@@ -142,8 +144,8 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
   protected void setState(@NotNull ExternalSystemTaskState state) {
     super.setState(state);
     if (state.isStopped() &&
-        // merging cache data with the new incremental data is not supported yet
-        !(myResolverPolicy instanceof IncrementalDataResolverPolicy)) {
+        // merging existing cache data with the new partial data is not supported yet
+        !(myResolverPolicy != null && myResolverPolicy.isPartialDataResolveAllowed())) {
       InternalExternalProjectInfo projectInfo =
         new InternalExternalProjectInfo(getExternalSystemId(), getExternalProjectPath(), myExternalProject.getAndSet(null));
       final long currentTimeMillis = System.currentTimeMillis();

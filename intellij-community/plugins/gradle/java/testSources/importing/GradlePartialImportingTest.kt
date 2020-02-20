@@ -24,41 +24,51 @@ import org.junit.Test
 import java.io.Serializable
 import java.util.function.Predicate
 
-class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
+class GradlePartialImportingTest : BuildViewMessagesImportingTestCase() {
   override fun setUp() {
     super.setUp()
     myProject.registerServiceInstance(ModelConsumer::class.java, ModelConsumer())
-    GradleProjectResolverExtension.EP_NAME.getPoint(null).registerExtension(TestProjectIncrementalResolverExtension(), testRootDisposable)
+    GradleProjectResolverExtension.EP_NAME.getPoint(null).registerExtension(TestPartialProjectResolverExtension(), testRootDisposable)
     ProjectModelContributor.EP_NAME.getPoint(null).registerExtension(TestProjectModelContributor(), testRootDisposable)
   }
 
 
   @Test
-  fun `test incremental re-import`() {
+  fun `test re-import with partial project data resolve`() {
     createAndImportTestProject()
-    assertReceivedModels(mapOf("prop1" to "val1"),
-                         mapOf("prop2" to "val2"))
+    assertReceivedModels(
+      mapOf("prop1" to "val1"),
+      mapOf("prop2" to "val2")
+    )
 
     val initialProjectStructure = ProjectDataManager.getInstance()
       .getExternalProjectData(myProject, SYSTEM_ID, projectPath)!!
       .externalProjectStructure!!
       .graphCopy()
 
-    createProjectSubFile("gradle.properties", "prop1=val1_inc\n" +
-                                              "prop2=val2_inc\n")
-    cleanupBeforeReImport()
-    ExternalSystemUtil.refreshProject(projectPath,
-                                      ImportSpecBuilder(myProject, SYSTEM_ID)
-                                        .use(ProgressExecutionMode.MODAL_SYNC)
-                                        .projectResolverPolicy(
-                                          GradleIncrementalResolverPolicy(Predicate { it is TestProjectIncrementalResolverExtension }))
+    createProjectSubFile(
+      "gradle.properties",
+      "prop1=val1_inc\n" +
+      "prop2=val2_inc\n"
+    )
+    ExternalSystemUtil.refreshProject(
+      projectPath,
+      ImportSpecBuilder(myProject, SYSTEM_ID)
+        .use(ProgressExecutionMode.MODAL_SYNC)
+        .projectResolverPolicy(
+          GradlePartialResolverPolicy(Predicate { it is TestPartialProjectResolverExtension })
+        )
     )
 
-    assertSyncViewTreeEquals("-\n" +
-                             " finished")
+    assertSyncViewTreeEquals(
+      "-\n" +
+      " finished"
+    )
 
-    assertReceivedModels(mapOf("prop1" to "val1_inc"),
-                         mapOf("prop2" to "val2_inc"))
+    assertReceivedModels(
+      mapOf("prop1" to "val1_inc"),
+      mapOf("prop2" to "val2_inc")
+    )
 
     val projectStructureAfterIncrementalImport = ProjectDataManager.getInstance()
       .getExternalProjectData(myProject, SYSTEM_ID, projectPath)!!
@@ -71,25 +81,33 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
   @Test
   fun `test import cancellation on project loaded phase`() {
     createAndImportTestProject()
-    assertReceivedModels(mapOf("prop1" to "val1"),
-                         mapOf("prop2" to "val2"))
+    assertReceivedModels(
+      mapOf("prop1" to "val1"),
+      mapOf("prop2" to "val2")
+    )
 
-    createProjectSubFile("gradle.properties", "prop1=error\n" +
-                                              "prop2=val22\n")
-    cleanupBeforeReImport()
+    createProjectSubFile(
+      "gradle.properties",
+      "prop1=error\n" +
+      "prop2=val22\n"
+    )
     ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(myProject, SYSTEM_ID).use(ProgressExecutionMode.MODAL_SYNC))
 
     if (currentGradleBaseVersion >= GradleVersion.version("4.8")) {
       if (currentGradleBaseVersion != GradleVersion.version("4.10.3")) {
-        assertSyncViewTreeEquals("-\n" +
-                                 " -failed\n" +
-                                 "  Build cancelled")
+        assertSyncViewTreeEquals(
+          "-\n" +
+          " -failed\n" +
+          "  Build cancelled"
+        )
       }
       assertReceivedModels(mapOf("prop1" to "error"))
     }
     else {
-      assertSyncViewTreeEquals("-\n" +
-                               " finished")
+      assertSyncViewTreeEquals(
+        "-\n" +
+        " finished"
+      )
       assertReceivedModels(mapOf("prop1" to "error"), mapOf("prop2" to "val22"))
     }
   }
@@ -140,23 +158,25 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
             }
           }
         """.trimIndent()
-    createProjectSubFile("gradle.properties", "prop1=val1\n" +
-                                              "prop2=val2\n")
+    createProjectSubFile(
+      "gradle.properties",
+      "prop1=val1\n" +
+      "prop2=val2\n"
+    )
 
-    importProject(GradleBuildScriptBuilderEx()
-                    .withJavaPlugin()
-                    .addPostfix(injectModelBuilder)
-                    .applyPlugin("TestPlugin")
-                    .generate())
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .addPostfix(injectModelBuilder)
+        .applyPlugin("TestPlugin")
+        .generate()
+    )
   }
 
-  private fun cleanupBeforeReImport() {
-    myProject.getService(ModelConsumer::class.java).projectLoadedModels.clear()
-    myProject.getService(ModelConsumer::class.java).buildFinishedModels.clear()
-  }
-
-  private fun assertReceivedModels(expectedProjectLoadedModelsMap: Map<String, String>,
-                                   expectedBuildFinishedModelsMap: Map<String, String>? = null) {
+  private fun assertReceivedModels(
+    expectedProjectLoadedModelsMap: Map<String, String>,
+    expectedBuildFinishedModelsMap: Map<String, String>? = null
+  ) {
     val modelConsumer = myProject.getService(ModelConsumer::class.java)
     assertSize(1, modelConsumer.projectLoadedModels)
     assertMapsEqual(expectedProjectLoadedModelsMap, modelConsumer.projectLoadedModels.first().second.map)
@@ -170,7 +190,7 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
   }
 }
 
-class TestProjectIncrementalResolverExtension : AbstractProjectResolverExtension() {
+class TestPartialProjectResolverExtension : AbstractProjectResolverExtension() {
 
   override fun projectsLoaded(models: ModelsHolder<BuildModel, ProjectModel>?) {
     val buildFinishedModel = models?.getModel(BuildFinishedModel::class.java)
@@ -195,42 +215,53 @@ class TestProjectIncrementalResolverExtension : AbstractProjectResolverExtension
 
   override fun getProjectsLoadedModelProvider(): ProjectImportModelProvider? {
     return object : ProjectImportModelProvider {
-      override fun populateProjectModels(controller: BuildController,
-                                         projectModel: Model,
-                                         modelConsumer: ProjectImportModelProvider.ProjectModelConsumer) {
+      override fun populateProjectModels(
+        controller: BuildController,
+        projectModel: Model,
+        modelConsumer: ProjectImportModelProvider.ProjectModelConsumer
+      ) {
         val model = controller.getModel(projectModel, HashMap::class.java)
         modelConsumer.consume(ProjectLoadedModel(model), ProjectLoadedModel::class.java)
       }
 
-      override fun populateBuildModels(controller: BuildController,
-                                       buildModel: GradleBuild,
-                                       consumer: ProjectImportModelProvider.BuildModelConsumer) {
+      override fun populateBuildModels(
+        controller: BuildController,
+        buildModel: GradleBuild,
+        consumer: ProjectImportModelProvider.BuildModelConsumer
+      ) {
       }
     }
   }
 
   override fun getModelProvider(): ProjectImportModelProvider? {
     return object : ProjectImportModelProvider {
-      override fun populateProjectModels(controller: BuildController,
-                                         projectModel: Model,
-                                         modelConsumer: ProjectImportModelProvider.ProjectModelConsumer) {
+      override fun populateProjectModels(
+        controller: BuildController,
+        projectModel: Model,
+        modelConsumer: ProjectImportModelProvider.ProjectModelConsumer
+      ) {
         val model = controller.getModel(projectModel, LinkedHashMap::class.java)
         modelConsumer.consume(BuildFinishedModel(model), BuildFinishedModel::class.java)
       }
 
-      override fun populateBuildModels(controller: BuildController,
-                                       buildModel: GradleBuild,
-                                       consumer: ProjectImportModelProvider.BuildModelConsumer) {
+      override fun populateBuildModels(
+        controller: BuildController,
+        buildModel: GradleBuild,
+        consumer: ProjectImportModelProvider.BuildModelConsumer
+      ) {
       }
     }
   }
 }
 
 internal class TestProjectModelContributor() : ProjectModelContributor {
-  override fun accept(projectModelBuilder: ProjectModelBuilder,
-                      toolingModelsProvider: ToolingModelsProvider,
-                      resolverContext: ProjectResolverContext) {
+  override fun accept(
+    modifiableGradleProjectModel: ModifiableGradleProjectModel,
+    toolingModelsProvider: ToolingModelsProvider,
+    resolverContext: ProjectResolverContext
+  ) {
     val modelConsumer = resolverContext.externalSystemTaskId.findProject()!!.getService(ModelConsumer::class.java)
+    modelConsumer.clear()
     toolingModelsProvider.projects().forEach {
       modelConsumer.projectLoadedModels.add(it to toolingModelsProvider.getProjectModel(it, ProjectLoadedModel::class.java)!!)
       modelConsumer.buildFinishedModels.add(it to toolingModelsProvider.getProjectModel(it, BuildFinishedModel::class.java)!!)
@@ -238,8 +269,15 @@ internal class TestProjectModelContributor() : ProjectModelContributor {
   }
 }
 
-internal data class ModelConsumer(val projectLoadedModels: MutableList<Pair<Project, ProjectLoadedModel>> = mutableListOf(),
-                                  val buildFinishedModels: MutableList<Pair<Project, BuildFinishedModel>> = mutableListOf())
+internal data class ModelConsumer(
+  val projectLoadedModels: MutableList<Pair<Project, ProjectLoadedModel>> = mutableListOf(),
+  val buildFinishedModels: MutableList<Pair<Project, BuildFinishedModel>> = mutableListOf()
+) {
+  fun clear() {
+    projectLoadedModels.clear()
+    buildFinishedModels.clear()
+  }
+}
 
 data class ProjectLoadedModel(val map: Map<*, *>) : Serializable
 data class BuildFinishedModel(val map: Map<*, *>) : Serializable

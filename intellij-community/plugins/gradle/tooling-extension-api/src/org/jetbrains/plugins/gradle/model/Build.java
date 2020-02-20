@@ -6,6 +6,13 @@ import org.gradle.tooling.model.BuildModel;
 import java.util.Collection;
 
 /**
+ * {@link Build} is a "lightweight" model represents a Gradle build.
+ * It can be used to access "build-level" tooling models built for related Gradle build.
+ *
+ * This is a replacement for {@link org.gradle.tooling.model.idea.IdeaProject}
+ *
+ * @see org.jetbrains.plugins.gradle.service.project.ToolingModelsProvider#getBuildModel(Build, Class)
+ *
  * @author Vladislav.Soroka
  */
 public interface Build extends BuildModel {

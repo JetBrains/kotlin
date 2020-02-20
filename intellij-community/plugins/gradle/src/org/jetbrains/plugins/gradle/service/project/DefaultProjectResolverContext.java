@@ -40,13 +40,13 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable private String myProjectGradleVersion;
   @Nullable private String myBuildSrcGroup;
   @Nullable private BuildEnvironment myBuildEnvironment;
-  @Nullable private final GradleIncrementalResolverPolicy myPolicy;
+  @Nullable private final GradlePartialResolverPolicy myPolicy;
 
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
                                        @Nullable final GradleExecutionSettings settings,
                                        @NotNull final ExternalSystemTaskNotificationListener listener,
-                                       @Nullable GradleIncrementalResolverPolicy resolverPolicy,
+                                       @Nullable GradlePartialResolverPolicy resolverPolicy,
                                        final boolean isPreviewMode) {
     this(externalSystemTaskId, projectPath, settings, null, listener, resolverPolicy, isPreviewMode);
   }
@@ -57,7 +57,7 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
                                        @Nullable final GradleExecutionSettings settings,
                                        final ProjectConnection connection,
                                        @NotNull final ExternalSystemTaskNotificationListener listener,
-                                       @Nullable GradleIncrementalResolverPolicy resolverPolicy,
+                                       @Nullable GradlePartialResolverPolicy resolverPolicy,
                                        final boolean isPreviewMode) {
     myExternalSystemTaskId = externalSystemTaskId;
     myProjectPath = projectPath;
@@ -218,7 +218,7 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
 
   @Nullable
   @ApiStatus.Experimental
-  public GradleIncrementalResolverPolicy getPolicy() {
+  public GradlePartialResolverPolicy getPolicy() {
     return myPolicy;
   }
 }
