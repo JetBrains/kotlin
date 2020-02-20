@@ -12,10 +12,11 @@ open class ValuesReadingContext(
     private val servicesManager: ServicesManager,
     val isUnitTestMode: Boolean
 ) {
-    inline fun <reified S : WizardService> service(noinline filter: (S) -> Boolean = { true }) = serviceByClass(S::class, filter)
+    inline fun <reified S : WizardService> service(noinline filter: (S) -> Boolean = { true }): S =
+        serviceByClass(S::class, filter)
 
-    fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }) =
-        servicesManager.serviceByClass(klass, filter)
+    fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }): S =
+        servicesManager.serviceByClass(klass, filter) ?: error("Service ${klass.simpleName} was not found")
 
     inline val <reified T : Any> PropertyReference<T>.propertyValue: T
         get() = context.propertyContext[this] as T
@@ -44,7 +45,7 @@ open class ValuesReadingContext(
     fun <V : Any> Setting<V, SettingType<V>>.getSavedValueForSetting(): V? {
         if (!isSavable || this !is PluginSetting<*, *>) return null
         val serializer = type.serializer.safeAs<SerializerImpl<V>>() ?: return null
-        val savedValue = service<SettingSavingWizardService>()!!.getSettingValue(path) ?: return null
+        val savedValue = service<SettingSavingWizardService>().getSettingValue(path) ?: return null
         return serializer.fromString(savedValue)
     }
 

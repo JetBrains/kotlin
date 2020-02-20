@@ -20,7 +20,7 @@ class RunConfigurationsPlugin(context: Context) : Plugin(context) {
         runBefore(BuildSystemPlugin::importProject)
 
         withAction {
-            service<RunConfigurationsService>()!!.apply {
+            service<RunConfigurationsService>().apply {
                 addRunConfigurations(RunConfigurationsPlugin::configurations.propertyValue)
             }
             UNIT_SUCCESS

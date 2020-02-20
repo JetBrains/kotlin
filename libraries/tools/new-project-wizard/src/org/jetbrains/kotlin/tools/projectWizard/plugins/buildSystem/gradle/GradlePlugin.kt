@@ -130,7 +130,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                 repositories
             )
             val buildFileText = createBuildFile().printBuildFile { settingsGradleIR.render(this) }
-            service<FileSystemWizardService>()!!.createFile(
+            service<FileSystemWizardService>().createFile(
                 projectPath / buildFileName,
                 buildFileText
             )

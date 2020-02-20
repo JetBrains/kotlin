@@ -34,7 +34,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
             if (setting.neededAtPhase !in phases) continue
             if (!setting.isSavable) continue
             val serializer = setting.type.serializer as? SerializerImpl<Any> ?: continue
-            service<SettingSavingWizardService>()!!.saveSettingValue(
+            service<SettingSavingWizardService>().saveSettingValue(
                 setting.path,
                 serializer.toString(setting.reference.settingValue)
             )

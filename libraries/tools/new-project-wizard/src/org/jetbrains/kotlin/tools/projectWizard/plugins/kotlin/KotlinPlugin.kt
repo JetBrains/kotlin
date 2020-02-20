@@ -26,7 +26,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         title = "Downloading list of Kotlin versions"
 
         withAction {
-            val version = service<KotlinVersionProviderService>()!!.getKotlinVersion()
+            val version = service<KotlinVersionProviderService>().getKotlinVersion()
             KotlinPlugin::version.update { version.asSuccess() }
         }
     }
@@ -84,7 +84,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         withAction {
-            fun Path.createKotlinAndResourceDirectories() = with(service<FileSystemWizardService>()!!) {
+            fun Path.createKotlinAndResourceDirectories() = with(service<FileSystemWizardService>()) {
                 createDirectory(this@createKotlinAndResourceDirectories / Defaults.KOTLIN_DIR) andThen
                         createDirectory(this@createKotlinAndResourceDirectories / Defaults.RESOURCES_DIR)
             }

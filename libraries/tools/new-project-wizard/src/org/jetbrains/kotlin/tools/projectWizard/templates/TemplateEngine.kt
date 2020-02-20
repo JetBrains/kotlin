@@ -17,11 +17,11 @@ interface TemplateEngine {
     fun renderTemplate(template: FileTemplateDescriptor, data: Map<String, Any?>): String
 
     fun TaskRunningContext.writeTemplate(template: FileTemplate): TaskResult<Unit> {
-        val formatter = service<FileFormattingService>()!!
+        val formatter = service<FileFormattingService>()
         val text = renderTemplate(template.descriptor, template.data).let { text ->
             formatter.formatFile(text, template.descriptor.relativePath.fileName.toString())
         }
-        return service<FileSystemWizardService>()!!.createFile(template.rootPath / template.descriptor.relativePath, text)
+        return service<FileSystemWizardService>().createFile(template.rootPath / template.descriptor.relativePath, text)
     }
 }
 

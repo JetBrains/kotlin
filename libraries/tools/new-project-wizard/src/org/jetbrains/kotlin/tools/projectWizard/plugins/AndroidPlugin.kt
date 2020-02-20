@@ -19,6 +19,7 @@ class AndroidPlugin(context: Context) : Plugin(context) {
         "Android SDK Path",
         neededAtPhase = GenerationPhase.PROJECT_GENERATION
     ) {
+        isSavable = true
         shouldExists()
     }
 

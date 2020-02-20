@@ -26,7 +26,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
         isSavable = true
         filter = { _, type ->
-            val service = service<BuildSystemAvailabilityWizardService>()!!
+            val service = service<BuildSystemAvailabilityWizardService>()
             service.isAvailable(type)
         }
 
@@ -71,7 +71,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val createModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(StructurePlugin::createProjectDir)
         withAction {
-            val fileSystem = service<FileSystemWizardService>()!!
+            val fileSystem = service<FileSystemWizardService>()
             val data = BuildSystemPlugin::buildSystemData.propertyValue.first { it.type == buildSystemType }
             val buildFileData = data.buildFileData ?: return@withAction UNIT_SUCCESS
             BuildSystemPlugin::buildFiles.propertyValue.mapSequenceIgnore { buildFile ->

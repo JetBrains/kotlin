@@ -13,7 +13,7 @@ interface BuildSystemAvailabilityWizardService : WizardService {
 }
 
 fun ValuesReadingContext.isBuildSystemAvailable(buildSystemType: BuildSystemType) =
-    service<BuildSystemAvailabilityWizardService>()!!.isAvailable(buildSystemType)
+    service<BuildSystemAvailabilityWizardService>().isAvailable(buildSystemType)
 
 class BuildSystemAvailabilityWizardServiceImpl : BuildSystemAvailabilityWizardService, IdeaIndependentWizardService {
     override fun isAvailable(buildSystemType: BuildSystemType) = true

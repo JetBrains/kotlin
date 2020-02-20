@@ -32,7 +32,7 @@ class StructurePlugin(context: Context) : Plugin(context) {
 
     val createProjectDir by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         withAction {
-            service<FileSystemWizardService>()!!.createDirectory(StructurePlugin::projectPath.reference.settingValue)
+            service<FileSystemWizardService>().createDirectory(StructurePlugin::projectPath.reference.settingValue)
         }
     }
 }
