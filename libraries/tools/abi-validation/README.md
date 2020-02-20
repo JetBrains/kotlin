@@ -20,7 +20,9 @@ The tool allows to dump binary API of a Kotlin libraries that is public in sense
   * [Class member changes](#class-member-changes)
 
 ## Setup
+
 Binary compatibility validator is a Gradle plugin that is added to the `build.gradle` in the following way:
+
 ```
 ext.validator_version = "0.1.1"
 
@@ -33,7 +35,7 @@ buildscript {
 apply plugin: 'binary-compatibility-validator'
 ```
 
-It is enough the plugin only to the root configuration file, all sub-projects will be configured automatically.
+It is enough to apply the plugin only to the root configuration file; all sub-projects will be configured automatically.
 
 ### Tasks
 
@@ -46,7 +48,9 @@ The plugin provides two tasks:
   tasks will start checking public API upon their execution.
 
 ### Optional parameters
+
 Binary compatibility validator can be additionally configured with the following DSL:
+
 ```kotlin
 apiValidation {
     /**
