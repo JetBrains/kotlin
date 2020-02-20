@@ -30,14 +30,17 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
 
     override fun getType(element: PsiElement): String {
         return when (element) {
-            is KtNamedFunction -> "function"
-            is KtClass -> "class"
-            is KtParameter -> "parameter"
-            is KtProperty -> if (element.isLocal) "variable" else "property"
-            is KtDestructuringDeclarationEntry -> "variable"
-            is KtTypeParameter -> "type parameter"
-            is KtSecondaryConstructor -> "constructor"
-            is KtObjectDeclaration -> "object"
+            is KtNamedFunction -> KotlinFindUsagesBundle.message("kotlin.lang.function")
+            is KtClass -> KotlinFindUsagesBundle.message("kotlin.lang.class")
+            is KtParameter -> KotlinFindUsagesBundle.message("kotlin.lang.parameter")
+            is KtProperty -> if (element.isLocal)
+                KotlinFindUsagesBundle.message("kotlin.lang.variable")
+            else
+                KotlinFindUsagesBundle.message("kotlin.lang.property")
+            is KtDestructuringDeclarationEntry -> KotlinFindUsagesBundle.message("kotlin.lang.variable")
+            is KtTypeParameter -> KotlinFindUsagesBundle.message("kotlin.lang.type.parameter")
+            is KtSecondaryConstructor -> KotlinFindUsagesBundle.message("kotlin.lang.constructor")
+            is KtObjectDeclaration -> KotlinFindUsagesBundle.message("kotlin.lang.object")
             else -> ""
         }
     }
