@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.name.Name
@@ -81,9 +83,9 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
             if (mainMethod.isSuspend) {
                 generateMainMethod(irClass) { args ->
                     body = buildRunSuspendWrapper {
-                        +irCall(mainMethod).apply {
+                        +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingType, it, irCall(mainMethod).apply {
                             putValueArgument(0, irGet(args))
-                        }
+                        })
                     }
                 }
             }
@@ -94,7 +96,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
             generateMainMethod(irClass) {
                 body = if (parameterlessMainMethod.isSuspend) {
                     buildRunSuspendWrapper {
-                        +irCall(parameterlessMainMethod)
+                        +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingType, it, irCall(parameterlessMainMethod))
                     }
                 } else {
                     context.createIrBuilder(symbol).irBlockBody {
@@ -147,19 +149,19 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
         }
     }
 
-    private fun IrFunctionImpl.buildRunSuspendWrapper(buildMainInvocation: IrBlockBodyBuilder.() -> Unit) =
+    private fun IrFunctionImpl.buildRunSuspendWrapper(buildMainInvocation: IrBlockBodyBuilder.(IrSimpleFunctionSymbol) -> Unit) =
         context.createJvmIrBuilder(symbol).irBlockBody {
             val lambda = irBlock(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrStatementOrigin.LAMBDA) {
                 val function = buildFun {
                     origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                     name = Name.identifier("wrapper_for_suspend_main")
                     visibility = Visibilities.LOCAL
-                    returnType = context.irBuiltIns.unitType
+                    returnType = context.irBuiltIns.anyNType
                 }.apply {
                     addValueParameter("k", context.irBuiltIns.anyNType)
                     parent = this
                     body = irBlockBody {
-                        buildMainInvocation()
+                        buildMainInvocation(symbol)
                     }
                 }
                 +function
@@ -168,7 +170,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
                     UNDEFINED_OFFSET,
                     context.irBuiltIns.function1.typeWith(
                         context.irBuiltIns.anyNType,
-                        context.irBuiltIns.unitType
+                        context.irBuiltIns.anyNType
                     ),
                     function.symbol,
                     typeArgumentsCount = 0,
