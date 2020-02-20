@@ -82,6 +82,6 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
     companion object {
         private const val gradleTroubleshootingLink = "https://docs.gradle.org/current/userguide/kotlin_dsl.html#troubleshooting"
 
-        val NAME = KotlinIdeaGradleBundle.message("action.text.show.kotlin.gradle.dsl.logs.in", RevealFileAction.getFileManagerName())
+        val NAME = KotlinIdeaGradleBundle.message("action.text.show.kotlin.gradle.dsl.logs.in", ShowFilePathAction.getFileManagerName())
     }
 }
