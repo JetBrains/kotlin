@@ -54,7 +54,6 @@ import java.util.*;
 public final class PostprocessReformattingAspect implements PomModelAspect {
   private static final Logger LOG = Logger.getInstance(PostprocessReformattingAspect.class);
   private final Project myProject;
-  private final PsiManager myPsiManager;
   private final TreeAspect myTreeAspect;
   private static final Key<Throwable> REFORMAT_ORIGINATOR = Key.create("REFORMAT_ORIGINATOR");
   private static final Key<Boolean> REPARSE_PENDING = Key.create("REPARSE_PENDING");
@@ -65,9 +64,12 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
 
   private final ThreadLocal<Context> myContext = ThreadLocal.withInitial(Context::new);
 
-  public PostprocessReformattingAspect(Project project) {
+  public static PostprocessReformattingAspect getInstance(@NotNull Project project) {
+    return project.getService(PostprocessReformattingAspect.class);
+  }
+
+  public PostprocessReformattingAspect(@NotNull Project project) {
     myProject = project;
-    myPsiManager = PsiManager.getInstance(project);
     myTreeAspect = TreeAspect.getInstance(project);
     PomManager.getModel(project).registerAspect(PostprocessReformattingAspect.class, this, Collections.singleton(myTreeAspect));
 
@@ -76,19 +78,17 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
       public void writeActionStarted(@NotNull Object action) {
         CommandProcessor processor = CommandProcessor.getInstance();
         if (processor != null) {
-          final Project project1 = processor.getCurrentCommandProject();
-          if (project1 == myProject) {
+          if (processor.getCurrentCommandProject() == myProject) {
             incrementPostponedCounter();
           }
         }
       }
 
       @Override
-      public void writeActionFinished(@NotNull final Object action) {
-        CommandProcessor processor = CommandProcessor.getInstance();
+      public void writeActionFinished(@NotNull Object action) {
+        CommandProcessor processor = ApplicationManager.getApplication().getServiceIfCreated(CommandProcessor.class);
         if (processor != null) {
-          final Project project1 = processor.getCurrentCommandProject();
-          if (project1 == myProject) {
+          if (processor.getCurrentCommandProject() == myProject) {
             decrementPostponedCounter();
           }
         }
@@ -314,10 +314,6 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
     return sb.toString();
   }
 
-  public static PostprocessReformattingAspect getInstance(Project project) {
-    return project.getComponent(PostprocessReformattingAspect.class);
-  }
-
   private void postponeFormatting(@NotNull FileViewProvider viewProvider, @NotNull ASTNode child) {
     if (!CodeEditUtil.isNodeGenerated(child) && child.getElementType() != TokenType.WHITE_SPACE) {
       final int oldIndent = CodeEditUtil.getOldIndentation(child);
@@ -337,19 +333,25 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
 
   private void doPostponedFormattingInner(@NotNull FileViewProvider key) {
     List<ASTNode> astNodes = getContext().myReformatElements.remove(key);
-    final Document document = key.getDocument();
+    Document document = key.getDocument();
     // Sort ranges by end offsets so that we won't need any offset adjustment after reformat or reindent
-    if (document == null) return;
+    if (document == null) {
+      return;
+    }
 
-    final VirtualFile virtualFile = key.getVirtualFile();
-    if (!virtualFile.isValid()) return;
+    VirtualFile virtualFile = key.getVirtualFile();
+    if (!virtualFile.isValid()) {
+      return;
+    }
 
     PsiManager manager = key.getManager();
     if (manager instanceof PsiManagerEx) {
       FileManager fileManager = ((PsiManagerEx)manager).getFileManager();
       FileViewProvider viewProvider = fileManager.findCachedViewProvider(virtualFile);
       if (viewProvider != key) { // viewProvider was invalidated e.g. due to language level change
-        if (viewProvider == null) viewProvider = fileManager.findViewProvider(virtualFile);
+        if (viewProvider == null) {
+          viewProvider = fileManager.findViewProvider(virtualFile);
+        }
         if (viewProvider != null) {
           key = viewProvider;
           astNodes = getContext().myReformatElements.remove(key);
@@ -365,20 +367,25 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
       toDispose = new ArrayList<>(postProcessTasks);
 
       // then we create ranges by changed nodes. One per node. There ranges can intersect. Ranges are sorted by end offset.
-      if (astNodes != null) createActionsMap(astNodes, key, postProcessTasks);
+      if (astNodes != null) {
+        createActionsMap(astNodes, key, postProcessTasks);
+      }
 
       while (!postProcessTasks.isEmpty()) {
         // now we have to normalize actions so that they not intersect and ordered in most appropriate way
         // (free reformatting -> reindent -> formatting under reindent)
-        final List<PostponedAction> normalizedActions = normalizeAndReorderPostponedActions(postProcessTasks, document);
+        List<PostponedAction> normalizedActions = normalizeAndReorderPostponedActions(postProcessTasks, document);
         toDispose.addAll(normalizedActions);
 
         // only in following loop real changes in document are made
-        final FileViewProvider viewProvider = key;
-        for (final PostponedAction normalizedAction : normalizedActions) {
-          CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(myPsiManager.getProject());
-          codeStyleManager.runWithDocCommentFormattingDisabled(
-            viewProvider.getPsi(viewProvider.getBaseLanguage()), () -> normalizedAction.execute(viewProvider));
+        FileViewProvider viewProvider = key;
+        if (!normalizedActions.isEmpty()) {
+          CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(manager.getProject());
+          for (PostponedAction normalizedAction : normalizedActions) {
+            codeStyleManager.runWithDocCommentFormattingDisabled(viewProvider.getPsi(viewProvider.getBaseLanguage()), () -> {
+              normalizedAction.execute(viewProvider);
+            });
+          }
         }
       }
       reparseByTextIfNeeded(key, document);
@@ -682,11 +689,11 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
 
   @NotNull
   private CodeFormatterFacade getFormatterFacade(@NotNull FileViewProvider viewProvider) {
-    final CodeStyleSettings styleSettings = CodeStyle.getSettings(viewProvider.getPsi(viewProvider.getBaseLanguage()));
-    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(myPsiManager.getProject());
-    final Document document = viewProvider.getDocument();
+    CodeStyleSettings styleSettings = CodeStyle.getSettings(viewProvider.getPsi(viewProvider.getBaseLanguage()));
+    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(myProject);
+    Document document = viewProvider.getDocument();
     assert document != null;
-    final CodeFormatterFacade codeFormatter = new CodeFormatterFacade(styleSettings, viewProvider.getBaseLanguage());
+    CodeFormatterFacade codeFormatter = new CodeFormatterFacade(styleSettings, viewProvider.getBaseLanguage());
 
     documentManager.commitDocument(document);
     return codeFormatter;
