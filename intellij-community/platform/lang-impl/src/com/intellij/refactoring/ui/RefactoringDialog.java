@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.ui;
 
 import com.intellij.ide.HelpTooltip;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbService;
@@ -13,6 +14,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -31,9 +33,49 @@ public abstract class RefactoringDialog extends DialogWrapper {
   protected final Project myProject;
 
   protected RefactoringDialog(@NotNull Project project, boolean canBeParent) {
+    this(project, canBeParent, false);
+  }
+
+  protected RefactoringDialog(@NotNull Project project, boolean canBeParent, boolean addOpenInEditorCheckbox) {
     super(project, canBeParent);
     myCbPreviewResults = true;
     myProject = project;
+    if (addOpenInEditorCheckbox) {
+      addOpenInEditorCheckbox();
+    }
+  }
+
+  /**
+   * Must be called before {@link #init()}.
+   */
+  protected void addOpenInEditorCheckbox() {
+    setDoNotAskOption(new DoNotAskOption.Adapter() {
+      @Override
+      public void rememberChoice(boolean selected, int exitCode) {
+        PropertiesComponent.getInstance().setValue(getRefactoringId() + ".OpenInEditor", selected, true);
+      }
+
+      @Override
+      public boolean isSelectedByDefault() {
+        return PropertiesComponent.getInstance().getBoolean(getRefactoringId() + ".OpenInEditor", true);
+      }
+
+      @NotNull
+      @Override
+      public String getDoNotShowMessage() {
+        return RefactoringBundle.message("open.in.editor.label");
+      }
+    });
+  }
+
+  @NonNls
+  @NotNull
+  protected String getRefactoringId() {
+    return getClass().getName();
+  }
+
+  public boolean isOpenInEditor() {
+    return myCheckBoxDoNotShowDialog != null && myCheckBoxDoNotShowDialog.isSelected();
   }
 
   public final boolean isPreviewUsages() {
