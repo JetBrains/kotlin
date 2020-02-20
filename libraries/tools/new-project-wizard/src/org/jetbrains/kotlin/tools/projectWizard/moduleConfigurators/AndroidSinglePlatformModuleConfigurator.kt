@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import java.nio.file.Path
 
-object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(),
+object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings,
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator,
     ModuleConfiguratorWithModuleType {

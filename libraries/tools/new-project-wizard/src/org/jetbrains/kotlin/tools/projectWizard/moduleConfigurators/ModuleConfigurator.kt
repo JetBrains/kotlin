@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KClass
 
 
 sealed class ModuleCondifuratorSettingsEnvironment {
@@ -51,18 +52,15 @@ fun <T> withSettingsOf(
 ): T = function(ModuleBasedConfiguratorSettingsEnvironment(configurator, module))
 
 
-abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwner {
-    override fun <V : Any, T : SettingType<V>> settingDelegate(
+abstract class ModuleConfiguratorSettings : SettingsOwner {
+    final override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any?, ModuleConfiguratorSetting<V, T>> = cached { name ->
         ModuleConfiguratorSetting(create(name).buildInternal())
     }
 
-    open fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = emptyList()
-    open fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
-
     @Suppress("UNCHECKED_CAST")
-    override fun <V : DisplayableSettingItem> dropDownSetting(
+    final override fun <V : DisplayableSettingItem> dropDownSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -76,7 +74,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<V, DropDownSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun stringSetting(
+    final override fun stringSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: StringSettingType.Builder.() -> Unit
@@ -88,7 +86,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<String, StringSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun booleanSetting(
+    final override fun booleanSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: BooleanSettingType.Builder.() -> Unit
@@ -100,7 +98,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<Boolean, BooleanSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V : Any> valueSetting(
+    final override fun <V : Any> valueSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -114,7 +112,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<V, ValueSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun versionSetting(
+    final override fun versionSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: VersionSettingType.Builder.() -> Unit
@@ -126,7 +124,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<Version, VersionSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V : Any> listSetting(
+    final override fun <V : Any> listSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -140,7 +138,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<List<V>, ListSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun pathSetting(
+    final override fun pathSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: PathSettingType.Builder.() -> Unit
@@ -159,6 +157,12 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         values = enumValues<E>().asList()
         init()
     }
+
+}
+
+interface ModuleConfiguratorWithSettings : ModuleConfigurator {
+    fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = emptyList()
+    fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
 
 
     fun initDefaultValuesFor(module: Module, context: Context) {

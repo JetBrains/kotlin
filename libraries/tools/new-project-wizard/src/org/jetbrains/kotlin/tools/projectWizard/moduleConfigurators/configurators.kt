@@ -17,12 +17,17 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenProper
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 
-abstract class JvmModuleConfigurator : ModuleConfiguratorWithTests() {
-    val targetJvmVersion by enumSetting<TargetJvmVersion>("Target JVM Version", GenerationPhase.PROJECT_GENERATION) {
-        defaultValue = TargetJvmVersion.JVM_1_8
+interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
+    companion object : ModuleConfiguratorSettings() {
+        val targetJvmVersion by enumSetting<TargetJvmVersion>("Target JVM Version", GenerationPhase.PROJECT_GENERATION) {
+            defaultValue = TargetJvmVersion.JVM_1_8
+        }
     }
 
-    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = super.getConfiguratorSettings() + targetJvmVersion
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = buildList {
+        +super.getConfiguratorSettings()
+        +targetJvmVersion
+    }
 }
 
 enum class TargetJvmVersion(val value: String) : DisplayableSettingItem {
@@ -66,7 +71,7 @@ interface SinglePlatformModuleConfigurator : ModuleConfigurator {
     override val moduleKind get() = ModuleKind.singleplatformJvm
 }
 
-object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator(),
+object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithModuleType {
     override val moduleType get() = ModuleType.jvm
@@ -88,7 +93,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator(),
         buildList {
             +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
 
-            val targetVersionValue = withSettingsOf(module) { targetJvmVersion.reference.settingValue.value }
+            val targetVersionValue = withSettingsOf(module) { JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value }
             when {
                 configurationData.buildSystemType.isGradle -> {
                     +GradleConfigureTaskIR(

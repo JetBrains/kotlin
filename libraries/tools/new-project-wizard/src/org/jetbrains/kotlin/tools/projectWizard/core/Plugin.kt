@@ -20,6 +20,7 @@ typealias PluginsCreator = (Context) -> List<Plugin>
 abstract class Plugin(override val context: Context) : EntityBase(),
     SettingsOwner,
     ContextOwner,
+    EntitiesOwnerDescriptor,
     EntitiesOwner<Plugin> {
     override val descriptor get() = this
     override val id: String get() = path

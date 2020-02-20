@@ -20,22 +20,24 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
-abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
-    val testFramework by enumSetting<KotlinTestFramework>(
-        "Test Framework",
-        neededAtPhase = GenerationPhase.PROJECT_GENERATION
-    ) {
-        defaultValue = defaultTestFramework()
+interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
+    companion object : ModuleConfiguratorSettings() {
+        val testFramework by enumSetting<KotlinTestFramework>(
+            "Test Framework",
+            neededAtPhase = GenerationPhase.PROJECT_GENERATION
+        ) {
+            defaultValue = KotlinTestFramework.COMMON
 
-        filter = filter@{ reference, kotlinTestFramework ->
-            if (reference !is ModuleConfiguratorSettingReference<*, *>) return@filter true
+            filter = filter@{ reference, kotlinTestFramework ->
+                if (reference !is ModuleConfiguratorSettingReference<*, *>) return@filter true
 
-            val moduleType = reference.module?.configurator?.safeAs<ModuleConfiguratorWithModuleType>()?.moduleType
-            kotlinTestFramework.moduleType == moduleType
+                val moduleType = reference.module?.configurator?.safeAs<ModuleConfiguratorWithModuleType>()?.moduleType
+                kotlinTestFramework.moduleType == moduleType
+            }
         }
     }
 
-    abstract fun defaultTestFramework(): KotlinTestFramework
+    fun defaultTestFramework(): KotlinTestFramework
 
     override fun ReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         withSettingsOf(module) {

@@ -23,7 +23,7 @@ interface TargetConfigurator : ModuleConfiguratorWithModuleType {
     fun ReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
 }
 
-abstract class TargetConfiguratorWithTests : ModuleConfiguratorWithTests(), TargetConfigurator
+abstract class TargetConfiguratorWithTests : ModuleConfiguratorWithTests, TargetConfigurator
 
 interface SingleCoexistenceTargetConfigurator : TargetConfigurator {
     override fun canCoexistsWith(other: List<TargetConfigurator>): Boolean =
@@ -56,7 +56,7 @@ private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
 
 interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator
 
-object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests() {
+object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
     override val id = "jsBrowser"
     override val text = "Browser"
     override val suggestedModuleName = "browser"
@@ -99,7 +99,7 @@ object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetCon
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.COMMON
 }
 
-object JvmTargetConfigurator : JvmModuleConfigurator(),
+object JvmTargetConfigurator : JvmModuleConfigurator,
     TargetConfigurator,
     SimpleTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
@@ -110,7 +110,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator(),
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
     override fun ReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
-        val targetVersionValue = withSettingsOf(module) { targetJvmVersion.reference.settingValue.value }
+        val targetVersionValue = withSettingsOf(module) { JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value }
         when {
             buildSystemType.isGradle -> {
                 +GradleSectionIR(

@@ -55,7 +55,7 @@ fun <T> withSettingsOf(
 ): T = function(IdBasedTemplateEnvironment(template, identificator))
 
 
-abstract class Template : SettingsOwner {
+abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     final override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any, TemplateSetting<V, T>> = cached { name ->
