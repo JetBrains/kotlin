@@ -699,6 +699,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testWeakHashMap() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/weakHashMap.kt");
         }
+
+        @TestMetadata("withInInitializer.kt")
+        public void testWithInInitializer() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/withInInitializer.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/smartcasts")
