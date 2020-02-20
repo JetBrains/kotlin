@@ -83,6 +83,11 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                 }
             }
             property.setName(newName)
+            property.annotationEntries.forEach {
+                if (it.useSiteTarget != null) {
+                    it.replace(psiFactory.createAnnotationEntry("@${it.shortName}${it.valueArgumentList?.text ?: ""}"))
+                }
+            }
 
             originalProperty.replace(psiFactory.createFunction(property.text))
         }
