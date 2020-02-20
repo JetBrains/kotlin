@@ -31,20 +31,20 @@ external fun bitsToDouble(bits: Long): Double
 
 // TODO: deprecate.
 @TypedIntrinsic(IntrinsicType.INTEROP_SIGN_EXTEND)
-external fun <R : Number> Number.signExtend(): R
+external inline fun <reified R : Number> Number.signExtend(): R
 
 // TODO: deprecate.
 @TypedIntrinsic(IntrinsicType.INTEROP_NARROW)
-external fun <R : Number> Number.narrow(): R
+external inline fun <reified R : Number> Number.narrow(): R
 
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Byte.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Short.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Int.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> Long.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> UByte.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> UShort.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> UInt.convert(): R
-@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external fun <R : Any> ULong.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Byte.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Short.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Int.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> Long.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> UByte.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> UShort.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> UInt.convert(): R
+@TypedIntrinsic(IntrinsicType.INTEROP_CONVERT) external inline fun <reified R : Any> ULong.convert(): R
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
