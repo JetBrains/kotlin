@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrLazyClass(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrClassSymbol,
+    override val descriptor: ClassDescriptor,
     override val name: Name,
     override val kind: ClassKind,
     override var visibility: Visibility,
@@ -43,34 +43,9 @@ class IrLazyClass(
     IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrClass {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrClassSymbol,
-        stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
-    ) :
-            this(
-                startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name, symbol.descriptor.kind,
-                symbol.descriptor.visibility, symbol.descriptor.modality,
-                isCompanion = symbol.descriptor.isCompanionObject,
-                isInner = symbol.descriptor.isInner,
-                isData = symbol.descriptor.isData,
-                isExternal = symbol.descriptor.isEffectivelyExternal(),
-                isInline = symbol.descriptor.isInline,
-                isExpect = symbol.descriptor.isExpect,
-                isFun = symbol.descriptor.isFun,
-                stubGenerator = stubGenerator,
-                typeTranslator = TypeTranslator
-            )
-
     init {
         symbol.bind(this)
     }
-
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override var thisReceiver: IrValueParameter? by lazyVar {
         typeTranslator.buildWithScope(this) {

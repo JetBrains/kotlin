@@ -603,6 +603,13 @@ abstract class KotlinIrLinker(
         if (!signature.shouldBeDeserialized()) return null
 
         val descriptor = symbol.descriptor
+
+        /*
+            Wrapped descriptors come from inside IrLinker. If a symbol with such a descriptor ends up here, this means we
+            have already looked for it in IrLinker and failed.
+         */
+        if (descriptor is WrappedDeclarationDescriptor<*>) return null
+
         if (descriptor is FunctionClassDescriptor || (descriptor.containingDeclaration is FunctionClassDescriptor)) {
             return null
         }

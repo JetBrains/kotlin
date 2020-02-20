@@ -25,6 +25,7 @@ class IrLazyTypeAlias(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeAliasSymbol,
+    override val descriptor: TypeAliasDescriptor,
     override val name: Name,
     override val visibility: Visibility,
     override val isActual: Boolean,
@@ -37,9 +38,6 @@ class IrLazyTypeAlias(
     init {
         symbol.bind(this)
     }
-
-    override val descriptor: TypeAliasDescriptor
-        get() = symbol.descriptor
 
     override var typeParameters: List<IrTypeParameter> by lazyVar {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {

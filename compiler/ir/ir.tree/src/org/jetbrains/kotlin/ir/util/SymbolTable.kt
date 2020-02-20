@@ -81,7 +81,7 @@ interface ReferenceSymbolTable {
     fun leaveScope(owner: DeclarationDescriptor)
 }
 
-open class SymbolTable(private val signaturer: IdSignatureComposer) : ReferenceSymbolTable {
+open class SymbolTable(val signaturer: IdSignatureComposer) : ReferenceSymbolTable {
 
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)

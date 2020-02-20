@@ -24,6 +24,7 @@ class IrLazyTypeParameter(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
+    override val descriptor: TypeParameterDescriptor,
     override val name: Name,
     override val index: Int,
     override val isReified: Boolean,
@@ -33,25 +34,6 @@ class IrLazyTypeParameter(
 ) :
     IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrTypeParameter {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
-        stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
-    ) :
-            this(
-                startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name,
-                symbol.descriptor.index,
-                symbol.descriptor.isReified,
-                symbol.descriptor.variance,
-                stubGenerator, TypeTranslator
-            )
-
-    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
 
     init {
         symbol.bind(this)

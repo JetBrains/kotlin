@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.hasBackingField
 
 class IrLazyProperty(
@@ -27,6 +26,7 @@ class IrLazyProperty(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
+    override val descriptor: PropertyDescriptor,
     override val name: Name,
     override val visibility: Visibility,
     override val modality: Modality,
@@ -44,39 +44,12 @@ class IrLazyProperty(
     IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrProperty {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrPropertySymbol,
-        stubGenerator: DeclarationStubGenerator,
-        typeTranslator: TypeTranslator,
-        bindingContext: BindingContext?
-    ) : this(
-        startOffset, endOffset, origin,
-        symbol,
-        symbol.descriptor.name, symbol.descriptor.visibility, symbol.descriptor.modality,
-        isVar = symbol.descriptor.isVar,
-        isConst = symbol.descriptor.isConst,
-        isLateinit = symbol.descriptor.isLateInit,
-        isDelegated = @Suppress("DEPRECATION") symbol.descriptor.isDelegated,
-        isExternal = symbol.descriptor.isEffectivelyExternal(),
-        isExpect = symbol.descriptor.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        stubGenerator = stubGenerator,
-        typeTranslator = typeTranslator,
-        bindingContext = bindingContext
-    )
-
     init {
         symbol.bind(this)
     }
 
     private val hasBackingField: Boolean =
         descriptor.hasBackingField(bindingContext) || stubGenerator.extensions.isPropertyWithPlatformField(descriptor)
-
-    override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
 
     override var backingField: IrField? by lazyVar {
         if (hasBackingField) {

@@ -33,6 +33,7 @@ class IrLazyEnumEntryImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
+    override val descriptor: ClassDescriptor,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) : IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
@@ -42,7 +43,6 @@ class IrLazyEnumEntryImpl(
         symbol.bind(this)
     }
 
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
     override val name: Name = symbol.descriptor.name
 
     override var correspondingClass: IrClass? = null
