@@ -6,13 +6,7 @@ configurations {
 }
 
 dependencies {
-    compile project(':kotlin-stdlib')
-    compileOnly project(':kotlinx-metadata')
-    compileOnly project(':kotlinx-metadata-jvm')
-    compile 'org.ow2.asm:asm:6.0'
-    compile 'org.ow2.asm:asm-tree:6.0'
-
-    runtime project(path: ':kotlinx-metadata-jvm', configuration: 'runtime')
+    compile("org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3")
 
     testCompile project(':kotlin-test:kotlin-test-junit')
 
