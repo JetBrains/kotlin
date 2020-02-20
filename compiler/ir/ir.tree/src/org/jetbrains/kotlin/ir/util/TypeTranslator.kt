@@ -62,27 +62,27 @@ class TypeTranslator(
     }
 
     fun translateType(kotlinType: KotlinType): IrType =
-        translateType(kotlinType, kotlinType, Variance.INVARIANT).type
+        translateType(kotlinType, Variance.INVARIANT).type
 
-    private fun translateType(kotlinType: KotlinType, approximatedKotlinType: KotlinType, variance: Variance): IrTypeProjection {
-        val approximatedType = LegacyTypeApproximation().approximate(kotlinType)
+    private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
+        val flexibleApproximatedType = approximate(kotlinType)
 
         when {
-            approximatedType.isError ->
-                return IrErrorTypeImpl(approximatedKotlinType, translateTypeAnnotations(approximatedType.annotations), variance)
-            approximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(approximatedKotlinType, translateTypeAnnotations(approximatedType.annotations), variance)
-            approximatedType.isFlexible() ->
-                return translateType(approximatedType.upperIfFlexible(), approximatedType, variance)
+            flexibleApproximatedType.isError ->
+                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
+            flexibleApproximatedType.isDynamic() ->
+                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
         }
+
+        val approximatedType = flexibleApproximatedType.upperIfFlexible()
 
         val ktTypeConstructor = approximatedType.constructor
         val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
         return IrSimpleTypeBuilder().apply {
-            this.kotlinType = approximatedKotlinType
-            hasQuestionMark = approximatedType.isMarkedNullable
+            this.kotlinType = flexibleApproximatedType
+            this.hasQuestionMark = approximatedType.isMarkedNullable
             this.variance = variance
             this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
             when (ktTypeDescriptor) {
@@ -116,45 +116,41 @@ class TypeTranslator(
         )
     }
 
-    private inner class LegacyTypeApproximation {
+    fun approximate(ktType: KotlinType): KotlinType {
+        val properlyApproximatedType = approximateByKotlinRules(ktType)
 
-        fun approximate(ktType: KotlinType): KotlinType {
-            val properlyApproximatedType = approximateByKotlinRules(ktType)
-
-            // If there's an intersection type, take the most common supertype of its intermediate supertypes.
-            // That's what old back-end effectively does.
-            val typeConstructor = properlyApproximatedType.constructor
-            if (typeConstructor is IntersectionTypeConstructor) {
-                val commonSupertype = CommonSupertypes.commonSupertype(typeConstructor.supertypes)
-                return approximate(commonSupertype.replaceArgumentsWithStarProjections())
-            }
-
-            // Other types should be approximated properly. Right? Riiight?
-            return properlyApproximatedType
+        // If there's an intersection type, take the most common supertype of its intermediate supertypes.
+        // That's what old back-end effectively does.
+        val typeConstructor = properlyApproximatedType.constructor
+        if (typeConstructor is IntersectionTypeConstructor) {
+            val commonSupertype = CommonSupertypes.commonSupertype(typeConstructor.supertypes)
+            return approximate(commonSupertype.replaceArgumentsWithStarProjections())
         }
 
-        private val isWithNewInference = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-
-        private fun approximateByKotlinRules(ktType: KotlinType): KotlinType =
-            if (isWithNewInference) {
-                if (ktType.constructor.isDenotable && ktType.arguments.isEmpty())
-                    ktType
-                else
-                    typeApproximatorForNI.approximateDeclarationType(
-                        ktType,
-                        local = false,
-                        languageVersionSettings = languageVersionSettings
-                    )
-            } else {
-                // Hack to preserve *-projections in arguments in OI.
-                // Expected to be removed as soon as OI is deprecated.
-                if (ktType.constructor.isDenotable)
-                    ktType
-                else
-                    approximateCapturedTypes(ktType).upper
-            }
-
+        // Assume that other types are approximated properly.
+        return properlyApproximatedType
     }
+
+    private val isWithNewInference = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+
+    private fun approximateByKotlinRules(ktType: KotlinType): KotlinType =
+        if (isWithNewInference) {
+            if (ktType.constructor.isDenotable && ktType.arguments.isEmpty())
+                ktType
+            else
+                typeApproximatorForNI.approximateDeclarationType(
+                    ktType,
+                    local = false,
+                    languageVersionSettings = languageVersionSettings
+                )
+        } else {
+            // Hack to preserve *-projections in arguments in OI.
+            // Expected to be removed as soon as OI is deprecated.
+            if (ktType.constructor.isDenotable)
+                ktType
+            else
+                approximateCapturedTypes(ktType).upper
+        }
 
     private fun translateTypeAnnotations(annotations: Annotations): List<IrConstructorCall> =
         annotations.mapNotNull(constantValueGenerator::generateAnnotationConstructorCall)
@@ -164,6 +160,6 @@ class TypeTranslator(
             if (it.isStarProjection)
                 IrStarProjectionImpl
             else
-                translateType(it.type, it.type, it.projectionKind)
+                translateType(it.type, it.projectionKind)
         }
 }

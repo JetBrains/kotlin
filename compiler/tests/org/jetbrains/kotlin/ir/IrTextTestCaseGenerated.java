@@ -1881,6 +1881,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType_NI.kt");
         }
 
+        @TestMetadata("receiverOfIntersectionType.kt")
+        public void testReceiverOfIntersectionType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/receiverOfIntersectionType.kt");
+        }
+
         @TestMetadata("smartCastOnFakeOverrideReceiver.kt")
         public void testSmartCastOnFakeOverrideReceiver() throws Exception {
             runTest("compiler/testData/ir/irText/types/smartCastOnFakeOverrideReceiver.kt");

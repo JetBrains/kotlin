@@ -299,18 +299,18 @@ internal class InsertImplicitCasts(
             null
 
     private fun IrExpression.cast(
-        expectedType: KotlinType?,
-        originalExpectedType: KotlinType? = expectedType,
+        possiblyNonDenotableExpectedType: KotlinType?,
+        originalExpectedType: KotlinType? = possiblyNonDenotableExpectedType,
         isLambdaReturnValue: Boolean = false
     ): IrExpression {
-        if (expectedType == null) return this
-        if (expectedType.isError) return this
+        if (possiblyNonDenotableExpectedType == null) return this
+        if (possiblyNonDenotableExpectedType.isError) return this
+
+        val expectedType = typeTranslator.approximate(possiblyNonDenotableExpectedType)
 
         if (this is IrFunctionExpression && originalExpectedType != null) {
             recordExpectedLambdaReturnTypeIfAppropriate(expectedType, originalExpectedType)
         }
-
-        // TODO here we can have non-denotable KotlinTypes (both in 'this@cast.type' and 'expectedType').
 
         val notNullableExpectedType = expectedType.makeNotNullable()
 
