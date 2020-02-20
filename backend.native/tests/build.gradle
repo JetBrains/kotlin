@@ -267,7 +267,7 @@ task resultsTask() {
                     "TOTAL: $statistics.total\n" +
                     "PASSED: $statistics.passed\n" +
                     "FAILED: $statistics.failed\n" +
-                    "ERROR: $statistics.error\n" +
+                    (statistics.error != 0 ? "ERROR: $statistics.error\n" : "") +
                     "SKIPPED: $statistics.skipped")
         }
     }
