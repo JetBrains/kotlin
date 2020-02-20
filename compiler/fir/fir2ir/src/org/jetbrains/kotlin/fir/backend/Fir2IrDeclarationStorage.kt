@@ -660,6 +660,7 @@ class Fir2IrDeclarationStorage(
         return propertyCache.getOrPut(property) {
             val containerSource = property.containerSource
             val descriptor = containerSource?.let { WrappedPropertyDescriptorWithContainerSource(it) } ?: WrappedPropertyDescriptor()
+            preCacheTypeParameters(property)
             property.convertWithOffsets { startOffset, endOffset ->
                 enterScope(descriptor)
                 val result = irSymbolTable.declareProperty(
