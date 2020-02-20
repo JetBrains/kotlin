@@ -135,7 +135,7 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
     val javaFix = CreateClassOrPackageFix.createFix(fullName, resolveScope, this, basePackage, null, null, null) ?: return null
 
     return object : DelegatingIntentionAction(javaFix) {
-        override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
+        override fun getFamilyName(): String = KotlinBundle.message("fix.create.from.usage.family")
 
         override fun getText(): String = "Create package '$fullName'"
     }

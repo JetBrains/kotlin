@@ -41,7 +41,7 @@ open class ImplementMembersHandler : OverrideImplementMembersHandler(), Intentio
 
     override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("hint.text.no.members.to.implement.have.been.found")
 
-    override fun getText() = KotlinIdeaCoreBundle.message("action.text.implement.members")
+    override fun getText() = familyName
     override fun getFamilyName() = KotlinIdeaCoreBundle.message("action.text.implement.members")
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = isValidFor(editor, file)

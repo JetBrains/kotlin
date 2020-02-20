@@ -10,7 +10,7 @@ class A {
                 DeclarationDescriptor containingDescriptor = declarationDescriptor.getContainingDeclaration();
                 if (containingDescriptor instanceof ClassDescriptor) {
                     return JetBundle.message(
-                            "x.in.y",
+                            "override.declaration.x.in.y",
                             DescriptorRenderer.COMPACT.render(declarationDescriptor),
                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
                     );

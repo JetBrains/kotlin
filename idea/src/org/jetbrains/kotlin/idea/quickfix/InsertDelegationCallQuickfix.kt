@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) :
     KotlinQuickFixAction<KtSecondaryConstructor>(element) {
-    override fun getText() = KotlinBundle.message("insert.delegation.call", keywordToUse)
+    override fun getText() = KotlinBundle.message("fix.insert.delegation.call", keywordToUse)
     override fun getFamilyName() = "Insert explicit delegation call"
 
     private val keywordToUse = if (isThis) "this" else "super"

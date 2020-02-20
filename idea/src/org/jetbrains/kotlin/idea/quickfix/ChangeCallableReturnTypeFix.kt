@@ -134,7 +134,7 @@ abstract class ChangeCallableReturnTypeFix(
             "Change $typeName of $functionPresentation to '$typePresentation'"
     }
 
-    override fun getFamilyName() = KotlinBundle.message("change.type.family")
+    override fun getFamilyName() = KotlinBundle.message("fix.change.return.type")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         return !typeContainsError &&
