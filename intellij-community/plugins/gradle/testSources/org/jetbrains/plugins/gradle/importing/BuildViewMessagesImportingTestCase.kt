@@ -32,13 +32,11 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     myProject.replaceService(BuildViewManager::class.java, buildViewManager, testRootDisposable)
   }
 
-  override fun tearDown() {
-    RunAll()
-      .append(ThrowableRunnable { syncViewManager.waitForPendingBuilds() })
-      .append(ThrowableRunnable { buildViewManager.waitForPendingBuilds() })
-      .append(ThrowableRunnable { super.tearDown() })
-      .run()
-  }
+  override fun tearDown() = RunAll()
+    .append(ThrowableRunnable { if (::syncViewManager.isInitialized) syncViewManager.waitForPendingBuilds() })
+    .append(ThrowableRunnable { if (::buildViewManager.isInitialized) syncViewManager.waitForPendingBuilds() })
+    .append(ThrowableRunnable { super.tearDown() })
+    .run()
 
   protected fun assertSyncViewTreeEquals(executionTreeText: String) {
     assertExecutionTree(syncViewManager, executionTreeText, false)
