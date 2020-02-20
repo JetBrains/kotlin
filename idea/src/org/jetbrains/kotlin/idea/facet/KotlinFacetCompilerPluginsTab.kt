@@ -62,8 +62,8 @@ class KotlinFacetCompilerPluginsTab(
         override fun getColumnCount() = 2
 
         override fun getColumnName(column: Int) = when (column) {
-            0 -> "Plugin"
-            else -> "Options"
+            0 -> KotlinFacetBundle.message("column.name.plugin")
+            else -> KotlinFacetBundle.message("column.name.options")
         }
 
         override fun getColumnClass(columnIndex: Int) = String::class.java
@@ -118,7 +118,8 @@ class KotlinFacetCompilerPluginsTab(
             val invalidOptions = optionsByTable.filter { parsePluginOption(it) == null }
             if (invalidOptions.isNotEmpty()) {
                 val message = buildString {
-                    append("Following options are not correct: <br/>")
+                    append(KotlinFacetBundle.message("text.following.options.are.not.correct"))
+                    append(" <br/>")
                     invalidOptions.joinTo(this, "<br/>") { "<strong>$it</strong>" }
                 }
                 return ValidationResult(message)
@@ -140,7 +141,7 @@ class KotlinFacetCompilerPluginsTab(
         validatorsManager.registerValidator(OptionValidator())
     }
 
-    override fun getDisplayName() = "Compiler Plugins"
+    override fun getDisplayName() = KotlinFacetBundle.message("name.compiler.plugins")
 
     override fun createComponent(): JComponent {
         val panel = JPanel(BorderLayout())
