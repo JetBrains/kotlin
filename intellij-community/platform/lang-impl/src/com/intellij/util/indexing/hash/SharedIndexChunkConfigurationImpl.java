@@ -37,9 +37,7 @@ import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentEnumeratorDelegate;
 import com.intellij.util.io.PersistentStringEnumerator;
 import com.intellij.util.io.zip.JBZipFile;
-import gnu.trove.TIntLongHashMap;
-import gnu.trove.TIntObjectHashMap;
-import gnu.trove.TIntObjectIterator;
+import gnu.trove.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -114,9 +112,21 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
             .flatMap(chunks -> chunks.values().stream()).filter(chunk -> chunk.removeProject(project))
             .collect(Collectors.toList());
 
+        TIntArrayList chunkIdsToRemove = new TIntArrayList();
         for (SharedIndexChunk chunk : toRemove) {
+          chunkIdsToRemove.add(chunk.getChunkId());
           myChunkMap.get(chunk.getIndexName()).remove(chunk.getChunkId(), chunk);
           chunk.close();
+        }
+
+        Set<ContentHashEnumerator> enumerators = new THashSet<>();
+        synchronized (myChunkEnumerators) {
+          for (int chunkId : chunkIdsToRemove.toNativeArray()) {
+            enumerators.add(myChunkEnumerators.remove(chunkId));
+          }
+        }
+        for (ContentHashEnumerator enumerator : enumerators) {
+          IOUtil.closeSafe(LOG, enumerator);
         }
       }
     });
