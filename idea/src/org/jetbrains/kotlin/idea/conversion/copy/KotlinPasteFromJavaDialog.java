@@ -39,9 +39,9 @@ public class KotlinPasteFromJavaDialog extends DialogWrapper {
         super(project, true);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setTitle("Convert Code From Java");
+        setTitle(KotlinCopyBundle.message("title.convert.code.from.java"));
         if (isPlainText) {
-            questionLabel.setText("Clipboard content seems to be Java code. Do you want to convert it to Kotlin? ");
+            questionLabel.setText(KotlinCopyBundle.message("text.clipboard.content.seems.to.be.java.code.do.you.want.to.convert.it.to.kotlin"));
             //TODO: should we also use different set of settings?
         }
         init();

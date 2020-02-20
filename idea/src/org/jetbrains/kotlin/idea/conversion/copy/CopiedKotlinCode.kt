@@ -29,6 +29,6 @@ class CopiedKotlinCode(val fileText: String, val startOffsets: IntArray, val end
     override fun setOffsets(offsets: IntArray?, index: Int) = index
 
     companion object {
-        val DATA_FLAVOR: DataFlavor = DataFlavor(CopiedKotlinCode::class.java, "Copied kotlin code")
+        val DATA_FLAVOR: DataFlavor = DataFlavor(CopiedKotlinCode::class.java, KotlinCopyBundle.message("text.copied.kotlin.code"))
     }
 }
