@@ -14,7 +14,7 @@ final class LambdaWithLongReceiverKt$box$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1 {
-    private field $res: kotlin.jvm.internal.Ref$ObjectRef
+    synthetic final @org.jetbrains.annotations.NotNull field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     private field label: int
     inner class LambdaWithLongReceiverKt$box$1

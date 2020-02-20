@@ -56,7 +56,7 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class CrossinlineKt$box$1 {
-    private field $res: kotlin.jvm.internal.Ref$IntRef
+    synthetic final @org.jetbrains.annotations.NotNull field $res: kotlin.jvm.internal.Ref$IntRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
