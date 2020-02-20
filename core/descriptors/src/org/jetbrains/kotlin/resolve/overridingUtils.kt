@@ -66,7 +66,12 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
             continue
         }
 
-        val mostSpecific = mostSpecific(overridableGroup, conflictedHandles, descriptorByHandle)
+        val mostSpecific = OverridingUtil.selectMostSpecificMember(overridableGroup, descriptorByHandle)
+        val mostSpecificDescriptor = mostSpecific.descriptorByHandle()
+
+        overridableGroup.filterNotTo(conflictedHandles) {
+            OverridingUtil.isMoreSpecific(mostSpecificDescriptor, it.descriptorByHandle())
+        }
 
         if (conflictedHandles.isNotEmpty()) {
             result.addAll(conflictedHandles)
@@ -74,26 +79,5 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
 
         result.add(mostSpecific)
     }
-    return result
-}
-
-private fun <H : Any> mostSpecific(
-    overridableGroup: Collection<H>,
-    conflictedHandles: MutableSet<H>,
-    descriptorByHandle: H.() -> CallableDescriptor
-): H {
-    val mostSpecific = OverridingUtil.selectMostSpecificMember(overridableGroup, descriptorByHandle)
-    val mostSpecificDescriptor = mostSpecific.descriptorByHandle()
-
-    overridableGroup.filterNotTo(conflictedHandles) {
-        OverridingUtil.isMoreSpecific(mostSpecificDescriptor, it.descriptorByHandle())
-    }
-    return mostSpecific
-}
-
-// Return multiple elements in case of conflicts
-fun <D : CallableDescriptor> Collection<D>.selectMostSpecificFromOverridableGroup(): Collection<D> {
-    val result = mutableSetOf<D>()
-    result.add(mostSpecific(this, conflictedHandles = result) { this })
     return result
 }

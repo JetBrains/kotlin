@@ -126,7 +126,7 @@ abstract class LazyJavaScope(
         val groups = groupBy { it.computeJvmDescriptor(withReturnType = false) }.values
         for (group in groups) {
             if (group.size == 1) continue
-            val mostSpecificMethods = group.selectMostSpecificFromOverridableGroup()
+            val mostSpecificMethods = group.selectMostSpecificInEachOverridableGroup { this }
             removeAll(group)
             addAll(mostSpecificMethods)
         }
