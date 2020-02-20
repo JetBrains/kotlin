@@ -8,9 +8,9 @@ versions.appcode.strict=true
 versions.appcode.repo=ijplatform_master_CIDR_AppCode_PublicInstallers
 versions.xcode-compat=0.2.5
 
-versions.clion=193.5662.56
+versions.clion=201.4865.10
 versions.clion.strict=true
-versions.clion.repo=ijplatform_IjPlatform193_CIDR_CLion_PublicInstallers
+versions.clion.repo=ijplatform_master_CIDR_CLion_PublicInstallers
 
 versions.nativeDebug=193.4099.13
 versions.nativeDebug.repo=ijplatform_master_Idea_InstallersForEapRelease
