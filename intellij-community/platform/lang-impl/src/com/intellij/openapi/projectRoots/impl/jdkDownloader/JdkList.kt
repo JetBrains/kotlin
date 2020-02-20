@@ -55,13 +55,6 @@ data class JdkProduct(
     return this.flavour.compareToIgnoreCase(other.flavour)
   }
 
-  val vendorPathText: String
-    get() = listOfNotNull(vendor, product, flavour)
-      .flatMap { it.split(Regex("\\s+")) }
-      .map { it.trim().toLowerCase() }
-      .filter { it.isBlank() }
-      .joinToString("-")
-
   val packagePresentationText: String
     get() = buildString {
       append(vendor)
@@ -109,11 +102,14 @@ data class JdkItem(
   val sharedIndexAliases: List<String>
 ) : Comparable<JdkItem> {
 
+  val vendorPrefix
+    get() = suggestedSdkName.split("-").dropLast(1).joinToString("-")
+
   fun matchesVendor(predicate: String) : Boolean {
     val cases = sequence {
       yield(product.vendor)
 
-      yield(suggestedSdkName.split("-").dropLast(1).joinToString("-"))
+      yield(vendorPrefix)
       if (product.product != null) {
         yield(product.product)
         yield("${product.vendor}-${product.product}")
