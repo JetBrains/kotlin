@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -13,22 +14,32 @@ import org.jetbrains.annotations.NotNull;
 public class PrintSettings implements PersistentStateComponent<PrintSettings> {
   public enum Placement {
     Header() {
-      @Override public String toString() { return CodeEditorBundle.message("print.header.placement.header"); }
+      @Override public String toString() {
+        return EditorBundle.message("print.header.placement.header");
+      }
     },
     Footer() {
-      @Override public String toString() { return CodeEditorBundle.message("print.header.placement.footer"); }
+      @Override public String toString() {
+        return EditorBundle.message("print.header.placement.footer");
+      }
     }
   }
 
   public enum Alignment {
     Left() {
-      @Override public String toString() { return CodeEditorBundle.message("print.header.alignment.left"); }
+      @Override public String toString() {
+        return EditorBundle.message("print.header.alignment.left");
+      }
     },
     Center() {
-      @Override public String toString() { return CodeEditorBundle.message("print.header.alignment.center"); }
+      @Override public String toString() {
+        return EditorBundle.message("print.header.alignment.center");
+      }
     },
     Right() {
-      @Override public String toString() { return CodeEditorBundle.message("print.header.alignment.right"); }
+      @Override public String toString() {
+        return EditorBundle.message("print.header.alignment.right");
+      }
     }
   }
 
@@ -56,10 +67,10 @@ public class PrintSettings implements PersistentStateComponent<PrintSettings> {
 
   public boolean EVEN_NUMBER_OF_PAGES = false;
 
-  public String FOOTER_HEADER_TEXT1 = CodeEditorBundle.message("print.header.default.line.1");
+  public String FOOTER_HEADER_TEXT1 = EditorBundle.message("print.header.default.line.1");
   public Placement FOOTER_HEADER_PLACEMENT1 = Placement.Header;
   public Alignment FOOTER_HEADER_ALIGNMENT1 = Alignment.Left;
-  public String FOOTER_HEADER_TEXT2 = CodeEditorBundle.message("print.header.default.line.2");
+  public String FOOTER_HEADER_TEXT2 = EditorBundle.message("print.header.default.line.2");
   public Placement FOOTER_HEADER_PLACEMENT2 = Placement.Footer;
   public Alignment FOOTER_HEADER_ALIGNMENT2 = Alignment.Center;
   public int FOOTER_HEADER_FONT_SIZE = 8;

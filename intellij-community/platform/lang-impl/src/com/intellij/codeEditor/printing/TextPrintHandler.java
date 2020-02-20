@@ -16,6 +16,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.editor.colors.EditorColorsUtil;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
@@ -83,7 +84,7 @@ public class TextPrintHandler extends PrintActionHandler {
     String text = null;
     if (editor != null) {
       if (editor.getSelectionModel().hasSelection()) {
-        text = CodeEditorBundle.message("print.selected.text.radio");
+        text = EditorBundle.message("print.selected.text.radio");
       }
       else {
         text = psiFile == null ? "Console text" : null;
@@ -148,7 +149,7 @@ public class TextPrintHandler extends PrintActionHandler {
     PsiDocumentManager.getInstance(project).commitAllDocuments();
 
     ProgressManager.getInstance()
-      .run(new Task.Backgroundable(project, CodeEditorBundle.message("print.progress"), true, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+      .run(new Task.Backgroundable(project, EditorBundle.message("print.progress"), true, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           try {

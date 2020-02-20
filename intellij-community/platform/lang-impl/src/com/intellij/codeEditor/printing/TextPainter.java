@@ -4,6 +4,7 @@ package com.intellij.codeEditor.printing;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -180,7 +181,7 @@ class TextPainter extends BasePainter {
     final Graphics2D g2d = (Graphics2D)g;
 
     if (myNumberOfPages < 0) {
-      myProgress.setText(CodeEditorBundle.message("print.file.calculating.number.of.pages.progress"));
+      myProgress.setText(EditorBundle.message("print.file.calculating.number.of.pages.progress"));
 
       if (!calculateNumberOfPages(g2d, pageFormat)) {
         return NO_SUCH_PAGE;
@@ -207,12 +208,12 @@ class TextPainter extends BasePainter {
     }
   }
 
-  private boolean printPageInReadAction(final Graphics2D g2d, final PageFormat pageFormat, @PropertyKey(resourceBundle = CodeEditorBundle.BUNDLE) String progressMessageKey) {
+  private boolean printPageInReadAction(final Graphics2D g2d, final PageFormat pageFormat, @PropertyKey(resourceBundle = EditorBundle.BUNDLE) String progressMessageKey) {
     return ReadAction.compute(() -> {
       if (!isValidRange(myRangeToPrint)) {
         return false;
       }
-      myProgress.setText(CodeEditorBundle.message(progressMessageKey, myShortFileName, (myPageIndex + 1), myNumberOfPages));
+      myProgress.setText(EditorBundle.message(progressMessageKey, myShortFileName, (myPageIndex + 1), myNumberOfPages));
       setSegment(printPage(g2d, pageFormat, myRangeToPrint));
       return true;
     });

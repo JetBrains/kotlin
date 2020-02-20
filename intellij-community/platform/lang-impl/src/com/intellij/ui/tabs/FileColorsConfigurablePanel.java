@@ -2,13 +2,13 @@
 
 package com.intellij.ui.tabs;
 
-import com.intellij.codeEditor.printing.CodeEditorBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.scopeChooser.EditScopesDialog;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.IdeBorderFactory;
@@ -43,17 +43,17 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
     final JPanel topPanel = new JPanel();
     topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
-    myEnabledCheckBox = new JCheckBox(CodeEditorBundle.message("file.colors.enable.file.colors"));
+    myEnabledCheckBox = new JCheckBox(EditorBundle.message("file.colors.enable.file.colors"));
     myEnabledCheckBox.setMnemonic('F');
     topPanel.add(myEnabledCheckBox);
     topPanel.add(Box.createRigidArea(JBUI.size(UIUtil.DEFAULT_HGAP, 0)));
 
-    myTabsEnabledCheckBox = new JCheckBox(CodeEditorBundle.message("file.colors.use.in.editor.tabs"));
+    myTabsEnabledCheckBox = new JCheckBox(EditorBundle.message("file.colors.use.in.editor.tabs"));
     myTabsEnabledCheckBox.setMnemonic('T');
     topPanel.add(myTabsEnabledCheckBox);
     topPanel.add(Box.createRigidArea(JBUI.size(UIUtil.DEFAULT_HGAP, 0)));
 
-    myProjectViewEnabledCheckBox = new JCheckBox(CodeEditorBundle.message("file.colors.use.in.project.vew"));
+    myProjectViewEnabledCheckBox = new JCheckBox(EditorBundle.message("file.colors.use.in.project.vew"));
     myProjectViewEnabledCheckBox.setMnemonic('P');
     topPanel.add(myProjectViewEnabledCheckBox);
 
@@ -94,7 +94,7 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
       })
       .createPanel();
     final JPanel localPanel = new JPanel(new BorderLayout());
-    localPanel.setBorder(IdeBorderFactory.createTitledBorder(CodeEditorBundle.message("file.colors.local.colors"), false, JBUI.insetsTop(8)).setShowLine(false));
+    localPanel.setBorder(IdeBorderFactory.createTitledBorder(EditorBundle.message("file.colors.local.colors"), false, JBUI.insetsTop(8)).setShowLine(false));
     localPanel.add(panel, BorderLayout.CENTER);
     mainPanel.add(localPanel);
 
@@ -115,7 +115,7 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
     };
 
     final JPanel sharedPanel = new JPanel(new BorderLayout());
-    sharedPanel.setBorder(IdeBorderFactory.createTitledBorder(CodeEditorBundle.message("file.colors.shared.colors"), false, JBUI.insetsTop(8)).setShowLine(false));
+    sharedPanel.setBorder(IdeBorderFactory.createTitledBorder(EditorBundle.message("file.colors.shared.colors"), false, JBUI.insetsTop(8)).setShowLine(false));
     final JPanel shared = ToolbarDecorator.createDecorator(mySharedTable)
       .addExtraAction(new AnActionButton(IdeBundle.lazyMessage("action.AnActionButton.text.unshare"), AllIcons.Actions.Unshare) {
         @Override
@@ -136,8 +136,8 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
 
     final JPanel infoPanel = new JPanel(new BorderLayout());
     infoPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    infoPanel.add(new JLabel(CodeEditorBundle.message("file.colors.scopes"), MessageType.INFO.getDefaultIcon(), SwingConstants.LEFT));
-    JButton editScopes = new JButton(CodeEditorBundle.message("file.colors.manage.scopes"));
+    infoPanel.add(new JLabel(EditorBundle.message("file.colors.scopes"), MessageType.INFO.getDefaultIcon(), SwingConstants.LEFT));
+    JButton editScopes = new JButton(EditorBundle.message("file.colors.manage.scopes"));
     editScopes.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(@NotNull ActionEvent e) {
@@ -147,8 +147,8 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
     infoPanel.add(editScopes, BorderLayout.EAST);
     add(infoPanel, BorderLayout.SOUTH);
 
-    myLocalTable.getEmptyText().setText(CodeEditorBundle.message("file.colors.no.local.colors"));
-    mySharedTable.getEmptyText().setText(CodeEditorBundle.message("file.colors.no.shared.colors"));
+    myLocalTable.getEmptyText().setText(EditorBundle.message("file.colors.no.local.colors"));
+    mySharedTable.getEmptyText().setText(EditorBundle.message("file.colors.no.shared.colors"));
   }
 
   private void unshare() {

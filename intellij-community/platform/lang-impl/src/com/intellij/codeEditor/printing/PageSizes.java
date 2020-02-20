@@ -3,6 +3,7 @@
 package com.intellij.codeEditor.printing;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.util.JDOMUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -90,10 +91,9 @@ class PageSizes {
         String unit = element.getAttributeValue(ATTRIBUTE_UNIT);
 
         final String unitName = unit.equals(UNIT_MM)
-                                ? CodeEditorBundle.message("print.page.size.unit.mm")
-                                : CodeEditorBundle.message("print.page.size.unit.in");
-        final String dimensions = CodeEditorBundle.message("print.page.width.x.height.unit.template",
-                                                           widthStr, heightStr, unitName);
+                                ? EditorBundle.message("print.page.size.unit.mm")
+                                : EditorBundle.message("print.page.size.unit.in");
+        final String dimensions = EditorBundle.message("print.page.width.x.height.unit.template", widthStr, heightStr, unitName);
 
         double width = parsePageSize(widthStr);
         double height = parsePageSize(heightStr);

@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -119,7 +120,7 @@ class ExportToHTMLManager {
         ExportRunnable exportRunnable =
           new ExportRunnable(exportToHTMLSettings, psiDirectory, outputDirectoryName, project);
         ProgressManager.getInstance()
-          .runProcessWithProgressSynchronously(exportRunnable, CodeEditorBundle.message("export.to.html.title"), true, project);
+          .runProcessWithProgressSynchronously(exportRunnable, EditorBundle.message("export.to.html.title"), true, project);
         if (myLastException != null) {
           throw myLastException;
         }
@@ -281,7 +282,7 @@ class ExportToHTMLManager {
         if(progressIndicator.isCanceled()) {
           return;
         }
-        progressIndicator.setText(CodeEditorBundle.message("export.to.html.generating.file.progress", getHTMLFileName(psiFile)));
+        progressIndicator.setText(EditorBundle.message("export.to.html.generating.file.progress", getHTMLFileName(psiFile)));
         progressIndicator.setFraction(((double)i)/filesList.size());
         if (!exportPsiFile(psiFile, myOutputDirectoryName, myProject, filesMap)) {
           return;

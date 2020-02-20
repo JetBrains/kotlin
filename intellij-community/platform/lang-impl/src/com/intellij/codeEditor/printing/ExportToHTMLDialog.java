@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeEditor.printing;
 
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileTextField;
@@ -12,6 +13,7 @@ import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.OptionGroup;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -36,11 +38,11 @@ public class ExportToHTMLDialog extends DialogWrapper {
   public ExportToHTMLDialog(String fileName, String directoryName, boolean isSelectedTextEnabled, Project project) {
     super(project, true);
     myProject = project;
-    setOKButtonText(CodeEditorBundle.message("export.to.html.save.button"));
+    setOKButtonText(EditorBundle.message("export.to.html.save.button"));
     myFileName = fileName;
     myDirectoryName = directoryName;
     this.myIsSelectedTextEnabled = isSelectedTextEnabled;
-    setTitle(CodeEditorBundle.message("export.to.html.title"));
+    setTitle(EditorBundle.message("export.to.html.title"));
     myExtensions = ContainerUtil.map(PrintOption.EP_NAME.getExtensionList(), PrintOption::createConfigurable);
     init();
   }
@@ -49,17 +51,19 @@ public class ExportToHTMLDialog extends DialogWrapper {
   protected JComponent createNorthPanel() {
     OptionGroup optionGroup = new OptionGroup();
 
-    myRbCurrentFile = new JRadioButton(CodeEditorBundle.message("export.to.html.file.name.radio", (myFileName != null ? myFileName : "")));
+    Object @NotNull [] params1 = new Object[]{(myFileName != null ? myFileName : "")};
+    myRbCurrentFile = new JRadioButton(EditorBundle.message("export.to.html.file.name.radio", params1));
     optionGroup.add(myRbCurrentFile);
 
-    myRbSelectedText = new JRadioButton(CodeEditorBundle.message("export.to.html.selected.text.radio"));
+    myRbSelectedText = new JRadioButton(EditorBundle.message("export.to.html.selected.text.radio"));
     optionGroup.add(myRbSelectedText);
 
+    Object @NotNull [] params = new Object[]{(myDirectoryName != null ? myDirectoryName : "")};
     myRbCurrentPackage = new JRadioButton(
-      CodeEditorBundle.message("export.to.html.all.files.in.directory.radio", (myDirectoryName != null ? myDirectoryName : "")));
+      EditorBundle.message("export.to.html.all.files.in.directory.radio", params));
     optionGroup.add(myRbCurrentPackage);
 
-    myCbIncludeSubpackages = new JCheckBox(CodeEditorBundle.message("export.to.html.include.subdirectories.checkbox"));
+    myCbIncludeSubpackages = new JCheckBox(EditorBundle.message("export.to.html.include.subdirectories.checkbox"));
     optionGroup.add(myCbIncludeSubpackages, true);
 
     FileTextField field = FileChooserFactory.getInstance().createFileTextField(FileChooserDescriptorFactory.createSingleFolderDescriptor(), myDisposable);
@@ -89,9 +93,9 @@ public class ExportToHTMLDialog extends DialogWrapper {
 
   public static LabeledComponent<TextFieldWithBrowseButton> assignLabel(TextFieldWithBrowseButton targetDirectoryField, Project project) {
     LabeledComponent<TextFieldWithBrowseButton> labeledComponent = new LabeledComponent<>();
-    labeledComponent.setText(CodeEditorBundle.message("export.to.html.output.directory.label"));
-    targetDirectoryField.addBrowseFolderListener(CodeEditorBundle.message("export.to.html.select.output.directory.title"),
-                                                 CodeEditorBundle.message("export.to.html.select.output.directory.description"),
+    labeledComponent.setText(EditorBundle.message("export.to.html.output.directory.label"));
+    targetDirectoryField.addBrowseFolderListener(EditorBundle.message("export.to.html.select.output.directory.title"),
+                                                 EditorBundle.message("export.to.html.select.output.directory.description"),
                                                  project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
     labeledComponent.setComponent(targetDirectoryField);
     return labeledComponent;
@@ -99,16 +103,16 @@ public class ExportToHTMLDialog extends DialogWrapper {
 
   @Override
   protected JComponent createCenterPanel() {
-    OptionGroup optionGroup = new OptionGroup(CodeEditorBundle.message("export.to.html.options.group"));
+    OptionGroup optionGroup = new OptionGroup(EditorBundle.message("export.to.html.options.group"));
 
-    myCbLineNumbers = new JCheckBox(CodeEditorBundle.message("export.to.html.options.show.line.numbers.checkbox"));
+    myCbLineNumbers = new JCheckBox(EditorBundle.message("export.to.html.options.show.line.numbers.checkbox"));
     optionGroup.add(myCbLineNumbers);
 
     for (UnnamedConfigurable printOption : myExtensions) {
       optionGroup.add(printOption.createComponent());
     }
 
-    myCbOpenInBrowser = new JCheckBox(CodeEditorBundle.message("export.to.html.open.generated.html.checkbox"));
+    myCbOpenInBrowser = new JCheckBox(EditorBundle.message("export.to.html.open.generated.html.checkbox"));
     optionGroup.add(myCbOpenInBrowser);
 
     return optionGroup.createPanel();
