@@ -50,9 +50,9 @@ public class ToolEditorDialog extends DialogWrapper {
   private JTextField myNameField;
   private ComboBox<String> myGroupCombo;
   private JTextField myDescriptionField;
-  private ExtendableTextFieldWithBrowseButton myProgramField;
+  private TextFieldWithBrowseButton myProgramField;
   private RawCommandLineEditor myArgumentsField;
-  private ExtendableTextFieldWithBrowseButton myWorkingDirField;
+  private TextFieldWithBrowseButton myWorkingDirField;
   private JPanel myAdditionalOptionsPanel;
   private AbstractTitledSeparatorWithIcon myAdvancedOptionsSeparator;
   private JPanel myAdvancedOptionsPanel;
@@ -273,11 +273,5 @@ public class ToolEditorDialog extends DialogWrapper {
   private static String convertString(String s) {
     if (s != null && s.trim().isEmpty()) return null;
     return s;
-  }
-
-  private static class ExtendableTextFieldWithBrowseButton extends TextFieldWithBrowseButton {
-    ExtendableTextFieldWithBrowseButton() {
-      super(new ExtendableTextField(10));
-    }
   }
 }
