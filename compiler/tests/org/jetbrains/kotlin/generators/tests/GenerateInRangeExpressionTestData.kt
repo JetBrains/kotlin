@@ -23,7 +23,12 @@ object GenerateInRangeExpressionTestData {
         header: String = ""
     ) {
         PrintWriter(File(GENERATED_DIR, fileName)).use {
-            it.generateTestCaseBody(header, rangeExpressions, elementExpressions, ignoreFrontendIR = (fileName != "charRangeLiteral.kt"))
+            it.generateTestCaseBody(
+                header, rangeExpressions, elementExpressions,
+                ignoreFrontendIR = fileName !in listOf(
+                    "charRangeLiteral.kt", "charDownTo.kt", "charUntil.kt", "intDownTo.kt", "longDownTo.kt"
+                )
+            )
         }
     }
 

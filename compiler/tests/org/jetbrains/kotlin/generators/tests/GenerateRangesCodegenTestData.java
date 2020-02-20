@@ -227,8 +227,11 @@ public class GenerateRangesCodegenTestData {
                     }
 
                     String fileName = testFunName + ".kt";
-                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, true);
-                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, true);
+                    boolean useFrontendIR =
+                            testFunName.equals("emptyDownto") || testFunName.equals("emptyRange") ||
+                            testFunName.equals("reversedEmptyRange") || testFunName.equals("reversedEmptyBackSequence");
+                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, !useFrontendIR);
+                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, !useFrontendIR);
                     writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true, true);
                     writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true, true);
                 }
