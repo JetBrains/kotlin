@@ -13,7 +13,7 @@ class WorkersIT : BaseGradleIT() {
     fun testParallelTasks() {
         parallelTasksImpl(
             isParallel = true,
-            jsCompilerType = KotlinJsCompilerType.legacy
+            jsCompilerType = KotlinJsCompilerType.LEGACY
         )
     }
 
@@ -21,7 +21,7 @@ class WorkersIT : BaseGradleIT() {
     fun testParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = true,
-            jsCompilerType = KotlinJsCompilerType.ir
+            jsCompilerType = KotlinJsCompilerType.IR
         )
     }
 
@@ -29,7 +29,7 @@ class WorkersIT : BaseGradleIT() {
     fun testNoParallelTasks() {
         parallelTasksImpl(
             isParallel = false,
-            jsCompilerType = KotlinJsCompilerType.legacy
+            jsCompilerType = KotlinJsCompilerType.LEGACY
         )
     }
 
@@ -37,7 +37,7 @@ class WorkersIT : BaseGradleIT() {
     fun testNoParallelTasksJsIr() {
         parallelTasksImpl(
             isParallel = false,
-            jsCompilerType = KotlinJsCompilerType.ir
+            jsCompilerType = KotlinJsCompilerType.IR
         )
     }
 
@@ -64,7 +64,7 @@ class WorkersIT : BaseGradleIT() {
                     kotlinClassesDir(sourceSet = "metadata/main") + "common/A.kotlin_metadata",
                     kotlinClassesDir(sourceSet = "jvm/main") + "common/A.class",
                     kotlinClassesDir(sourceSet = "js/main") +
-                            if (jsCompilerType == KotlinJsCompilerType.ir) "default/manifest" else "new-mpp-parallel.js"
+                            if (jsCompilerType == KotlinJsCompilerType.IR) "default/manifest" else "new-mpp-parallel.js"
                 )
                 expectedKotlinOutputFiles.forEach { assertFileExists(it) }
                 assertSubstringCount("Loaded GradleKotlinCompilerWork", 1)

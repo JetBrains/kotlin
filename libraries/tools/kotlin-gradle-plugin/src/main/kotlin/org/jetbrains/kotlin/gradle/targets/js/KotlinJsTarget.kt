@@ -39,7 +39,7 @@ constructor(
         internal set
 
     val disambiguationClassifierInPlatform: String?
-        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.legacy)
+        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (irTarget == null)
@@ -71,7 +71,7 @@ constructor(
     ): KotlinVariant {
         return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
             irTarget?.let {
-                artifactTargetName = targetName.removeJsCompilerSuffix(KotlinJsCompilerType.legacy)
+                artifactTargetName = targetName.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
             }
         }
     }

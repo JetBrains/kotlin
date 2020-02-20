@@ -37,7 +37,7 @@ constructor(
         internal set
 
     val disambiguationClassifierInPlatform: String?
-        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.ir)
+        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
 
     var producingType: KotlinJsProducingType? = null
 

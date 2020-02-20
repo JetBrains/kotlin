@@ -5,6 +5,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerTypeHolder
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.lowerName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
@@ -17,11 +18,11 @@ interface KotlinTargetContainerWithJsPresetFunctions :
         configure: KotlinJsTargetDsl.() -> Unit = { }
     ): KotlinJsTargetDsl =
         configureOrCreate(
-            lowerCamelCaseName(name, if (compiler == KotlinJsCompilerType.both) KotlinJsCompilerType.legacy.name else null),
+            lowerCamelCaseName(name, if (compiler == KotlinJsCompilerType.BOTH) KotlinJsCompilerType.LEGACY.lowerName else null),
             presets.getByName(
                 lowerCamelCaseName(
                     "js",
-                    if (compiler == KotlinJsCompilerType.legacy) null else compiler.name
+                    if (compiler == KotlinJsCompilerType.LEGACY) null else compiler.lowerName
                 )
             ) as KotlinTargetPreset<KotlinJsTargetDsl>,
             configure

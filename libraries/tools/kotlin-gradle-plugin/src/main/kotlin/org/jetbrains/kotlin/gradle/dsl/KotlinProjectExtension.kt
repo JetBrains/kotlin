@@ -120,13 +120,13 @@ open class KotlinJsProjectExtension :
     ) {
         if (_target == null) {
             val target: KotlinJsTargetDsl = when (compiler) {
-                legacy -> legacyPreset
+                LEGACY -> legacyPreset
                     .also { it.irPreset = null }
                     .createTarget("js")
-                ir -> irPreset
+                IR -> irPreset
                     .also { it.mixedMode = false }
                     .createTarget("js")
-                both -> legacyPreset
+                BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true
                         it.irPreset = irPreset
@@ -134,7 +134,7 @@ open class KotlinJsProjectExtension :
                     .createTarget(
                         lowerCamelCaseName(
                             "js",
-                            legacy.name
+                            LEGACY.lowerName
                         )
                     )
             }

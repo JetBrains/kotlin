@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
+import org.jetbrains.kotlin.gradle.plugin.lowerName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -248,42 +249,42 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testLibAndAppJsLegacy() = doTestLibAndAppJsBothCompilers(
         "sample-lib",
         "sample-app",
-        legacy
+        LEGACY
     )
 
     @Test
     fun testLibAndAppJsIr() = doTestLibAndAppJsBothCompilers(
         "sample-lib",
         "sample-app",
-        ir
+        IR
     )
 
     @Test
     fun testLibAndAppJsBoth() = doTestLibAndAppJsBothCompilers(
         "sample-lib",
         "sample-app",
-        both
+        BOTH
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsLegacy() = doTestLibAndAppJsBothCompilers(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        legacy
+        LEGACY
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsIr() = doTestLibAndAppJsBothCompilers(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        ir
+        IR
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDslJsBoth() = doTestLibAndAppJsBothCompilers(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        both
+        BOTH
     )
 
     private fun doTestLibAndAppJsBothCompilers(
@@ -296,12 +297,12 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val compileTasksNames =
             listOf(
-                *(if (jsCompilerType != both) {
+                *(if (jsCompilerType != BOTH) {
                     arrayOf("NodeJs")
                 } else {
                     arrayOf(
-                        "NodeJs${legacy.name.capitalize()}",
-                        "NodeJs${ir.name.capitalize()}",
+                        "NodeJs${LEGACY.lowerName.capitalize()}",
+                        "NodeJs${IR.lowerName.capitalize()}",
                     )
                 }),
                 "Metadata"
@@ -316,7 +317,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksExecuted(*compileTasksNames.toTypedArray(), ":metadataJar")
 
                 val groupDir = projectDir.resolve("repo/com/example")
-                val jsExtension = if (jsCompilerType == legacy) "jar" else "klib"
+                val jsExtension = if (jsCompilerType == LEGACY) "jar" else "klib"
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
                 val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
 
@@ -340,7 +341,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
 
                 when (jsCompilerType) {
-                    legacy -> {
+                    LEGACY -> {
                         val jsJar = ZipFile(groupDir.resolve(jsJarName))
                         val compiledJs = jsJar.getInputStream(jsJar.getEntry("sample-lib.js")).reader().readText()
                         Assert.assertTrue("function id(" in compiledJs)
@@ -348,7 +349,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         Assert.assertTrue("function expectedFun(" in compiledJs)
                         Assert.assertTrue("function main(" in compiledJs)
                     }
-                    ir -> {
+                    IR -> {
                         groupDir.resolve(jsJarName).exists()
                     }
                 }
@@ -382,7 +383,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
                 }
 
-                if (jsCompilerType == legacy) {
+                if (jsCompilerType == LEGACY) {
                     projectDir.resolve(targetClassesDir("nodeJs")).resolve("sample-app.js").readText().run {
                         Assert.assertTrue(contains("console.info"))
                         Assert.assertTrue(contains("function nodeJsMain("))
@@ -397,10 +398,10 @@ class NewMultiplatformIT : BaseGradleIT() {
                 checkAppBuild(jsCompilerType)
             }
 
-            if (jsCompilerType == both) {
+            if (jsCompilerType == BOTH) {
                 listOf(
-                    legacy,
-                    ir
+                    LEGACY,
+                    IR
                 ).forEach {
                     build(
                         "assemble",

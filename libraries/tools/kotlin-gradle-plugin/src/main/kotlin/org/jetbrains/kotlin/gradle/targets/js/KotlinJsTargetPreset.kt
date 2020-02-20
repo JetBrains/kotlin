@@ -9,10 +9,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
@@ -38,7 +35,10 @@ open class KotlinJsTargetPreset(
             platformType
         ).apply {
             this.irTarget = irPreset?.createTarget(
-                lowerCamelCaseName(name.removeJsCompilerSuffix(KotlinJsCompilerType.legacy), KotlinJsCompilerType.ir.name)
+                lowerCamelCaseName(
+                    name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY),
+                    KotlinJsCompilerType.IR.lowerName
+                )
             )
 
             project.whenEvaluated {
@@ -68,7 +68,7 @@ open class KotlinJsTargetPreset(
     override fun getName(): String {
         return lowerCamelCaseName(
             PRESET_NAME,
-            irPreset?.let { KotlinJsCompilerType.both.name }
+            irPreset?.let { KotlinJsCompilerType.BOTH.lowerName }
         )
     }
 
@@ -92,7 +92,7 @@ class KotlinJsSingleTargetPreset(
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
         irPreset?.let {
             super.provideTargetDisambiguationClassifier(target)
-                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.legacy))
+                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY))
                 ?.decapitalize()
         }
 

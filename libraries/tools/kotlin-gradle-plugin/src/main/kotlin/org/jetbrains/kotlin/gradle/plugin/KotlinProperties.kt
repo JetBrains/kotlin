@@ -170,10 +170,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.js.experimental.discoverTypes")
 
     /**
-     * Use Kotlin/JS backend mode
+     * Use Kotlin/JS backend compiler type
      */
     val jsCompiler: KotlinJsCompilerType
-        get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgument(it) } ?: KotlinJsCompilerType.legacy
+        get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgument(it) } ?: KotlinJsCompilerType.LEGACY
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)

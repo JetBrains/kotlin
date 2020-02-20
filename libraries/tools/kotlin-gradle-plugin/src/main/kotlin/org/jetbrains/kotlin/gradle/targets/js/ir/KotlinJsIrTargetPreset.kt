@@ -62,7 +62,7 @@ open class KotlinJsIrTargetPreset(
     companion object {
         val PRESET_NAME = lowerCamelCaseName(
             "js",
-            KotlinJsCompilerType.ir.name
+            KotlinJsCompilerType.IR.lowerName
         )
     }
 }
@@ -78,7 +78,7 @@ class KotlinJsIrSingleTargetPreset(
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
         return if (mixedMode!!) {
             super.provideTargetDisambiguationClassifier(target)
-                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.ir))
+                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.IR))
                 ?.decapitalize()
         } else {
             null

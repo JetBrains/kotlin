@@ -39,7 +39,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
             build(
                 "build",
-                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.ir)
+                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
             ) {
                 assertSuccessful()
 
@@ -63,7 +63,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
             build(
                 "build",
-                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.ir)
+                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
             ) {
                 assertSuccessful()
 
@@ -552,7 +552,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
         if (irBackend) {
-            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.ir))
+            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
         }
 
         build("build") {

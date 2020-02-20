@@ -5,21 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Named
-import java.io.Serializable
-
-// For Gradle attributes
-@Suppress("EnumEntryName")
-enum class KotlinJsCompilerType : Named, Serializable {
-    legacy,
-    ir,
-    both;
-
-    override fun getName(): String =
-        name.toLowerCase()
-
-    override fun toString(): String =
-        getName()
+enum class KotlinJsCompilerType {
+    LEGACY,
+    IR,
+    BOTH;
 
     companion object {
         const val jsCompilerProperty = "kotlin.js.compiler"
@@ -29,11 +18,14 @@ enum class KotlinJsCompilerType : Named, Serializable {
     }
 }
 
+val KotlinJsCompilerType.lowerName
+    get() = name.toLowerCase()
+
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
-    val truncatedString = removeSuffix(compilerType.name)
+    val truncatedString = removeSuffix(compilerType.lowerName)
     if (this != truncatedString) {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.name.capitalize())
+    return removeSuffix(compilerType.lowerName.capitalize())
 }
