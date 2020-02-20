@@ -5,7 +5,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 abstract class SubStep(
-    val readingContext: ReadingContext
+    readingContext: ReadingContext
 ) : DynamicComponent(readingContext) {
     protected abstract fun buildContent(): JComponent
 

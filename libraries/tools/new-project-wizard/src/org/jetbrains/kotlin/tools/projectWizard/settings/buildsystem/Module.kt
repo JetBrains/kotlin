@@ -86,7 +86,7 @@ class Module(
             else -> "Module"
         }
 
-    fun ReadingContext.initDefaultValuesForSettings(context: Context) {
+    fun ReadingContext.initDefaultValuesForSettings() {
         configurator.safeAs<ModuleConfiguratorWithSettings>()?.initDefaultValuesFor(this@Module, context)
         template?.apply { initDefaultValuesFor(this@Module, context) }
     }

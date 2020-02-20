@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
+import org.jetbrains.kotlin.idea.debugger.readAction
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
@@ -63,7 +64,7 @@ class ModuleSettingsSubStep(
     uiEditorUsagesStats: UiEditorUsageStats
 ) : SubStep(wizard.valuesReadingContext) {
     private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.valuesReadingContext).asSubComponent()
-    private val moduleSettingsComponent = ModuleSettingsComponent(readingContext, uiEditorUsagesStats).asSubComponent()
+    private val moduleSettingsComponent = ModuleSettingsComponent(wizard.valuesReadingContext, uiEditorUsagesStats).asSubComponent()
     private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
 
     private val panel = panel {

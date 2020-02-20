@@ -84,7 +84,7 @@ class TemplatesComponent(
 }
 
 class ChooseTemplateComponent(
-    private val readingContext: ReadingContext,
+    readingContext: ReadingContext,
     private val onTemplateChosen: (Template) -> Unit
 ) : DynamicComponent(readingContext) {
     private enum class State(val text: String) {
@@ -105,7 +105,7 @@ class ChooseTemplateComponent(
     }
 
     private val allTemplates
-        get() = with(readingContext) {
+        get() = read {
             TemplatesPlugin::templates.propertyValue
         }
 

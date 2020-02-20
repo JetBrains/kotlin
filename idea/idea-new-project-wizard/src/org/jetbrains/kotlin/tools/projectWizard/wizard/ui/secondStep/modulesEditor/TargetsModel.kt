@@ -65,7 +65,7 @@ class TargetsModel(
     fun add(module: Module) {
         uiEditorUsagesStats.modulesCreated++
         with(readingContext) {
-            module.apply { initDefaultValuesForSettings(context) }
+            module.apply { initDefaultValuesForSettings() }
         }
         addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
     }

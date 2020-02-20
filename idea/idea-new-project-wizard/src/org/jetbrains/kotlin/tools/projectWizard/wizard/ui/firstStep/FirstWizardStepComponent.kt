@@ -57,7 +57,7 @@ class TemplatesSubStep(readingContext: ReadingContext) :
         }
         read {
             allModules().forEach { module ->
-                module.apply { initDefaultValuesForSettings(readingContext.context) }
+                module.apply { initDefaultValuesForSettings() }
             }
         }
     }
@@ -70,8 +70,9 @@ class TemplatesSubStep(readingContext: ReadingContext) :
             module.subModules.forEach(::addModule)
         }
 
-        readingContext.context.settingContext[KotlinPlugin::modules.reference]
-            ?.forEach(::addModule)
+        read {
+            KotlinPlugin::modules.reference.notRequiredSettingValue
+        }?.forEach(::addModule)
 
         return modules
     }

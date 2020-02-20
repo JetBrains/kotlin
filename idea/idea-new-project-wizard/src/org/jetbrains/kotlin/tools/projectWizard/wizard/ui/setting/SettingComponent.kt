@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 
 abstract class SettingComponent<V : Any, T: SettingType<V>>(
     val reference: SettingReference<V, T>,
-    val readingContext: ReadingContext
+    private val readingContext: ReadingContext
 ) : DynamicComponent(readingContext), Displayable, FocusableComponent {
     var value: V?
         get() = reference.value
