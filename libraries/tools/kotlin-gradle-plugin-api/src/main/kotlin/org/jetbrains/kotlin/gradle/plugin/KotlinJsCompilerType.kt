@@ -25,8 +25,7 @@ enum class KotlinJsCompilerType : Named, Serializable {
         const val jsCompilerProperty = "kotlin.js.compiler"
 
         fun byArgument(argument: String): KotlinJsCompilerType? =
-            KotlinJsCompilerType
-                .values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+            values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }
 

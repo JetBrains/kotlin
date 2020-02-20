@@ -28,6 +28,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.COMPILE
@@ -452,11 +453,11 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
 
     if (target is KotlinJsTarget) {
-        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, KotlinJsCompilerType.legacy)
+        attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
     }
 
     if (target is KotlinJsIrTarget) {
-        attributes.attribute(KotlinJsTarget.jsCompilerAttribute, KotlinJsCompilerType.ir)
+        attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 
     // TODO: Provide an universal way to copy attributes from the target.

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributesSchema
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -198,17 +196,6 @@ constructor(
                 sourceMap = true
                 sourceMapEmbedSources = null
             }
-        }
-    }
-
-    companion object {
-        val jsCompilerAttribute = Attribute.of(
-            "org.jetbrains.kotlin.js.compiler",
-            KotlinJsCompilerType::class.java
-        )
-
-        fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
-            attributesSchema.attribute(jsCompilerAttribute)
         }
     }
 }
