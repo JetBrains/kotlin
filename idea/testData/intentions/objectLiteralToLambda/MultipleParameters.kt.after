@@ -5,5 +5,5 @@ import java.io.FilenameFilter
 fun foo(filter: FilenameFilter) {}
 
 fun bar() {
-    foo(FilenameFilter { file, name -> name == "x" })
+    foo { file, name -> name == "x" }
 }

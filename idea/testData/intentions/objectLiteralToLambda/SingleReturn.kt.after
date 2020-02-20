@@ -5,5 +5,5 @@ import java.io.FileFilter
 fun foo(filter: FileFilter) {}
 
 fun bar() {
-    foo(FileFilter { file -> file.name.startsWith("a") })
+    foo { file -> file.name.startsWith("a") }
 }
