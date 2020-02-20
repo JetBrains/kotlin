@@ -177,9 +177,6 @@ internal object Devirtualization {
 
         class Function(val symbol: DataFlowIR.FunctionSymbol, val parameters: Array<Node>, val returns: Node, val throws: Node)
 
-        class VirtualCallSiteReceivers(val receiver: Node, val caller: DataFlowIR.FunctionSymbol,
-                                       val devirtualizedCallees: List<DevirtualizedCallee>)
-
         inner class ConstraintGraph : DirectedGraph<Node, Node> {
 
             private var nodesCount = 0
@@ -195,7 +192,7 @@ internal object Devirtualization {
             val concreteClasses = mutableMapOf<DataFlowIR.Type.Declared, Node>()
             val externalFunctions = mutableMapOf<Pair<DataFlowIR.FunctionSymbol, DataFlowIR.Type>, Node>()
             val fields = mutableMapOf<DataFlowIR.Field, Node>() // Do not distinguish receivers.
-            val virtualCallSiteReceivers = mutableMapOf<DataFlowIR.Node.VirtualCall, VirtualCallSiteReceivers>()
+            val virtualCallSiteReceivers = mutableMapOf<DataFlowIR.Node.VirtualCall, Node>()
 
             private fun nextId(): Int = nodesCount++
 
@@ -247,6 +244,16 @@ internal object Devirtualization {
                 findAllInheritors(type, result)
                 return result.toList()
             }
+        }
+
+        private fun DataFlowIR.Type.Declared.calleeAt(callSite: DataFlowIR.Node.VirtualCall) = when (callSite) {
+            is DataFlowIR.Node.VtableCall ->
+                vtable[callSite.calleeVtableIndex]
+
+            is DataFlowIR.Node.ItableCall ->
+                itable[callSite.calleeHash]!!
+
+            else -> error("Unreachable")
         }
 
         private inner class InstantiationsSearcher(val rootSet: List<DataFlowIR.FunctionSymbol>,
@@ -312,15 +319,7 @@ internal object Devirtualization {
                     println("Receiver type: $receiverType")
                 }
 
-                val callee = when (virtualCall) {
-                    is DataFlowIR.Node.VtableCall ->
-                        receiverType.vtable[virtualCall.calleeVtableIndex]
-
-                    is DataFlowIR.Node.ItableCall ->
-                        receiverType.itable[virtualCall.calleeHash]!!
-
-                    else -> error("Unreachable")
-                }
+                val callee = receiverType.calleeAt(virtualCall)
                 dfs(callee, virtualCall.returnType)
             }
 
@@ -765,62 +764,63 @@ internal object Devirtualization {
 
             val result = mutableMapOf<DataFlowIR.Node.VirtualCall, Pair<DevirtualizedCallSite, DataFlowIR.FunctionSymbol>>()
             val nothing = symbolTable.classMap[context.ir.symbols.nothing.owner]
-            functions.values
-                    .asSequence()
-                    .filter { constraintGraph.functions.containsKey(it.symbol) }
-                    .flatMap { it.body.nodes.asSequence() }
-                    .filterIsInstance<DataFlowIR.Node.VirtualCall>()
-                    .forEach { virtualCall ->
-                        assert (nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
-                        val virtualCallSiteReceivers = constraintGraph.virtualCallSiteReceivers[virtualCall]
-                                ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
-                        if (virtualCallSiteReceivers.receiver.types[VIRTUAL_TYPE_ID]) {
+            for (function in functions.values) {
+                if (!constraintGraph.functions.containsKey(function.symbol)) continue
+                for (node in function.body.nodes) {
+                    val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: continue
+                    assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
+                    val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]
+                            ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
+                    if (receiverNode.types[VIRTUAL_TYPE_ID]) {
 
-                            DEBUG_OUTPUT(0) {
-                                println("Unable to devirtualize callsite " +
-                                        (virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.callee.toString()))
-                                println("    receiver is Virtual")
-                                printPathToType(virtualCallSiteReceivers.receiver, VIRTUAL_TYPE_ID)
-                            }
-
-                            return@forEach
-                        }
                         DEBUG_OUTPUT(0) {
-                            println("Devirtualized callsite " +
-                                    (virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.callee.toString()))
+                            println("Unable to devirtualize callsite " +
+                                    (virtualCall.irCallSite?.let { ir2stringWhole(it) }
+                                            ?: virtualCall.callee.toString()))
+                            println("    receiver is Virtual")
+                            printPathToType(receiverNode, VIRTUAL_TYPE_ID)
                         }
-                        val inheritorsOfReceiverType = virtualCallSiteReceivers.devirtualizedCallees.map { it.receiverType }.toSet()
-                        val possibleReceivers = allTypes.asSequence()
-                                .withIndex()
-                                .filter { virtualCallSiteReceivers.receiver.types[it.index] }
-                                .filter { inheritorsOfReceiverType.contains(it.value) }
-                                .filterNot { it.value == nothing }
-                                .map {
-                                    DEBUG_OUTPUT(0) {
-                                        println("Path to type ${it.value}")
-                                        printPathToType(virtualCallSiteReceivers.receiver, it.index)
-                                    }
-                                    it.value
-                                }.toList()
 
-                        val map = virtualCallSiteReceivers.devirtualizedCallees.associateBy({ it.receiverType }, { it })
-                        result[virtualCall] = DevirtualizedCallSite(virtualCall.callee.resolved(),
-                                possibleReceivers.map { receiverType ->
-                                    assert(map[receiverType] != null) {
-                                        "Non-expected receiver type $receiverType at call site: " +
-                                                (virtualCall.irCallSite?.let { ir2stringWhole(it) }
-                                                        ?: virtualCall.toString())
-                                    }
-                                    val devirtualizedCallee = map[receiverType]!!
-                                    val callee = devirtualizedCallee.callee
-                                    if (callee is DataFlowIR.FunctionSymbol.Declared && callee.symbolTableIndex < 0)
-                                        error("Function ${devirtualizedCallee.receiverType}.$callee cannot be called virtually," +
-                                                " but actually is at call site: " +
-                                                (virtualCall.irCallSite?.let { ir2stringWhole(it) }
-                                                        ?: virtualCall.toString()))
-                                    devirtualizedCallee
-                                }) to virtualCallSiteReceivers.caller
+                        continue
                     }
+
+                    DEBUG_OUTPUT(0) {
+                        println("Devirtualized callsite " +
+                                (virtualCall.irCallSite?.let { ir2stringWhole(it) } ?: virtualCall.callee.toString()))
+                    }
+
+                    val receiverType = virtualCall.receiverType.resolved()
+                    val inheritorsOfReceiverType = typeHierarchy.inheritorsOf(receiverType).filter {
+                        instantiatingClasses.containsKey(it)
+                    }
+                    val possibleReceivers = allTypes.asSequence()
+                            .withIndex()
+                            .filter { receiverNode.types[it.index] }
+                            .filter { inheritorsOfReceiverType.contains(it.value) }
+                            .filterNot { it.value == nothing }
+                            .map {
+
+                                DEBUG_OUTPUT(0) {
+                                    println("Path to type ${it.value}")
+                                    printPathToType(receiverNode, it.index)
+                                }
+
+                                it.value
+                            }.toList()
+
+                    result[virtualCall] = DevirtualizedCallSite(virtualCall.callee.resolved(),
+                            possibleReceivers.map { possibleReceiverType ->
+                                val callee = possibleReceiverType.calleeAt(virtualCall)
+                                if (callee is DataFlowIR.FunctionSymbol.Declared && callee.symbolTableIndex < 0)
+                                    error("Function ${possibleReceiverType}.$callee cannot be called virtually," +
+                                            " but actually is at call site: " +
+                                            (virtualCall.irCallSite?.let { ir2stringWhole(it) }
+                                                    ?: virtualCall.toString()))
+                                DevirtualizedCallee(possibleReceiverType, callee)
+                            }) to function.symbol
+
+                }
+            }
 
             DEBUG_OUTPUT(0) {
                 println("Devirtualized from current module:")
@@ -1104,22 +1104,11 @@ internal object Devirtualization {
                                 println("Receiver type: $receiverType")
                             }
 
-                            val possibleReceiverTypes =
-                                    if (receiverType == DataFlowIR.Type.Virtual)
-                                        emptyList()
-                                    else
-                                        typeHierarchy.inheritorsOf(receiverType).filter { instantiatingClasses.containsKey(it) }
-                            val callees = possibleReceiverTypes.map {
-                                when (node) {
-                                    is DataFlowIR.Node.VtableCall ->
-                                        it.vtable[node.calleeVtableIndex]
-
-                                    is DataFlowIR.Node.ItableCall ->
-                                        it.itable[node.calleeHash]!!
-
-                                    else -> error("Unreachable")
-                                }
+                            val possibleReceiverTypes = typeHierarchy.inheritorsOf(receiverType).filter {
+                                instantiatingClasses.containsKey(it)
                             }
+
+                            val callees = possibleReceiverTypes.map { it.calleeAt(node) }
 
                             DEBUG_OUTPUT(0) {
                                 println("Possible callees:")
@@ -1131,9 +1120,7 @@ internal object Devirtualization {
                             val receiverNode = edgeToConstraintNode(node.arguments[0])
                             if (receiverType == DataFlowIR.Type.Virtual)
                                 constraintGraph.virtualNode.addEdge(receiverNode)
-                            val castedReceiver = ordinaryNode { "CastedReceiver\$${function.symbol}" }
-                            receiverNode.addEdge(castedReceiver)
-                            val arguments = listOf(castedReceiver) + node.arguments.drop(1)
+                            val arguments = listOf(receiverNode) + node.arguments.drop(1)
 
                             val returnsNode = ordinaryNode { "VirtualCallReturns\$${function.symbol}" }
                             callees.forEachIndexed { index, actualCallee ->
@@ -1154,11 +1141,7 @@ internal object Devirtualization {
                                 concreteClass(returnType).addEdge(returnsNode)
                             }
 
-                            val devirtualizedCallees = possibleReceiverTypes.mapIndexed { index, possibleReceiverType ->
-                                DevirtualizedCallee(possibleReceiverType, callees[index])
-                            }
-                            constraintGraph.virtualCallSiteReceivers[node] =
-                                    VirtualCallSiteReceivers(castedReceiver, function.symbol, devirtualizedCallees)
+                            constraintGraph.virtualCallSiteReceivers[node] = receiverNode
                             returnsNode
                         }
 
