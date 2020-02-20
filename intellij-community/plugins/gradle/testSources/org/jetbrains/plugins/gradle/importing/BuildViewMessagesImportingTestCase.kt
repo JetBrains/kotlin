@@ -34,7 +34,7 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
 
   override fun tearDown() = RunAll()
     .append(ThrowableRunnable { if (::syncViewManager.isInitialized) syncViewManager.waitForPendingBuilds() })
-    .append(ThrowableRunnable { if (::buildViewManager.isInitialized) syncViewManager.waitForPendingBuilds() })
+    .append(ThrowableRunnable { if (::buildViewManager.isInitialized) buildViewManager.waitForPendingBuilds() })
     .append(ThrowableRunnable { super.tearDown() })
     .run()
 
