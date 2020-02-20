@@ -398,8 +398,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
         // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
         val receiverAsFirstArgument = if (dispatchReceiver is Lambda) listOfNotNull(irFunction.symbol.getExtensionReceiver()) else listOf()
         val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
-        interpretValueParameters(expression, data).also { if (it != Code.NEXT) return it }
-        newFrame.addAll(valueParametersDescriptors.map { Variable(it, data.popReturnValue()) })
+        val frameWithReceiverAndData = data.copy().apply { addAll(newFrame.getAll()) } // primary use case: copy method in data class
+        interpretValueParameters(expression, frameWithReceiverAndData).also { if (it != Code.NEXT) return it }
+        newFrame.addAll(valueParametersDescriptors.map { Variable(it, frameWithReceiverAndData.popReturnValue()) })
 
         irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
             if (typeParameter.isReified) {
