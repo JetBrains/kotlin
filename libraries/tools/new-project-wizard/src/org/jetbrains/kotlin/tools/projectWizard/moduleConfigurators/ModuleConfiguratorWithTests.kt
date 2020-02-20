@@ -50,7 +50,7 @@ abstract class ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings() {
             }
         }
 
-    override val settings: List<ModuleConfiguratorSetting<*, *>> = listOf(testFramework)
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = listOf(testFramework)
 }
 
 

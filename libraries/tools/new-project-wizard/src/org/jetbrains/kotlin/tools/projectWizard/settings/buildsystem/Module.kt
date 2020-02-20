@@ -38,8 +38,12 @@ class Module(
         StringValidators.shouldBeValidIdentifier("Module name `$name`", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES).validate(this, module.name)
     } and settingValidator { module ->
         withSettingsOf(module) {
-            configurator.settings.map { setting ->
-                val value = setting.reference.notRequiredSettingValue
+            allSettingsOfModuleConfigurator(configurator).map { setting ->
+                val value = when (setting) {
+                    is PluginSetting<Any, SettingType<Any>> -> setting.reference.notRequiredSettingValue
+                    is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference.notRequiredSettingValue
+                    else -> null
+                }
                     ?: setting.defaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)

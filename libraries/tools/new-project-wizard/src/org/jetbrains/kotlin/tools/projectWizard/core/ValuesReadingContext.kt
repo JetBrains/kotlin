@@ -36,4 +36,9 @@ open class ValuesReadingContext(
 
     fun <V : Any, T : SettingType<V>> SettingReference<V, T>.notRequiredSettingValue(): V? =
         context.settingContext[this]
+
+    val <V : Any, T : SettingType<V>> PluginSettingReference<V, T>.pluginSetting: Setting<V, T>
+        get() = context.settingContext.getPluginSetting(this)
+
+
 }

@@ -58,7 +58,8 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
         ModuleConfiguratorSetting(create(name).buildInternal())
     }
 
-    abstract val settings: List<ModuleConfiguratorSetting<*, *>>
+    open fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = emptyList()
+    open fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
 
     @Suppress("UNCHECKED_CAST")
     override fun <V : DisplayableSettingItem> dropDownSetting(
@@ -162,7 +163,7 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
 
     fun initDefaultValuesFor(module: Module, context: Context) {
         withSettingsOf(module) {
-            settings.forEach { setting ->
+            getConfiguratorSettings().forEach { setting ->
                 val defaultValue = setting.defaultValue ?: return@forEach
                 context.settingContext[setting.reference] = defaultValue
             }
@@ -172,14 +173,25 @@ abstract class ModuleConfiguratorWithSettings : ModuleConfigurator, SettingsOwne
 
 val ModuleConfigurator.settings
     get() = when (this) {
-        is ModuleConfiguratorWithSettings -> settings
+        is ModuleConfiguratorWithSettings -> getConfiguratorSettings()
         else -> emptyList()
     }
 
-val Module.configuratorSettings
-    get() = configurator.settings.map { setting ->
-        ModuleBasedConfiguratorSettingReference(configurator, this, setting)
+fun ValuesReadingContext.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
+    is ModuleConfiguratorWithSettings -> buildList<Setting<Any, SettingType<Any>>> {
+        +moduleConfigurator.getConfiguratorSettings()
+        +moduleConfigurator.getPluginSettings().map { it.pluginSetting }
     }
+    else -> emptyList()
+}
+
+fun Module.getConfiguratorSettings() = buildList<SettingReference<*, *>> {
+    +configurator.settings.map { setting ->
+        ModuleBasedConfiguratorSettingReference(configurator, this@getConfiguratorSettings, setting)
+    }
+    configurator.safeAs<ModuleConfiguratorWithSettings>()?.getPluginSettings()?.let { +it }
+}
+
 
 interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val moduleKind: ModuleKind

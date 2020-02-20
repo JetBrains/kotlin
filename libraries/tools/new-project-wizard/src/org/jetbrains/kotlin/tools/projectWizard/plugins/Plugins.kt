@@ -23,6 +23,7 @@ object Plugins {
             TemplatesPlugin(context),
             ProjectTemplatesPlugin(context),
             RunConfigurationsPlugin(context),
+            AndroidPlugin(context),
 
             // templates
             ConsoleJvmApplicationTemplatePlugin(context),

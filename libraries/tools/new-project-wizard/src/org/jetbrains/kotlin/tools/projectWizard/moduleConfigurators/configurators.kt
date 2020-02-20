@@ -21,8 +21,8 @@ abstract class JvmModuleConfigurator : ModuleConfiguratorWithTests() {
     val targetJvmVersion by enumSetting<TargetJvmVersion>("Target JVM Version", GenerationPhase.PROJECT_GENERATION) {
         defaultValue = TargetJvmVersion.JVM_1_8
     }
-    override val settings: List<ModuleConfiguratorSetting<*, *>>
-        get() = super.settings + targetJvmVersion
+
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = super.getConfiguratorSettings() + targetJvmVersion
 }
 
 enum class TargetJvmVersion(val value: String) : DisplayableSettingItem {

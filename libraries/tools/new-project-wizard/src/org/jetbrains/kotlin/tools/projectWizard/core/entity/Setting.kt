@@ -24,9 +24,9 @@ sealed class SettingReference<out V : Any, out T : SettingType<V>> {
     final override fun hashCode() = path.hashCode()
 }
 
-data class PluginSettingReference<V : Any, T : SettingType<V>>(
+data class PluginSettingReference<out V : Any, out T : SettingType<V>>(
     override val path: String,
-    override val type: KClass<T>
+    override val type: KClass<@UnsafeVariance T>
 ) : SettingReference<V, T>() {
 
     constructor(kProperty: KProperty1<out Plugin, PluginSetting<V, T>>, type: KClass<T>) :
@@ -39,6 +39,9 @@ data class PluginSettingReference<V : Any, T : SettingType<V>>(
     override fun Context.getSetting(): Setting<V, T> =
         settingContext.getPluginSetting(this@PluginSettingReference)
 }
+
+inline val <V : Any, reified T : SettingType<V>> PluginSetting<V, T>.reference: PluginSettingReference<V, T>
+    get() = PluginSettingReference(path, T::class)
 
 sealed class ModuleConfiguratorSettingReference<V : Any, T : SettingType<V>> : SettingReference<V, T>() {
     abstract val descriptor: ModuleConfigurator

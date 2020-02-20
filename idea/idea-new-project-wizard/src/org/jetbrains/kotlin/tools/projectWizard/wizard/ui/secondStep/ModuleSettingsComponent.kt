@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.configuratorSettings
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -71,7 +71,7 @@ class ModuleSettingsComponent(
         nameField.component.isVisible = module.kind != ModuleKind.target
                 || module.configurator.moduleType != ModuleType.common
 
-        moduleConfiguratorSettingsList.setSettings(module.configuratorSettings)
+        moduleConfiguratorSettingsList.setSettings(module.getConfiguratorSettings())
         templateComponent.module = module
     }
 }

@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PluginSettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
@@ -9,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScrip
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
-import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -27,18 +29,14 @@ import java.nio.file.Path
 object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(),
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator,
-    ModuleConfiguratorWithModuleType{
+    ModuleConfiguratorWithModuleType {
     override val moduleType = ModuleType.jvm
     override val id = "android"
     override val suggestedModuleName = "android"
     override val text = "Android"
     override val greyText = "Requires Android SDK"
 
-    val androidSdkPath by pathSetting("Android SDK Path", neededAtPhase = GenerationPhase.PROJECT_GENERATION) {
-        shouldExists()
-    }
-
-    private fun createRepositories(configurationData: ModuleConfigurationData) =buildList<Repository> {
+    private fun createRepositories(configurationData: ModuleConfigurationData) = buildList<Repository> {
         +DefaultRepository.GRADLE_PLUGIN_PORTAL
         +DefaultRepository.GOOGLE
         +DefaultRepository.JCENTER
@@ -79,12 +77,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path
-    ): TaskResult<Unit> = withSettingsOf(module) {
-        val path = androidSdkPath.reference.settingValue
-        GradlePlugin::localProperties.addValues(
-            "sdk.dir" to path
-        )
-    } andThen computeM {
+    ): TaskResult<Unit> = computeM {
         val javaPackage = module.javaPackage(configurationData.pomIr)
         TemplatesPlugin::addFileTemplates.execute(
             listOf(
@@ -119,8 +112,8 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
     override fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
         StdlibType.StdlibJdk7
 
-    override val settings: List<ModuleConfiguratorSetting<*, *>> =
-        listOf(androidSdkPath)
+    override fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> =
+        listOf(AndroidPlugin::androidSdkPath.reference)
 
     private object FileTemplateDescriptors {
         val activityMainXml = FileTemplateDescriptor(
