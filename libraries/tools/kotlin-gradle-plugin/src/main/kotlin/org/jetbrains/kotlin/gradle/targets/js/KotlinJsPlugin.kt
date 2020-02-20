@@ -49,11 +49,9 @@ open class KotlinJsPlugin(
             .forEach { baseCompilationName ->
                 listOf(
                     COMPILE_ONLY,
-                    COMPILE,
                     IMPLEMENTATION,
                     API,
-                    RUNTIME_ONLY,
-                    RUNTIME
+                    RUNTIME_ONLY
                 ).forEach { baseConfigurationName ->
                     configurations.maybeCreate(
                         lowerCamelCaseName(
