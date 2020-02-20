@@ -398,6 +398,9 @@ class Fir2IrDeclarationStorage(
 
     private fun <T : IrFunction> T.declareParameters(function: FirFunction<*>?, containingClass: IrClass?, isStatic: Boolean) {
         val parent = this
+        if (function is FirSimpleFunction) {
+            setTypeParameters(function)
+        }
         if (function is FirDefaultPropertySetter) {
             val type = function.valueParameters.first().returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
             declareDefaultSetterParameter(type)
@@ -408,9 +411,6 @@ class Fir2IrDeclarationStorage(
         }
         if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            if (function is FirSimpleFunction) {
-                setTypeParameters(function)
-            }
             val receiverTypeRef = function?.receiverTypeRef
             if (receiverTypeRef != null) {
                 extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
