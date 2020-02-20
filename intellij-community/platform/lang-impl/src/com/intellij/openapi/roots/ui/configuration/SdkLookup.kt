@@ -60,10 +60,7 @@ interface SdkLookupBuilder {
   fun withSdkType(sdkType: SdkType): SdkLookupBuilder
 
   @Contract(pure = true)
-  fun withMinSdkVersionInclusive(version: String): SdkLookupBuilder
-
-  @Contract(pure = true)
-  fun withMaxSdkVersionExclusive(version: String): SdkLookupBuilder
+  fun withVersionFilter(filter: (String) -> Boolean) : SdkLookupBuilder
 
   @Contract(pure = true)
   fun withSdkHomeFilter(filter: (String) -> Boolean): SdkLookupBuilder
