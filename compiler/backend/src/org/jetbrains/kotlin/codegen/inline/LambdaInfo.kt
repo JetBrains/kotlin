@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
+import org.jetbrains.kotlin.codegen.coroutines.isCapturedSuspendLambda
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -82,7 +83,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
     }
 }
 
-class NonInlineableArgumentForInlineableParameterCalledInSuspend(val isSuspend: Boolean) : FunctionalArgument
+object NonInlineableArgumentForInlineableParameterCalledInSuspend : FunctionalArgument
 object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
 
 
@@ -215,6 +216,7 @@ abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInli
     }
 
     abstract fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor
+    abstract fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean
 }
 
 class PsiExpressionLambda(
@@ -328,4 +330,7 @@ class PsiExpressionLambda(
             typeMapper.bindingContext
         )
     }
+
+    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
+        isCapturedSuspendLambda(closure, desc.fieldName, inliningContext.state.bindingContext)
 }

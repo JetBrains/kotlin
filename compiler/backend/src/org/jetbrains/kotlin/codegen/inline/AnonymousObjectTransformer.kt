@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.DEBUG_METADATA_ANNOTATION_ASM_TYPE
-import org.jetbrains.kotlin.codegen.coroutines.isCapturedSuspendLambda
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
@@ -526,10 +525,8 @@ class AnonymousObjectTransformer(
                         alreadyAddedParam?.newFieldName ?: getNewFieldName(desc.fieldName, false),
                         alreadyAddedParam != null
                     )
-                    if (info is PsiExpressionLambda && info.closure.captureVariables.any { it.value.fieldName == desc.fieldName }) {
-                        recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend(
-                            isCapturedSuspendLambda(info.closure, desc.fieldName, inliningContext.state.bindingContext)
-                        )
+                    if (info is ExpressionLambda && info.isCapturedSuspend(desc, inliningContext)) {
+                        recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
                     }
                     val composed = StackValue.field(
                         desc.type,

@@ -391,7 +391,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 info = invocationParamBuilder.addNextValueParameter(jvmType, false, remappedValue, parameterIndex)
                 info.functionalArgument = when (kind) {
                     ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND ->
-                        NonInlineableArgumentForInlineableParameterCalledInSuspend(kotlinType?.isSuspendFunctionTypeOrSubtype == true)
+                        NonInlineableArgumentForInlineableParameterCalledInSuspend
                     ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER -> NonInlineableArgumentForInlineableSuspendParameter
                     else -> null
                 }

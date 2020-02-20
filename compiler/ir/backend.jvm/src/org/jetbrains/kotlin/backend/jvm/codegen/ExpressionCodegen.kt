@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
@@ -476,21 +475,15 @@ class ExpressionCodegen(
         }
     }
 
-    private fun IrFunctionAccessExpression.isInvokeOfInlineLambda(): Boolean = when (val receiver = dispatchReceiver) {
-        is IrGetField -> receiver.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
-        is IrGetValue -> receiver.origin == IrStatementOrigin.VARIABLE_AS_FUNCTION &&
-                (receiver.symbol.owner as? IrValueParameter)?.isNoinline == false
-        else -> false
-    }
-
     private fun IrFunctionAccessExpression.isSuspensionPoint(): Boolean = when {
         !symbol.owner.isSuspend || irFunction.shouldNotContainSuspendMarkers() -> false
         // Copy-pasted bytecode blocks are not suspension points.
         symbol.owner.isInline ->
             symbol.owner.fqNameForIrSerialization == FqName("kotlin.coroutines.intrinsics.IntrinsicsKt.suspendCoroutineUninterceptedOrReturn")
         // This includes inline lambdas, but only in functions intended for the inliner; in others, they stay as `f.invoke()`.
-        isInvokeOfInlineLambda() ->
-            irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE && irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+        dispatchReceiver.isReadOfInlineLambda() ->
+            irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE && irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&
+                    irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
         else -> true
     }
 
