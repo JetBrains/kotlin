@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test
 
 import junit.framework.TestCase
 import org.junit.runner.Runner
+import org.junit.runner.notification.Failure
+import org.junit.runner.notification.RunListener
+import org.junit.runner.notification.RunNotifier
 import org.junit.runners.BlockJUnit4ClassRunner
 import org.junit.runners.model.FrameworkMethod
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters
@@ -30,6 +33,16 @@ private val DO_AUTO_MUTE: AutoMute? by lazy {
     } else {
         null
     }
+}
+
+private fun AutoMute.muteTest(testKey: String) {
+    val file = File(file)
+    val lines = file.readLines()
+    val firstLine = lines[0] // Drop file header
+    val muted = lines.drop(1).toMutableList()
+    muted.add("$testKey, $issue")
+    val newMuted: List<String> = mutableListOf<String>() + firstLine + muted.sorted()
+    file.writeText(newMuted.joinToString("\n"))
 }
 
 private class MutedTest(
@@ -161,14 +174,7 @@ internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> U
         try {
             f()
         } catch (e: Throwable) {
-            val file = File(doAutoMute.file)
-            val lines = file.readLines()
-            val firstLine = lines[0]
-            val muted = lines.drop(1).toMutableList()
-            muted.add("${testKey(testCase)}, ${doAutoMute.issue}")
-            val newMuted: List<String> = mutableListOf<String>() + firstLine + muted.sorted()
-            file.writeText(newMuted.joinToString("\n"))
-
+            doAutoMute.muteTest(testKey(testCase))
             throw e
         }
     }
@@ -185,13 +191,55 @@ class RunnerFactoryWithMuteInDatabase : ParametersRunnerFactory {
             override fun isIgnored(child: FrameworkMethod): Boolean {
                 return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child, name)
             }
+
+            override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
+                notifier.withMuteFailureListener(method.declaringClass, parametrizedMethodKey(method, name)) {
+                    super.runChild(method, notifier)
+                }
+            }
         }
+    }
+}
+
+private fun parametrizedMethodKey(child: FrameworkMethod, parametersName: String): String {
+    return child.method.name + parametersName
+}
+
+private inline fun RunNotifier.withMuteFailureListener(
+    declaredClass: Class<*>,
+    methodKey: String,
+    crossinline run: () -> Unit,
+) {
+    val doAutoMute = DO_AUTO_MUTE
+    if (doAutoMute == null) {
+        run()
+        return
+    }
+
+    val muteFailureListener = object : RunListener() {
+        override fun testFailure(failure: Failure) {
+            doAutoMute.muteTest(testKey(declaredClass, methodKey))
+            super.testFailure(failure)
+        }
+    }
+
+    try {
+        addListener(muteFailureListener)
+        run()
+    } finally {
+        removeListener(muteFailureListener)
     }
 }
 
 class RunnerWithIgnoreInDatabase(klass: Class<*>?) : BlockJUnit4ClassRunner(klass) {
     override fun isIgnored(child: FrameworkMethod): Boolean {
         return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child)
+    }
+
+    override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
+        notifier.withMuteFailureListener(method.declaringClass, method.name) {
+            super.runChild(method, notifier)
+        }
     }
 }
 
@@ -209,7 +257,7 @@ fun isIgnoredInDatabaseWithLog(child: FrameworkMethod, parametersName: String): 
         return true
     }
 
-    val methodWithParametersKey = child.method.name + parametersName
+    val methodWithParametersKey = parametrizedMethodKey(child, parametersName)
     if (isMutedInDatabase(child.declaringClass, methodWithParametersKey)) {
         System.err.println(mutedMessage(testKey(child.declaringClass, methodWithParametersKey)))
         return true
