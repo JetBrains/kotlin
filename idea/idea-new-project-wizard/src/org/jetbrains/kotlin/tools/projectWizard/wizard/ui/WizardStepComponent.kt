@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 
 abstract class WizardStepComponent(
-    valuesReadingContext: ValuesReadingContext
-) : DynamicComponent(valuesReadingContext)
+    readingContext: ReadingContext
+) : DynamicComponent(readingContext)

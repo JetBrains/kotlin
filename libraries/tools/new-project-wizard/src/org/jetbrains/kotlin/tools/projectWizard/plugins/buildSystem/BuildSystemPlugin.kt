@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
-import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
-import java.nio.file.Path
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
     val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
@@ -127,12 +125,12 @@ val BuildSystemType.isGradle
     get() = this == BuildSystemType.GradleGroovyDsl
             || this == BuildSystemType.GradleKotlinDsl
 
-val TaskRunningContext.allModules
+val WritingContext.allModules
     get() = BuildSystemPlugin::buildFiles.propertyValue.flatMap { buildFile ->
         buildFile.modules.modules
     }
 
-val TaskRunningContext.allModulesPaths
+val WritingContext.allModulesPaths
     get() = BuildSystemPlugin::buildFiles.propertyValue.flatMap { buildFile ->
         val paths = when (val structure = buildFile.modules) {
             is MultiplatformModulesStructureIR -> listOf(buildFile.directoryPath)
@@ -147,6 +145,6 @@ val TaskRunningContext.allModulesPaths
     }
 
 
-val ValuesReadingContext.buildSystemType: BuildSystemType
+val ReadingContext.buildSystemType: BuildSystemType
     get() = BuildSystemPlugin::type.reference.settingValue
 

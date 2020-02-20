@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectName
-import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
@@ -106,7 +105,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }
     }
 
-    private fun TaskRunningContext.applyFileTemplatesFromSourceset(
+    private fun WritingContext.applyFileTemplatesFromSourceset(
         module: ModuleIR,
         templateEngine: TemplateEngine,
         interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
@@ -129,7 +128,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }.sequenceIgnore()
     }
 
-    private fun TaskRunningContext.defaultSettings(moduleIR: ModuleIR) = mapOf(
+    private fun WritingContext.defaultSettings(moduleIR: ModuleIR) = mapOf(
         "projectName" to projectName,
         "moduleName" to moduleIR.name
     )

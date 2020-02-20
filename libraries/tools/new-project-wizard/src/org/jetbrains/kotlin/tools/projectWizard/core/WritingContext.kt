@@ -5,15 +5,15 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.Task1
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Task1Reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 
-class TaskRunningContext(
+class WritingContext(
     context: Context,
     servicesManager: ServicesManager,
     isUnitTestMode: Boolean
-) : ValuesReadingContext(context, servicesManager, isUnitTestMode) {
+) : ReadingContext(context, servicesManager, isUnitTestMode) {
     fun <A, B : Any> Task1Reference<A, B>.execute(value: A): TaskResult<B> {
         @Suppress("UNCHECKED_CAST")
         val task = context.taskContext.getEntity(this) as Task1<A, B>
-        return task.action(this@TaskRunningContext, value)
+        return task.action(this@WritingContext, value)
     }
 
     inline fun <reified T : Any> PropertyReference<T>.update(

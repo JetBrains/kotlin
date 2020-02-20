@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
@@ -17,7 +17,7 @@ class ConsoleJvmApplicationTemplate : Template() {
     """.trimIndent()
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
 
-    override fun TaskRunningContext.getIrsToAddToBuildFile(
+    override fun WritingContext.getIrsToAddToBuildFile(
         module: ModuleIR
     ) = buildList<BuildSystemIR> {
         +runTaskIrs("MainKt")
@@ -26,7 +26,7 @@ class ConsoleJvmApplicationTemplate : Template() {
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.addWithJavaIntoJvmTarget()
 
-    override fun TaskRunningContext.getFileTemplates(module: ModuleIR) =
+    override fun WritingContext.getFileTemplates(module: ModuleIR) =
         buildList<FileTemplateDescriptorWithPath> {
             +(FileTemplateDescriptor("$id/main.kt.vm", "main.kt".asPath()) asSrcOf SourcesetType.main)
         }

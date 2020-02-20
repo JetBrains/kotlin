@@ -71,7 +71,7 @@ abstract class Template : SettingsOwner {
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
-    fun ValuesReadingContext.initDefaultValuesFor(module: Module, context: Context) {
+    fun ReadingContext.initDefaultValuesFor(module: Module, context: Context) {
         withSettingsOf(module) {
             settings.forEach { setting ->
                 val defaultValue = setting.savedOrDefaultValue ?: return@forEach
@@ -80,10 +80,10 @@ abstract class Template : SettingsOwner {
         }
     }
 
-    open fun TaskRunningContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
+    open fun WritingContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
 
     //TODO: use setting reading context
-    open fun TaskRunningContext.getIrsToAddToBuildFile(
+    open fun WritingContext.getIrsToAddToBuildFile(
         module: ModuleIR
     ): List<BuildSystemIR> = emptyList()
 
@@ -92,13 +92,13 @@ abstract class Template : SettingsOwner {
         targetConfigurationIR: TargetConfigurationIR
     ): TargetConfigurationIR = targetConfigurationIR
 
-    open fun TaskRunningContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
+    open fun WritingContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
 
     open fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = emptyList()
 
-    open fun ValuesReadingContext.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = emptyList()
+    open fun ReadingContext.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = emptyList()
 
-    fun TaskRunningContext.applyToSourceset(
+    fun WritingContext.applyToSourceset(
         module: ModuleIR
     ): TaskResult<TemplateApplicationResult> {
         val librariesToAdd = getRequiredLibraries(module)
@@ -118,7 +118,7 @@ abstract class Template : SettingsOwner {
         return result.asSuccess()
     }
 
-    fun TaskRunningContext.settingsAsMap(module: Module): Map<String, Any> =
+    fun WritingContext.settingsAsMap(module: Module): Map<String, Any> =
         withSettingsOf(module) {
             settings.associate { setting ->
                 setting.path to setting.reference.settingValue
@@ -126,7 +126,7 @@ abstract class Template : SettingsOwner {
         } + createDefaultSettings()
 
 
-    private fun TaskRunningContext.createDefaultSettings() = mapOf(
+    private fun WritingContext.createDefaultSettings() = mapOf(
         "projectName" to StructurePlugin::name.settingValue.capitalize()
     )
 
@@ -252,7 +252,7 @@ fun Template.settings(module: Module) = withSettingsOf(module) {
     settings.map { it.reference }
 }
 
-fun TaskRunningContext.applyTemplateToModule(
+fun WritingContext.applyTemplateToModule(
     template: Template?,
     module: ModuleIR
 ): TaskResult<TemplateApplicationResult> = when (template) {

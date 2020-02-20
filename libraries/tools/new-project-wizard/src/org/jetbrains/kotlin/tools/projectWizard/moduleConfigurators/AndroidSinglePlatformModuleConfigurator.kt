@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScrip
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
@@ -44,7 +43,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
     }
 
 
-    override fun ValuesReadingContext.createBuildFileIRs(
+    override fun ReadingContext.createBuildFileIRs(
         configurationData: ModuleConfigurationData,
         module: Module
     ) =
@@ -73,7 +72,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
         ).map(::BuildScriptDependencyIR)
     }
 
-    override fun TaskRunningContext.runArbitraryTask(
+    override fun WritingContext.runArbitraryTask(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path
@@ -88,7 +87,7 @@ object AndroidSinglePlatformModuleConfigurator : ModuleConfiguratorWithSettings(
         )
     }
 
-    override fun ValuesReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    override fun ReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         buildList {
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),

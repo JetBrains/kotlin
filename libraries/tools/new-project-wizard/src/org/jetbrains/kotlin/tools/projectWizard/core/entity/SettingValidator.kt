@@ -3,20 +3,20 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
 import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
 import org.jetbrains.kotlin.tools.projectWizard.core.ValidationError
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 
-inline class SettingValidator<V>(val validate: ValuesReadingContext.(V) -> ValidationResult) {
+inline class SettingValidator<V>(val validate: ReadingContext.(V) -> ValidationResult) {
     infix fun and(other: SettingValidator<V>) = SettingValidator<V> { value ->
         validate(value) and other.validate(this, value)
     }
 
-    operator fun ValuesReadingContext.invoke(value: V) = validate(value)
+    operator fun ReadingContext.invoke(value: V) = validate(value)
 }
 
-fun <V> settingValidator(validator: ValuesReadingContext.(V) -> ValidationResult) =
+fun <V> settingValidator(validator: ReadingContext.(V) -> ValidationResult) =
     SettingValidator(validator)
 
-fun <V> inValidatorContext(validator: ValuesReadingContext.(V) -> SettingValidator<V>) =
+fun <V> inValidatorContext(validator: ReadingContext.(V) -> SettingValidator<V>) =
     SettingValidator<V> { value ->
         validator(value).validate(this, value)
     }
@@ -96,7 +96,7 @@ interface Validatable<out V> {
     val validator: SettingValidator<@UnsafeVariance V>
 }
 
-fun <V, Q : Validatable<Q>> ValuesReadingContext.validateList(list: List<Q>) = settingValidator<V> {
+fun <V, Q : Validatable<Q>> ReadingContext.validateList(list: List<Q>) = settingValidator<V> {
     list.fold(ValidationResult.OK as ValidationResult) { result, value ->
         result and value.validator.validate(this, value).withTarget(value)
     }

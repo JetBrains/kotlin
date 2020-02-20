@@ -177,7 +177,7 @@ val ModuleConfigurator.settings
         else -> emptyList()
     }
 
-fun ValuesReadingContext.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
+fun ReadingContext.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
     is ModuleConfiguratorWithSettings -> buildList<Setting<Any, SettingType<Any>>> {
         +moduleConfigurator.getConfiguratorSettings()
         +moduleConfigurator.getPluginSettings().map { it.pluginSetting }
@@ -201,13 +201,13 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val suggestedModuleName: String? get() = null
     val canContainSubModules: Boolean get() = false
 
-    fun ValuesReadingContext.createBuildFileIRs(
+    fun ReadingContext.createBuildFileIRs(
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
-    fun ValuesReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    fun ReadingContext.createModuleIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         emptyList()
 
     fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
@@ -217,7 +217,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
         null
 
-    fun TaskRunningContext.runArbitraryTask(
+    fun WritingContext.runArbitraryTask(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path

@@ -14,12 +14,12 @@ sealed class Task : EntityBase()
 
 data class Task1<A, B : Any>(
     override val path: String,
-    val action: TaskRunningContext.(A) -> TaskResult<B>
+    val action: WritingContext.(A) -> TaskResult<B>
 ) : Task() {
     class Builder<A, B : Any>(private val name: String) {
-        private var action: TaskRunningContext.(A) -> TaskResult<B> = { Failure() }
+        private var action: WritingContext.(A) -> TaskResult<B> = { Failure() }
 
-        fun withAction(action: TaskRunningContext.(A) -> TaskResult<B>) {
+        fun withAction(action: WritingContext.(A) -> TaskResult<B>) {
             this.action = action
         }
 
@@ -38,7 +38,7 @@ data class Task1<A, B : Any>(
 
 data class PipelineTask(
     override val path: String,
-    val action: TaskRunningContext.() -> TaskResult<Unit>,
+    val action: WritingContext.() -> TaskResult<Unit>,
     val before: List<PipelineTaskReference>,
     val after: List<PipelineTaskReference>,
     val phase: GenerationPhase,
@@ -49,7 +49,7 @@ data class PipelineTask(
         private val name: String,
         private val phase: GenerationPhase
     ) {
-        private var action: TaskRunningContext.() -> TaskResult<Unit> = { UNIT_SUCCESS }
+        private var action: WritingContext.() -> TaskResult<Unit> = { UNIT_SUCCESS }
         private val before = mutableListOf<PipelineTaskReference>()
         private val after = mutableListOf<PipelineTaskReference>()
 
@@ -57,7 +57,7 @@ data class PipelineTask(
 
         var title: String? = null
 
-        fun withAction(action: TaskRunningContext.() -> TaskResult<Unit>) {
+        fun withAction(action: WritingContext.() -> TaskResult<Unit>) {
             this.action = action
         }
 

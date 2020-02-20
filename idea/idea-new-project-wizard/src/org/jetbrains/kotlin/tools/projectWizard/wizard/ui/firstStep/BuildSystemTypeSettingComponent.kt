@@ -6,31 +6,26 @@ import icons.OpenapiIcons
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.UIComponentDelegatingSettingComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
-import java.awt.BorderLayout
 
 
 class BuildSystemTypeSettingComponent(
-    valuesReadingContext: ValuesReadingContext
+    readingContext: ReadingContext
 ) : UIComponentDelegatingSettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
     BuildSystemPlugin::type.reference,
-    valuesReadingContext
+    readingContext
 ) {
     override val uiComponent: DropDownComponent<BuildSystemType> = DropDownComponent(
-        valuesReadingContext,
+        readingContext,
         setting.type.values,
         labelText = "Build System",
-        filter = { value -> setting.type.filter(valuesReadingContext, reference, value) },
+        filter = { value -> setting.type.filter(readingContext, reference, value) },
         validator = setting.validator,
         iconProvider = BuildSystemType::icon,
         onValueUpdate = { value = it }

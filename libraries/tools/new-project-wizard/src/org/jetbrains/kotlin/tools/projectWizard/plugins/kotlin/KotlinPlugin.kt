@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.pomIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
@@ -98,7 +97,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     }
 
 
-    private fun TaskRunningContext.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
+    private fun WritingContext.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
         with(
             ModulesToIRsConverter(
                 ModuleConfigurationData(

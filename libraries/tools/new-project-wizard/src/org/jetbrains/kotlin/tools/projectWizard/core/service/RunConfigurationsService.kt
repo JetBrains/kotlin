@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.service
 
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 
 interface RunConfigurationsService : WizardService {
-    fun ValuesReadingContext.addRunConfigurations(configurations: List<WizardRunConfiguration>)
+    fun ReadingContext.addRunConfigurations(configurations: List<WizardRunConfiguration>)
 }
 
 class RunConfigurationsServiceImpl : RunConfigurationsService, IdeaIndependentWizardService {
-    override fun ValuesReadingContext.addRunConfigurations(configurations: List<WizardRunConfiguration>) = Unit
+    override fun ReadingContext.addRunConfigurations(configurations: List<WizardRunConfiguration>) = Unit
 }

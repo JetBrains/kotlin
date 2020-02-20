@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.ToolbarDecorator
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -18,8 +18,8 @@ import java.awt.Dimension
 import javax.swing.JComponent
 
 class SourcesetDependenciesSettingsComponent(
-    valuesReadingContext: ValuesReadingContext
-) : DynamicComponent(valuesReadingContext) {
+    readingContext: ReadingContext
+) : DynamicComponent(readingContext) {
     private val sourcesetDependenciesList = SourcesetDependenciesList()
 
     private val toolbarDecorator: ToolbarDecorator = ToolbarDecorator.createDecorator(sourcesetDependenciesList).apply {

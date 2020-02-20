@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizard
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
-open class ValuesReadingContext(
+open class ReadingContext(
     val context: Context,
     private val servicesManager: ServicesManager,
     val isUnitTestMode: Boolean

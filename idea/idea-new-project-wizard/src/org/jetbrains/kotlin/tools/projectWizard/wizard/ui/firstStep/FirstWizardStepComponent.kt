@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -22,19 +22,19 @@ class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.v
     }
 }
 
-class BuildSystemSubStep(valuesReadingContext: ValuesReadingContext) :
-    SubStep(valuesReadingContext) {
-    private val buildSystemSetting = BuildSystemTypeSettingComponent(valuesReadingContext).asSubComponent()
+class BuildSystemSubStep(readingContext: ReadingContext) :
+    SubStep(readingContext) {
+    private val buildSystemSetting = BuildSystemTypeSettingComponent(readingContext).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
         add(buildSystemSetting.component, BorderLayout.CENTER)
     }
 }
 
-class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
-    SubStep(valuesReadingContext) {
+class TemplatesSubStep(readingContext: ReadingContext) :
+    SubStep(readingContext) {
     private val projectTemplateSettingComponent =
-        ProjectTemplateSettingComponent(valuesReadingContext) { projectTemplate ->
+        ProjectTemplateSettingComponent(readingContext) { projectTemplate ->
             templateDescriptionComponent.setTemplate(projectTemplate)
         }.asSubComponent()
 
@@ -57,7 +57,7 @@ class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
         }
         read {
             allModules().forEach { module ->
-                module.apply { initDefaultValuesForSettings(valuesReadingContext.context) }
+                module.apply { initDefaultValuesForSettings(readingContext.context) }
             }
         }
     }
@@ -70,7 +70,7 @@ class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
             module.subModules.forEach(::addModule)
         }
 
-        valuesReadingContext.context.settingContext[KotlinPlugin::modules.reference]
+        readingContext.context.settingContext[KotlinPlugin::modules.reference]
             ?.forEach(::addModule)
 
         return modules

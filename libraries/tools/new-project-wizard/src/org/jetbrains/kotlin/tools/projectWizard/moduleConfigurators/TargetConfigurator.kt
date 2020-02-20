@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
@@ -20,8 +19,8 @@ interface TargetConfigurator : ModuleConfiguratorWithModuleType {
 
     fun canCoexistsWith(other: List<TargetConfigurator>): Boolean = true
 
-    fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR>
-    fun ValuesReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
+    fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR>
+    fun ReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = emptyList()
 }
 
 abstract class TargetConfiguratorWithTests : ModuleConfiguratorWithTests(), TargetConfigurator
@@ -40,7 +39,7 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     override val suggestedModuleName: String? get() = moduleSubType.name
 
 
-    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(moduleSubType),
             createInnerTargetIrs(module)
@@ -64,7 +63,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
-    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
             buildList {
@@ -82,7 +81,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     override val suggestedModuleName = "nodeJs"
 
 
-    override fun ValuesReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
             buildList {
@@ -110,7 +109,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator(),
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
-    override fun ValuesReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
+    override fun ReadingContext.createInnerTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         val targetVersionValue = withSettingsOf(module) { targetJvmVersion.reference.settingValue.value }
         when {
             buildSystemType.isGradle -> {

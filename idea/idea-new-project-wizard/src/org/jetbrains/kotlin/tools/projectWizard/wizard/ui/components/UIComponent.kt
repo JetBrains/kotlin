@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
@@ -19,11 +18,11 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 abstract class UIComponent<V : Any>(
-    private val valuesReadingContext: ValuesReadingContext,
+    private val readingContext: ReadingContext,
     labelText: String? = null,
     private val validator: SettingValidator<V>? = null,
     private val onValueUpdate: (V) -> Unit = {}
-) : DynamicComponent(valuesReadingContext), ErrorAwareComponent, FocusableComponent, Disposable {
+) : DynamicComponent(readingContext), ErrorAwareComponent, FocusableComponent, Disposable {
     private val validationIndicator by lazy(LazyThreadSafetyMode.NONE) {
         if (validator != null)
             IdeaBasedComponentValidator(this, getValidatorTarget())
@@ -70,7 +69,7 @@ abstract class UIComponent<V : Any>(
     fun validate(value: V) {
         if (validator == null) return
         if (validationIndicator == null) return
-        validationIndicator?.updateValidationState(validator.validate(valuesReadingContext, value))
+        validationIndicator?.updateValidationState(validator.validate(readingContext, value))
     }
 
     override fun focusOn() {
@@ -78,11 +77,11 @@ abstract class UIComponent<V : Any>(
     }
 
     override fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent? = takeIf {
-        getUiValue()?.let { validator?.validate?.invoke(valuesReadingContext, it)?.isSpecificError(error) } == true
+        getUiValue()?.let { validator?.validate?.invoke(readingContext, it)?.isSpecificError(error) } == true
     }
 }
 
-fun <V : Any> ValuesReadingContext.valueForSetting(
+fun <V : Any> ReadingContext.valueForSetting(
     uiComponent: UIComponent<V>,
     setting: Setting<V, SettingType<V>>
 ): V? = setting.savedOrDefaultValue ?: uiComponent.getUiValue()

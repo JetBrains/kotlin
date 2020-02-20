@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -84,7 +84,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator(),
         )
 
 
-    override fun ValuesReadingContext.createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
+    override fun ReadingContext.createBuildFileIRs(configurationData: ModuleConfigurationData, module: Module): List<BuildSystemIR> =
         buildList {
             +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
 

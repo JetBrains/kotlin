@@ -9,7 +9,7 @@ import com.intellij.util.ui.StatusText
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
@@ -26,17 +26,17 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 class TemplatesComponent(
-    valuesReadingContext: ValuesReadingContext,
+    readingContext: ReadingContext,
     uiEditorUsagesStats: UiEditorUsageStats
-) : DynamicComponent(valuesReadingContext), ErrorAwareComponent {
+) : DynamicComponent(readingContext), ErrorAwareComponent {
     private val chooseTemplateComponent: ChooseTemplateComponent =
-        ChooseTemplateComponent(valuesReadingContext) { template ->
+        ChooseTemplateComponent(readingContext) { template ->
             uiEditorUsagesStats.moduleTemplatesSet++
             module?.template = template
             switchState(template)
         }
 
-    private val templateSettingsComponent = TemplateSettingsComponent(valuesReadingContext) {
+    private val templateSettingsComponent = TemplateSettingsComponent(readingContext) {
         if (MessagesEx.showOkCancelDialog(
                 component,
                 "Do you want to remove selected template from module",
@@ -84,9 +84,9 @@ class TemplatesComponent(
 }
 
 class ChooseTemplateComponent(
-    private val valuesReadingContext: ValuesReadingContext,
+    private val readingContext: ReadingContext,
     private val onTemplateChosen: (Template) -> Unit
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(readingContext) {
     private enum class State(val text: String) {
         MODULE_SELECTED_AND_TEMPLATES_AVAILABLE("You can configure a template for selected module"),
         MODULE_SELECTED_AND_NO_TEMPLATES_AVAILABLE("No templates available for selected module"),
@@ -105,7 +105,7 @@ class ChooseTemplateComponent(
     }
 
     private val allTemplates
-        get() = with(valuesReadingContext) {
+        get() = with(readingContext) {
             TemplatesPlugin::templates.propertyValue
         }
 
@@ -247,9 +247,9 @@ class TemplateDescriptionComponent(
 }
 
 private class TemplateSettingsComponent(
-    valuesReadingContext: ValuesReadingContext,
+    readingContext: ReadingContext,
     removeTemplate: () -> Unit
-) : DynamicComponent(valuesReadingContext), ErrorAwareComponent {
+) : DynamicComponent(readingContext), ErrorAwareComponent {
     private val templateDescriptionComponent = TemplateDescriptionComponent(
         needRemoveButton = true,
         nonDefaultBackgroundColor = UIUtil.getEditorPaneBackground(),
@@ -258,7 +258,7 @@ private class TemplateSettingsComponent(
         component.bordered(needTopEmptyBorder = false, needBottomEmptyBorder = false)
     }
 
-    private val settings = SettingsList(emptyList(), valuesReadingContext).apply {
+    private val settings = SettingsList(emptyList(), readingContext).apply {
         component.bordered()
     }
 

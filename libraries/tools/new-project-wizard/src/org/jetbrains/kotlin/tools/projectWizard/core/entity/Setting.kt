@@ -131,7 +131,7 @@ class SettingContext(val onUpdated: (SettingReference<*, *>) -> Unit) {
         onUpdated(reference)
     }
 
-    fun ValuesReadingContext.initPluginSettings(settings: List<PluginSetting<*, *>>) {
+    fun ReadingContext.initPluginSettings(settings: List<PluginSetting<*, *>>) {
         for (setting in settings) {
             setting.savedOrDefaultValue?.let { values[setting.path] = it }
         }
@@ -215,7 +215,7 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
         this.validator = this.validator and validator
     }
 
-    fun validate(validator: ValuesReadingContext.(V) -> ValidationResult) {
+    fun validate(validator: ReadingContext.(V) -> ValidationResult) {
         this.validator = this.validator and settingValidator(validator)
     }
 
@@ -318,7 +318,7 @@ class DropDownSettingType<V : DisplayableSettingItem>(
 }
 
 typealias DropDownSettingTypeFilter <V> =
-        ValuesReadingContext.(SettingReference<V, DropDownSettingType<V>>, V) -> Boolean
+        ReadingContext.(SettingReference<V, DropDownSettingType<V>>, V) -> Boolean
 
 
 class ValueSettingType<V : Any>(

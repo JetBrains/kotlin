@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
 abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager, private val isUnitTestMode: Boolean) {
     val context = Context(createPlugins, EventManager())
-    val valuesReadingContext = ValuesReadingContext(context, servicesManager, isUnitTestMode)
+    val valuesReadingContext = ReadingContext(context, servicesManager, isUnitTestMode)
     protected val plugins = context.plugins
     protected val pluginSettings = plugins.flatMap { it.declaredSettings }.distinctBy { it.path }
 
@@ -20,7 +20,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         }
 
     @Suppress("UNUSED_PARAMETER")
-    fun ValuesReadingContext.validate(phases: Set<GenerationPhase>): TaskResult<Unit> =
+    fun ReadingContext.validate(phases: Set<GenerationPhase>): TaskResult<Unit> =
         context.settingContext.allPluginSettings.map { setting ->
             val value = context.settingContext.pluginSettingValue(setting) ?: return@map ValidationResult.OK
             when (setting.neededAtPhase) {
@@ -29,7 +29,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
             }
         }.fold(ValidationResult.OK, ValidationResult::and).toResult()
 
-    private fun ValuesReadingContext.saveSettingValues(phases: Set<GenerationPhase>) {
+    private fun ReadingContext.saveSettingValues(phases: Set<GenerationPhase>) {
         for (setting in pluginSettings) {
             if (setting.neededAtPhase !in phases) continue
             if (!setting.isSavable) continue
@@ -47,7 +47,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         onTaskExecuting: (PipelineTask) -> Unit = {}
     ): TaskResult<Unit> = computeM {
         context.checkAllRequiredSettingPresent(phases).ensure()
-        val taskRunningContext = TaskRunningContext(context, servicesManager.withServices(services), isUnitTestMode)
+        val taskRunningContext = WritingContext(context, servicesManager.withServices(services), isUnitTestMode)
         taskRunningContext.validate(phases).ensure()
         taskRunningContext.saveSettingValues(phases)
         val (tasksSorted) = context.sortTasks().map { tasks ->

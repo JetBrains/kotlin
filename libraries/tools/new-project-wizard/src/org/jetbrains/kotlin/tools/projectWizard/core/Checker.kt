@@ -5,14 +5,14 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
 
 
 sealed class CheckerRule {
-    abstract fun check(context: ValuesReadingContext): Boolean
+    abstract fun check(context: ReadingContext): Boolean
 }
 
 data class RuleBySettingValue(
     val settingReference: SettingReference<Any, SettingType<Any>>,
     val expectedValue: Any
 ) : CheckerRule() {
-    override fun check(context: ValuesReadingContext): Boolean = with(context) {
+    override fun check(context: ReadingContext): Boolean = with(context) {
         settingReference.notRequiredSettingValue() == expectedValue
     }
 }
@@ -21,11 +21,11 @@ data class OrRule(
     val left: CheckerRule,
     val right: CheckerRule
 ) : CheckerRule() {
-    override fun check(context: ValuesReadingContext): Boolean = left.check(context) || right.check(context)
+    override fun check(context: ReadingContext): Boolean = left.check(context) || right.check(context)
 }
 
 data class Checker(val rules: List<CheckerRule>) {
-    fun check(context: ValuesReadingContext) =
+    fun check(context: ReadingContext) =
         rules.all { rule -> rule.check(context) }
 
     class Builder {
@@ -64,5 +64,5 @@ interface ContextOwner {
 interface ActivityCheckerOwner {
     val activityChecker: Checker
 
-    fun isActive(valuesReadingContext: ValuesReadingContext) = activityChecker.check(valuesReadingContext)
+    fun isActive(readingContext: ReadingContext) = activityChecker.check(readingContext)
 }

@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 
 abstract class Component : Displayable {
@@ -15,11 +15,11 @@ abstract class Component : Displayable {
     }
 }
 
-abstract class DynamicComponent(private val valuesReadingContext: ValuesReadingContext) : Component() {
+abstract class DynamicComponent(private val readingContext: ReadingContext) : Component() {
     //TODO do not use it in future
-    protected val context = valuesReadingContext.context
+    protected val context = readingContext.context
     protected val eventManager
-        get() = valuesReadingContext.context.eventManager
+        get() = readingContext.context.eventManager
 
     private var isInitialized: Boolean = false
 
@@ -29,7 +29,7 @@ abstract class DynamicComponent(private val valuesReadingContext: ValuesReadingC
     }
 
     var <V : Any, T : SettingType<V>> SettingReference<V, T>.value: V?
-        get() = with(valuesReadingContext) { notRequiredSettingValue() }
+        get() = with(readingContext) { notRequiredSettingValue() }
         set(value) {
             with(context) { settingContext[this@value] = value!! }
         }
@@ -38,13 +38,13 @@ abstract class DynamicComponent(private val valuesReadingContext: ValuesReadingC
         get() = reference.value
 
     init {
-        valuesReadingContext.context.eventManager.addSettingUpdaterEventListener { reference ->
+        readingContext.context.eventManager.addSettingUpdaterEventListener { reference ->
             if (isInitialized) onValueUpdated(reference)
         }
     }
 
-    protected fun <T> read(reader: ValuesReadingContext.() -> T): T =
-        reader(valuesReadingContext)
+    protected fun <T> read(reader: ReadingContext.() -> T): T =
+        reader(readingContext)
 
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }

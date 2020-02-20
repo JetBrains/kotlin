@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
@@ -13,11 +13,11 @@ import javax.swing.BorderFactory
 import javax.swing.JComponent
 
 class ProjectTemplateSettingComponent(
-    valuesReadingContext: ValuesReadingContext,
+    readingContext: ReadingContext,
     private val onSelected: (ProjectTemplate) -> Unit
 ) : SettingComponent<ProjectTemplate, DropDownSettingType<ProjectTemplate>>(
     ProjectTemplatesPlugin::template.reference,
-    valuesReadingContext
+    readingContext
 ) {
     override val validationIndicator: ValidationIndicator? get() = null
 

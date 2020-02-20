@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
@@ -35,7 +35,7 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
             version = configurationData.kotlinVersion
         )
 
-    override fun ValuesReadingContext.createBuildFileIRs(
+    override fun ReadingContext.createBuildFileIRs(
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> = buildList {

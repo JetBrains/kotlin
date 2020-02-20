@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTabbedPane
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
@@ -20,15 +19,15 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(
-    valuesReadingContext: ValuesReadingContext,
+    readingContext: ReadingContext,
     uiEditorUsagesStats: UiEditorUsageStats
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(readingContext) {
     private val validateModuleName =
         StringValidators.shouldNotBeBlank("Module name") and
                 StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
 
-    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), valuesReadingContext).asSubComponent()
-    private val templateComponent = TemplatesComponent(valuesReadingContext, uiEditorUsagesStats).asSubComponent()
+    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), readingContext).asSubComponent()
+    private val templateComponent = TemplatesComponent(readingContext, uiEditorUsagesStats).asSubComponent()
 
     private val tabPanel = JBTabbedPane().apply {
         add("Template", templateComponent.component)
@@ -43,7 +42,7 @@ class ModuleSettingsComponent(
     }
 
     private val nameField = TextFieldComponent(
-        valuesReadingContext,
+        readingContext,
         labelText = "Name",
         onValueUpdate = { value ->
             module?.name = value
