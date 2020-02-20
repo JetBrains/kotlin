@@ -95,42 +95,52 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
             AppleProjectDataService.forEachProject(project) { appleProject, moduleData, rootProjectPath ->
                 for ((name, target) in appleProject.targets) {
                     val buildConfig = "Debug"
+                    val buildVariant = OCVariant(buildConfig)
                     // TODO Enable different variants (= build configurations, architectures, …)
                     val id = "${moduleData.id}:$name:$buildConfig"
+                    val testId = "$id:test"
                     assert(alreadyAddedConfigurations.add(id)) { "Duplicate configuration id" }
 
-                    val config = workspace.addConfiguration(id, name, OCVariant(buildConfig))
-                    configData[id] = Data(target, newDisposable)
+                    val config = workspace.addConfiguration(id, name, buildVariant)
+                    val testConfig = workspace.addConfiguration(testId, "$name Tests", buildVariant)
 
                     // TODO Proper compiler detection and switch building
                     val compilerKind = OCCompilerKind.CLANG
 
-                    for (kind in OCLanguageKindProvider.getAllLanguageKinds()) {
-                        if (kind !is CLanguageKind) continue
+                    fun configure(id: String, config: OCResolveConfiguration.ModifiableModel, directories: Set<File>) {
+                        val data = Data(target, newDisposable)
+                        configData[id] = data
 
-                        val switches = CidrSwitchBuilder()
-                            //.addSingleRaw("-arch").addSingleRaw(architectures.get(0))
-                            .addSingleRaw("-isysroot").addSingleRaw(sdk.homePath)
-                            .addSingleRaw("-fmodules") // Enable modules support (@import)
-                        if (kind.isObjC) switches.addSingleRaw("-fobjc-arc")
+                        for (kind in OCLanguageKindProvider.getAllLanguageKinds()) {
+                            if (kind !is CLanguageKind) continue
 
-                        val langSettings = config.getLanguageCompilerSettings(kind)
-                        langSettings.setCompiler(compilerKind, File("clang"), File(rootProjectPath))
-                        langSettings.setCompilerSwitches(switches.build())
+                            val switches = CidrSwitchBuilder()
+                                //.addSingleRaw("-arch").addSingleRaw(architectures.get(0))
+                                .addSingleRaw("-isysroot").addSingleRaw(sdk.homePath)
+                                .addSingleRaw("-fmodules") // Enable modules support (@import)
+                            if (kind.isObjC) switches.addSingleRaw("-fobjc-arc")
+
+                            val langSettings = config.getLanguageCompilerSettings(kind)
+                            langSettings.setCompiler(compilerKind, File("clang"), File(rootProjectPath))
+                            langSettings.setCompilerSwitches(switches.build())
+                        }
+
+                        for (file in directories.flatMap {
+                            it.listFiles()?.asList() ?: emptyList()
+                        }) { // don't flatten
+                            if (OCFileTypeHelpers.isHeaderFile(file.name)) continue
+                            val kind = // TODO Caution hack - should use AppCodeLanguageKindCalculatorHelper instead
+                                OCLanguageKindProvider.getAllLanguageKinds().find { it.defaultSourceExtension.equals(file.extension, true) }
+                                    ?: OCLanguageKindCalculator.calculateMinimalKindByExtension(project, file.name)
+                                    ?: continue
+                            config.addSource(VfsUtilCore.fileToUrl(file), kind)
+                        }
+
+                        compilerInfoSession.schedule(id, config, environment)
                     }
 
-                    for (file in target.sourceFolders.flatMap {
-                        it.listFiles()?.asList() ?: emptyList()
-                    }) { // don't flatten
-                        if (OCFileTypeHelpers.isHeaderFile(file.name)) continue
-                        val kind = // TODO Caution hack - should use AppCodeLanguageKindCalculatorHelper instead
-                            OCLanguageKindProvider.getAllLanguageKinds().find { it.defaultSourceExtension.equals(file.extension, true) }
-                                ?: OCLanguageKindCalculator.calculateMinimalKindByExtension(project, file.name)
-                                ?: continue
-                        config.addSource(VfsUtilCore.fileToUrl(file), kind)
-                    }
-
-                    compilerInfoSession.schedule(id, config, environment)
+                    configure(id, config, target.sourceFolders)
+                    configure(testId, testConfig, target.testFolders)
                 }
             }
 
