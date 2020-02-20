@@ -98,7 +98,8 @@ open class KotlinJsProjectExtension :
     // target is public property
     // Users can write kotlin.target and it should work
     // So call of target should init default canfiguration
-    private var _target: KotlinJsTargetDsl? = null
+    internal var _target: KotlinJsTargetDsl? = null
+        private set
 
     override var target: KotlinJsTargetDsl
         get() {

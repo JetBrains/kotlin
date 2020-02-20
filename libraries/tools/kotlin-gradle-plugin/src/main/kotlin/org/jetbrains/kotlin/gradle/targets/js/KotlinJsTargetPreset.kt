@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
@@ -39,6 +40,25 @@ open class KotlinJsTargetPreset(
             this.irTarget = irPreset?.createTarget(
                 lowerCamelCaseName(name.removeJsCompilerSuffix(KotlinJsCompilerType.legacy), KotlinJsCompilerType.ir.name)
             )
+
+            project.whenEvaluated {
+                if (!isBrowserConfigured && !isNodejsConfigured) {
+                    project.logger.warn(
+                        """
+                            Choose sub target (or both), for which js is necessary
+                            In next releases it will be error
+                            Use
+                            kotlin {
+                                js {
+                                    // Affect in which tests are executed and final dist (in browser is only one bundle file)
+                                    browser()
+                                    nodejs()
+                                }
+                            }
+                        """.trimIndent()
+                    )
+                }
+            }
         }
     }
 
