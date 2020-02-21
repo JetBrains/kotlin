@@ -75,18 +75,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 return super.visitFunction(declaration).also { functionStack.pop() }
             }
 
-            override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
-                val receiverType = expression.dispatchReceiver?.type
-                val newExpression = super.visitMemberAccess(expression) as IrMemberAccessExpression
-                if (receiverType != null && receiverType != newExpression.dispatchReceiver?.type) {
-                    newExpression.dispatchReceiver = IrTypeOperatorCallImpl(
-                        expression.startOffset, expression.endOffset, receiverType,
-                        IrTypeOperator.IMPLICIT_CAST, receiverType, newExpression.dispatchReceiver!!
-                    )
-                }
-                return newExpression
-            }
-
             override fun visitCall(expression: IrCall): IrExpression {
                 // This is a property, no need to add continuation parameter, since this cannot be suspend call
                 if (functionStack.isEmpty()) return super.visitCall(expression)
@@ -790,7 +778,9 @@ private fun IrCall.createSuspendFunctionCallViewIfNeeded(context: JvmBackendCont
     val view = (symbol.owner as IrSimpleFunction).suspendFunctionViewOrStub(context)
     if (view == symbol.owner) return this
 
-    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol, superQualifierSymbol = superQualifierSymbol).also {
+    // While the new callee technically returns `<original type> | COROUTINE_SUSPENDED`, the latter case is handled
+    // by a method visitor so at an IR overview we don't need to consider it.
+    return IrCallImpl(startOffset, endOffset, type, view.symbol, superQualifierSymbol = superQualifierSymbol).also {
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
