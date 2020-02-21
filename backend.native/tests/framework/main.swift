@@ -188,6 +188,18 @@ protocol TestProvider {
     var tests: [TestCase] { get }
 }
 
+class SimpleTestProvider : TestProvider {
+    var tests: [TestCase] = []
+
+    init() {
+        providers.append(self)
+    }
+
+    func test(_ name: String, _ method: @escaping () throws -> Void) {
+        tests.append(TestCase(name: name, method: withAutorelease(method)))
+    }
+}
+
 var providers: [TestProvider] = []
 
 private func execute(tests: [TestCase]) {
