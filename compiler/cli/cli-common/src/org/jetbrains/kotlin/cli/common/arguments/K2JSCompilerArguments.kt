@@ -129,6 +129,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var irOnly: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xir-module-name",
+        valueDescription = "<name>",
+        description = "Specify a compilation module name for IR backend"
+    )
+    var irModuleName: String? by NullableStringFreezableVar(null)
+
+    @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files."
