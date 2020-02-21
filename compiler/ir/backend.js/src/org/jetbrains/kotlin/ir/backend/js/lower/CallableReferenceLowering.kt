@@ -43,28 +43,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
             expression.transformChildrenVoid(this)
 
-            if (expression.function.isSuspend) {
-                val startOffset = expression.startOffset
-                val endOffset = expression.endOffset
-                val type = expression.type
-                val origin = expression.origin
-                val function = expression.function
-
-                return IrBlockImpl(
-                    startOffset, endOffset, type, origin,
-                    listOf(
-                        function,
-                        IrFunctionReferenceImpl(
-                            startOffset, endOffset, type,
-                            function.symbol,
-                            typeArgumentsCount = 0,
-                            reflectionTarget = null,
-                            origin = origin
-                        )
-                    )
-                )
-            }
-
             val function = expression.function
             val (clazz, ctor) = buildLambdaReference(function, expression)
 
