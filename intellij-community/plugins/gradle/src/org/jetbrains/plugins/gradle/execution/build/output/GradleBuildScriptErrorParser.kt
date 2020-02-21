@@ -31,7 +31,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     if (whereOrWhatLine == "* Where:") {
       location = reader.readLine() ?: return false
       filter = GradleConsoleFilter(null)
-      filter.applyFilter(location, 0) ?: return false
+      filter.applyFilter(location, location.length) ?: return false
       if (!reader.readLine().isNullOrBlank()) return false
       whereOrWhatLine = reader.readLine()
     }

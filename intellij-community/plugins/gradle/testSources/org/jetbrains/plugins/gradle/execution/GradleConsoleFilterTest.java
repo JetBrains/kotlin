@@ -37,13 +37,13 @@ public class GradleConsoleFilterTest extends CodeInsightFixtureTestCase {
 
   private void doTestExpectingNull(@NotNull String line) {
     GradleConsoleFilter filter = new GradleConsoleFilter(myFixture.getProject());
-    Filter.Result result = filter.applyFilter(line, 0);
+    Filter.Result result = filter.applyFilter(line, line.length());
     assertNull(result);
   }
 
   private void doTest(String line, String expectedFileName, int expectedLineNumber) {
     GradleConsoleFilter filter = new GradleConsoleFilter(myFixture.getProject());
-    filter.applyFilter(line, 0);
+    filter.applyFilter(line, line.length());
     assertEquals(expectedFileName, filter.getFilteredFileName());
     assertEquals(expectedLineNumber, filter.getFilteredLineNumber());
   }
