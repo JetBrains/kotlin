@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.core.CoreBundle
+import com.intellij.ide.IdeBundle
 import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.command.WriteCommandAction
@@ -16,7 +17,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsBundle
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.replaceService
@@ -39,13 +39,13 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   private fun VirtualFile.findOrCreateChildDirectory(name: String): VirtualFile {
     val file = findChild(name) ?: createChildDirectory(null, name)
-    if (!file.isDirectory) throw IOException(VfsBundle.message("new.directory.failed.error", name))
+    if (!file.isDirectory) throw IOException(IdeBundle.message("new.directory.failed.error", name))
     return file
   }
 
   private fun VirtualFile.findOrCreateChildFile(name: String): VirtualFile {
     val file = findChild(name) ?: createChildData(null, name)
-    if (file.isDirectory) throw IOException(VfsBundle.message("new.file.failed.error", name))
+    if (file.isDirectory) throw IOException(IdeBundle.message("new.file.failed.error", name))
     return file
   }
 
