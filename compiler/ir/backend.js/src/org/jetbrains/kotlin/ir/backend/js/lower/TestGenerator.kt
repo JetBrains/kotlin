@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -35,7 +34,7 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.declarations.forEach {
             if (it is IrClass) {
-                generateTestCalls(it) { suiteForPackage(irFile.fqName).body }
+                generateTestCalls(it) { suiteForPackage(irFile.fqName).function }
             }
 
             // TODO top-level functions
@@ -45,42 +44,37 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
     private val packageSuites = mutableMapOf<FqName, FunctionWithBody>()
 
     private fun suiteForPackage(fqName: FqName) = packageSuites.getOrPut(fqName) {
-        context.suiteFun!!.createInvocation(fqName.asString(), context.testContainer.body as IrBlockBody)
+        context.suiteFun!!.createInvocation(fqName.asString(), context.testContainer)
     }
 
     private data class FunctionWithBody(val function: IrSimpleFunction, val body: IrBlockBody)
 
     private fun IrSimpleFunctionSymbol.createInvocation(
         name: String,
-        parentBody: IrBlockBody,
+        parentFunction: IrSimpleFunction,
         ignored: Boolean = false
     ): FunctionWithBody {
         val body = JsIrBuilder.buildBlockBody(emptyList())
 
-        val function = JsIrBuilder.buildFunction(
-            "$name test fun",
-            context.irBuiltIns.unitType,
-            context.implicitDeclarationFile
-        ).also {
-            it.body = body
-            context.implicitDeclarationFile.declarations += it
-        }
+        val function = JsIrBuilder.buildFunction("$name test fun", context.irBuiltIns.unitType, parentFunction)
+        function.body = body
 
+        val parentBody = parentFunction.body as IrBlockBody
         parentBody.statements += JsIrBuilder.buildCall(this).apply {
             putValueArgument(0, JsIrBuilder.buildString(context.irBuiltIns.stringType, name))
             putValueArgument(1, JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, ignored))
 
             val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
-            putValueArgument(2, JsIrBuilder.buildFunctionReference(refType, function.symbol))
+            putValueArgument(2, JsIrBuilder.buildFunctionExpression(refType, function))
         }
 
         return FunctionWithBody(function, body)
     }
 
-    private fun generateTestCalls(irClass: IrClass, parentBody: () -> IrBlockBody) {
+    private fun generateTestCalls(irClass: IrClass, parentFunction: () -> IrSimpleFunction) {
         if (irClass.modality == Modality.ABSTRACT || irClass.isEffectivelyExternal() || irClass.isExpect) return
 
-        val suiteFunBody by lazy { context.suiteFun!!.createInvocation(irClass.name.asString(), parentBody(), irClass.isIgnored) }
+        val suiteFunBody by lazy { context.suiteFun!!.createInvocation(irClass.name.asString(), parentFunction(), irClass.isIgnored) }
 
         val beforeFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isBefore }
         val afterFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isAfter }
@@ -88,10 +82,10 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
         irClass.declarations.forEach {
             when {
                 it is IrClass ->
-                    generateTestCalls(it) { suiteFunBody.body }
+                    generateTestCalls(it) { suiteFunBody.function }
 
                 it is IrSimpleFunction && it.isTest ->
-                    generateCodeForTestMethod(it, beforeFunctions, afterFunctions, irClass, suiteFunBody.body)
+                    generateCodeForTestMethod(it, beforeFunctions, afterFunctions, irClass, suiteFunBody.function)
             }
         }
     }
@@ -101,9 +95,9 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
         beforeFuns: List<IrSimpleFunction>,
         afterFuns: List<IrSimpleFunction>,
         irClass: IrClass,
-        parentBody: IrBlockBody
+        parentFunction: IrSimpleFunction
     ) {
-        val (fn, body) = context.testFun!!.createInvocation(testFun.name.asString(), parentBody, testFun.isIgnored)
+        val (fn, body) = context.testFun!!.createInvocation(testFun.name.asString(), parentFunction, testFun.isIgnored)
 
         val classVal = JsIrBuilder.buildVar(irClass.defaultType, fn, initializer = irClass.instance())
 

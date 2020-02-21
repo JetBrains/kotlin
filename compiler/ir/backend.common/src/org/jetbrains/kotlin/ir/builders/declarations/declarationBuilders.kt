@@ -105,6 +105,7 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         builder()
         buildFun().also { getter ->
             this@addGetter.getter = getter
+            getter.correspondingPropertySymbol = this@addGetter.symbol
             getter.parent = this@addGetter.parent
         }
     }

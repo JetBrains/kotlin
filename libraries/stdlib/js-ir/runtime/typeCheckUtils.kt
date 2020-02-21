@@ -75,11 +75,11 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 */
 
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
-    val ctor = obj.constructor?.unsafeCast<Ctor>() ?: return false
+    if (jsTypeOf(obj) == "function") {
+        return obj.`$arity`.unsafeCast<Int>() === arity
+    }
 
-    val metadata = ctor.`$metadata$`?.unsafeCast<Metadata>() ?: return false
-
-    return metadata.suspendArity === arity
+    return false
 }
 
 fun isObject(obj: dynamic): Boolean {

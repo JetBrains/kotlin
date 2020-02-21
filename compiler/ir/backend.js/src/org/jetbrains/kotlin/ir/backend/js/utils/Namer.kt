@@ -42,4 +42,5 @@ object Namer {
     val KPROPERTY_GET = "get"
     val KPROPERTY_SET = "set"
     val KCALLABLE_CACHE_SUFFIX = "\$cache"
+    const val KCALLABLE_ARITY = "\$arity"
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.ir.backend.js.lower.InteropCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -66,6 +67,8 @@ private fun isNativeInvoke(call: IrCall): Boolean {
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
     if (simpleFunction.isSuspend) return false
+
+    if (call.origin === InteropCallableReferenceLowering.Companion.EXPLICIT_INVOKE) return false
 
     return simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunctionTypeOrSubtype()
 }
@@ -206,7 +209,9 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
         val argument = expression.getValueArgument(index)
         val result = argument?.accept(transformer, context)
         if (result == null) {
-            assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isExternalOrInheritedFromExternal())
+            assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isExternalOrInheritedFromExternal()) {
+                1
+            }
             JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
         } else
             result

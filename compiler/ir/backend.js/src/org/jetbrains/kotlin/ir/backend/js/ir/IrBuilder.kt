@@ -191,6 +191,9 @@ object JsIrBuilder {
     fun buildFunctionReference(type: IrType, symbol: IrFunctionSymbol, reflectionTarget: IrFunctionSymbol? = symbol) =
         IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, 0, reflectionTarget, null)
 
+    fun buildFunctionExpression(type: IrType, function: IrSimpleFunction) =
+        IrFunctionExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, function, SYNTHESIZED_STATEMENT)
+
     fun buildVar(
         type: IrType,
         parent: IrDeclarationParent?,
