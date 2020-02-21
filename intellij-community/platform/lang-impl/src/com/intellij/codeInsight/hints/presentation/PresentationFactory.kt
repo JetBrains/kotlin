@@ -65,13 +65,28 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
   }
 
 
+  override fun mouseHandling(base: InlayPresentation, clickListener: ClickListener?, hoverListener: HoverListener?): InlayPresentation {
+    return MouseHandlingPresentation(base, clickListener, hoverListener)
+  }
+
   @Contract(pure = true)
-  override fun mouseHandling(
+  @Deprecated(message = "Bad API for Java, use mouseHandling with ClickListener")
+  fun mouseHandling(
     base: InlayPresentation,
     clickListener: ((MouseEvent, Point) -> Unit)?,
     hoverListener: HoverListener?
   ): InlayPresentation {
-    return MouseHandlingPresentation(base, clickListener, hoverListener)
+    val adapter = if (clickListener != null) {
+      object : ClickListener {
+        override fun onClick(event: MouseEvent, translated: Point) {
+          clickListener.invoke(event, translated)
+        }
+      }
+    }
+    else {
+      null
+    }
+    return mouseHandling(base, adapter, hoverListener)
   }
 
   @Contract(pure = true)
