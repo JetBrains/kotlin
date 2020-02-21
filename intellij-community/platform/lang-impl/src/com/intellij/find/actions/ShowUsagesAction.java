@@ -318,7 +318,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     List<Usage> usages = new ArrayList<>();
     Set<UsageNode> visibleNodes = new LinkedHashSet<>();
-    List<UsageNode> data = collectData(usages, visibleNodes, usageView, presentation);
+    List<UsageNode> data = collectData(usages, visibleNodes, usageView);
     table.setTableModel(data);
 
     boolean isPreviewMode =
@@ -723,8 +723,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   @NotNull
   private static List<UsageNode> collectData(@NotNull List<? extends Usage> usages,
                                              @NotNull Collection<? extends UsageNode> visibleNodes,
-                                             @NotNull UsageViewImpl usageView,
-                                             @NotNull UsageViewPresentation presentation) {
+                                             @NotNull UsageViewImpl usageView) {
     @NotNull List<UsageNode> data = new ArrayList<>();
     int filtered = filtered(usages, usageView);
     if (filtered != 0) {
@@ -800,7 +799,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       popup.setCaption(fullTitle);
     }
 
-    List<UsageNode> data = collectData(usages, nodes, usageView, presentation);
+    List<UsageNode> data = collectData(usages, nodes, usageView);
     ShowUsagesTable.MyModel tableModel = table.setTableModel(data);
     List<UsageNode> existingData = tableModel.getItems();
 
