@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.performance
 
 import com.intellij.execution.filters.TextConsoleBuilderFactory
@@ -25,14 +25,14 @@ import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
-class TypingLatencyReportAction : AnAction() {
+private class TypingLatencyReportAction : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     TypingLatencyReportDialog(project).show()
   }
 }
 
-class TypingLatencyReportDialog(
+internal class TypingLatencyReportDialog(
   private val project: Project,
   private val threadDumps: List<String> = emptyList()
 ) : DialogWrapper(project) {
