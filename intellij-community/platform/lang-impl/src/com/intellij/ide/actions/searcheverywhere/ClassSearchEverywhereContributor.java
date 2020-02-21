@@ -2,7 +2,6 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.GotoClassAction;
 import com.intellij.ide.actions.GotoClassPresentationUpdater;
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
@@ -59,7 +58,7 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
 
   @NotNull
   public String includeNonProjectItemsText() {
-    return IdeBundle.message("checkbox.include.non.project.classes", IdeUICustomization.getInstance().getProjectConceptName());
+    return IdeUICustomization.getInstance().projectMessage("checkbox.include.non.project.items");
   }
 
   @Override

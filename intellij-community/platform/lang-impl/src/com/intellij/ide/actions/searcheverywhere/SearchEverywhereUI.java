@@ -461,8 +461,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         rebuildList();
       };
       if (contributor == null) {
-        actions = Arrays.asList(new CheckBoxSearchEverywhereToggleAction(
-          IdeBundle.message("checkbox.include.non.project.items", IdeUICustomization.getInstance().getProjectConceptName())) {
+        String actionText = IdeUICustomization.getInstance().projectMessage("checkbox.include.non.project.items");
+        actions = Arrays.asList(new CheckBoxSearchEverywhereToggleAction(actionText) {
           final SearchEverywhereManagerImpl seManager = (SearchEverywhereManagerImpl)SearchEverywhereManager.getInstance(myProject);
           @Override
           public boolean isEverywhere() {

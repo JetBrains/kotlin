@@ -48,7 +48,7 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
   }
 
   public String includeNonProjectItemsText() {
-    return IdeBundle.message("checkbox.include.non.project.files", IdeUICustomization.getInstance().getProjectConceptName());
+    return IdeUICustomization.getInstance().projectMessage("checkbox.include.non.project.files");
   }
 
   @Override

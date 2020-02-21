@@ -34,7 +34,7 @@ public class SymbolSearchEverywhereContributor extends AbstractGotoSEContributor
 
   @NotNull
   public String includeNonProjectItemsText() {
-    return IdeBundle.message("checkbox.include.non.project.symbols", IdeUICustomization.getInstance().getProjectConceptName());
+    return IdeUICustomization.getInstance().projectMessage("checkbox.include.non.project.symbols");
   }
 
   @Override

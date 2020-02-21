@@ -65,6 +65,6 @@ public class ProjectViewSelectInGroupTarget implements CompositeSelectInTarget, 
 
   @Override
   public String toString() {
-    return IdeUICustomization.getInstance().getProjectViewSelectInTitle();
+    return IdeUICustomization.getInstance().projectMessage("select.in.item.project.view");
   }
 }

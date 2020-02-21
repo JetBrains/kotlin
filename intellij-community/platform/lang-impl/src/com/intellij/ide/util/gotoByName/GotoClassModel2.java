@@ -60,13 +60,13 @@ public class GotoClassModel2 extends FilteringGotoByModel<Language> {
 
   @Override
   public String getCheckBoxName() {
-    return IdeBundle.message("checkbox.include.non.project.classes", IdeUICustomization.getInstance().getProjectConceptName());
+    return IdeUICustomization.getInstance().projectMessage("checkbox.include.non.project.items");
   }
 
   @NotNull
   @Override
   public String getNotInMessage() {
-    return IdeBundle.message("label.no.matches.found.in.project", IdeUICustomization.getInstance().getProjectConceptName());
+    return IdeUICustomization.getInstance().projectMessage("label.no.matches.found.in.project");
   }
 
   @NotNull

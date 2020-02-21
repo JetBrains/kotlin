@@ -143,7 +143,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
   public void initToolWindow(@NotNull ToolWindow toolWindow) {
     // Create panels
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-    Content allTodosContent = contentFactory.createContent(null, IdeUICustomization.getInstance().getProjectDisplayName(), false);
+    Content allTodosContent = contentFactory.createContent(null, IdeUICustomization.getInstance().projectMessage("tab.title.project"), false);
     toolWindow.setHelpId("find.todoList");
     myAllTodos = new TodoPanel(myProject, state.all, false, allTodosContent) {
       @Override

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Konstantin Bulenkov
  */
 public final class NonProjectFilesScope extends NamedScope {
-  public static final String NAME = IdeUICustomization.getInstance().getNonProjectFilesScopeTitle();
+  public static final String NAME = IdeUICustomization.getInstance().projectMessage("scope.name.non.project.files");
   public static final NonProjectFilesScope INSTANCE = new NonProjectFilesScope();
 
   private NonProjectFilesScope() {
