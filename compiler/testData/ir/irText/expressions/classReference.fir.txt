@@ -25,4 +25,8 @@ FILE fqName:<root> fileName:/classReference.kt
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
       CALL 'public final fun <get-java> (): java.lang.Class<T of <uninitialized parent>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null
+        $receiver: GET_CLASS type=kotlin.reflect.KClass<<root>.A>
+          GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun <get-java> (): java.lang.Class<T of <uninitialized parent>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null
+        $receiver: GET_CLASS type=kotlin.reflect.KClass<<root>.A>
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null

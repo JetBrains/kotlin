@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface IrProvider {
     fun getDeclaration(symbol: IrSymbol): IrDeclaration?
@@ -831,11 +832,15 @@ open class SymbolTable(val signaturer: IdSignatureComposer) : ReferenceSymbolTab
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
 
-    fun functionDescriptorsWithNonClassParent(): Set<WrappedFunctionDescriptorWithContainerSource> {
-        val result = mutableSetOf<WrappedFunctionDescriptorWithContainerSource>()
+    fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
+        val result = mutableSetOf<DescriptorWithContainerSource>()
         for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource
-                && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedFunctionDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
+                result.add(descriptor)
+            }
+        }
+        for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
+            if (descriptor is WrappedPropertyDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
                 result.add(descriptor)
             }
         }
