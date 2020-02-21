@@ -1117,7 +1117,13 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
   }
 
-  public void indexFileContent(@Nullable Project project, @NotNull com.intellij.ide.caches.FileContent content) {
+  public void indexFiles(@NotNull Project project,
+                         @NotNull Collection<VirtualFile> files,
+                         @NotNull ProgressIndicator indicator) {
+    CacheUpdateRunner.processFiles(indicator, files, project, (fileContent) -> indexFileContent(project, fileContent));
+  }
+
+  private void indexFileContent(@Nullable Project project, @NotNull com.intellij.ide.caches.FileContent content) {
     VirtualFile file = content.getVirtualFile();
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 

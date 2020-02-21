@@ -5,7 +5,6 @@
  */
 package com.intellij.util.indexing;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.lightEdit.LightEdit;
@@ -142,7 +141,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
         LOG.info("Reindexing refreshed files: " + files.size() + " to update, calculated in " + calcDuration + "ms");
         if (!files.isEmpty()) {
           PerformanceWatcher.Snapshot snapshot = PerformanceWatcher.takeSnapshot();
-          reindexRefreshedFiles(indicator, files, project);
+          index.indexFiles(project, files, indicator);
           snapshot.logResponsivenessSinceCreation("Reindexing refreshed files");
         }
       }
@@ -188,12 +187,5 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
                System.currentTimeMillis() < start + 100;
       }
     });
-  }
-
-  @VisibleForTesting
-  @ApiStatus.Internal
-  public static void reindexRefreshedFiles(ProgressIndicator indicator, Collection<VirtualFile> files, Project project) {
-    FileBasedIndexImpl index = (FileBasedIndexImpl)FileBasedIndex.getInstance();
-    CacheUpdateRunner.processFiles(indicator, files, project, content -> index.processRefreshedFile(project, content));
   }
 }

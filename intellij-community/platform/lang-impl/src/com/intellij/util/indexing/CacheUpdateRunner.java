@@ -32,14 +32,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CacheUpdateRunner {
+final class CacheUpdateRunner {
   private static final Logger LOG = Logger.getInstance(CacheUpdateRunner.class);
   private static final Key<Boolean> FAILED_TO_INDEX = Key.create("FAILED_TO_INDEX");
 
-  public static void processFiles(@NotNull ProgressIndicator indicator,
-                                  @NotNull Collection<? extends VirtualFile> files,
-                                  @NotNull Project project,
-                                  @NotNull Consumer<? super FileContent> processor) {
+  private CacheUpdateRunner() {
+  }
+
+  static void processFiles(@NotNull ProgressIndicator indicator,
+                          @NotNull Collection<VirtualFile> files,
+                          @NotNull Project project,
+                          @NotNull Consumer<? super FileContent> processor) {
     ProgressIndicator updaterProgressIndicator = PoweredProgressIndicator.apply(indicator);
     updaterProgressIndicator.checkCanceled();
     final FileContentQueue queue = new FileContentQueue(project, files, updaterProgressIndicator);
@@ -89,7 +92,7 @@ public class CacheUpdateRunner {
     }
   }
 
-  interface ProgressUpdater {
+  private interface ProgressUpdater {
     void processingStarted(@NotNull VirtualFile file);
     void processingSuccessfullyFinished(@NotNull VirtualFile file);
   }

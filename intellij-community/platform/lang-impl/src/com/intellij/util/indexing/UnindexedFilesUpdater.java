@@ -158,7 +158,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   }
 
   private void indexFiles(ProgressIndicator indicator, List<VirtualFile> files) {
-    CacheUpdateRunner.processFiles(indicator, files, myProject, content -> myIndex.indexFileContent(myProject, content));
+    myIndex.indexFiles(myProject, files, indicator);
   }
 
   @Override
