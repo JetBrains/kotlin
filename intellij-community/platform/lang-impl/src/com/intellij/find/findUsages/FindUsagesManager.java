@@ -270,7 +270,7 @@ public final class FindUsagesManager {
   }
 
   @NotNull
-  public static ProgressIndicator startProcessUsages(@NotNull FindUsagesHandler handler,
+  public static ProgressIndicator startProcessUsages(@NotNull FindUsagesHandlerBase handler,
                                                      PsiElement @NotNull [] primaryElements,
                                                      PsiElement @NotNull [] secondaryElements,
                                                      @NotNull Processor<? super Usage> processor,
@@ -282,7 +282,7 @@ public final class FindUsagesManager {
   }
 
   private static void startProcessUsages(@NotNull ProgressIndicator indicator,
-                                         @NotNull FindUsagesHandler handler,
+                                         @NotNull FindUsagesHandlerBase handler,
                                          PsiElement @NotNull [] primaryElements,
                                          PsiElement @NotNull [] secondaryElements,
                                          @NotNull Processor<? super Usage> processor,
@@ -292,7 +292,7 @@ public final class FindUsagesManager {
   }
 
   @ApiStatus.Internal
-  public static UsageSearcher createUsageSearcher(@NotNull FindUsagesHandler handler,
+  public static UsageSearcher createUsageSearcher(@NotNull FindUsagesHandlerBase handler,
                                                   PsiElement @NotNull [] primaryElements,
                                                   PsiElement @NotNull [] secondaryElements, @NotNull FindUsagesOptions findUsagesOptions) {
     return ReadAction.compute(() -> {
@@ -319,7 +319,7 @@ public final class FindUsagesManager {
   }
 
   @NotNull
-  public UsageViewPresentation createPresentation(@NotNull FindUsagesHandler handler, @NotNull FindUsagesOptions findUsagesOptions) {
+  public UsageViewPresentation createPresentation(@NotNull FindUsagesHandlerBase handler, @NotNull FindUsagesOptions findUsagesOptions) {
     PsiElement element = handler.getPsiElement();
     LOG.assertTrue(element.isValid());
     return createPresentation(element, findUsagesOptions, FindSettings.getInstance().isShowResultsInSeparateView());
@@ -347,7 +347,7 @@ public final class FindUsagesManager {
   @NotNull
   public static UsageSearcher createUsageSearcher(PsiElement2UsageTargetAdapter @NotNull [] primaryTargets,
                                                   PsiElement2UsageTargetAdapter @NotNull [] secondaryTargets,
-                                                  @NotNull FindUsagesHandler handler,
+                                                  @NotNull FindUsagesHandlerBase handler,
                                                   @NotNull FindUsagesOptions options,
                                                   PsiFile scopeFile) throws PsiInvalidElementAccessException {
     ReadAction.run(() -> {
@@ -432,7 +432,7 @@ public final class FindUsagesManager {
 
   public void findUsages(PsiElement @NotNull [] primaryElements,
                          PsiElement @NotNull [] secondaryElements,
-                         @NotNull FindUsagesHandler handler,
+                         @NotNull FindUsagesHandlerBase handler,
                          @NotNull FindUsagesOptions findUsagesOptions,
                          boolean toSkipUsagePanelWhenOneUsage) {
     doFindUsages(primaryElements, secondaryElements, handler, findUsagesOptions, toSkipUsagePanelWhenOneUsage);
@@ -440,7 +440,7 @@ public final class FindUsagesManager {
 
   public UsageView doFindUsages(PsiElement @NotNull [] primaryElements,
                                 PsiElement @NotNull [] secondaryElements,
-                                @NotNull FindUsagesHandler handler,
+                                @NotNull FindUsagesHandlerBase handler,
                                 @NotNull FindUsagesOptions findUsagesOptions,
                                 boolean toSkipUsagePanelWhenOneUsage) {
     if (primaryElements.length == 0) {
@@ -656,7 +656,7 @@ public final class FindUsagesManager {
 
 
   @NotNull
-  public static GlobalSearchScope getMaximalScope(@NotNull FindUsagesHandler handler) {
+  public static GlobalSearchScope getMaximalScope(@NotNull FindUsagesHandlerBase handler) {
     PsiElement element = handler.getPsiElement();
     Project project = element.getProject();
     PsiFile file = element.getContainingFile();

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class FindUsagesUtil {
   private FindUsagesUtil() { }
 
-  public static boolean isSearchForTextOccurrencesAvailable(@NotNull PsiElement element, boolean isSingleFile, @Nullable FindUsagesHandler handler) {
+  public static boolean isSearchForTextOccurrencesAvailable(@NotNull PsiElement element, boolean isSingleFile, @Nullable FindUsagesHandlerBase handler) {
     return !isSingleFile && handler != null && handler.isSearchForTextOccurrencesAvailable(element, false);
   }
 }

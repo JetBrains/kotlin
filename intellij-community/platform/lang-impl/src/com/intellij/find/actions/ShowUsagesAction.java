@@ -9,11 +9,7 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindSettings;
 import com.intellij.find.UsagesPreviewPanelProvider;
-import com.intellij.find.findUsages.AbstractFindUsagesDialog;
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.find.findUsages.FindUsagesHandlerFactory.OperationMode;
-import com.intellij.find.findUsages.FindUsagesManager;
-import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
@@ -196,7 +192,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   public static void startFindUsages(@NotNull PsiElement element, @NotNull RelativePoint popupPosition, @Nullable Editor editor) {
     Project project = element.getProject();
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
-    FindUsagesHandler handler = findUsagesManager.getFindUsagesHandler(element, OperationMode.USAGES_WITH_DEFAULT_OPTIONS);
+    FindUsagesHandlerBase handler = findUsagesManager.getFindUsagesHandler(element, FindUsagesHandlerFactory.OperationMode.USAGES_WITH_DEFAULT_OPTIONS);
     if (handler == null) return;
     //noinspection deprecation
     FindUsagesOptions options = handler.getFindUsagesOptions(DataManager.getInstance().getDataContext());
@@ -217,7 +213,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
   private static void showElementUsages(@Nullable Editor editor,
                                         @NotNull RelativePoint popupPosition,
-                                        @NotNull FindUsagesHandler handler,
+                                        @NotNull FindUsagesHandlerBase handler,
                                         @NotNull FindUsagesOptions options,
                                         @NotNull IntRef minWidth) {
     Project project = handler.getProject();
@@ -501,9 +497,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     });
   }
 
-  private static void showDialog(@NotNull FindUsagesHandler handler, @NotNull Consumer<@NotNull FindUsagesOptions> optionsConsumer) {
+  private static void showDialog(@NotNull FindUsagesHandlerBase handler, @NotNull Consumer<@NotNull FindUsagesOptions> optionsConsumer) {
     FUCounterUsageLogger.getInstance().logEvent("toolbar", "ShowUsagesPopup.showSettings");
-    AbstractFindUsagesDialog dialog = handler.getFindUsagesDialog(false, false, false);
+    AbstractFindUsagesDialog dialog;
+    if (handler instanceof FindUsagesHandlerUi) {
+      dialog = ((FindUsagesHandlerUi)handler).getFindUsagesDialog(false, false, false);
+    } else {
+      dialog = FindUsagesHandler.createDefaultFindUsagesDialog(false, false, false, handler);
+    }
     if (dialog.showAndGet()) {
       dialog.calcFindUsagesOptions();
       //noinspection deprecation

@@ -28,15 +28,17 @@ public class CommonFindUsagesDialog extends AbstractFindUsagesDialog {
                                 boolean toShowInNewTab,
                                 boolean mustOpenInNewTab,
                                 boolean isSingleFile,
-                                @NotNull FindUsagesHandler handler) {
+                                @NotNull FindUsagesHandlerBase handler) {
     super(project, findUsagesOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, isTextSearch(element, isSingleFile, handler),
           true);
     myPsiElement = element;
-    myHelpId = ObjectUtils.chooseNotNull(handler.getHelpId(), HelpID.FIND_OTHER_USAGES);
+    String helpId = handler instanceof FindUsagesHandlerUi?
+       ((FindUsagesHandlerUi)handler).getHelpId(): null;
+    myHelpId = ObjectUtils.chooseNotNull(helpId, HelpID.FIND_OTHER_USAGES);
     init();
   }
 
-  private static boolean isTextSearch(@NotNull PsiElement element, boolean isSingleFile, @NotNull FindUsagesHandler handler) {
+  private static boolean isTextSearch(@NotNull PsiElement element, boolean isSingleFile, @NotNull FindUsagesHandlerBase handler) {
     return FindUsagesUtil.isSearchForTextOccurrencesAvailable(element, isSingleFile, handler);
   }
 

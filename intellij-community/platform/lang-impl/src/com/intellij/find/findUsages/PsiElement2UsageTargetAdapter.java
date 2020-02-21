@@ -131,7 +131,7 @@ public class PsiElement2UsageTargetAdapter
 
     Project project = target.getProject();
     final FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
-    final FindUsagesHandler handler = findUsagesManager.getFindUsagesHandler(target, true);
+    final FindUsagesHandlerBase handler = findUsagesManager.getFindUsagesHandler(target, true);
 
     // in case of injected file, use host file to highlight all occurrences of the target in each injected file
     PsiFile context = InjectedLanguageManager.getInstance(project).getTopLevelFile(file);
