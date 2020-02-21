@@ -14,5 +14,5 @@ private const val BUNDLE = "messages.KotlinJ2KBundle"
 
 object KotlinJ2KBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
-    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
+    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 }
