@@ -1,5 +1,6 @@
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.SystemInfoRt
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
@@ -25,6 +26,7 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.process.internal.ExecActionFactory
+import org.gradle.process.internal.ExecException
 import java.io.*
 import javax.inject.Inject
 import javax.swing.SwingUtilities
@@ -95,10 +97,8 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
         val projectDir = baseDir.resolve("${target.name}.xcodeproj")
 
         if (projectDir.exists()) {
-            with(execActionFactory.newExecAction()) {
-                commandLine("rm", "-rf", projectDir)
-                execute().assertNormalExitValue()
-            }
+            val deleted = FileUtilRt.delete(projectDir)
+            if (!deleted) throw ExecException("failed to delete directory $projectDir")
         }
         projectDir.mkdirs()
 
