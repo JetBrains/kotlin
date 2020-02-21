@@ -24,28 +24,41 @@ enum TestError : Error {
 
 // ---------------- Assertions ----------------
 
+private func throwAssertFailed(message: String, file: String, line: Int) throws -> Never {
+    throw TestError.assertFailed("\(file):\(line): \(message)")
+}
+
 func assertEquals<T: Equatable>(actual: T, expected: T,
-                                _ message: String = "Assertion failed:") throws {
+                                _ message: String = "Assertion failed:",
+                                file: String = #file, line: Int = #line) throws {
     if (actual != expected) {
-        throw TestError.assertFailed(message + " Expected value: \(expected), but got: \(actual)")
+        try throwAssertFailed(message: message + " Expected value: \(expected), but got: \(actual)",
+                file: file, line: line)
     }
 }
 
 func assertEquals<T: Equatable>(actual: [T], expected: [T],
-                                _ message: String = "Assertion failed: arrays not equal") throws {
-    try assertEquals(actual: actual.count, expected: expected.count, "Size differs")
-    try assertTrue(actual.elementsEqual(expected), "Arrays elements are not equal")
+                                _ message: String = "Assertion failed: arrays not equal",
+                                file: String = #file, line: Int = #line) throws {
+    try assertEquals(actual: actual.count, expected: expected.count, "Size differs", file: file, line: line)
+    try assertTrue(actual.elementsEqual(expected), "Arrays elements are not equal", file: file, line: line)
 }
 
-func assertTrue(_ value: Bool, _ message: String = "Assertion failed:") throws {
+func assertTrue(_ value: Bool,
+                _ message: String = "Assertion failed:",
+                file: String = #file, line: Int = #line) throws {
     if (value != true) {
-        throw TestError.assertFailed(message + " Expected value to be TRUE, but got: \(value)")
+        try throwAssertFailed(message: message + " Expected value to be TRUE, but got: \(value)",
+                file: file, line: line)
     }
 }
 
-func assertFalse(_ value: Bool, _ message: String = "Assertion failed:") throws {
+func assertFalse(_ value: Bool,
+                 _ message: String = "Assertion failed:",
+                 file: String = #file, line: Int = #line) throws {
     if (value != false) {
-        throw TestError.assertFailed(message + " Expected value to be FALSE, but got: \(value)")
+        try throwAssertFailed(message: message + " Expected value to be FALSE, but got: \(value)",
+                file: file, line: line)
     }
 }
 
