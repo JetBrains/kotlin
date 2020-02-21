@@ -4,6 +4,7 @@ package com.intellij.lang.javascript.boilerplate;
 import com.google.common.collect.Sets;
 import com.intellij.BundleBase;
 import com.intellij.CommonBundle;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,7 +32,6 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
   private void createUIComponents() {
     myReloadableComboBoxPanel = new ReloadableComboBoxPanel<GithubTagInfo>() {
 
-      @SuppressWarnings("unchecked")
       @Override
       protected void doUpdateValues(@NotNull Set<GithubTagInfo> tags) {
         if (!shouldUpdate(tags)) {
@@ -165,7 +165,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
 
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
-    settingsStep.addSettingsField(BundleBase.replaceMnemonicAmpersand("&Version:"), myVersionPanel);
+    settingsStep.addSettingsField(BundleBase.replaceMnemonicAmpersand(IdeBundle.message("github.project.generator.version")), myVersionPanel);
     settingsStep.addSettingsComponent(myReloadableComboBoxPanel.getErrorComponent());
   }
 
@@ -188,7 +188,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
     }
     String errorMessage = StringUtil.notNullize(myReloadableComboBoxPanel.getErrorComponent().getText());
     if (errorMessage.isEmpty()) {
-      errorMessage = "Versions have not been loaded yet.";
+      errorMessage = IdeBundle.message("github.project.generator.versions.not.loaded.error");
     }
     return new ValidationInfo(errorMessage);
   }
