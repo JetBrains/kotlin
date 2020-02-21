@@ -126,10 +126,13 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             else
                 KotlinFindUsagesBundle.message("kotlin.lang.object")
             is KtNamedFunction -> KotlinFindUsagesBundle.message("kotlin.lang.function")
-            is KtPropertyAccessor -> (if (targetElement.isGetter)
-                KotlinFindUsagesBundle.message("kotlin.lang.getter")
-            else
-                KotlinFindUsagesBundle.message("kotlin.lang.setter")) + " " + KotlinFindUsagesBundle.message("kotlin.lang.for.property") + " "
+            is KtPropertyAccessor -> KotlinFindUsagesBundle.message(
+                "kotlin.lang.for.property",
+                (if (targetElement.isGetter)
+                    KotlinFindUsagesBundle.message("kotlin.lang.getter")
+                else
+                    KotlinFindUsagesBundle.message("kotlin.lang.setter"))
+            ) + " "
             is KtFunctionLiteral -> KotlinFindUsagesBundle.message("kotlin.lang.lambda")
             is KtPrimaryConstructor, is KtSecondaryConstructor -> KotlinFindUsagesBundle.message("kotlin.lang.constructor")
             is KtProperty -> if (targetElement.isLocal)
