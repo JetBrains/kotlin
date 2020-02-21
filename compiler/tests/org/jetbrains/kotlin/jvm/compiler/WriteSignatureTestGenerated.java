@@ -665,7 +665,7 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
 
         public void testAllFilesPresentInSuspendMain() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/suspendMain"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/suspendMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("parameterlessSuspendMain.kt")

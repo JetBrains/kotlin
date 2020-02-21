@@ -1992,6 +1992,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedSuspendCallInsideLambda.kt");
             }
 
+            @TestMetadata("qualifiedResolvedExpressionInsideBuilderInference.kt")
+            public void testQualifiedResolvedExpressionInsideBuilderInference() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/qualifiedResolvedExpressionInsideBuilderInference.kt");
+            }
+
             @TestMetadata("recursiveGenerators.kt")
             public void testRecursiveGenerators() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/recursiveGenerators.kt");
