@@ -2,6 +2,7 @@
 package com.intellij.largeFilesEditor.editor;
 
 import com.google.common.collect.EvictingQueue;
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.largeFilesEditor.file.ReadingPageResultHandler;
 import com.intellij.largeFilesEditor.search.SearchResult;
@@ -277,7 +278,7 @@ public class EditorModel {
     catch (IOException e) {
       LOG.info(e);
       Messages.showErrorDialog(EditorBundle.message("large.file.editor.message.error.while.working.with.file.try.to.reopen.it"),
-                               EditorBundle.message("large.file.editor.title.error"));
+                               CommonBundle.getErrorTitle());
       return;
     }
 

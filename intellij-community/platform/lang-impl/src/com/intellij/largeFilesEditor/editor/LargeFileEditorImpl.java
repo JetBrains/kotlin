@@ -76,7 +76,8 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     catch (FileNotFoundException e) {
       logger.warn(e);
       editorModel.setBrokenMode();
-      Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.open.file.because.file.not.found"), EditorBundle.message("large.file.editor.title.warning"));
+      Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.open.file.because.file.not.found"),
+                                 EditorBundle.message("large.file.editor.title.warning"));
       requestClosingEditorTab();
       return;
     }

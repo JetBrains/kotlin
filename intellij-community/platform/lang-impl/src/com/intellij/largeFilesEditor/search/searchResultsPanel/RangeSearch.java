@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.search.searchResultsPanel;
 
+import com.intellij.CommonBundle;
 import com.intellij.largeFilesEditor.GuiUtils;
 import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.search.SearchResult;
@@ -309,7 +310,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     catch (IOException e) {
       logger.info(e);
       Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.working.with.file.error"),
-                                 EditorBundle.message("large.file.editor.title.error"));
+                                 CommonBundle.getErrorTitle());
     }
 
     updateTabName();
@@ -335,7 +336,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     if (fileDataProviderForSearch == null) {
       logger.warn("Can't open Large File Editor for target file.");
       Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.open.large.file.editor.for.target.file"),
-                                 EditorBundle.message("large.file.editor.title.error"));
+                                 CommonBundle.getErrorTitle());
       return;
     }
 
@@ -346,7 +347,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     catch (CloneNotSupportedException e) {
       logger.warn(e);
       Messages.showWarningDialog(EditorBundle.message("large.file.editor.cant.launch.searching.because.of.unexpected.error"),
-                                 EditorBundle.message("large.file.editor.title.error"));
+                                 CommonBundle.getErrorTitle());
       return;
     }
 
@@ -420,7 +421,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     catch (IOException e) {
       logger.warn(e);
       Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.working.with.file.error"),
-                                 EditorBundle.message("large.file.editor.title.error"));
+                                 CommonBundle.getErrorTitle());
       return;
     }
 
