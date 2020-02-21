@@ -160,7 +160,7 @@ internal class ObjCExportLazyImpl(
 
         file.children.filterIsInstance<KtCallableDeclaration>().forEach {
             // Supposed to be similar to ObjCExportMapper.shouldBeVisible.
-            if ((it is KtFunction || it is KtProperty) && it.isPublic && !it.isSuspend && !it.hasExpectModifier()) {
+            if ((it is KtFunction || it is KtProperty) && it.isPublic && !it.hasExpectModifier()) {
                 val classDescriptor = getClassIfExtension(it)
                 if (classDescriptor != null) {
                     extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
@@ -437,9 +437,6 @@ private fun ModuleDescriptor.isCommonStdlib() =
 
 private val KtModifierListOwner.isPublic: Boolean
     get() = this.visibilityModifierTypeOrDefault() == KtTokens.PUBLIC_KEYWORD
-
-private val KtCallableDeclaration.isSuspend: Boolean
-    get() = this.hasModifier(KtTokens.SUSPEND_KEYWORD)
 
 internal val KtPureClassOrObject.isInterface: Boolean
     get() = this is KtClass && this.isInterface()

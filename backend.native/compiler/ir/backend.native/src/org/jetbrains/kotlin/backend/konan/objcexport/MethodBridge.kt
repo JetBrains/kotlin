@@ -35,6 +35,7 @@ internal object MethodBridgeSelector : MethodBridgeParameter()
 internal sealed class MethodBridgeValueParameter : MethodBridgeParameter() {
     data class Mapped(val bridge: TypeBridge) : MethodBridgeValueParameter()
     object ErrorOutParameter : MethodBridgeValueParameter()
+    object SuspendCompletion : MethodBridgeValueParameter()
 }
 
 internal data class MethodBridge(
@@ -56,6 +57,8 @@ internal data class MethodBridge(
             object Success : WithError()
             data class ZeroForError(val successBridge: ReturnValue, val successMayBeZero: Boolean) : WithError()
         }
+
+        object Suspend : ReturnValue()
     }
 
     val paramBridges: List<MethodBridgeParameter> =
@@ -86,6 +89,7 @@ internal fun MethodBridge.valueParametersAssociated(
         when (it) {
             is MethodBridgeValueParameter.Mapped -> it to kotlinParameters.next()
 
+            MethodBridgeValueParameter.SuspendCompletion,
             is MethodBridgeValueParameter.ErrorOutParameter -> it to null
         }
     }.also { assert(!kotlinParameters.hasNext()) }
@@ -101,6 +105,7 @@ internal fun MethodBridge.parametersAssociated(
             is MethodBridgeValueParameter.Mapped, MethodBridgeReceiver.Instance ->
                 it to kotlinParameters.next()
 
+            MethodBridgeValueParameter.SuspendCompletion,
             MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter ->
                 it to null
 

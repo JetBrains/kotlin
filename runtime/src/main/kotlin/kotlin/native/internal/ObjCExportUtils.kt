@@ -266,12 +266,10 @@ internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
 @ExportForCppRuntime private fun Kotlin_NSSetAsKSet_create() = NSSetAsKSet()
 @ExportForCppRuntime private fun Kotlin_NSDictionaryAsKMap_create() = NSDictionaryAsKMap()
 
-@ExportForCppRuntime private fun Kotlin_ObjCExport_RethrowNSErrorAsExceptionImpl(
+@ExportForCppRuntime private fun Kotlin_ObjCExport_NSErrorAsExceptionImpl(
         message: String?,
         error: Any
-) {
-    throw ObjCErrorException(message, error)
-}
+) = ObjCErrorException(message, error)
 
 class ObjCErrorException(
         message: String?,

@@ -444,8 +444,6 @@ static const char* getBlockEncoding(id block) {
 extern "C" convertReferenceFromObjC* Kotlin_ObjCExport_blockToFunctionConverters;
 extern "C" int Kotlin_ObjCExport_blockToFunctionConverters_size;
 
-extern "C" id objc_retainBlock(id self);
-
 static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   const char* encoding = getBlockEncoding(block);
 

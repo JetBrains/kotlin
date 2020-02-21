@@ -207,6 +207,11 @@ internal class KonanSymbols(
                     NoLookupLocation.FROM_BACKEND
             ).single())
 
+    val objCExportResumeContinuation = internalFunction("resumeContinuation")
+    val objCExportResumeContinuationWithException = internalFunction("resumeContinuationWithException")
+    val objCExportGetCoroutineSuspended = internalFunction("getCoroutineSuspended")
+    val objCExportInterceptedContinuation = internalFunction("interceptedContinuation")
+
     val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.getNativeNullPtr)
 
     val boxCachePredicates = BoxCache.values().associate {

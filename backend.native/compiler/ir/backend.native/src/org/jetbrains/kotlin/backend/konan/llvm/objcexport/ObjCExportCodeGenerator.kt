@@ -86,7 +86,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
                 generateBlockToKotlinFunctionConverter(bridge)
             }
 
-    private val blockGenerator = BlockGenerator(this.codegen)
+    protected val blockGenerator = BlockGenerator(this.codegen)
     private val functionToBlockConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
 
     internal fun kotlinFunctionToBlockConverter(bridge: BlockPointerBridge): LLVMValueRef =
@@ -122,6 +122,10 @@ internal class ObjCExportCodeGenerator(
     val selectorsToDefine = mutableMapOf<String, MethodBridge>()
 
     val externalGlobalInitializers = mutableMapOf<LLVMValueRef, ConstValue>()
+
+    internal val continuationToCompletionConverter: LLVMValueRef by lazy {
+        generateContinuationToCompletionConverter(blockGenerator)
+    }
 
     fun FunctionGenerationContext.genSendMessage(
             returnType: LLVMTypeRef,
@@ -584,6 +588,20 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     setObjCExportTypeInfo(boxClass, constPointer(converter))
 }
 
+private fun ObjCExportCodeGenerator.generateContinuationToCompletionConverter(
+        blockGenerator: BlockGenerator
+): LLVMValueRef = with(blockGenerator) {
+    generateWrapKotlinObjectToBlock(
+            BlockType(numberOfParameters = 2, returnsVoid = true),
+            convertName = "convertContinuation",
+            invokeName = "invokeCompletion"
+    ) { continuation, arguments ->
+        check(arguments.size == 2)
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation) + arguments)
+        ret(null)
+    }
+}
+
 private const val maxConvertorsInCache = 33
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
@@ -760,6 +778,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     }
 
     var errorOutPtr: LLVMValueRef? = null
+    var continuation: LLVMValueRef? = null
 
     val kotlinArgs = methodBridge.paramBridges.mapIndexedNotNull { index, paramBridge ->
         val parameter = param(index)
@@ -777,17 +796,22 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 errorOutPtr = parameter
                 null
             }
+
+            MethodBridgeValueParameter.SuspendCompletion -> {
+                callFromBridge(
+                        context.llvm.Kotlin_ObjCExport_createContinuationArgument,
+                        listOf(parameter, generateExceptionTypeInfoArray(baseMethod!!)),
+                        Lifetime.ARGUMENT
+                ).also {
+                    continuation = it
+                }
+            }
         }
     }
 
     // TODO: consider merging this handler with function cleanup.
-    val exceptionHandler = if (errorOutPtr == null) {
-        kotlinExceptionHandler { exception ->
-            callFromBridge(symbols.objCExportTrapOnUndeclaredException.owner.llvmFunction, listOf(exception))
-            unreachable()
-        }
-    } else {
-        kotlinExceptionHandler { exception ->
+    val exceptionHandler = when {
+        errorOutPtr != null -> kotlinExceptionHandler { exception ->
             callFromBridge(
                     context.llvm.Kotlin_ObjCExport_RethrowExceptionAsNSError,
                     listOf(exception, errorOutPtr!!, generateExceptionTypeInfoArray(baseMethod!!))
@@ -810,6 +834,22 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 
             ret(returnValue)
         }
+
+        continuation != null -> kotlinExceptionHandler { exception ->
+            // Callee haven't suspended, so it isn't going to call the completion. Call it here:
+            callFromBridge(
+                    context.ir.symbols.objCExportResumeContinuationWithException.owner.llvmFunction,
+                    listOf(continuation!!, exception)
+            )
+            // Note: completion block could be called directly instead, but this implementation is
+            // simpler and avoids duplication.
+            ret(null)
+        }
+
+        else -> kotlinExceptionHandler { exception ->
+            callFromBridge(symbols.objCExportTrapOnUndeclaredException.owner.llvmFunction, listOf(exception))
+            unreachable()
+        }
     }
 
     val targetResult = callKotlin(kotlinArgs, Lifetime.ARGUMENT, exceptionHandler)
@@ -825,6 +865,23 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         is MethodBridge.ReturnValue.WithError.ZeroForError -> genReturnValueOnSuccess(returnBridge.successBridge)
         MethodBridge.ReturnValue.Instance.InitResult -> param(0)
         MethodBridge.ReturnValue.Instance.FactoryResult -> kotlinReferenceToObjC(targetResult!!) // provided by [callKotlin]
+        MethodBridge.ReturnValue.Suspend -> {
+            val coroutineSuspended = callFromBridge(
+                    codegen.llvmFunction(context.ir.symbols.objCExportGetCoroutineSuspended.owner),
+                    emptyList(),
+                    Lifetime.LOCAL
+            )
+            ifThen(icmpNe(targetResult!!, coroutineSuspended)) {
+                // Callee haven't suspended, so it isn't going to call the completion. Call it here:
+                callFromBridge(
+                        context.ir.symbols.objCExportResumeContinuation.owner.llvmFunction,
+                        listOf(continuation!!, targetResult)
+                )
+                // Note: completion block could be called directly instead, but this implementation is
+                // simpler and avoids duplication.
+            }
+            null
+        }
     }
 
     ret(genReturnValueOnSuccess(returnType))
@@ -928,6 +985,17 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                         store(kNullInt8Ptr, it)
                         errorOutPtr = it
                     }
+
+                MethodBridgeValueParameter.SuspendCompletion -> {
+                    val continuation = param(irFunction.allParameters.size) // The last argument.
+                    // TODO: consider placing interception into the converter to reduce code size.
+                    val intercepted = callFromBridge(
+                            context.ir.symbols.objCExportInterceptedContinuation.owner.llvmFunction,
+                            listOf(continuation),
+                            Lifetime.ARGUMENT
+                    )
+                    callFromBridge(continuationToCompletionConverter, listOf(intercepted))
+                }
             }
         }
 
@@ -985,12 +1053,25 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             MethodBridge.ReturnValue.Instance.InitResult,
             MethodBridge.ReturnValue.Instance.FactoryResult ->
                 error("init or factory method can't have bridge for overriding: $baseMethod")
+
+            MethodBridge.ReturnValue.Suspend -> {
+                // Objective-C implementation of Kotlin suspend function is always responsible
+                // for calling the completion, so in Kotlin coroutines machinery terms it suspends,
+                // which is indicated by the return value:
+                callFromBridge(
+                        context.ir.symbols.objCExportGetCoroutineSuspended.owner.llvmFunction,
+                        emptyList(),
+                        Lifetime.RETURN_VALUE
+                )
+            }
         }
 
         val baseReturnType = baseIrFunction.returnType
         val actualReturnType = irFunction.returnType
 
         val retVal = when {
+            baseIrFunction.isSuspend -> genKotlinBaseMethodResult(Lifetime.RETURN_VALUE, methodBridge.returnBridge)
+
             actualReturnType.isUnit() || actualReturnType.isNothing() -> {
                 genKotlinBaseMethodResult(Lifetime.ARGUMENT, methodBridge.returnBridge)
                 null
@@ -1433,10 +1514,12 @@ private val MethodBridgeParameter.objCType: LLVMTypeRef get() = when (this) {
     is MethodBridgeReceiver -> ReferenceBridge.objCType
     MethodBridgeSelector -> int8TypePtr
     MethodBridgeValueParameter.ErrorOutParameter -> pointerType(ReferenceBridge.objCType)
+    MethodBridgeValueParameter.SuspendCompletion -> int8TypePtr
 }
 
 private fun MethodBridge.ReturnValue.objCType(context: Context): LLVMTypeRef {
     return when (this) {
+        MethodBridge.ReturnValue.Suspend,
         MethodBridge.ReturnValue.Void -> voidType
         MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) int64Type else int32Type
         is MethodBridge.ReturnValue.Mapped -> this.bridge.objCType
@@ -1483,6 +1566,7 @@ private val Family.nsUIntegerEncoding: String get() = when (this) {
 }
 
 private fun MethodBridge.ReturnValue.getObjCEncoding(targetFamily: Family): String = when (this) {
+    MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> "v"
     MethodBridge.ReturnValue.HashCode -> targetFamily.nsUIntegerEncoding
     is MethodBridge.ReturnValue.Mapped -> this.bridge.objCEncoding
@@ -1498,6 +1582,7 @@ private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
     is MethodBridgeReceiver -> ReferenceBridge.objCEncoding
     MethodBridgeSelector -> ":"
     MethodBridgeValueParameter.ErrorOutParameter -> "^${ReferenceBridge.objCEncoding}"
+    MethodBridgeValueParameter.SuspendCompletion -> "@"
 }
 
 private val TypeBridge.objCEncoding: String get() = when (this) {

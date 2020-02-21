@@ -110,6 +110,9 @@ internal fun ReportUnhandledException(throwable: Throwable) {
     throwable.printStackTrace()
 }
 
+@SymbolName("TerminateWithUnhandledException")
+internal external fun TerminateWithUnhandledException(throwable: Throwable)
+
 @ExportForCppRuntime
 internal fun ExceptionReporterLaunchpad(reporter: (Throwable) -> Unit, throwable: Throwable) {
     try {

@@ -163,3 +163,8 @@ internal fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this)
 
     is ObjCNullableReferenceType, is ObjCRawType, is ObjCPrimitiveType, ObjCVoidType -> this
 }
+
+internal fun ObjCReferenceType.makeNullable(): ObjCNullableReferenceType = when (this) {
+    is ObjCNonNullReferenceType -> ObjCNullableReferenceType(this)
+    is ObjCNullableReferenceType -> this
+}

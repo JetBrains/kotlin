@@ -488,6 +488,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction
     val Kotlin_ObjCExport_RethrowNSErrorAsException by lazyRtFunction
     val Kotlin_ObjCExport_AllocInstanceWithAssociatedObject by lazyRtFunction
+    val Kotlin_ObjCExport_createContinuationArgument by lazyRtFunction
+    val Kotlin_ObjCExport_resumeContinuation by lazyRtFunction
 
     val tlsMode by lazy {
         when (target) {

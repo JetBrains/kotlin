@@ -581,6 +581,7 @@ internal class ObjCExportTranslatorImpl(
                         }
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
+                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 val uniqueName = unifyName(candidateName, usedNames)
@@ -590,6 +591,16 @@ internal class ObjCExportTranslatorImpl(
                     is MethodBridgeValueParameter.Mapped -> mapType(p!!.type, bridge.bridge, objCExportScope)
                     MethodBridgeValueParameter.ErrorOutParameter ->
                         ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
+
+                    MethodBridgeValueParameter.SuspendCompletion -> {
+                        ObjCBlockPointerType(
+                                returnType = ObjCVoidType,
+                                parameterTypes = listOf(
+                                        mapReferenceType(method.returnType!!, objCExportScope).makeNullable(),
+                                        ObjCNullableReferenceType(ObjCClassType("NSError"))
+                                )
+                        )
+                    }
                 }
 
                 parameters += ObjCParameter(uniqueName, p, type)
@@ -652,6 +663,7 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun mapReturnType(returnBridge: MethodBridge.ReturnValue, method: FunctionDescriptor, objCExportScope: ObjCExportScope): ObjCType = when (returnBridge) {
+        MethodBridge.ReturnValue.Suspend,
         MethodBridge.ReturnValue.Void -> ObjCVoidType
         MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType.NSUInteger
         is MethodBridge.ReturnValue.Mapped -> mapType(method.returnType!!, returnBridge.bridge, objCExportScope)

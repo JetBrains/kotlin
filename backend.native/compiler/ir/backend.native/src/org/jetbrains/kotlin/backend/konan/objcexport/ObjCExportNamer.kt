@@ -453,13 +453,17 @@ internal class ObjCExportNamerImpl(
                         else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
+                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 if (index == 0) {
                     append(when {
                         bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
 
+                        bridge is MethodBridgeValueParameter.SuspendCompletion -> "With"
+
                         method is ConstructorDescriptor -> "With"
+
                         else -> ""
                     })
                     append(name.capitalize())
@@ -502,6 +506,7 @@ internal class ObjCExportNamerImpl(
                         else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
+                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 append(label)

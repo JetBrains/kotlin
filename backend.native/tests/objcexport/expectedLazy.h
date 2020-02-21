@@ -121,6 +121,77 @@ __attribute__((swift_name("KotlinBoolean")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CoroutineException")))
+@interface KtCoroutineException : KtKotlinThrowable
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithCause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ContinuationHolder")))
+@interface KtContinuationHolder<T> : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)resumeValue:(T _Nullable)value __attribute__((swift_name("resume(value:)")));
+- (void)resumeWithExceptionException:(KtKotlinThrowable *)exception __attribute__((swift_name("resumeWithException(exception:)")));
+@end;
+
+__attribute__((swift_name("SuspendFun")))
+@protocol KtSuspendFun
+@required
+- (void)suspendFunDoYield:(BOOL)doYield doThrow:(BOOL)doThrow completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(doYield:doThrow:completionHandler:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ResultHolder")))
+@interface KtResultHolder<T> : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property int32_t completed __attribute__((swift_name("completed")));
+@property T _Nullable result __attribute__((swift_name("result")));
+@property KtKotlinThrowable * _Nullable exception __attribute__((swift_name("exception")));
+@end;
+
+__attribute__((swift_name("SuspendBridge")))
+@protocol KtSuspendBridge
+@required
+- (void)intValue:(id _Nullable)value completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("int(value:completionHandler:)")));
+- (void)intAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("intAsAny(value:completionHandler:)")));
+- (void)unitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+- (void)unitAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
+- (void)nothingValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothing(value:completionHandler:)")));
+- (void)nothingAsIntValue:(id _Nullable)value completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsInt(value:completionHandler:)")));
+- (void)nothingAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsAny(value:completionHandler:)")));
+- (void)nothingAsUnitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
+@end;
+
+__attribute__((swift_name("AbstractSuspendBridge")))
+@interface KtAbstractSuspendBridge : KtBase <KtSuspendBridge>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)intAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("intAsAny(value:completionHandler:)")));
+- (void)unitAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
+- (void)nothingAsIntValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsInt(value:completionHandler:)")));
+- (void)nothingAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsAny(value:completionHandler:)")));
+- (void)nothingAsUnitValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CoroutinesKt")))
+@interface KtCoroutinesKt : KtBase
++ (void)suspendFunWithCompletionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(completionHandler:)")));
++ (void)suspendFunResult:(id _Nullable)result doSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(result:doSuspend:doThrow:completionHandler:)")));
++ (void)suspendFunAsyncResult:(id _Nullable)result continuationHolder:(KtContinuationHolder<id> *)continuationHolder completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFunAsync(result:continuationHolder:completionHandler:)")));
++ (BOOL)throwExceptionException:(KtKotlinThrowable *)exception error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("throwException(exception:)")));
++ (void)callSuspendFunSuspendFun:(id<KtSuspendFun>)suspendFun doYield:(BOOL)doYield doThrow:(BOOL)doThrow resultHolder:(KtResultHolder<KtInt *> *)resultHolder __attribute__((swift_name("callSuspendFun(suspendFun:doYield:doThrow:resultHolder:)")));
++ (void)callSuspendFun2SuspendFun:(id<KtSuspendFun>)suspendFun doYield:(BOOL)doYield doThrow:(BOOL)doThrow completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("callSuspendFun2(suspendFun:doYield:doThrow:completionHandler:)")));
++ (BOOL)callSuspendBridgeBridge:(KtAbstractSuspendBridge *)bridge resultHolder:(KtResultHolder<KtKotlinUnit *> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callSuspendBridge(bridge:resultHolder:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DelegateClass")))
 @interface KtDelegateClass : KtBase <KtKotlinReadWriteProperty>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

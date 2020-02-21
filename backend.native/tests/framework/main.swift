@@ -37,6 +37,15 @@ func assertEquals<T: Equatable>(actual: T, expected: T,
     }
 }
 
+func assertSame(actual: AnyObject?, expected: AnyObject?,
+                _ message: String = "Assertion failed:",
+                file: String = #file, line: Int = #line) throws {
+    if (actual !== expected) {
+        try throwAssertFailed(message: message + " Expected value: \(expected), but got: \(actual)",
+                file: file, line: line)
+    }
+}
+
 func assertEquals<T: Equatable>(actual: [T], expected: [T],
                                 _ message: String = "Assertion failed: arrays not equal",
                                 file: String = #file, line: Int = #line) throws {
