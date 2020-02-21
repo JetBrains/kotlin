@@ -49,7 +49,7 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
 }
 
 class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPanel() {
-    private val cbImportNestedClasses = JCheckBox("Insert imports for nested classes")
+    private val cbImportNestedClasses = JCheckBox(KotlinFormatterBundle.message("checkbox.text.insert.imports.for.nested.classes"))
 
     private val starImportPackageEntryTable = PackageEntryTable()
     private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
@@ -59,11 +59,12 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
     private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
-        "Top-level Symbols", KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT
+        KotlinFormatterBundle.message("title.top.level.symbols"), KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT
     )
 
     private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
-        "Java Statics and Enum Members", KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+        KotlinFormatterBundle.message("title.java.statics.and.enum.members"),
+        KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
     )
 
     init {
@@ -80,7 +81,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
 
             add(nameCountToUseStarImportForMembersSelector.createPanel(), constraints.apply { gridy++ })
 
-            add(OptionGroup("Other").apply { add(cbImportNestedClasses) }.createPanel(), constraints.apply { gridy++ })
+            add(
+                OptionGroup(KotlinFormatterBundle.message("title.other")).apply { add(cbImportNestedClasses) }.createPanel(),
+                constraints.apply { gridy++ })
 
             add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.apply {
                 gridy++
@@ -155,9 +158,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
 
     private class NameCountToUseStarImportSelector(title: String, default: Int) : OptionGroup(title) {
-        private val rbUseSingleImports = JRadioButton("Use single name import")
-        private val rbUseStarImports = JRadioButton("Use import with '*'")
-        private val rbUseStarImportsIfAtLeast = JRadioButton("Use import with '*' when at least ")
+        private val rbUseSingleImports = JRadioButton(KotlinFormatterBundle.message("button.text.use.single.name.import"))
+        private val rbUseStarImports = JRadioButton(KotlinFormatterBundle.message("button.text.use.import.with"))
+        private val rbUseStarImportsIfAtLeast = JRadioButton(KotlinFormatterBundle.message("button.text.use.import.with.when.at.least"))
         private val starImportLimitModel = SpinnerNumberModel(default, 2, 100, 1)
         private val starImportLimitField = JSpinner(starImportLimitModel)
 
@@ -175,7 +178,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                 val constraints = GridBagConstraints().apply { gridx = GridBagConstraints.RELATIVE }
                 this.add(rbUseStarImportsIfAtLeast, constraints)
                 this.add(starImportLimitField, constraints)
-                this.add(JLabel(" names used"), constraints.apply { fill = GridBagConstraints.HORIZONTAL; weightx = 1.0 })
+                this.add(
+                    JLabel(KotlinFormatterBundle.message("text.names.used")),
+                    constraints.apply { fill = GridBagConstraints.HORIZONTAL; weightx = 1.0 })
             }, true)
 
             fun updateEnabled() {
