@@ -57,10 +57,11 @@ fun compile(
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
 
     // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
-    val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
-    moduleFragment.acceptVoid(mangleChecker)
-    irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
-
+    if (mainModule is MainModule.SourceFiles) {
+        val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
+        moduleFragment.acceptVoid(mangleChecker)
+        irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
+    }
 
     val moduleDescriptor = moduleFragment.descriptor
 
