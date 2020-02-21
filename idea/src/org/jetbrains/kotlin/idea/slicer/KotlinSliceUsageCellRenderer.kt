@@ -42,12 +42,15 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
         }
 
-        append(" (Tracking enclosing lambda)".repeat(sliceUsage.lambdaLevel), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+        append(
+            KotlinSlicerBundle.message("text.tracking.enclosing.lambda").repeat(sliceUsage.lambdaLevel),
+            SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES
+        )
 
         val declaration = sliceUsage.element?.parents?.firstOrNull {
             it is KtClass || it is KtObjectDeclaration && !it.isObjectLiteral() || it is KtDeclarationWithBody || it is KtProperty && it.isLocal
         } as? KtDeclaration ?: return
         val descriptor = declaration.unsafeResolveToDescriptor()
-        append(" in ${descriptorRenderer.render(descriptor)}", SimpleTextAttributes.GRAY_ATTRIBUTES)
+        append(KotlinSlicerBundle.message("text.in", descriptorRenderer.render(descriptor)), SimpleTextAttributes.GRAY_ATTRIBUTES)
     }
 }
