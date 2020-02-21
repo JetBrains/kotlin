@@ -1,9 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.TreePath
@@ -12,7 +13,7 @@ import kotlin.reflect.KMutableProperty0
 class TargetsModel(
     private val tree: ModulesEditorTree,
     private val value: KMutableProperty0<List<Module>?>,
-    private val readingContext: ReadingContext,
+    private val ideContext: IdeContext,
     private val uiEditorUsagesStats: UiEditorUsageStats
 ) {
     private val root get() = tree.model.root as DefaultMutableTreeNode
@@ -65,7 +66,7 @@ class TargetsModel(
     fun add(module: Module) {
         uiEditorUsagesStats.modulesCreated++
         addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
-        with(readingContext) {
+        with(ideContext) {
             module.apply { initDefaultValuesForSettings() }
         }
     }

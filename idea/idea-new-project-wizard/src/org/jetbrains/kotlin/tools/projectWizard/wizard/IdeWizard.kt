@@ -27,6 +27,7 @@ class IdeWizard(
     isUnitTestMode
 ) {
     private val allSettings = plugins.flatMap { it.declaredSettings }
+    val ideContext = IdeContext(context, servicesManager, isUnitTestMode)
 
     init {
         with(valuesReadingContext) {

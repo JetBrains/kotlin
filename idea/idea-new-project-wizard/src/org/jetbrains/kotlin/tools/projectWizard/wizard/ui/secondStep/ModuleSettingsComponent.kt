@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTabbedPane
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
@@ -19,15 +20,15 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(
-    readingContext: ReadingContext,
+    ideContext: IdeContext,
     uiEditorUsagesStats: UiEditorUsageStats
-) : DynamicComponent(readingContext) {
+) : DynamicComponent(ideContext) {
     private val validateModuleName =
         StringValidators.shouldNotBeBlank("Module name") and
                 StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
 
-    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), readingContext).asSubComponent()
-    private val templateComponent = TemplatesComponent(readingContext, uiEditorUsagesStats).asSubComponent()
+    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), ideContext).asSubComponent()
+    private val templateComponent = TemplatesComponent(ideContext, uiEditorUsagesStats).asSubComponent()
 
     private val tabPanel = JBTabbedPane().apply {
         add("Template", templateComponent.component)
@@ -42,11 +43,11 @@ class ModuleSettingsComponent(
     }
 
     private val nameField = TextFieldComponent(
-        readingContext,
+        ideContext,
         labelText = "Name",
         onValueUpdate = { value ->
             module?.name = value
-            eventManager.fireListeners(null)
+            ideContext.eventManager.fireListeners(null)
         },
         validator = validateModuleName
     ).asSubComponent()

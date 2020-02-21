@@ -1,7 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 
 abstract class Component : Displayable {
     private val subComponents = mutableListOf<Component>()
@@ -15,12 +18,7 @@ abstract class Component : Displayable {
     }
 }
 
-abstract class DynamicComponent(private val readingContext: ReadingContext) : Component() {
-    //TODO do not use it in future
-    protected val context = readingContext.context
-    protected val eventManager
-        get() = readingContext.context.eventManager
-
+abstract class DynamicComponent(private val ideContext: IdeContext) : Component() {
     private var isInitialized: Boolean = false
 
     override fun onInit() {
@@ -29,22 +27,29 @@ abstract class DynamicComponent(private val readingContext: ReadingContext) : Co
     }
 
     var <V : Any, T : SettingType<V>> SettingReference<V, T>.value: V?
-        get() = with(readingContext) { notRequiredSettingValue() }
-        set(value) {
-            with(context) { settingContext[this@value] = value!! }
+        get() = read { notRequiredSettingValue() }
+        set(value) = modify {
+            value?.let { setValue(it) }
         }
+
 
     inline val <V : Any, reified T : SettingType<V>> PluginSettingPropertyReference<V, T>.value: V?
         get() = reference.value
 
     init {
-        readingContext.context.eventManager.addSettingUpdaterEventListener { reference ->
+        ideContext.eventManager.addSettingUpdaterEventListener { reference ->
             if (isInitialized) onValueUpdated(reference)
         }
     }
 
     protected fun <T> read(reader: ReadingContext.() -> T): T =
-        reader(readingContext)
+        reader(ideContext)
+
+    protected fun <T> write(writer: WritingContext.() -> T): T =
+        writer(ideContext)
+
+    protected fun <T> modify(modifier: SettingsWritingContext.() -> T): T =
+        modifier(ideContext)
 
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }

@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
@@ -9,7 +11,8 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
 abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager, private val isUnitTestMode: Boolean) {
     val context = Context(createPlugins, EventManager())
-    val valuesReadingContext = ReadingContext(context, servicesManager, isUnitTestMode)
+    val valuesReadingContext =
+        ReadingContext(context, servicesManager, isUnitTestMode)
     protected val plugins = context.plugins
     protected val pluginSettings = plugins.flatMap { it.declaredSettings }.distinctBy { it.path }
 
@@ -48,7 +51,11 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         onTaskExecuting: (PipelineTask) -> Unit = {}
     ): TaskResult<Unit> = computeM {
         context.checkAllRequiredSettingPresent(phases).ensure()
-        val taskRunningContext = WritingContext(context, servicesManager.withServices(services), isUnitTestMode)
+        val taskRunningContext = WritingContext(
+            context,
+            servicesManager.withServices(services),
+            isUnitTestMode
+        )
         taskRunningContext.validate(phases).ensure()
         taskRunningContext.saveSettingValues(phases)
         val (tasksSorted) = context.sortTasks().map { tasks ->

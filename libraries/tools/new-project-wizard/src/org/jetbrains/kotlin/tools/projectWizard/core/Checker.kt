@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+
 typealias Checker = ReadingContext.() -> Boolean
 
 val ALWAYS_AVAILABLE_CHECKER = checker { true }

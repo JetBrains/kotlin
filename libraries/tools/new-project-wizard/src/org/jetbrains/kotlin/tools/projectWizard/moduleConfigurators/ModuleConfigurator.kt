@@ -2,8 +2,11 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.cached
+import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -163,11 +166,11 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
     fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
 
 
-    fun initDefaultValuesFor(module: Module, context: Context) {
+    fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             getConfiguratorSettings().forEach { setting ->
                 val defaultValue = setting.defaultValue ?: return@forEach
-                context.settingContext[setting.reference] = defaultValue
+                setting.reference.setValue(defaultValue)
             }
         }
     }

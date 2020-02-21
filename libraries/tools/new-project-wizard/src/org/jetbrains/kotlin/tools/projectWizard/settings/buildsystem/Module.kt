@@ -3,7 +3,9 @@ package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
@@ -86,9 +88,9 @@ class Module(
             else -> "Module"
         }
 
-    fun ReadingContext.initDefaultValuesForSettings() {
-        configurator.safeAs<ModuleConfiguratorWithSettings>()?.initDefaultValuesFor(this@Module, context)
-        template?.apply { initDefaultValuesFor(this@Module, context) }
+    fun SettingsWritingContext.initDefaultValuesForSettings() {
+        configurator.safeAs<ModuleConfiguratorWithSettings>()?.apply { initDefaultValuesFor(this@Module) }
+        template?.apply { initDefaultValuesFor(this@Module) }
     }
 
     companion object {

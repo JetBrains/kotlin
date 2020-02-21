@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR

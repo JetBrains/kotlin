@@ -1,12 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType

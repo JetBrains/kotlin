@@ -3,7 +3,10 @@ package org.jetbrains.kotlin.tools.projectWizard.templates
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -72,11 +75,11 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
-    fun ReadingContext.initDefaultValuesFor(module: Module, context: Context) {
+    fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             settings.forEach { setting ->
                 val defaultValue = setting.savedOrDefaultValue ?: return@forEach
-                context.settingContext[setting.reference] = defaultValue
+                setting.reference.setValue(defaultValue)
             }
         }
     }

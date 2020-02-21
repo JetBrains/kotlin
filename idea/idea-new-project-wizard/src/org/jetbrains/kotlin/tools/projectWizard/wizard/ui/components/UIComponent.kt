@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
@@ -18,11 +19,11 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 abstract class UIComponent<V : Any>(
-    private val readingContext: ReadingContext,
+    ideContext: IdeContext,
     labelText: String? = null,
     private val validator: SettingValidator<V>? = null,
     private val onValueUpdate: (V) -> Unit = {}
-) : DynamicComponent(readingContext), ErrorAwareComponent, FocusableComponent, Disposable {
+) : DynamicComponent(ideContext), ErrorAwareComponent, FocusableComponent, Disposable {
     private val validationIndicator by lazy(LazyThreadSafetyMode.NONE) {
         if (validator != null)
             IdeaBasedComponentValidator(this, getValidatorTarget())
@@ -69,7 +70,9 @@ abstract class UIComponent<V : Any>(
     fun validate(value: V) {
         if (validator == null) return
         if (validationIndicator == null) return
-        validationIndicator?.updateValidationState(validator.validate(readingContext, value))
+        read {
+            validationIndicator?.updateValidationState(validator.validate(this, value))
+        }
     }
 
     override fun focusOn() {
@@ -77,7 +80,9 @@ abstract class UIComponent<V : Any>(
     }
 
     override fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent? = takeIf {
-        getUiValue()?.let { validator?.validate?.invoke(readingContext, it)?.isSpecificError(error) } == true
+        read {
+            getUiValue()?.let { validator?.validate?.invoke(this, it)?.isSpecificError(error) } == true
+        }
     }
 }
 

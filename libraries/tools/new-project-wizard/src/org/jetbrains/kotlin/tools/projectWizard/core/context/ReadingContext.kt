@@ -1,6 +1,14 @@
-package org.jetbrains.kotlin.tools.projectWizard.core
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
+package org.jetbrains.kotlin.tools.projectWizard.core.context
+
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
@@ -8,7 +16,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 open class ReadingContext(
-    val context: Context,
+    protected val context: Context,
     private val servicesManager: ServicesManager,
     val isUnitTestMode: Boolean
 ) {
@@ -19,10 +27,10 @@ open class ReadingContext(
         servicesManager.serviceByClass(klass, filter) ?: error("Service ${klass.simpleName} was not found")
 
     inline val <reified T : Any> PropertyReference<T>.propertyValue: T
-        get() = context.propertyContext[this] as T
+        get() = `access$context`.propertyContext[this] as T
 
     inline val <reified V : Any, T : SettingType<V>> SettingReference<V, T>.settingValue: V
-        get() = context.settingContext[this] ?: error("No value is present for setting `$this`")
+        get() = `access$context`.settingContext[this] ?: error("No value is present for setting `$this`")
 
     inline val <reified V : Any> KProperty1<out Plugin, PluginSetting<V, SettingType<V>>>.settingValue: V
         get() = reference.settingValue
@@ -31,7 +39,7 @@ open class ReadingContext(
         this.reference.settingValue
 
     inline fun <reified V : Any, T : SettingType<V>> SettingReference<V, T>.settingValue(): V =
-        context.settingContext[this] ?: error("No value is present for setting `$this`")
+        `access$context`.settingContext[this] ?: error("No value is present for setting `$this`")
 
     val <V : Any, T : SettingType<V>> SettingReference<V, T>.notRequiredSettingValue: V?
         get() = context.settingContext[this]
@@ -52,4 +60,11 @@ open class ReadingContext(
     val <V : Any> Setting<V, SettingType<V>>.savedOrDefaultValue: V?
         get() = getSavedValueForSetting() ?: defaultValue
 
+    val <V : Any, T : SettingType<V>> SettingReference<V, T>.setting: Setting<V, T>
+        get() = with(this) { getSetting() }
+
+
+    @PublishedApi
+    internal val `access$context`: Context
+        get() = context
 }

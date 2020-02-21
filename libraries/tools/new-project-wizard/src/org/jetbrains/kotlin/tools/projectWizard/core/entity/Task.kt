@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import kotlin.reflect.KProperty1

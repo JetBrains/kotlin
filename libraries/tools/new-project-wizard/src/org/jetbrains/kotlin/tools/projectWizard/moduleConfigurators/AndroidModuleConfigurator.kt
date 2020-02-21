@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PluginSettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType

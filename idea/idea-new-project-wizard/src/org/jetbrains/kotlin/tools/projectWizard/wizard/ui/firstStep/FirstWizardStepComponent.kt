@@ -1,20 +1,20 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.valuesReadingContext) {
-    private val buildSystemSubStep = BuildSystemSubStep(wizard.valuesReadingContext).asSubComponent()
-    private val templatesSubStep = TemplatesSubStep(wizard.valuesReadingContext).asSubComponent()
+class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.ideContext) {
+    private val buildSystemSubStep = BuildSystemSubStep(wizard.ideContext).asSubComponent()
+    private val templatesSubStep = TemplatesSubStep(wizard.ideContext).asSubComponent()
 
     override val component: JComponent = panel {
         add(templatesSubStep.component, BorderLayout.CENTER)
@@ -22,19 +22,17 @@ class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.v
     }
 }
 
-class BuildSystemSubStep(readingContext: ReadingContext) :
-    SubStep(readingContext) {
-    private val buildSystemSetting = BuildSystemTypeSettingComponent(readingContext).asSubComponent()
+class BuildSystemSubStep(ideContext: IdeContext) : SubStep(ideContext) {
+    private val buildSystemSetting = BuildSystemTypeSettingComponent(ideContext).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
         add(buildSystemSetting.component, BorderLayout.CENTER)
     }
 }
 
-class TemplatesSubStep(readingContext: ReadingContext) :
-    SubStep(readingContext) {
+class TemplatesSubStep(ideContext: IdeContext) : SubStep(ideContext) {
     private val projectTemplateSettingComponent =
-        ProjectTemplateSettingComponent(readingContext) { projectTemplate ->
+        ProjectTemplateSettingComponent(ideContext) { projectTemplate ->
             templateDescriptionComponent.setTemplate(projectTemplate)
         }.asSubComponent()
 
@@ -51,11 +49,10 @@ class TemplatesSubStep(readingContext: ReadingContext) :
     }
 
     private fun applySelectedTemplate() {
-        projectTemplateSettingComponent.value?.setsValues?.forEach { (setting, value) ->
-            // TODO do not use settingContext directly
-            context.settingContext[setting] = value
-        }
-        read {
+        modify {
+            projectTemplateSettingComponent.value?.setsValues?.forEach { (setting, value) ->
+                setting.setValue(value)
+            }
             allModules().forEach { module ->
                 module.apply { initDefaultValuesForSettings() }
             }

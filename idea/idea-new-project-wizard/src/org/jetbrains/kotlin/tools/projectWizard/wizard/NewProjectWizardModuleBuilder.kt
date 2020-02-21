@@ -190,7 +190,7 @@ private class PomWizardStep(
     originalSettingStep: SettingsStep,
     wizard: IdeWizard
 ) : WizardStep(wizard, GenerationPhase.PROJECT_GENERATION) {
-    private val pomWizardStepComponent = PomWizardStepComponent(wizard.valuesReadingContext)
+    private val pomWizardStepComponent = PomWizardStepComponent(wizard.ideContext)
 
     init {
         originalSettingStep.addSettingsComponent(component)
