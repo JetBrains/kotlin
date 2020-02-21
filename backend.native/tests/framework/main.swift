@@ -62,12 +62,67 @@ func assertFalse(_ value: Bool,
     }
 }
 
+func assertNil(_ value: Any?,
+                 _ message: String = "Assertion failed:",
+                 file: String = #file, line: Int = #line) throws {
+    if (value != nil) {
+        try throwAssertFailed(message: message + " Expected value to be nil, but got: \(value!)",
+                file: file, line: line)
+    }
+}
+
+func fail(_ message: String = "Should not reach here", file: String = #file, line: Int = #line) throws -> Never {
+    try throwAssertFailed(message: message, file: file, line: line)
+}
+
+func assertFailsWith<T : Error>(_ errorType: T.Type,
+                                _ message: String = "Assertion failed:",
+                                file: String = #file, line: Int = #line,
+                                block: () throws -> Void) throws {
+    do {
+        try block()
+    } catch let error {
+        if error is T { return }
+        try throwAssertFailed(message: message + " Expected error \(errorType), got \(error)",
+                file: file, line: line)
+    }
+
+    try throwAssertFailed(message: message + " Expected error \(errorType), but finished successfully",
+            file: file, line: line)
+}
+
+func assertFailsWithKotlin<T>(_ exceptionType: T.Type,
+                              _ message: String = "Assertion failed:",
+                              file: String = #file, line: Int = #line,
+                              block: () throws -> Void) throws {
+    do {
+        try block()
+    } catch let error {
+        let kotlinException = error.kotlinException
+        if kotlinException is T { return }
+        let got = kotlinException ?? error
+        try throwAssertFailed(message: message + " Expected Kotlin exception \(exceptionType), got \(got)",
+                file: file, line: line)
+    }
+
+    try throwAssertFailed(message: message + " Expected Kotlin exception \(exceptionType), but finished successfully",
+            file: file, line: line)
+}
+
 
 // ---------------- Utils --------------------
 
 func withAutorelease( _ method: @escaping () throws -> Void) -> () throws -> Void {
     return { () throws -> Void in
         try autoreleasepool { try method() }
+    }
+}
+
+extension Error {
+    var kotlinException: Any? {
+        get {
+            return (self as NSError).userInfo["KotlinException"]
+        }
     }
 }
 
