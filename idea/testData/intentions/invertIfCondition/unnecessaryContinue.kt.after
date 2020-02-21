@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun test() {
+    for (x in "abc") {
+        if (x != 'a') {
+            println("else")
+        }
+    }
+}

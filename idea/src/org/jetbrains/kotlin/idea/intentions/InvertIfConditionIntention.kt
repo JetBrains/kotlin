@@ -191,6 +191,14 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
             parent.addAfter(thenBranch, ifExpression)
             parent.addAfter(factory.createNewLine(), ifExpression)
         }
+
+        (parent.getStrictParentOfType<KtForExpression>()?.body as? KtBlockExpression)
+            ?.takeIf { it == parent }
+            ?.statements
+            ?.lastOrNull()
+            ?.takeIf { it is KtContinueExpression }
+            ?.delete()
+
         return ifExpression
     }
 
