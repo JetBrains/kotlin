@@ -183,8 +183,8 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
 fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
     Messages.showErrorDialog(
         project,
-        jarName + " is not found. Make sure plugin is properly installed.",
-        "No Runtime Found"
+        KotlinVersionBundle.message("dialog.message.is.not.found.make.sure.plugin.is.properly.installed", jarName),
+        KotlinVersionBundle.message("title.no.runtime.found")
     )
 }
 
@@ -293,13 +293,21 @@ val DEPRECATED_LIBRARIES_INFORMATION = listOf(
         oldGroupId = "org.jetbrains.kotlin",
         oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME,
         outdatedAfterVersion = "1.2.0-rc-39",
-        message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME}"
+        message = KotlinVersionBundle.message(
+            "message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
+            PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME,
+            PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME
+        )
     ),
 
     deprecatedLib(
         oldGroupId = "org.jetbrains.kotlin",
         oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME,
         outdatedAfterVersion = "1.2.0-rc-39",
-        message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME}"
+        message = KotlinVersionBundle.message(
+            "message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
+            PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME,
+            PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
+        )
     )
 )
