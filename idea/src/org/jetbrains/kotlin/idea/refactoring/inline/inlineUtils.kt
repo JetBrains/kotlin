@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
@@ -63,13 +64,16 @@ fun showDialog(
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
     val kind = when (declaration) {
-        is KtProperty -> if (declaration.isLocal) "local variable" else "property"
-        is KtTypeAlias -> "type alias"
+        is KtProperty -> if (declaration.isLocal)
+            KotlinRefactoringBundle.message("text.local.variable")
+        else
+            KotlinRefactoringBundle.message("text.local.property")
+        is KtTypeAlias -> KotlinRefactoringBundle.message("text.type.alias")
         else -> return false
     }
     val dialog = RefactoringMessageDialog(
         title,
-        "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", usages.size),
+        KotlinRefactoringBundle.message("text.inline.0.1.2", kind, name, RefactoringBundle.message("occurences.string", usages.size)),
         helpTopic,
         "OptionPane.questionIcon",
         true,
@@ -144,11 +148,19 @@ internal fun buildCodeToInline(
         if (returnStatements.any { it != lastReturn }) {
             val message = RefactoringBundle.getCannotRefactorMessage(
                 if (returnStatements.size > 1)
-                    "Inline Function is not supported for functions with multiple return statements."
+                    KotlinRefactoringBundle.message("error.text.inline.function.is.not.supported.for.functions.with.multiple.return.statements")
                 else
-                    "Inline Function is not supported for functions with return statements not at the end of the body."
+                    KotlinRefactoringBundle.message("error.text.inline.function.is.not.supported.for.functions.with.return.statements.not.at.the.end.of.the.body")
             )
-            CommonRefactoringUtil.showErrorHint(declaration.project, editor, message, "Inline Function", null)
+
+            CommonRefactoringUtil.showErrorHint(
+                declaration.project,
+                editor,
+                message,
+                KotlinRefactoringBundle.message("title.inline.function"),
+                null
+            )
+
             return null
         }
 

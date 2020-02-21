@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.help.HelpManager
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -52,7 +53,7 @@ class KotlinInlineValDialog(
 
                 override fun shouldSaveOptionsOnCancel() = false
 
-                override fun getDoNotShowMessage() = "Do not show for local variables in future"
+                override fun getDoNotShowMessage() = KotlinRefactoringBundle.message("message.do.not.show.for.local.variables.in.future")
             })
         }
         init()
