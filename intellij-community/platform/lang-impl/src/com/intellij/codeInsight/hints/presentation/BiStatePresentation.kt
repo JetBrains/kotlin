@@ -4,7 +4,7 @@ package com.intellij.codeInsight.hints.presentation
 /**
  * Presentation, that may be in two states and can preserve state type between passes.
  */
-class BiStatePresentation(
+open class BiStatePresentation(
   val first: () -> InlayPresentation,
   val second: () -> InlayPresentation,
   initialState: Boolean
