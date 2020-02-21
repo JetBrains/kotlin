@@ -95,7 +95,6 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
    * Intended to be used with [smallText]
    */
   @Contract(pure = true)
-  @Deprecated(message = "", replaceWith = ReplaceWith("container"))
   fun roundWithBackground(base: InlayPresentation): InlayPresentation {
     val rounding = withInlayAttributes(RoundWithBackgroundPresentation(
       InsetPresentation(
