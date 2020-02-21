@@ -27,7 +27,7 @@ class EmulatedExperiment {
             return (
                      experimentVersion == GROUP_B_EXPERIMENT_VERSION ||
                      experimentVersion == GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION && language.isKotlin() ||
-                     experimentVersion == GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION && PlatformUtils.isPyCharm()
+                     experimentVersion == GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION && language.id == "Python"
                    )
                    && !Registry.`is`("completion.stats.exit.experiment")
         }
@@ -45,10 +45,8 @@ class EmulatedExperiment {
             3 -> GROUP_A_EXPERIMENT_VERSION
             4 -> GROUP_B_EXPERIMENT_VERSION
             5 -> GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
-            else ->
-                if (PlatformUtils.isPyCharm())
-                    GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
-                else null
+            6 -> GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
+            else -> null
         }
     }
 
