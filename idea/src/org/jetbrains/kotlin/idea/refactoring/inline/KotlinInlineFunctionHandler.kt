@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -37,8 +38,11 @@ class KotlinInlineFunctionHandler : InlineActionHandler() {
 
         val recursive = element.isRecursive()
         if (recursive && nameReference == null) {
-            val message = RefactoringBundle.getCannotRefactorMessage("Inline recursive function is supported only on references")
-            CommonRefactoringUtil.showErrorHint(project, editor, message, "Inline Function", null)
+            val message = RefactoringBundle.getCannotRefactorMessage(
+                KotlinRefactoringBundle.message("text.inline.recursive.function.is.supported.only.on.references")
+            )
+
+            CommonRefactoringUtil.showErrorHint(project, editor, message, KotlinRefactoringBundle.message("title.inline.function"), null)
             return
         }
 
