@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.fileTypes.impl;
 
 import com.intellij.CommonBundle;
@@ -405,9 +405,11 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
 
       @Override
       protected void selectElement(Object element, String selectedText) {
-        ScrollingUtil.selectItem(myComponent, element);
-        if (myCurrentType != null && myCurrentType.equals(element) && myController != null) {
-          myController.myPatterns.select(myExtension);
+        if (element != null) {
+          ScrollingUtil.selectItem(myComponent, element);
+          if (myCurrentType != null && myCurrentType.equals(element) && myController != null) {
+            myController.myPatterns.select(myExtension);
+          }
         }
       }
 
