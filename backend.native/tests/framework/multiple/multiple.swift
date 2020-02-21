@@ -50,7 +50,7 @@ func testIsolation3() throws {
 #endif
 }
 
-class MultipleFrameworksTests : TestProvider {
+class MultipleTests : TestProvider {
     var tests: [TestCase] = []
 
     init() {

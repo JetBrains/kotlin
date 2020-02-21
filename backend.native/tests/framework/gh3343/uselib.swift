@@ -11,7 +11,7 @@ func testGh3343() throws {
 
 // -------- Execution of the test --------
 
-class Gh3343Tests : TestProvider {
+class UselibTests : TestProvider {
     var tests: [TestCase] = []
 
     init() {

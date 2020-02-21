@@ -275,7 +275,7 @@ func testGenericExtensions() throws {
 
 // -------- Execution of the test --------
 
-class ValuesGenericsTests : TestProvider {
+class ValuesTests : TestProvider {
     var tests: [TestCase] = []
 
     init() {

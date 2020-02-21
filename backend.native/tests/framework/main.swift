@@ -132,12 +132,15 @@ private func execute(tests: [TestCase]) {
  * Entry point of the test
  */
 private func main() {
-    // Generated method that instantiates TestProvider
-    registerProvider()
+    // Generated method that instantiates test providers.
+    registerProviders()
 
     let stats = Statistics.getInstance()
     for pr in providers {
+        let name = String(describing: type(of: pr))
+        print("-- \(name) started")
         execute(tests: pr.tests)
+        print("-- \(name) finished")
     }
     print(stats)
 
