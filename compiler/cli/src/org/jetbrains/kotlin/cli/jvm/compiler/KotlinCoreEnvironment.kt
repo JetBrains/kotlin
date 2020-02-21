@@ -421,6 +421,7 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
+            setupIdeaStandaloneExecution()
             val appEnv = getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
