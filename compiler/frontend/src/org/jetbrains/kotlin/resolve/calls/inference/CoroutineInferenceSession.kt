@@ -55,6 +55,9 @@ class CoroutineInferenceSession(
 
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         val system = candidate.getSystem() as NewConstraintSystemImpl
+
+        if (system.hasContradiction) return true
+
         val storage = system.getBuilder().currentStorage()
         fun ResolvedAtom.hasPostponed(): Boolean {
             if (this is PostponedResolvedAtom && !analyzed) return true
