@@ -218,7 +218,8 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
         }
     }
 
-    override fun getConversionDescription() = "Update source roots for non-JVM modules in Kotlin project"
+    override fun getConversionDescription() =
+        KotlinRootsBundle.message("description.text.update.source.roots.for.non.jvm.modules.in.kotlin.project")
 
     override fun createConverter(context: ConversionContext) = ConverterImpl(context)
 }
