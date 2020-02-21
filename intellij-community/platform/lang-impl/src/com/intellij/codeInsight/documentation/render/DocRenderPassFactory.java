@@ -27,8 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.intellij.lang.documentation.DocumentationMarkup.*;
-
 public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRegistrar, TextEditorHighlightingPassFactory {
   private static final Logger LOG = Logger.getInstance(DocRenderPassFactory.class);
   private static final Key<Long> MODIFICATION_STAMP = Key.create("doc.render.modification.stamp");
@@ -85,59 +83,12 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
     try {
       PsiElement owner = comment.getOwner();
       if (owner == null) return null;
-      String doc = DocumentationManager.getProviderFromElement(owner).generateDoc(owner, null);
-      if (doc == null) return null;
-      // remove definition (it's already visible in the source code)
-      int definitionPos = doc.indexOf(DEFINITION_START);
-      if (definitionPos >= 0) {
-        int definitionEnd = doc.indexOf(DEFINITION_END, definitionPos + DEFINITION_START.length());
-        if (definitionEnd > 0) {
-          doc = doc.substring(0, definitionPos) + doc.substring(definitionEnd + DEFINITION_END.length());
-        }
-      }
-      // remove information about non-code annotations
-      int sectionPos = 0;
-      while ((sectionPos = doc.indexOf(SECTION_HEADER_START, sectionPos)) >= 0) {
-        int sectionNamePos = sectionPos + SECTION_HEADER_START.length();
-        int separatorPos = doc.indexOf(SECTION_SEPARATOR, sectionNamePos);
-        if (separatorPos < 0) break;
-        int endPos = doc.indexOf(SECTION_END, separatorPos + SECTION_SEPARATOR.length());
-        if (endPos < 0) break;
-        int endEndPos = endPos + SECTION_END.length();
-        if (doc.substring(sectionNamePos, separatorPos).contains("annotations")) {
-          doc = doc.substring(0, sectionPos) + doc.substring(endEndPos);
-        }
-        else {
-          sectionPos = endEndPos;
-        }
-      }
-      return isWhitespaceAndTags(doc) ? null : doc;
+      return DocumentationManager.getProviderFromElement(owner).generateRenderedDoc(owner);
     }
     catch (IndexNotReadyException e) {
       LOG.debug(e);
       return CodeInsightBundle.message("doc.render.dumb.mode.text");
     }
-  }
-
-  private static boolean isWhitespaceAndTags(@NotNull String text) {
-    boolean tag = false;
-    for (int i = 0; i < text.length(); i++) {
-      char c = text.charAt(i);
-      if (tag) {
-        if (c == '>') {
-          tag = false;
-        }
-      }
-      else {
-        if (c == '<') {
-          tag = true;
-        }
-        else {
-          if (c > ' ') return false;
-        }
-      }
-    }
-    return true;
   }
 
   public static void applyItemsToRender(@NotNull Editor editor,
