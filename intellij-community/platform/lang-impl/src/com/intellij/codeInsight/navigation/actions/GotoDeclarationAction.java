@@ -125,13 +125,20 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
   }
 
   public static void startFindUsages(@NotNull Editor editor, @NotNull Project project, @NotNull PsiElement element) {
+    startFindUsages(editor, project, element, null);
+  }
+
+  public static void startFindUsages(@NotNull Editor editor,
+                                     @NotNull Project project,
+                                     @NotNull PsiElement element,
+                                     @Nullable RelativePoint point) {
     if (DumbService.getInstance(project).isDumb()) {
       AnAction action = ActionManager.getInstance().getAction(ShowUsagesAction.ID);
       String name = action.getTemplatePresentation().getText();
       DumbService.getInstance(project).showDumbModeNotification(ActionUtil.getUnavailableMessage(name, false));
     }
     else {
-      RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(editor);
+      RelativePoint popupPosition = point != null ? point : JBPopupFactory.getInstance().guessBestPopupLocation(editor);
       ShowUsagesAction.startFindUsages(element, popupPosition, editor);
     }
   }
