@@ -248,7 +248,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
 
 private fun KtFile.getDefaultImports(): List<ImportPath> {
     val moduleInfo = getNullableModuleInfo() ?: return emptyList()
-    return TargetPlatformDetector.getPlatform(this).findAnalyzerServices.getDefaultImports(
+    return TargetPlatformDetector.getPlatform(this).findAnalyzerServices(project).getDefaultImports(
         IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project),
         includeLowPriorityImports = true
     )
