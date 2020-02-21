@@ -86,7 +86,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
         val scopeSymbol = currentScope?.scope?.scopeOwnerSymbol ?: containerSymbol
         val builder = context.createIrBuilder(scopeSymbol!!)
         val variable by lazy {
-            builder.scope.createTemporaryVariableDeclaration(expression.type, "tmp\$ret\$${labelCnt++}", true)
+            builder.scope.createTmpVariable(expression.type, "tmp\$ret\$${labelCnt++}", true)
         }
 
         val loop by lazy {
