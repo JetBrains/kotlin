@@ -10,6 +10,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -58,6 +59,8 @@ class AppleXcodeProjectFileModificationListener(private val project: Project, pr
 
     companion object {
         fun setUp(project: Project, target: AppleTargetModel, disposable: Disposable) {
+            if (!SystemInfo.isMac) return
+
             val pbxProjFile = AppleXcodeProjectFileProvider.findXcodeProjFile(target).resolve("project.pbxproj")
             VfsUtil.findFileByIoFile(pbxProjFile, true)
 
