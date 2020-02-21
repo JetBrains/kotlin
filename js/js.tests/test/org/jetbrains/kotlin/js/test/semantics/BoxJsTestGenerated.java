@@ -4963,6 +4963,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsModule/externalFunction.kt");
         }
 
+        @TestMetadata("externalFunctionNameClash.kt")
+        public void testExternalFunctionNameClash() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/externalFunctionNameClash.kt");
+        }
+
         @TestMetadata("externalFunctionPlain.kt")
         public void testExternalFunctionPlain() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/externalFunctionPlain.kt");
