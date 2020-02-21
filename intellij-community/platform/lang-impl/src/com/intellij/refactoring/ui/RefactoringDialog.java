@@ -5,6 +5,8 @@ import com.intellij.ide.HelpTooltip;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -53,11 +55,19 @@ public abstract class RefactoringDialog extends DialogWrapper {
       @Override
       public void rememberChoice(boolean selected, int exitCode) {
         PropertiesComponent.getInstance().setValue(getRefactoringId() + ".OpenInEditor", selected, true);
+        report(selected, "open.in.editor.saved");
       }
 
       @Override
       public boolean isSelectedByDefault() {
-        return PropertiesComponent.getInstance().getBoolean(getRefactoringId() + ".OpenInEditor", true);
+        boolean selected = PropertiesComponent.getInstance().getBoolean(getRefactoringId() + ".OpenInEditor", true);
+        return report(selected, "open.in.editor.shown");
+      }
+
+      private boolean report(boolean selected, String eventId) {
+        FeatureUsageData data = new FeatureUsageData().addData("selected", selected).addData("refactoring.id", getRefactoringId());
+        FUCounterUsageLogger.getInstance().logEvent("refactoring.dialog", eventId, data);
+        return selected;
       }
 
       @NotNull
