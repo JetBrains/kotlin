@@ -25,11 +25,14 @@ fun showDecompiledCode(sourceFile: KtFile) {
     ProgressManager.getInstance().run(KotlinBytecodeDecompilerTask(sourceFile))
 }
 
-class KotlinBytecodeDecompilerTask(val file: KtFile) : Task.Backgroundable(file.project, "Decompile kotlin bytecode") {
+class KotlinBytecodeDecompilerTask(val file: KtFile) : Task.Backgroundable(
+    file.project,
+    KotlinInternalBundle.message("action.text.decompile.kotlin.bytecode")
+) {
     override fun run(indicator: ProgressIndicator) {
         val decompilerService = KotlinDecompilerService.getInstance() ?: return
 
-        indicator.text = "Decompiling ${file.name}"
+        indicator.text = KotlinInternalBundle.message("indicator.text.decompiling", file.name)
 
         val decompiledText = try {
             decompilerService.decompile(file)
@@ -43,7 +46,10 @@ class KotlinBytecodeDecompilerTask(val file: KtFile) : Task.Backgroundable(file.
 
                 if (decompiledText == null) {
                     ApplicationManager.getApplication().invokeLater {
-                        Messages.showErrorDialog("Cannot decompile ${file.name}", "Decompiler error")
+                        Messages.showErrorDialog(
+                            KotlinInternalBundle.message("error.text.cannot.decompile", file.name),
+                            KotlinInternalBundle.message("title.decompiler.error")
+                        )
                     }
                     return@runWriteAction
                 }
