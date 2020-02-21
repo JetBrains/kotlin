@@ -81,7 +81,7 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
         getter.body = IrBlockBodyImpl(startOffset, endOffset) {
             val irBuilder = backendContext.createIrBuilder(getter.symbol, startOffset, endOffset)
             irBuilder.run {
-                val resultVar = scope.createTemporaryVariable(
+                val resultVar = scope.createTmpVariable(
                     irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
                 )
                 resultVar.parent = getter

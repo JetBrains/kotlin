@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -54,6 +55,34 @@ fun <T : IrElement> IrStatementsBuilder<T>.createTmpVariable(
     val variable = scope.createTmpVariable(irExpression, nameHint, isMutable, origin, irType)
     +variable
     return variable
+}
+
+fun Scope.createTmpVariable(
+    irType: IrType,
+    nameHint: String? = null,
+    isMutable: Boolean = false,
+    initializer: IrExpression? = null,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
+): IrVariable {
+    val descriptor = WrappedVariableDescriptor()
+    val symbol = IrVariableSymbolImpl(descriptor)
+    return IrVariableImpl(
+        startOffset,
+        endOffset,
+        origin,
+        symbol,
+        Name.identifier(nameHint ?: "tmp"),
+        irType,
+        isMutable,
+        isConst = false,
+        isLateinit = false
+    ).apply {
+        this.initializer = initializer
+        parent = getLocalDeclarationParent()
+        descriptor.bind(this)
+    }
 }
 
 fun Scope.createTmpVariable(
