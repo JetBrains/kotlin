@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.move.moveFilesOrDirectories;
 
 import com.intellij.ide.util.DirectoryUtil;
@@ -11,10 +11,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
@@ -22,6 +19,7 @@ import com.intellij.psi.*;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.RefactoringSettings;
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog;
+import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
@@ -38,19 +36,17 @@ import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.util.List;
 
-public abstract class MoveFilesOrDirectoriesDialog extends DialogWrapper {
+public abstract class MoveFilesOrDirectoriesDialog extends RefactoringDialog {
+  private static final String MOVE_FILE = "MoveFile";
   private static final String RECENT_KEYS = "MoveFile.RECENT_KEYS";
   private static final String MOVE_FILES_OPEN_IN_EDITOR = "MoveFile.OpenInEditor";
 
-  private final Project myProject;
   private JLabel myNameLabel;
   private TextFieldWithHistoryWithBrowseButton myTargetDirectoryField;
   private JCheckBox myCbSearchForReferences;
-  private JCheckBox myOpenInEditorCb;
 
   public MoveFilesOrDirectoriesDialog(@NotNull Project project, PsiElement @NotNull [] psiElements, PsiDirectory initialTargetDirectory) {
-    super(project, true);
-    myProject = project;
+    super(project, true, true);
     setTitle(RefactoringBundle.message("move.title"));
     init();
 
@@ -80,7 +76,7 @@ public abstract class MoveFilesOrDirectoriesDialog extends DialogWrapper {
       myTargetDirectoryField.getChildComponent().getTextEditor().select(lastDirectoryIdx + 1, textLength);
     }
 
-    validateOKButton();
+    validateButtons();
   }
 
   @Override
@@ -113,7 +109,7 @@ public abstract class MoveFilesOrDirectoriesDialog extends DialogWrapper {
     textField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
-        validateOKButton();
+        validateButtons();
       }
     });
     myTargetDirectoryField.setTextFieldPreferredWidth(CopyFilesOrDirectoriesDialog.MAX_PATH_LENGTH);
@@ -124,15 +120,16 @@ public abstract class MoveFilesOrDirectoriesDialog extends DialogWrapper {
     myCbSearchForReferences = new NonFocusableCheckBox(RefactoringBundle.message("search.for.references"));
     myCbSearchForReferences.setSelected(RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE);
 
-    myOpenInEditorCb = new NonFocusableCheckBox("Open moved files in editor");
-    myOpenInEditorCb.setSelected(isOpenInEditor());
-
     return FormBuilder.createFormBuilder().addComponent(myNameLabel)
       .addLabeledComponent(RefactoringBundle.message("move.files.to.directory.label"), myTargetDirectoryField, UIUtil.LARGE_VGAP)
       .addTooltip(RefactoringBundle.message("path.completion.shortcut", shortcutText))
       .addComponentToRightColumn(myCbSearchForReferences, UIUtil.LARGE_VGAP)
-      .addComponentToRightColumn(myOpenInEditorCb, UIUtil.LARGE_VGAP)
       .getPanel();
+  }
+
+  @Override
+  protected @NotNull String getRefactoringId() {
+    return MOVE_FILE;
   }
 
   @Override
@@ -140,25 +137,25 @@ public abstract class MoveFilesOrDirectoriesDialog extends DialogWrapper {
     return "refactoring.moveFile";
   }
 
-  public static boolean isOpenInEditor() {
+  public static boolean isOpenInEditorProperty() {
     return !ApplicationManager.getApplication().isUnitTestMode() &&
            PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false);
   }
 
-  private void validateOKButton() {
-    setOKActionEnabled(myTargetDirectoryField.getChildComponent().getText().length() > 0);
+  @Override
+  protected boolean hasPreviewButton() {
+    return false;
   }
 
   @Override
-  protected void doOKAction() {
-    PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, myOpenInEditorCb.isSelected(), false);
+  protected boolean areButtonsValid() {
+    return myTargetDirectoryField.getChildComponent().getText().length() > 0;
+  }
+
+  @Override
+  protected void doAction() {
     RecentsManager.getInstance(myProject).registerRecentEntry(RECENT_KEYS, myTargetDirectoryField.getChildComponent().getText());
     RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE = myCbSearchForReferences.isSelected();
-
-    if (DumbService.isDumb(myProject)) {
-      Messages.showMessageDialog(myProject, "Move refactoring is not available while indexing is in progress", "Indexing", null);
-      return;
-    }
 
     CommandProcessor.getInstance().executeCommand(myProject, () -> {
       PsiDirectory targetDirectory = ApplicationManager.getApplication().runWriteAction((Computable<PsiDirectory>)() -> {
