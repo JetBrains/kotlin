@@ -9,14 +9,16 @@ import com.intellij.ide.projectView.impl.nodes.NamedLibraryElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.DefaultJDOMExternalizer;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -37,16 +39,28 @@ import java.util.function.Function;
 
 import static com.intellij.ide.favoritesTreeView.FavoritesListProvider.EP_NAME;
 
-public final class FavoritesManager implements ProjectComponent, JDOMExternalizable {
+@Service
+@State(name = "FavoritesManager", storages = {
+  @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
+  @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true),
+})
+public final class FavoritesManager implements PersistentStateComponent<Element> {
   // fav list name -> list of (root: root url, root class)
-  private final Map<String, List<TreeItem<Pair<AbstractUrl, String>>>> myName2FavoritesRoots =
-    new TreeMap<>();
+  private final Map<String, List<TreeItem<Pair<AbstractUrl, String>>>> myName2FavoritesRoots = new TreeMap<>();
   private final List<String> myFavoritesRootsOrder = new ArrayList<>();
   private final Map<String, String> myDescriptions = new HashMap<>();
   private final Project myProject;
   private final List<FavoritesListener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
   private final FavoritesViewSettings myViewSettings = new FavoritesViewSettings();
   private Map<String, FavoritesListProvider> myProviders;
+
+  public static FavoritesManager getInstance(@NotNull Project project) {
+    return project.getService(FavoritesManager.class);
+  }
+
+  public FavoritesManager(@NotNull Project project) {
+    myProject = project;
+  }
 
   @NotNull
   private Map<String, FavoritesListProvider> getProviders() {
@@ -137,14 +151,6 @@ public final class FavoritesManager implements ProjectComponent, JDOMExternaliza
       result.add(provider.createFavoriteListNode(myProject));
     }
     return result;
-  }
-
-  public static FavoritesManager getInstance(Project project) {
-    return project.getComponent(FavoritesManager.class);
-  }
-
-  public FavoritesManager(Project project) {
-    myProject = project;
   }
 
   @NotNull
@@ -325,19 +331,13 @@ public final class FavoritesManager implements ProjectComponent, JDOMExternaliza
     return true;
   }
 
-  @Override
-  @NotNull
-  public String getComponentName() {
-    return "FavoritesManager";
-  }
-
   @Nullable
   public FavoritesListProvider getListProvider(@Nullable String name) {
     return getProviders().get(name);
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
+  public void loadState(@NotNull Element element) {
     myName2FavoritesRoots.clear();
     for (Element list : element.getChildren(ELEMENT_FAVORITES_LIST)) {
       final String name = list.getAttributeValue(ATTRIBUTE_NAME);
@@ -407,21 +407,24 @@ public final class FavoritesManager implements ProjectComponent, JDOMExternaliza
     return null;
   }
 
-
   @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    for (final String name : myFavoritesRootsOrder) {
+  public Element getState() {
+    Element element = new Element("state");
+    for (String name : myFavoritesRootsOrder) {
       Element list = new Element(ELEMENT_FAVORITES_LIST);
       list.setAttribute(ATTRIBUTE_NAME, name);
       writeRoots(list, myName2FavoritesRoots.get(name));
       element.addContent(list);
     }
     DefaultJDOMExternalizer.writeExternal(this, element);
+    return element;
   }
 
   @Nullable
   public static AbstractUrl createUrlByElement(Object element, final Project project) {
-    if (element instanceof SmartPsiElementPointer) element = ((SmartPsiElementPointer)element).getElement();
+    if (element instanceof SmartPsiElementPointer) {
+      element = ((SmartPsiElementPointer)element).getElement();
+    }
 
     for (FavoriteNodeProvider nodeProvider : FavoriteNodeProvider.EP_NAME.getExtensions(project)) {
       String url = nodeProvider.getElementUrl(element);
