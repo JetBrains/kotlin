@@ -55,10 +55,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.ui.ActiveComponent;
-import com.intellij.ui.InplaceButton;
-import com.intellij.ui.ScreenUtil;
-import com.intellij.ui.ScrollingUtil;
+import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupUpdateProcessor;
@@ -313,6 +310,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     final AtomicInteger outOfScopeUsages = new AtomicInteger();
     ShowUsagesTable table = new ShowUsagesTable(new ShowUsagesTableCellRenderer(usageView, outOfScopeUsages, searchScope));
     AsyncProcessIcon processIcon = new AsyncProcessIcon("xxx");
+    TitlePanel statusPanel = new TitlePanel();
+    statusPanel.add(processIcon, BorderLayout.EAST);
+    Consumer<String> statusConsumer = statusPanel::setText;
 
     addUsageNodes(usageView.getRoot(), usageView, new ArrayList<>());
 
@@ -334,8 +334,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     );
 
 
-    JBPopup popup = isPreviewMode ? null : createUsagePopup(project, usages, visibleNodes,
-                                                            usageView, table, itemChosenCallback, presentation, processIcon, minWidth,
+    JBPopup popup = isPreviewMode ? null : createUsagePopup(project,
+                                                            usageView, table, itemChosenCallback, presentation, statusPanel, minWidth,
                                                             () -> actionHandler.showDialogAndShowUsages(editor),
                                                             actionHandler);
     ProgressIndicator indicator = new ProgressIndicatorBase();
@@ -366,7 +366,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       }
 
       rebuildTable(
-        usageView, copy, nodes, table, popup, presentation, popupPosition, minWidth, !processIcon.isDisposed()
+        usageView, copy, nodes, table, popup, statusConsumer, popupPosition, minWidth, !processIcon.isDisposed()
       );
     });
 
@@ -446,13 +446,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
             }
           }
           else {
-            if (popup != null) {
-              String title = presentation.getTabText();
-              boolean shouldShowMoreSeparator = visibleNodes.contains(Holder.MORE_USAGES_SEPARATOR_NODE);
-              String fullTitle = getFullTitle(usages, title, shouldShowMoreSeparator,
-                                              visibleNodes.size() - (shouldShowMoreSeparator ? 1 : 0), false);
-              popup.setCaption(fullTitle);
-            }
+            boolean hasMore = visibleNodes.contains(Holder.MORE_USAGES_SEPARATOR_NODE);
+            statusConsumer.accept(getStatusString(false, hasMore, visibleNodes.size(), usages.size()));
           }
         }
       },
@@ -519,13 +514,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
   @NotNull
   private static JBPopup createUsagePopup(@NotNull Project project,
-                                          @NotNull List<? extends Usage> usages,
-                                          @NotNull Set<? extends UsageNode> visibleNodes,
                                           @NotNull UsageViewImpl usageView,
                                           @NotNull JTable table,
                                           @NotNull Runnable itemChoseCallback,
                                           @NotNull UsageViewPresentation presentation,
-                                          @NotNull AsyncProcessIcon processIcon,
+                                          @NotNull TitlePanel statusPanel,
                                           @NotNull IntRef minWidth,
                                           @NotNull Runnable showDialogAndFindUsagesRunnable,
                                           @NotNull ShowUsagesActionHandler actionHandler) {
@@ -533,15 +526,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
     String title = presentation.getTabText();
-    String fullTitle;
-    if (title == null) {
-      fullTitle = "";
-    }
-    else {
-      fullTitle = getFullTitle(usages, title, false, visibleNodes.size() - 1, true);
-      builder.setTitle(fullTitle);
-      builder.setAdText(getSecondInvocationTitle(actionHandler));
-    }
+    builder.setTitle(XmlStringUtil.wrapInHtml("<body><nobr>" + StringUtil.escapeXmlEntities(title) + "</nobr></body>"));
+    builder.setAdText(getSecondInvocationTitle(actionHandler));
 
     builder.setMovable(true).setResizable(true);
     builder.setItemChoosenCallback(itemChoseCallback);
@@ -570,16 +556,21 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     InplaceButton settingsButton = createSettingsButton(project, () -> cancel(popup[0]), showDialogAndFindUsagesRunnable);
 
-    ActiveComponent spinningProgress = new ActiveComponent.Adapter() {
+    ActiveComponent statusComponent = new ActiveComponent() {
+      @Override
+      public void setActive(boolean active) {
+        statusPanel.setActive(active);
+      }
+
       @NotNull
       @Override
       public JComponent getComponent() {
-        return processIcon;
+        return statusPanel;
       }
     };
     DefaultActionGroup pinGroup = new DefaultActionGroup();
     ActiveComponent pin = createPinButton(project, popup, pinGroup, actionHandler::findUsages);
-    builder.setCommandButton(new CompositeActiveComponent(spinningProgress, settingsButton, pin));
+    builder.setCommandButton(new CompositeActiveComponent(statusComponent, settingsButton, pin));
 
     DefaultActionGroup toolbar = new DefaultActionGroup();
     usageView.addFilteringActions(toolbar);
@@ -601,6 +592,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     popup[0] = builder.createPopup();
     JComponent content = popup[0].getContent();
 
+    String fullTitle = title + getStatusString(true, false, 0, 0);
     int approxWidth = (int)(toolBar.getPreferredSize().getWidth()
                             + new JLabel(fullTitle).getPreferredSize().getWidth()
                             + settingsButton.getPreferredSize().getWidth());
@@ -661,22 +653,16 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }
   }
 
-  @NotNull
-  private static String getFullTitle(@NotNull List<? extends Usage> usages,
-                                     @NotNull String title,
-                                     boolean hadMoreSeparator,
-                                     int visibleNodesCount,
-                                     boolean findUsagesInProgress) {
-    String soFarSuffix = findUsagesInProgress ? " so far" : "";
-    title = StringUtil.escapeXmlEntities(title);
-    String s;
-    if (hadMoreSeparator) {
-      s = "<b>Some</b> " + title + " " + "<b>(Only " + visibleNodesCount + " usages shown" + soFarSuffix + ")</b>";
+  private static @NotNull String getStatusString(boolean findUsagesInProgress, boolean hasMore, int visibleCount, int totalCount) {
+    if (findUsagesInProgress || hasMore) {
+      return UsageViewBundle.message("showing.0.usages", visibleCount - (hasMore ? 1 : 0));
+    }
+    else if (visibleCount != totalCount) {
+      return UsageViewBundle.message("showing.0.of.1.usages", visibleCount, totalCount);
     }
     else {
-      s = title + " (" + UsageViewBundle.message("usages.n", usages.size()) + soFarSuffix + ")";
+      return UsageViewBundle.message("found.0.usages", totalCount);
     }
-    return XmlStringUtil.wrapInHtml("<body><nobr>" + s + "</nobr></body>");
   }
 
   @NotNull
@@ -774,7 +760,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                    @NotNull List<UsageNode> nodes,
                                    @NotNull ShowUsagesTable table,
                                    @Nullable JBPopup popup,
-                                   @NotNull UsageViewPresentation presentation,
+                                   @NotNull Consumer<String> statusConsumer,
                                    @NotNull RelativePoint popupPosition,
                                    @NotNull IntRef minWidth,
                                    boolean findUsagesInProgress) {
@@ -789,15 +775,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
     }
 
-    String title = presentation.getTabText();
-    String fullTitle = getFullTitle(
-      usages, title, shouldShowMoreSeparator || hasOutsideScopeUsages,
-      nodes.size() - (shouldShowMoreSeparator || hasOutsideScopeUsages ? 1 : 0),
-      findUsagesInProgress
-    );
-    if (popup != null) {
-      popup.setCaption(fullTitle);
-    }
+    boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
+    statusConsumer.accept(getStatusString(findUsagesInProgress, hasMore, nodes.size(), usages.size()));
 
     List<UsageNode> data = collectData(usages, nodes, usageView);
     ShowUsagesTable.MyModel tableModel = table.setTableModel(data);
