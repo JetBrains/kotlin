@@ -18086,6 +18086,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/regressions/kt3535.kt");
             }
 
+            @TestMetadata("kt35626.kt")
+            public void testKt35626() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt35626.kt");
+            }
+
+            @TestMetadata("kt35626small.kt")
+            public void testKt35626small() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt35626small.kt");
+            }
+
             @TestMetadata("kt35668.kt")
             public void testKt35668() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt35668.kt");

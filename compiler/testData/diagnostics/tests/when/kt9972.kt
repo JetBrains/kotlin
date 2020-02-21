@@ -10,7 +10,7 @@ fun test1(): Int {
 }
 
 fun test2(): Int {
-    val x: String = <!NI;TYPE_MISMATCH!>when {
+    val x: String = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>when {
                         true -> <!OI;TYPE_MISMATCH!>Any()<!>
                         else -> null
                     } ?: return 0<!>

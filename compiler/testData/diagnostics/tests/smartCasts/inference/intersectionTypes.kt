@@ -39,11 +39,11 @@ fun <T> foo(t: T, <!UNUSED_PARAMETER!>l<!>: MutableList<T>): T = t
 
 fun testErrorMessages(a: A, ml: MutableList<String>) {
     if (a is B && a is C) {
-        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>ml<!>)
+        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH!>ml<!>)
     }
 
     if(a is C) {
-        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>ml<!>)
+        <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH!>ml<!>)
     }
 }
 
