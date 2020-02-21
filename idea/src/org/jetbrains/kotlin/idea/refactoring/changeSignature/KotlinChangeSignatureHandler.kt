@@ -141,8 +141,8 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                     CodeInsightUtils.showErrorHint(
                         project,
                         editor,
-                        "Change signature is not applicable to dynamically invoked functions",
-                        "Change Signature",
+                        KotlinRefactoringBundle.message("message.change.signature.is.not.applicable.to.dynamically.invoked.functions"),
+                        RefactoringBundle.message("changeSignature.refactoring.name"),
                         null
                     )
                 }

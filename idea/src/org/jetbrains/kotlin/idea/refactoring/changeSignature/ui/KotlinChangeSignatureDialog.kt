@@ -39,7 +39,6 @@ import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.Consumer
-import com.intellij.util.IJSwingUtilities
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.table.JBTableRow
 import com.intellij.util.ui.table.JBTableRowEditor
@@ -106,10 +105,10 @@ class KotlinChangeSignatureDialog(
         val typeText = item.typeCodeFragment.text
         val defaultValue = item.defaultValueCodeFragment.text
         val separator = StringUtil.repeatSymbol(' ', getParamNamesMaxLength() - parameterName.length + 1)
-        var text = "$valOrVar$parameterName:$separator$typeText"
-
-        if (StringUtil.isNotEmpty(defaultValue)) {
-            text += " // default value = $defaultValue"
+        val text = "$valOrVar$parameterName:$separator$typeText" + if (StringUtil.isNotEmpty(defaultValue)) {
+            KotlinRefactoringBundle.message("text.default.value", defaultValue)
+        } else {
+            ""
         }
 
         val field = object : EditorTextField(" $text", project, fileType) {
@@ -335,7 +334,10 @@ class KotlinChangeSignatureDialog(
         ) {
             if (Messages.showOkCancelDialog(
                     myProject,
-                    "Return type '${myReturnTypeCodeFragment!!.text}' cannot be resolved.\nContinue?",
+                    KotlinRefactoringBundle.message(
+                        "message.text.return.type.cannot.be.resolved",
+                        myReturnTypeCodeFragment?.text.toString()
+                    ),
                     RefactoringBundle.message("changeSignature.refactoring.name"),
                     Messages.getWarningIcon()
                 ) != Messages.OK
@@ -346,10 +348,17 @@ class KotlinChangeSignatureDialog(
 
         for (item in parametersTableModel.items) {
             if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null) {
-                val paramText = if (item.parameter != parametersTableModel.receiver) "parameter '${item.parameter.name}'" else "receiver"
+                val paramText = if (item.parameter != parametersTableModel.receiver)
+                    KotlinRefactoringBundle.message("text.parameter", item.parameter.name)
+                else
+                    KotlinRefactoringBundle.message("text.receiver")
                 if (Messages.showOkCancelDialog(
                         myProject,
-                        "Type '${item.typeCodeFragment.text}' for $paramText cannot be resolved.\nContinue?",
+                        KotlinRefactoringBundle.message(
+                            "message.type.for.cannot.be.resolved",
+                            item.typeCodeFragment.text,
+                            paramText
+                        ),
                         RefactoringBundle.message("changeSignature.refactoring.name"),
                         Messages.getWarningIcon()
                     ) != Messages.OK

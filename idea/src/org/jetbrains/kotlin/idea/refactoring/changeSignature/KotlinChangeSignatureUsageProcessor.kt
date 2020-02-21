@@ -185,7 +185,11 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                             object : UnresolvableCollisionUsageInfo(callElement, null) {
                                 override fun getDescription(): String {
                                     val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(callerDescriptor)
-                                    return "There is already a variable '$currentName' in $signature. It will conflict with the new parameter."
+                                    return KotlinRefactoringBundle.message(
+                                        "text.there.is.already.a.variable.0.in.1.it.will.conflict.with.the.new.parameter",
+                                        currentName,
+                                        signature
+                                    )
                                 }
                             }
                         )
@@ -562,7 +566,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 if (candidateTypes == newTypes) {
                     result.putValue(
                         conflictElement,
-                        "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'"
+                        KotlinRefactoringBundle.message(
+                            "text.function.already.exists",
+                            DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict)
+                        )
                     )
                     break
                 }
@@ -574,7 +581,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val parameterName = parameter.name
 
             if (!parameterNames.add(parameterName)) {
-                result.putValue(function, "Duplicating parameter '$parameterName'")
+                result.putValue(function, KotlinRefactoringBundle.message("text.duplicating.parameter", parameterName))
             }
 
             if (parametersScope != null) {
@@ -582,7 +589,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     for (property in parametersScope.getVariablesFromImplicitReceivers(Name.identifier(parameterName))) {
                         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) ?: continue
                         if (propertyDeclaration.parent !is KtParameterList) {
-                            result.putValue(propertyDeclaration, "Duplicating property '$parameterName'")
+                            result.putValue(
+                                propertyDeclaration,
+                                KotlinRefactoringBundle.message("text.duplicating.property", parameterName)
+                            )
                             break
                         }
                     }
@@ -590,7 +600,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     for (variable in parametersScope.getContributedVariables(Name.identifier(parameterName), NoLookupLocation.FROM_IDE)) {
                         if (variable is ValueParameterDescriptor) continue
                         val conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(variable)
-                        result.putValue(conflictElement, "Duplicating local variable '$parameterName'")
+                        result.putValue(conflictElement, KotlinRefactoringBundle.message("text.duplicating.local.variable", parameterName))
                     }
                 }
             }
@@ -629,7 +639,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val name = parameterInfo.name
             val parameter = existingParameters[name] ?: continue
 
-            result.putValue(parameter, "There is already a parameter '$name' in $signature. It will conflict with the new parameter.")
+            result.putValue(parameter, KotlinRefactoringBundle.message("text.there.is.already.a.parameter", name, signature))
         }
     }
 
@@ -660,7 +670,11 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (labelExpr != null && newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
                 result.putValue(
                     originalExpr,
-                    "Parameter reference can't be safely replaced with " + newExprText + " since " + labelExpr.text + " is ambiguous in this context"
+                    KotlinRefactoringBundle.message(
+                        "text.parameter.reference.can.t.be.safely.replaced.with.0.since.1.is.ambiguous.in.this.context",
+                        newExprText,
+                        labelExpr.text
+                    )
                 )
                 continue
             }
@@ -670,7 +684,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (thisTargetPsi != null && callable.isAncestor(thisTargetPsi, true)) {
                 result.putValue(
                     originalExpr,
-                    "Parameter reference can't be safely replaced with $newExprText since target function can't be referenced in this context"
+                    KotlinRefactoringBundle.message(
+                        "text.parameter.reference.can.t.be.safely.replaced.with.0.since.target.function.can.t.be.referenced.in.this.context",
+                        newExprText
+                    )
                 )
             }
         }
@@ -695,8 +712,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 else -> continue@loop
             }
 
-            val message =
-                "Explicit receiver is already present in call element: " + CommonRefactoringUtil.htmlEmphasize(elementToReport.text)
+            val message = KotlinRefactoringBundle.message(
+                "text.explicit.receiver.is.already.present.in.call.element.0",
+                CommonRefactoringUtil.htmlEmphasize(elementToReport.text)
+            )
             result.putValue(callElement, message)
         }
     }
@@ -717,7 +736,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (qualifiedExpression is KtSafeQualifiedExpression) {
                 result.putValue(
                     callElement,
-                    "Receiver can't be safely transformed to value argument: ${CommonRefactoringUtil.htmlEmphasize(qualifiedExpression.text)}"
+                    KotlinRefactoringBundle.message(
+                        "text.receiver.can.t.be.safely.transformed.to.value.argument",
+                        CommonRefactoringUtil.htmlEmphasize(qualifiedExpression.text)
+                    )
                 )
             }
         }
@@ -756,7 +778,10 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     val descriptor = originalRef.getResolvedCall(originalContext)!!.candidateDescriptor
                     val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(callable.project, descriptor)
                     val prefix = if (declaration != null) RefactoringUIUtil.getDescription(declaration, true) else originalRef.text
-                    result.putValue(originalRef, prefix.capitalize() + " will no longer be accessible after signature change")
+                    result.putValue(
+                        originalRef,
+                        KotlinRefactoringBundle.message("text.0.will.no.longer.be.accessible.after.signature.change", prefix.capitalize())
+                    )
                 }
             }
         }
