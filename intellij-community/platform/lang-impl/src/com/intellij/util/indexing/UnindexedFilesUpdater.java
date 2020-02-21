@@ -7,22 +7,32 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.impl.ProgressSuspender;
 import com.intellij.openapi.project.*;
-import com.intellij.openapi.roots.CollectingContentIterator;
+import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
+import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.roots.IndexableFilesProvider;
+import com.intellij.util.indexing.roots.VisitedFileSet;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public final class UnindexedFilesUpdater extends DumbModeTask {
   private static final Logger LOG = Logger.getInstance(UnindexedFilesUpdater.class);
@@ -72,32 +82,39 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     myIndex.clearIndicesIfNecessary();
 
-    CollectingContentIterator finder = new UnindexedFilesFinder(myProject);
+    UpdatableIndex<FileType, Void, FileContent> fileTypeIndex = myIndex.getIndex(FileTypeIndex.NAME);
+    VirtualFileFilter finder = new UnindexedFilesFinder(myProject, myIndex, fileTypeIndex);
     snapshot = PerformanceWatcher.takeSnapshot();
 
-    myIndex.iterateIndexableFilesConcurrently(finder, myProject, indicator);
+    List<VirtualFile> allFiles = Collections.synchronizedList(new ArrayList<>());
+    ContentIterator processor = (file) -> {
+      if (finder.accept(file)) {
+        allFiles.add(file);
+      }
+      return true;
+    };
+
+    iterateIndexableFilesConcurrently(myProject, indicator, processor);
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Indexable file iteration");
-
-    List<VirtualFile> files = finder.getFiles();
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       // full VFS refresh makes sense only after it's loaded, i.e. after scanning files to index is finished
       scheduleInitialVfsRefresh();
     }
 
-    if (files.isEmpty()) {
+    if (allFiles.isEmpty()) {
       return;
     }
 
     snapshot = PerformanceWatcher.takeSnapshot();
 
-    if (trackResponsiveness) LOG.info("Unindexed files update started: " + files.size() + " files to update");
+    if (trackResponsiveness) LOG.info("Unindexed files update started: " + allFiles.size() + " files to update");
 
     indicator.setIndeterminate(false);
     indicator.setText(IdeBundle.message("progress.indexing.updating"));
 
-    indexFiles(indicator, files);
+    indexFiles(indicator, allFiles);
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Unindexed files update");
   }
@@ -124,7 +141,20 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     }
   }
 
-  private void indexFiles(ProgressIndicator indicator, List<? extends VirtualFile> files) {
+  private void iterateIndexableFilesConcurrently(@NotNull Project project,
+                                                 @NotNull ProgressIndicator indicator,
+                                                 @NotNull ContentIterator processor) {
+    Set<IndexableFilesProvider> providers = myIndex.getIndexableFilesProviders(project, indicator);
+    VisitedFileSet visitedFileSet = new VisitedFileSet();
+    List<Runnable> tasks = ContainerUtil.map(providers, provider -> () -> {
+      provider.iterateFiles(project, processor, visitedFileSet);
+    });
+    if (!tasks.isEmpty()) {
+      PushedFilePropertiesUpdaterImpl.invokeConcurrentlyIfPossible(tasks);
+    }
+  }
+
+  private void indexFiles(ProgressIndicator indicator, List<VirtualFile> files) {
     CacheUpdateRunner.processFiles(indicator, files, myProject, content -> myIndex.indexFileContent(myProject, content));
   }
 

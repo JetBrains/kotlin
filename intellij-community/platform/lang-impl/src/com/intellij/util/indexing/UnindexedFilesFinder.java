@@ -5,105 +5,68 @@ import com.intellij.index.SharedIndexExtensions;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.CollectingContentIterator;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-class UnindexedFilesFinder implements CollectingContentIterator {
+class UnindexedFilesFinder implements VirtualFileFilter {
   private static final Logger LOG = Logger.getInstance(UnindexedFilesFinder.class);
 
-  private final List<VirtualFile> myFiles = new ArrayList<>();
   private final Project myProject;
   private final boolean myDoTraceForFilesToBeIndexed = FileBasedIndexImpl.LOG.isTraceEnabled();
   private final FileBasedIndexImpl myFileBasedIndex;
+  private final UpdatableIndex<FileType, Void, FileContent> myFileTypeIndex;
 
   private final FileContentHashIndex myFileContentHashIndex;
   private final TIntHashSet myAttachedChunks;
   private final TIntHashSet myInvalidatedChunks;
 
-  UnindexedFilesFinder(@NotNull Project project) {
+  UnindexedFilesFinder(@NotNull Project project,
+                       @NotNull FileBasedIndexImpl fileBasedIndex,
+                       @NotNull UpdatableIndex<FileType, Void, FileContent> fileTypeIndex) {
     myProject = project;
-    myFileBasedIndex = ((FileBasedIndexImpl)FileBasedIndex.getInstance());
+    myFileBasedIndex = fileBasedIndex;
+    myFileTypeIndex = fileTypeIndex;
 
     myFileContentHashIndex = SharedIndexExtensions.areSharedIndexesEnabled() ? myFileBasedIndex.getOrCreateFileContentHashIndex() : null;
     myAttachedChunks = SharedIndexExtensions.areSharedIndexesEnabled() ? new TIntHashSet() : null;
     myInvalidatedChunks = SharedIndexExtensions.areSharedIndexesEnabled() ? new TIntHashSet() : null;
   }
 
-  @NotNull
   @Override
-  public List<VirtualFile> getFiles() {
-    List<VirtualFile> files;
-    synchronized (myFiles) {
-      files = myFiles;
-    }
-
-    // When processing roots concurrently myFiles looses the local order of local vs archive files
-    // If we process the roots in 2 threads we can just separate local vs archive
-    // IMPORTANT: also remove duplicated file that can appear due to roots intersection
-    BitSet usedFileIds = new BitSet(files.size());
-    List<VirtualFile> localFileSystemFiles = new ArrayList<>(files.size() / 2);
-    List<VirtualFile> archiveFiles = new ArrayList<>(files.size() / 2);
-
-    for(VirtualFile file:files) {
-      int fileId = ((VirtualFileWithId)file).getId();
-      if (usedFileIds.get(fileId)) continue;
-      usedFileIds.set(fileId);
-
-      if (file.getFileSystem() instanceof LocalFileSystem) localFileSystemFiles.add(file);
-      else archiveFiles.add(file);
-    }
-
-    localFileSystemFiles.addAll(archiveFiles);
-    return localFileSystemFiles;
-  }
-
-  @Override
-  public boolean processFile(@NotNull final VirtualFile file) {
+  public boolean accept(VirtualFile file) {
     return ReadAction.compute(() -> {
-      if (!file.isValid()) {
-        return true;
-      }
-      if (file instanceof VirtualFileSystemEntry && ((VirtualFileSystemEntry)file).isFileIndexed()) {
-        return true;
+      if (!file.isValid()
+          || file instanceof VirtualFileSystemEntry && ((VirtualFileSystemEntry)file).isFileIndexed()
+          || !(file instanceof VirtualFileWithId)
+      ) {
+        return false;
       }
 
-      if (!(file instanceof VirtualFileWithId)) {
-        return true;
-      }
+      AtomicBoolean shouldIndexFile = new AtomicBoolean(false);
       FileBasedIndexImpl.getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
         IndexedFile fileContent = new IndexedFileImpl(file, myProject);
 
-        boolean isUptoDate = true;
         boolean isDirectory = file.isDirectory();
         int inputId = Math.abs(FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file));
         if (!isDirectory && !myFileBasedIndex.isTooLarge(file)) {
 
-          if (!isIndexedFileTypeUpToDate(fileContent, inputId)) {
+          if (!myFileTypeIndex.isIndexedStateForFile(inputId, fileContent)) {
             for (ID<?, ?> state : IndexingStamp.getNontrivialFileIndexedStates(inputId)) {
               myFileBasedIndex.getIndex(state).resetIndexedStateForFile(inputId);
             }
-            synchronized (myFiles) {
-              myFiles.add(file);
-            }
-            isUptoDate = false;
-          }
-
-          if (isUptoDate) {
+            shouldIndexFile.set(true);
+          } else {
             final List<ID<?, ?>> affectedIndexCandidates = myFileBasedIndex.getAffectedIndexCandidates(file);
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
@@ -142,10 +105,7 @@ class UnindexedFilesFinder implements CollectingContentIterator {
                     if (myDoTraceForFilesToBeIndexed) {
                       LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
                     }
-                    synchronized (myFiles) {
-                      myFiles.add(file);
-                    }
-                    isUptoDate = false;
+                    shouldIndexFile.set(true);
                     break;
                   }
                 }
@@ -171,24 +131,11 @@ class UnindexedFilesFinder implements CollectingContentIterator {
         }
         IndexingStamp.flushCache(inputId);
 
-        if (isUptoDate && file instanceof VirtualFileSystemEntry) {
+        if (!shouldIndexFile.get() && file instanceof VirtualFileSystemEntry) {
           ((VirtualFileSystemEntry)file).setFileIndexed(true);
         }
       });
-
-      ProgressManager.checkCanceled();
-      return true;
+      return shouldIndexFile.get();
     });
-  }
-
-  private UpdatableIndex<FileType, Void, FileContent> myFileTypeIndex;
-  private boolean isIndexedFileTypeUpToDate(@NotNull IndexedFile file, int inputId) {
-    if (myFileTypeIndex == null) {
-      myFileTypeIndex = myFileBasedIndex.getIndex(FileTypeIndex.NAME);
-      if (myFileTypeIndex == null) {
-        throw new IllegalStateException();
-      }
-    }
-    return myFileTypeIndex.isIndexedStateForFile(inputId, file);
   }
 }
