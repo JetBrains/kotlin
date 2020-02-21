@@ -6,6 +6,7 @@ import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +20,12 @@ public class FindForwardBackwardAction extends AnAction implements DumbAware {
     this.directionForward = directionForward;
     this.searchManager = searchManager;
 
-    getTemplatePresentation().setDescription(
-      directionForward ?
-      "Search from the current position to the end and show matching strings in the tool window" :
-      "Search from the current position to the beginning and show matching strings in the tool window");
-    getTemplatePresentation().setText(directionForward ? "Search Forward" : "Search Backward");
+    getTemplatePresentation().setDescription(directionForward ?
+                                             EditorBundle.message("large.file.editor.find.forward.action.description") :
+                                             EditorBundle.message("large.file.editor.find.backward.action.description"));
+    getTemplatePresentation().setText(directionForward ?
+                                      EditorBundle.message("large.file.editor.find.forward.action.text") :
+                                      EditorBundle.message("large.file.editor.find.backward.action.text"));
     getTemplatePresentation().setIcon(directionForward ? AllIcons.Actions.FindForward : AllIcons.Actions.FindBackward);
   }
 

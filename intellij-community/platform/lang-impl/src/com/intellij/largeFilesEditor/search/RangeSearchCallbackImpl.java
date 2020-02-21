@@ -6,6 +6,7 @@ import com.intellij.largeFilesEditor.editor.LargeFileEditorProvider;
 import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearchCallback;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -26,7 +27,8 @@ public class RangeSearchCallbackImpl implements RangeSearchCallback {
   public void showResultInEditor(SearchResult searchResult, Project project, VirtualFile virtualFile) {
     LargeFileEditor largeFileEditor = getLargeFileEditor(true, project, virtualFile);
     if (largeFileEditor == null) {
-      Messages.showWarningDialog("Can't show file in the editor", "Show Match Problem");
+      Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.show.file.in.the.editor"),
+                                 EditorBundle.message("large.file.editor.title.show.match.problem"));
       LOG.info("[Large File Editor Subsystem] Can't get LargeFileEditor for showing search result. FilePath="
                + virtualFile.getPath());
       return;

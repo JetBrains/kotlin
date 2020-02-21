@@ -6,6 +6,7 @@ import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
 import com.intellij.largeFilesEditor.search.searchTask.RangeSearchTask;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +14,6 @@ import javax.swing.*;
 
 public class StopRangeSearchAction extends AnAction implements DumbAware {
 
-  //private static final Logger logger = Logger.getInstance(FindFurtherAction.class);
-
-  private static final String TEXT = "Stop Searching";
   private static class Holder {
     private static final Icon ICON = AllIcons.Actions.Suspend;
   }
@@ -24,7 +22,7 @@ public class StopRangeSearchAction extends AnAction implements DumbAware {
 
   public StopRangeSearchAction(@NotNull RangeSearch rangeSearch) {
     this.myRangeSearch = rangeSearch;
-    getTemplatePresentation().setText(TEXT);
+    getTemplatePresentation().setText(EditorBundle.message("large.file.editor.stop.searching.action.text"));
     getTemplatePresentation().setIcon(Holder.ICON);
   }
 

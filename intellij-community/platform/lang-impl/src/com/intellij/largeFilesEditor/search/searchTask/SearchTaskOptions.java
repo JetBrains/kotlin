@@ -98,7 +98,6 @@ public class SearchTaskOptions implements Cloneable {
       stringBuilder.append(", ");
     }
 
-
     stringBuilder.append("}");
 
     return stringBuilder.toString();

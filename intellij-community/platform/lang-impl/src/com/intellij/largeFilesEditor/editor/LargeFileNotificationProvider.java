@@ -3,6 +3,7 @@ package com.intellij.largeFilesEditor.editor;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -36,17 +37,16 @@ public final class LargeFileNotificationProvider extends EditorNotifications.Pro
     }
 
     EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.createActionLabel("Hide notification", () -> {
+    panel.createActionLabel(EditorBundle.message("large.file.editor.hide.notification.action.text"), () -> {
       editor.putUserData(HIDDEN_KEY, "true");
       update(file, project);
     });
-    panel.createActionLabel("Don't show again", () -> {
+    panel.createActionLabel(EditorBundle.message("large.file.editor.dont.show.again.action.text"), () -> {
       PropertiesComponent.getInstance().setValue(DISABLE_KEY, "true");
       update(file, project);
     });
-    return panel.text(String.format(
-      "The file is too large: %s. Showing in read-only mode.",
-      StringUtil.formatFileSize(file.getLength())));
+    return panel.text(EditorBundle.message("large.file.editor.notification.text.the.file.is.too.large.so.showing.in.read.only.mode",
+                                        StringUtil.formatFileSize(file.getLength())));
   }
 
   private static void update(@NotNull VirtualFile file, @NotNull Project project) {

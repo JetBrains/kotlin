@@ -18,6 +18,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.undo.UndoUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.editor.ex.DocumentEx;
@@ -75,7 +76,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     catch (FileNotFoundException e) {
       logger.warn(e);
       editorModel.setBrokenMode();
-      Messages.showWarningDialog("Can't open file: file not found.", "Warning");
+      Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.open.file.because.file.not.found"), EditorBundle.message("large.file.editor.title.warning"));
       requestClosingEditorTab();
       return;
     }
@@ -268,12 +269,13 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
       public boolean tryChangeEncoding(@NotNull Charset charset) {
 
         if (fileManager.hasBOM()) {
-          Messages.showWarningDialog("Can't change file encoding, because it has BOM (Byte order mark)", "Warning");
+          Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.change.encoding.because.it.has.bom.byte.order.mark"), EditorBundle.message("large.file.editor.title.warning"));
           return false;
         }
 
         if (searchManager.isSearchWorkingNow()) {
-          Messages.showInfoMessage("Can't change file encoding, because search is working now.", "Can't Change Encoding");
+          Messages.showInfoMessage(EditorBundle.message("large.file.editor.message.cant.change.encoding.because.search.is.working.now"),
+                                   EditorBundle.message("large.file.editor.title.cant.change.encoding"));
           return false;
         }
 

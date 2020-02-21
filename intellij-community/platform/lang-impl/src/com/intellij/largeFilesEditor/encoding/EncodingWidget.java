@@ -3,6 +3,7 @@ package com.intellij.largeFilesEditor.encoding;
 
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.Project;
@@ -133,7 +134,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
     else {
       myActionEnabled = true;
       charsetName = largeFileEditorAccess.getCharsetName();
-      toolTipText = "File Encoding: " + charsetName;
+      toolTipText = EditorBundle.message("large.file.editor.tooltip.file.encoding.is.some", charsetName);
       myComponent.setVisible(true);
     }
 

@@ -276,8 +276,8 @@ public class EditorModel {
     }
     catch (IOException e) {
       LOG.info(e);
-      Messages.showErrorDialog("[Large File Editor Subsystem] EditorMode.update():"
-                               + " Error while working with file. Try to reopen it.", "ERROR");
+      Messages.showErrorDialog(EditorBundle.message("large.file.editor.message.error.while.working.with.file.try.to.reopen.it"),
+                               EditorBundle.message("large.file.editor.title.error"));
       return;
     }
 

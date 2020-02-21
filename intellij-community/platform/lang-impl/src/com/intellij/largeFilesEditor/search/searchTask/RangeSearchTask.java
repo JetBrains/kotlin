@@ -3,6 +3,7 @@ package com.intellij.largeFilesEditor.search.searchTask;
 
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
@@ -34,7 +35,7 @@ public class RangeSearchTask extends SearchTaskBase {
     String fileName = cutToMaxLength(
       fileDataProviderForSearch.getName(), maxFileNameLength);
 
-    return String.format("Searching for \"%s\" in file \"%s\"", strToFind, fileName);
+    return EditorBundle.message("large.file.editor.title.searching.for.some.string.in.some.file", strToFind, fileName);
   }
 
   public void setProgressIndicator(ProgressIndicator progressIndicator) {
