@@ -3760,9 +3760,9 @@ task library_ir_provider_mismatch(type: KonanDriverTest) {
 }
 
 if (isAppleTarget(project)) {
-    task testValuesFramework(type: FrameworkTest) {
-        final String frameworkName = 'Values'
-        testName = frameworkName
+    task testObjCExport(type: FrameworkTest) {
+        final String frameworkName = 'Kt'
+        testName = "ObjCExport"
         frameworkNames = [frameworkName]
 
         final String dir = "$testOutputFramework/$testName"
@@ -3770,7 +3770,7 @@ if (isAppleTarget(project)) {
 
         doLast {
             final String expectedLazyHeaderName = "expectedLazy.h"
-            final String expectedLazyHeaderDir = file("framework/values/")
+            final String expectedLazyHeaderDir = file("objcexport/")
             final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
 
             if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
@@ -3792,7 +3792,7 @@ if (isAppleTarget(project)) {
 
         konanArtifacts {
             framework(frameworkName, targets: [target.name]) {
-                srcDir 'framework/values'
+                srcDir 'objcexport'
                 baseDir dir
 
                 if (!useCustomDist) {
@@ -3804,7 +3804,9 @@ if (isAppleTarget(project)) {
                 extraOpts project.globalTestArgs
             }
         }
-        swiftSources = ['framework/values/values.swift']
+        swiftSources = fileTree('objcexport') {
+            include '*.swift'
+        }*.absolutePath
     }
 
     task testValuesGenericsFramework(type: FrameworkTest) {
@@ -3813,7 +3815,7 @@ if (isAppleTarget(project)) {
         frameworkNames = [frameworkName]
         konanArtifacts {
             framework(frameworkName, targets: [ target ]) {
-                srcDir 'framework/values'
+                srcFiles 'objcexport/values.kt'
                 srcDir 'framework/values_generics'
                 baseDir "$testOutputFramework/$testName"
 
