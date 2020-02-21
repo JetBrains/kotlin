@@ -20,6 +20,14 @@ open class BiStatePresentation(
     state = State(!state.currentFirst)
   }
 
+  fun setFirst() {
+    state = State(true)
+  }
+
+  fun setSecond() {
+    state = State(false)
+  }
+
   override fun toString(): String = currentPresentation.toString()
 
   data class State(val currentFirst: Boolean)
