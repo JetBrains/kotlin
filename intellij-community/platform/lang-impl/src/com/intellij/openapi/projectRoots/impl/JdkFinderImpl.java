@@ -10,6 +10,6 @@ public class JdkFinderImpl implements JdkFinder {
   @NotNull
   @Override
   public List<String> suggestHomePaths() {
-    return JavaHomeFinder.suggestHomePaths(false);
+    return JavaHomeFinder.suggestHomePaths();
   }
 }

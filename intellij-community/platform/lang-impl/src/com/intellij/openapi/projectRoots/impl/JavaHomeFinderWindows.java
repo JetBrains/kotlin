@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-class JavaHomeFinderWindows extends JavaHomeFinder {
+class JavaHomeFinderWindows extends JavaHomeFinderBase {
 
   @NotNull
   @Override
-  protected List<String> findExistingJdks() {
+  public List<String> findExistingJdks() {
     ArrayList<String> result = new ArrayList<>();
     Set<File> roots = findRootsToScan();
     for (File root : roots) {
