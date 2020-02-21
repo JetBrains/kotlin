@@ -315,9 +315,6 @@ public class SharedIndexChunkConfigurationImpl implements SharedIndexChunkConfig
   private List<SharedIndexChunk> registerChunk(@NotNull ChunkDescriptor descriptor) throws IOException {
     String chunkRootName = descriptor.getChunkUniqueId();
     int chunkId = myChunkDescriptorEnumerator.enumerate(chunkRootName);
-    if (chunkId == 0) {
-      throw new RuntimeException("chunk " + chunkRootName + " is not present");
-    }
     return registerChunk(chunkId);
   }
 
