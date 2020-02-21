@@ -986,7 +986,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
-        expectActualTable.findExpectsForActuals(declaration)
+        if (!skipExpects) expectActualTable.findExpectsForActuals(declaration)
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol)
             coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
