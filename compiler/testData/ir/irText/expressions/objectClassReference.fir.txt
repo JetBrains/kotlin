@@ -23,3 +23,5 @@ FILE fqName:<root> fileName:/objectClassReference.kt
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
         GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
       CALL 'public final fun <get-java> (): java.lang.Class<T of <uninitialized parent>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null
+        $receiver: GET_CLASS type=kotlin.reflect.KClass<<root>.A>
+          GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A

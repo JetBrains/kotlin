@@ -408,7 +408,8 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    private fun <T : IrFunction> T.declareParameters(function: FirFunction<*>?, containingClass: IrClass?, isStatic: Boolean) {
+    private fun <T : IrFunction> T.declareParameters(function: FirFunction<*>?, containingClass: IrClass?, isStatic: Boolean,
+                                                     receiverType: FirTypeRef? = null) {
         val parent = this
         if (function is FirSimpleFunction) {
             setTypeParameters(function)
@@ -428,7 +429,7 @@ class Fir2IrDeclarationStorage(
         }
         if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            val receiverTypeRef = function?.receiverTypeRef
+            val receiverTypeRef = function?.receiverTypeRef ?: receiverType
             if (receiverTypeRef != null) {
                 extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
                     declareThisReceiverParameter(
@@ -455,11 +456,12 @@ class Fir2IrDeclarationStorage(
         descriptor: WrappedCallableDescriptor<T>,
         irParent: IrDeclarationParent?,
         isStatic: Boolean,
-        shouldLeaveScope: Boolean
+        shouldLeaveScope: Boolean,
+        receiverType: FirTypeRef? = null
     ): T {
         descriptor.bind(this)
         enterScope(descriptor)
-        declareParameters(function, containingClass = irParent as? IrClass, isStatic = isStatic)
+        declareParameters(function, containingClass = irParent as? IrClass, isStatic = isStatic, receiverType = receiverType)
         if (shouldLeaveScope) {
             leaveScope(descriptor)
         }
@@ -592,9 +594,14 @@ class Fir2IrDeclarationStorage(
         isSetter: Boolean,
         origin: IrDeclarationOrigin,
         startOffset: Int,
-        endOffset: Int
+        endOffset: Int,
+        receiverType: FirTypeRef? = null
     ): IrSimpleFunction {
-        val descriptor = WrappedSimpleFunctionDescriptor()
+        val propertyDescriptor = correspondingProperty.descriptor
+        val descriptor =
+            if (propertyDescriptor is WrappedPropertyDescriptorWithContainerSource)
+                WrappedFunctionDescriptorWithContainerSource(propertyDescriptor.containerSource)
+            else WrappedSimpleFunctionDescriptor()
         val prefix = if (isSetter) "set" else "get"
         return irSymbolTable.declareSimpleFunction(
             propertyAccessor?.psi?.startOffsetSkippingComments ?: startOffset,
@@ -615,7 +622,8 @@ class Fir2IrDeclarationStorage(
                     declareDefaultSetterParameter(propertyType)
                 }
             }.bindAndDeclareParameters(
-                propertyAccessor, descriptor, irParent, isStatic = irParent !is IrClass, shouldLeaveScope = true
+                propertyAccessor, descriptor, irParent, isStatic = irParent !is IrClass, shouldLeaveScope = true,
+                receiverType = receiverType
             ).apply {
                 if (irParent != null) {
                     parent = irParent
@@ -692,6 +700,7 @@ class Fir2IrDeclarationStorage(
                     ).apply {
                         descriptor.bind(this)
                         val type = property.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
+                        val receiverType = if (property.containerSource != null) property.receiverTypeRef else null
                         getter = createIrPropertyAccessor(
                             property.getter, this, type, irParent, false,
                             when {
@@ -699,7 +708,7 @@ class Fir2IrDeclarationStorage(
                                 property.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
-                            startOffset, endOffset
+                            startOffset, endOffset, receiverType = receiverType
                         )
                         if (property.isVar) {
                             setter = createIrPropertyAccessor(
@@ -709,7 +718,8 @@ class Fir2IrDeclarationStorage(
                                     property.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                     else -> origin
                                 },
-                                startOffset, endOffset
+                                startOffset, endOffset,
+                                receiverType = receiverType
                             )
                         }
                     }

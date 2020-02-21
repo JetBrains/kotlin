@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.PackageCodegenImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -48,7 +49,8 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
         val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
-        for (descriptor in symbolTable.functionDescriptorsWithNonClassParent()) {
+        for (descriptor in symbolTable.wrappedDescriptorsWithNonClassParent()) {
+            descriptor as WrappedDeclarationDescriptor<*>
             val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor)
             descriptor.owner.parent = parentClass ?: throw AssertionError("Facade class for ${descriptor.name} not found")
         }
