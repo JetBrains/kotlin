@@ -105,9 +105,11 @@ public abstract class AbstractNavBarUI implements NavBarUI {
     int textOffset = getElementPadding().width() + offset;
     if (item.needPaintIcon()) {
       Icon icon = item.getIcon();
-      final int iconOffset = getElementPadding().left + offset;
-      icon.paintIcon(item, g, iconOffset, (item.getHeight() - icon.getIconHeight()) / 2);
-      textOffset += icon.getIconWidth();
+      if (icon != null) {
+        int iconOffset = getElementPadding().left + offset;
+        icon.paintIcon(item, g, iconOffset, (item.getHeight() - icon.getIconHeight()) / 2);
+        textOffset += icon.getIconWidth();
+      }
     }
 
     item.doPaintText(g, textOffset);

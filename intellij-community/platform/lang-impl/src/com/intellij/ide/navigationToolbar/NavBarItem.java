@@ -174,7 +174,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
     final Dimension size = super.getPreferredSize();
     final Dimension offsets = myUI.getOffsets(this);
     int width = size.width + offsets.width;
-    if (!needPaintIcon()) {
+    if (!needPaintIcon() && myIcon != null) {
       width -= myIcon.getIconWidth();
     }
     return new Dimension(width, size.height + offsets.height);
