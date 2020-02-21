@@ -25,7 +25,7 @@ message IrFile {
 
 message PublicIdSignature {
   repeated int32 package_fq_name = 1 [packed=true];
-  repeated int32 class_fq_name = 2 [packed=true];
+  repeated int32 declaration_fq_name = 2 [packed = true];
   optional int64 member_uniq_id = 3;
   optional int64 flags = 4 [default = 0];
 }
