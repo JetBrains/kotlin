@@ -33,6 +33,7 @@ import com.intellij.util.AdapterProcessor
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Function
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighterBundle
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher
@@ -80,7 +81,7 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
     val project = propertyOrParameter.project
 
     if (DumbService.isDumb(project)) {
-        DumbService.getInstance(project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
+        DumbService.getInstance(project)?.showDumbModeNotification(KotlinHighlighterBundle.message("notification.text.navigation.to.overriding.classes.is.not.possible.during.index.update"))
         return null
     }
 

@@ -124,7 +124,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         callElement.textRange,
         AllIcons.Gutter.RecursiveMethod,
         Pass.LINE_MARKERS,
-        { "Recursive call" },
+        { KotlinHighlighterBundle.message("tool.tip.text.recursive.call") },
         null,
         GutterIconRenderer.Alignment.RIGHT
     ) {
