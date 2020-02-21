@@ -16,7 +16,7 @@
 
 package com.intellij.packageDependencies.ui;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.dnd.aware.DnDAwareTree;
 import com.intellij.ide.projectView.impl.ModuleGroup;
@@ -157,7 +157,7 @@ public class FileTreeModelBuilder {
     final TreeModel treeModel = new TreeModel(myRoot);
     if (showProgress) {
       final Task.Backgroundable backgroundable =
-        new Task.Backgroundable(project, AnalysisScopeBundle.message("package.dependencies.build.process.title")) {
+        new Task.Backgroundable(project, CodeInsightBundle.message("package.dependencies.build.process.title")) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
             buildingRunnable.run();
@@ -217,7 +217,7 @@ public class FileTreeModelBuilder {
     };
 
     if (showProgress) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(buildingRunnable, AnalysisScopeBundle
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(buildingRunnable, CodeInsightBundle
         .message("package.dependencies.build.process.title"), false, myProject);
     }
     else {
@@ -604,6 +604,6 @@ public class FileTreeModelBuilder {
   }
 
   public static String getScanningPackagesMessage() {
-    return AnalysisScopeBundle.message("package.dependencies.build.progress.text");
+    return CodeInsightBundle.message("package.dependencies.build.progress.text");
   }
 }

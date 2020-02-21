@@ -2,7 +2,7 @@
 
 package com.intellij.psi.search.scope.packageSet;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.TokenType;
@@ -33,7 +33,7 @@ public class PackageSetFactoryImpl extends PackageSetFactory {
 
     public PackageSet parse() throws ParsingException {
       PackageSet set = parseUnion();
-      if (myLexer.getTokenType() != null) error(AnalysisScopeBundle.message("error.package.set.token.expectations", getTokenText()));
+      if (myLexer.getTokenType() != null) error(CodeInsightBundle.message("error.package.set.token.expectations", getTokenText()));
       return set;
     }
 
@@ -135,7 +135,7 @@ public class PackageSetFactoryImpl extends PackageSetFactory {
         myLexer.advance();
       }
       if (pattern.length() == 0) {
-        error(AnalysisScopeBundle.message("error.package.set.pattern.expectations"));
+        error(CodeInsightBundle.message("error.package.set.pattern.expectations"));
       }
       return pattern.toString();
     }
@@ -145,7 +145,7 @@ public class PackageSetFactoryImpl extends PackageSetFactory {
       myLexer.advance();
 
       PackageSet result = parseUnion();
-      if (myLexer.getTokenType() != ScopeTokenTypes.RPARENTH) error(AnalysisScopeBundle.message("error.package.set.rparen.expected"));
+      if (myLexer.getTokenType() != ScopeTokenTypes.RPARENTH) error(CodeInsightBundle.message("error.package.set.rparen.expected"));
       myLexer.advance();
 
       return result;
@@ -153,7 +153,7 @@ public class PackageSetFactoryImpl extends PackageSetFactory {
 
     private void error(@NotNull String message) throws ParsingException {
       throw new ParsingException(
-        AnalysisScopeBundle.message("error.package.set.position.parsing.error", message, (myLexer.getTokenStart() + 1)));
+        CodeInsightBundle.message("error.package.set.position.parsing.error", message, (myLexer.getTokenStart() + 1)));
     }
   }
 }

@@ -4,7 +4,7 @@
 package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class ModuleScopeItemPresenter implements ModelScopeItemPresenter {
   public JRadioButton getButton(ModelScopeItem m) {
     ModuleScopeItem model = (ModuleScopeItem) m;
     JRadioButton button = new JRadioButton();
-    button.setText(AnalysisScopeBundle.message("scope.option.module.with.mnemonic", model.Module.getName()));
+    button.setText(CodeInsightBundle.message("scope.option.module.with.mnemonic", model.Module.getName()));
     return button;
   }
 

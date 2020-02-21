@@ -3,10 +3,10 @@
 package com.intellij.codeInspection.actions;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.analysis.AnalysisUIOptions;
 import com.intellij.analysis.BaseAnalysisActionDialog;
 import com.intellij.analysis.dialog.ModelScopeItem;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -83,8 +83,8 @@ public class RunInspectionIntention implements IntentionAction, HighPriorityActi
                                                  @NotNull Project project) {
     List<ModelScopeItem> items = BaseAnalysisActionDialog.standardItems(project, customScope, module, context);
     final BaseAnalysisActionDialog dlg = new BaseAnalysisActionDialog(
-      AnalysisScopeBundle.message("specify.analysis.scope", InspectionsBundle.message("inspection.action.title")),
-      AnalysisScopeBundle.message("analysis.scope.title", InspectionsBundle.message("inspection.action.noun")), project,
+      CodeInsightBundle.message("specify.analysis.scope", InspectionsBundle.message("inspection.action.title")),
+      CodeInsightBundle.message("analysis.scope.title", InspectionsBundle.message("inspection.action.noun")), project,
       items, AnalysisUIOptions.getInstance(project), true);
     if (!dlg.showAndGet()) {
       return;

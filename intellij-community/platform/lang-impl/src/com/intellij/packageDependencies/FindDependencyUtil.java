@@ -16,7 +16,7 @@
 
 package com.intellij.packageDependencies;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
@@ -114,7 +114,7 @@ public class FindDependencyUtil {
       indicator.setFraction(((double)++count) / totalCount);
       final VirtualFile virtualFile = psiFile.getVirtualFile();
       if (virtualFile != null) {
-        indicator.setText(AnalysisScopeBundle.message("find.dependencies.progress.text", virtualFile.getPresentableUrl()));
+        indicator.setText(CodeInsightBundle.message("find.dependencies.progress.text", virtualFile.getPresentableUrl()));
       }
     }
     return count;

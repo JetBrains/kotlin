@@ -4,6 +4,7 @@
 package com.intellij.analysis;
 
 import com.intellij.analysis.dialog.*;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.find.FindSettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
@@ -155,7 +156,7 @@ public class BaseAnalysisActionDialog extends DialogWrapper {
       gridY++;
     }
 
-    myInspectTestSource.setText(AnalysisScopeBundle.message("scope.option.include.test.sources"));
+    myInspectTestSource.setText(CodeInsightBundle.message("scope.option.include.test.sources"));
     myInspectTestSource.setSelected(myOptions.ANALYZE_TEST_SOURCES);
     myInspectTestSource.setVisible(myShowInspectTestSource);
     gbc.gridy = gridY;

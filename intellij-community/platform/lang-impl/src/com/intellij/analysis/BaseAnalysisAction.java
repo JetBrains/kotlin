@@ -2,6 +2,7 @@
 package com.intellij.analysis;
 
 import com.intellij.analysis.dialog.ModelScopeItem;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.ui.InspectionResultsView;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -49,7 +50,7 @@ public abstract class BaseAnalysisAction extends AnAction {
     if (scope == null) return;
 
     String title = getDialogTitle();
-    String noon = AnalysisScopeBundle.message("analysis.scope.title", myAnalysisNoon.get());
+    String noon = CodeInsightBundle.message("analysis.scope.title", myAnalysisNoon.get());
     Module module = getModuleFromContext(dataContext);
     boolean rememberScope = ActionPlaces.isMainMenuOrActionSearch(e.getPlace());
     AnalysisUIOptions uiOptions = AnalysisUIOptions.getInstance(project);
@@ -88,7 +89,7 @@ public abstract class BaseAnalysisAction extends AnAction {
   }
 
   protected @NotNull String getDialogTitle() {
-    return AnalysisScopeBundle.message("specify.analysis.scope", myTitle.get());
+    return CodeInsightBundle.message("specify.analysis.scope", myTitle.get());
   }
 
   protected String getHelpTopic() {

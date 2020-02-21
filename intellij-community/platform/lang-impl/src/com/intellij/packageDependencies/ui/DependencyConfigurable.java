@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packageDependencies.ui;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.util.scopeChooser.PackageSetChooserCombo;
 import com.intellij.openapi.diagnostic.Logger;
@@ -34,10 +34,10 @@ public class DependencyConfigurable implements Configurable {
   private TableView<DependencyRule> myDenyTable;
   private TableView<DependencyRule> myAllowTable;
 
-  private final ColumnInfo<DependencyRule, NamedScope> DENY_USAGES_OF = new LeftColumn(AnalysisScopeBundle.message("dependency.configurable.deny.table.column1"));
-  private final ColumnInfo<DependencyRule, NamedScope> DENY_USAGES_IN = new RightColumn(AnalysisScopeBundle.message("dependency.configurable.deny.table.column2"));
-  private final ColumnInfo<DependencyRule, NamedScope> ALLOW_USAGES_OF = new LeftColumn(AnalysisScopeBundle.message("dependency.configurable.allow.table.column1"));
-  private final ColumnInfo<DependencyRule, NamedScope> ALLOW_USAGES_ONLY_IN = new RightColumn(AnalysisScopeBundle.message("dependency.configurable.allow.table.column2"));
+  private final ColumnInfo<DependencyRule, NamedScope> DENY_USAGES_OF = new LeftColumn(CodeInsightBundle.message("dependency.configurable.deny.table.column1"));
+  private final ColumnInfo<DependencyRule, NamedScope> DENY_USAGES_IN = new RightColumn(CodeInsightBundle.message("dependency.configurable.deny.table.column2"));
+  private final ColumnInfo<DependencyRule, NamedScope> ALLOW_USAGES_OF = new LeftColumn(CodeInsightBundle.message("dependency.configurable.allow.table.column1"));
+  private final ColumnInfo<DependencyRule, NamedScope> ALLOW_USAGES_ONLY_IN = new RightColumn(CodeInsightBundle.message("dependency.configurable.allow.table.column2"));
 
   private JPanel myWholePanel;
   private JPanel myDenyPanel;
@@ -51,7 +51,7 @@ public class DependencyConfigurable implements Configurable {
 
   @Override
   public String getDisplayName() {
-    return AnalysisScopeBundle.message("dependency.configurable.display.name");
+    return CodeInsightBundle.message("dependency.configurable.display.name");
   }
 
   @Override

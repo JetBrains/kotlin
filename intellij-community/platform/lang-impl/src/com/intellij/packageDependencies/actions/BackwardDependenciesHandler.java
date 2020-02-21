@@ -17,7 +17,7 @@
 package com.intellij.packageDependencies.actions;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.packageDependencies.BackwardDependenciesBuilder;
 import com.intellij.packageDependencies.DependenciesBuilder;
@@ -44,12 +44,12 @@ public class BackwardDependenciesHandler extends DependenciesHandlerBase {
 
   @Override
   protected String getProgressTitle() {
-    return AnalysisScopeBundle.message("backward.dependencies.progress.text");
+    return CodeInsightBundle.message("backward.dependencies.progress.text");
   }
 
   @Override
   protected String getPanelDisplayName(final AnalysisScope scope) {
-    return AnalysisScopeBundle.message("backward.dependencies.toolwindow.title", scope.getDisplayName());
+    return CodeInsightBundle.message("backward.dependencies.toolwindow.title", scope.getDisplayName());
   }
 
   @Override

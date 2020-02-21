@@ -4,7 +4,7 @@
 package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vcs.changes.ChangeList;
@@ -71,6 +71,6 @@ public class VcsScopeItem implements ModelScopeItem {
   }
 
   private static String getAll() {
-    return AnalysisScopeBundle.message("scope.option.uncommitted.files.all.changelists.choice");
+    return CodeInsightBundle.message("scope.option.uncommitted.files.all.changelists.choice");
   }
 }

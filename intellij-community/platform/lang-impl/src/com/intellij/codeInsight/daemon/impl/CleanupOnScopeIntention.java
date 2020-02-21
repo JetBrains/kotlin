@@ -16,9 +16,9 @@
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.analysis.AnalysisUIOptions;
 import com.intellij.analysis.BaseAnalysisActionDialog;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.actions.CleanupIntention;
 import com.intellij.openapi.module.Module;
@@ -43,8 +43,8 @@ public class CleanupOnScopeIntention extends CleanupIntention {
       analysisScope = new AnalysisScope(project);
     }
     final BaseAnalysisActionDialog dlg = new BaseAnalysisActionDialog(
-      AnalysisScopeBundle.message("specify.analysis.scope", InspectionsBundle.message("inspection.action.title")),
-      AnalysisScopeBundle.message("analysis.scope.title", InspectionsBundle.message("inspection.action.noun")), project, BaseAnalysisActionDialog.standardItems(
+      CodeInsightBundle.message("specify.analysis.scope", InspectionsBundle.message("inspection.action.title")),
+      CodeInsightBundle.message("analysis.scope.title", InspectionsBundle.message("inspection.action.noun")), project, BaseAnalysisActionDialog.standardItems(
       project, analysisScope, module, file),
       AnalysisUIOptions.getInstance(project), true);
     if (!dlg.showAndGet()) {

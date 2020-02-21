@@ -17,9 +17,9 @@
 package com.intellij.packageDependencies.actions;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.analysis.BaseAnalysisAction;
 import com.intellij.analysis.BaseAnalysisActionDialog;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -34,7 +34,7 @@ public class BackwardDependenciesAction extends BaseAnalysisAction {
 
 
   public BackwardDependenciesAction() {
-    super(AnalysisScopeBundle.lazyMessage("action.backward.dependency.analysis"), AnalysisScopeBundle.lazyMessage("action.analysis.noun"));
+    super(CodeInsightBundle.lazyMessage("action.backward.dependency.analysis"), CodeInsightBundle.lazyMessage("action.analysis.noun"));
   }
 
   @Override

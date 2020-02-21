@@ -2,7 +2,7 @@
 package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.SimpleListCellRenderer;
@@ -24,7 +24,7 @@ public class VcsScopeItemPresenter implements ModelScopeItemPresenter {
   @Override
   public JRadioButton getButton(ModelScopeItem m) {
     JRadioButton button = new JRadioButton();
-    button.setText(AnalysisScopeBundle.message("scope.option.uncommitted.files"));
+    button.setText(CodeInsightBundle.message("scope.option.uncommitted.files"));
     return button;
   }
 

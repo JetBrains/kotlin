@@ -19,7 +19,7 @@
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="messages/AnalysisScopeBundle" key="skip.import.statements.checkbox.title"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="skip.import.statements.checkbox.title"/>
         </properties>
       </component>
       <grid id="fb6d9" binding="myAllowPanel" layout-manager="BorderLayout" hgap="0" vgap="0">

@@ -16,7 +16,7 @@
 package com.intellij.packageDependencies.actions;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -46,12 +46,12 @@ public class AnalyzeDependenciesOnSpecifiedTargetHandler extends DependenciesHan
 
   @Override
   protected String getProgressTitle() {
-    return AnalysisScopeBundle.message("package.dependencies.progress.title");
+    return CodeInsightBundle.message("package.dependencies.progress.title");
   }
 
   @Override
   protected String getPanelDisplayName(AnalysisScope scope) {
-    return AnalysisScopeBundle.message("package.dependencies.on.toolwindow.title", scope.getDisplayName(), myTargetScope.getDisplayName());
+    return CodeInsightBundle.message("package.dependencies.on.toolwindow.title", scope.getDisplayName(), myTargetScope.getDisplayName());
   }
 
   @Override
@@ -65,10 +65,10 @@ public class AnalyzeDependenciesOnSpecifiedTargetHandler extends DependenciesHan
     }
     final String source = StringUtil.decapitalize(getPanelDisplayName(builders));
     final String target = StringUtil.decapitalize(myTargetScope.getDisplayName());
-    String message = AnalysisScopeBundle.message("no.dependencies.found.message", source, target);
+    String message = CodeInsightBundle.message("no.dependencies.found.message", source, target);
     if (DependencyVisitorFactory.VisitorOptions.fromSettings(myProject).skipImports()) {
       message += " ";
-      message += AnalysisScopeBundle.message("dependencies.in.imports.message");
+      message += CodeInsightBundle.message("dependencies.in.imports.message");
     }
     NOTIFICATION_GROUP.createNotification(message, MessageType.INFO).notify(myProject);
     return false;

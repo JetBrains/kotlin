@@ -16,7 +16,7 @@
 
 package com.intellij.psi.search.scope.packageSet;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.search.scope.packageSet.lexer.ScopeTokenTypes;
@@ -62,7 +62,7 @@ public class FilePackageSetParserExtension implements PackageSetParserExtension 
         pattern.append("/");
       }
       else if (lexer.getTokenType() == ScopeTokenTypes.IDENTIFIER || lexer.getTokenType() == ScopeTokenTypes.INTEGER_LITERAL) {
-        if (wasIdentifier) error(lexer, AnalysisScopeBundle.message("error.package.set.token.expectations", getTokenText(lexer)));
+        if (wasIdentifier) error(lexer, CodeInsightBundle.message("error.package.set.token.expectations", getTokenText(lexer)));
         wasIdentifier = lexer.getTokenType() == ScopeTokenTypes.IDENTIFIER;
         pattern.append(getTokenText(lexer));
       }
@@ -97,7 +97,7 @@ public class FilePackageSetParserExtension implements PackageSetParserExtension 
     }
 
     if (pattern.length() == 0) {
-      error(lexer, AnalysisScopeBundle.message("error.package.set.pattern.expectations"));
+      error(lexer, CodeInsightBundle.message("error.package.set.pattern.expectations"));
     }
 
     return pattern.toString();
@@ -111,6 +111,6 @@ public class FilePackageSetParserExtension implements PackageSetParserExtension 
 
   private static void error(Lexer lexer, String message) throws ParsingException {
     throw new ParsingException(
-      AnalysisScopeBundle.message("error.package.set.position.parsing.error", message, (lexer.getTokenStart() + 1)));
+      CodeInsightBundle.message("error.package.set.position.parsing.error", message, (lexer.getTokenStart() + 1)));
   }
 }

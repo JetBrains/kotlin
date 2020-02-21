@@ -17,9 +17,9 @@
 package com.intellij.packageDependencies.actions;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.analysis.BaseAnalysisAction;
 import com.intellij.analysis.BaseAnalysisActionDialog;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,7 @@ public class AnalyzeDependenciesAction extends BaseAnalysisAction {
   private AnalyzeDependenciesSettingPanel myPanel;
 
   public AnalyzeDependenciesAction() {
-    super(AnalysisScopeBundle.lazyMessage("action.forward.dependency.analysis"), AnalysisScopeBundle.lazyMessage("action.analysis.noun"));
+    super(CodeInsightBundle.lazyMessage("action.forward.dependency.analysis"), CodeInsightBundle.lazyMessage("action.analysis.noun"));
   }
 
   @Override

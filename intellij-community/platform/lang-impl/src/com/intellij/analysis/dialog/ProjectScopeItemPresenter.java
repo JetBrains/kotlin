@@ -4,7 +4,7 @@
 package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class ProjectScopeItemPresenter implements ModelScopeItemPresenter {
   @NotNull
   @Override
   public JRadioButton getButton(ModelScopeItem m) {
-    String message = AnalysisScopeBundle.message("scope.option.whole.project");
+    String message = CodeInsightBundle.message("scope.option.whole.project");
     JRadioButton button = new JRadioButton();
     button.setText(message);
     return button;

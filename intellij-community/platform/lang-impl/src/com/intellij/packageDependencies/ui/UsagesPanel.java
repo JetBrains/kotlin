@@ -16,7 +16,7 @@
 
 package com.intellij.packageDependencies.ui;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -83,7 +83,7 @@ public abstract class UsagesPanel extends JPanel implements Disposable, DataProv
   }
 
   private void setToCanceled() {
-    setToComponent(createLabel(AnalysisScopeBundle.message("usage.view.canceled")));
+    setToComponent(createLabel(CodeInsightBundle.message("usage.view.canceled")));
   }
 
   void setToComponent(final JComponent cmp) {

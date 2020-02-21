@@ -4,7 +4,7 @@
 package com.intellij.analysis.dialog;
 
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class CustomScopeItemPresenter implements ModelScopeItemPresenter {
   @Override
   public JRadioButton getButton(ModelScopeItem model) {
     JRadioButton button = new JRadioButton();
-    button.setText(AnalysisScopeBundle.message("scope.option.custom"));
+    button.setText(CodeInsightBundle.message("scope.option.custom"));
     return button;
   }
 

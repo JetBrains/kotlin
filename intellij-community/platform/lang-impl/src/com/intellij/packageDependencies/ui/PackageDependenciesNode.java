@@ -16,7 +16,7 @@
 
 package com.intellij.packageDependencies.ui;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -118,7 +118,7 @@ public class PackageDependenciesNode extends DefaultMutableTreeNode implements N
 
   public String getPresentableFilesCount(){
     final int filesCount = getContainingFiles();
-    return filesCount > 0 ? " (" + AnalysisScopeBundle.message("package.dependencies.node.items.count", filesCount) + ")" : "";
+    return filesCount > 0 ? " (" + CodeInsightBundle.message("package.dependencies.node.items.count", filesCount) + ")" : "";
   }
 
   @Override

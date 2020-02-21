@@ -3,10 +3,10 @@ package com.intellij.codeInspection.actions;
 
 import com.intellij.CommonBundle;
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.analysis.AnalysisUIOptions;
 import com.intellij.analysis.BaseAnalysisActionDialog;
 import com.intellij.analysis.dialog.ModelScopeItem;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.CleanupLocalInspectionTool;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.InspectionProfile;
@@ -142,7 +142,7 @@ public class RunInspectionAction extends GotoActionBase implements DataProvider 
     final AnalysisScope initialAnalysisScope = analysisScope;
     List<ModelScopeItem> items = BaseAnalysisActionDialog.standardItems(project, analysisScope, module, psiElement);
     final BaseAnalysisActionDialog dialog = new BaseAnalysisActionDialog("Run '" + toolWrapper.getDisplayName() + "'",
-                                                                         AnalysisScopeBundle.message("analysis.scope.title", InspectionsBundle
+                                                                         CodeInsightBundle.message("analysis.scope.title", InspectionsBundle
                                                                            .message("inspection.action.noun")), project,
                                                                          items, options, true) {
 
@@ -198,7 +198,7 @@ public class RunInspectionAction extends GotoActionBase implements DataProvider 
       protected Action @NotNull [] createActions() {
         final List<Action> actions = new ArrayList<>();
         final boolean hasFixAll = toolWrapper.getTool() instanceof CleanupLocalInspectionTool;
-        actions.add(new AbstractAction(hasFixAll ? AnalysisScopeBundle.message("action.analyze.verb")
+        actions.add(new AbstractAction(hasFixAll ? CodeInsightBundle.message("action.analyze.verb")
                                                  : CommonBundle.getOkButtonText()) {
           {
             putValue(DEFAULT_ACTION, Boolean.TRUE);

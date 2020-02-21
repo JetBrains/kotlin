@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
-import com.intellij.analysis.AnalysisScopeBundle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
@@ -44,7 +44,7 @@ public class DefaultNavBarExtension extends AbstractNavBarModelExtension {
     }
     else if (object instanceof LibraryOrderEntry) {
       final String libraryName = ((LibraryOrderEntry)object).getLibraryName();
-      return libraryName != null ? libraryName : AnalysisScopeBundle.message("package.dependencies.library.node.text");
+      return libraryName != null ? libraryName : CodeInsightBundle.message("package.dependencies.library.node.text");
     }
     else if (object instanceof ModuleOrderEntry) {
       final ModuleOrderEntry moduleOrderEntry = (ModuleOrderEntry)object;
