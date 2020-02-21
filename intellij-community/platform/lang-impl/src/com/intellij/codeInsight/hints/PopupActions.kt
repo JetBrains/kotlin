@@ -7,8 +7,8 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.impl.ParameterHintsPresentationManager
 import com.intellij.codeInsight.hints.HintInfo.MethodInfo
-import com.intellij.codeInsight.hints.settings.InlayHintsConfigurable
 import com.intellij.codeInsight.hints.settings.Diff
+import com.intellij.codeInsight.hints.settings.InlayHintsConfigurable
 import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
@@ -130,9 +130,11 @@ class BlacklistCurrentMethodIntention : IntentionAction, LowPriorityAction {
       notification.expire()
     }
 
-    val notification = Notification("Parameter Name Hints", "Method \"$methodName\" added to blacklist", 
-                 "<html><a href='settings'>Show Parameter Hints Settings</a> or <a href='undo'>Undo</a></html>",
-                 NotificationType.INFORMATION, listener)
+
+    val notification = Notification("Parameter Name Hints",
+                                    CodeInsightBundle.message("notification.inlay.method.added.to.blacklist", methodName),
+                                    CodeInsightBundle.message("notification.show.parameter.hints.settings.or.undo.label"),
+                                    NotificationType.INFORMATION, listener)
     
     notification.notify(project)
   }

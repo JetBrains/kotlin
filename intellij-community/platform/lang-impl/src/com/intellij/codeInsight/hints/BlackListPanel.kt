@@ -27,7 +27,7 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
   private var myPatternsAreValid = true
 
   init {
-    title = "Parameter Name Hints Blacklist"
+    title = CodeInsightBundle.message("settings.inlay.parameter.hints.blacklist")
     init()
   }
 
