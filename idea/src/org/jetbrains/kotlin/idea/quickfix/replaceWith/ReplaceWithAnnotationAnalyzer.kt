@@ -133,7 +133,7 @@ object ReplaceWithAnnotationAnalyzer {
         languageVersionSettings: LanguageVersionSettings
     ): List<ImportingScope> {
         val allDefaultImports =
-            resolutionFacade.frontendService<TargetPlatform>().findAnalyzerServices
+            resolutionFacade.frontendService<TargetPlatform>().findAnalyzerServices(resolutionFacade.project)
                 .getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
         val (allUnderImports, aliasImports) = allDefaultImports.partition { it.isAllUnder }
         // this solution doesn't support aliased default imports with a different alias

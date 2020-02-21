@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.findAnalyzerServices
-import org.jetbrains.kotlin.idea.project.getStableName
-import org.jetbrains.kotlin.idea.project.isHMPPEnabled
+import org.jetbrains.kotlin.idea.project.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -170,7 +167,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     fun getPlatform(): org.jetbrains.kotlin.resolve.TargetPlatform = platform.toOldPlatform()
 
     override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = platform.findAnalyzerServices
+        get() = platform.findAnalyzerServices(module.project)
 
     override fun createModificationTracker(): ModificationTracker =
         KotlinModuleOutOfCodeBlockModificationTracker(module)
@@ -312,7 +309,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
         get() = getLibraryPlatform(project, library)
 
     override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = platform.findAnalyzerServices
+        get() = platform.findAnalyzerServices(project)
 
     override val sourcesModuleInfo: SourceForBinaryModuleInfo
         get() = LibrarySourceInfo(project, library, this)
@@ -388,7 +385,7 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
         get() = DefaultIdeTargetPlatformKindProvider.defaultPlatform
 
     override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = platform.findAnalyzerServices
+        get() = platform.single().findAnalyzerServices()
 }
 
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
@@ -486,7 +483,7 @@ data class PlatformModuleInfo(
         get() = platformModule.moduleOrigin
 
     override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = platform.findAnalyzerServices
+        get() = platform.findAnalyzerServices(platformModule.module.project)
 
     override fun dependencies() = platformModule.dependencies()
 
