@@ -113,7 +113,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     override fun doCreateProject(projectFile: Path): Project {
-        return myProjectManager.loadProject(projectFile.toFile().path)!!
+        return loadProjectCompat(projectFile)
     }
 
     private val projectName: String
