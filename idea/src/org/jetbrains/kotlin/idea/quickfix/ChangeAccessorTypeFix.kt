@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -24,14 +25,18 @@ class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = getType() != null
 
-    override fun getFamilyName() = "Change accessor type"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.accessor.family")
 
     override fun getText(): String {
         val element = element ?: return ""
         val type = getType() ?: return familyName
         val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
-        val target = if (element.isGetter) "getter" else "setter parameter"
-        return "Change $target type to $renderedType"
+
+        return if (element.isGetter) {
+            KotlinBundle.message("fix.change.accessor.getter", renderedType)
+        } else {
+            KotlinBundle.message("fix.change.accessor.setter.parameter", renderedType)
+        }
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

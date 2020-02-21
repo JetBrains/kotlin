@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -22,9 +23,19 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
 class ChangeToStarProjectionFix(element: KtTypeElement) : KotlinQuickFixAction<KtTypeElement>(element) {
-    override fun getFamilyName() = "Change to star projection"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.to.star.projection.family")
 
-    override fun getText() = element?.let { "Change type arguments to <${it.typeArgumentsAsTypes.joinToString { "*" }}>" } ?: ""
+    override fun getText(): String {
+        val element = this.element
+
+        return when {
+            element != null -> {
+                val type = element.typeArgumentsAsTypes.joinToString { "*" }
+                KotlinBundle.message("fix.change.to.star.projection.text", "<$type>")
+            }
+            else -> null
+        } ?: ""
+    }
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

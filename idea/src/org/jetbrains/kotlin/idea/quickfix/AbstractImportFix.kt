@@ -496,7 +496,11 @@ internal class DelegateAccessorsImportFix(
 
     override fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
         if (solveSeveralProblems) {
-            return createGroupedImportsAction(project, editor, element, "Delegate accessors", suggestions)
+            return createGroupedImportsAction(
+                project, editor, element,
+                KotlinBundle.message("fix.import.kind.delegate.accessors"),
+                suggestions
+            )
         }
 
         return super.createAction(project, editor, element)
@@ -537,7 +541,11 @@ internal class ComponentsImportFix(
 
     override fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
         if (solveSeveralProblems) {
-            return createGroupedImportsAction(project, editor, element, "Component functions", suggestions)
+            return createGroupedImportsAction(
+                project, editor, element,
+                KotlinBundle.message("fix.import.kind.component.functions"),
+                suggestions
+            )
         }
 
         return super.createAction(project, editor, element)

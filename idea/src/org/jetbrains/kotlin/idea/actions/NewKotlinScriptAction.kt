@@ -13,6 +13,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -28,10 +29,10 @@ open class NewKotlinScriptAction(
 ), DumbAware {
 
     constructor() : this(
-        actionName = "Kotlin Script",
-        description = "Creates new Kotlin script",
-        dialogTitle = "New Kotlin Script",
-        templateName = "Kotlin Script"
+        actionName = KotlinBundle.message("action.new.script.name"),
+        description = KotlinBundle.message("action.new.script.description"),
+        dialogTitle = KotlinBundle.message("action.new.script.dialog.title"),
+        templateName = KotlinBundle.message("action.new.script.template.name")
     )
 
     override fun postProcess(createdElement: PsiFile, templateName: String?, customProperties: Map<String, String>?) {

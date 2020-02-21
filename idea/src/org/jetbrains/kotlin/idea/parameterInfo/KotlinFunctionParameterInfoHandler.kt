@@ -30,6 +30,7 @@ import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
@@ -197,7 +198,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (ApplicationManager.getApplication()?.isDispatchThread == true) {
             ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 task,
-                "Calculating parameter info", true, argumentList.project
+                KotlinBundle.message("hints.progress.calculating.parameter.info"), true, argumentList.project
             )
         } else {
             task.run()

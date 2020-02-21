@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class AddReturnToLastExpressionInFunctionFix(element: KtDeclarationWithBody) : KotlinQuickFixAction<KtDeclarationWithBody>(element) {
-    override fun getText() = "Add 'return' to last expression"
+    override fun getText() = KotlinBundle.message("fix.add.return.last.expression")
     override fun getFamilyName() = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {

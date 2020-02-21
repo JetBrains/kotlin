@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.*
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class AddReturnToUnusedLastExpressionInFunctionFix(element: KtElement) : KotlinQuickFixAction<KtElement>(element) {
-    override fun getText() = "Add 'return' before the expression"
+    override fun getText() = KotlinBundle.message("fix.add.return.before.expression")
     override fun getFamilyName() = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {

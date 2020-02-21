@@ -23,6 +23,7 @@ import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
 import org.jetbrains.kotlin.psi.*;
 
@@ -31,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class KtDeclarationTreeNode extends AbstractPsiBasedNode<KtDeclaration> {
-    public static final String CLASS_INITIALIZER = "<class initializer>";
+    public static final String CLASS_INITIALIZER = "<" + KotlinBundle.message("project.view.class.initializer") + ">";
 
     protected KtDeclarationTreeNode(Project project, KtDeclaration ktDeclaration, ViewSettings viewSettings) {
         super(project, ktDeclaration, viewSettings);

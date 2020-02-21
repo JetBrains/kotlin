@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -21,8 +22,20 @@ class AddSuspendModifierFix(
 ) : AddModifierFix(element, KtTokens.SUSPEND_KEYWORD) {
 
     override fun getText() = when (element) {
-        is KtNamedFunction -> "Make ${declarationName ?: "containing function"} suspend"
-        is KtTypeReference -> "Make ${declarationName ?: "receiver"} type suspend"
+        is KtNamedFunction -> {
+            if (declarationName != null) {
+                KotlinBundle.message("fix.add.suspend.modifier.function", declarationName)
+            } else {
+                KotlinBundle.message("fix.add.suspend.modifier.function.generic")
+            }
+        }
+        is KtTypeReference -> {
+            if (declarationName != null) {
+                KotlinBundle.message("fix.add.suspend.modifier.receiver", declarationName)
+            } else {
+                KotlinBundle.message("fix.add.suspend.modifier.receiver.generic")
+            }
+        }
         else -> super.getText()
     }
 

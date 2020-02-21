@@ -40,6 +40,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
@@ -53,8 +54,8 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
 
 class NewKotlinFileAction : CreateFileFromTemplateAction(
-    "Kotlin File/Class",
-    "Creates new Kotlin file or class",
+    KotlinBundle.message("action.new.file.text"),
+    KotlinBundle.message("action.new.file.description"),
     KotlinFileType.INSTANCE.icon
 ), DumbAware {
     override fun postProcess(createdElement: PsiFile?, templateName: String?, customProperties: Map<String, String>?) {
@@ -85,17 +86,39 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
     }
 
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
-        builder.setTitle("New Kotlin File/Class")
-            .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
-            .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
-            .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
-            .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
-            .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
+        builder.setTitle(KotlinBundle.message("action.new.file.dialog.title"))
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.file.title"),
+                KotlinFileType.INSTANCE.icon,
+                KotlinBundle.message("action.new.file.dialog.file.description")
+            )
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.class.title"),
+                KotlinIcons.CLASS,
+                KotlinBundle.message("action.new.file.dialog.class.description")
+            )
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.interface.title"),
+                KotlinIcons.INTERFACE,
+                KotlinBundle.message("action.new.file.dialog.interface.description")
+            )
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.enum.title"),
+                KotlinIcons.ENUM,
+                KotlinBundle.message("action.new.file.dialog.enum.description")
+            )
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.object.title"),
+                KotlinIcons.OBJECT,
+                KotlinBundle.message("action.new.file.dialog.object.description")
+            )
 
         builder.setValidator(NameValidator)
     }
 
-    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin File/Class"
+    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String {
+        return KotlinBundle.message("action.new.file.text")
+    }
 
     override fun isAvailable(dataContext: DataContext): Boolean {
         if (super.isAvailable(dataContext)) {
@@ -124,12 +147,12 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
         private object NameValidator : InputValidatorEx {
             override fun getErrorText(inputString: String): String? {
                 if (inputString.trim().isEmpty()) {
-                    return "Name can't be empty"
+                    return KotlinBundle.message("action.new.file.error.empty.name")
                 }
 
                 val parts: List<String> = inputString.split(*FQNAME_SEPARATORS)
                 if (parts.any { it.trim().isEmpty() }) {
-                    return "Name can't have empty parts"
+                    return KotlinBundle.message("action.new.file.error.empty.name.part")
                 }
 
                 return null
@@ -208,7 +231,10 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
 
 
         fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
-            val directorySeparators = if (template.name == "Kotlin File") FILE_SEPARATORS else FQNAME_SEPARATORS
+            val directorySeparators = when (template.name) {
+                KotlinBundle.message("action.new.file.dialog.file.description") -> FILE_SEPARATORS
+                else -> FQNAME_SEPARATORS
+            }
             val (className, targetDir) = findOrCreateTarget(dir, name, directorySeparators)
 
             val service = DumbService.getInstance(dir.project)

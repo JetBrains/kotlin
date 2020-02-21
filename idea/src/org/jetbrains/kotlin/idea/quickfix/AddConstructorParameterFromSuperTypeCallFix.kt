@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
@@ -25,7 +26,7 @@ class AddConstructorParameterFromSuperTypeCallFix(
     private val parameterName: String,
     private val parameterType: FqName
 ) : KotlinQuickFixAction<KtValueArgumentList>(constructor) {
-    override fun getText() = "Add constructor parameter '$parameterName'"
+    override fun getText() = KotlinBundle.message("fix.add.constructor.parameter", parameterName)
 
     override fun getFamilyName() = text
 
