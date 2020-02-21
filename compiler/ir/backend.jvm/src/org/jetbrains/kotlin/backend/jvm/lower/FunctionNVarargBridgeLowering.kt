@@ -48,7 +48,8 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     // Change calls to big arity invoke functions to vararg calls.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.valueArgumentsCount < FunctionInvokeDescriptor.BIG_ARITY ||
-            !expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
+            !(expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
+                    expression.symbol.owner.parentAsClass.defaultType.isSuspendFunctionOrKFunction()) ||
             expression.symbol.owner.name.asString() != "invoke"
         ) return super.visitFunctionAccess(expression)
 

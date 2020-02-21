@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendForInlineOfLambda
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfLambda
 import org.jetbrains.kotlin.backend.jvm.codegen.isReadOfCrossinline
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor.Factory.BIG_ARITY
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.Modality
@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -787,25 +790,12 @@ private fun IrCall.createSuspendFunctionCallViewIfNeeded(context: JvmBackendCont
     val view = (symbol.owner as IrSimpleFunction).suspendFunctionViewOrStub(context)
     if (view == symbol.owner) return this
 
-    val isBigAritySuspendFunctionN =
-        symbol.owner.parentAsClass?.defaultType?.let { it.isSuspendFunction() || it.isKSuspendFunction() } && valueArgumentsCount + 1 >= BIG_ARITY
-    val calleeSymbol =
-        if (isBigAritySuspendFunctionN) context.ir.symbols.functionN.functions.single { it.owner.name.toString() == "invoke" } else view.symbol
-    return IrCallImpl(startOffset, endOffset, view.returnType, calleeSymbol, superQualifierSymbol = superQualifierSymbol).also {
+    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol, superQualifierSymbol = superQualifierSymbol).also {
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
         val valueArguments = computeSuspendFunctionCallViewValueArguments(caller, context, view)
-        if (isBigAritySuspendFunctionN) {
-            // If we are calling FunctionN.invoke, wrap arguments in an array.
-            it.putValueArgument(0, context.createJvmIrBuilder(caller.symbol).run {
-                irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
-                    valueArguments.forEach { argument -> +argument }
-                }
-            })
-        } else {
-            valueArguments.forEachIndexed { index, argument -> it.putValueArgument(index, argument) }
-        }
+        valueArguments.forEachIndexed { index, argument -> it.putValueArgument(index, argument) }
     }
 }
 
