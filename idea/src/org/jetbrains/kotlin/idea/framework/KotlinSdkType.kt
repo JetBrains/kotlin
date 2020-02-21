@@ -45,7 +45,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
         }
     }
 
-    override fun getPresentableName() = "Kotlin SDK"
+    override fun getPresentableName() = KotlinFrameworkBundle.message("name.kotlin.sdk")
 
     override fun getIcon() = KotlinIcons.SMALL_LOGO
 
