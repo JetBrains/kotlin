@@ -182,7 +182,16 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
     ) {
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
 
-        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        buildScriptData.addOther(
+            """
+                kotlin {
+                    target {
+                        $jsSubTargetName { }
+                        produceExecutable()
+                    }
+                }
+            """.trimIndent()
+        )
         val artifactId = MAVEN_JS_STDLIB_ID.removePrefix("kotlin-")
         buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }
