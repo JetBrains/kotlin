@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.intention.impl;
 
@@ -48,9 +48,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author mike
- */
 public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
 
   @Override
@@ -142,7 +139,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
           return false;
         }
       }
-      
+
       if (action instanceof PsiElementBaseIntentionAction) {
         PsiElementBaseIntentionAction psiAction = (PsiElementBaseIntentionAction)action;
         if (!psiAction.checkFile(psiFile)) {
