@@ -9,7 +9,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.BuildAdapter
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -69,10 +71,12 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
         createTargetConfigurator().configureTarget(result)
 
-        project.gradle.taskGraph.whenReady {
-            SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
-                project.setUpKotlinNativePlatformDependencies()
-            }
+        SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
+            project.gradle.addListener(object : BuildAdapter() {
+                override fun projectsEvaluated(gradle: Gradle) {
+                    project.setUpKotlinNativePlatformDependencies()
+                }
+            })
         }
 
         if (!konanTarget.enabledOnCurrentHost) {
