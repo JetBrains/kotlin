@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.klibModuleName
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
@@ -63,17 +64,25 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     override fun configureCompilations(target: KotlinJsIrTarget) {
         super.configureCompilations(target)
 
-        target.compilations.all {
-            it.compileKotlinTask.kotlinOptions {
+        target.compilations.all { compilation ->
+            compilation.compileKotlinTask.kotlinOptions {
                 configureOptions()
 
                 freeCompilerArgs += listOf(
                     DISABLE_PRE_IR,
                     PRODUCE_UNZIPPED_KLIB
                 )
+
+                // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
+                val baseName = if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                    target.project.name
+                } else {
+                    "${target.project.name}_${compilation.name}"
+                }
+                freeCompilerArgs += listOf("$MODULE_NAME=${target.project.klibModuleName(baseName)}")
             }
 
-            it.binaries
+            compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->

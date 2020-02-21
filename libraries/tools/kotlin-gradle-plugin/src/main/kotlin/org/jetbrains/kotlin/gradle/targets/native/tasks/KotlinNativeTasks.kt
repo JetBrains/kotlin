@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
@@ -297,6 +299,14 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
     override val baseName: String
         get() = if (compilation.isMainCompilation) project.name else "${project.name}_${compilation.name}"
 
+    @get:Input
+    val moduleName: String by project.provider {
+        project.klibModuleName(baseName)
+    }
+
+    @get:Input
+    val shortModuleName: String by project.provider { baseName }
+
     // Inputs and outputs.
     // region Sources.
     @InputFiles
@@ -378,6 +388,9 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
         addAll(super.buildCompilerArgs())
 
+        // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
+        addArg("-module-name", moduleName)
+        add("-Xshort-module-name=$shortModuleName")
         val friends = friendModule?.files
         if (friends != null && friends.isNotEmpty()) {
             addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
@@ -885,14 +898,21 @@ open class CInteropProcess : DefaultTask() {
     val interopName: String
         @Internal get() = settings.name
 
-    val outputFileName: String
-        @Internal get() = with(CompilerOutputKind.LIBRARY) {
-            val baseName = settings.compilation.let {
+    val baseKlibName: String
+        @Internal get() {
+            val compilationPrefix = settings.compilation.let {
                 if (it.isMainCompilation) project.name else it.name
             }
-            val suffix = suffix(konanTarget)
-            return "$baseName-cinterop-$interopName$suffix"
+            return "$compilationPrefix-cinterop-$interopName"
         }
+
+    val outputFileName: String
+        @Internal get() = with(CompilerOutputKind.LIBRARY) {
+            "$baseKlibName${suffix(konanTarget)}"
+        }
+
+    val moduleName: String
+        @Input get() = project.klibModuleName(baseKlibName)
 
     @get:Internal
     val outputFile: File
@@ -960,6 +980,10 @@ open class CInteropProcess : DefaultTask() {
 
             addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
+
+            if (project.konanVersion.isAtLeast(1, 4, 0)) {
+                addArg("-Xmodule-name", moduleName)
+            }
 
             addAll(extraOpts)
         }
