@@ -8,12 +8,20 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CheckboxAction;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public abstract class EditorHeaderToggleAction extends CheckboxAction implements DumbAware, LightEditCompatible {
   protected EditorHeaderToggleAction(@NotNull String text) {
+    this(text, null, null, null);
+  }
+
+  protected EditorHeaderToggleAction(@NotNull String text, @Nullable Icon icon, @Nullable Icon hoveredIcon, @Nullable Icon selectedIcon) {
     super(text);
+    getTemplatePresentation().setIcon(icon);
+    getTemplatePresentation().setHoveredIcon(hoveredIcon);
+    getTemplatePresentation().setSelectedIcon(selectedIcon);
   }
 
   @Override

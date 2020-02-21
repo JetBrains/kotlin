@@ -16,14 +16,19 @@
 package com.intellij.find.editorHeaderActions;
 
 import com.intellij.find.EditorSearchSession;
+import com.intellij.find.FindBundle;
 import com.intellij.find.FindModel;
 import com.intellij.find.SearchSession;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class TogglePreserveCaseAction extends EditorHeaderToggleAction {
+public class TogglePreserveCaseAction extends EditorHeaderToggleAction implements Embeddable{
   public TogglePreserveCaseAction() {
-    super("Pr&eserve Case");
+    super(FindBundle.message("find.options.replace.preserve.case"),
+          AllIcons.Actions.PreserveCase,
+          AllIcons.Actions.PreserveCaseHover,
+          AllIcons.Actions.PreserveCaseSelected);
   }
 
   @Override

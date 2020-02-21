@@ -1,13 +1,18 @@
 package com.intellij.find.editorHeaderActions;
 
+import com.intellij.find.FindBundle;
 import com.intellij.find.FindSettings;
 import com.intellij.find.SearchSession;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class ToggleWholeWordsOnlyAction extends EditorHeaderToggleAction {
+public class ToggleWholeWordsOnlyAction extends EditorHeaderToggleAction implements Embeddable {
   public ToggleWholeWordsOnlyAction() {
-    super("W&ords");
+    super(FindBundle.message("find.whole.words"),
+          AllIcons.Actions.Words,
+          AllIcons.Actions.WordsHovered,
+          AllIcons.Actions.WordsSelected);
   }
 
   @Override

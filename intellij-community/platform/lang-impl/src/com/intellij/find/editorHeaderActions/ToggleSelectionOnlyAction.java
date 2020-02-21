@@ -20,6 +20,12 @@ public class ToggleSelectionOnlyAction extends ToggleAction implements ContextAw
   }
 
   @Override
+  public void update(@NotNull AnActionEvent e) {
+    super.update(e);
+    e.getPresentation().setEnabled(e.getData(SearchSession.KEY) != null);
+  }
+
+  @Override
   public void setSelected(@NotNull AnActionEvent e, boolean state) {
     SearchSession search = e.getData(SearchSession.KEY);
     if (search != null) {
