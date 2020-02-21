@@ -46,6 +46,7 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
@@ -78,7 +79,7 @@ class JavaToKotlinAction : AnAction() {
             }
         }
 
-        val title = "Convert Java to Kotlin"
+        val title = KotlinBundle.message("action.j2k.name")
 
         private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
             val result = ArrayList<VirtualFile>()
@@ -86,13 +87,13 @@ class JavaToKotlinAction : AnAction() {
                 try {
                     val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)
                     val errorMessage = when {
-                        document == null -> "couldn't find document for ${psiFile.name}"
-                        !document.isWritable -> "file `${psiFile.name}` is read-only"
+                        document == null -> KotlinBundle.message("action.j2k.error.cant.find.document", psiFile.name)
+                        !document.isWritable -> KotlinBundle.message("action.j2k.error.read.only", psiFile.name)
                         else -> null
                     }
                     if (errorMessage != null) {
-                        MessagesEx.error(psiFile.project, "Failed to save conversion result: $errorMessage")
-                            .showLater()
+                        val message = KotlinBundle.message("action.j2k.error.cant.save.result", errorMessage)
+                        MessagesEx.error(psiFile.project, message).showLater()
                         continue
                     }
                     document!!.replaceString(0, document.textLength, text)
@@ -176,8 +177,7 @@ class JavaToKotlinAction : AnAction() {
             val result = converterResult ?: return emptyList()
             val externalCodeProcessing = result.externalCodeProcessing
             if (enableExternalCodeProcessing && externalCodeProcessing != null) {
-                val question =
-                    "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
+                val question = KotlinBundle.message("action.j2k.correction.required")
                 if (!askExternalCodeProcessing || (Messages.showYesNoDialog(
                         project,
                         question,
@@ -200,7 +200,7 @@ class JavaToKotlinAction : AnAction() {
                 }
             }
 
-            return project.executeWriteCommand("Convert files from Java to Kotlin", null) {
+            return project.executeWriteCommand(KotlinBundle.message("action.j2k.task.name"), null) {
                 CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
                 val newFiles = saveResults(javaFiles, result.results)
@@ -228,7 +228,7 @@ class JavaToKotlinAction : AnAction() {
         if (javaFiles.isEmpty()) {
             val statusBar = WindowManager.getInstance().getStatusBar(project)
             JBPopupFactory.getInstance()
-                .createHtmlTextBalloonBuilder("Nothing to convert:<br>No writable Java files found", MessageType.ERROR, null)
+                .createHtmlTextBalloonBuilder(KotlinBundle.message("action.j2k.errornothing.to.convert"), MessageType.ERROR, null)
                 .createBalloon()
                 .showInCenterOf(statusBar.component)
         }
@@ -239,12 +239,14 @@ class JavaToKotlinAction : AnAction() {
 
         if (firstSyntaxError != null) {
             val count = javaFiles.filter { PsiTreeUtil.hasErrorElements(it) }.count()
-            val question = firstSyntaxError.containingFile.name +
-                    (if (count > 1) " and ${count - 1} more Java files" else " file") +
-                    " contain syntax errors, the conversion result may be incorrect"
-
-            val okText = "Investigate Errors"
-            val cancelText = "Proceed with Conversion"
+            assert(count > 0)
+            val firstFileName = firstSyntaxError.containingFile.name
+            val question = when (count) {
+                1 -> KotlinBundle.message("action.j2k.correction.errors.single", firstFileName)
+                else -> KotlinBundle.message("action.j2k.correction.errors.multiple", firstFileName, count - 1)
+            }
+            val okText = KotlinBundle.message("action.j2k.correction.investigate")
+            val cancelText = KotlinBundle.message("action.j2k.correction.proceed")
             if (Messages.showOkCancelDialog(
                     project,
                     question,

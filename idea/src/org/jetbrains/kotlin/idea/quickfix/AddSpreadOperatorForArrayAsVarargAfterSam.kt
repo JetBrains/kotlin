@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
@@ -24,7 +25,7 @@ object AddSpreadOperatorForArrayAsVarargAfterSamFixFactory : KotlinSingleIntenti
 }
 
 class AddSpreadOperatorForArrayAsVarargAfterSamFix(element: PsiElement) : KotlinQuickFixAction<PsiElement>(element) {
-    override fun getFamilyName() = "Add a spread operator before an array passing as vararg"
+    override fun getFamilyName() = KotlinBundle.message("fix.add.spread.operator.after.sam")
 
     override fun getText() = familyName
 

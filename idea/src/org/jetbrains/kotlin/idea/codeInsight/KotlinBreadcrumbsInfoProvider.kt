@@ -24,6 +24,7 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.xml.breadcrumbs.BreadcrumbsInfoProvider
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.unwrapIfLabeled
@@ -214,7 +215,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
         override fun elementTooltip(element: KtDeclaration): String = try {
             ElementDescriptionUtil.getElementDescription(element, RefactoringDescriptionLocation.WITH_PARENT)
         } catch (e: IndexNotReadyException) {
-            "Indexing..."
+            KotlinBundle.message("breadcrumbs.tooltip.indexing")
         }
     }
 

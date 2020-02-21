@@ -25,6 +25,7 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.wrapTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -58,18 +59,18 @@ object KDocRenderer {
     }
 
     fun StringBuilder.appendKDocSection(section: KDocSection) {
-        renderTag(section.findTagByName("receiver"), "Receiver", this)
+        renderTag(section.findTagByName("receiver"), KotlinBundle.message("kdoc.section.title.receiver"), this)
         val paramTags = section.findTagsByName("param").filter { it.getSubjectName() != null }
-        renderTagList(paramTags, "Params", this)
+        renderTagList(paramTags, KotlinBundle.message("kdoc.section.title.parameters"), this)
 
-        renderTag(section.findTagByName("return"), "Returns", this)
+        renderTag(section.findTagByName("return"), KotlinBundle.message("kdoc.section.title.returns"), this)
 
         val throwsTags = (section.findTagsByName("exception").union(section.findTagsByName("throws")))
             .filter { it.getSubjectName() != null }
-        renderTagList(throwsTags, "Throws", this)
+        renderTagList(throwsTags, KotlinBundle.message("kdoc.section.title.throws"), this)
 
-        renderTag(section.findTagByName("author"), "Author", this)
-        renderTag(section.findTagByName("since"), "Since", this)
+        renderTag(section.findTagByName("author"), KotlinBundle.message("kdoc.section.title.author"), this)
+        renderTag(section.findTagByName("since"), KotlinBundle.message("kdoc.section.title.since"), this)
 
         renderSeeAlso(section, this)
 
@@ -113,7 +114,7 @@ object KDocRenderer {
     private fun renderSamplesList(sampleTags: List<KDocTag>, to: StringBuilder) {
         if (sampleTags.isEmpty()) return
 
-        to.renderSection("Samples") {
+        to.renderSection(KotlinBundle.message("kdoc.section.title.samples")) {
             sampleTags.forEach {
                 it.getSubjectLink()?.let { subjectLink ->
                     append("<p>")
@@ -122,7 +123,7 @@ object KDocRenderer {
                     wrapTag("pre") {
                         wrapTag("code") {
                             if (target == null)
-                                to.append("// Unresolved")
+                                to.append("// " + KotlinBundle.message("kdoc.comment.unresolved"))
                             else {
                                 to.append(trimCommonIndent(target.extractExampleText()).htmlEscape())
                             }
@@ -137,7 +138,7 @@ object KDocRenderer {
         val seeTags = docComment.findTagsByName("see")
         if (seeTags.isEmpty()) return
 
-        to.renderSection("See Also") {
+        to.renderSection(KotlinBundle.message("kdoc.section.title.see.also")) {
             seeTags.forEachIndexed { index, tag ->
                 val subjectName = tag.getSubjectName()
                 if (subjectName != null) {

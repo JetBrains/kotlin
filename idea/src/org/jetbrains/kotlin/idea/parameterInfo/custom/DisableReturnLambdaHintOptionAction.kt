@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo.custom
 
-import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.hints.InlayParameterHintsExtension
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
@@ -19,12 +18,7 @@ import org.jetbrains.kotlin.idea.util.refreshAllOpenEditors
 
 class DisableReturnLambdaHintOptionAction : IntentionAction, LowPriorityAction {
     override fun getText(): String {
-        val optionName = HintType.LAMBDA_RETURN_EXPRESSION.option.name
-        return if (optionName.startsWith("show", ignoreCase = true)) {
-            "Do not ${optionName.toLowerCase()}"
-        } else {
-            CodeInsightBundle.message("inlay.hints.disable.custom.option", optionName)
-        }
+        return HintType.LAMBDA_RETURN_EXPRESSION.doNotShowDesc
     }
 
     override fun getFamilyName(): String = text

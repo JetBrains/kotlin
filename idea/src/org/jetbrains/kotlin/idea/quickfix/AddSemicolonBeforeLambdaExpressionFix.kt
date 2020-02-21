@@ -11,13 +11,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AddSemicolonBeforeLambdaExpressionFix(element: KtLambdaExpression) : KotlinQuickFixAction<KtLambdaExpression>(element) {
-    override fun getText(): String = "Terminate preceding call with semicolon"
+    override fun getText(): String = KotlinBundle.message("fix.add.semicolon.lambda.expression")
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

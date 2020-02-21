@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddAnnotationTargetFix(annotationEntry: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(annotationEntry) {
 
-    override fun getText() = "Add annotation target"
+    override fun getText() = KotlinBundle.message("fix.add.annotation.target")
 
     override fun getFamilyName() = text
 

@@ -25,6 +25,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.containers.HashMap
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
@@ -60,13 +61,13 @@ class KotlinGenerateEqualsWizard(
 
         init {
             equalsPanel = if (needEquals) {
-                KotlinMemberSelectionPanel("Choose properties to be included in equals()", memberInfos, null).apply {
+                KotlinMemberSelectionPanel(KotlinBundle.message("action.generate.equals.choose.equals"), memberInfos, null).apply {
                     table.memberInfoModel = MemberInfoModelImpl
                 }
             } else null
 
             hashCodePanel = if (needHashCode) {
-                KotlinMemberSelectionPanel("Choose properties to be included in hashCode()", memberInfos, null).apply {
+                KotlinMemberSelectionPanel(KotlinBundle.message("action.generate.equals.choose.hashcode"), memberInfos, null).apply {
                     table.memberInfoModel = MemberInfoModelImpl
                 }
             } else null

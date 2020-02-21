@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -25,8 +26,8 @@ class AddArrayOfTypeFix(expression: KtExpression, expectedType: KotlinType) : Ko
 
     }
 
-    override fun getText() = "Add $prefix wrapper"
-    override fun getFamilyName() = "Add arrayOf wrapper"
+    override fun getText() = KotlinBundle.message("fix.add.array.of.type.text", prefix)
+    override fun getFamilyName() = KotlinBundle.message("fix.add.array.of.type.family")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

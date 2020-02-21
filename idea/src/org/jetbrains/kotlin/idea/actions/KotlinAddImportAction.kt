@@ -203,7 +203,7 @@ class KotlinAddImportAction internal constructor(
 
                 return object : BaseListPopupStep<String>(null, toExclude) {
                     override fun getTextFor(value: String): String {
-                        return "Exclude '$value' from auto-import"
+                        return KotlinBundle.message("fix.import.exclude", value)
                     }
 
                     override fun onChosen(selectedValue: String, finalChoice: Boolean): PopupStep<Any>? {
