@@ -106,10 +106,6 @@ public class ExternalSystemProcessHandler extends BuildProcessHandler implements
   }
 
   protected void closeInput() {
-    ExternalSystemTask task = myTask;
-    if (task instanceof UserDataHolder) {
-      ((UserDataHolder)task).putUserData(ExternalSystemRunConfiguration.RUN_INPUT_KEY, null);
-    }
     StreamUtil.closeStream(myProcessInput);
     myProcessInput = null;
   }
@@ -117,6 +113,13 @@ public class ExternalSystemProcessHandler extends BuildProcessHandler implements
   @Override
   public void dispose() {
     try {
+      ExternalSystemTask task = myTask;
+      if (task instanceof UserDataHolder) {
+        UserDataHolder taskDataHolder = (UserDataHolder)task;
+        InputStream inputStream = taskDataHolder.getUserData(ExternalSystemRunConfiguration.RUN_INPUT_KEY);
+        StreamUtil.closeStream(inputStream);
+        taskDataHolder.putUserData(ExternalSystemRunConfiguration.RUN_INPUT_KEY, null);
+      }
       detachProcessImpl();
     }
     finally {
