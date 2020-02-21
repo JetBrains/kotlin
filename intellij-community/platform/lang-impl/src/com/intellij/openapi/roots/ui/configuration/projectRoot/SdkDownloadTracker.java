@@ -21,11 +21,13 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -277,6 +279,9 @@ public class SdkDownloadTracker implements Disposable {
             finally {
               myProgressIndicator.removeStateDelegate(middleMan);
             }
+
+            // make sure VFS has the right image of our SDK to avoid empty SDK from being created
+            VfsUtil.markDirtyAndRefresh(false, true, true, new File(myTask.getPlannedHomeDir()));
 
             onSdkDownloadCompleted(false);
           }
