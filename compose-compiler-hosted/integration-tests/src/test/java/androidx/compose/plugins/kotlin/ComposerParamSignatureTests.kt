@@ -20,6 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
+/* ktlint-disable max-line-length */
 @RunWith(ComposeRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
@@ -925,7 +926,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         // TODO(lmr): test
     }
 
-
     @Test
     fun testSyntheticAccessFunctions(): Unit = validateBytecode(
         """
@@ -936,7 +936,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     ) {
         // TODO(lmr): test
     }
-
 
     @Test
     fun testLambdaMemoization(): Unit = validateBytecode(
@@ -967,7 +966,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         }
         """
     ) { assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.startRestartGroup")) }
-
 
     @Test
     fun testCustomComposerCall(): Unit = validateBytecode(

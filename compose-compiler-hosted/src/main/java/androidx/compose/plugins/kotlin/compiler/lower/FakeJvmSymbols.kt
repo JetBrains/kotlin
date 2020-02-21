@@ -56,7 +56,11 @@ class FakeJvmSymbols(val module: ModuleDescriptor, val irBuiltIns: IrBuiltIns) {
         }
     }
 
-    private fun createClass(fqName: FqName, classKind: ClassKind = ClassKind.CLASS, block: (IrClass) -> Unit = {}): IrClassSymbol =
+    private fun createClass(
+        fqName: FqName,
+        classKind: ClassKind = ClassKind.CLASS,
+        block: (IrClass) -> Unit = {}
+    ): IrClassSymbol =
         buildClass {
             name = fqName.shortName()
             kind = classKind
@@ -65,7 +69,6 @@ class FakeJvmSymbols(val module: ModuleDescriptor, val irBuiltIns: IrBuiltIns) {
             createImplicitParameterDeclarationWithWrappedDescriptor()
             block(this)
         }.symbol
-
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl(
