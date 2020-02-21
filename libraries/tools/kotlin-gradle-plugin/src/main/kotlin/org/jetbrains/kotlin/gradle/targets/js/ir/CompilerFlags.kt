@@ -18,3 +18,5 @@ internal const val GENERATE_D_TS = "-Xgenerate-dts"
 
 internal const val PRODUCE_JS = "-Xir-produce-js"
 internal const val PRODUCE_UNZIPPED_KLIB = "-Xir-produce-klib-dir"
+
+internal const val MODULE_NAME = "-Xir-module-name"

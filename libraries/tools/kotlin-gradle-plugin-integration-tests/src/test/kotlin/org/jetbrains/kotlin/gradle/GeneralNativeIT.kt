@@ -51,6 +51,7 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksExecuted(":two:compileKotlinLinux")
             assertNotContains("Parallel in-process execution of the Kotlin/Native compiler detected.")
         }
-
     }
+
+    // TODO: Move native specific tests from NewMultiplatformIT here.
 }
