@@ -40,7 +40,7 @@ interface InferenceSession {
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
         diagnosticsHolder: KotlinDiagnosticsHolder
-    ): Map<TypeConstructor, UnwrappedType>
+    ): Map<TypeConstructor, UnwrappedType>?
 
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean

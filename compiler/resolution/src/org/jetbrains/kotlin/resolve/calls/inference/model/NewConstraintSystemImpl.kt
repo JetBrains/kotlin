@@ -103,6 +103,10 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables -= variable
     }
 
+    override fun removePostponedVariables() {
+        storage.postponedTypeVariables.clear()
+    }
+
     override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) =
         constraintInjector.addInitialSubtypeConstraint(
             apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },

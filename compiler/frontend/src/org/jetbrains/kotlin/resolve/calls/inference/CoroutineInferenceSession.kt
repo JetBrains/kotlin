@@ -105,7 +105,13 @@ class CoroutineInferenceSession(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
         diagnosticsHolder: KotlinDiagnosticsHolder
-    ): Map<TypeConstructor, UnwrappedType> {
+    ): Map<TypeConstructor, UnwrappedType>? {
+        if (partiallyResolvedCallsInfo.isEmpty() && commonCalls.isEmpty()) {
+            val emptyCommonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns)
+            updateCalls(lambda, emptyCommonSystem)
+            return null
+        }
+
         val commonSystem = buildCommonSystem(initialStorage)
 
         val context = commonSystem.asConstraintSystemCompleterContext()
@@ -281,9 +287,8 @@ class CoroutineInferenceSession(
 
 class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubstitutor) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
-        return left.substituteNotNullTypeWithConstructor(
-            right.substituteNotNullTypeWithConstructor(constructor)?.constructor ?: constructor
-        )
+        val rightSubstitution = right.substituteNotNullTypeWithConstructor(constructor)
+        return left.substituteNotNullTypeWithConstructor(rightSubstitution?.constructor ?: constructor) ?: rightSubstitution
     }
 
     override val isEmpty: Boolean get() = left.isEmpty && right.isEmpty

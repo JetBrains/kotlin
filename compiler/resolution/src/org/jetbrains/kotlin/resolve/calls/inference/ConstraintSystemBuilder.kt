@@ -34,6 +34,7 @@ interface ConstraintSystemOperation {
     fun registerVariable(variable: TypeVariableMarker)
     fun markPostponedVariable(variable: TypeVariableMarker)
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
+    fun removePostponedVariables()
 
     fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition)
     fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition)

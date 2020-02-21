@@ -159,6 +159,10 @@ class PostponedArgumentsAnalyzer(
             val storageSnapshot = c.getBuilder().currentStorage()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, diagnosticHolder)
+            if (postponedVariables == null) {
+                c.getBuilder().removePostponedVariables()
+                return
+            }
 
             for ((constructor, resultType) in postponedVariables) {
                 val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
