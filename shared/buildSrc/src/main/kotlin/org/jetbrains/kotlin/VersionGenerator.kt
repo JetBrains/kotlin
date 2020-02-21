@@ -41,16 +41,17 @@ open class VersionGenerator: DefaultTask() {
                 val major = version[0].toInt()
                 val minor = version[1].toInt()
                 val maintenance = if (version.size > 2) version[2].toInt() else 0
+                val milestone = konanVersion.split("-M").getOrNull(1)?.toInt() ?: -1
                 project.logger.info("BUILD_NUMBER: $buildNumber")
                 val build = buildNumber?.let {
-                    it.split("-")[2].toInt() //7-dev-buildcount
+                    it.split("-").last().toInt() //7-dev-buildcount
                 }?: -1
 
                 + """
                    |package org.jetbrains.kotlin.konan
                    |
                    |internal val currentCompilerVersion: CompilerVersion =
-                   |    CompilerVersionImpl($meta, $major, $minor, $maintenance, $build)
+                   |    CompilerVersionImpl($meta, $major, $minor, $maintenance, $milestone, $build)
                    |
                    |val CompilerVersion.Companion.CURRENT: CompilerVersion
                    |    get() = currentCompilerVersion
