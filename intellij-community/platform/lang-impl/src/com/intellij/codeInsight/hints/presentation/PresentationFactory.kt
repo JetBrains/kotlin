@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.LightweightHint
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.Contract
 import java.awt.*
 import java.awt.event.MouseEvent
@@ -34,8 +35,9 @@ import kotlin.math.ceil
 import kotlin.math.max
 
 /**
- * Users of InlayHintsFactory should use interface instead
+ * Contains non-stable and not well-designed API. Will be changed in 2020.2
  */
+@ApiStatus.Experimental
 class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFactory {
   @Contract(pure = true)
   override fun smallText(text: String): InlayPresentation {
