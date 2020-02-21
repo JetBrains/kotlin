@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.psi.impl.source.codeStyle;
 
@@ -230,7 +230,8 @@ public class CodeFormatterFacade {
         i++;
       }
     }
-    final PostprocessReformattingAspect component = file.getProject().getComponent(PostprocessReformattingAspect.class);
+
+    PostprocessReformattingAspect component = PostprocessReformattingAspect.getInstance(file.getProject());
     FormattingProgressTask.FORMATTING_CANCELLED_FLAG.set(false);
     component.doPostponedFormatting(file.getViewProvider());
     i = 0;
