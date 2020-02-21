@@ -21,6 +21,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * @author peter
  */
@@ -29,10 +31,13 @@ class ActionTracker {
   private final Editor myEditor;
   private final Project myProject;
   private boolean myIgnoreDocumentChanges;
+  private final boolean myIsDumb;
 
   ActionTracker(Editor editor, Disposable parentDisposable) {
     myEditor = editor;
     myProject = editor.getProject();
+    myIsDumb = DumbService.getInstance(Objects.requireNonNull(myProject)).isDumb();
+
     ApplicationManager.getApplication().getMessageBus().connect(parentDisposable).subscribe(AnActionListener.TOPIC, new AnActionListener() {
       @Override
       public void beforeEditorTyping(char c, @NotNull DataContext dataContext) {
@@ -90,7 +95,7 @@ class ActionTracker {
   }
 
   boolean hasAnythingHappened() {
-    return myActionsHappened || DumbService.getInstance(myProject).isDumb() ||
+    return myActionsHappened || myIsDumb != DumbService.getInstance(myProject).isDumb() ||
            myEditor.isDisposed() ||
            (myEditor instanceof EditorWindow && !((EditorWindow)myEditor).isValid());
   }
