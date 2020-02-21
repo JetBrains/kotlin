@@ -45,8 +45,10 @@ class EmulatedExperiment {
             3 -> GROUP_A_EXPERIMENT_VERSION
             4 -> GROUP_B_EXPERIMENT_VERSION
             5 -> GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
-            6,7 -> GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
-            else -> null
+            else ->
+                if (PlatformUtils.isPyCharm())
+                    GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
+                else null
         }
     }
 
