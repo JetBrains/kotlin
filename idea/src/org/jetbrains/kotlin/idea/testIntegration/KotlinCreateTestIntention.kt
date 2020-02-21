@@ -108,8 +108,8 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 if (testFolders.isEmpty() && !propertiesComponent.getBoolean("create.test.in.the.same.root")) {
                     if (Messages.showOkCancelDialog(
                             project,
-                            "Create test in the same source root?",
-                            "No Test Roots Found",
+                            KotlinTestIntegrationBundle.message("message.text.create.test.in.the.same.source.root"),
+                            KotlinTestIntegrationBundle.message("title.no.test.roots.found"),
                             Messages.getQuestionIcon()
                         ) != Messages.OK
                     ) return
@@ -130,10 +130,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(
                         project,
-                        "Kotlin class '${existingClass.name}' already exists. Do you want to update it?",
+                        KotlinTestIntegrationBundle.message("message.text.kotlin.class", existingClass.name.toString()),
                         CommonBundle.getErrorTitle(),
-                        "Rewrite",
-                        "Cancel",
+                        KotlinTestIntegrationBundle.message("button.text.rewrite"),
+                        KotlinTestIntegrationBundle.message("button.text.cancel"),
                         Messages.getErrorIcon()
                     )
                     if (answer == Messages.NO) return
