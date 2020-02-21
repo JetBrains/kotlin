@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class JavaHomeFinderMac extends JavaHomeFinderSimple {
@@ -33,7 +34,7 @@ class JavaHomeFinderMac extends JavaHomeFinderSimple {
   }
 
   @Nullable
-  private String getSystemDefaultJavaHome() {
+  private static String getSystemDefaultJavaHome() {
     String homePath = null;
     if (SystemInfo.isMacOSLeopard) {
       // since version 10.5
@@ -59,15 +60,9 @@ class JavaHomeFinderMac extends JavaHomeFinderSimple {
     return dir.isDirectory();
   }
 
-
+  @NotNull
   @Override
-  protected File adjustPath(File file) {
-    File home = new File(file, "/Home");
-    if (home.exists()) return home;
-
-    home = new File(file, "Contents/Home");
-    if (home.exists()) return home;
-
-    return file;
+  protected List<File> adjustPath(@NotNull File file) {
+    return Arrays.asList(file, new File(file, "/Home"), new File(file, "Contents/Home"));
   }
 }

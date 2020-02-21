@@ -4,18 +4,15 @@ package com.intellij.openapi.projectRoots.impl;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.EnvironmentUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 class JavaHomeFinderSimple extends JavaHomeFinderBase {
   private final String[] myPaths;
@@ -27,20 +24,21 @@ class JavaHomeFinderSimple extends JavaHomeFinderBase {
   }
 
   @NotNull
+  @Override
   public List<String> findExistingJdks() {
-    ArrayList<String> result = new ArrayList<>();
+    Set<String> result = SystemInfo.isFileSystemCaseSensitive ? new TreeSet<>(String.CASE_INSENSITIVE_ORDER) : new TreeSet<>();
     for (String path : myPaths) {
       scanFolder(new File(path), true, result);
     }
     for (File dir : guessByPathVariable()) {
       scanFolder(dir, false, result);
     }
-    removeDuplicates(result, SystemInfo.isFileSystemCaseSensitive);
-    return result;
+
+    return new ArrayList<>(result);
   }
 
   public Collection<File> guessByPathVariable() {
-    String pathVarString = System.getenv("PATH");
+    String pathVarString = EnvironmentUtil.getValue("PATH");
     if (pathVarString == null || pathVarString.isEmpty()) return Collections.emptyList();
     boolean isWindows = SystemInfo.isWindows;
     String suffix = isWindows ? ".exe" : "";
@@ -77,21 +75,8 @@ class JavaHomeFinderSimple extends JavaHomeFinderBase {
 
   @Nullable
   private static File granny(@Nullable File file) {
+    if (file == null) return null;
     File parent = file.getParentFile();
     return parent != null ? parent.getParentFile() : null;
-  }
-
-  private static void removeDuplicates(@NotNull ArrayList<String> strings, boolean caseSensitive) {
-    int k = strings.size() - 1;
-    while (k > 0) {
-      String s = strings.get(k);
-      for (int i = 0; i < k; i++) {
-        if (StringUtil.equal(strings.get(i), s, caseSensitive)) {
-          strings.remove(k);
-          break;
-        }
-      }
-      k--;
-    }
   }
 }
