@@ -29,7 +29,7 @@ android {
     }
     buildTypes {
         'release' {
-            isMinifyEnabled false
+            minifyEnabled false
         }
     }
 }

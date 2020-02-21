@@ -27,7 +27,12 @@ data class AndroidConfigIR(val javaPackage: JavaPackage?) : AndroidIR, FreeIR {
                     GradlePrinter.GradleDsl.GROOVY -> "release".quotified
                 }
                 sectionCall(sectionIdentifier, needIndent = true) {
-                    assignmentOrCall("isMinifyEnabled") { +"false" }
+                    val minifyCallName = when (dsl) {
+                        GradlePrinter.GradleDsl.KOTLIN -> "isMinifyEnabled"
+                        GradlePrinter.GradleDsl.GROOVY -> "minifyEnabled"
+                    }
+
+                    assignmentOrCall(minifyCallName) { +"false" }
                 }
             }
         }
