@@ -16,15 +16,16 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener.Companion.LISTENER
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 
 internal class ScriptChangesNotifier(
     private val project: Project,
-    private val updater: ScriptConfigurationUpdater
+    private val updater: ScriptConfigurationUpdater,
 ) {
-    private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
+    private val scriptsQueue = Alarm(Alarm.ThreadToUse.POOLED_THREAD, project)
     private val scriptChangesListenerDelay = 1400
 
     init {
@@ -32,39 +33,45 @@ internal class ScriptChangesNotifier(
     }
 
     private fun listenForChangesInScripts() {
-        project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-            override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-                runScriptDependenciesUpdateIfNeeded(file)
-            }
-
-            override fun selectionChanged(event: FileEditorManagerEvent) {
-                event.newFile?.let { runScriptDependenciesUpdateIfNeeded(it) }
-            }
-
-            private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
-                getListener(project, file)?.editorActivated(file, updater)
-            }
-        })
-
-        EditorFactory.getInstance().eventMulticaster.addDocumentListener(object : DocumentListener {
-            override fun documentChanged(event: DocumentEvent) {
-                val document = event.document
-                val file = FileDocumentManager.getInstance().getFile(document)?.takeIf { it.isInLocalFileSystem } ?: return
-
-                val listener = getListener(project, file) ?: return
-
-                if (ApplicationManager.getApplication().isUnitTestMode) {
-                    listener.documentChanged(file, updater)
+        project.messageBus.connect().subscribe(
+            FileEditorManagerListener.FILE_EDITOR_MANAGER,
+            object : FileEditorManagerListener {
+                override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+                    runScriptDependenciesUpdateIfNeeded(file)
                 }
 
-                scriptsQueue.cancelAllRequests()
-                scriptsQueue.addRequest(
-                    { listener.documentChanged(file, updater) },
-                    scriptChangesListenerDelay,
-                    true
-                )
-            }
-        }, project.messageBus.connect())
+                override fun selectionChanged(event: FileEditorManagerEvent) {
+                    event.newFile?.let { runScriptDependenciesUpdateIfNeeded(it) }
+                }
+
+                private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
+                    AppExecutorUtil.getAppExecutorService().submit {
+                        getListener(project, file)?.editorActivated(file, updater)
+                    }
+                }
+            },
+        )
+
+        EditorFactory.getInstance().eventMulticaster.addDocumentListener(
+            object : DocumentListener {
+                override fun documentChanged(event: DocumentEvent) {
+                    val document = event.document
+                    val file = FileDocumentManager.getInstance().getFile(document)?.takeIf { it.isInLocalFileSystem } ?: return
+
+                    if (ApplicationManager.getApplication().isUnitTestMode) {
+                        getListener(project, file)?.documentChanged(file, updater)
+                    } else {
+                        scriptsQueue.cancelAllRequests()
+                        scriptsQueue.addRequest(
+                            { getListener(project, file)?.documentChanged(file, updater) },
+                            scriptChangesListenerDelay,
+                            true,
+                        )
+                    }
+                }
+            },
+            project.messageBus.connect(),
+        )
     }
 
     private val defaultListener = DefaultScriptChangeListener(project)
@@ -83,6 +90,7 @@ internal class ScriptChangesNotifier(
     }
 
     private fun areListenersDisabled(): Boolean {
-        return ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptChangesNotifierDisabled == true
+        return ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication()
+            .isScriptChangesNotifierDisabled == true
     }
 }
