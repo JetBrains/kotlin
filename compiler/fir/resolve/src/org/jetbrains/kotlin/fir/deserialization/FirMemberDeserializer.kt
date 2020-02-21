@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -271,7 +272,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.symbol = symbol
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.typeParameters += typeParameters
-            valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
+            valueParameters += local.memberDeserializer.valueParameters(
+                proto.valueParameterList, addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
+            )
             annotations += local.annotationDeserializer.loadConstructorAnnotations(proto, local.nameResolver)
         }.build()
     }
@@ -284,7 +287,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     }
 
     private fun valueParameters(
-        valueParameters: List<ProtoBuf.ValueParameter>
+        valueParameters: List<ProtoBuf.ValueParameter>,
+        addDefaultValue: Boolean = false
     ): List<FirValueParameter> {
         return valueParameters.map { proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
@@ -295,6 +299,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.name = name
                 symbol = FirVariableSymbol(name)
                 defaultValue = defaultValue(flags)
+                if (addDefaultValue) {
+                    defaultValue = buildExpressionStub()
+                }
                 isCrossinline = Flags.IS_CROSSINLINE.get(flags)
                 isNoinline = Flags.IS_NOINLINE.get(flags)
                 isVararg = proto.varargElementType(c.typeTable) != null

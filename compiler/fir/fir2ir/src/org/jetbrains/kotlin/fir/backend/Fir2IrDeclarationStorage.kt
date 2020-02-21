@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
@@ -417,7 +418,12 @@ class Fir2IrDeclarationStorage(
             declareDefaultSetterParameter(type)
         } else if (function != null) {
             valueParameters = function.valueParameters.mapIndexed { index, valueParameter ->
-                createAndSaveIrParameter(valueParameter, index).apply { this.parent = parent }
+                createAndSaveIrParameter(
+                    valueParameter, index,
+                    useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum")
+                ).apply {
+                    this.parent = parent
+                }
             }
         }
         if (function !is FirConstructor) {
@@ -739,7 +745,11 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun createAndSaveIrParameter(valueParameter: FirValueParameter, index: Int = -1): IrValueParameter {
+    private fun createAndSaveIrParameter(
+        valueParameter: FirValueParameter,
+        index: Int = -1,
+        useStubForDefaultValueStub: Boolean = true
+    ): IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val type = valueParameter.returnTypeRef.toIrType(session, this)
@@ -755,7 +765,10 @@ class Fir2IrDeclarationStorage(
                     valueParameter.isCrossinline, valueParameter.isNoinline
                 ).apply {
                     descriptor.bind(this)
-                    if (valueParameter.defaultValue != null) {
+                    if (valueParameter.defaultValue.let {
+                            it != null && (useStubForDefaultValueStub || it !is FirExpressionStub)
+                        }
+                    ) {
                         this.defaultValue = IrExpressionBodyImpl(
                             IrErrorExpressionImpl(
                                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, type,

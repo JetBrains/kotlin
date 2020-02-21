@@ -515,7 +515,7 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>| {
     public final val ordinal: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor<E>(name: R|kotlin/String|, ordinal: R|kotlin/Int|): R|kotlin/Enum<E>|
+    public constructor<E>(name: R|kotlin/String| = STUB, ordinal: R|kotlin/Int| = STUB): R|kotlin/Enum<E>|
 
     public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|kotlin/Enum.Companion|
