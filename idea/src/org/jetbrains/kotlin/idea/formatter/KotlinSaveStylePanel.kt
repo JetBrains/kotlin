@@ -27,7 +27,7 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
     override fun getFileType() = throw UnsupportedOperationException()
     override fun getPreviewText(): String? = null
 
-    override fun getTabTitle(): String = "Load/Save"
+    override fun getTabTitle(): String = KotlinFormatterBundle.message("title.load.save")
 
     private data class SaveItem(val label: String, val id: String?)
 
@@ -63,7 +63,7 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
                             }
                         })
 
-                        add(JLabel("Use defaults from:"))
+                        add(JLabel(KotlinFormatterBundle.message("text.use.defaults.from")))
                         add(saveDefaultsComboBox)
                     })
                 }
