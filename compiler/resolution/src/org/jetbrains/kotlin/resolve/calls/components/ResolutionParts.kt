@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.record
+import org.jetbrains.kotlin.resolve.calls.components.CollectionTypeVariableUsagesInfo.getTypeParameterByVariable
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
@@ -26,6 +28,9 @@ import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -281,6 +286,144 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
                     (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension != null)
                 ) hasError()
             BOTH_RECEIVERS -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension == null) hasError()
+        }
+    }
+}
+
+internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
+    private val KotlinType.isComputed get() = this !is WrappedType || isComputed()
+
+    private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositions(
+        variableTypeConstructor: TypeConstructorMarker,
+        baseType: KotlinTypeMarker,
+        wasOutVariance: Boolean = true
+    ): Boolean {
+        if (baseType !is KotlinType) return false
+
+        val dependentTypeParameter = getTypeParameterByVariable(variableTypeConstructor) ?: return false
+        val declaredTypeParameters = baseType.constructor.parameters
+
+        if (declaredTypeParameters.size < baseType.arguments.size) return false
+
+        for ((argumentsIndex, argument) in baseType.arguments.withIndex()) {
+            if (argument.isStarProjection || argument.type.isMarkedNullable) continue
+
+            val currentEffectiveVariance =
+                declaredTypeParameters[argumentsIndex].variance == Variance.OUT_VARIANCE || argument.projectionKind == Variance.OUT_VARIANCE
+            val effectiveVarianceFromTopLevel = wasOutVariance && currentEffectiveVariance
+
+            if ((argument.type.constructor == dependentTypeParameter || argument.type.constructor == variableTypeConstructor) && !effectiveVarianceFromTopLevel)
+                return true
+
+            if (isContainedInInvariantOrContravariantPositions(variableTypeConstructor, argument.type, effectiveVarianceFromTopLevel))
+                return true
+        }
+
+        return false
+    }
+
+    private fun isContainedInInvariantOrContravariantPositionsAmongTypeParameters(
+        checkingType: TypeVariableFromCallableDescriptor,
+        typeParameters: List<TypeParameterDescriptor>
+    ) = typeParameters.any {
+        it.variance != Variance.OUT_VARIANCE && it.typeConstructor == checkingType.originalTypeParameter.typeConstructor
+    }
+
+    private fun NewConstraintSystem.getDependentTypeParameters(
+        variable: TypeConstructorMarker,
+        dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> = listOf()
+    ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
+        val context = asConstraintSystemCompleterContext()
+        val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.mapNotNull { (typeConstructor, constraints) ->
+            val upperBounds = constraints.constraints.filter {
+                it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
+            }
+
+            upperBounds.mapNotNull { constraint ->
+                if (constraint.type.typeConstructor(context) != variable) {
+                    val suitableUpperBound = upperBounds.find { upperBound ->
+                        with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
+                    }?.type
+
+                    if (suitableUpperBound != null) typeConstructor to suitableUpperBound else null
+                } else typeConstructor to null
+            }
+        }.flatten().filter { it !in dependentTypeParametersSeen && it.first != variable }
+
+        return dependentTypeParameters + dependentTypeParameters.mapNotNull { (typeConstructor, _) ->
+            if (typeConstructor != variable) {
+                getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
+            } else null
+        }.flatten()
+    }
+
+    private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
+        checkingType: TypeConstructorMarker,
+        dependentTypeParameters: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>>
+    ): Boolean {
+        var currentTypeParameterConstructor = checkingType
+
+        return dependentTypeParameters.any { (typeConstructor, upperBound) ->
+            val isContainedOrNoUpperBound =
+                upperBound == null || isContainedInInvariantOrContravariantPositions(currentTypeParameterConstructor, upperBound)
+            currentTypeParameterConstructor = typeConstructor
+            isContainedOrNoUpperBound
+        }
+    }
+
+    private fun NewConstraintSystem.getTypeParameterByVariable(typeConstructor: TypeConstructorMarker) =
+        (getBuilder().currentStorage().allTypeVariables[typeConstructor] as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.typeConstructor
+
+    private fun NewConstraintSystem.getDependingOnTypeParameter(variable: TypeConstructor) =
+        getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
+            if (it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER) {
+                it.type.typeConstructor(asConstraintSystemCompleterContext())
+            } else null
+        } ?: emptyList()
+
+    private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsWithDependencies(
+        variable: TypeVariableFromCallableDescriptor,
+        declarationDescriptor: DeclarationDescriptor?
+    ): Boolean {
+        if (declarationDescriptor !is CallableDescriptor) return false
+
+        val returnType = declarationDescriptor.returnType ?: return false
+
+        if (!returnType.isComputed) return false
+
+        val typeVariableConstructor = variable.freshTypeConstructor
+        val dependentTypeParameters = getDependentTypeParameters(typeVariableConstructor)
+        val dependingOnTypeParameter = getDependingOnTypeParameter(typeVariableConstructor)
+
+        val isContainedInUpperBounds =
+            isContainedInInvariantOrContravariantPositionsAmongUpperBound(typeVariableConstructor, dependentTypeParameters)
+        val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { (typeParameter, _) ->
+            returnType.contains {
+                it.typeConstructor(asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
+            }
+        }
+
+        return isContainedInInvariantOrContravariantPositions(typeVariableConstructor, returnType)
+                || dependingOnTypeParameter.any { isContainedInInvariantOrContravariantPositions(it, returnType) }
+                || dependentTypeParameters.any { isContainedInInvariantOrContravariantPositions(it.first, returnType) }
+                || (isContainedAnyDependentTypeInReturnType && isContainedInUpperBounds)
+    }
+
+    private fun TypeVariableFromCallableDescriptor.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter() {
+        freshTypeConstructor.isContainedInInvariantOrContravariantPositions = true
+    }
+
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        for (variable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
+            if (resolvedCall.candidateDescriptor is ClassConstructorDescriptor) {
+                val typeParameters = resolvedCall.candidateDescriptor.containingDeclaration.declaredTypeParameters
+
+                if (isContainedInInvariantOrContravariantPositionsAmongTypeParameters(variable, typeParameters)) {
+                    variable.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter()
+                }
+            } else if (getSystem().isContainedInInvariantOrContravariantPositionsWithDependencies(variable, candidateDescriptor)) {
+                variable.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter()
+            }
         }
     }
 }

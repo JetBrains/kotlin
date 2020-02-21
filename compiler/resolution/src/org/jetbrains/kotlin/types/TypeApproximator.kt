@@ -41,7 +41,6 @@ open class TypeApproximatorConfiguration {
     open val errorType get() = false
     open val integerLiteralType: Boolean = false // IntegerLiteralTypeConstructor
     open val definitelyNotNullType get() = true
-    open val definitelyNotNullTypeInInvariantPosition get() = true
     open val intersection: IntersectionStrategy = TO_COMMON_SUPERTYPE
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
@@ -83,10 +82,7 @@ open class TypeApproximatorConfiguration {
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
     }
 
-    object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION) {
-        override val definitelyNotNullTypeInInvariantPosition: Boolean get() = false
-    }
-
+    object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION)
     object SubtypeCapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_SUBTYPING)
     object CapturedAndIntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
@@ -95,7 +91,6 @@ open class TypeApproximatorConfiguration {
     object FinalApproximationAfterResolutionAndInference :
         TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
-        override val definitelyNotNullTypeInInvariantPosition: Boolean get() = false
     }
 
     object IntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AllFlexibleSameValue() {
@@ -377,7 +372,11 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
-        return if (type.isMarkedNullable()) baseResult.withNullability(true) else baseResult
+        return when {
+            type.isMarkedNullable() -> baseResult.withNullability(true)
+            type.isProjectionNotNull() -> baseResult.withNullability(false)
+            else -> baseResult
+        }
     }
 
     private fun approximateSimpleToSuperType(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, depth: Int) =
@@ -480,12 +479,6 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             if (argument.isStarProjection()) continue
 
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-            if (effectiveVariance == TypeVariance.INV) {
-                val argumentType = argument.getType()
-                if (argumentType is DefinitelyNotNullTypeMarker && !conf.definitelyNotNullTypeInInvariantPosition) {
-                    newArguments[index] = argumentType.original().withNullability(false).asTypeArgument()
-                }
-            }
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
 

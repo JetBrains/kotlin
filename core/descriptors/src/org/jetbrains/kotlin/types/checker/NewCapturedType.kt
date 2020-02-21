@@ -110,7 +110,8 @@ class NewCapturedType(
     override val constructor: NewCapturedTypeConstructor,
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
     override val annotations: Annotations = Annotations.EMPTY,
-    override val isMarkedNullable: Boolean = false
+    override val isMarkedNullable: Boolean = false,
+    val isProjectionNotNull: Boolean = false
 ) : SimpleType(), CapturedTypeMarker {
     internal constructor(
         captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection, typeParameter: TypeParameterDescriptor

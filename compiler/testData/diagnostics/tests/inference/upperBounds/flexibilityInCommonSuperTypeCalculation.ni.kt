@@ -169,8 +169,8 @@ fun <T> case_11(y: T) {
         <!DEBUG_INFO_EXPRESSION_TYPE("(T!!..T?)")!>x3<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>y<!>
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<out (T..T?)>")!>result_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<out T?>")!>result_2<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<(T!!..T?)>")!>result_3<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_4<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_5<!>

@@ -508,6 +508,9 @@ object AbstractNullabilityChecker {
         // i.e. subType is definitely not null
         if (subType.isDefinitelyNotNullType()) return true
 
+        // i.e. subType is captured type, projection of which is marked not-null
+        if (subType is CapturedTypeMarker && subType.isProjectionNotNull()) return true
+
         // i.e. subType is not-nullable
         if (hasNotNullSupertype(subType, SupertypesPolicy.LowerIfFlexible)) return true
 

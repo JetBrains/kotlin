@@ -405,6 +405,17 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.constructor.projection
     }
 
+    override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
+        require(this is NewCapturedType, this::errorMessage)
+
+        return NewCapturedType(captureStatus, constructor, lowerType, annotations, isMarkedNullable, isProjectionNotNull = true)
+    }
+
+    override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
+        require(this is NewCapturedType, this::errorMessage)
+        return this.isProjectionNotNull
+    }
+
     override fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? {
         require(this is NewCapturedType, this::errorMessage)
         return this.constructor.typeParameter

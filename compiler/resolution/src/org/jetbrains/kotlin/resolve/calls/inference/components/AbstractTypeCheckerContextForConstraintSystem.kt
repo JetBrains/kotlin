@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.model.*
 
 abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheckerContext(), TypeSystemInferenceExtensionContext {
@@ -179,9 +181,31 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     private fun simplifyLowerConstraint(typeVariable: KotlinTypeMarker, subType: KotlinTypeMarker): Boolean {
         val lowerConstraint = when (typeVariable) {
             is SimpleTypeMarker ->
-                // Foo <: T or
-                // Foo <: T? -- Foo!! <: T
-                if (typeVariable.isMarkedNullable()) subType.makeDefinitelyNotNullOrNotNull() else subType
+                /*
+                 * Foo <: T -- Foo <: T
+                 * Foo <: T? (T is contained in invariant or contravariant positions of a return type) -- Foo <: T
+                 *      Example:
+                 *          fun <T> foo(x: T?): Inv<T> {}
+                 *          fun <K> main(z: K) { val x = foo(z) }
+                 * Foo <: T? (T isn't contained there) -- Foo!! <: T
+                 *      Example:
+                 *          fun <T> foo(x: T?) {}
+                 *          fun <K> main(z: K) { foo(z) }
+                 */
+                if (typeVariable.isMarkedNullable()) {
+                    val typeVariableTypeConstructor = typeVariable.typeConstructor()
+                    val subTypeConstructor = subType.typeConstructor()
+
+                    if (subTypeConstructor !is TypeVariableTypeConstructor && typeVariableTypeConstructor is TypeVariableTypeConstructor && typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions) {
+                        if (subType is NewCapturedType) {
+                            subType.withNotNullProjection()
+                        } else {
+                            subType.withNullability(false)
+                        }
+                    } else {
+                        subType.makeDefinitelyNotNullOrNotNull()
+                    }
+                } else subType
 
             is FlexibleTypeMarker -> {
                 assertFlexibleTypeVariable(typeVariable)

@@ -75,6 +75,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker =
         error("Captured types should be used for IrTypes")
 
+    override fun CapturedTypeMarker.isProjectionNotNull(): Boolean =
+        error("Captured types should be used for IrTypes")
+
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
         error("Captured types should be used for IrTypes")
 

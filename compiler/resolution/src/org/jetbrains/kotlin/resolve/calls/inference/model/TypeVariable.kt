@@ -49,10 +49,12 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = this
 
     override fun toString() = "TypeVariable($debugName)"
+
+    var isContainedInInvariantOrContravariantPositions: Boolean = false
 }
 
 sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
-    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
+    val freshTypeConstructor = TypeVariableTypeConstructor(builtIns, name)
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
