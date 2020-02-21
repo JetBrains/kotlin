@@ -7,6 +7,7 @@ import com.intellij.internal.statistic.eventLog.EventLogConfiguration
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.util.PlatformUtils
 
 /*
  * For now, we decide about AB experiment inside IDE using bucket
@@ -16,6 +17,7 @@ class EmulatedExperiment {
         const val GROUP_A_EXPERIMENT_VERSION: Int = 7
         const val GROUP_B_EXPERIMENT_VERSION: Int = 8
         const val GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION: Int = 9
+        const val GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION: Int = 10
 
         const val DIFF_ENABLED_PROPERTY_KEY = "ml.completion.diff.registry.was.enabled"
 
@@ -24,7 +26,8 @@ class EmulatedExperiment {
         fun shouldRank(language: Language, experimentVersion: Int): Boolean {
             return (
                      experimentVersion == GROUP_B_EXPERIMENT_VERSION ||
-                     experimentVersion == GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION && language.isKotlin()
+                     experimentVersion == GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION && language.isKotlin() ||
+                     experimentVersion == GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION && PlatformUtils.isPyCharm()
                    )
                    && !Registry.`is`("completion.stats.exit.experiment")
         }
@@ -42,6 +45,7 @@ class EmulatedExperiment {
             3 -> GROUP_A_EXPERIMENT_VERSION
             4 -> GROUP_B_EXPERIMENT_VERSION
             5 -> GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
+            6,7 -> GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION.apply { enableOnceDiffShowing() }
             else -> null
         }
     }

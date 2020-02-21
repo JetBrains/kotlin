@@ -8,7 +8,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.util.PlatformUtils;
 import com.jetbrains.completion.ranker.WeakModelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
