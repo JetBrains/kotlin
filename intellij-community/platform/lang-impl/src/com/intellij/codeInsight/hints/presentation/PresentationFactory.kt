@@ -150,7 +150,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
               onClick = { _, _ ->
                 presentationToChange?.flipState()
               })
-    }, second = { expanded() }, initialState = startWithPlaceholder)
+    }, second = { expanded() }, initiallyFirstEnabled = startWithPlaceholder)
     presentationToChange = content
     val listener = object : InputHandler {
       override fun mouseClicked(event: MouseEvent, translated: Point) {
