@@ -144,6 +144,10 @@ constructor(
             "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
         }
 
+        if (this.producingType != null) {
+            return
+        }
+
         this.producingType = producingType
 
         whenBrowserConfigured {
