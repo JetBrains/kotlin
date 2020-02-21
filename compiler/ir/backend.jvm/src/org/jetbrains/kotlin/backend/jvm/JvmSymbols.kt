@@ -248,7 +248,10 @@ class JvmSymbols(
             klass.superTypes += suspendFunctionInterface.defaultType
             klass.addConstructor().apply {
                 addValueParameter("arity", irBuiltIns.intType)
-                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
+                addValueParameter(
+                    SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
+                    continuationClass.typeWith(irBuiltIns.anyNType).makeNullable()
+                )
             }
             klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, Visibilities.PROTECTED).apply {
                 addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
@@ -607,15 +610,20 @@ class JvmSymbols(
     val enumValueOfFunction: IrSimpleFunctionSymbol =
         javaLangEnum.functionByName("valueOf")
 
+    private val kotlinCoroutinesJvmInternalRunSuspendKt =
+        createClass(FqName("kotlin.coroutines.jvm.internal.RunSuspendKt")) { klass ->
+            klass.addFunction("runSuspend", irBuiltIns.unitType, isStatic = true).apply {
+                addValueParameter(
+                    "block",
+                    getJvmSuspendFunctionClass(0).typeWith(
+                        irBuiltIns.unitType
+                    )
+                )
+            }
+        }
+
     val runSuspendFunction: IrSimpleFunctionSymbol =
-        buildFun {
-            name = Name.identifier("runSuspend")
-            origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-        }.apply {
-            parent = kotlinCoroutinesJvmInternalPackage
-            returnType = irBuiltIns.unitType
-            addValueParameter("block", getJvmSuspendFunctionClass(0).typeWith(continuationClass.typeWith(irBuiltIns.unitType), irBuiltIns.anyNType))
-        }.symbol
+        kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
