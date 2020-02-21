@@ -305,6 +305,7 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     for (ExternalSourceSet sourceSet : externalProject.getSourceSets().values()) {
       String moduleId = GradleProjectResolverUtil.getModuleId(resolverCtx, ideaModule, sourceSet);
       DataNode<GradleSourceSetData> sourceSetNode = sourceSetIndex.get(moduleId);
+      if (sourceSetNode == null) continue;
       result.put(sourceSet, sourceSetNode);
     }
     return result;
