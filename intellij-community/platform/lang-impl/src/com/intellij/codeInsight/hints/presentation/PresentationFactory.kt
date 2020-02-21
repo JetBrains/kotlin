@@ -5,6 +5,7 @@ import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.codeInsight.hints.InlayPresentationFactory
+import com.intellij.codeInsight.hints.InlayPresentationFactory.*
 import com.intellij.ide.ui.AntialiasingType
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
@@ -53,8 +54,8 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
 
   override fun container(
     presentation: InlayPresentation,
-    padding: InlayPresentationFactory.Padding?,
-    roundedCorners: InlayPresentationFactory.RoundedCorners?,
+    padding: Padding?,
+    roundedCorners: RoundedCorners?,
     background: Color?,
     backgroundAlpha: Float
   ): InlayPresentation {
@@ -66,7 +67,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
   override fun mouseHandling(
     base: InlayPresentation,
     clickListener: ((MouseEvent, Point) -> Unit)?,
-    hoverListener: InlayPresentationFactory.HoverListener?
+    hoverListener: HoverListener?
   ): InlayPresentation {
     return MouseHandlingPresentation(base, clickListener, hoverListener)
   }
@@ -184,7 +185,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
                          decorator: (InlayPresentation) -> InlayPresentation): List<InlayPresentation> {
     val forwardings = presentations.map { DynamicDelegatePresentation(it) }
     return forwardings.map {
-      onHover(it, object : InlayPresentationFactory.HoverListener {
+      onHover(it, object : HoverListener {
         override fun onHover(event: MouseEvent, translated: Point) {
           for ((index, forwarding) in forwardings.withIndex()) {
             forwarding.delegate = decorator(presentations[index])
@@ -204,7 +205,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
    * @see OnHoverPresentation
    */
   @Contract(pure = true)
-  fun onHover(base: InlayPresentation, onHoverListener: InlayPresentationFactory.HoverListener): InlayPresentation =
+  fun onHover(base: InlayPresentation, onHoverListener: HoverListener): InlayPresentation =
     OnHoverPresentation(base, onHoverListener)
 
   /**
@@ -253,20 +254,23 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
   }
 
   @Contract(pure = true)
-  fun referenceOnHover(base: InlayPresentation, onClickAction: Runnable): InlayPresentation {
-    return changeOnHover(
-      base,
-      onHover = {
-        onClick(
-          base = withReferenceAttributes(base),
-          buttons = EnumSet.of(MouseButton.Left, MouseButton.Middle),
-          onClick = { _, _ ->
-            onClickAction.run()
-          }
-        )
-      },
-      onHoverPredicate = { true }
-    )
+  fun referenceOnHover(base: InlayPresentation, clickListener: ClickListener): InlayPresentation {
+    return object: ChangeOnHoverPresentation(base, hover = {
+      val handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+      editor.setCustomCursor(this@PresentationFactory, handCursor)
+      onClick(
+        base = withReferenceAttributes(base),
+        buttons = EnumSet.of(MouseButton.Left, MouseButton.Middle),
+        onClick = { e, p ->
+          clickListener.onClick(e, p)
+        }
+      )
+    }, onHoverPredicate = { true }) {
+      override fun mouseExited() {
+        super.mouseExited()
+        editor.setCustomCursor(this@PresentationFactory, null)
+      }
+    }
   }
 
   @Contract(pure = true)

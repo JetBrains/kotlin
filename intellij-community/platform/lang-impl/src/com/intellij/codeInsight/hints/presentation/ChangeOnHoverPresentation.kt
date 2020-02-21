@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent
  * Preserves hover state between passes.
  * @param onHoverPredicate predicate, that considers state is hovered (additional to fact, that it is in bounds)
  */
-class ChangeOnHoverPresentation(
+open class ChangeOnHoverPresentation(
   val noHover: InlayPresentation,
   private val hover: () -> InlayPresentation,
   private val onHoverPredicate: (MouseEvent) -> Boolean = { true }
