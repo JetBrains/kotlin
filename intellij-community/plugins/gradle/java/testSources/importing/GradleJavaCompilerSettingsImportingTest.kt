@@ -4,6 +4,8 @@ package org.jetbrains.plugins.gradle.importing
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.junit.Test
 
 class GradleJavaCompilerSettingsImportingTest : GradleJavaImportingTestCase() {
@@ -22,8 +24,10 @@ class GradleJavaCompilerSettingsImportingTest : GradleJavaImportingTestCase() {
   }
 
   override fun tearDown() {
-    removeSdk(sdk)
-    super.tearDown()
+    RunAll(
+      ThrowableRunnable { if (::sdk.isInitialized) removeSdk(sdk) },
+      ThrowableRunnable { super.tearDown() }
+    ).run()
   }
 
   @Test
@@ -99,12 +103,14 @@ class GradleJavaCompilerSettingsImportingTest : GradleJavaImportingTestCase() {
   }
 
   private fun createGradleSettingsFile(vararg moduleNames: String) {
-    createSettingsFile(GroovyBuilder.generate {
-      property("rootProject.name", "'project'")
-      for (moduleName in moduleNames) {
-        call("include", "'$moduleName'")
+    createSettingsFile(
+      GroovyBuilder.generate {
+        property("rootProject.name", "'project'")
+        for (moduleName in moduleNames) {
+          call("include", "'$moduleName'")
+        }
       }
-    })
+    )
   }
 
   private fun createJavaGradleSubProject(
