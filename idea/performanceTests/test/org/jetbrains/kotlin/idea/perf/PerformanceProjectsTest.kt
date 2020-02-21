@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.TEST_KEY
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
 import org.jetbrains.kotlin.idea.testFramework.Fixture
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
+import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.EXISTING_IDEA_PROJECT
+import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.SIMPLE_JAVA_MODULE
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertNotEquals
 
@@ -53,8 +56,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         super.setUp()
         // warm up: open simple small project
         if (!warmedUp) {
-            warmUpProject(hwStats)
-
+            warmUpProject(hwStats, "src/HelloMain.kt") { perfOpenHelloWorld(hwStats, WARM_UP) }
             warmedUp = true
         }
     }
@@ -206,6 +208,28 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             }
         }
     }
+
+    private fun perfOpenKotlinProjectFast(stats: Stats) = perfOpenKotlinProject(stats, fast = true)
+
+    private fun perfOpenKotlinProject(stats: Stats, fast: Boolean = false) {
+        myProject = perfOpenProject(
+            name = "kotlin",
+            stats = stats,
+            note = "",
+            path = "../perfTestProject",
+            openAction = EXISTING_IDEA_PROJECT,
+            fast = fast
+        )
+    }
+
+    private fun perfOpenHelloWorld(stats: Stats, note: String = ""): Project =
+        perfOpenProject(
+            name = "helloKotlin",
+            stats = stats,
+            note = note,
+            path = "idea/testData/perfTest/helloKotlin",
+            openAction = SIMPLE_JAVA_MODULE
+        )
 
     private fun perfScriptDependenciesBuildGradleKts(it: Stats) {
         perfScriptDependencies("build.gradle.kts", stats = it)

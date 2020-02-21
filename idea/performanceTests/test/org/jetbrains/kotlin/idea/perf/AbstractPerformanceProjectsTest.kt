@@ -11,7 +11,6 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.IdentifierHighlighterPassFactory
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.ide.highlighter.ModuleFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationManager
@@ -20,26 +19,23 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.openapi.project.impl.ProjectImpl
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.*
+import com.intellij.testFramework.EditorTestUtil
+import com.intellij.testFramework.RunAll
+import com.intellij.testFramework.TestDataProvider
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtilRt
 import com.intellij.util.ThrowableRunnable
@@ -51,7 +47,6 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.testFramework.*
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
@@ -98,11 +93,15 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         }
     }
 
-    protected fun warmUpProject(stats: Stats) {
-        val project = perfOpenHelloWorld(stats, WARM_UP)
+    protected fun warmUpProject(stats: Stats, vararg filesToHighlight: String, openProject: () -> Project) {
+        assertTrue(filesToHighlight.isNotEmpty())
+
+        val project = openProject()
         try {
-            val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", stats, WARM_UP)
-            assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
+            filesToHighlight.forEach {
+                val perfHighlightFile = perfHighlightFile(project, it, stats, WARM_UP)
+                assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
+            }
         } finally {
             closeProject(project)
             myApplication.setDataProvider(null)
@@ -130,22 +129,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         return if (lastIndexOf >= 0) fileName.substring(lastIndexOf + 1) else fileName
     }
 
-    protected fun perfOpenKotlinProjectFast(stats: Stats) =
-        perfOpenKotlinProject(stats, fast = true)
-
-    protected fun perfOpenKotlinProject(stats: Stats, fast: Boolean = false) {
-        myProject = innerPerfOpenProject("kotlin", stats = stats, path = "../perfTestProject", note = "", fast = fast)
-    }
-
-    protected fun perfOpenHelloWorld(stats: Stats, note: String = ""): Project =
-        innerPerfOpenProject("helloKotlin", stats, note, path = "idea/testData/perfTest/helloKotlin", simpleModule = true)
-
-    protected fun innerPerfOpenProject(
+    protected fun perfOpenProject(
         name: String,
         stats: Stats,
         note: String,
         path: String,
-        simpleModule: Boolean = false,
+        openAction: ProjectOpenAction,
         fast: Boolean = false
     ): Project {
         val projectPath = File(path).canonicalPath
@@ -154,7 +143,6 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
         val warmUpIterations = if (fast) 0 else 5
         val iterations = if (fast) 1 else 5
-        val projectManagerEx = ProjectManagerEx.getInstanceEx()
 
         var lastProject: Project? = null
         var counter = 0
@@ -166,27 +154,10 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             iterations(iterations)
             checkStability(!fast)
             test {
-                val project = if (!simpleModule) {
-                    val project = loadProjectWithName(name = name, path = path)
-                    assertNotNull("project $name at $path is not loaded", project)
-                    val projectRootManager = ProjectRootManager.getInstance(project!!)
-
-                    runWriteAction {
-                        with(projectRootManager) {
-                            projectSdk = jdk18
-                        }
-                    }
-                    assertTrue("project $name at $path is not opened", projectManagerEx.openProject(project))
-                    project
-                } else {
-                    val project = projectManagerEx.loadAndOpenProject(projectPath)!!
-                    initKotlinProject(project, projectPath, name)
-                    project
-                }
-
-                (project as ProjectImpl).registerComponentImplementation(
-                    FileEditorManager::class.java,
-                    FileEditorManagerImpl::class.java
+                val project = openAction.openProject(
+                    projectPath = path,
+                    projectName = name,
+                    jdk = jdk18
                 )
 
                 dispatchAllInvocationEvents()
@@ -535,27 +506,6 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 ScriptConfigurationManager.updateScriptDependenciesSynchronously(fixture.psiFile, project)
             }
         }
-    }
-
-    private fun initKotlinProject(
-        project: Project,
-        projectPath: String,
-        name: String
-    ) {
-        val modulePath = "$projectPath/$name${ModuleFileType.DOT_DEFAULT_EXTENSION}"
-        val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(projectPath))!!
-        val srcFile = projectFile.findChild("src")!!
-        val module = runWriteAction {
-            val projectRootManager = ProjectRootManager.getInstance(project)
-            with(projectRootManager) {
-                projectSdk = jdk18
-            }
-            val moduleManager = ModuleManager.getInstance(project)
-            val module = moduleManager.newModule(modulePath, ModuleTypeId.JAVA_MODULE)
-            PsiTestUtil.addSourceRoot(module, srcFile)
-            module
-        }
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, jdk18)
     }
 
     protected fun perfHighlightFile(name: String, stats: Stats): List<HighlightInfo> =
