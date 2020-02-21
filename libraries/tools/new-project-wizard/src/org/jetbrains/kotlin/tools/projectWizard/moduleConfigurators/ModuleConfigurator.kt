@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.cached
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
@@ -148,15 +149,13 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<Path, PathSettingType>>
 
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified E> enumSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
-    ) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
-        values = enumValues<E>().asList()
-        init()
-    }
-
+    ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
+        enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<E, DropDownSettingType<E>>>
 }
 
 interface ModuleConfiguratorWithSettings : ModuleConfigurator {

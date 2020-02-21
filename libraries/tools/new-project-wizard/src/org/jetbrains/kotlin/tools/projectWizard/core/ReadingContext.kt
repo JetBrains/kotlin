@@ -42,7 +42,7 @@ open class ReadingContext(
     val <V : Any, T : SettingType<V>> PluginSettingReference<V, T>.pluginSetting: Setting<V, T>
         get() = context.settingContext.getPluginSetting(this)
 
-    fun <V : Any> Setting<V, SettingType<V>>.getSavedValueForSetting(): V? {
+    private fun <V : Any> Setting<V, SettingType<V>>.getSavedValueForSetting(): V? {
         if (!isSavable || this !is PluginSetting<*, *>) return null
         val serializer = type.serializer.safeAs<SerializerImpl<V>>() ?: return null
         val savedValue = service<SettingSavingWizardService>().getSettingValue(path) ?: return null

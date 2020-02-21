@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
@@ -221,14 +222,13 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
             init
         ) as ReadOnlyProperty<Any, TemplateSetting<Path, PathSettingType>>
 
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified E> enumSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
-    ) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
-        values = enumValues<E>().asList()
-        init()
-    }
+    ): ReadOnlyProperty<Any, TemplateSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
+        enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, TemplateSetting<E, DropDownSettingType<E>>>
 
     companion object {
         fun parser(sourcesetIdentificator: Identificator): Parser<Template> = mapParser { map, path ->

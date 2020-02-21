@@ -64,10 +64,10 @@ class TargetsModel(
 
     fun add(module: Module) {
         uiEditorUsagesStats.modulesCreated++
+        addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
         with(readingContext) {
             module.apply { initDefaultValuesForSettings() }
         }
-        addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
     }
 
     fun update() {
