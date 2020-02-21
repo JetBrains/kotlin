@@ -201,7 +201,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
 
     private fun deserializePublicIdSignature(proto: ProtoPublicIdSignature): IdSignature.PublicSignature {
         val pkg = deserializeFqName(proto.packageFqNameList)
-        val cls = deserializeFqName(proto.classFqNameList)
+        val cls = deserializeFqName(proto.declarationFqNameList)
         val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
 
         return IdSignature.PublicSignature(pkg, cls, memberId, proto.flags)
@@ -215,7 +215,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         val mask = proto.flags
 
         val accessorSignature = with(propertySignature) {
-            IdSignature.PublicSignature(packageFqn, classFqn.child(Name.special(name)), hash, mask)
+            IdSignature.PublicSignature(packageFqn, declarationFqn.child(Name.special(name)), hash, mask)
         }
 
         return IdSignature.AccessorSignature(propertySignature, accessorSignature)
