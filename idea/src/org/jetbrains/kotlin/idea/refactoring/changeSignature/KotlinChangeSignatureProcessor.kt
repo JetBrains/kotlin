@@ -29,6 +29,7 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplicitReceiverUsage
@@ -55,7 +56,10 @@ class KotlinChangeSignatureProcessor(
     }
 
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
-        val subject = if (ktChangeInfo.kind.isConstructor) "constructor" else "function"
+        val subject = if (ktChangeInfo.kind.isConstructor)
+            KotlinRefactoringBundle.message("text.constructor")
+        else
+            KotlinRefactoringBundle.message("text.function")
         return KotlinUsagesViewDescriptor(myChangeInfo.method, RefactoringBundle.message("0.to.change.signature", subject))
     }
 
