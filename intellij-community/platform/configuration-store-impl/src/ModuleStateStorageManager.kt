@@ -7,7 +7,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.impl.ModuleEx
 import com.intellij.openapi.module.impl.ModuleManagerImpl
 import com.intellij.openapi.module.impl.getModuleNameByFilePath
-import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.project.isExternalStorageEnabled
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import org.jdom.Element
@@ -82,7 +81,7 @@ open class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubstitu
                                   provider: StreamProvider? = null) : MyFileStorage(storageManager, file, fileSpec, rootElementName, roamingType, pathMacroManager, provider) {
     override fun handleVirtualFileNotFound() {
       if (storageDataRef.get() == null && !storageManager.isExternalSystemStorageEnabled) {
-        throw FileNotFoundException(ProjectBundle.message("module.file.does.not.exist.error", file.toString()))
+        throw FileNotFoundException(ConfigurationStoreBundle.message("module.file.does.not.exist.error", file.toString()))
       }
     }
   }

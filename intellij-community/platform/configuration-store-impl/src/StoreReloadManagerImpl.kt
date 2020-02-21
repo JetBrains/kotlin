@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.project.ProjectReloadState
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.project.processOpenedProjects
@@ -270,7 +269,7 @@ internal fun reloadStore(changedStorages: Set<StateStorage>, store: ComponentSto
     catch (e: Throwable) {
       LOG.warn(e)
       AppUIUtil.invokeOnEdt {
-        Messages.showWarningDialog(ProjectBundle.message("project.reload.failed", e.message), ProjectBundle.message("project.reload.failed.title"))
+        Messages.showWarningDialog(ConfigurationStoreBundle.message("project.reload.failed", e.message), ConfigurationStoreBundle.message("project.reload.failed.title"))
       }
       return ReloadComponentStoreStatus.ERROR
     }

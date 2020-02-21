@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
-import com.intellij.ide.IdeBundle
 import com.intellij.ide.util.ElementsChooser
 import com.intellij.ide.util.MultiStateElementsChooser
 import com.intellij.ide.util.PropertiesComponent
@@ -106,7 +105,7 @@ fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, desc
 
 internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<ExportableItem>>, private val isShowFilePath: Boolean, title: String, private val description: String) : DialogWrapper(false) {
   private val chooser: ElementsChooser<ComponentElementProperties>
-  private val pathPanel = FieldPanel(IdeBundle.message("editbox.export.settings.to"), null, { browse() }, null)
+  private val pathPanel = FieldPanel(ConfigurationStoreBundle.message("editbox.export.settings.to"), null, { browse() }, null)
 
   internal val exportableComponents: Set<ExportableItem>
     get() {
@@ -149,8 +148,8 @@ internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<E
   }
 
   private fun browse() {
-    chooseSettingsFile(pathPanel.text, window, IdeBundle.message("title.export.file.location"),
-                       IdeBundle.message("prompt.choose.export.settings.file.path"))
+    chooseSettingsFile(pathPanel.text, window, ConfigurationStoreBundle.message("title.export.file.location"),
+                       ConfigurationStoreBundle.message("prompt.choose.export.settings.file.path"))
       .onSuccess { path -> pathPanel.text = FileUtil.toSystemDependentName(path) }
   }
 
