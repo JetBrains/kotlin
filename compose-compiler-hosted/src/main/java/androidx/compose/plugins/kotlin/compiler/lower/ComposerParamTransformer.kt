@@ -21,7 +21,6 @@ import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyGetterDescriptor
@@ -75,7 +74,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -323,8 +321,8 @@ class ComposerParamTransformer(
     fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
-        val newFnClass = context.irIntrinsics.symbols.externalSymbolTable.referenceClass(context.builtIns
-            .getFunction(argCount + 1))
+        val newFnClass = context.irIntrinsics.symbols.externalSymbolTable
+            .referenceClass(context.builtIns.getFunction(argCount + 1))
         val newDescriptor = newFnClass.descriptor.unsubstitutedMemberScope.findFirstFunction(
             OperatorNameConventions.INVOKE.identifier
         ) { true }
@@ -382,7 +380,7 @@ class ComposerParamTransformer(
         }
     }
 
-    private fun wrapDescriptor(descriptor: FunctionDescriptor) : WrappedSimpleFunctionDescriptor {
+    private fun wrapDescriptor(descriptor: FunctionDescriptor): WrappedSimpleFunctionDescriptor {
         return when (descriptor) {
             is PropertyGetterDescriptor ->
                 WrappedPropertyGetterDescriptor(
@@ -589,8 +587,7 @@ class ComposerParamTransformer(
                                 )
                             }
                         }
-                    }
-                    else
+                    } else
                         expression
                     return super.visitCall(expr)
                 }

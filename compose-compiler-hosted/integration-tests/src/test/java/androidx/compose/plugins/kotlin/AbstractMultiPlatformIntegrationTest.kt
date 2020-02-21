@@ -16,7 +16,6 @@
 
 package androidx.compose.plugins.kotlin
 
-
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
@@ -64,8 +63,7 @@ private fun executeCompiler(compiler: CLITool<*>, args: List<String>): Pair<Stri
         System.setErr(PrintStream(bytes))
         val exitCode = CLITool.doMainNoExit(compiler, args.toTypedArray())
         return Pair(String(bytes.toByteArray()), exitCode)
-    }
-    finally {
+    } finally {
         System.setErr(origErr)
     }
 }
@@ -149,10 +147,16 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
         assertEquals(output.trimIndent(), printPublicApi(sb.toString(), "test"))
     }
 
-    private fun CLICompiler<*>.compile(sources: File, commonSources: File?, vararg mainArguments: String): String = buildString {
+    private fun CLICompiler<*>.compile(
+        sources: File,
+        commonSources: File?,
+        vararg mainArguments: String
+    ): String = buildString {
         val (output, exitCode) = executeCompilerGrabOutput(
             this@compile,
-            listOfNotNull(sources.absolutePath, commonSources?.absolutePath, commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
+            listOfNotNull(sources.absolutePath,
+                commonSources?.absolutePath,
+                commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
                     "-Xmulti-platform" + mainArguments
         )
         appendln("Exit code: $exitCode")

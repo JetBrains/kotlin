@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -1030,7 +1029,8 @@ class ComposableCallTransformer(
         )
 
         val context = this@ComposableCallTransformer.context
-        val superType = FakeJvmSymbols(context.state.module, context.irBuiltIns).lambdaClass.typeWith()
+        val superType =
+            FakeJvmSymbols(context.state.module, context.irBuiltIns).lambdaClass.typeWith()
         val parameterTypes = (functionExpression.type as IrSimpleType).arguments.map {
             (it as IrTypeProjection).type
         }

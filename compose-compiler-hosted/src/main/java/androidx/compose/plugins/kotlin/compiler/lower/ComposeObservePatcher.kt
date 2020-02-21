@@ -20,10 +20,8 @@ import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.KtxNameConventions.UPDATE_SCOPE
 import androidx.compose.plugins.kotlin.isEmitInline
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -89,8 +87,10 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ComposeObservePatcher(context: JvmBackendContext, symbolRemapper: DeepCopySymbolRemapper,
-                            bindingTrace: BindingTrace
+class ComposeObservePatcher(
+    context: JvmBackendContext,
+    symbolRemapper: DeepCopySymbolRemapper,
+    bindingTrace: BindingTrace
 ) :
     AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     FileLoweringPass,

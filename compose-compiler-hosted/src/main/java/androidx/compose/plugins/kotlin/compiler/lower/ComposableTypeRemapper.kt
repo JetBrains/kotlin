@@ -19,7 +19,6 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -57,7 +56,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
@@ -75,7 +73,6 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
-
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     val context: JvmBackendContext,
@@ -174,8 +171,8 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             expression.dispatchReceiver?.type?.isComposable() == true
         ) {
             val typeArguments = containingClass.defaultType.arguments
-            val newFnClass = context.irIntrinsics.symbols.externalSymbolTable.referenceClass(context.builtIns
-                .getFunction(typeArguments.size))
+            val newFnClass = context.irIntrinsics.symbols.externalSymbolTable
+                .referenceClass(context.builtIns.getFunction(typeArguments.size))
             val newDescriptor = newFnClass
                 .descriptor
                 .unsubstitutedMemberScope
@@ -248,7 +245,9 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     }
 
     /* copied verbatim from DeepCopyIrTreeWithSymbols */
-    private fun IrMemberAccessExpression.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression) {
+    private fun IrMemberAccessExpression.copyRemappedTypeArgumentsFrom(
+        other: IrMemberAccessExpression
+    ) {
         assert(typeArgumentsCount == other.typeArgumentsCount) {
             "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
         }
@@ -379,4 +378,3 @@ class ComposerTypeRemapper(
             annotations
         )
 }
-

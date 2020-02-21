@@ -39,7 +39,8 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         // TODO: refactor transformers to work with just BackendContext
         val jvmContext = backendContext as JvmBackendContext
         val module = jvmContext.ir.irModule
-        val bindingTrace = DelegatingBindingTrace(bindingContext, "trace in ComposeIrGenerationExtension")
+        val bindingTrace = DelegatingBindingTrace(bindingContext,
+            "trace in ComposeIrGenerationExtension")
         // We transform the entire module all at once since we end up remapping symbols, we need to
         // ensure that everything in the module points to the right symbol. There is no extension
         // point that allows you to transform at the module level but we should communicate this

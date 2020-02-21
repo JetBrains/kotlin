@@ -55,7 +55,7 @@ abstract class AbstractComposeLowering(
     val context: JvmBackendContext,
     val symbolRemapper: DeepCopySymbolRemapper,
     val bindingTrace: BindingTrace
-): IrElementTransformerVoid() {
+) : IrElementTransformerVoid() {
 
     protected val typeTranslator =
         TypeTranslator(
@@ -131,5 +131,4 @@ abstract class AbstractComposeLowering(
     fun IrFunction.isComposable(): Boolean {
         return descriptor.isComposable()
     }
-
 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.robolectric.Robolectric
 import java.net.URLClassLoader
 
-
 fun printPublicApi(classDump: String, name: String): String {
     return classDump
         .splitToSequence("\n")
@@ -105,7 +104,8 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
     fun validateBytecode(
         src: String,
         dumpClasses: Boolean = false,
-        validate: (String) -> Unit): Unit = ensureSetup {
+        validate: (String) -> Unit
+    ): Unit = ensureSetup {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 
@@ -195,8 +195,6 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
         val testMethod = instanceClass.getMethod("test", Context::class.java)
-
-
 
         val controller = Robolectric.buildActivity(TestActivity::class.java)
         val activity = controller.create().get()

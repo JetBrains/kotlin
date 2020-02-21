@@ -75,5 +75,4 @@ class ComposeCallResolutionDiagnosticsTests : AbstractComposeDiagnosticsTest() {
 
         """
     )
-
 }
