@@ -316,12 +316,8 @@ class SwiftNotThrowingWithBridge : ThrowsWithBridge {
     }
 }
 
-private func testThrowing(_ block: () throws -> Void) throws {
-    do {
-        try block()
-    } catch let error as NSError {
-        try assertTrue(error.kotlinException is MyException)
-    }
+private func testThrowing(file: String = #file, line: Int = #line, _ block: () throws -> Void) throws {
+    try assertFailsWithKotlin(MyException.self, file: file, line: line, block: block)
 }
 
 func testExceptions() throws {
@@ -1239,64 +1235,61 @@ func testGH3825() throws {
 
 // -------- Execution of the test --------
 
-class ValuesTests : TestProvider {
-    var tests: [TestCase] = []
+class ValuesTests : SimpleTestProvider {
+    override init() {
+        super.init()
 
-    init() {
-        providers.append(self)
-        tests = [
-            TestCase(name: "TestValues", method: withAutorelease(testVals)),
-            TestCase(name: "TestVars", method: withAutorelease(testVars)),
-            TestCase(name: "TestDoubles", method: withAutorelease(testDoubles)),
-            TestCase(name: "TestNumbers", method: withAutorelease(testNumbers)),
-            TestCase(name: "TestLists", method: withAutorelease(testLists)),
-            TestCase(name: "TestLazyValues", method: withAutorelease(testLazyVal)),
-            TestCase(name: "TestDelegatedProperties", method: withAutorelease(testDelegatedProp)),
-            TestCase(name: "TestGetterDelegate", method: withAutorelease(testGetterDelegate)),
-            TestCase(name: "TestNulls", method: withAutorelease(testNulls)),
-            TestCase(name: "TestAnyVar", method: withAutorelease(testAnyVar)),
-            TestCase(name: "TestFunctions", method: withAutorelease(testFunctions)),
-            TestCase(name: "TestExceptions", method: withAutorelease(testExceptions)),
-            TestCase(name: "TestFuncType", method: withAutorelease(testFuncType)),
-            TestCase(name: "TestGenericsFoo", method: withAutorelease(testGenericsFoo)),
-            TestCase(name: "TestVararg", method: withAutorelease(testVararg)),
-            TestCase(name: "TestStringExtension", method: withAutorelease(testStrExtFun)),
-            TestCase(name: "TestAnyToString", method: withAutorelease(testAnyToString)),
-            TestCase(name: "TestAnyPrint", method: withAutorelease(testAnyPrint)),
-            TestCase(name: "TestCharExtensions", method: withAutorelease(testCharExtensions)),
-            TestCase(name: "TestLambda", method: withAutorelease(testLambda)),
-            TestCase(name: "TestInterfaceExtension", method: withAutorelease(testInterfaceExtension)),
-            TestCase(name: "TestClassInstances", method: withAutorelease(testClassInstances)),
-            TestCase(name: "TestEnum", method: withAutorelease(testEnum)),
-            TestCase(name: "TestDataClass", method: withAutorelease(testDataClass)),
-            TestCase(name: "TestCompanionObj", method: withAutorelease(testCompanionObj)),
-            TestCase(name: "TestInlineClasses", method: withAutorelease(testInlineClasses)),
-            TestCase(name: "TestShared", method: withAutorelease(testShared)),
-            TestCase(name: "TestPureSwiftClasses", method: withAutorelease(testPureSwiftClasses)),
-            TestCase(name: "TestNames", method: withAutorelease(testNames)),
-            TestCase(name: "TestSwiftOverride", method: withAutorelease(testSwiftOverride)),
-            TestCase(name: "TestKotlinOverride", method: withAutorelease(testKotlinOverride)),
-            TestCase(name: "TestGH2945", method: withAutorelease(testGH2945)),
-            TestCase(name: "TestGH2830", method: withAutorelease(testGH2830)),
-            TestCase(name: "TestGH2959", method: withAutorelease(testGH2959)),
-            TestCase(name: "TestKClass", method: withAutorelease(testKClass)),
-            TestCase(name: "TestSR10177Workaround", method: withAutorelease(testSR10177Workaround)),
-            TestCase(name: "TestClashes", method: withAutorelease(testClashes)),
-            TestCase(name: "TestInvalidIdentifiers", method: withAutorelease(testInvalidIdentifiers)),
-            TestCase(name: "TestDeprecation", method: withAutorelease(testDeprecation)),
-            TestCase(name: "TestWeakRefs", method: withAutorelease(testWeakRefs)),
-            TestCase(name: "TestSharedRefs", method: withAutorelease(TestSharedRefs().test)),
-            TestCase(name: "TestClassTypeCheck", method: withAutorelease(testClassTypeCheck)),
-            TestCase(name: "TestInterfaceTypeCheck", method: withAutorelease(testInterfaceTypeCheck)),
-            TestCase(name: "TestGH3503_1", method: withAutorelease(testGH3503_1)),
-            TestCase(name: "TestGH3503_2", method: withAutorelease(testGH3503_2)),
-            TestCase(name: "TestGH3503_3", method: withAutorelease(testGH3503_3)),
-            TestCase(name: "TestGH3525", method: withAutorelease(testGH3525)),
-            TestCase(name: "TestStringConversion", method: withAutorelease(testStringConversion)),
-            TestCase(name: "TestGH3825", method: withAutorelease(testGH3825)),
+        test("TestValues", testVals)
+        test("TestVars", testVars)
+        test("TestDoubles", testDoubles)
+        test("TestNumbers", testNumbers)
+        test("TestLists", testLists)
+        test("TestLazyValues", testLazyVal)
+        test("TestDelegatedProperties", testDelegatedProp)
+        test("TestGetterDelegate", testGetterDelegate)
+        test("TestNulls", testNulls)
+        test("TestAnyVar", testAnyVar)
+        test("TestFunctions", testFunctions)
+        test("TestExceptions", testExceptions)
+        test("TestFuncType", testFuncType)
+        test("TestGenericsFoo", testGenericsFoo)
+        test("TestVararg", testVararg)
+        test("TestStringExtension", testStrExtFun)
+        test("TestAnyToString", testAnyToString)
+        test("TestAnyPrint", testAnyPrint)
+        test("TestCharExtensions", testCharExtensions)
+        test("TestLambda", testLambda)
+        test("TestInterfaceExtension", testInterfaceExtension)
+        test("TestClassInstances", testClassInstances)
+        test("TestEnum", testEnum)
+        test("TestDataClass", testDataClass)
+        test("TestCompanionObj", testCompanionObj)
+        test("TestInlineClasses", testInlineClasses)
+        test("TestShared", testShared)
+        test("TestPureSwiftClasses", testPureSwiftClasses)
+        test("TestNames", testNames)
+        test("TestSwiftOverride", testSwiftOverride)
+        test("TestKotlinOverride", testKotlinOverride)
+        test("TestGH2945", testGH2945)
+        test("TestGH2830", testGH2830)
+        test("TestGH2959", testGH2959)
+        test("TestKClass", testKClass)
+        test("TestSR10177Workaround", testSR10177Workaround)
+        test("TestClashes", testClashes)
+        test("TestInvalidIdentifiers", testInvalidIdentifiers)
+        test("TestDeprecation", testDeprecation)
+        test("TestWeakRefs", testWeakRefs)
+        test("TestSharedRefs", TestSharedRefs().test)
+        test("TestClassTypeCheck", testClassTypeCheck)
+        test("TestInterfaceTypeCheck", testInterfaceTypeCheck)
+        test("TestGH3503_1", testGH3503_1)
+        test("TestGH3503_2", testGH3503_2)
+        test("TestGH3503_3", testGH3503_3)
+        test("TestGH3525", testGH3525)
+        test("TestStringConversion", testStringConversion)
+        test("TestGH3825", testGH3825)
 
-            // Stress test, must remain the last one:
-            TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
-        ]
+        // Stress test, must remain the last one:
+        test("TestGH2931", testGH2931)
     }
 }
