@@ -232,7 +232,7 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
             "Task ':taskWithArgs' is not up-to-date because:\n" +
             "  Task has not declared any outputs despite executing actions.\n" +
             "test args\n" +
-            ":taskWithArgs \\(Thread\\[Execution worker for ':'.*\\]\\) completed. Took (\\d+).(\\d+) secs.\n\n"
+            ":taskWithArgs \\(Thread\\[.*\\]\\) completed. Took (\\d+).(\\d+) secs.\n\n"
           )
         }
       )
