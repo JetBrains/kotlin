@@ -47,7 +47,10 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
         }
 
-        append(" (Tracking enclosing lambda)".repeat(sliceUsage.lambdaLevel), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+        append(
+            KotlinSlicerBundle.message("text.tracking.enclosing.lambda").repeat(sliceUsage.lambdaLevel),
+            SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES
+        )
 
         val declaration = sliceUsage.element?.parents?.firstOrNull {
             it is KtClass ||
@@ -57,7 +60,7 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
                     it is KtConstructor<*>
         } as? KtDeclaration ?: return
 
-        append(" in ", SimpleTextAttributes.GRAY_ATTRIBUTES)
+        append(KotlinSlicerBundle.message("text.in", ""), SimpleTextAttributes.GRAY_ATTRIBUTES)
 
         val descriptor = declaration.unsafeResolveToDescriptor()
 
