@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -16,16 +15,12 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.testFramework.EdtTestUtilKt;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.SmartList;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +45,6 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.exe
  * @author Vladislav.Soroka
  */
 public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
-  private final List<Sdk> removedSdks = new SmartList<>();
 
   /**
    * Needed only to reuse stuff in GradleImportingTestCase#setUp().
@@ -59,40 +53,6 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
   @Parameterized.Parameters(name = "with Gradle-{0}")
   public static Collection<Object[]> data() {
     return Arrays.asList(new Object[][]{{BASE_GRADLE_VERSION}});
-  }
-
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    removedSdks.clear();
-    WriteAction.runAndWait(() -> {
-      for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
-        if (GRADLE_JDK_NAME.equals(sdk.getName())) continue;
-        ProjectJdkTable.getInstance().removeJdk(sdk);
-        removedSdks.add(sdk);
-      }
-    });
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      WriteAction.runAndWait(() -> {
-        Arrays.stream(ProjectJdkTable.getInstance().getAllJdks())
-          .filter(sdk -> !GRADLE_JDK_NAME.equals(sdk.getName()))
-          .forEach(ProjectJdkTable.getInstance()::removeJdk);
-        for (Sdk sdk : removedSdks) {
-          SdkConfigurationUtil.addSdk(sdk);
-        }
-        removedSdks.clear();
-      });
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
   }
 
   @Override

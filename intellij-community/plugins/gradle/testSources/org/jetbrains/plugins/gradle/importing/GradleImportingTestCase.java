@@ -24,6 +24,7 @@ import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.RunAll;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.lang.JavaVersion;
 import org.gradle.StartParameter;
@@ -77,15 +78,19 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   private GradleProjectSettings myProjectSettings;
   private String myJdkHome;
 
+  private final List<Sdk> removedSdks = new SmartList<>();
+
   @Override
   public void setUp() throws Exception {
     assumeThat(gradleVersion, versionMatcherRule.getMatcher());
     myJdkHome = requireRealJdkHome();
     super.setUp();
+    removedSdks.clear();
     WriteAction.runAndWait(() -> {
-      Sdk oldJdk = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
-      if (oldJdk != null) {
-        ProjectJdkTable.getInstance().removeJdk(oldJdk);
+      for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
+        ProjectJdkTable.getInstance().removeJdk(sdk);
+        if (GRADLE_JDK_NAME.equals(sdk.getName())) continue;
+        removedSdks.add(sdk);
       }
       VirtualFile jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(myJdkHome));
       JavaSdk javaSdk = JavaSdk.getInstance();
@@ -160,10 +165,13 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     }
     new RunAll(
       () -> {
-        Sdk jdk = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
-        if (jdk != null) {
-          WriteAction.runAndWait(() -> ProjectJdkTable.getInstance().removeJdk(jdk));
-        }
+        WriteAction.runAndWait(() -> {
+          Arrays.stream(ProjectJdkTable.getInstance().getAllJdks()).forEach(ProjectJdkTable.getInstance()::removeJdk);
+          for (Sdk sdk : removedSdks) {
+            SdkConfigurationUtil.addSdk(sdk);
+          }
+          removedSdks.clear();
+        });
       },
       () -> {
         Messages.setTestDialog(TestDialog.DEFAULT);
