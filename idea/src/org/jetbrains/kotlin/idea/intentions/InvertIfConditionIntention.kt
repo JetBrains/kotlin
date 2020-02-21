@@ -184,12 +184,13 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         }
 
         if (thenBranch is KtBlockExpression) {
+            (thenBranch.statements.lastOrNull() as? KtContinueExpression)?.delete()
             val range = thenBranch.contentRange()
             if (!range.isEmpty) {
                 parent.addRangeAfter(range.first, range.last, ifExpression)
                 parent.addAfter(factory.createNewLine(), ifExpression)
             }
-        } else {
+        } else if (thenBranch !is KtContinueExpression) {
             parent.addAfter(thenBranch, ifExpression)
             parent.addAfter(factory.createNewLine(), ifExpression)
         }

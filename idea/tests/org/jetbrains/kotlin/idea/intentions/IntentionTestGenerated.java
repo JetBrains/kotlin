@@ -9654,6 +9654,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/invertIfCondition/simple.kt");
         }
 
+        @TestMetadata("unnecessaryContinue.kt")
+        public void testUnnecessaryContinue() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/unnecessaryContinue.kt");
+        }
+
+        @TestMetadata("unnecessaryContinue2.kt")
+        public void testUnnecessaryContinue2() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/unnecessaryContinue2.kt");
+        }
+
+        @TestMetadata("unnecessaryContinue3.kt")
+        public void testUnnecessaryContinue3() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/unnecessaryContinue3.kt");
+        }
+
         @TestMetadata("valueAndReturnBranches.kt")
         public void testValueAndReturnBranches() throws Exception {
             runTest("idea/testData/intentions/invertIfCondition/valueAndReturnBranches.kt");
