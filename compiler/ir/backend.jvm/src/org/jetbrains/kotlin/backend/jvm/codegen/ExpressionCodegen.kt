@@ -436,13 +436,6 @@ class ExpressionCodegen(
         }
 
         if (expression.isSuspensionPoint()) {
-            // Check return type of non-lowered suspend call, in order to replace the result of the call with Unit,
-            // otherwise, it would seem like the call returns non-unit upon resume.
-            // See box/coroutines/tailCallOptimization/unit tests.
-            if (expression.symbol.owner.suspendFunctionOriginal().returnType.isUnit()) {
-                addReturnsUnitMarker(mv)
-            }
-
             addSuspendMarker(mv, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
@@ -455,8 +448,12 @@ class ExpressionCodegen(
             }
             expression is IrConstructorCall ->
                 MaterialValue(this, asmType, expression.type)
-            expression.type.isUnit() -> {
+            !irFunction.shouldNotContainSuspendMarkers() && expression.type.isUnit() -> {
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
+                // Also, if the callee is a suspend function with a suspending tail call, the next `resumeWith`
+                // will continue from here, but the value passed to it might not have been `Unit`. An exception
+                // is methods that do not pass through the state machine generating MethodVisitor, since getting
+                // COROUTINE_SUSPENDED here is still possible; luckily, all those methods are bridges.
                 if (callable.asmMethod.returnType != Type.VOID_TYPE)
                     MaterialValue(this, callable.asmMethod.returnType, callee.returnType).discard()
                 // don't generate redundant UNIT/pop instructions

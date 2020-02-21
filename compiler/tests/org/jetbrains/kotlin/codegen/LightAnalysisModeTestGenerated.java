@@ -6785,6 +6785,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendImplBridge.kt")
+        public void testSuspendImplBridge() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendImplBridge.kt");
+        }
+
         @TestMetadata("suspendInCycle.kt")
         public void testSuspendInCycle_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInCycle.kt", "kotlin.coroutines.experimental");
@@ -6828,6 +6833,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("suspendJavaOverrides.kt")
         public void testSuspendJavaOverrides() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
+        }
+
+        @TestMetadata("suspendReturningPlatformType.kt")
+        public void testSuspendReturningPlatformType() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendReturningPlatformType.kt");
         }
 
         @TestMetadata("suspensionInsideSafeCallWithElvis.kt")
@@ -8713,6 +8723,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                 public void testAllFilesPresentInUnit() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("functionReference.kt")
+                public void testFunctionReference() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/functionReference.kt");
                 }
 
                 @TestMetadata("override.kt")

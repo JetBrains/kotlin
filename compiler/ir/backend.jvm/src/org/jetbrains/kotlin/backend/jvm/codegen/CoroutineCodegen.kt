@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
@@ -118,6 +120,11 @@ internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspen
 private fun IrFunction.isInvokeOfSuspendMainWrapper(): Boolean = !isSuspend && name.asString() == "invoke" &&
         parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
 
+private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
+    isSuspend && this is IrSimpleFunction && parentAsClass.functions.any {
+        it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX && it.attributeOwnerId == attributeOwnerId
+    }
+
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
     when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
@@ -130,7 +137,7 @@ internal fun IrFunction.isKnownToBeTailCall(): Boolean =
         IrDeclarationOrigin.BRIDGE,
         IrDeclarationOrigin.BRIDGE_SPECIAL,
         IrDeclarationOrigin.DELEGATED_MEMBER -> true
-        else -> isInvokeOfSuspendMainWrapper() || isInvokeOfSuspendCallableReference()
+        else -> isInvokeOfSuspendMainWrapper() || isInvokeOfSuspendCallableReference() || isBridgeToSuspendImplMethod()
     }
 
 internal fun IrFunction.shouldNotContainSuspendMarkers(): Boolean =
