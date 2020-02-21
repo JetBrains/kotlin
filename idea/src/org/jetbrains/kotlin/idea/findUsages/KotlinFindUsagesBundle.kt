@@ -14,8 +14,8 @@ private const val BUNDLE = "messages.KotlinFindUsagesBundle"
 
 object KotlinFindUsagesBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
-    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
+    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 
     @JvmStatic
-    fun lazyMessage(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): () -> String = { getMessage(key, *params) }
+    fun lazyMessage(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): () -> String = { getMessage(key, *params) }
 }
