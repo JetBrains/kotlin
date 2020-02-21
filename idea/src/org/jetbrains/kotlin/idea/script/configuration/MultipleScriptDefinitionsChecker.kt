@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.script.KotlinScriptBundle
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -69,8 +70,8 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
 
         private fun createNotification(psiFile: KtFile, defs: List<ScriptDefinition>): EditorNotificationPanel =
             EditorNotificationPanel().apply {
-                setText("Multiple script definitions are applicable for this script. ${defs.first().name} is used")
-                createComponentActionLabel("Show all") { label ->
+                setText(KotlinScriptBundle.message("text.multiple.script.definitions.are.applicable.for.this.script", defs.first().name))
+                createComponentActionLabel(KotlinScriptBundle.message("action.text.show.all")) { label ->
                     val list = JBPopupFactory.getInstance().createListPopup(
                         object : BaseListPopupStep<ScriptDefinition>(null, defs) {
                             override fun getTextFor(value: ScriptDefinition): String =
@@ -84,12 +85,12 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
                     list.showUnderneathOf(label)
                 }
 
-                createComponentActionLabel("Ignore") {
+                createComponentActionLabel(KotlinScriptBundle.message("action.text.ignore")) {
                     KotlinScriptingSettings.getInstance(psiFile.project).suppressDefinitionsCheck = true
                     EditorNotifications.getInstance(psiFile.project).updateAllNotifications()
                 }
 
-                createComponentActionLabel("Open Settings") {
+                createComponentActionLabel(KotlinScriptBundle.message("action.text.open.settings")) {
                     ShowSettingsUtilImpl.showSettingsDialog(psiFile.project, KotlinScriptingSettingsConfigurable.ID, "")
                 }
             }

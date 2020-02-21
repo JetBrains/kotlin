@@ -43,7 +43,7 @@ class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDef
     }
 
     override val id = "ScriptTemplatesFromDependenciesProvider"
-    override val progressMessage = "Kotlin: scanning dependencies for script definitions..."
+    override val progressMessage = KotlinScriptBundle.message("progress.text.kotlin.scanning.dependencies.for.script.definitions")
 
     override fun loadScriptDefinitions(previous: List<ScriptDefinition>?): List<ScriptDefinition> {
         if (project.isDefault) return emptyList()
