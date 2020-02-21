@@ -15,8 +15,6 @@ import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.util.JavaPluginUtil
 
-import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize
-
 @CompileStatic
 class ExternalTestsModelBuilderImpl implements ModelBuilderService {
   @Override
@@ -67,8 +65,6 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
         for (folder in storedSourceFolders) sourceFolders.add(folder)
       }
       def task = entry.key
-      def taskProjectPath = task.project.path == ":" ? "" : task.project.path
-      def cleanTestTaskName = "clean" + capitalize(task.name)
       def defaultExternalTestSourceMapping = new DefaultExternalTestSourceMapping()
       defaultExternalTestSourceMapping.testName = task.name
       defaultExternalTestSourceMapping.testTaskPath = task.path
