@@ -245,7 +245,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
             ReportMessages.GROUP
                 .createNotification(
                     ReportMessages.ERROR_REPORT,
-                    "Can't report exception from patched plugin",
+                    KotlinReporterBundle.message("text.can.t.report.exception.from.patched.plugin"),
                     NotificationType.INFORMATION,
                     null
                 )
@@ -264,10 +264,13 @@ class KotlinReportSubmitter : ITNReporterCompat() {
 
                 val rc = showDialog(
                     parentComponent,
-                    "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
-                            "while the latest version is ${status.pluginDescriptor.version}",
-                    "Update Kotlin Plugin",
-                    arrayOf("Update", "Ignore"),
+                    KotlinReporterBundle.message(
+                        "message.text.you.re.running.kotlin.plugin.version",
+                        KotlinPluginUtil.getPluginVersion(),
+                        status.pluginDescriptor.version
+                    ),
+                    KotlinReporterBundle.message("title.update.kotlin.plugin"),
+                    arrayOf(KotlinReporterBundle.message("button.text.update"), KotlinReporterBundle.message("button.text.ignore")),
                     0, Messages.getInformationIcon()
                 )
 
