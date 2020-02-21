@@ -57,7 +57,7 @@ data class CompilerVersionImpl(
             append('.')
             append(maintenance)
         }
-        if (milestone != 0) {
+        if (milestone != -1) {
             append("-M")
             append(milestone)
         }
