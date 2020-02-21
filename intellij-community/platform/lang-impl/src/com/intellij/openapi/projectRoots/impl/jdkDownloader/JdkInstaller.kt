@@ -3,12 +3,10 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.google.common.hash.Hashing
 import com.google.common.io.Files
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -16,7 +14,6 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.Urls
 import com.intellij.util.io.HttpRequests
-import com.intellij.util.messages.Topic
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -53,17 +50,21 @@ class JdkInstaller {
 
   private val LOG = logger<JdkInstaller>()
 
-  fun defaultInstallDir(newVersion: JdkItem) : String {
-    val installFolderName = newVersion.installFolderName
-
+  fun defaultInstallDir() : String {
     val home = FileUtil.toCanonicalPath(System.getProperty("user.home") ?: ".")
     val targetDir = when {
-      SystemInfo.isLinux ->  "$home/.jdks/$installFolderName"
+      SystemInfo.isLinux ->  "$home/.jdks/"
       //see https://youtrack.jetbrains.com/issue/IDEA-206163#focus=streamItem-27-3270022.0-0
-      SystemInfo.isMac ->  "$home/Library/Java/JavaVirtualMachines/$installFolderName"
-      SystemInfo.isWindows -> "$home\\.jdks\\${installFolderName}"
+      SystemInfo.isMac ->  "$home/Library/Java/JavaVirtualMachines/"
+      SystemInfo.isWindows -> "$home\\.jdks\\"
       else -> error("Unsupported OS")
     }
+
+    return FileUtil.toSystemDependentName(targetDir)
+  }
+
+  fun defaultInstallDir(newVersion: JdkItem) : String {
+    val targetDir = defaultInstallDir() + File.separatorChar + newVersion.installFolderName
 
     var count = 1
     var uniqueDir = targetDir

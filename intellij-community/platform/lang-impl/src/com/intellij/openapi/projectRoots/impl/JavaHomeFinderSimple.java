@@ -25,16 +25,17 @@ class JavaHomeFinderSimple extends JavaHomeFinderBase {
 
   @NotNull
   @Override
-  public List<String> findExistingJdks() {
-    Set<String> result = SystemInfo.isFileSystemCaseSensitive ? new TreeSet<>(String.CASE_INSENSITIVE_ORDER) : new TreeSet<>();
+  public Set<String> findExistingJdksImpl() {
+    Set<String> result = new TreeSet<>();
     for (String path : myPaths) {
       scanFolder(new File(path), true, result);
     }
+
     for (File dir : guessByPathVariable()) {
       scanFolder(dir, false, result);
     }
 
-    return new ArrayList<>(result);
+    return result;
   }
 
   public Collection<File> guessByPathVariable() {

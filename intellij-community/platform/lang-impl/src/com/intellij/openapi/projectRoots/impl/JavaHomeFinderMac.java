@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 class JavaHomeFinderMac extends JavaHomeFinderSimple {
   public static final String JAVA_HOME_FIND_UTIL = "/usr/libexec/java_home";
@@ -19,18 +20,13 @@ class JavaHomeFinderMac extends JavaHomeFinderSimple {
     super(forceEmbeddedJava, "/Library/Java/JavaVirtualMachines", "/System/Library/Java/JavaVirtualMachines");
   }
 
-  @NotNull
   @Override
-  public List<String> findExistingJdks() {
-    List<String> list = super.findExistingJdks();
+  public @NotNull Set<String> findExistingJdksImpl() {
+    Set<String> set = super.findExistingJdksImpl();
     String defaultJavaHome = getSystemDefaultJavaHome();
-    if (defaultJavaHome != null) {
-      ArrayList<String> list2 = new ArrayList<>(list.size() + 1);
-      list2.add(defaultJavaHome);
-      list2.addAll(list);
-      list = list2;
-    }
-    return list;
+    if (defaultJavaHome == null) return set;
+    set.add(defaultJavaHome);
+    return set;
   }
 
   @Nullable
@@ -62,7 +58,29 @@ class JavaHomeFinderMac extends JavaHomeFinderSimple {
 
   @NotNull
   @Override
-  protected List<File> adjustPath(@NotNull File file) {
+  protected List<File> listPossibleJdkHomesFromInstallRoot(@NotNull File file) {
     return Arrays.asList(file, new File(file, "/Home"), new File(file, "Contents/Home"));
+  }
+
+  @Override
+  protected @NotNull List<File> listPossibleJdkInstallRootsFromHomes(@NotNull File file) {
+    List<File> result = new ArrayList<>();
+    result.add(file);
+
+    if (file.getName().equalsIgnoreCase("Home")) {
+      File parentFile = file.getParentFile();
+      if (parentFile != null) {
+        result.add(parentFile);
+
+        if (parentFile.getName().equalsIgnoreCase("Contents")) {
+          File parentParentFile = parentFile.getParentFile();
+          if (parentParentFile != null) {
+            result.add(parentParentFile);
+          }
+        }
+      }
+    }
+
+    return result;
   }
 }
