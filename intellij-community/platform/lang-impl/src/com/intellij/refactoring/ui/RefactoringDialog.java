@@ -129,7 +129,7 @@ public abstract class RefactoringDialog extends DialogWrapper {
 
   @Override
   protected final void doOKAction() {
-    if (DumbService.isDumb(myProject)) {
+    if (!DumbService.isDumbAware(this) && DumbService.isDumb(myProject)) {
       Messages.showMessageDialog(myProject, "Refactoring is not available while indexing is in progress", "Indexing", null);
       return;
     }
