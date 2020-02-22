@@ -764,6 +764,16 @@ class Collections {
         }
     }
 
+    class Filtering {
+        @Sample
+        fun filter() {
+            val numbers: List<Int> = listOf(1, 2, 3, 4)
+            val evenNumbers = numbers.filter { number -> number.rem(2) == 0 }
+
+            assertPrints(evenNumbers, "[2, 4]")
+        }
+    }
+    
     class Sorting {
 
         @Sample

@@ -3590,6 +3590,8 @@ public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ *  @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
