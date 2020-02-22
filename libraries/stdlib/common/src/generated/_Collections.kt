@@ -699,6 +699,8 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
