@@ -26,7 +26,7 @@ ext.validator_version = "0.1.1"
 
 buildscript {
     dependencies {
-        classpath "org.jetbrains.kotlinx:kotlinx-binary_compatibility_validator:$validator_version"
+        classpath "org.jetbrains.kotlinx:binary-compatibility-validator:$validator_version"
     }
 }
                     
