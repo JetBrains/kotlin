@@ -375,6 +375,8 @@ public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing only elements matching the given [predicate].
  *
  * The operation is _intermediate_ and _stateless_.
+ *
+ *  @sample samples.collections.Collections.Filtering.filter
  */
 public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, true, predicate)

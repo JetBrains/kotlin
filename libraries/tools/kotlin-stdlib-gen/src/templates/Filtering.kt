@@ -548,6 +548,7 @@ object Filtering : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate]." }
+        sample("samples.collections.Collections.Filtering.filter")
         returns("List<T>")
         body {
             """
