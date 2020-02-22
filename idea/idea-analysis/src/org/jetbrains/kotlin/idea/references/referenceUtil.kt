@@ -288,8 +288,8 @@ fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingCon
     if (this is KDocReference) {
         val qualifier = element.getQualifier() ?: return true
         return if (target.isExtension) {
-            val elementHasFunctionDescriptor = element.resolveMainReferenceToDescriptors().find { it is FunctionDescriptor } != null
-            val qualifierHasClassDescriptor = qualifier.resolveMainReferenceToDescriptors().find { it is ClassDescriptor } != null
+            val elementHasFunctionDescriptor = element.resolveMainReferenceToDescriptors().any { it is FunctionDescriptor }
+            val qualifierHasClassDescriptor = qualifier.resolveMainReferenceToDescriptors().any { it is ClassDescriptor }
             elementHasFunctionDescriptor && qualifierHasClassDescriptor
         } else {
             false
