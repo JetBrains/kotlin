@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.statistic.eventLog
 
-import com.intellij.concurrency.JobScheduler
 import com.intellij.configurationStore.ComponentInfo
 import com.intellij.configurationStore.ComponentStoreImpl
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
@@ -13,6 +12,7 @@ import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.util.concurrency.AppExecutorUtil
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
@@ -31,7 +31,7 @@ internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracke
       return
     }
 
-    JobScheduler.getScheduler().scheduleWithFixedDelay({ logConfigStateEvents() }, INITIAL_DELAY.toLong(), PERIOD_DELAY.toLong(), TimeUnit.MINUTES)
+    AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay({ logConfigStateEvents() }, INITIAL_DELAY.toLong(), PERIOD_DELAY.toLong(), TimeUnit.MINUTES)
   }
 }
 

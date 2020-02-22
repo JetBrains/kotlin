@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.server;
 
 import com.intellij.ProjectTopics;
@@ -10,7 +10,6 @@ import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
 import com.intellij.compiler.impl.javaCompiler.eclipse.EclipseCompilerConfiguration;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.compiler.server.impl.BuildProcessClasspathManager;
-import com.intellij.concurrency.JobScheduler;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionListener;
 import com.intellij.execution.ExecutionManager;
@@ -23,7 +22,10 @@ import com.intellij.ide.file.BatchFileChangeListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.*;
-import com.intellij.openapi.compiler.*;
+import com.intellij.openapi.compiler.CompilationStatusListener;
+import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompilerPaths;
+import com.intellij.openapi.compiler.CompilerTopics;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -52,6 +54,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.impl.FileNameCache;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.util.*;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.containers.IntArrayList;
 import com.intellij.util.io.BaseOutputReader;
@@ -315,7 +318,7 @@ public final class BuildManager implements Disposable {
     ShutDownTracker.getInstance().registerShutdownTask(this::stopListening);
 
     if (!IS_UNIT_TEST_MODE) {
-      ScheduledFuture<?> future = JobScheduler.getScheduler().scheduleWithFixedDelay(() -> runCommand(myGCTask), 3, 180, TimeUnit.MINUTES);
+      ScheduledFuture<?> future = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(() -> runCommand(myGCTask), 3, 180, TimeUnit.MINUTES);
       Disposer.register(this, () -> future.cancel(false));
     }
   }
