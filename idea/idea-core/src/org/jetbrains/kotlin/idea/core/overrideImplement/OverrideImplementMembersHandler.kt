@@ -146,9 +146,9 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
             fun ClassDescriptor.findElement(memberDescriptor: CallableMemberDescriptor): KtDeclaration? {
                 return implementedElements[memberDescriptor]
-                    ?: (findCallableMemberBySignature(memberDescriptor)?.source?.getPsi() as? KtDeclaration)?.also {
-                        implementedElements[memberDescriptor] = it
-                    }
+                    ?: (findCallableMemberBySignature(memberDescriptor)?.source?.getPsi() as? KtDeclaration)
+                        ?.takeIf { it != classOrObject }
+                        ?.also { implementedElements[memberDescriptor] = it }
             }
 
             fun getAnchor(selectedElement: KtDeclaration): PsiElement? {

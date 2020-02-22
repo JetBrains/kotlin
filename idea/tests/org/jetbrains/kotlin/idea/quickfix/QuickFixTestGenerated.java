@@ -7669,6 +7669,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/implement/annotation.kt");
         }
 
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("idea/testData/quickfix/implement/dataClass.kt");
+        }
+
+        @TestMetadata("dataClass2.kt")
+        public void testDataClass2() throws Exception {
+            runTest("idea/testData/quickfix/implement/dataClass2.kt");
+        }
+
+        @TestMetadata("dataClass3.kt")
+        public void testDataClass3() throws Exception {
+            runTest("idea/testData/quickfix/implement/dataClass3.kt");
+        }
+
         @TestMetadata("doNotAddExpectForVal.kt")
         public void testDoNotAddExpectForVal() throws Exception {
             runTest("idea/testData/quickfix/implement/doNotAddExpectForVal.kt");
