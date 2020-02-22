@@ -39,7 +39,7 @@ abstract class ComponentInfo {
 
   var affectedPropertyNames: List<String> = emptyList()
 
-  open fun updateModificationCount(newCount: Long = currentModificationCount) {
+  open fun updateModificationCount(newCount: Long) {
   }
 }
 

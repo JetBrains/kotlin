@@ -372,12 +372,7 @@ abstract class ComponentStoreImpl : IComponentStore {
       return initComponentWithoutStateSpec(component, configurationSchemaKey)
     }
 
-    if (doInitComponent(info, component, changedStorages, reloadData)) {
-      // if component was initialized, update lastModificationCount
-      info.updateModificationCount()
-      return true
-    }
-    return false
+    return doInitComponent(info, component, changedStorages, reloadData)
   }
 
   protected fun initComponentWithoutStateSpec(component: PersistentStateComponent<Any>, configurationSchemaKey: String): Boolean {
@@ -436,16 +431,22 @@ abstract class ComponentStoreImpl : IComponentStore {
             state = deserializeState(Element("state"), stateClass, null)!!
           }
           else {
-            FeatureUsageSettingsEvents.logDefaultConfigurationState(name, stateSpec, stateClass, project)
+            if (stateSpec.reportStatistic) {
+              FeatureUsageSettingsEvents.logDefaultConfigurationState(name, stateClass, project)
+            }
             continue
           }
         }
 
         component.loadState(state)
         val stateAfterLoad = stateGetter.archiveState()
-        LOG.runAndLogException {
-          FeatureUsageSettingsEvents.logConfigurationState(name, stateSpec, stateAfterLoad ?: state, project)
+        if (stateSpec.reportStatistic) {
+          LOG.runAndLogException {
+            FeatureUsageSettingsEvents.logConfigurationState(name, stateAfterLoad ?: state, project)
+          }
         }
+
+        info.updateModificationCount(info.currentModificationCount)
         return true
       }
     }
@@ -456,6 +457,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
     else {
       component.loadState(defaultState)
+      info.updateModificationCount(info.currentModificationCount)
     }
     return true
   }

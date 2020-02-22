@@ -7,7 +7,6 @@ import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
 import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.internal.statistic.utils.getProjectId
 import com.intellij.openapi.components.ReportValue
-import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.serialization.MutableAccessor
@@ -23,33 +22,29 @@ private val GROUP = EventLogGroup("settings", 4)
 private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
 private val recordedOptionNames: MutableSet<String> = ContainerUtil.newConcurrentSet()
 
-fun isComponentNameWhitelisted(name: String): Boolean {
+internal fun isComponentNameWhitelisted(name: String): Boolean {
   return recordedComponents.contains(name)
 }
 
-fun isComponentOptionNameWhitelisted(name: String): Boolean {
+internal fun isComponentOptionNameWhitelisted(name: String): Boolean {
   return recordedOptionNames.contains(name)
 }
 
-object FeatureUsageSettingsEvents {
-  val printer = FeatureUsageSettingsEventPrinter(false)
+internal object FeatureUsageSettingsEvents {
+  private val printer = FeatureUsageSettingsEventPrinter(false)
 
-  fun logDefaultConfigurationState(componentName: String, stateSpec: State, clazz: Class<*>, project: Project?) {
-    if (stateSpec.reportStatistic) {
-      NonUrgentExecutor.getInstance().execute {
-        if (FeatureUsageLogger.isEnabled()) {
-          printer.logDefaultConfigurationState(componentName, clazz, project)
-        }
+  fun logDefaultConfigurationState(componentName: String, clazz: Class<*>, project: Project?) {
+    NonUrgentExecutor.getInstance().execute {
+      if (FeatureUsageLogger.isEnabled()) {
+        printer.logDefaultConfigurationState(componentName, clazz, project)
       }
     }
   }
 
-  fun logConfigurationState(componentName: String, stateSpec: State, state: Any, project: Project?) {
-    if (stateSpec.reportStatistic) {
-      NonUrgentExecutor.getInstance().execute {
-        if (FeatureUsageLogger.isEnabled()) {
-          printer.logConfigurationState(componentName, state, project)
-        }
+  fun logConfigurationState(componentName: String, state: Any, project: Project?) {
+    NonUrgentExecutor.getInstance().execute {
+      if (FeatureUsageLogger.isEnabled()) {
+        printer.logConfigurationState(componentName, state, project)
       }
     }
   }
