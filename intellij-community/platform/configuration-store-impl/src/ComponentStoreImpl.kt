@@ -64,7 +64,7 @@ private class PersistenceStateAdapter(val component: Any) : PersistentStateCompo
   }
 }
 
-private val NOT_ROAMABLE_COMPONENT_SAVE_THRESHOLD_DEFAULT = TimeUnit.MINUTES.toSeconds(4).toInt()
+private val NOT_ROAMABLE_COMPONENT_SAVE_THRESHOLD_DEFAULT = TimeUnit.MINUTES.toSeconds(5).toInt()
 private var NOT_ROAMABLE_COMPONENT_SAVE_THRESHOLD = NOT_ROAMABLE_COMPONENT_SAVE_THRESHOLD_DEFAULT
 
 @TestOnly
@@ -192,16 +192,6 @@ abstract class ComponentStoreImpl : IComponentStore {
         val info = components.get(name)!!
         var currentModificationCount = -1L
 
-        if (info.isModificationTrackingSupported) {
-          currentModificationCount = info.currentModificationCount
-          if (currentModificationCount == info.lastModificationCount) {
-            SAVE_MOD_LOG.debug { "${if (isUseModificationCount) "Skip " else ""}$name: modificationCount $currentModificationCount equals to last saved" }
-            if (isUseModificationCount) {
-              continue
-            }
-          }
-        }
-
         if (info.lastSaved != -1) {
           if (isForce || (nowInSeconds - info.lastSaved) > NOT_ROAMABLE_COMPONENT_SAVE_THRESHOLD) {
             info.lastSaved = nowInSeconds
@@ -212,6 +202,16 @@ abstract class ComponentStoreImpl : IComponentStore {
                                  " (lastSaved ${info.lastSaved}, now: $nowInSeconds)")
             }
             continue
+          }
+        }
+
+        if (info.isModificationTrackingSupported) {
+          currentModificationCount = info.currentModificationCount
+          if (currentModificationCount == info.lastModificationCount) {
+            SAVE_MOD_LOG.debug { "${if (isUseModificationCount) "Skip " else ""}$name: modificationCount $currentModificationCount equals to last saved" }
+            if (isUseModificationCount) {
+              continue
+            }
           }
         }
 

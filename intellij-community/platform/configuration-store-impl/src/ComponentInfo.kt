@@ -7,17 +7,16 @@ import com.intellij.util.ThreeState
 import java.util.concurrent.TimeUnit
 
 internal fun createComponentInfo(component: Any, stateSpec: State?, serviceDescriptor: ServiceDescriptor?): ComponentInfo {
-  return when (component) {
+  val result = when (component) {
     is PersistentStateComponentWithModificationTracker<*> -> ComponentWithStateModificationTrackerInfo(component, stateSpec, serviceDescriptor?.configurationSchemaKey)
     is ModificationTracker -> ComponentWithModificationTrackerInfo(component, stateSpec, serviceDescriptor?.configurationSchemaKey)
-    else -> {
-      val componentInfo = ComponentInfoImpl(component, stateSpec)
-      if (stateSpec != null && stateSpec.storages.isNotEmpty() && stateSpec.storages.all(::isUseSaveThreshold)) {
-        componentInfo.lastSaved = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
-      }
-      componentInfo
-    }
+    else -> ComponentInfoImpl(component, stateSpec)
   }
+
+  if (stateSpec != null && stateSpec.storages.isNotEmpty() && stateSpec.storages.all { it.deprecated || isUseSaveThreshold(it) }) {
+    result.lastSaved = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+  }
+  return result
 }
 
 private fun isUseSaveThreshold(storage: Storage): Boolean {
