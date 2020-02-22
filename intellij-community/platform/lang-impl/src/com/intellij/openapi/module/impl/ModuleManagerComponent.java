@@ -49,7 +49,7 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
     myMessageBusConnection.subscribe(VirtualFileManager.VFS_CHANGES, new ModuleFileListener(this));
   }
 
-  static class MyProjectServiceContainerInitializedListener implements ProjectServiceContainerInitializedListener {
+  static final class MyProjectServiceContainerInitializedListener implements ProjectServiceContainerInitializedListener {
     @Override
     public void serviceCreated(@NotNull Project project) {
       Activity activity = StartUpMeasurer.startMainActivity("module loading");
