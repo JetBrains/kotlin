@@ -23,6 +23,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
+@Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 class KotlinSourceFilterScope private constructor(
     delegate: GlobalSearchScope,
     private val includeProjectSourceFiles: Boolean,
@@ -73,8 +74,8 @@ class KotlinSourceFilterScope private constructor(
         return true
     }
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
+    override fun calcHashCode(): Int {
+        var result = super.calcHashCode()
         result = 31 * result + includeProjectSourceFiles.hashCode()
         result = 31 * result + includeLibrarySourceFiles.hashCode()
         result = 31 * result + includeClassFiles.hashCode()
