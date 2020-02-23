@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
+import com.intellij.ui.DirtyUI;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PlatformIcons;
@@ -180,6 +181,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
     return new Dimension(width, size.height + offsets.height);
   }
 
+  @DirtyUI
   public boolean needPaintIcon() {
     if (Registry.is("navBar.show.icons") || isPopupElement || isLastElement()) {
       return true;

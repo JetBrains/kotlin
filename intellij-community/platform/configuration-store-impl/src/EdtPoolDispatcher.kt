@@ -3,7 +3,6 @@ package com.intellij.configurationStore
 
 import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.WriteThread
 import com.intellij.openapi.diagnostic.runAndLogException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +29,7 @@ internal class EdtPoolDispatcherManager {
 
   private fun scheduleFlush() {
     if (isScheduled.compareAndSet(false, true)) {
-      WriteThread.submit(this::processQueue)
+      ApplicationManager.getApplication().invokeLater(this::processQueue)
     }
   }
 
