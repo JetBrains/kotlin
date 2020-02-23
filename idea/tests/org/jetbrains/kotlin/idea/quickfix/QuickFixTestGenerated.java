@@ -10384,6 +10384,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testLambdaArgument() throws Exception {
             runTest("idea/testData/quickfix/removeArgument/lambdaArgument.kt");
         }
+
+        @TestMetadata("matchedArguments.kt")
+        public void testMatchedArguments() throws Exception {
+            runTest("idea/testData/quickfix/removeArgument/matchedArguments.kt");
+        }
+
+        @TestMetadata("typeMismatch.kt")
+        public void testTypeMismatch() throws Exception {
+            runTest("idea/testData/quickfix/removeArgument/typeMismatch.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/removeAtFromAnnotationArgument")
