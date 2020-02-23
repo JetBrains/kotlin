@@ -250,6 +250,7 @@ private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope
     override fun isSearchInLibraries() = false
 }
 
+@Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
 
@@ -258,8 +259,7 @@ private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(mo
         return (other is ModuleProductionSourceScope && module == other.module)
     }
 
-    // KT-6206
-    override fun hashCode(): Int = 31 * module.hashCode()
+    override fun calcHashCode(): Int = 31 * module.hashCode()
 
     override fun contains(file: VirtualFile) =
         moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContentKotlinAware(file)
@@ -267,6 +267,7 @@ private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(mo
     override fun toString() = "ModuleProductionSourceScope($module)"
 }
 
+@Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
 
@@ -275,8 +276,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
         return (other is ModuleTestSourceScope && module == other.module)
     }
 
-    // KT-6206
-    override fun hashCode(): Int = 37 * module.hashCode()
+    override fun calcHashCode(): Int = 37 * module.hashCode()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContentKotlinAware(file)
 
@@ -325,6 +325,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     }
 
     override fun hashCode(): Int = 43 * library.hashCode()
+
 }
 
 data class LibrarySourceInfo(val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
@@ -388,6 +389,7 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
         get() = platform.single().findAnalyzerServices()
 }
 
+@Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
     LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
 
@@ -395,11 +397,12 @@ private class LibraryWithoutSourceScope(project: Project, private val library: L
 
     override fun equals(other: Any?) = other is LibraryWithoutSourceScope && library == other.library
 
-    override fun hashCode() = library.hashCode()
+    override fun calcHashCode(): Int = library.hashCode()
 
     override fun toString() = "LibraryWithoutSourceScope($library)"
 }
 
+@Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class LibrarySourceScope(project: Project, private val library: Library) :
     LibraryScopeBase(project, arrayOf<VirtualFile>(), library.getFiles(OrderRootType.SOURCES)) {
 
@@ -407,18 +410,19 @@ private class LibrarySourceScope(project: Project, private val library: Library)
 
     override fun equals(other: Any?) = other is LibrarySourceScope && library == other.library
 
-    override fun hashCode() = library.hashCode()
+    override fun calcHashCode(): Int = library.hashCode()
 
     override fun toString() = "LibrarySourceScope($library)"
 }
 
 //TODO: (module refactoring) android sdk has modified scope
+@Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class SdkScope(project: Project, val sdk: Sdk) :
     LibraryScopeBase(project, sdk.rootProvider.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
 
     override fun equals(other: Any?) = other is SdkScope && sdk == other.sdk
 
-    override fun hashCode() = sdk.hashCode()
+    override fun calcHashCode(): Int = sdk.hashCode()
 
     override fun toString() = "SdkScope($sdk)"
 }
