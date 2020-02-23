@@ -133,6 +133,12 @@ fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = Fi
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
     }
 
+fun Project.toolsJarApi(): Any =
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync)
+        files(toolsJarFile() ?: error("tools.jar is not found!"))
+    else
+        dependencies.project(":dependencies:tools-jar-api")
+
 fun Project.toolsJar(): FileCollection = files(toolsJarFile() ?: error("tools.jar is not found!"))
 
 fun Project.toolsJarFile(jdkHome: File = File(this.property("JDK_18") as String)): File? =

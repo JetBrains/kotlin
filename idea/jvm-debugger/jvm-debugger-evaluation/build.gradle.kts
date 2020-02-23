@@ -10,7 +10,7 @@ dependencies {
     compile(project(":idea:idea-j2k"))
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
 
-    compileOnly(project(":dependencies:tools-jar-api"))
+    compileOnly(toolsJarApi())
     Platform[192].orHigher {
         compileOnly(intellijPluginDep("java"))
     }

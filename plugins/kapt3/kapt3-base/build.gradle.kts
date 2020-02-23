@@ -5,10 +5,10 @@ plugins {
 
 dependencies {
     compile(kotlinStdlib())
-    compileOnly(project(":dependencies:tools-jar-api"))
+    compileOnly(toolsJarApi())
 
     testCompile(commonDep("junit:junit"))
-    testCompileOnly(project(":dependencies:tools-jar-api"))
+    testCompileOnly(toolsJarApi())
 }
 
 sourceSets {
