@@ -2,6 +2,7 @@
 package com.intellij.find.editorHeaderActions;
 
 import com.intellij.find.SearchSession;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class StatusTextAction extends DumbAwareAction implements CustomComponentAction {
+public class StatusTextAction extends DumbAwareAction implements CustomComponentAction, LightEditCompatible {
   @Override
   public void update(@NotNull AnActionEvent e) {
     SearchSession search = e.getData(SearchSession.KEY);
