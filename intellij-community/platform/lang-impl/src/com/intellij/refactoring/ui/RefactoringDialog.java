@@ -65,7 +65,8 @@ public abstract class RefactoringDialog extends DialogWrapper {
       }
 
       private boolean report(boolean selected, String eventId) {
-        FeatureUsageData data = new FeatureUsageData().addData("selected", selected).addData("refactoring.id", getRefactoringId());
+        String refactoringClassName = RefactoringDialog.this.getClass().getName();
+        FeatureUsageData data = new FeatureUsageData().addData("selected", selected).addData("class_name", refactoringClassName);
         FUCounterUsageLogger.getInstance().logEvent("refactoring.dialog", eventId, data);
         return selected;
       }
