@@ -239,9 +239,9 @@ class EnableCustomHintsOption: IntentionAction, HighPriorityAction {
     val provider = InlayParameterHintsExtension.forLanguage(file.language) ?: return null
 
     val target = PsiTreeUtil.findFirstParent(element) { it is PsiFile
-                                                        || provider.hasDisabledOptionHintInfo(it) }
+                                                        || provider.hasDisabledOptionHintInfo(it, file) }
     if (target == null || target is PsiFile) return null
-    return provider.getHintInfo(target) as? HintInfo.OptionInfo
+    return provider.getHintInfo(target, file) as? HintInfo.OptionInfo
   }
 
   override fun invoke(project: Project, editor: Editor, file: PsiFile) {
@@ -255,8 +255,8 @@ class EnableCustomHintsOption: IntentionAction, HighPriorityAction {
 }
 
 
-private fun InlayParameterHintsProvider.hasDisabledOptionHintInfo(element: PsiElement): Boolean {
-  val info = getHintInfo(element)
+private fun InlayParameterHintsProvider.hasDisabledOptionHintInfo(element: PsiElement, file: PsiFile): Boolean {
+  val info = getHintInfo(element, file)
   return info is HintInfo.OptionInfo && !info.isOptionEnabled()
 }
 
@@ -324,9 +324,9 @@ private fun getHintInfoFromProvider(offset: Int, file: PsiFile, editor: Editor):
 
   val method = PsiTreeUtil.findFirstParent(element) { it is PsiFile
                                                       // hint owned by element
-                                                      || (provider.getHintInfo(it)?.isOwnedByPsiElement(it, editor) ?: false)}
+                                                      || (provider.getHintInfo(it, file)?.isOwnedByPsiElement(it, editor) ?: false)}
   if (method == null || method is PsiFile) return null
-  return provider.getHintInfo(method)
+  return provider.getHintInfo(method, file)
 }
 
 fun MethodInfo.toPattern(): String = this.fullyQualifiedName + '(' + this.paramNames.joinToString(",") + ')'

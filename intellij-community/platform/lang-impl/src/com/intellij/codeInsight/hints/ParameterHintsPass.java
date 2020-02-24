@@ -72,9 +72,9 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
   }
 
   private void process(@NotNull PsiElement element, @NotNull InlayParameterHintsProvider provider) {
-    List<InlayInfo> hints = provider.getParameterHints(element);
+    List<InlayInfo> hints = provider.getParameterHints(element, myFile);
     if (hints.isEmpty()) return;
-    HintInfo info = provider.getHintInfo(element);
+    HintInfo info = provider.getHintInfo(element, myFile);
 
     boolean showHints = info == null || info instanceof HintInfo.OptionInfo || myHintInfoFilter.showHint(info);
 
