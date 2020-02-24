@@ -209,7 +209,7 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
 
           Runnable performRunnable = () -> {
             if (DumbService.isDumb(myProject)) {
-              DumbService.getInstance(myProject).showDumbModeNotification("Refactorings cannot be performed while indexing is in progress");
+              DumbService.getInstance(myProject).showDumbModeNotification(RefactoringBundle.message("refactoring.not.available.indexing"));
               return;
             }
 

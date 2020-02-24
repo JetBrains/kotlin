@@ -71,7 +71,7 @@ public abstract class IntroduceHandler<Target extends IntroduceTarget, Scope ext
           public void pass(final Target target) {
             invokeOnTarget(target, file, editor, project);
           }
-        }, "Expressions", targetInfo.getSecond());
+        }, RefactoringBundle.message("introduce.target.chooser.expressions.title"), targetInfo.getSecond());
       }
     }
   }

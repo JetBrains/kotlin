@@ -72,7 +72,7 @@ public class InplaceChangeSignature implements DocumentListener {
       myMarkAction = StartMarkAction.start(editor, project, ChangeSignatureHandler.REFACTORING_NAME);
     }
     catch (StartMarkAction.AlreadyStartedException e) {
-      final int exitCode = Messages.showYesNoDialog(myProject, e.getMessage(), ChangeSignatureHandler.REFACTORING_NAME, "Navigate to Started", "Cancel", Messages.getErrorIcon());
+      final int exitCode = Messages.showYesNoDialog(myProject, e.getMessage(), ChangeSignatureHandler.REFACTORING_NAME, RefactoringBundle.message("inplace.refactoring.navigate.to.started"), RefactoringBundle.message("inplace.refactoring.cancel.current"), Messages.getErrorIcon());
       if (exitCode == Messages.CANCEL) return;
       PsiElement method = myStableChange.getMethod();
       VirtualFile virtualFile = PsiUtilCore.getVirtualFile(method);
@@ -206,7 +206,7 @@ public class InplaceChangeSignature implements DocumentListener {
       updateCurrentInfo();
     });
     JPanel content = new JPanel(new BorderLayout());
-    content.add(new JBLabel("Performed signature modifications:"), BorderLayout.NORTH);
+    content.add(new JBLabel(RefactoringBundle.message("inplace.change.signature.preview.label")), BorderLayout.NORTH);
     content.add(myPreview.getComponent(), BorderLayout.CENTER);
     updateMethodSignature(myStableChange);
     content.add(checkBox, BorderLayout.SOUTH);

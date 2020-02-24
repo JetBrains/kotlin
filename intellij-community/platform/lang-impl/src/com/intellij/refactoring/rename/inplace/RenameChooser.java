@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.RefactoringSettings;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -72,7 +73,7 @@ abstract class RenameChooser {
           myRangeHighlighters.add(rangeHighlighter);
         }
       })
-      .setTitle("String occurrences found")
+      .setTitle(RefactoringBundle.message("rename.string.occurrences.found.title"))
       .setMovable(false)
       .setResizable(false)
       .setRequestFocus(true)

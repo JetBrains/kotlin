@@ -18,6 +18,7 @@ package com.intellij.refactoring.rename;
 import com.intellij.ide.projectView.impl.NestingTreeStructureProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.rename.naming.AutomaticRenamer;
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory;
 import com.intellij.usageView.UsageInfo;
@@ -42,7 +43,7 @@ public class RelatedFilesRenamerFactory implements AutomaticRenamerFactory {
   @Nullable
   @Override
   public String getOptionName() {
-    return "Rename related files (with the same name)";
+    return RefactoringBundle.message("rename.related.files.option.name");
   }
 
   @Override

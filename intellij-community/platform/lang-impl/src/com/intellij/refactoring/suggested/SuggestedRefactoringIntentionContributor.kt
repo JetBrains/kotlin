@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.annotations.NonNls
 
 class SuggestedRefactoringIntentionContributor : IntentionMenuContributor {
   private val icon = AllIcons.Actions.SuggestedRefactoringBulb
@@ -101,6 +102,7 @@ class SuggestedRefactoringIntentionContributor : IntentionMenuContributor {
   ) : IntentionAction, PriorityAction {
     override fun getPriority() = PriorityAction.Priority.TOP
 
+    @NonNls
     override fun getFamilyName() = "Suggested Refactoring"
 
     override fun getText() = text

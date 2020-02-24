@@ -3,6 +3,7 @@ package com.intellij.refactoring;
 
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.codeInsight.unwrap.ScopeHighlighter;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -128,7 +129,7 @@ public class IntroduceTargetChooser {
           }
           else {
             setForeground(JBColor.RED);
-            setText("Invalid");
+            setText(IdeBundle.message("invalid.node.text"));
           }
           return rendererComponent;
         }
