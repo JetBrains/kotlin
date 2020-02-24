@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -303,6 +304,7 @@ public class ExpressionTypingServices {
 
         boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
+            ProgressManager.checkCanceled();
             // Use filtering trace to keep effect system cache only for one statement
             AbstractFilteringTrace traceForSingleStatement = new EffectsFilteringTrace(context.trace);
 
