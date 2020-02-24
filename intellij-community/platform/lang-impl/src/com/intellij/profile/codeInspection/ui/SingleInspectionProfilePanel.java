@@ -2,6 +2,7 @@
 
 package com.intellij.profile.codeInspection.ui;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
@@ -56,6 +57,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -703,7 +705,7 @@ public class SingleInspectionProfilePanel extends JPanel {
   }
 
   // TODO 134099: see IntentionDescriptionPanel#setHTML
-  public static String toHTML(JEditorPane browser, String text, boolean miniFontSize) {
+  public static String toHTML(JEditorPane browser, @Nls String text, boolean miniFontSize) {
     final HintHint hintHint = new HintHint(browser, new Point(0, 0));
     hintHint.setFont(miniFontSize ? UIUtil.getLabelFont(UIUtil.FontSize.SMALL) : UIUtil.getLabelFont());
     return HintUtil.prepareHintText(text, hintHint);
@@ -738,11 +740,11 @@ public class SingleInspectionProfilePanel extends JPanel {
 
         }
         else {
-          readHTML(myBrowser, toHTML(myBrowser, "Can't find inspection description.", false));
+          readHTML(myBrowser, toHTML(myBrowser, AnalysisBundle.message("inspections.settings.no.description.warning"), false));
         }
       }
       else {
-        readHTML(myBrowser, toHTML(myBrowser, "Multiple inspections are selected. You can edit them as a single inspection.", false));
+        readHTML(myBrowser, toHTML(myBrowser, AnalysisBundle.message("inspections.settings.multiple.inspections.warning"), false));
       }
 
       myOptionsPanel.removeAll();
@@ -1044,8 +1046,9 @@ public class SingleInspectionProfilePanel extends JPanel {
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(inspectionTreePanel, BorderLayout.CENTER);
-    final JBCheckBox disableNewInspectionsCheckBox = new JBCheckBox("Disable new inspections by default",
-                                                                    getProfile().isProfileLocked());
+    final JBCheckBox disableNewInspectionsCheckBox = new JBCheckBox(
+      AnalysisBundle.message("inspections.settings.disable.new.inspections.by.default.checkbox"),
+      getProfile().isProfileLocked());
     panel.add(disableNewInspectionsCheckBox, BorderLayout.SOUTH);
     disableNewInspectionsCheckBox.addItemListener(__ -> {
       final boolean enabled = disableNewInspectionsCheckBox.isSelected();
@@ -1210,7 +1213,7 @@ public class SingleInspectionProfilePanel extends JPanel {
       myScopesAndSeveritiesTable = scopesAndSeveritiesTable;
       setLayout(new GridBagLayout());
       GridBagConstraints optionsLabelConstraints = new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.insets(0, 2, 0, 0), 0, 0);
-      add(new JBLabel("Options"), optionsLabelConstraints);
+      add(new JBLabel(AnalysisBundle.message("inspections.settings.options.title")), optionsLabelConstraints);
       GridBagConstraints separatorConstraints =
         new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, JBUI.insets(2,
                                                                                                                        TitledSeparator.SEPARATOR_LEFT_INSET,
@@ -1223,7 +1226,7 @@ public class SingleInspectionProfilePanel extends JPanel {
       UserActivityWatcher userActivityWatcher = new UserActivityWatcher();
       userActivityWatcher.addUserActivityListener(() -> setupResetLinkVisibility());
       userActivityWatcher.register(options);
-      myResetLink = LinkLabel.create("Reset", () -> {
+      myResetLink = LinkLabel.create(IdeBundle.message("reset.action.text"), () -> {
         ScopeToolState state = getSelectedState();
         if (state != null) {
           state.resetConfigPanel();

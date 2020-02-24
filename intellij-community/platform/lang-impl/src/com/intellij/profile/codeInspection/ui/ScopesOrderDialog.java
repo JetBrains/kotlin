@@ -1,6 +1,7 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.profile.codeInspection.ui;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.icons.AllIcons;
@@ -13,7 +14,10 @@ import com.intellij.psi.search.scope.NonProjectFilesScope;
 import com.intellij.psi.search.scope.packageSet.CustomScopesProviderEx;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ListUtil;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.EditableModel;
 import com.intellij.util.ui.UIUtil;
@@ -63,16 +67,14 @@ public class ScopesOrderDialog extends DialogWrapper {
         reloadScopeList();
       }
     }).disableRemoveAction().disableAddAction().createPanel();
-    final JLabel descr = new JLabel("<html><p>If file appears in two or more scopes, it will be " +
-                                           "inspected with settings of the topmost scope in list above.</p><p/>" +
-                                           "<p>Scope order is set globally for all inspections in the profile.</p></html>");
+    final JLabel descr = new JLabel(AnalysisBundle.message("inspections.settings.scopes.order.help.label"));
     UIUtil.applyStyle(UIUtil.ComponentStyle.SMALL, descr);
     myPanel = new JPanel();
     myPanel.setLayout(new BorderLayout());
     myPanel.add(listPanel, BorderLayout.CENTER);
     myPanel.add(descr, BorderLayout.SOUTH);
     init();
-    setTitle("Scopes Order");
+    setTitle(AnalysisBundle.message("inspections.settings.scopes.order.title"));
   }
 
   private void reloadScopeList() {
