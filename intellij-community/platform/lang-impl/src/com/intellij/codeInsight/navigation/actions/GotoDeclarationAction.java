@@ -11,6 +11,7 @@ import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.codeInsight.navigation.action.GotoDeclarationUtil;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.actions.ShowUsagesAction;
+import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.injected.editor.EditorWindow;
@@ -46,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
@@ -162,9 +164,14 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
                             elements);
 
     // Disable the 'no declaration found' notification for keywords
-    if (!found && !isKeywordUnderCaret(project, currentFile, offset)) {
+    if (!found && !isUnderDoubleClick() && !isKeywordUnderCaret(project, currentFile, offset)) {
       HintManager.getInstance().showErrorHint(editor, "Cannot find declaration to go to");
     }
+  }
+
+  private static boolean isUnderDoubleClick() {
+    AWTEvent event = IdeEventQueue.getInstance().getTrueCurrentEvent();
+    return event instanceof MouseEvent && ((MouseEvent)event).getClickCount() == 2;
   }
 
   private static boolean navigateInCurrentEditor(@NotNull PsiElement element, @NotNull PsiFile currentFile, @NotNull Editor currentEditor) {
