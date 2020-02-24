@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packageDependencies.actions;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
@@ -26,7 +27,7 @@ public class AnalyzeDependenciesOnSpecifiedTargetAction extends AnAction {
     final Presentation presentation = e.getPresentation();
     if (module != null && scope != null) {
       presentation.setVisible(true);
-      presentation.setText("Analyze Dependencies of Module '" + module.getName() + "' on " + scope.getDisplayName());
+      presentation.setText(AnalysisBundle.message("analyze.dependencies.on.scope.action.text", module.getName(), scope.getDisplayName()));
     }
     else {
       presentation.setVisible(false);

@@ -16,6 +16,7 @@
 
 package com.intellij.packageDependencies.actions;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.BaseAnalysisAction;
 import com.intellij.analysis.BaseAnalysisActionDialog;
@@ -45,7 +46,7 @@ public class AnalyzeDependenciesAction extends BaseAnalysisAction {
   @Nullable
   protected JComponent getAdditionalActionSettings(final Project project, final BaseAnalysisActionDialog dialog) {
     myPanel = new AnalyzeDependenciesSettingPanel();
-    myPanel.myTransitiveCB.setText("Show transitive dependencies. Do not travel deeper than");
+    myPanel.myTransitiveCB.setText(AnalysisBundle.message("analyze.dependencies.transitive.dependencies.checkbox"));
     myPanel.myTransitiveCB.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {

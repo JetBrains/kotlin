@@ -15,6 +15,7 @@
  */
 package com.intellij.packageDependencies.actions;
 
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.PerformAnalysisInBackgroundOption;
 import com.intellij.diagnostic.PerformanceWatcher;
@@ -110,7 +111,8 @@ public abstract class DependenciesHandlerBase {
       snapshot.logResponsivenessSinceCreation("Dependency analysis");
     }
     catch (IndexNotReadyException e) {
-      DumbService.getInstance(myProject).showDumbModeNotification("Analyze dependencies is not available until indices are ready");
+      DumbService.getInstance(myProject).showDumbModeNotification(
+        AnalysisBundle.message("analyze.dependencies.not.available.notification.indexing"));
       throw new ProcessCanceledException();
     }
   }

@@ -3,6 +3,7 @@
 package com.intellij.packageDependencies.ui;
 
 import com.intellij.CommonBundle;
+import com.intellij.analysis.AnalysisBundle;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.PerformAnalysisInBackgroundOption;
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -560,7 +561,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class ShowModuleGroupsAction extends ToggleAction {
     ShowModuleGroupsAction() {
-      super("Show module groups", "Show module groups", AllIcons.Actions.GroupByModuleGroup);
+      super(AnalysisBundle.message("analyze.dependencies.show.module.groups.action.text"),
+            AnalysisBundle.message("analyze.dependencies.show.module.groups.action.text"), AllIcons.Actions.GroupByModuleGroup);
     }
 
     @Override
@@ -954,7 +956,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
                                         new NamedScope.UnnamedScope(rightPackageSet), true));
           rebuild();
         } else {
-          Messages.showErrorDialog(DependenciesPanel.this, "Rule was not added.\n There is no direct dependency between \'" + leftPackageSet.getText() + "\' and \'" + rightPackageSet.getText() + "\'",
+          Messages.showErrorDialog(DependenciesPanel.this, AnalysisBundle
+                                     .message("analyze.dependencies.unable.to.create.rule.error.message", leftPackageSet.getText(), rightPackageSet.getText()),
                                    CodeInsightBundle.message("mark.dependency.illegal.text"));
         }
       }
