@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
@@ -174,6 +175,7 @@ internal class UltraLightMembersCreator(
         numberOfDefaultParametersToAdd: Int = -1,
         methodIndex: Int
     ): KtLightMethod {
+        ProgressManager.checkCanceled()
         val isConstructor = ktFunction is KtConstructor<*>
         val name =
             if (isConstructor) containingClass.name
