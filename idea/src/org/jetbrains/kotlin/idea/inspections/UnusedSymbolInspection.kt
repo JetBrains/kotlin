@@ -17,6 +17,7 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
@@ -201,6 +202,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return namedDeclarationVisitor(fun(declaration) {
+            ProgressManager.checkCanceled()
             val message = declaration.describe()?.let { "$it is never used" } ?: return
 
             if (!ProjectRootsUtil.isInProjectSource(declaration)) return
@@ -321,6 +323,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val KtNamedDeclaration.isObjectOrEnum: Boolean get() = this is KtObjectDeclaration || this is KtClass && isEnum()
 
     private fun checkReference(ref: PsiReference, declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
+        ProgressManager.checkCanceled()
         if (declaration.isAncestor(ref.element)) return true // usages inside element's declaration are not counted
 
         if (ref.element.parent is KtValueArgumentName) return true // usage of parameter in form of named argument is not counted
