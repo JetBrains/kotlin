@@ -151,6 +151,22 @@ org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.test
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.ChangeSignature.Jk.testJkKeepValOnParameterTypeChange, Unprocessed
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertActualSealedClassToEnum, Enum reorder
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertExpectSealedClassToEnum, Enum reorder
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertSuper, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertSuper, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertThis, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertThis, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableOnEmpty, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableOnEmpty, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableWithOneConstructor, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableWithOneConstructor, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredNoSuper, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredNoSuper, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredParameterless, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredParameterless, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithBody, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithBody, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithParameter, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithParameter, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.ExpressionBody.testMultipleInExpression, Unstable order of usages
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceJavaParameter.testJavaMethodOverridingKotlinFunctionWithUsages, Unprocessed
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda, final modifier added
