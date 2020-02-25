@@ -44,7 +44,7 @@ interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgum
 
 interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
-interface SubKotlinCallArgument : SimpleKotlinCallArgument {
+interface SubKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom {
     val callResult: PartialCallResolutionResult
 }
 
