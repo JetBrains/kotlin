@@ -1577,7 +1577,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         applyFontProps();
         // resize popup according to new font size, if user didn't set popup size manually
         if (!myManuallyResized && myHint != null && myHint.getDimensionServiceKey() == null) showHint();
-      });
+      }, DocumentationComponent.this);
     }
   }
 

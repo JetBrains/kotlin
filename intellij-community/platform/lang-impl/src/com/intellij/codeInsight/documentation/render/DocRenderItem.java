@@ -428,7 +428,7 @@ class DocRenderItem {
     public void actionPerformed(@NotNull AnActionEvent e) {
       Editor editor = e.getData(CommonDataKeys.EDITOR);
       if (editor != null) {
-        DocFontSizePopup.show(() -> updateInlays(editor));
+        DocFontSizePopup.show(() -> updateInlays(editor), editor.getContentComponent());
       }
     }
   }

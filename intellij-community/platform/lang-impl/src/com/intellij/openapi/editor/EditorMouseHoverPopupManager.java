@@ -68,6 +68,7 @@ import org.jetbrains.concurrency.CancellablePromise;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -309,9 +310,17 @@ public final class EditorMouseHoverPopupManager implements Disposable {
         if (e.getID() == MouseEvent.MOUSE_PRESSED && e.getSource() == window) {
           myKeepPopupOnMouseMove = true;
         }
+        else if (e.getID() == WindowEvent.WINDOW_OPENED && !isParentWindow(window, e.getSource())) {
+          closeHint();
+        }
         return false;
       }, hint);
     }
+  }
+
+  private static boolean isParentWindow(@NotNull Window parent, Object potentialChild) {
+    return parent == potentialChild ||
+           (potentialChild instanceof Component) && isParentWindow(parent, ((Component)potentialChild).getParent());
   }
 
   private static AbstractPopup createHint(JComponent component, PopupBridge popupBridge, boolean requestFocus) {
