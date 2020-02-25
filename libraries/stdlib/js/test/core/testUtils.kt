@@ -21,3 +21,6 @@ internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
 
 public actual fun testOnJvm(action: () -> Unit) { }
 public actual fun testOnJs(action: () -> Unit) = action()
+
+// TODO: should be true at least in JS IR after implementing KT-24975
+public actual val isFloat32RangeEnforced: Boolean = false
