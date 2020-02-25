@@ -717,6 +717,18 @@ public class KotlinTestUtils {
         MuteWithDatabaseKt.runTest(testCase, test);
     }
 
+    public static void runTestWithThrowable(@NotNull TestCase testCase, @NotNull RunnableWithThrowable test) {
+        MuteWithDatabaseKt.runTest(testCase, () -> {
+            try {
+                test.run();
+            }
+            catch (Throwable throwable) {
+                throw new IllegalStateException(throwable);
+            }
+            return null;
+        });
+    }
+
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
     public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
