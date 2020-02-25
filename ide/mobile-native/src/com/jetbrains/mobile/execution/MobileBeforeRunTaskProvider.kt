@@ -8,22 +8,12 @@ package com.jetbrains.mobile.execution
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.BeforeRunTaskProvider
 import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
-import com.intellij.openapi.externalSystem.task.TaskCallback
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.util.Key
-import com.intellij.util.concurrency.FutureResult
 import com.jetbrains.mobile.MobileBundle
-import com.jetbrains.mobile.execution.testing.MobileTestRunConfiguration
-import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
-import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import javax.swing.Icon
 
 class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskProvider.Task>() {
@@ -48,51 +38,7 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
         if (configuration !is MobileRunConfiguration) return false
         val device = environment.executionTarget as? Device ?: return false
 
-        val project = configuration.project
-        val projectData = ProjectDataManager.getInstance().getExternalProjectData(project, GRADLE_SYSTEM_ID, project.basePath!!)
-        if (projectData == null) {
-            log.warn("External project is not configured")
-            return false
-        }
-        val moduleId = GradleProjectResolverUtil.getGradlePath(configuration.module!!)!!
-
-        val settings = ExternalSystemTaskExecutionSettings()
-        settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
-        settings.externalProjectPath = projectData.externalProjectPath
-        settings.executionName = name
-        settings.taskNames = when (configuration) {
-            is MobileAppRunConfiguration ->
-                when (device) {
-                    is AndroidDevice -> listOf("$moduleId:assembleDebug")
-                    is AppleDevice -> listOf("$moduleId:buildIosAppMain")
-                    else -> throw IllegalStateException()
-                }
-            is MobileTestRunConfiguration ->
-                when (device) {
-                    is AndroidDevice -> listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest")
-                    is AppleDevice -> listOf("$moduleId:buildIosAppTest")
-                    else -> throw IllegalStateException()
-                }
-            else -> throw IllegalStateException()
-        }
-
-        val success = FutureResult<Boolean>()
-        val callback = object : TaskCallback {
-            override fun onSuccess() {
-                success.set(true)
-            }
-
-            override fun onFailure() {
-                success.set(false)
-            }
-        }
-
-        ExternalSystemUtil.runTask(
-            settings, DefaultRunExecutor.EXECUTOR_ID, project, GRADLE_SYSTEM_ID,
-            callback, ProgressExecutionMode.IN_BACKGROUND_ASYNC
-        )
-
-        return success.get()
+        return MobileBuild.build(configuration, device)
     }
 
     class Task : BeforeRunTask<Task>(ID) {
