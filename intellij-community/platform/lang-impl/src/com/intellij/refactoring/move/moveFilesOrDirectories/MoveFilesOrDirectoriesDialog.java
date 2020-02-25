@@ -139,7 +139,7 @@ public abstract class MoveFilesOrDirectoriesDialog extends RefactoringDialog {
 
   public static boolean isOpenInEditorProperty() {
     return !ApplicationManager.getApplication().isUnitTestMode() &&
-           PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false);
+           PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, true);
   }
 
   @Override
