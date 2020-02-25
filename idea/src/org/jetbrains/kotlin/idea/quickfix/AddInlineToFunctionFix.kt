@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 class AddInlineToFunctionFix(function: KtFunction) :
     KotlinQuickFixAction<KtFunction>(function) {
     override fun getFamilyName(): String = KotlinBundle.message("fix.add.modifier.inline.function.family")
-    override fun getText(): String = KotlinBundle.message("fix.add.modifier.inline.function.text", element?.name)
+    override fun getText(): String = KotlinBundle.message("fix.add.modifier.inline.function.text", element?.name.toString())
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element?.addModifier(KtTokens.INLINE_KEYWORD)

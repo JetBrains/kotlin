@@ -188,7 +188,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             }
             errorHint?.let { HintManager.getInstance().showErrorHint(editor, it) }
         } catch (e: IncorrectOperationException) {
-            val message = KotlinBundle.message("action.generate.test.support.error.cant.generate.method", e.message)
+            val message = KotlinBundle.message("action.generate.test.support.error.cant.generate.method", e.message.toString())
             HintManager.getInstance().showErrorHint(editor, message)
         }
     }

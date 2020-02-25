@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 class ChangeToUseSpreadOperatorFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
     override fun getFamilyName() = KotlinBundle.message("fix.change.to.use.spread.operator.family")
 
-    override fun getText() = KotlinBundle.message("fix.change.to.use.spread.operator.text", element?.text, "*${element?.text}")
+    override fun getText() = KotlinBundle.message("fix.change.to.use.spread.operator.text", element?.text.toString(), "*${element?.text}")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

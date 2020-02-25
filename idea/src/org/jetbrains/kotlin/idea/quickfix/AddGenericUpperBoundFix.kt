@@ -34,7 +34,7 @@ class AddGenericUpperBoundFix(
     override fun getText(): String {
         val element = this.element
         return when {
-            element != null -> KotlinBundle.message("fix.add.generic.upperbound.text", renderedUpperBound, element.name)
+            element != null -> KotlinBundle.message("fix.add.generic.upperbound.text", renderedUpperBound, element.name.toString())
             else -> null
         } ?: ""
     }

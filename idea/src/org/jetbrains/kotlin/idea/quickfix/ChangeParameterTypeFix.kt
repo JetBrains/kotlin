@@ -48,13 +48,13 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
             isPrimaryConstructorParameter -> {
                 KotlinBundle.message(
                     "fix.change.return.type.text.primary.constructor",
-                    element.name, containingDeclarationName, typePresentation
+                    element.name.toString(), containingDeclarationName.toString(), typePresentation
                 )
             }
             else -> {
                 KotlinBundle.message(
                     "fix.change.return.type.text.function",
-                    element.name, containingDeclarationName, typePresentation
+                    element.name.toString(), containingDeclarationName.toString(), typePresentation
                 )
             }
         }
