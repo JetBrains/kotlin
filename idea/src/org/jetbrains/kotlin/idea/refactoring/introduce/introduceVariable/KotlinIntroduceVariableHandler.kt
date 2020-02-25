@@ -747,7 +747,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             return candidateContainers.last().let { runWithChosenContainers(it.first, it.second) }
         }
 
-        chooseContainerElementIfNecessary(candidateContainers, editor, "Select target code block", true, { it.first }) {
+        chooseContainerElementIfNecessary(candidateContainers, editor,
+                                          KotlinRefactoringBundle.message("text.select.target.code.block"), true, { it.first }) {
             runWithChosenContainers(it.first, it.second)
         }
     }

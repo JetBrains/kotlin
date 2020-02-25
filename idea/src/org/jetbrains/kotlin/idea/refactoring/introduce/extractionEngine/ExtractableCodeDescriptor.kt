@@ -401,17 +401,17 @@ fun ExtractableCodeDescriptor.copy(
 }
 
 enum class ExtractionTarget(val targetName: String) {
-    FUNCTION("function") {
+    FUNCTION(KotlinRefactoringBundle.message("text.function")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
     },
 
-    FAKE_LAMBDALIKE_FUNCTION("lambda parameter") {
+    FAKE_LAMBDALIKE_FUNCTION(KotlinRefactoringBundle.message("text.lambda.parameter")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSimpleControlFlow(descriptor) || descriptor.controlFlow.outputValues.isEmpty()
         }
     },
 
-    PROPERTY_WITH_INITIALIZER("property with initializer") {
+    PROPERTY_WITH_INITIALIZER(KotlinRefactoringBundle.message("text.property.with.initializer")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
                     && checkSimpleControlFlow(descriptor)
@@ -421,13 +421,13 @@ enum class ExtractionTarget(val targetName: String) {
         }
     },
 
-    PROPERTY_WITH_GETTER("property with getter") {
+    PROPERTY_WITH_GETTER(KotlinRefactoringBundle.message("text.property.with.getter")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
         }
     },
 
-    LAZY_PROPERTY("lazy property") {
+    LAZY_PROPERTY(KotlinRefactoringBundle.message("text.lazy.property")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
                     && checkSimpleControlFlow(descriptor)

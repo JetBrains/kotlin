@@ -122,7 +122,12 @@ fun selectElementsWithTargetParent(
             return when (elementKinds.singleOrNull()) {
                 CodeInsightUtils.ElementKind.EXPRESSION -> showErrorHintByKey("cannot.refactor.no.expression")
                 CodeInsightUtils.ElementKind.TYPE_ELEMENT -> showErrorHintByKey("cannot.refactor.no.type")
-                else -> showErrorHint(file.project, editor, "Refactoring can't be performed on the selected code element", title)
+                else -> showErrorHint(
+                    file.project,
+                    editor,
+                    KotlinRefactoringBundle.message("text.refactoring.can.t.be.performed.on.the.selected.code.element"),
+                    title
+                )
             }
         }
 
@@ -246,7 +251,7 @@ fun <T : KtDeclaration> insertDeclaration(declaration: T, targetSibling: PsiElem
 
 internal fun validateExpressionElements(elements: List<PsiElement>): String? {
     if (elements.any { it is KtConstructor<*> || it is KtParameter || it is KtTypeAlias || it is KtPropertyAccessor }) {
-        return "Refactoring is not applicable to this code fragment"
+        return KotlinRefactoringBundle.message("text.refactoring.is.not.applicable.to.this.code.fragment")
     }
     return null
 }

@@ -212,7 +212,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         };
         parameterTablePanel.init(extractableCodeDescriptor.getReceiverParameter(), extractableCodeDescriptor.getParameters());
 
-        inputParametersPanel.setText("&Parameters");
+        inputParametersPanel.setText(KotlinRefactoringBundle.message("text.parameters"));
         inputParametersPanel.setLabelFor(parameterTablePanel.getTable());
         inputParametersPanel.add(parameterTablePanel);
     }
