@@ -3437,6 +3437,9 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun throwUninitializedPropertyAccessException (Ljava/lang/String;)V
 }
 
+public class kotlin/jvm/internal/Intrinsics$Kotlin {
+}
+
 public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun getArity ()I

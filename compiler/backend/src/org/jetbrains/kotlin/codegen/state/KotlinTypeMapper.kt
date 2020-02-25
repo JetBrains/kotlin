@@ -1313,7 +1313,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return JvmClassName.byClassId(ownerClassId).internalName
         }
 
-        private val FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(FqName("kotlin.KotlinPackage"))
+        private val FAKE_CLASS_ID_FOR_BUILTINS = ClassId(FqName("kotlin.jvm.internal"), FqName("Intrinsics.Kotlin"), false)
 
         private fun getPackageMemberContainingClassesInfo(descriptor: DescriptorWithContainerSource): ContainingClassesInfo? {
             val containingDeclaration = descriptor.containingDeclaration

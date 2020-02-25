@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -134,6 +135,13 @@ class JvmSymbols(
             addValueParameter("object", irBuiltIns.anyNType)
         }
         klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
+
+        klass.declarations.add(buildClass {
+            name = Name.identifier("Kotlin")
+        }.apply {
+            parent = klass
+            createImplicitParameterDeclarationWithWrappedDescriptor()
+        })
     }
 
     val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
@@ -153,6 +161,9 @@ class JvmSymbols(
 
     val intrinsicStringPlus: IrFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
+
+    val intrinsicsKotlinClass: IrClassSymbol =
+        (intrinsicsClass.owner.declarations.single { it is IrClass && it.name.asString() == "Kotlin" } as IrClass).symbol
 
     override val stringBuilder: IrClassSymbol = createClass(FqName("java.lang.StringBuilder")) { klass ->
         klass.addConstructor()

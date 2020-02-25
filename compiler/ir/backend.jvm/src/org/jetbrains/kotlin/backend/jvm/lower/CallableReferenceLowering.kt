@@ -370,9 +370,15 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             kClassToJavaClass(kClassReference(classType), context)
 
         internal fun IrBuilderWithScope.calculateOwner(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression {
-            // For built-in members (i.e. top level `toString`) we don't know any meaningful container, so we're generating Any.
-            // The non-IR backend generates equally meaningless "kotlin/KotlinPackage" in this case (see KT-17151).
-            val kClass = kClassReference((irContainer as? IrClass)?.defaultType ?: context.irBuiltIns.anyNType)
+            val classType =
+                if (irContainer is IrClass) irContainer.defaultType
+                else {
+                    // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
+                    // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
+                    // and construct a special KCallable object.
+                    context.ir.symbols.intrinsicsKotlinClass.defaultType
+                }
+            val kClass = kClassReference(classType)
 
             if ((irContainer as? IrClass)?.isFileClass != true && irContainer !is IrPackageFragment)
                 return kClass

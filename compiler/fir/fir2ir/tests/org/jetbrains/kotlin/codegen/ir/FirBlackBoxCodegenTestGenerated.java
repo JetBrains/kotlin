@@ -1963,6 +1963,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("builtinFunctionReferenceOwner.kt")
+        public void testBuiltinFunctionReferenceOwner() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/builtinFunctionReferenceOwner.kt");
+        }
+
         @TestMetadata("classesAreSynthetic.kt")
         public void testClassesAreSynthetic() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/classesAreSynthetic.kt");
