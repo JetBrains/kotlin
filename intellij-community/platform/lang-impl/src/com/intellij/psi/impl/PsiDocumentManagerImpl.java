@@ -1,4 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 package com.intellij.psi.impl;
 
 import com.intellij.AppTopics;
@@ -134,14 +135,10 @@ public final class PsiDocumentManagerImpl extends PsiDocumentManagerBase {
 
   @Override
   public void doPostponedOperationsAndUnblockDocument(@NotNull Document doc) {
-    if (doc instanceof DocumentWindow) {
-      doc = ((DocumentWindow)doc).getDelegate();
-    }
-    PostprocessReformattingAspect component = PostprocessReformattingAspect.getInstance(myProject);
-    FileViewProvider viewProvider = getCachedViewProvider(doc);
-    if (viewProvider != null && component != null) {
-      component.doPostponedFormatting(viewProvider);
-    }
+    if (doc instanceof DocumentWindow) doc = ((DocumentWindow)doc).getDelegate();
+    final PostprocessReformattingAspect component = myProject.getComponent(PostprocessReformattingAspect.class);
+    final FileViewProvider viewProvider = getCachedViewProvider(doc);
+    if (viewProvider != null && component != null) component.doPostponedFormatting(viewProvider);
   }
 
   @NotNull
