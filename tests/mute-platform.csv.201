@@ -170,6 +170,13 @@ org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL
 org.jetbrains.kotlin.idea.script.ScriptConfigurationHighlightingTestGenerated.Highlighting.testCustomJavaHome, No Java
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testChangeInsideNonKtsFileInvalidatesOtherFiles, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testChangeInsideSectionsInvalidatesOtherFiles, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testChangeOutsideSectionsInvalidatesOtherFiles, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testConfigurationUpdateAfterProjectClosing, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testFileAttributesUpdateAfterChangeOutsideSectionsOfOtherFile, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testLoadedConfigurationWhenExternalFileChanged, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testTwoFilesChanged, Assert: some script configuration loading tasks should be scheduled
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Function.testExternalFunctionalInterface, NJ2K in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_19604, NJ2K in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_19606, NJ2K in 201
