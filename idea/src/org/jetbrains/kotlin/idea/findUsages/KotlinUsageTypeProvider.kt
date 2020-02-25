@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.usages.UsageTarget
 import com.intellij.usages.impl.rules.UsageType
 import com.intellij.usages.impl.rules.UsageTypeProviderEx
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 
 object KotlinUsageTypeProvider : UsageTypeProviderEx {
@@ -74,35 +75,35 @@ object KotlinUsageTypeProvider : UsageTypeProviderEx {
 
 object KotlinUsageTypes {
     // types
-    val TYPE_CONSTRAINT = UsageType(KotlinFindUsagesBundle.message("find.usages.type.type.constraint"))
-    val VALUE_PARAMETER_TYPE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.value.parameter.type"))
-    val NON_LOCAL_PROPERTY_TYPE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.nonLocal.property.type"))
-    val FUNCTION_RETURN_TYPE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.function.return.type"))
-    val SUPER_TYPE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.superType"))
-    val IS = UsageType(KotlinFindUsagesBundle.message("find.usages.type.is"))
-    val CLASS_OBJECT_ACCESS = UsageType(KotlinFindUsagesBundle.message("find.usages.type.class.object"))
-    val COMPANION_OBJECT_ACCESS = UsageType(KotlinFindUsagesBundle.message("find.usages.type.companion.object"))
-    val EXTENSION_RECEIVER_TYPE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.extension.receiver.type"))
-    val SUPER_TYPE_QUALIFIER = UsageType(KotlinFindUsagesBundle.message("find.usages.type.super.type.qualifier"))
-    val TYPE_ALIAS = UsageType(KotlinFindUsagesBundle.message("type.type.alias"))
+    val TYPE_CONSTRAINT = UsageType(KotlinBundle.message("find.usages.type.type.constraint"))
+    val VALUE_PARAMETER_TYPE = UsageType(KotlinBundle.message("find.usages.type.value.parameter.type"))
+    val NON_LOCAL_PROPERTY_TYPE = UsageType(KotlinBundle.message("find.usages.type.nonLocal.property.type"))
+    val FUNCTION_RETURN_TYPE = UsageType(KotlinBundle.message("find.usages.type.function.return.type"))
+    val SUPER_TYPE = UsageType(KotlinBundle.message("find.usages.type.superType"))
+    val IS = UsageType(KotlinBundle.message("find.usages.type.is"))
+    val CLASS_OBJECT_ACCESS = UsageType(KotlinBundle.message("find.usages.type.class.object"))
+    val COMPANION_OBJECT_ACCESS = UsageType(KotlinBundle.message("find.usages.type.companion.object"))
+    val EXTENSION_RECEIVER_TYPE = UsageType(KotlinBundle.message("find.usages.type.extension.receiver.type"))
+    val SUPER_TYPE_QUALIFIER = UsageType(KotlinBundle.message("find.usages.type.super.type.qualifier"))
+    val TYPE_ALIAS = UsageType(KotlinBundle.message("find.usages.type.type.alias"))
 
     // functions
-    val FUNCTION_CALL = UsageType(KotlinFindUsagesBundle.message("find.usages.type.function.call"))
-    val IMPLICIT_GET = UsageType(KotlinFindUsagesBundle.message("find.usages.type.implicit.get"))
-    val IMPLICIT_SET = UsageType(KotlinFindUsagesBundle.message("find.usages.type.implicit.set"))
-    val IMPLICIT_INVOKE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.implicit.invoke"))
-    val IMPLICIT_ITERATION = UsageType(KotlinFindUsagesBundle.message("find.usages.type.implicit.iteration"))
-    val PROPERTY_DELEGATION = UsageType(KotlinFindUsagesBundle.message("find.usages.type.property.delegation"))
+    val FUNCTION_CALL = UsageType(KotlinBundle.message("find.usages.type.function.call"))
+    val IMPLICIT_GET = UsageType(KotlinBundle.message("find.usages.type.implicit.get"))
+    val IMPLICIT_SET = UsageType(KotlinBundle.message("find.usages.type.implicit.set"))
+    val IMPLICIT_INVOKE = UsageType(KotlinBundle.message("find.usages.type.implicit.invoke"))
+    val IMPLICIT_ITERATION = UsageType(KotlinBundle.message("find.usages.type.implicit.iteration"))
+    val PROPERTY_DELEGATION = UsageType(KotlinBundle.message("find.usages.type.property.delegation"))
 
     // values
-    val RECEIVER = UsageType(KotlinFindUsagesBundle.message("find.usages.type.receiver"))
-    val DELEGATE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.delegate"))
+    val RECEIVER = UsageType(KotlinBundle.message("find.usages.type.receiver"))
+    val DELEGATE = UsageType(KotlinBundle.message("find.usages.type.delegate"))
 
     // packages
-    val PACKAGE_DIRECTIVE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.packageDirective"))
-    val PACKAGE_MEMBER_ACCESS = UsageType(KotlinFindUsagesBundle.message("find.usages.type.packageMemberAccess"))
+    val PACKAGE_DIRECTIVE = UsageType(KotlinBundle.message("find.usages.type.packageDirective"))
+    val PACKAGE_MEMBER_ACCESS = UsageType(KotlinBundle.message("find.usages.type.packageMemberAccess"))
 
     // common usage types
-    val CALLABLE_REFERENCE = UsageType(KotlinFindUsagesBundle.message("find.usages.type.callable.reference"))
-    val NAMED_ARGUMENT = UsageType(KotlinFindUsagesBundle.message("type.named.argument"))
+    val CALLABLE_REFERENCE = UsageType(KotlinBundle.message("find.usages.type.callable.reference"))
+    val NAMED_ARGUMENT = UsageType(KotlinBundle.message("find.usages.type.named.argument"))
 }

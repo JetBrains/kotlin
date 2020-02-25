@@ -29,6 +29,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.Consumer
 import com.intellij.util.ThreeState
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
@@ -245,7 +246,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
             ReportMessages.GROUP
                 .createNotification(
                     ReportMessages.ERROR_REPORT,
-                    KotlinReporterBundle.message("text.can.t.report.exception.from.patched.plugin"),
+                    KotlinBundle.message("reporter.text.can.t.report.exception.from.patched.plugin"),
                     NotificationType.INFORMATION,
                     null
                 )
@@ -264,13 +265,13 @@ class KotlinReportSubmitter : ITNReporterCompat() {
 
                 val rc = showDialog(
                     parentComponent,
-                    KotlinReporterBundle.message(
-                        "message.text.you.re.running.kotlin.plugin.version",
+                    KotlinBundle.message(
+                        "reporter.message.text.you.re.running.kotlin.plugin.version",
                         KotlinPluginUtil.getPluginVersion(),
                         status.pluginDescriptor.version
                     ),
-                    KotlinReporterBundle.message("title.update.kotlin.plugin"),
-                    arrayOf(KotlinReporterBundle.message("button.text.update"), KotlinReporterBundle.message("button.text.ignore")),
+                    KotlinBundle.message("reporter.title.update.kotlin.plugin"),
+                    arrayOf(KotlinBundle.message("reporter.button.text.update"), KotlinBundle.message("reporter.button.text.ignore")),
                     0, Messages.getInformationIcon()
                 )
 

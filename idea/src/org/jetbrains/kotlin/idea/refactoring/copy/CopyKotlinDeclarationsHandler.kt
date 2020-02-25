@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRe
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.*
@@ -126,8 +126,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         targetFileName: String,
         targetDirectory: PsiDirectory
     ): ExistingFilePolicy {
-        val message = KotlinRefactoringBundle.message(
-            "text.file.0.already.exists.in.1",
+        val message = KotlinBundle.message("text.file.0.already.exists.in.1",
             targetFileName,
             targetDirectory.virtualFile.path
         )
@@ -138,8 +137,8 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             val answer = Messages.showOkCancelDialog(
                 message,
                 commandName,
-                KotlinRefactoringBundle.message("action.text.overwrite"),
-                KotlinRefactoringBundle.message("action.text.cancel"),
+                KotlinBundle.message("action.text.overwrite"),
+                KotlinBundle.message("action.text.cancel"),
                 Messages.getQuestionIcon()
             )
             if (answer == Messages.OK) ExistingFilePolicy.OVERWRITE else ExistingFilePolicy.SKIP
@@ -149,9 +148,9 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             val answer = Messages.showYesNoCancelDialog(
                 message,
                 commandName,
-                KotlinRefactoringBundle.message("action.text.append"),
-                KotlinRefactoringBundle.message("action.text.overwrite"),
-                KotlinRefactoringBundle.message("action.text.cancel"),
+                KotlinBundle.message("action.text.append"),
+                KotlinBundle.message("action.text.overwrite"),
+                KotlinBundle.message("action.text.cancel"),
                 Messages.getQuestionIcon()
             )
             when (answer) {

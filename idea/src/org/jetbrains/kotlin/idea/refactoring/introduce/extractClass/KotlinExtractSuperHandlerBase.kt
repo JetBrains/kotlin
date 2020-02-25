@@ -31,6 +31,7 @@ import com.intellij.refactoring.extractSuperclass.ExtractSuperClassUtil
 import com.intellij.refactoring.lang.ElementsHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractSuperDialogBase
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
@@ -90,9 +91,9 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
             containers,
             editor,
             if (containers.first() is KtFile)
-                KotlinRefactoringBundle.message("text.select.target.file")
+                KotlinBundle.message("text.select.target.file")
             else
-                KotlinRefactoringBundle.message("text.select.target.code.block.file"),
+                KotlinBundle.message("text.select.target.code.block.file"),
             true,
             { it },
             { doInvoke(klass, if (it is SeparateFileWrapper) klass.containingFile.parent!! else it) }
@@ -111,8 +112,8 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
     }
 
     internal open fun getErrorMessage(klass: KtClassOrObject): String? = when {
-        klass.isExpectDeclaration() -> KotlinRefactoringBundle.message("error.text.extraction.from.expect.class.is.not.yet.supported")
-        klass.toLightClass() == null -> KotlinRefactoringBundle.message("error.text.extraction.from.non.jvm.class.is.not.yet.supported")
+        klass.isExpectDeclaration() -> KotlinBundle.message("error.text.extraction.from.expect.class.is.not.yet.supported")
+        klass.toLightClass() == null -> KotlinBundle.message("error.text.extraction.from.non.jvm.class.is.not.yet.supported")
         else -> null
     }
 

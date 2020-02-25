@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.references.findPsiDeclarations
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object KotlinIntroduceImportAliasHandler : RefactoringActionHandler {
-    val REFACTORING_NAME = KotlinRefactoringBundle.message("name.introduce.import.alias")
+    val REFACTORING_NAME = KotlinBundle.message("name.introduce.import.alias")
 
     @get:TestOnly
     var suggestedImportAliasNames: Collection<String> = emptyList()

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.editor.fixers.startLine
-import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighterBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.*
@@ -50,7 +50,7 @@ import java.util.*
 import javax.swing.ListCellRenderer
 
 class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
-    override fun getName() = KotlinHighlighterBundle.message("name.kotlin.line.markers")
+    override fun getName() = KotlinBundle.message("highlighter.name.kotlin.line.markers")
 
     override fun getOptions(): Array<Option> = KotlinLineMarkerOptions.options
 
@@ -279,8 +279,8 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     )
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
-        if (declaration is KtNamedFunction) KotlinHighlighterBundle.message("action.text.go.to.super.method") else KotlinHighlighterBundle.message(
-            "action.text.go.to.super.property"
+        if (declaration is KtNamedFunction) KotlinBundle.message("highlighter.action.text.go.to.super.method") else KotlinBundle.message(
+            "highlighter.action.text.go.to.super.property"
         ),
         IdeActions.ACTION_GOTO_SUPER
     )
@@ -311,8 +311,8 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
     )
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
-        if (element.isInterface()) KotlinHighlighterBundle.message("action.text.go.to.implementations") else KotlinHighlighterBundle.message(
-            "action.text.go.to.subclasses"
+        if (element.isInterface()) KotlinBundle.message("highlighter.action.text.go.to.implementations") else KotlinBundle.message(
+            "highlighter.action.text.go.to.subclasses"
         ),
         IdeActions.ACTION_GOTO_IMPLEMENTATION
     )
@@ -351,7 +351,7 @@ private fun collectOverriddenPropertyAccessors(
         )
         NavigateAction.setNavigateAction(
             lineMarkerInfo,
-            KotlinHighlighterBundle.message("action.text.go.to.overridden.properties"),
+            KotlinBundle.message("highlighter.action.text.go.to.overridden.properties"),
             IdeActions.ACTION_GOTO_IMPLEMENTATION
         )
         result.add(lineMarkerInfo)
@@ -483,7 +483,7 @@ private fun collectActualMarkers(
     )
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
-        KotlinHighlighterBundle.message("action.text.go.to.actual.declarations"),
+        KotlinBundle.message("highlighter.action.text.go.to.actual.declarations"),
         IdeActions.ACTION_GOTO_IMPLEMENTATION
     )
     result.add(lineMarkerInfo)
@@ -514,7 +514,7 @@ private fun collectExpectedMarkers(
     )
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
-        KotlinHighlighterBundle.message("action.text.go.to.expected.declaration"),
+        KotlinBundle.message("highlighter.action.text.go.to.expected.declaration"),
         null
     )
     result.add(lineMarkerInfo)
@@ -553,7 +553,7 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
         )
         NavigateAction.setNavigateAction(
             lineMarkerInfo,
-            KotlinHighlighterBundle.message("action.text.go.to.overridden.methods"),
+            KotlinBundle.message("highlighter.action.text.go.to.overridden.methods"),
             IdeActions.ACTION_GOTO_IMPLEMENTATION
         )
         result.add(lineMarkerInfo)

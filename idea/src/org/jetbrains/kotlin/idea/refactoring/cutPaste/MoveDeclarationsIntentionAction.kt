@@ -17,7 +17,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.BaseRefactoringIntentionAction
 import org.jetbrains.kotlin.idea.core.util.range
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 class MoveDeclarationsIntentionAction(
     private val processor: MoveDeclarationsProcessor,
@@ -27,12 +27,11 @@ class MoveDeclarationsIntentionAction(
 
     override fun startInWriteAction() = false
 
-    override fun getText() = KotlinRefactoringBundle.message(
-        "text.update.usages.to.reflect.declaration.0.move",
+    override fun getText() = KotlinBundle.message("text.update.usages.to.reflect.declaration.0.move",
         processor.pastedDeclarations.size
     )
 
-    override fun getFamilyName() = KotlinRefactoringBundle.message("family.name.update.usages.on.declarations.cut.paste")
+    override fun getFamilyName() = KotlinBundle.message("family.name.update.usages.on.declarations.cut.paste")
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         return PsiModificationTracker.SERVICE.getInstance(processor.project).modificationCount == modificationCount

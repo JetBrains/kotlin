@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.hierarchy.calls.CalleeReferenceProcessor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyNodeDescriptor
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -49,9 +49,9 @@ class KotlinCallerChooser(
 
     override fun findDeepestSuperMethods(method: PsiElement) = method.toLightMethods().singleOrNull()?.findDeepestSuperMethods()
 
-    override fun getEmptyCallerText() = KotlinRefactoringBundle.message("text.caller.text.with.highlighted.callee.call.would.be.shown.here")
+    override fun getEmptyCallerText() = KotlinBundle.message("text.caller.text.with.highlighted.callee.call.would.be.shown.here")
 
-    override fun getEmptyCalleeText() = KotlinRefactoringBundle.message("text.callee.text.would.be.shown.here")
+    override fun getEmptyCalleeText() = KotlinBundle.message("text.callee.text.would.be.shown.here")
 }
 
 class KotlinMethodNode(
@@ -75,7 +75,7 @@ class KotlinMethodNode(
 
         val renderedFunction = KotlinCallHierarchyNodeDescriptor.renderNamedFunction(descriptor)
         val renderedFunctionWithContainer = containerName?.let {
-            "${if (it.isSpecial) KotlinRefactoringBundle.message("text.anonymous") else it.asString()}.$renderedFunction"
+            "${if (it.isSpecial) KotlinBundle.message("text.anonymous") else it.asString()}.$renderedFunction"
         } ?: renderedFunction
 
         val attributes = if (isEnabled)

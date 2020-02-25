@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -78,8 +78,8 @@ internal fun chooseApplicableComponentFunctions(
     if (editor == null) return callback(emptyList())
 
     val list = JBList<String>(
-        KotlinRefactoringBundle.message("text.create.single.variable"),
-        KotlinRefactoringBundle.message("text.create.destructuring.declaration")
+        KotlinBundle.message("text.create.single.variable"),
+        KotlinBundle.message("text.create.destructuring.declaration")
     )
     JBPopupFactory.getInstance()
         .createListPopupBuilder(list)

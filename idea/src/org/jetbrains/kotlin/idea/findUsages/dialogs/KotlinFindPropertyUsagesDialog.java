@@ -28,7 +28,6 @@ import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -128,7 +127,7 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
         if (isActual) {
             expectedUsages = addCheckboxToPanel(
-                    KotlinFindUsagesBundle.message("checkbox.name.expected.properties"),
+                    KotlinBundle.message("find.usages.checkbox.name.expected.properties"),
                     options.getSearchExpected(),
                     optionsPanel,
                     false
@@ -137,9 +136,9 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
 
         if (isDataClassConstructorProperty(property)) {
             JCheckBox dataClassComponentCheckBox =
-                    new JCheckBox(KotlinFindUsagesBundle.message("checkbox.text.fast.data.class.component.search"));
-            dataClassComponentCheckBox.setToolTipText(KotlinFindUsagesBundle.message(
-                    "tool.tip.text.disable.search.for.data.class.components.and.destruction.declarations.project.wide.setting"));
+                    new JCheckBox(KotlinBundle.message("find.usages.checkbox.text.fast.data.class.component.search"));
+            dataClassComponentCheckBox.setToolTipText(KotlinBundle.message(
+                    "find.usages.tool.tip.text.disable.search.for.data.class.components.and.destruction.declarations.project.wide.setting"));
             Project project = property.getProject();
             dataClassComponentCheckBox.setSelected(getDisableComponentAndDestructionSearch(project));
             optionsPanel.add(dataClassComponentCheckBox);

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighterBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -53,8 +53,8 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
         .groupBy { it.getPlatformName() }
         .filter { (platform, _) -> platform != null }
         .entries
-        .joinToString(prefix = KotlinHighlighterBundle.message("prefix.text.has.actuals.in") + " ") { (platform, modules) ->
-            val modulesSuffix = if (modules.size <= 1) "" else KotlinHighlighterBundle.message("text.modules", modules.size)
+        .joinToString(prefix = KotlinBundle.message("highlighter.prefix.text.has.actuals.in") + " ") { (platform, modules) ->
+            val modulesSuffix = if (modules.size <= 1) "" else KotlinBundle.message("highlighter.text.modules", modules.size)
             if (platform == null) {
                 throw AssertionError("Platform should not be null")
             }
@@ -69,9 +69,9 @@ class ActualExpectedPsiElementCellRenderer : DefaultPsiElementCellRenderer() {
     override fun getContainerText(element: PsiElement?, name: String?) = ""
 }
 
-fun KtDeclaration.navigateToActualTitle() = KotlinHighlighterBundle.message("title.choose.actual.for", name.toString())
+fun KtDeclaration.navigateToActualTitle() = KotlinBundle.message("highlighter.title.choose.actual.for", name.toString())
 
-fun KtDeclaration.navigateToActualUsagesTitle() = KotlinHighlighterBundle.message("title.actuals.for", name.toString())
+fun KtDeclaration.navigateToActualUsagesTitle() = KotlinBundle.message("highlighter.title.actuals.for", name.toString())
 
 fun buildNavigateToActualDeclarationsPopup(element: PsiElement?): NavigationPopupDescriptor? {
     return element?.markerDeclaration?.let {

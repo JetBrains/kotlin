@@ -17,7 +17,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -62,7 +62,7 @@ class KotlinVariableInplaceIntroducer(
     init {
         initFormComponents {
             if (!doNotChangeVar) {
-                val varCheckBox = NonFocusableCheckBox(KotlinRefactoringBundle.message("checkbox.text.declare.with.var"))
+                val varCheckBox = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.declare.with.var"))
                 varCheckBox.isSelected = isVar
                 varCheckBox.addActionListener {
                     myProject.executeWriteCommand(commandName, commandName) {
@@ -79,7 +79,7 @@ class KotlinVariableInplaceIntroducer(
             if (expressionType != null && !noTypeInference) {
                 val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType)
                 expressionTypeCheckBox =
-                    NonFocusableCheckBox(KotlinRefactoringBundle.message("checkbox.text.specify.type.explicitly")).apply {
+                    NonFocusableCheckBox(KotlinBundle.message("checkbox.text.specify.type.explicitly")).apply {
                         isSelected = false
                         addActionListener {
                             runWriteCommandAndRestart {

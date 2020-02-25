@@ -9,6 +9,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.components.JBCheckBox
 import org.jdesktop.swingx.VerticalLayout
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.PlatformVersion
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.isDev
@@ -19,13 +20,13 @@ import javax.swing.JPanel
 
 object ExperimentalFeatures {
     val NewJ2k = ExperimentalFeature(
-        title = KotlinConfigurationBundle.message("feature.text.new.java.to.kotlin.converter"),
+        title = KotlinBundle.message("configuration.feature.text.new.java.to.kotlin.converter"),
         registryKey = "kotlin.experimental.new.j2k",
         enabledByDefault = true
     )
 
     val NewWizard = ExperimentalFeature(
-        title = KotlinConfigurationBundle.message("feature.text.new.experimental.project.wizard"),
+        title = KotlinBundle.message("configuration.feature.text.new.experimental.project.wizard"),
         registryKey = "kotlin.experimental.project.wizard",
         enabledByDefault = false,
         shouldBeShown = {

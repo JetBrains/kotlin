@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class KotlinInlineTypeAliasHandler : InlineActionHandler() {
     companion object {
-        val REFACTORING_NAME = KotlinRefactoringBundle.message("name.inline.type.alias")
+        val REFACTORING_NAME = KotlinBundle.message("name.inline.type.alias")
     }
 
     private fun showErrorHint(project: Project, editor: Editor?, message: String) {
@@ -70,7 +70,7 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
         if (usages.isEmpty()) return showErrorHint(
             project,
             editor,
-            KotlinRefactoringBundle.message("message.text.type.alias.0.is.never.used", name)
+            KotlinBundle.message("message.text.type.alias.0.is.never.used", name)
         )
 
         val usagesInOriginalFile = usages.filter { it.containingFile == file }

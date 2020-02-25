@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByUnresolvedRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterFromUsageFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.getPossibleTypeParameterContainers
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicates
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.KotlinIntroduceTypeAliasHandler
@@ -54,14 +54,14 @@ import org.jetbrains.kotlin.utils.keysToMap
 
 object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
     @JvmField
-    val REFACTORING_NAME = KotlinRefactoringBundle.message("introduce.type.parameter")
+    val REFACTORING_NAME = KotlinBundle.message("introduce.type.parameter")
 
     fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit) {
         selectElementsWithTargetParent(
             REFACTORING_NAME,
             editor,
             file,
-            KotlinRefactoringBundle.message("introduce.type.parameter.to.declaration"),
+            KotlinBundle.message("introduce.type.parameter.to.declaration"),
             listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
             { null },
             { _, parent -> getPossibleTypeParameterContainers(parent) },
@@ -75,7 +75,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
             elements.singleOrNull() as? KtTypeElement ?: return showErrorHint(
                 project,
                 editor,
-                KotlinRefactoringBundle.message("error.text.no.type.to.refactor"),
+                KotlinBundle.message("error.text.no.type.to.refactor"),
                 REFACTORING_NAME
             )
 
@@ -99,7 +99,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
             } ?: return showErrorHint(
                 project,
                 editor,
-                KotlinRefactoringBundle.message("error.text.refactoring.is.not.applicable.in.the.current.context"),
+                KotlinBundle.message("error.text.refactoring.is.not.applicable.in.the.current.context"),
                 REFACTORING_NAME
             )
 
@@ -145,7 +145,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                         restoredOwner,
                         UsageViewTypeLocation.INSTANCE
                     ) + " '${restoredOwner.name}'",
-                    KotlinRefactoringBundle.message("description.a.reference.to.extracted.type.parameter")
+                    KotlinBundle.message("description.a.reference.to.extracted.type.parameter")
                 )
 
                 restoredTypeParameter.extendsBound?.let {

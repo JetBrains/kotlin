@@ -9,17 +9,17 @@ import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.configuration.KotlinConfigurationBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
 
 internal fun showMigrationNotification(project: Project, migrationInfo: MigrationInfo) {
     val detectedChangeMessage = buildString {
-        appendBr(KotlinConfigurationBundle.message("migration.text.detected.migration"))
+        appendBr(KotlinBundle.message("configuration.migration.text.detected.migration"))
         if (migrationInfo.oldStdlibVersion != migrationInfo.newStdlibVersion) {
             appendIndentBr(
-                KotlinConfigurationBundle.message(
-                    "migration.text.standard.library",
+                KotlinBundle.message(
+                    "configuration.migration.text.standard.library",
                     migrationInfo.oldStdlibVersion,
                     migrationInfo.newStdlibVersion
                 )
@@ -28,8 +28,8 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
 
         if (migrationInfo.oldLanguageVersion != migrationInfo.newLanguageVersion) {
             appendIndentBr(
-                KotlinConfigurationBundle.message(
-                    "migration.text.language.version",
+                KotlinBundle.message(
+                    "configuration.migration.text.language.version",
                     migrationInfo.oldLanguageVersion,
                     migrationInfo.newLanguageVersion
                 )
@@ -38,8 +38,8 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
 
         if (migrationInfo.oldApiVersion != migrationInfo.newApiVersion) {
             appendIndentBr(
-                KotlinConfigurationBundle.message(
-                    "migration.text.api.version",
+                KotlinBundle.message(
+                    "configuration.migration.text.api.version",
                     migrationInfo.oldApiVersion,
                     migrationInfo.newApiVersion
                 )
@@ -49,13 +49,13 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
 
     KOTLIN_MIGRATION_NOTIFICATION_GROUP
         .createNotification(
-            KotlinConfigurationBundle.message("migration.title.kotlin.migration"),
-            "${KotlinConfigurationBundle.message("migration.text.migrations.for.kotlin.code.are.available")}<br/><br/>$detectedChangeMessage",
+            KotlinBundle.message("configuration.migration.title.kotlin.migration"),
+            "${KotlinBundle.message("configuration.migration.text.migrations.for.kotlin.code.are.available")}<br/><br/>$detectedChangeMessage",
             NotificationType.WARNING,
             null
         )
         .also { notification ->
-            notification.addAction(NotificationAction.createSimple(KotlinConfigurationBundle.message("migration.text.run.migrations")) {
+            notification.addAction(NotificationAction.createSimple(KotlinBundle.message("configuration.migration.text.run.migrations")) {
                 val projectContext = SimpleDataContext.getProjectContext(project)
                 val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
                 Notification.fire(notification, action, projectContext)

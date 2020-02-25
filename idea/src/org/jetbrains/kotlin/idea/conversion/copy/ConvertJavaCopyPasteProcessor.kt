@@ -32,6 +32,7 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
@@ -377,7 +378,7 @@ fun runPostProcessing(
                         processor.updateState(0, phase, description)
                     }
             },
-            KotlinCopyBundle.message("text.convert.java.to.kotlin"),
+            KotlinBundle.message("copy.text.convert.java.to.kotlin"),
             true,
             project
         )

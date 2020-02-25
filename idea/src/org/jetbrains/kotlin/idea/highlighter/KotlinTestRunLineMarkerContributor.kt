@@ -24,6 +24,7 @@ import com.intellij.execution.testframework.sm.runner.states.TestStateInfo
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
@@ -66,6 +67,6 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
 
         val targetPlatform = declaration.module?.platform ?: return null
         val icon = targetPlatform.idePlatformKind.tooling.getTestIcon(declaration, descriptor) ?: return null
-        return Info(icon, { KotlinHighlighterBundle.message("tool.tip.text.run.test") }, ExecutorAction.getActions())
+        return Info(icon, { KotlinBundle.message("highlighter.tool.tip.text.run.test") }, ExecutorAction.getActions())
     }
 }
