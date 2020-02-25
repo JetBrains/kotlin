@@ -1027,9 +1027,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitComponentCall(componentCall: FirComponentCall) {
-        componentCall.annotations.renderAnnotations()
-        componentCall.explicitReceiver.accept(this)
-        print(".component${componentCall.componentIndex}()")
+        visitFunctionCall(componentCall)
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall) {
