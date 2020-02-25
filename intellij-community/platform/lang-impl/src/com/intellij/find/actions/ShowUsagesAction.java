@@ -286,9 +286,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     savedGlobalSettings.loadState(usageViewSettings);
     usageViewSettings.loadState(showUsagesSettings.getState());
 
-    UsageViewManager manager = UsageViewManager.getInstance(project);
-    presentation.setDetachedMode(true);
-    UsageViewImpl usageView = (UsageViewImpl)manager.createUsageView(UsageTarget.EMPTY_ARRAY, Usage.EMPTY_ARRAY, presentation, null);
+    UsageViewImpl usageView = createUsageView(project);
     if (editor != null) {
       PsiReference reference = TargetElementUtil.findReference(editor);
       if (reference != null) {
@@ -449,6 +447,16 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       },
       project.getDisposed()
     ));
+  }
+
+  @NotNull
+  private static UsageViewImpl createUsageView(@NotNull Project project) {
+    UsageViewManager manager = UsageViewManager.getInstance(project);
+    UsageViewPresentation usageViewPresentation = new UsageViewPresentation();
+    usageViewPresentation.setDetachedMode(true);
+    return (UsageViewImpl)manager.createUsageView(
+      UsageTarget.EMPTY_ARRAY, Usage.EMPTY_ARRAY, usageViewPresentation, null
+    );
   }
 
   @NotNull
