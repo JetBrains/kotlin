@@ -17,11 +17,11 @@ import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
-import org.jetbrains.kotlin.idea.script.KotlinScriptBundle
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -70,8 +70,11 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
 
         private fun createNotification(psiFile: KtFile, defs: List<ScriptDefinition>): EditorNotificationPanel =
             EditorNotificationPanel().apply {
-                setText(KotlinScriptBundle.message("text.multiple.script.definitions.are.applicable.for.this.script", defs.first().name))
-                createComponentActionLabel(KotlinScriptBundle.message("action.text.show.all")) { label ->
+                setText(
+                    KotlinBundle.message("script.text.multiple.script.definitions.are.applicable.for.this.script", defs.first().name))
+                createComponentActionLabel(
+                    KotlinBundle.message("script.action.text.show.all")
+                ) { label ->
                     val list = JBPopupFactory.getInstance().createListPopup(
                         object : BaseListPopupStep<ScriptDefinition>(null, defs) {
                             override fun getTextFor(value: ScriptDefinition): String =
@@ -85,12 +88,12 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
                     list.showUnderneathOf(label)
                 }
 
-                createComponentActionLabel(KotlinScriptBundle.message("action.text.ignore")) {
+                createComponentActionLabel(KotlinBundle.message("script.action.text.ignore")) {
                     KotlinScriptingSettings.getInstance(psiFile.project).suppressDefinitionsCheck = true
                     EditorNotifications.getInstance(psiFile.project).updateAllNotifications()
                 }
 
-                createComponentActionLabel(KotlinScriptBundle.message("action.text.open.settings")) {
+                createComponentActionLabel(KotlinBundle.message("script.action.text.open.settings")) {
                     ShowSettingsUtilImpl.showSettingsDialog(psiFile.project, KotlinScriptingSettingsConfigurable.ID, "")
                 }
             }

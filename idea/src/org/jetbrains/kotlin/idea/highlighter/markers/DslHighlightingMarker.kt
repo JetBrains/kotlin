@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighterBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import org.jetbrains.kotlin.idea.highlighter.dsl.isDslHighlightingMarker
 import org.jetbrains.kotlin.psi.KtClass
@@ -32,7 +32,7 @@ private val navHandler = GutterIconNavigationHandler<PsiElement> { event, elemen
 }
 
 private val toolTipHandler = Function<PsiElement, String> {
-    KotlinHighlighterBundle.message("tool.tip.marker.annotation.for.dsl")
+    KotlinBundle.message("highlighter.tool.tip.marker.annotation.for.dsl")
 }
 
 fun collectHighlightingColorsMarkers(

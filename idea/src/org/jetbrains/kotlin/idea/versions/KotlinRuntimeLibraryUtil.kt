@@ -39,6 +39,7 @@ import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.isSnapshot
@@ -183,8 +184,8 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
 fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
     Messages.showErrorDialog(
         project,
-        KotlinVersionBundle.message("dialog.message.is.not.found.make.sure.plugin.is.properly.installed", jarName),
-        KotlinVersionBundle.message("title.no.runtime.found")
+        KotlinBundle.message("version.dialog.message.is.not.found.make.sure.plugin.is.properly.installed", jarName),
+        KotlinBundle.message("version.title.no.runtime.found")
     )
 }
 
@@ -293,8 +294,8 @@ val DEPRECATED_LIBRARIES_INFORMATION = listOf(
         oldGroupId = "org.jetbrains.kotlin",
         oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME,
         outdatedAfterVersion = "1.2.0-rc-39",
-        message = KotlinVersionBundle.message(
-            "message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
+        message = KotlinBundle.message(
+            "version.message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
             PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME,
             PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME
         )
@@ -304,8 +305,8 @@ val DEPRECATED_LIBRARIES_INFORMATION = listOf(
         oldGroupId = "org.jetbrains.kotlin",
         oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME,
         outdatedAfterVersion = "1.2.0-rc-39",
-        message = KotlinVersionBundle.message(
-            "message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
+        message = KotlinBundle.message(
+            "version.message.is.deprecated.since.1.2.0.and.should.be.replaced.with",
             PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME,
             PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
         )

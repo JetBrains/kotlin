@@ -30,7 +30,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -203,7 +203,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
             @Override
             public JComponent invoke() {
                 final JCheckBox exprTypeCheckbox = new NonFocusableCheckBox(
-                        KotlinRefactoringBundle.message("checkbox.text.specify.type.explicitly"));
+                        KotlinBundle.message("checkbox.text.specify.type.explicitly"));
                 exprTypeCheckbox.setSelected(false);
                 exprTypeCheckbox.addActionListener(new ActionListener() {
                     @Override
@@ -238,7 +238,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
         return new Function0<JComponent>() {
             @Override
             public JComponent invoke() {
-                final JCheckBox varCheckbox = new NonFocusableCheckBox(KotlinRefactoringBundle.message("checkbox.text.declare.with.var"));
+                final JCheckBox varCheckbox = new NonFocusableCheckBox(KotlinBundle.message("checkbox.text.declare.with.var"));
                 varCheckbox.setSelected(isVar);
                 varCheckbox.addActionListener(new ActionListener() {
                     @Override

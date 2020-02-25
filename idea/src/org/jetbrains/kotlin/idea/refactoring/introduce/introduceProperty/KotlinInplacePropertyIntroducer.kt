@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Pass
 import com.intellij.psi.PsiElement
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.PopupMenuListenerAdapter
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionTarget
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.generateDeclaration
@@ -90,7 +90,7 @@ class KotlinInplacePropertyIntroducer(
                         this
                     }
 
-                    val propertyKindLabel = JLabel(KotlinRefactoringBundle.message("label.text.introduce.as"))
+                    val propertyKindLabel = JLabel(KotlinBundle.message("label.text.introduce.as"))
                     propertyKindLabel.labelFor = propertyKindComboBox
 
                     val panel = JPanel()
@@ -127,7 +127,8 @@ class KotlinInplacePropertyIntroducer(
         if (occurrenceCount > 1) {
             addPanelControl(
                 ControlWrapper {
-                    val replaceAllCheckBox = NonFocusableCheckBox(KotlinRefactoringBundle.message("checkbox.text.replace.all.occurrences.0", occurrenceCount))
+                    val replaceAllCheckBox = NonFocusableCheckBox(
+                        KotlinBundle.message("checkbox.text.replace.all.occurrences.0", occurrenceCount))
                     replaceAllCheckBox.isSelected = replaceAll
                     replaceAllCheckBox.addActionListener { replaceAll = replaceAllCheckBox.isSelected }
                     replaceAllCheckBox

@@ -14,6 +14,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
@@ -49,7 +50,7 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
 }
 
 class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPanel() {
-    private val cbImportNestedClasses = JCheckBox(KotlinFormatterBundle.message("checkbox.text.insert.imports.for.nested.classes"))
+    private val cbImportNestedClasses = JCheckBox(KotlinBundle.message("formatter.checkbox.text.insert.imports.for.nested.classes"))
 
     private val starImportPackageEntryTable = PackageEntryTable()
     private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
@@ -59,11 +60,11 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
     private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
-        KotlinFormatterBundle.message("title.top.level.symbols"), KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT
+        KotlinBundle.message("formatter.title.top.level.symbols"), KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT
     )
 
     private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
-        KotlinFormatterBundle.message("title.java.statics.and.enum.members"),
+        KotlinBundle.message("formatter.title.java.statics.and.enum.members"),
         KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
     )
 
@@ -82,7 +83,8 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             add(nameCountToUseStarImportForMembersSelector.createPanel(), constraints.apply { gridy++ })
 
             add(
-                OptionGroup(KotlinFormatterBundle.message("title.other")).apply { add(cbImportNestedClasses) }.createPanel(),
+                OptionGroup(
+                    KotlinBundle.message("formatter.title.other")).apply { add(cbImportNestedClasses) }.createPanel(),
                 constraints.apply { gridy++ })
 
             add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.apply {
@@ -158,9 +160,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
 
     private class NameCountToUseStarImportSelector(title: String, default: Int) : OptionGroup(title) {
-        private val rbUseSingleImports = JRadioButton(KotlinFormatterBundle.message("button.text.use.single.name.import"))
-        private val rbUseStarImports = JRadioButton(KotlinFormatterBundle.message("button.text.use.import.with"))
-        private val rbUseStarImportsIfAtLeast = JRadioButton(KotlinFormatterBundle.message("button.text.use.import.with.when.at.least"))
+        private val rbUseSingleImports = JRadioButton(KotlinBundle.message("formatter.button.text.use.single.name.import"))
+        private val rbUseStarImports = JRadioButton(KotlinBundle.message("formatter.button.text.use.import.with"))
+        private val rbUseStarImportsIfAtLeast = JRadioButton(KotlinBundle.message("formatter.button.text.use.import.with.when.at.least"))
         private val starImportLimitModel = SpinnerNumberModel(default, 2, 100, 1)
         private val starImportLimitField = JSpinner(starImportLimitModel)
 
@@ -179,7 +181,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                 this.add(rbUseStarImportsIfAtLeast, constraints)
                 this.add(starImportLimitField, constraints)
                 this.add(
-                    JLabel(KotlinFormatterBundle.message("text.names.used")),
+                    JLabel(KotlinBundle.message("formatter.text.names.used")),
                     constraints.apply { fill = GridBagConstraints.HORIZONTAL; weightx = 1.0 })
             }, true)
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui
 import com.intellij.ui.components.JBComboBoxLabel
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent
 import com.intellij.util.ui.AbstractTableCellEditor
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Parameter
 import org.jetbrains.kotlin.idea.refactoring.introduce.ui.AbstractParameterTablePanel
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -29,7 +29,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
         var type = originalParameter.parameterType
 
         init {
-            name = if (isReceiver) KotlinRefactoringBundle.message("text.receiver") else originalParameter.name
+            name = if (isReceiver) KotlinBundle.message("text.receiver") else originalParameter.name
         }
 
         override fun toParameter() = originalParameter.copy(name, type)
@@ -39,7 +39,7 @@ open class ExtractFunctionParameterTablePanel : AbstractParameterTablePanel<Para
 
     override fun createAdditionalColumns() {
         with(table.columnModel.getColumn(PARAMETER_TYPE_COLUMN)) {
-            headerValue = KotlinRefactoringBundle.message("text.type")
+            headerValue = KotlinBundle.message("text.type")
             cellRenderer = object : DefaultTableCellRenderer() {
                 private val myLabel = JBComboBoxLabel()
 

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesBundle;
 import org.jetbrains.kotlin.idea.refactoring.RenderingUtilsKt;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
@@ -75,7 +74,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
 
         String name = classOrObject.getName();
         if (name == null || name.isEmpty()) {
-            name = KotlinFindUsagesBundle.message("class.name.anonymous");
+            name = KotlinBundle.message("find.usages.class.name.anonymous");
         }
 
         PsiClass javaClass;
@@ -166,7 +165,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         KotlinClassFindUsagesOptions options = getFindUsagesOptions();
         if (isActual) {
             expectedUsages = addCheckboxToPanel(
-                    KotlinFindUsagesBundle.message("checkbox.name.expected.classes"),
+                    KotlinBundle.message("find.usages.checkbox.name.expected.classes"),
                     options.getSearchExpected(),
                     optionsPanel,
                     false

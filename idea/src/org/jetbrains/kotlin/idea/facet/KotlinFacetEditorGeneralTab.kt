@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.createArguments
 import org.jetbrains.kotlin.config.splitArgumentString
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.*
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.platform.*
@@ -83,10 +84,12 @@ class KotlinFacetEditorGeneralTab(
         private fun FormBuilder.addTargetPlatformComponents(): FormBuilder {
             return if (configuration?.settings?.isHmppEnabled == true) {
                 targetPlatformLabel.toolTipText =
-                    KotlinFacetBundle.message("label.text.the.project.is.imported.from.external.build.system.and.could.not.be.edited")
-                this.addLabeledComponent(KotlinFacetBundle.message("label.text.selected.target.platforms"), targetPlatformLabel)
+                    KotlinBundle.message("facet.label.text.the.project.is.imported.from.external.build.system.and.could.not.be.edited")
+                this.addLabeledComponent(
+                    KotlinBundle.message("facet.label.text.selected.target.platforms"), targetPlatformLabel)
             } else {
-                this.addLabeledComponent(KotlinFacetBundle.message("label.text.target.platform"), targetPlatformSelectSingleCombobox)
+                this.addLabeledComponent(
+                    KotlinBundle.message("facet.label.text.target.platform"), targetPlatformSelectSingleCombobox)
             }
         }
 
@@ -132,7 +135,7 @@ class KotlinFacetEditorGeneralTab(
                 isMultiEditor
             )
 
-            useProjectSettingsCheckBox = ThreeStateCheckBox(KotlinFacetBundle.message("checkbox.text.use.project.settings")).apply { isThirdStateEnabled = isMultiEditor }
+            useProjectSettingsCheckBox = ThreeStateCheckBox(KotlinBundle.message("facet.checkbox.text.use.project.settings")).apply { isThirdStateEnabled = isMultiEditor }
             dependsOnLabel = JLabel()
 
             targetPlatformWrappers = CommonPlatforms.allDefaultTargetPlatforms.sortedBy { unifyJvmVersion(it.oldFashionedDescription) }
@@ -152,14 +155,14 @@ class KotlinFacetEditorGeneralTab(
                                 text =
                                     (value as? TargetPlatformWrapper)?.targetPlatform?.componentPlatforms?.singleOrNull()
                                         ?.oldFashionedDescription
-                                        ?: KotlinFacetBundle.message("text.multiplatform")
+                                        ?: KotlinBundle.message("facet.text.multiplatform")
                             }
                         }
                     })
                 }
             targetPlatformSelectSingleCombobox.maximumRowCount =
                 targetPlatformsComboboxRowsCount(targetPlatformWrappers.size)
-            projectSettingsLink = HoverHyperlinkLabel(KotlinFacetBundle.message("link.text.edit.project.settings")).apply {
+            projectSettingsLink = HoverHyperlinkLabel(KotlinBundle.message("facet.link.text.edit.project.settings")).apply {
                 addHyperlinkListener {
                     ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
                     if (useProjectSettingsCheckBox.isSelected) {
@@ -224,7 +227,8 @@ class KotlinFacetEditorGeneralTab(
 
     inner class ArgumentConsistencyValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val platform = editor.getChosenPlatform() ?: return ValidationResult(KotlinFacetBundle.message("error.text.at.least.one.target.platform.should.be.selected"))
+            val platform = editor.getChosenPlatform() ?: return ValidationResult(
+                KotlinBundle.message("facet.error.text.at.least.one.target.platform.should.be.selected"))
             val primaryArguments = platform.createArguments {
                 editor.compilerConfigurable.applyTo(
                     this,
@@ -261,8 +265,8 @@ class KotlinFacetEditorGeneralTab(
                 val message = buildString {
                     if (overridingArguments.isNotEmpty()) {
                         append(
-                            KotlinFacetBundle.message(
-                                "text.following.arguments.override.facet.settings",
+                            KotlinBundle.message(
+                                "facet.text.following.arguments.override.facet.settings",
                                 overridingArguments.joinToString()
                             )
                         )
@@ -271,7 +275,8 @@ class KotlinFacetEditorGeneralTab(
                         if (isNotEmpty()) {
                             append("<br/>")
                         }
-                        append(KotlinFacetBundle.message("text.following.arguments.are.redundant", redundantArguments.joinToString()))
+                        append(
+                            KotlinBundle.message("facet.text.following.arguments.are.redundant", redundantArguments.joinToString()))
                     }
                 }
                 return ValidationResult(message)
@@ -431,7 +436,7 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
-    override fun getDisplayName() = KotlinFacetBundle.message("name.general")
+    override fun getDisplayName() = KotlinBundle.message("facet.name.general")
 
     override fun createComponent(): JComponent {
         return editor

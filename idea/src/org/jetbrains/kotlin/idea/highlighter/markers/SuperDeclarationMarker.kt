@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KtFunctionPsiElementCellRenderer
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
-import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighterBundle
 import org.jetbrains.kotlin.idea.search.usagesSearch.propertyDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
@@ -57,17 +56,17 @@ object SuperDeclarationMarkerTooltip : Function<PsiElement, String> {
         val containingStrings = overriddenDescriptors.map {
             val declaration = it.containingDeclaration
             val memberKind = if (it is PropertyAccessorDescriptor || it is PropertyDescriptor)
-                KotlinHighlighterBundle.message("tool.tip.text.property")
+                KotlinBundle.message("highlighter.tool.tip.text.property")
             else
-                KotlinHighlighterBundle.message("tool.tip.text.function")
+                KotlinBundle.message("highlighter.tool.tip.text.function")
 
             val isBaseAbstract = it.modality == Modality.ABSTRACT
-            KotlinHighlighterBundle.message(
-                "text.in",
+            KotlinBundle.message(
+                "highlighter.text.in",
                 "${if (!isAbstract && isBaseAbstract)
-                    KotlinHighlighterBundle.message("text.implements")
+                    KotlinBundle.message("highlighter.text.implements")
                 else
-                    KotlinHighlighterBundle.message("text.overrides")
+                    KotlinBundle.message("highlighter.text.overrides")
                 } $memberKind",
                 renderer.render(declaration)
             )

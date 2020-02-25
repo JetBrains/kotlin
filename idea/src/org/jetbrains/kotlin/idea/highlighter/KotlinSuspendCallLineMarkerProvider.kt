@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.accessors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
@@ -69,10 +70,10 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             result += if (element is KtForExpression) {
                 SuspendCallMarkerInfo(
                     getElementForLineMark(element.loopRange!!),
-                    KotlinHighlighterBundle.message("message.suspending.iteration")
+                    KotlinBundle.message("highlighter.message.suspending.iteration")
                 )
             } else {
-                SuspendCallMarkerInfo(getElementForLineMark(element), KotlinHighlighterBundle.message("message.suspend.function.call"))
+                SuspendCallMarkerInfo(getElementForLineMark(element), KotlinBundle.message("highlighter.message.suspend.function.call"))
             }
         }
     }

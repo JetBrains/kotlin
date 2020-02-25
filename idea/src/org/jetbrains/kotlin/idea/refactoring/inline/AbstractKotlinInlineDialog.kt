@@ -10,7 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.inline.InlineOptionsDialog
 import com.intellij.usageView.UsageViewTypeLocation
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
@@ -30,7 +30,7 @@ abstract class AbstractKotlinInlineDialog(
 
     private val kind: String = ElementDescriptionUtil.getElementDescription(callable, UsageViewTypeLocation.INSTANCE)
 
-    private val refactoringName get() = KotlinRefactoringBundle.message("text.inline.0", StringUtil.capitalizeWords(kind, true))
+    private val refactoringName get() = KotlinBundle.message("text.inline.0", StringUtil.capitalizeWords(kind, true))
 
     init {
         myInvokedOnReference = reference != null
@@ -55,21 +55,20 @@ abstract class AbstractKotlinInlineDialog(
         return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
     }
 
-    private fun getInlineText(verb: String) = KotlinRefactoringBundle.message(
-        "text.inline.all.references.and.0.the.1",
+    private fun getInlineText(verb: String) = KotlinBundle.message("text.inline.all.references.and.0.the.1",
         verb,
         (occurrencesString?.let { "($it)" } ?: "")
     )
 
-    override fun getInlineAllText() = getInlineText(KotlinRefactoringBundle.message("text.remove"))
+    override fun getInlineAllText() = getInlineText(KotlinBundle.message("text.remove"))
 
     override fun getKeepTheDeclarationText(): String? =
         // With non-writable callable refactoring does not work anyway (for both property or function)
         if (callable.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
-            getInlineText(KotlinRefactoringBundle.message("text.keep"))
+            getInlineText(KotlinBundle.message("text.keep"))
         } else {
             null
         }
 
-    override fun getInlineThisText() = KotlinRefactoringBundle.message("text.inline.this.reference.and.keep.the.0", kind)
+    override fun getInlineThisText() = KotlinBundle.message("text.inline.this.reference.and.keep.the.0", kind)
 }

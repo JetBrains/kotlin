@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -43,14 +44,14 @@ class KotlinImportOptimizer : ImportOptimizer {
 
         return object : ImportOptimizer.CollectingInfoRunnable {
             override fun getUserNotificationInfo(): String = if (remove == 0)
-                KotlinImportsBundle.message("text.import.optimizer.zero")
+                KotlinBundle.message("import.optimizer.text.zero")
             else
-                KotlinImportsBundle.message(
-                    "text.import.optimizer.non.zero",
+                KotlinBundle.message(
+                    "import.optimizer.text.non.zero",
                     remove,
-                    KotlinImportsBundle.message("text.import.optimizer.import", remove),
+                    KotlinBundle.message("import.optimizer.text.import", remove),
                     add,
-                    KotlinImportsBundle.message("text.import.optimizer.import", add)
+                    KotlinBundle.message("import.optimizer.text.import", add)
                 )
 
             override fun run() = replaceImports(ktFile, imports)
@@ -225,7 +226,7 @@ class KotlinImportOptimizer : ImportOptimizer {
     companion object {
         fun collectDescriptorsToImport(file: KtFile, inProgressBar: Boolean = false): OptimizedImportsBuilder.InputData {
             val progressIndicator = if (inProgressBar) ProgressIndicatorProvider.getInstance().progressIndicator else null
-            progressIndicator?.text = KotlinImportsBundle.message("progress.indicator.text.collect.imports.for", file.name)
+            progressIndicator?.text = KotlinBundle.message("import.optimizer.progress.indicator.text.collect.imports.for", file.name)
             progressIndicator?.isIndeterminate = false
 
             val visitor = CollectUsedDescriptorsVisitor(file, progressIndicator)
@@ -270,7 +271,7 @@ class KotlinImportOptimizer : ImportOptimizer {
         private val DO_NOTHING = object : ImportOptimizer.CollectingInfoRunnable {
             override fun run() = Unit
 
-            override fun getUserNotificationInfo() = KotlinImportsBundle.message("notification.text.unused.imports.not.found")
+            override fun getUserNotificationInfo() = KotlinBundle.message("import.optimizer.notification.text.unused.imports.not.found")
         }
     }
 }

@@ -19,7 +19,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
@@ -161,7 +161,7 @@ class KotlinInplaceParameterIntroducer(
         initFormComponents {
             addComponent(previewComponent)
 
-            val defaultValueCheckBox = NonFocusableCheckBox(KotlinRefactoringBundle.message("checkbox.text.introduce.default.value"))
+            val defaultValueCheckBox = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.introduce.default.value"))
             defaultValueCheckBox.isSelected = descriptor.withDefaultValue
             defaultValueCheckBox.addActionListener {
                 descriptor = descriptor.copy(withDefaultValue = defaultValueCheckBox.isSelected)
@@ -171,7 +171,8 @@ class KotlinInplaceParameterIntroducer(
 
             val occurrenceCount = descriptor.occurrencesToReplace.size
             if (occurrenceCount > 1) {
-                val replaceAllCheckBox = NonFocusableCheckBox(KotlinRefactoringBundle.message("checkbox.text.replace.all.occurrences.0", occurrenceCount))
+                val replaceAllCheckBox = NonFocusableCheckBox(
+                    KotlinBundle.message("checkbox.text.replace.all.occurrences.0", occurrenceCount))
                 replaceAllCheckBox.isSelected = true
                 addComponent(replaceAllCheckBox)
                 this@KotlinInplaceParameterIntroducer.replaceAllCheckBox = replaceAllCheckBox

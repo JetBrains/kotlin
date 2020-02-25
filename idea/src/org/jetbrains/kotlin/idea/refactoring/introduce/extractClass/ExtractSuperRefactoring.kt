@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
@@ -137,8 +137,7 @@ class ExtractSuperRefactoring(
                     ?.let {
                         conflicts.putValue(
                             it,
-                            KotlinRefactoringBundle.message(
-                                "text.class.0.already.exists.in.the.target.scope",
+                            KotlinBundle.message("text.class.0.already.exists.in.the.target.scope",
                                 newClassName
                             )
                         )

@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -46,7 +47,7 @@ fun notifyOutdatedBundledCompilerIfNecessary(project: Project) {
     Notifications.Bus.notify(
         Notification(
             OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID,
-            KotlinConfigurationBundle.message("title.outdated.bundled.kotlin.compiler"),
+            KotlinBundle.message("configuration.title.outdated.bundled.kotlin.compiler"),
             message,
             NotificationType.WARNING,
             NotificationListener { notification, event ->
@@ -130,10 +131,10 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
     modulesStr = modulesStr.removeSuffix("<br/>")
 
     return """
-        <p>${KotlinConfigurationBundle.message("text.the.compiler.bundled.to.kotlin.plugin", bundledCompilerVersion)}</p>
+        <p>${KotlinBundle.message("configuration.text.the.compiler.bundled.to.kotlin.plugin", bundledCompilerVersion)}</p>
         <ul>$modulesStr</ul>
-        <p>${KotlinConfigurationBundle.message("text.this.may.cause.different.set.of.errors.and.warnings.reported.in.ide.p")}</p>
-        <p><a href="update">${KotlinConfigurationBundle.message("action.text.update")}</a>  <a href="ignore">${KotlinConfigurationBundle.message("action.text.ignore")}</a></p>"""
+        <p>${KotlinBundle.message("configuration.text.this.may.cause.different.set.of.errors.and.warnings.reported.in.ide.p")}</p>
+        <p><a href="update">${KotlinBundle.message("configuration.action.text.update")}</a>  <a href="ignore">${KotlinBundle.message("configuration.action.text.ignore")}</a></p>"""
         .trimIndent().lines().joinToString(separator = "").replace("<br/>", "\n")
 }
 

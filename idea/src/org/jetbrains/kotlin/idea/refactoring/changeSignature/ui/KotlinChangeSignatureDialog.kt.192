@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.validateElement
@@ -107,7 +107,7 @@ class KotlinChangeSignatureDialog(
         val defaultValue = item.defaultValueCodeFragment.text
         val separator = StringUtil.repeatSymbol(' ', getParamNamesMaxLength() - parameterName.length + 1)
         val text = "$valOrVar$parameterName:$separator$typeText" + if (StringUtil.isNotEmpty(defaultValue)) {
-            KotlinRefactoringBundle.message("text.default.value", defaultValue)
+            KotlinBundle.message("text.default.value", defaultValue)
         } else {
             ""
         }
@@ -336,8 +336,7 @@ class KotlinChangeSignatureDialog(
         ) {
             if (Messages.showOkCancelDialog(
                     myProject,
-                    KotlinRefactoringBundle.message(
-                        "message.text.return.type.cannot.be.resolved",
+                    KotlinBundle.message("message.text.return.type.cannot.be.resolved",
                         myReturnTypeCodeFragment?.text.toString()
                     ),
                     RefactoringBundle.message("changeSignature.refactoring.name"),
@@ -351,13 +350,12 @@ class KotlinChangeSignatureDialog(
         for (item in parametersTableModel.items) {
             if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null) {
                 val paramText = if (item.parameter != parametersTableModel.receiver)
-                    KotlinRefactoringBundle.message("text.parameter", item.parameter.name)
+                    KotlinBundle.message("text.parameter", item.parameter.name)
                 else
-                    KotlinRefactoringBundle.message("text.receiver")
+                    KotlinBundle.message("text.receiver")
                 if (Messages.showOkCancelDialog(
                         myProject,
-                        KotlinRefactoringBundle.message(
-                            "message.type.for.cannot.be.resolved",
+                        KotlinBundle.message("message.type.for.cannot.be.resolved",
                             item.typeCodeFragment.text,
                             paramText
                         ),
@@ -374,23 +372,23 @@ class KotlinChangeSignatureDialog(
 
     override fun canRun() {
         if (myNamePanel.isVisible && myMethod.canChangeName() && !methodName.isIdentifier()) {
-            throw ConfigurationException(KotlinRefactoringBundle.message("function.name.is.invalid"))
+            throw ConfigurationException(KotlinBundle.message("function.name.is.invalid"))
         }
 
         if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite) {
             (myReturnTypeCodeFragment as? KtTypeCodeFragment)
-                ?.validateElement(KotlinRefactoringBundle.message("return.type.is.invalid"))
+                ?.validateElement(KotlinBundle.message("return.type.is.invalid"))
         }
 
         for (item in parametersTableModel.items) {
             val parameterName = item.parameter.name
 
             if (item.parameter != parametersTableModel.receiver && !parameterName.isIdentifier()) {
-                throw ConfigurationException(KotlinRefactoringBundle.message("parameter.name.is.invalid", parameterName))
+                throw ConfigurationException(KotlinBundle.message("parameter.name.is.invalid", parameterName))
             }
 
             (item.typeCodeFragment as? KtTypeCodeFragment)
-                ?.validateElement(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
+                ?.validateElement(KotlinBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
         }
     }
 

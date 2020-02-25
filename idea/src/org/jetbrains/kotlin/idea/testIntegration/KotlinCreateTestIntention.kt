@@ -24,6 +24,7 @@ import com.intellij.testIntegration.createTest.TestGenerators
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getPackage
@@ -108,8 +109,8 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 if (testFolders.isEmpty() && !propertiesComponent.getBoolean("create.test.in.the.same.root")) {
                     if (Messages.showOkCancelDialog(
                             project,
-                            KotlinTestIntegrationBundle.message("message.text.create.test.in.the.same.source.root"),
-                            KotlinTestIntegrationBundle.message("title.no.test.roots.found"),
+                            KotlinBundle.message("test.integration.message.text.create.test.in.the.same.source.root"),
+                            KotlinBundle.message("test.integration.title.no.test.roots.found"),
                             Messages.getQuestionIcon()
                         ) != Messages.OK
                     ) return
@@ -130,10 +131,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(
                         project,
-                        KotlinTestIntegrationBundle.message("message.text.kotlin.class", existingClass.name.toString()),
+                        KotlinBundle.message("test.integration.message.text.kotlin.class", existingClass.name.toString()),
                         CommonBundle.getErrorTitle(),
-                        KotlinTestIntegrationBundle.message("button.text.rewrite"),
-                        KotlinTestIntegrationBundle.message("button.text.cancel"),
+                        KotlinBundle.message("test.integration.button.text.rewrite"),
+                        KotlinBundle.message("test.integration.button.text.cancel"),
                         Messages.getErrorIcon()
                     )
                     if (answer == Messages.NO) return

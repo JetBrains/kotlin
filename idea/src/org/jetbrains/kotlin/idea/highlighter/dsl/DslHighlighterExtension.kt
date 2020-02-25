@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.highlighter.HighlighterExtension
-import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighterBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -45,10 +45,10 @@ class DslHighlighterExtension : HighlighterExtension() {
         fun externalKeyName(index: Int) = "KOTLIN_DSL_STYLE$index"
 
         val descriptionsToStyles = (1..numStyles).associate { index ->
-            KotlinHighlighterBundle.message("name.dsl") + styleOptionDisplayName(index) to styleById(index)
+            KotlinBundle.message("highlighter.name.dsl") + styleOptionDisplayName(index) to styleById(index)
         }
 
-        fun styleOptionDisplayName(index: Int) = KotlinHighlighterBundle.message("name.style") + index
+        fun styleOptionDisplayName(index: Int) = KotlinBundle.message("highlighter.name.style") + index
 
         fun styleIdByMarkerAnnotation(markerAnnotation: ClassDescriptor): Int? {
             val markerAnnotationFqName = markerAnnotation.fqNameSafe

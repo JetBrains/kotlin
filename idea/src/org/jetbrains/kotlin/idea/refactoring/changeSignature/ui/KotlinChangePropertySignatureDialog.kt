@@ -14,7 +14,7 @@ import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -43,7 +43,7 @@ class KotlinChangePropertySignatureDialog(
     private var receiverDefaultValueField: EditorTextField? = null
 
     init {
-        title = KotlinRefactoringBundle.message("title.change.signature")
+        title = KotlinBundle.message("title.change.signature")
         init()
     }
 
@@ -65,22 +65,22 @@ class KotlinChangePropertySignatureDialog(
             val baseDeclaration = methodDescriptor.baseDeclaration
             if ((baseDeclaration as? KtProperty)?.isLocal != true) {
                 visibilityCombo.selectedItem = methodDescriptor.visibility
-                addLabeledComponent(KotlinRefactoringBundle.message("label.text.visibility"), visibilityCombo)
+                addLabeledComponent(KotlinBundle.message("label.text.visibility"), visibilityCombo)
             }
 
-            addLabeledComponent(KotlinRefactoringBundle.message("label.text.name"), nameField)
+            addLabeledComponent(KotlinBundle.message("label.text.name"), nameField)
 
             val returnTypeCodeFragment = psiFactory.createTypeCodeFragment(
                 methodDescriptor.returnTypeInfo.render(),
                 baseDeclaration
             )
             returnTypeField = EditorTextField(documentManager.getDocument(returnTypeCodeFragment), myProject, KotlinFileType.INSTANCE)
-            addLabeledComponent(KotlinRefactoringBundle.message("label.text.type"), returnTypeField)
+            addLabeledComponent(KotlinBundle.message("label.text.type"), returnTypeField)
 
             if (baseDeclaration is KtProperty) {
                 addSeparator()
 
-                val receiverTypeCheckBox = JCheckBox(KotlinRefactoringBundle.message("checkbox.text.extension.property"))
+                val receiverTypeCheckBox = JCheckBox(KotlinBundle.message("checkbox.text.extension.property"))
                 receiverTypeCheckBox.addActionListener { updateReceiverUI() }
                 receiverTypeCheckBox.isSelected = methodDescriptor.receiver != null
                 addComponent(receiverTypeCheckBox)
@@ -92,7 +92,7 @@ class KotlinChangePropertySignatureDialog(
                 )
                 receiverTypeField =
                     EditorTextField(documentManager.getDocument(receiverTypeCodeFragment), myProject, KotlinFileType.INSTANCE)
-                receiverTypeLabel = JLabel(KotlinRefactoringBundle.message("label.text.receiver.type"))
+                receiverTypeLabel = JLabel(KotlinBundle.message("label.text.receiver.type"))
                 addLabeledComponent(receiverTypeLabel, receiverTypeField)
 
                 if (methodDescriptor.receiver == null) {
@@ -102,7 +102,7 @@ class KotlinChangePropertySignatureDialog(
                         myProject,
                         KotlinFileType.INSTANCE
                     )
-                    receiverDefaultValueLabel = JLabel(KotlinRefactoringBundle.message("label.text.default.receiver.value"))
+                    receiverDefaultValueLabel = JLabel(KotlinBundle.message("label.text.default.receiver.value"))
                     addLabeledComponent(receiverDefaultValueLabel, receiverDefaultValueField!!)
                 }
 
@@ -121,12 +121,15 @@ class KotlinChangePropertySignatureDialog(
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
 
-        psiFactory.createSimpleName(nameField.text).validateElement(KotlinRefactoringBundle.message("error.text.invalid.name"))
-        psiFactory.createType(returnTypeField.text).validateElement(KotlinRefactoringBundle.message("error.text.invalid.return.type"))
+        psiFactory.createSimpleName(nameField.text).validateElement(
+            KotlinBundle.message("error.text.invalid.name"))
+        psiFactory.createType(returnTypeField.text).validateElement(
+            KotlinBundle.message("error.text.invalid.return.type"))
         if (receiverTypeCheckBox?.isSelected == true) {
-            psiFactory.createType(receiverTypeField.text).validateElement(KotlinRefactoringBundle.message("error.text.invalid.receiver.type"))
+            psiFactory.createType(receiverTypeField.text).validateElement(
+                KotlinBundle.message("error.text.invalid.receiver.type"))
         }
-        getDefaultReceiverValue()?.validateElement(KotlinRefactoringBundle.message("error.text.invalid.default.receiver.value"))
+        getDefaultReceiverValue()?.validateElement(KotlinBundle.message("error.text.invalid.default.receiver.value"))
     }
 
     override fun doAction() {

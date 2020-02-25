@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
@@ -70,7 +70,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
 
     private fun checkTargetFileName(fileName: String) {
         if (FileTypeManager.getInstance().getFileTypeByFileName(fileName) != KotlinFileType.INSTANCE) {
-            throw ConfigurationException(KotlinRefactoringBundle.message("refactoring.move.non.kotlin.file"))
+            throw ConfigurationException(KotlinBundle.message("refactoring.move.non.kotlin.file"))
         }
     }
 
@@ -192,7 +192,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         } else {
             val targetFile = File(targetFilePath).toPsiFile(project)
             if (targetFile != null && targetFile !is KtFile) {
-                throw ConfigurationException(KotlinRefactoringBundle.message("refactoring.move.non.kotlin.file"))
+                throw ConfigurationException(KotlinBundle.message("refactoring.move.non.kotlin.file"))
             }
         }
     }

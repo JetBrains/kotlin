@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -401,17 +401,17 @@ fun ExtractableCodeDescriptor.copy(
 }
 
 enum class ExtractionTarget(val targetName: String) {
-    FUNCTION(KotlinRefactoringBundle.message("text.function")) {
+    FUNCTION(KotlinBundle.message("text.function")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
     },
 
-    FAKE_LAMBDALIKE_FUNCTION(KotlinRefactoringBundle.message("text.lambda.parameter")) {
+    FAKE_LAMBDALIKE_FUNCTION(KotlinBundle.message("text.lambda.parameter")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSimpleControlFlow(descriptor) || descriptor.controlFlow.outputValues.isEmpty()
         }
     },
 
-    PROPERTY_WITH_INITIALIZER(KotlinRefactoringBundle.message("text.property.with.initializer")) {
+    PROPERTY_WITH_INITIALIZER(KotlinBundle.message("text.property.with.initializer")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
                     && checkSimpleControlFlow(descriptor)
@@ -421,13 +421,13 @@ enum class ExtractionTarget(val targetName: String) {
         }
     },
 
-    PROPERTY_WITH_GETTER(KotlinRefactoringBundle.message("text.property.with.getter")) {
+    PROPERTY_WITH_GETTER(KotlinBundle.message("text.property.with.getter")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
         }
     },
 
-    LAZY_PROPERTY(KotlinRefactoringBundle.message("text.lazy.property")) {
+    LAZY_PROPERTY(KotlinBundle.message("text.lazy.property")) {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
                     && checkSimpleControlFlow(descriptor)
@@ -528,7 +528,7 @@ class AnalysisResult(
         }
 
         fun renderMessage(): String {
-            val message = KotlinRefactoringBundle.message(
+            val message = KotlinBundle.message(
                 when (this) {
                     NO_EXPRESSION -> "cannot.refactor.no.expression"
                     NO_CONTAINER -> "cannot.refactor.no.container"

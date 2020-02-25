@@ -15,6 +15,7 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JLabel
@@ -27,7 +28,7 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
     override fun getFileType() = throw UnsupportedOperationException()
     override fun getPreviewText(): String? = null
 
-    override fun getTabTitle(): String = KotlinFormatterBundle.message("title.load.save")
+    override fun getTabTitle(): String = KotlinBundle.message("formatter.title.load.save")
 
     private data class SaveItem(val label: String, val id: String?)
 
@@ -63,7 +64,7 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
                             }
                         })
 
-                        add(JLabel(KotlinFormatterBundle.message("text.use.defaults.from")))
+                        add(JLabel(KotlinBundle.message("formatter.text.use.defaults.from")))
                         add(saveDefaultsComboBox)
                     })
                 }

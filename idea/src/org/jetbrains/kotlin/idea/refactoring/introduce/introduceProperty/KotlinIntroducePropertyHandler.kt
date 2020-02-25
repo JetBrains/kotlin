@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetSibling
@@ -64,7 +64,7 @@ class KotlinIntroducePropertyHandler(
                 showErrorHint(
                     project,
                     editor,
-                    KotlinRefactoringBundle.message("error.text.can.t.introduce.property.for.this.expression"),
+                    KotlinBundle.message("error.text.can.t.introduce.property.for.this.expression"),
                     INTRODUCE_PROPERTY
                 )
             }
@@ -76,7 +76,7 @@ class KotlinIntroducePropertyHandler(
             INTRODUCE_PROPERTY,
             editor,
             file,
-            KotlinRefactoringBundle.message("title.select.target.code.block"),
+            KotlinBundle.message("title.select.target.code.block"),
             listOf(CodeInsightUtils.ElementKind.EXPRESSION),
             ::validateExpressionElements,
             { _, parent ->
@@ -134,4 +134,4 @@ class KotlinIntroducePropertyHandler(
     }
 }
 
-val INTRODUCE_PROPERTY: String = KotlinRefactoringBundle.message("introduce.property")
+val INTRODUCE_PROPERTY: String = KotlinBundle.message("introduce.property")

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.project.builtIns
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -65,7 +65,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             return showErrorHint(
                 project,
                 editor,
-                KotlinRefactoringBundle.message("error.hint.text.cannot.inline.0.from.a.decompiled.file", name)
+                KotlinBundle.message("error.hint.text.cannot.inline.0.from.a.decompiled.file", name)
             )
         }
 
@@ -76,7 +76,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             return showErrorHint(
                 project,
                 editor,
-                KotlinRefactoringBundle.message("cannot.inline.property.with.accessor.s.and.backing.field")
+                KotlinBundle.message("cannot.inline.property.with.accessor.s.and.backing.field")
             )
         }
 
@@ -84,10 +84,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
 
         if (referenceExpressions.isEmpty() && conflicts.isEmpty) {
             val kind = if (declaration.isLocal)
-                KotlinRefactoringBundle.message("text.variable")
+                KotlinBundle.message("text.variable")
             else
-                KotlinRefactoringBundle.message("text.property")
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("0.1.is.never.used", kind.capitalize(), name))
+                KotlinBundle.message("text.property")
+            return showErrorHint(project, editor, KotlinBundle.message("0.1.is.never.used", kind.capitalize(), name))
         }
 
         val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
@@ -117,14 +117,13 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
         if (!conflicts.isEmpty) {
             val conflictsCopy = conflicts.copy()
             val allOrSome = if (referenceExpressions.isEmpty())
-                KotlinRefactoringBundle.message("text.all")
+                KotlinBundle.message("text.all")
             else
-                KotlinRefactoringBundle.message("text.the.following")
+                KotlinBundle.message("text.the.following")
 
             conflictsCopy.putValue(
                 null,
-                KotlinRefactoringBundle.message(
-                    "0.usages.are.not.supported.by.the.inline.refactoring.they.won.t.be.processed",
+                KotlinBundle.message("0.usages.are.not.supported.by.the.inline.refactoring.they.won.t.be.processed",
                     allOrSome
                 )
             )
@@ -146,7 +145,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
         for (ref in references) {
             val refElement = ref.element
             if (refElement !is KtElement) {
-                conflictUsages.putValue(refElement, KotlinRefactoringBundle.message("non.kotlin.usage.0", refElement.text))
+                conflictUsages.putValue(refElement, KotlinBundle.message("non.kotlin.usage.0", refElement.text))
                 continue
             }
 
@@ -154,7 +153,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
             //TODO: what if null?
             if (expression != null) {
                 if (expression.readWriteAccess(useResolveForReadWrite = true) == ReferenceAccess.READ_WRITE) {
-                    conflictUsages.putValue(expression, KotlinRefactoringBundle.message("unsupported.usage.0", expression.parent.text))
+                    conflictUsages.putValue(expression, KotlinBundle.message("unsupported.usage.0", expression.parent.text))
                 }
                 referenceExpressions.add(expression)
             }
