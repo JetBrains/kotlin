@@ -187,6 +187,7 @@ constructor(
                 sourceMapEmbedSources = null
             }
         }
+        irTarget?.useCommonJs()
     }
 
     companion object {
