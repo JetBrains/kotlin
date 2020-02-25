@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPolyVariantReference
+import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 
 class JKResolver(val project: Project, module: Module?, private val contextElement: PsiElement) {
@@ -76,9 +78,8 @@ class JKResolver(val project: Project, module: Module?, private val contextEleme
         return constructImportDirectiveWithContext(fqName)
             .getChildOfType<KtDotQualifiedExpression>()
             ?.selectorExpression
-            ?.let {
-                it.references.mapNotNull { it.resolve() }.firstOrNull()
-            }
+            ?.references
+            ?.firstNotNullResult(PsiReference::resolve)
     }
 
 
