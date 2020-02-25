@@ -22,8 +22,8 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
     ): TestModule? = null
 
 
-    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? =
-        null
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile =
+        TestFile(fileName, text)
 
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -35,10 +35,6 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
 
     override fun isKotlinSourceRootNeeded(): Boolean {
         return true
-    }
-
-    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
-        return TestJdkKind.FULL_JDK
     }
 
     override fun getConfigurationKind(): ConfigurationKind {
