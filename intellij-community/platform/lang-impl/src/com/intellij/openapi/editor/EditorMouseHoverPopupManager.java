@@ -892,6 +892,15 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
       getInstance().cancelCurrentProcessing();
     }
+
+    @Override
+    public void mousePressed(@NotNull EditorMouseEvent event) {
+      if (!Registry.is("editor.new.mouse.hover.popups")) {
+        return;
+      }
+
+      getInstance().cancelProcessingAndCloseHint();
+    }
   }
 
   private static class MyActionListener implements AnActionListener {
