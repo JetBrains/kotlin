@@ -5,27 +5,22 @@ import com.intellij.ide.projectWizard.NewProjectWizardTestCase;
 import com.intellij.ide.projectWizard.ProjectTypeStep;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
-import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
+import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -38,6 +33,7 @@ import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.RunAll;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
@@ -45,14 +41,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder;
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep;
+import org.jetbrains.plugins.gradle.util.Environment;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside;
@@ -63,6 +57,7 @@ import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.co
 public class GradleProjectWizardTest extends NewProjectWizardTestCase {
 
   protected static final String GRADLE_JDK_NAME = "Gradle JDK";
+  private final List<Sdk> removedSdks = new SmartList<>();
   private String myJdkHome;
 
   public void testGradleProject() throws Exception {
@@ -105,8 +100,6 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
                  "    id 'java'\n" +
                  "}\n\n" +
                  "version '1.0-SNAPSHOT'\n" +
-                 "\n" +
-                 "sourceCompatibility = 1.8\n" +
                  "\n" +
                  "repositories {\n" +
                  "    mavenCentral()\n" +
@@ -181,41 +174,55 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     roots.add(myJdkHome);
     roots.addAll(collectRootsInside(myJdkHome));
     roots.add(PathManager.getConfigPath());
+    String javaHome = Environment.getEnvVariable("JAVA_HOME");
+    if (javaHome != null) roots.add(javaHome);
   }
 
   @Override
   protected void setUp() throws Exception {
-    super.setUp();
     myJdkHome = IdeaTestUtil.requireRealJdkHome();
+    super.setUp();
+    removedSdks.clear();
+    WriteAction.runAndWait(() -> {
+      for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
+        ProjectJdkTable.getInstance().removeJdk(sdk);
+        if (GRADLE_JDK_NAME.equals(sdk.getName())) continue;
+        removedSdks.add(sdk);
+      }
+      VirtualFile jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(myJdkHome));
+      JavaSdk javaSdk = JavaSdk.getInstance();
+      SdkType javaSdkType = javaSdk == null ? SimpleJavaSdkType.getInstance() : javaSdk;
+      Sdk jdk = SdkConfigurationUtil.setupSdk(new Sdk[0], jdkHomeDir, javaSdkType, true, null, GRADLE_JDK_NAME);
+      assertNotNull("Cannot create JDK for " + myJdkHome, jdk);
+      ProjectJdkTable.getInstance().addJdk(jdk);
+    });
     List<String> allowedRoots = new ArrayList<>();
     collectAllowedRoots(allowedRoots);
     if (!allowedRoots.isEmpty()) {
       VfsRootAccess.allowRootAccess(getTestRootDisposable(), ArrayUtilRt.toStringArray(allowedRoots));
     }
-    WriteAction.runAndWait(() -> {
-      Sdk oldJdk = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
-      if (oldJdk != null) {
-        ProjectJdkTable.getInstance().removeJdk(oldJdk);
-      }
-      VirtualFile jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(myJdkHome));
-      Sdk jdk = SdkConfigurationUtil.setupSdk(new Sdk[0], jdkHomeDir, SimpleJavaSdkType.getInstance(), true, null, GRADLE_JDK_NAME);
-      assertNotNull("Cannot create JDK for " + myJdkHome, jdk);
-      ProjectJdkTable.getInstance().addJdk(jdk);
-    });
   }
 
   @Override
   public void tearDown() {
+    if (myJdkHome == null) {
+      //super.setUp() wasn't called
+      return;
+    }
     new RunAll(
       () -> {
-        if (myJdkHome != null) {
-          Sdk jdk = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
-          if (jdk != null) {
-            WriteAction.runAndWait(() -> ProjectJdkTable.getInstance().removeJdk(jdk));
+        WriteAction.runAndWait(() -> {
+          Arrays.stream(ProjectJdkTable.getInstance().getAllJdks()).forEach(ProjectJdkTable.getInstance()::removeJdk);
+          for (Sdk sdk : removedSdks) {
+            SdkConfigurationUtil.addSdk(sdk);
           }
-        }
+          removedSdks.clear();
+        });
       },
-      () -> super.tearDown()
+      () -> {
+        Messages.setTestDialog(TestDialog.DEFAULT);
+      },
+      super::tearDown
     ).run();
   }
 }
