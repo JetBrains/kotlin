@@ -4,15 +4,14 @@
 package com.intellij.model.psi.impl
 
 import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.model.psi.PsiSymbolDeclaration
 import com.intellij.model.psi.PsiSymbolDeclarationProvider
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.elementsAroundOffsetUp
+import com.intellij.psi.util.leavesAroundOffset
 import com.intellij.util.SmartList
 
 /**
@@ -28,10 +27,7 @@ fun PsiFile.allDeclarationsAround(offsetInFile: Int): Collection<PsiSymbolDeclar
   }
 
   // fall back
-  val document = PsiDocumentManager.getInstance(project).getDocument(this) ?: return emptyList()
-  val adjustedOffset = TargetElementUtilBase.adjustOffset(this, document, offsetInFile)
-  val leaf: PsiElement? = findElementAt(adjustedOffset)
-  if (leaf != null) {
+  for ((leaf, _) in leavesAroundOffset(offsetInFile)) {
     val namedElement: PsiElement? = TargetElementUtil.getNamedElement(leaf)
     if (namedElement != null) {
       return listOf(PsiElement2Declaration.createFromPsi(namedElement, leaf))
