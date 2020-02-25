@@ -277,7 +277,7 @@ abstract class KotlinCommonBlock(
 
             if (parentType === VALUE_PARAMETER_LIST || parentType === VALUE_ARGUMENT_LIST) {
                 val prev = getPrevWithoutWhitespace(child)
-                if (childType === RPAR && (prev == null || prev.elementType !== TokenType.ERROR_ELEMENT)) {
+                if (childType === RPAR && (prev == null || prev.elementType !== COMMA || !hasDoubleLineBreakBefore(child))) {
                     return Indent.getNoneIndent()
                 }
 
