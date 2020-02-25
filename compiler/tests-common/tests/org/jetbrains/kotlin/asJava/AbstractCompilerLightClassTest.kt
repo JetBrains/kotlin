@@ -36,7 +36,7 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
     override fun isKotlinSourceRootNeeded(): Boolean = true
 
     override fun doMultiFileTest(file: File, files: List<TestFile>) {
-        val environment = createEnvironment(file)
+        val environment = createEnvironment(file, files)
         val expectedFile = KotlinTestUtils.replaceExtension(file, "java")
         val allowFrontendExceptions = InTextDirectivesUtils.isDirectiveDefined(file.readText(), "// ALLOW_FRONTEND_EXCEPTION")
 

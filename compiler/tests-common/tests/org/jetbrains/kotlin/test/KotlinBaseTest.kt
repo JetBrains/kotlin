@@ -46,6 +46,15 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         throw UnsupportedOperationException("Multi-file test cases are not supported in this test")
     }
 
+    protected open fun getTestJdkKind(files: List<F>): TestJdkKind {
+        for (file in files) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
+                return TestJdkKind.FULL_JDK
+            }
+        }
+        return TestJdkKind.MOCK_JDK
+    }
+
     open class TestFile(@JvmField val name: String, @JvmField val content: String) : Comparable<TestFile> {
         override operator fun compareTo(other: TestFile): Int {
             return name.compareTo(other.name)

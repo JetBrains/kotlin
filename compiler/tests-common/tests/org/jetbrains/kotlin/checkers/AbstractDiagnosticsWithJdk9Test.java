@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
-import java.io.File;
+import java.util.List;
 
 public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnosticsTest {
     @NotNull
@@ -31,7 +31,7 @@ public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnostic
 
     @NotNull
     @Override
-    protected TestJdkKind getTestJdkKind(@NotNull File file) {
+    protected TestJdkKind getTestJdkKind(@NotNull List<TestFile> testFiles) {
         return TestJdkKind.FULL_JDK_9;
     }
 }

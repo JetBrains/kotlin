@@ -97,16 +97,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), TestJdkKind.MOCK_JDK, javaSourceRoots);
     }
 
-    @NotNull
-    protected static TestJdkKind getJdkKind(@NotNull List<TestFile> files) {
-        for (TestFile file : files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
-                return TestJdkKind.FULL_JDK;
-            }
-        }
-        return TestJdkKind.MOCK_JDK;
-    }
-
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
@@ -699,7 +689,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         }
 
         CompilerConfiguration configuration = createConfiguration(
-                configurationKind, getJdkKind(files),
+                configurationKind, getTestJdkKind(files),
                 classpath,
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files

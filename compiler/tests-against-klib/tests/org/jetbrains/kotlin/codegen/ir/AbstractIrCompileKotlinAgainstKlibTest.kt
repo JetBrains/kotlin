@@ -16,11 +16,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.nio.file.Paths
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTest() {
     lateinit var klibName: String
@@ -35,7 +33,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KotlinTestUtils.getAnnotationsJar())
         val configuration = createConfiguration(
-            configurationKind, CodegenTestCase.getJdkKind(files),
+            configurationKind, getTestJdkKind(files),
             classpath,
             listOf(outputDir),
             files

@@ -48,7 +48,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     }
 
     private fun setupEnvironment(files: List<TestFile>) {
-        val jdkKind = getJdkKind(files)
+        val jdkKind = getTestJdkKind(files)
 
         val javacOptions = ArrayList<String>(0)
         var addRuntime = false

@@ -63,10 +63,13 @@ public abstract class KotlinMultiFileTestWithJava<M extends KotlinBaseTest.TestM
     }
 
     @NotNull
-    protected KotlinCoreEnvironment createEnvironment(@NotNull File file) {
+    protected KotlinCoreEnvironment createEnvironment(
+            @NotNull File file,
+            @NotNull List<TestFile> files
+    ) {
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
                 getConfigurationKind(),
-                getTestJdkKind(file),
+                getTestJdkKind(files),
                 getClasspath(file),
                 isJavaSourceRootNeeded() ? Collections.singletonList(javaFilesDir) : Collections.emptyList()
         );
@@ -104,13 +107,6 @@ public abstract class KotlinMultiFileTestWithJava<M extends KotlinBaseTest.TestM
     @NotNull
     protected ConfigurationKind getConfigurationKind() {
         return ConfigurationKind.JDK_ONLY;
-    }
-
-    @NotNull
-    protected TestJdkKind getTestJdkKind(@NotNull File file) {
-        return InTextDirectivesUtils.isDirectiveDefined(FilesKt.readText(file, Charsets.UTF_8), "FULL_JDK")
-               ? TestJdkKind.FULL_JDK
-               : TestJdkKind.MOCK_JDK;
     }
 
     private List<File> getClasspath(File file) {

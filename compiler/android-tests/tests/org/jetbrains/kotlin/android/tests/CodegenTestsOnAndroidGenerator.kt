@@ -219,7 +219,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (hasBoxMethod(fullFileText)) {
                     val testFiles = createTestFiles(file, fullFileText)
                     val kind = extractConfigurationKind(testFiles)
-                    val jdkKind = getJdkKind(testFiles)
+                    val jdkKind = getTestJdkKind(testFiles)
                     val keyConfiguration = CompilerConfiguration()
                     updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
 

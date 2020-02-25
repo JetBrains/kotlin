@@ -27,7 +27,7 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
 
 
     override fun doMultiFileTest(file: File, files: List<TestFile>) {
-        val environment = createEnvironment(file)
+        val environment = createEnvironment(file, files)
         doVisualizerTest(file, environment)
     }
 
@@ -37,7 +37,7 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
         return true
     }
 
-    override fun getTestJdkKind(file: File): TestJdkKind {
+    override fun getTestJdkKind(testFiles: MutableList<TestFile>): TestJdkKind {
         return TestJdkKind.FULL_JDK
     }
 
