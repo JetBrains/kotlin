@@ -9,23 +9,18 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
-import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
+import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -46,8 +41,6 @@ constructor(
 
     val disambiguationClassifierInPlatform: String?
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
-
-    var producingType: KotlinJsProducingType? = null
 
     override val binaries: KotlinJsBinaryContainer
         get() = compilations.withType(KotlinJsIrCompilation::class.java)
@@ -129,11 +122,8 @@ constructor(
         compilations.all {
             it.compileKotlinTask.configureCommonJsOptions()
 
-            listOf(
-                it.productionLinkTask,
-                it.developmentLinkTask
-            ).forEach {
-                it.configure { linkTask ->
+            binaries.forEach {
+                it.linkTask.configure { linkTask ->
                     linkTask.configureCommonJsOptions()
                 }
             }
