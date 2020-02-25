@@ -12,7 +12,7 @@ public class test/A {
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public final method size(): int
+    public bridge final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }

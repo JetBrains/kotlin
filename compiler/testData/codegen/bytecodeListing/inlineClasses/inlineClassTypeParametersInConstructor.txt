@@ -23,7 +23,7 @@ public class TestBasic {
 @kotlin.Metadata
 public final enum class TestEnum {
     private synthetic final static field $VALUES: TestEnum[]
-    public final static field ANSWER: TestEnum
+    public final enum static field ANSWER: TestEnum
     private final field z: int
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: int): void

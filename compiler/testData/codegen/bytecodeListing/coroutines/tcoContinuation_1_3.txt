@@ -329,7 +329,7 @@ public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     inner class helpers/CoroutineUtilKt$handleExceptionContinuation$1
     method <init>(p0: kotlin.jvm.functions.Function1): void
-    public synthetic method getContext(): kotlin.coroutines.CoroutineContext
+    public synthetic bridge method getContext(): kotlin.coroutines.CoroutineContext
     public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.EmptyCoroutineContext
     public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
@@ -340,7 +340,7 @@ public final class helpers/CoroutineUtilKt$handleResultContinuation$1 {
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     inner class helpers/CoroutineUtilKt$handleResultContinuation$1
     method <init>(p0: kotlin.jvm.functions.Function1): void
-    public synthetic method getContext(): kotlin.coroutines.CoroutineContext
+    public synthetic bridge method getContext(): kotlin.coroutines.CoroutineContext
     public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.EmptyCoroutineContext
     public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }
