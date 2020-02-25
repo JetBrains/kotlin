@@ -64,9 +64,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
                 "isSearchReferences = $isSearchReferences\n" +
                 "isSearchInComments = $isSearchInComments\n" +
                 "isSearchInNonJavaFiles = $isSearchInNonJavaFiles\n" +
-                "isDeleteEmptyFiles = $isDeleteEmptyFiles\n" +
-                "isUpdatePackageDirective = $isUpdatePackageDirective\n" +
-                "isFullFileMove = $isFullFileMove"
+                "isDeleteEmptyFiles = $isDeleteEmptyFiles\n"
     }
 
     private fun KotlinAwareMoveFilesOrDirectoriesModel.testDataString(): String {
@@ -153,10 +151,6 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
         targetDirectory: PsiDirectory?,
         targetFile: KtFile?,
         moveToPackage: Boolean,
-        searchInComments: Boolean,
-        searchForTextOccurrences: Boolean,
-        deleteEmptySourceFiles: Boolean,
-        moveMppDeclarations: Boolean,
         moveCallback: MoveCallback?
     ) {
         val selectedElementsToMove = mutableSetOf<KtNamedDeclaration>()
@@ -180,8 +174,6 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
             isSearchInComments = randomBoolean(),
             isSearchInNonJavaFiles = randomBoolean(),
             isDeleteEmptyFiles = randomBoolean(),
-            isUpdatePackageDirective = randomBoolean(),
-            isFullFileMove = randomBoolean(),
             applyMPPDeclarations = true,
             moveCallback = null
         )

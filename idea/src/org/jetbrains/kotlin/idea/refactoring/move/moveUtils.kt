@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.ide.util.DirectoryUtil
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
@@ -58,7 +61,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.lang.System.currentTimeMillis
 import java.util.*
-import javax.swing.JCheckBox
 
 sealed class ContainerInfo {
     abstract val fqName: FqName?
@@ -708,4 +710,27 @@ internal fun logFusForMoveRefactoring(
             isSucceeded = succeeded,
         )
     }
+}
+
+internal fun <T> List<KtNamedDeclaration>.mapWithReadActionInProcess(
+    project: Project,
+    title: String,
+    body: (KtNamedDeclaration) -> T
+): List<T> = let { declarations ->
+    val result = mutableListOf<T>()
+    val task: Task.Modal = object : Task.Modal(project, title, false) {
+        override fun run(indicator: ProgressIndicator) {
+            val count = 0
+            val fraction: Double = 1.0 / declarations.size
+            indicator.fraction = 0.0
+            ApplicationManager.getApplication().runReadAction(Runnable {
+                for (declaration in declarations) {
+                    result.add(body(declaration))
+                    indicator.fraction = fraction * count
+                }
+            })
+        }
+    }
+    ProgressManager.getInstance().run(task)
+    return result
 }

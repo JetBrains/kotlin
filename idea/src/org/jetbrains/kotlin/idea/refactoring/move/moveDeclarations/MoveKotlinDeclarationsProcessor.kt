@@ -363,7 +363,7 @@ class MoveKotlinDeclarationsProcessor(
                     }
                 }
 
-                if (descriptor.deleteSourceFiles) {
+                if (descriptor.deleteSourceFiles && sourceFile.declarations.isEmpty()) {
                     sourceFile.delete()
                 }
             }

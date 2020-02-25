@@ -129,9 +129,11 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
 
         if (targetContainer is KtClassOrObject) {
             val targetClass = targetContainer as KtClassOrObject?
-            for (member in targetClass!!.declarations) {
-                if (member is KtClassOrObject && className == member.getName()) {
-                    throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+            if (targetClass != null) {
+                for (member in targetClass.declarations) {
+                    if (member is KtClassOrObject && className == member.getName()) {
+                        throw ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.name))
+                    }
                 }
             }
         }

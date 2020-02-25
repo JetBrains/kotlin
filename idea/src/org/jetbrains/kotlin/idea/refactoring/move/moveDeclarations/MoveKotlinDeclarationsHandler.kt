@@ -68,10 +68,6 @@ private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerAction
         targetDirectory: PsiDirectory?,
         targetFile: KtFile?,
         moveToPackage: Boolean,
-        searchInComments: Boolean,
-        searchForTextOccurrences: Boolean,
-        deleteEmptySourceFiles: Boolean,
-        moveMppDeclarations: Boolean,
         moveCallback: MoveCallback?
     ) = MoveKotlinTopLevelDeclarationsDialog(
         project,
@@ -80,10 +76,6 @@ private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerAction
         targetDirectory,
         targetFile,
         moveToPackage,
-        searchInComments,
-        searchForTextOccurrences,
-        deleteEmptySourceFiles,
-        moveMppDeclarations,
         moveCallback
     ).show()
 
@@ -180,6 +172,15 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
             }
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
 
+            if (!ApplicationManager.getApplication().isUnitTestMode && elementsToSearch.any { it.isExpectDeclaration() || it.isEffectivelyActual() }
+            ) {
+                val message = RefactoringBundle.getCannotRefactorMessage(
+                    "This refactoring will move selected declaration without it's expect/actual counterparts that may lead to compilation errors.\n\"Do you wish to proceed?\"")
+                val title = RefactoringBundle.getCannotRefactorMessage("MPP declarations does not supported by this refactoring.")
+                val proceedWithIncompleteRefactoring = Messages.showYesNoDialog(project, message, title, Messages.getWarningIcon())
+                if (proceedWithIncompleteRefactoring != Messages.YES) return true
+            }
+
             handlerActions.invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
                 project, initialTargetDirectory, ktFileElements, callback
             )
@@ -193,10 +194,6 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                 val targetDirectory = if (targetContainer != null) {
                     MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
                 } else null
-                val searchInComments = KotlinRefactoringSettings.instance.MOVE_SEARCH_IN_COMMENTS
-                val searchInText = KotlinRefactoringSettings.instance.MOVE_SEARCH_FOR_TEXT
-                val deleteEmptySourceFiles = KotlinRefactoringSettings.instance.MOVE_DELETE_EMPTY_SOURCE_FILES
-                val moveMppDeclarations = KotlinRefactoringSettings.instance.MOVE_MPP_DECLARATIONS
                 val targetFile = targetContainer as? KtFile
                 val moveToPackage = targetContainer !is KtFile
 
@@ -207,10 +204,6 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                     targetDirectory,
                     targetFile,
                     moveToPackage,
-                    searchInComments,
-                    searchInText,
-                    deleteEmptySourceFiles,
-                    moveMppDeclarations,
                     callback
                 )
             }

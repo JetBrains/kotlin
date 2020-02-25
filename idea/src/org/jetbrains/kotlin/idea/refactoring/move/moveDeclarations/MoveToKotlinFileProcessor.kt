@@ -66,22 +66,19 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
         return super.showConflicts(conflicts, usages)
     }
 
-    // Assign a temporary name to file-under-move to avoid naming conflict during the refactoring
-    private fun renameFileTemporarily() {
-        if (targetDirectory.findFile(targetFileName) == null) return
+    private fun renameFileTemporarilyIfNeeded() {
+        if (targetDirectory.findFile(sourceFile.name) == null) return
+
+        val containingDirectory = sourceFile.containingDirectory ?: return
 
         val temporaryName = UniqueNameGenerator.generateUniqueName("temp", "", ".kt") {
-            sourceFile.containingDirectory!!.findFile(it) == null
+            containingDirectory.findFile(it) == null
         }
         sourceFile.name = temporaryName
     }
 
     override fun performRefactoring(usages: Array<UsageInfo>) {
-        val needTemporaryRename = targetDirectory.findFile(sourceFile.name) != null
-        if (needTemporaryRename) {
-            renameFileTemporarily()
-        }
-
+        renameFileTemporarilyIfNeeded()
         super.performRefactoring(usages)
         sourceFile.name = targetFileName
     }
