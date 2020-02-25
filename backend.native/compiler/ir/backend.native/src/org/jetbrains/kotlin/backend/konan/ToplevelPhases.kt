@@ -215,7 +215,10 @@ internal val psiToIrPhase = konanUnitPhase(
             modulesWithoutDCE
                     .filter(ModuleDescriptor::isFromInteropLibrary)
                     .forEach(irProviderForCEnumsAndCStructs::buildAllEnumsAndStructsFrom)
-            val irProviderForInteropStubs = IrProviderForInteropStubs(irProviderForCEnumsAndCStructs::canHandleSymbol)
+            val irProviderForInteropStubs = IrProviderForInteropStubs(
+                    stubGenerator,
+                    irProviderForCEnumsAndCStructs::canHandleSymbol
+            )
             val irProviders = listOf(
                     irProviderForCEnumsAndCStructs,
                     irProviderForInteropStubs,

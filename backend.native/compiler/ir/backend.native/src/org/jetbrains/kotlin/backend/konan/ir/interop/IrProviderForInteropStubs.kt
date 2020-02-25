@@ -4,15 +4,11 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop
 
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrProvider
 
 /**
  * Generates external IR declarations for descriptors from interop libraries.
@@ -20,113 +16,16 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
  * For example, for CEnums we need to generate non-lazy IR.
  */
 class IrProviderForInteropStubs(
+        private val declarationStubGenerator: DeclarationStubGenerator,
         private val isSpecialInteropCase: (IrSymbol) -> Boolean
-) : LazyIrProvider {
-
-    override lateinit var declarationStubGenerator: DeclarationStubGenerator
-
-    override fun getDeclaration(symbol: IrSymbol): IrLazyDeclarationBase? =
+) : IrProvider {
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
             when {
-                // TODO: LazyIrProvider appears to be a bad interface.
-                //  Incoming symbol might be already bound and we need to return its current owner.
-                //  The problem is that it isn't necessary a LazyIr declaration.
-                //  So for now we relate on correct behavior of subsequent providers.
-                symbol.isBound -> null
+                symbol.isBound -> symbol.owner as IrDeclaration
                 isSpecialInteropCase(symbol) -> null
                 symbol.isPublicApi && symbol.signature.run { IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test() } ->
-                    provideIrDeclaration(symbol)
+                    declarationStubGenerator.generateMemberStub(symbol.descriptor)
                 else -> null
             }
-
-    private fun provideIrDeclaration(symbol: IrSymbol): IrLazyDeclarationBase = when (symbol) {
-        is IrSimpleFunctionSymbol -> provideIrFunction(symbol)
-        is IrPropertySymbol -> provideIrProperty(symbol)
-        is IrTypeAliasSymbol -> provideIrTypeAlias(symbol)
-        is IrClassSymbol -> provideIrClass(symbol)
-        is IrConstructorSymbol -> provideIrConstructor(symbol)
-        is IrFieldSymbol -> provideIrField(symbol)
-        else -> error("Unsupported interop declaration: symbol=$symbol, descriptor=${symbol.descriptor}")
-    }
-
-    private fun provideIrFunction(symbol: IrSimpleFunctionSymbol): IrLazyFunction {
-        val origin = computeOrigin(symbol.descriptor)
-        return declarationStubGenerator.symbolTable.declareSimpleFunction(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol.descriptor
-        ) {
-            IrLazyFunction(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it,
-                    declarationStubGenerator, declarationStubGenerator.typeTranslator
-            )
-        } as IrLazyFunction
-    }
-
-    private fun provideIrProperty(symbol: IrPropertySymbol): IrLazyProperty {
-        val origin = computeOrigin(symbol.descriptor)
-        return declarationStubGenerator.symbolTable.declareProperty(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol.descriptor
-        ) {
-            IrLazyProperty(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol,
-                    declarationStubGenerator, declarationStubGenerator.typeTranslator, null
-            )
-        } as IrLazyProperty
-    }
-
-    private fun provideIrClass(symbol: IrClassSymbol): IrLazyClass {
-        val origin = computeOrigin(symbol.descriptor)
-        return declarationStubGenerator.symbolTable.declareClass(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol.descriptor
-        ) {
-            IrLazyClass(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol,
-                    declarationStubGenerator, declarationStubGenerator.typeTranslator
-            )
-        } as IrLazyClass
-    }
-
-    private fun provideIrConstructor(symbol: IrConstructorSymbol): IrLazyConstructor {
-        val origin = computeOrigin(symbol.descriptor)
-        return declarationStubGenerator.symbolTable.declareConstructor(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol.descriptor
-        ) {
-            IrLazyConstructor(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol,
-                    declarationStubGenerator, declarationStubGenerator.typeTranslator
-            )
-        } as IrLazyConstructor
-    }
-
-    private fun provideIrTypeAlias(symbol: IrTypeAliasSymbol): IrLazyTypeAlias =
-            declarationStubGenerator.symbolTable.declareTypeAlias(symbol.descriptor) {
-                IrLazyTypeAlias(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        computeOrigin(symbol.descriptor),
-                        symbol, symbol.descriptor.name,
-                        symbol.descriptor.visibility, symbol.descriptor.isActual,
-                        declarationStubGenerator, declarationStubGenerator.typeTranslator
-                )
-            } as IrLazyTypeAlias
-
-    private fun provideIrField(symbol: IrFieldSymbol): IrLazyField {
-        val type = declarationStubGenerator.typeTranslator.translateType(symbol.descriptor.type)
-        val origin = computeOrigin(symbol.descriptor)
-        return declarationStubGenerator.symbolTable.declareField(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol.descriptor, type
-        ) {
-            IrLazyField(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-                    symbol, declarationStubGenerator, declarationStubGenerator.typeTranslator
-            )
-        } as IrLazyField
-    }
-
-    private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin {
-        val nonDefaultOrigin = when (descriptor) {
-            is CallableMemberDescriptor -> if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                IrDeclarationOrigin.FAKE_OVERRIDE else null
-            else -> null
-        }
-        return nonDefaultOrigin ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-    }
 
 }
