@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -59,11 +60,12 @@ abstract class ChangeFunctionSignatureFix(
     }
 
     protected fun getNewArgumentName(argument: ValueArgument, validator: Function1<String, Boolean>): String {
-        val argumentName = argument.getArgumentName()
+        val argumentName = argument.getArgumentName()?.asName?.asString()
+            ?: (argument.getArgumentExpression() as? KtNameReferenceExpression)?.getReferencedName()?.takeIf { it != "it" }
         val expression = argument.getArgumentExpression()
 
         return when {
-            argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName.asName.asString(), validator)
+            argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName, validator)
             expression != null -> {
                 val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                 if (expression.text == "it") {
