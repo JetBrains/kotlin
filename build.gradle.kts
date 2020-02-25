@@ -8,7 +8,7 @@ buildscript {
     extra["defaultSnapshotVersion"] = "1.4-SNAPSHOT"
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.4.0-dev-1075", cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.4.0-dev-1818", cacheRedirectorEnabled))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
