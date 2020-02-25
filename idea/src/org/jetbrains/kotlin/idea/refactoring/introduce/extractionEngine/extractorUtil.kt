@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
@@ -47,7 +48,11 @@ import java.util.*
 private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: DescriptorRenderer): CallableBuilder {
     val extractionTarget = config.generatorOptions.target
     if (!extractionTarget.isAvailable(config.descriptor)) {
-        val message = "Can't generate ${extractionTarget.targetName}: ${config.descriptor.extractionData.codeFragmentText}"
+        val message = KotlinRefactoringBundle.message(
+            "error.text.can.t.generate.0.1",
+            extractionTarget.targetName,
+            config.descriptor.extractionData.codeFragmentText
+        )
         throw BaseRefactoringProcessor.ConflictsInTestsException(listOf(message))
     }
 
@@ -126,7 +131,11 @@ fun ExtractionGeneratorConfiguration.getDeclarationPattern(
     if (!extractionTarget.isAvailable(descriptor)) {
         throw BaseRefactoringProcessor.ConflictsInTestsException(
             listOf(
-                "Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}"
+                KotlinRefactoringBundle.message(
+                    "error.text.can.t.generate.0.1",
+                    extractionTarget.targetName,
+                    descriptor.extractionData.codeFragmentText
+                )
             )
         )
     }

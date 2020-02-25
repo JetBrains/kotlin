@@ -84,10 +84,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
 
         if (referenceExpressions.isEmpty() && conflicts.isEmpty) {
             val kind = if (declaration.isLocal)
-                KotlinRefactoringBundle.message("variable")
+                KotlinRefactoringBundle.message("text.variable")
             else
-                KotlinRefactoringBundle.message("property")
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("0.1.is.never.used", kind, name))
+                KotlinRefactoringBundle.message("text.property")
+            return showErrorHint(project, editor, KotlinRefactoringBundle.message("0.1.is.never.used", kind.capitalize(), name))
         }
 
         val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
@@ -117,9 +117,9 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
         if (!conflicts.isEmpty) {
             val conflictsCopy = conflicts.copy()
             val allOrSome = if (referenceExpressions.isEmpty())
-                KotlinRefactoringBundle.message("all")
+                KotlinRefactoringBundle.message("text.all")
             else
-                KotlinRefactoringBundle.message("the.following")
+                KotlinRefactoringBundle.message("text.the.following")
 
             conflictsCopy.putValue(
                 null,

@@ -91,7 +91,7 @@ fun processDuplicates(
                 scopeDescription,
                 usageDescription
             ),
-            "Process Duplicates",
+            KotlinRefactoringBundle.message("text.process.duplicates"),
             Messages.getQuestionIcon()
         )
     }

@@ -61,7 +61,12 @@ class KotlinIntroducePropertyHandler(
                 val options = ExtractionGeneratorOptions.DEFAULT.copy(target = target, delayInitialOccurrenceReplacement = true)
                 doRefactor(ExtractionGeneratorConfiguration(descriptor, options), onFinish)
             } else {
-                showErrorHint(project, editor, "Can't introduce property for this expression", INTRODUCE_PROPERTY)
+                showErrorHint(
+                    project,
+                    editor,
+                    KotlinRefactoringBundle.message("error.text.can.t.introduce.property.for.this.expression"),
+                    INTRODUCE_PROPERTY
+                )
             }
         }
     }
@@ -71,7 +76,7 @@ class KotlinIntroducePropertyHandler(
             INTRODUCE_PROPERTY,
             editor,
             file,
-            "Select target code block",
+            KotlinRefactoringBundle.message("title.select.target.code.block"),
             listOf(CodeInsightUtils.ElementKind.EXPRESSION),
             ::validateExpressionElements,
             { _, parent ->

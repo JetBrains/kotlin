@@ -24,6 +24,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.ui.awt.RelativePoint
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -90,7 +91,7 @@ class ExtractionEngine(
                 )
                 JBPopupFactory.getInstance()!!
                     .createHtmlTextBalloonBuilder(
-                        "$message<br/><br/><a href=\"EXTRACT\">Proceed with extraction</a>",
+                        "$message<br/><br/><a href=\"EXTRACT\">${KotlinRefactoringBundle.message("text.proceed.with.extraction")}</a>",
                         MessageType.WARNING
                     ) { event ->
                         if (event?.eventType == HyperlinkEvent.EventType.ACTIVATED) {
