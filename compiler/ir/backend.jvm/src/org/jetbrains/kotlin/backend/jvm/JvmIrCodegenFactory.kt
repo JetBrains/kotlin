@@ -50,8 +50,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
 
         val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
         for (descriptor in symbolTable.wrappedTopLevelCallableDescriptors()) {
-            descriptor as WrappedDeclarationDescriptor<*>
-            val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor)
+            val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor as WrappedDeclarationDescriptor<*>)
             descriptor.owner.parent = parentClass ?: throw AssertionError("Facade class for ${descriptor.name} not found")
         }
 

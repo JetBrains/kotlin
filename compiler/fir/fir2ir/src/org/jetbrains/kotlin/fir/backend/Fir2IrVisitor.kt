@@ -847,7 +847,8 @@ class Fir2IrVisitor(
                 val ownerFunction = symbol.owner
                 if (ownerFunction.dispatchReceiverParameter != null) {
                     dispatchReceiver = qualifiedAccess.findIrDispatchReceiver()
-                } else if (ownerFunction.extensionReceiverParameter != null) {
+                }
+                if (ownerFunction.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver()
                 }
                 this

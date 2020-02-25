@@ -34,3 +34,4 @@ FILE fqName:<root> fileName:/nullabilityAssertionOnExtensionReceiver.kt
     BLOCK_BODY
       CALL 'public final fun memberExtension (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR '<this>: <root>.C declared in <root>.testMemberExt' type=<root>.C origin=null
+        $receiver: CALL 'public open fun s (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
