@@ -4,6 +4,7 @@ package com.intellij.model.psi.impl;
 import com.intellij.model.Symbol;
 import com.intellij.model.psi.PsiSymbolDeclaration;
 import com.intellij.model.psi.PsiSymbolService;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomTarget;
 import com.intellij.pom.PsiDeclaredTarget;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class PsiElement2Declaration implements PsiSymbolDeclaration {
+
+  private static final Logger LOG = Logger.getInstance(PsiElement2Declaration.class);
 
   private final PsiElement myTargetElement;
   private final PsiElement myDeclaringElement;
@@ -82,10 +85,18 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
   @NotNull
   private static TextRange getDeclarationRangeFromPom(@NotNull PomTarget target, @NotNull PsiElement declaringElement) {
     if (target instanceof PsiDeclaredTarget) {
-      assert ((PsiDeclaredTarget)target).getNavigationElement() == declaringElement;
-      TextRange nameIdentifierRange = ((PsiDeclaredTarget)target).getNameIdentifierRange();
+      PsiDeclaredTarget declaredTarget = (PsiDeclaredTarget)target;
+      TextRange nameIdentifierRange = declaredTarget.getNameIdentifierRange();
       if (nameIdentifierRange != null) {
-        return nameIdentifierRange;
+        PsiElement navigationElement = declaredTarget.getNavigationElement();
+        if (navigationElement == declaringElement) {
+          return nameIdentifierRange;
+        }
+        else {
+          LOG.assertTrue(navigationElement.getContainingFile() == declaringElement.getContainingFile());
+          int delta = declaringElement.getTextRange().getStartOffset() - navigationElement.getTextRange().getStartOffset();
+          return nameIdentifierRange.shiftLeft(delta);
+        }
       }
     }
     return rangeOf(declaringElement);
