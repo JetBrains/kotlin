@@ -25,6 +25,8 @@ interface FirQualifiedAccessWithoutCallee : FirStatement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessWithoutCallee(this, data)
 
+    fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
     fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessWithoutCallee
 
     fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessWithoutCallee

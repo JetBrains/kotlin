@@ -53,6 +53,7 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate ?: return qualifiedAccessExpression.compose()
 
         val candidateFir = calleeReference.candidateSymbol.phasedFir
+        val typeArguments = computeTypeArguments(qualifiedAccessExpression, calleeReference.candidate)
         val typeRef = (candidateFir as? FirTypedDeclaration)?.let {
             typeCalculator.tryCalculateReturnType(it)
         } ?: buildErrorTypeRef {
@@ -60,7 +61,7 @@ class FirCallCompletionResultsWriterTransformer(
             diagnostic = FirSimpleDiagnostic("Callee reference to candidate without return type: ${candidateFir.render()}")
         }
 
-        qualifiedAccessExpression.replaceTypeRefWithSubstituted(calleeReference, typeRef)
+        qualifiedAccessExpression.replaceTypeRefWithSubstituted(calleeReference, typeRef).replaceTypeArguments(typeArguments)
 
         return qualifiedAccessExpression.transformCalleeReference(
             StoreCalleeReference,
@@ -69,7 +70,9 @@ class FirCallCompletionResultsWriterTransformer(
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
             },
-        ).compose()
+        ).apply {
+            replaceTypeArguments(typeArguments)
+        }.compose()
     }
 
     private fun <D : FirExpression> D.replaceTypeRefWithSubstituted(
@@ -115,7 +118,7 @@ class FirCallCompletionResultsWriterTransformer(
                 source = calleeReference.source
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
-                inferredTypeArguments.addAll(computeTypeArguments(calleeReference.candidate))
+                inferredTypeArguments.addAll(computeTypeArgumentTypes(calleeReference.candidate))
             },
         ).compose()
     }
@@ -141,29 +144,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val subCandidate = calleeReference.candidate
         val declaration = subCandidate.symbol.phasedFir as FirCallableMemberDeclaration<*>
-        val typeArguments = computeTypeArguments(subCandidate)
-            .mapIndexed { index, type ->
-                when (val argument = functionCall.typeArguments.getOrNull(index)) {
-                    is FirTypeProjectionWithVariance -> {
-                        val typeRef = argument.typeRef as FirResolvedTypeRef
-                        buildTypeProjectionWithVariance {
-                            source = argument.source
-                            this.typeRef = typeRef.withReplacedConeType(type)
-                            variance = argument.variance
-                        }
-                    }
-                    else -> {
-                        buildTypeProjectionWithVariance {
-                            source = argument?.source
-                            typeRef = buildResolvedTypeRef {
-                                this.type = type
-                            }
-                            variance = Variance.INVARIANT
-                        }
-                    }
-                }
-            }
-
+        val typeArguments = computeTypeArguments(functionCall, subCandidate)
         val typeRef = typeCalculator.tryCalculateReturnType(declaration).let {
             if (functionCall.safe) {
                 val nullableType = it.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
@@ -262,6 +243,34 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun computeTypeArguments(
+        access: FirQualifiedAccess,
+        candidate: Candidate
+    ): List<FirTypeProjectionWithVariance> {
+        return computeTypeArgumentTypes(candidate)
+            .mapIndexed { index, type ->
+                when (val argument = access.typeArguments.getOrNull(index)) {
+                    is FirTypeProjectionWithVariance -> {
+                        val typeRef = argument.typeRef as FirResolvedTypeRef
+                        buildTypeProjectionWithVariance {
+                            source = argument.source
+                            this.typeRef = typeRef.withReplacedConeType(type)
+                            variance = argument.variance
+                        }
+                    }
+                    else -> {
+                        buildTypeProjectionWithVariance {
+                            source = argument?.source
+                            typeRef = buildResolvedTypeRef {
+                                this.type = type
+                            }
+                            variance = Variance.INVARIANT
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun computeTypeArgumentTypes(
         candidate: Candidate,
     ): List<ConeKotlinType> {
         val declaration = candidate.symbol.phasedFir as? FirCallableMemberDeclaration<*> ?: return emptyList()

@@ -229,9 +229,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C' type=kotlin.String origin=null
-                $this: CONST String type=kotlin.String value="8"
-                $receiver: CONST String type=kotlin.String value="8"
+              arg0: ERROR_EXPR 'Cannot bind 1 type arguments to <get-g2> call with 0 type parameters' type=kotlin.String
               arg1: CONST String type=kotlin.String value="8"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="8"
@@ -250,9 +248,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass' type=kotlin.String origin=null
-                $this: CONST String type=kotlin.String value="10"
-                $receiver: CONST String type=kotlin.String value="10"
+              arg0: ERROR_EXPR 'Cannot bind 1 type arguments to <get-fromClass> call with 0 type parameters' type=kotlin.String
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="10"

@@ -94,4 +94,9 @@ internal class FirVariableAssignmentImpl(
         rValue = rValue.transformSingle(transformer, data)
         return this
     }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
+    }
 }

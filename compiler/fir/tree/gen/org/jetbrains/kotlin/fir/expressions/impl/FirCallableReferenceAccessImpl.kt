@@ -88,4 +88,9 @@ internal class FirCallableReferenceAccessImpl(
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
+    }
 }

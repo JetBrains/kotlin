@@ -785,13 +785,13 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun IrExpression.applyTypeArguments(call: FirFunctionCall): IrExpression {
+    private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
             is IrCallWithIndexedArgumentsBase -> {
-                val argumentsCount = call.typeArguments.size
+                val argumentsCount = access.typeArguments.size
                 if (argumentsCount <= typeArgumentsCount) {
                     apply {
-                        for ((index, argument) in call.typeArguments.withIndex()) {
+                        for ((index, argument) in access.typeArguments.withIndex()) {
                             val argumentIrType = (argument as FirTypeProjectionWithVariance).typeRef.toIrType(
                                 session,
                                 declarationStorage
@@ -904,7 +904,8 @@ class Fir2IrVisitor(
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
-        return qualifiedAccessExpression.toIrExpression(qualifiedAccessExpression.typeRef).applyReceivers(qualifiedAccessExpression)
+        return qualifiedAccessExpression.toIrExpression(qualifiedAccessExpression.typeRef)
+            .applyTypeArguments(qualifiedAccessExpression).applyReceivers(qualifiedAccessExpression)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {

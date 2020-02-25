@@ -35,4 +35,6 @@ interface FirModifiableQualifiedAccess : FirQualifiedAccessWithoutCallee {
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
 
     override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirModifiableQualifiedAccess
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 }

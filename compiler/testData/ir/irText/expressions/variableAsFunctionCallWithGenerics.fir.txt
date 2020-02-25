@@ -15,8 +15,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGeneric1 (x: kotlin.String): T of <uninitialized parent> declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <uninitialized parent> origin=INVOKE
-          $this: CALL 'public final fun <get-gk> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
-            $receiver: GET_VAR 'x: kotlin.String declared in <root>.testGeneric1' type=kotlin.String origin=null
+          $this: ERROR_EXPR 'Cannot bind 1 type arguments to <get-gk> call with 0 type parameters' type=kotlin.Function0<kotlin.String>
   PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
     FUN name:<get-kt26531Val> visibility:public modality:FINAL <> ($receiver:T of <uninitialized parent>) returnType:kotlin.Function0<T of <uninitialized parent>>
       correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
@@ -32,5 +31,4 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): T of <uninitialized parent> declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <uninitialized parent> origin=INVOKE
-          $this: CALL 'public final fun <get-kt26531Val> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>' type=kotlin.Function0<kotlin.Int> origin=null
-            $receiver: CONST Int type=kotlin.Int value=7
+          $this: ERROR_EXPR 'Cannot bind 1 type arguments to <get-kt26531Val> call with 0 type parameters' type=kotlin.Function0<kotlin.Int>

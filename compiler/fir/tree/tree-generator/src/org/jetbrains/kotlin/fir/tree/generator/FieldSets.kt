@@ -29,7 +29,7 @@ object FieldSets {
     )
 
     val typeArguments =
-        fieldList("typeArguments", typeProjection)
+        fieldList("typeArguments", typeProjection, withReplace = true)
 
     val arguments =
         fieldList("arguments", expression)

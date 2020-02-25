@@ -59,4 +59,9 @@ internal class FirResolvedQualifierImpl(
     override fun replaceSafe(newSafe: Boolean) {
         safe = newSafe
     }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
+    }
 }

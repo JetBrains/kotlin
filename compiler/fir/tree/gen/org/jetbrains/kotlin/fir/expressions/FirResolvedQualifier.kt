@@ -33,5 +33,7 @@ abstract class FirResolvedQualifier : FirExpression() {
 
     abstract fun replaceSafe(newSafe: Boolean)
 
+    abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
     abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifier
 }

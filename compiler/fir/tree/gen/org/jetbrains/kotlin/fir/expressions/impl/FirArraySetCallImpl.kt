@@ -109,4 +109,9 @@ internal class FirArraySetCallImpl(
         indexes.transformInplace(transformer, data)
         return this
     }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
+    }
 }
