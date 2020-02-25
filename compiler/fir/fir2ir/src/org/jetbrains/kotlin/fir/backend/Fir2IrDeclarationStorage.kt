@@ -409,8 +409,11 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun <T : IrFunction> T.declareParameters(
-        function: FirFunction<*>?, containingClass: IrClass?,
-        isStatic: Boolean, parentReceiverType: FirTypeRef? = null
+        function: FirFunction<*>?,
+        containingClass: IrClass?,
+        isStatic: Boolean,
+        // Can be not-null only for property accessors
+        parentPropertyReceiverType: FirTypeRef?
     ) {
         val parent = this
         if (function is FirSimpleFunction) {
@@ -431,7 +434,7 @@ class Fir2IrDeclarationStorage(
         }
         if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            val receiverTypeRef = function?.receiverTypeRef ?: parentReceiverType
+            val receiverTypeRef = if (function !is FirPropertyAccessor) function?.receiverTypeRef else parentPropertyReceiverType
             if (receiverTypeRef != null) {
                 extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
                     declareThisReceiverParameter(
@@ -459,11 +462,11 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent?,
         isStatic: Boolean,
         shouldLeaveScope: Boolean,
-        parentReceiverType: FirTypeRef? = null
+        parentPropertyReceiverType: FirTypeRef? = null
     ): T {
         descriptor.bind(this)
         enterScope(descriptor)
-        declareParameters(function, containingClass = irParent as? IrClass, isStatic = isStatic, parentReceiverType = parentReceiverType)
+        declareParameters(function, irParent as? IrClass, isStatic, parentPropertyReceiverType)
         if (shouldLeaveScope) {
             leaveScope(descriptor)
         }
@@ -597,7 +600,7 @@ class Fir2IrDeclarationStorage(
         origin: IrDeclarationOrigin,
         startOffset: Int,
         endOffset: Int,
-        parentPropertyReceiverType: FirTypeRef? = null
+        correspondingPropertyReceiverTypeRef: FirTypeRef?
     ): IrSimpleFunction {
         val propertyDescriptor = correspondingProperty.descriptor
         val descriptor =
@@ -625,7 +628,7 @@ class Fir2IrDeclarationStorage(
                 }
             }.bindAndDeclareParameters(
                 propertyAccessor, descriptor, irParent, isStatic = irParent !is IrClass, shouldLeaveScope = true,
-                parentReceiverType = parentPropertyReceiverType
+                parentPropertyReceiverType = correspondingPropertyReceiverTypeRef
             ).apply {
                 if (irParent != null) {
                     parent = irParent
@@ -702,7 +705,7 @@ class Fir2IrDeclarationStorage(
                     ).apply {
                         descriptor.bind(this)
                         val type = property.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
-                        val receiverType = if (property.containerSource != null) property.receiverTypeRef else null
+                        val receiverType = property.receiverTypeRef
                         getter = createIrPropertyAccessor(
                             property.getter, this, type, irParent, false,
                             when {
@@ -710,7 +713,7 @@ class Fir2IrDeclarationStorage(
                                 property.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
-                            startOffset, endOffset, parentPropertyReceiverType = receiverType
+                            startOffset, endOffset, correspondingPropertyReceiverTypeRef = receiverType
                         )
                         if (property.isVar) {
                             setter = createIrPropertyAccessor(
@@ -721,7 +724,7 @@ class Fir2IrDeclarationStorage(
                                     else -> origin
                                 },
                                 startOffset, endOffset,
-                                parentPropertyReceiverType = receiverType
+                                correspondingPropertyReceiverTypeRef = receiverType
                             )
                         }
                     }

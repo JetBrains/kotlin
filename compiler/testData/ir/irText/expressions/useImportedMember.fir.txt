@@ -35,9 +35,10 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseClass modality:OPEN visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:fromClass visibility:public modality:FINAL [val]
-      FUN name:<get-fromClass> visibility:public modality:FINAL <> ($this:<root>.BaseClass) returnType:T of <uninitialized parent>
+      FUN name:<get-fromClass> visibility:public modality:FINAL <> ($this:<root>.BaseClass, $receiver:T of <uninitialized parent>) returnType:T of <uninitialized parent>
         correspondingProperty: PROPERTY name:fromClass visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
+        $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass'
             ERROR_CALL 'Unresolved reference: this@R|/BaseClass.fromClass|' type=T of <uninitialized parent>
@@ -98,9 +99,10 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-p>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-p>' type=kotlin.Int origin=null
     PROPERTY name:ext visibility:public modality:FINAL [val]
-      FUN name:<get-ext> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
+      FUN name:<get-ext> visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Int) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:ext visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-ext> (): kotlin.Int declared in <root>.C'
             CONST Int type=kotlin.Int value=6
@@ -112,9 +114,10 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         RETURN type=kotlin.Nothing from='public final fun g1 <T> (t: T of <root>.C.g1): T of <root>.C.g1 declared in <root>.C'
           GET_VAR 't: T of <root>.C.g1 declared in <root>.C.g1' type=T of <root>.C.g1 origin=null
     PROPERTY name:g2 visibility:public modality:FINAL [val]
-      FUN name:<get-g2> visibility:public modality:FINAL <> ($this:<root>.C) returnType:T of <uninitialized parent>
+      FUN name:<get-g2> visibility:public modality:FINAL <> ($this:<root>.C, $receiver:T of <uninitialized parent>) returnType:T of <uninitialized parent>
         correspondingProperty: PROPERTY name:g2 visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
+        $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C'
             ERROR_CALL 'Unresolved reference: this@R|/C.g2|' type=T of <uninitialized parent>
@@ -176,6 +179,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun f (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: CONST Boolean type=kotlin.Boolean value=true
+                $receiver: CONST Boolean type=kotlin.Boolean value=true
               arg1: CONST Int type=kotlin.Int value=3
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="3"
@@ -206,6 +210,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-ext> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                 $this: CONST Int type=kotlin.Int value=5
+                $receiver: CONST Int type=kotlin.Int value=5
               arg1: CONST Int type=kotlin.Int value=6
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="6"
@@ -226,6 +231,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C' type=kotlin.String origin=null
                 $this: CONST String type=kotlin.String value="8"
+                $receiver: CONST String type=kotlin.String value="8"
               arg1: CONST String type=kotlin.String value="8"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="8"
@@ -236,6 +242,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg0: CALL 'public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $this: CONST Int type=kotlin.Int value=9
+                $receiver: CONST Int type=kotlin.Int value=9
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="9"
@@ -245,6 +252,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass' type=kotlin.String origin=null
                 $this: CONST String type=kotlin.String value="10"
+                $receiver: CONST String type=kotlin.String value="10"
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="10"

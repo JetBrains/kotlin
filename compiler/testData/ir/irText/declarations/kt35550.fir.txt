@@ -2,9 +2,10 @@ FILE fqName:<root> fileName:/kt35550.kt
   CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
     PROPERTY name:id visibility:public modality:OPEN [val]
-      FUN name:<get-id> visibility:public modality:OPEN <> ($this:<root>.I) returnType:T of <uninitialized parent>
+      FUN name:<get-id> visibility:public modality:OPEN <> ($this:<root>.I, $receiver:T of <uninitialized parent>) returnType:T of <uninitialized parent>
         correspondingProperty: PROPERTY name:id visibility:public modality:OPEN [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.I
+        $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-id> (): T of <uninitialized parent> declared in <root>.I'
             ERROR_CALL 'Unresolved reference: this@R|/I.id|' type=T of <uninitialized parent>

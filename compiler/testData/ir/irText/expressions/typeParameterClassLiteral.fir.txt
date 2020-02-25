@@ -11,8 +11,9 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
       RETURN type=kotlin.Nothing from='public final fun classRefExtFun <T> (): kotlin.reflect.KClass<T of <root>.classRefExtFun> [inline] declared in <root>'
         CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<T of <root>.classRefExtFun>
   PROPERTY name:classRefExtVal visibility:public modality:FINAL [val]
-    FUN name:<get-classRefExtVal> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<T of <uninitialized parent>>
+    FUN name:<get-classRefExtVal> visibility:public modality:FINAL <> ($receiver:T of <uninitialized parent>) returnType:kotlin.reflect.KClass<T of <uninitialized parent>>
       correspondingProperty: PROPERTY name:classRefExtVal visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-classRefExtVal> (): kotlin.reflect.KClass<T of <uninitialized parent>> declared in <root>'
           CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<T of <uninitialized parent>>
@@ -36,9 +37,10 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberExtFun <TF> (): kotlin.reflect.KClass<TF of <root>.Host.classRefGenericMemberExtFun> [inline] declared in <root>.Host'
           CLASS_REFERENCE 'TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<TF of <root>.Host.classRefGenericMemberExtFun>
     PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val]
-      FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.reflect.KClass<TV of <uninitialized parent>>
+      FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:TV of <uninitialized parent>) returnType:kotlin.reflect.KClass<TV of <uninitialized parent>>
         correspondingProperty: PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $receiver: VALUE_PARAMETER name:<this> type:TV of <uninitialized parent>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-classRefGenericMemberExtVal> (): kotlin.reflect.KClass<TV of <uninitialized parent>> declared in <root>.Host'
             CLASS_REFERENCE 'TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<TV of <uninitialized parent>>

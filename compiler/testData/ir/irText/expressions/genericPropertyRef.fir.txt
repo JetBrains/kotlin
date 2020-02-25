@@ -69,8 +69,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
           kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var]' field='FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <uninitialized parent>>, kotlin.String?> origin=null
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <> ($receiver:<root>.Value<T of <uninitialized parent>>) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<T of <uninitialized parent>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalText> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
@@ -82,8 +83,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
           kmember: PROPERTY_REFERENCE 'public final value: T of <uninitialized parent> [var]' field=null getter='public final fun <get-value> (): T of <uninitialized parent> declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <uninitialized parent>): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <uninitialized parent>>, T of <uninitialized parent>> origin=null
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <> ($receiver:<root>.Value<T of <uninitialized parent>>) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Value<T of <uninitialized parent>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-additionalValue> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int [operator] declared in <root>.DVal' type=kotlin.Int origin=null
@@ -159,13 +161,15 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Any? declared in <root>.<set-value2>' type=kotlin.Any? origin=null
   PROPERTY name:bar visibility:public modality:FINAL [var]
-    FUN name:<get-bar> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
+    FUN name:<get-bar> visibility:public modality:FINAL <> ($receiver:T of <uninitialized parent>) returnType:T of <uninitialized parent>
       correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
+      $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-bar> (): T of <uninitialized parent> declared in <root>'
           ERROR_CALL 'Unresolved reference: this@R|/bar|' type=T of <uninitialized parent>
-    FUN name:<set-bar> visibility:public modality:FINAL <> (value:T of <uninitialized parent>) returnType:kotlin.Unit
+    FUN name:<set-bar> visibility:public modality:FINAL <> ($receiver:T of <uninitialized parent>, value:T of <uninitialized parent>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
+      $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
       VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent>
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null

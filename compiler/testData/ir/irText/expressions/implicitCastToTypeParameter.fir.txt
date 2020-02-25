@@ -29,8 +29,9 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:asT visibility:public modality:FINAL [val]
-    FUN name:<get-asT> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>?
+    FUN name:<get-asT> visibility:public modality:FINAL <> ($receiver:<root>.Foo<T of <uninitialized parent>>) returnType:T of <uninitialized parent>?
       correspondingProperty: PROPERTY name:asT visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <uninitialized parent>>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-asT> (): T of <uninitialized parent>? declared in <root>'
           WHEN type=T of <uninitialized parent>? origin=IF

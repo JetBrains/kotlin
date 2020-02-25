@@ -60,11 +60,13 @@ FILE fqName:<root> fileName:/memberExtension.kt
         EXPRESSION_BODY
           CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): <root>.Host.StringDelegate [operator] declared in <root>.Host' type=<root>.Host.StringDelegate origin=null
             $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
+            $receiver: CONST String type=kotlin.String value="K"
             host: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=null
-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY name:plusK visibility:public modality:FINAL [delegated,val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-plusK> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (receiver: kotlin.String, p: kotlin.Any): kotlin.String [operator] declared in <root>.Host.StringDelegate' type=kotlin.String origin=null
@@ -77,6 +79,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-plusK> (): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
             $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
+            $receiver: CONST String type=kotlin.String value="O"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String
         correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host

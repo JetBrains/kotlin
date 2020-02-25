@@ -14,8 +14,9 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         TYPE_OP type=T of <root>.castExtFun origin=CAST typeOperand=T of <root>.castExtFun
           GET_VAR '<this>: kotlin.Any declared in <root>.castExtFun' type=kotlin.Any origin=null
   PROPERTY name:castExtVal visibility:public modality:FINAL [val]
-    FUN name:<get-castExtVal> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
+    FUN name:<get-castExtVal> visibility:public modality:FINAL <> ($receiver:T of <uninitialized parent>) returnType:T of <uninitialized parent>
       correspondingProperty: PROPERTY name:castExtVal visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:T of <uninitialized parent>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-castExtVal> (): T of <uninitialized parent> declared in <root>'
           TYPE_OP type=T of <uninitialized parent> origin=CAST typeOperand=T of <uninitialized parent>
@@ -58,17 +59,19 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
           TYPE_OP type=TF of <root>.Host.castGenericMemberExtFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberExtFun
             GET_VAR '<this>: kotlin.Any declared in <root>.Host.castGenericMemberExtFun' type=kotlin.Any origin=null
     PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val]
-      FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:T of <root>.Host
+      FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, $receiver:kotlin.Any) returnType:T of <root>.Host
         correspondingProperty: PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castMemberExtVal> (): T of <root>.Host declared in <root>.Host'
             TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
               ERROR_CALL 'Unresolved reference: this@R|/Host.castMemberExtVal|' type=kotlin.Any
     PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val]
-      FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>) returnType:TV of <uninitialized parent>
+      FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host<T of <root>.Host>, $receiver:TV of <uninitialized parent>) returnType:TV of <uninitialized parent>
         correspondingProperty: PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host<T of <root>.Host>
+        $receiver: VALUE_PARAMETER name:<this> type:TV of <uninitialized parent>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): TV of <uninitialized parent> declared in <root>.Host'
             TYPE_OP type=TV of <uninitialized parent> origin=CAST typeOperand=TV of <uninitialized parent>
