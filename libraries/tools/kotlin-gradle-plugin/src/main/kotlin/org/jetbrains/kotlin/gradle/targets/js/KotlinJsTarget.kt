@@ -197,5 +197,6 @@ constructor(
                 sourceMapEmbedSources = null
             }
         }
+        irTarget?.useCommonJs()
     }
 }
