@@ -101,6 +101,7 @@ open class KotlinJsProjectExtension :
     internal var _target: KotlinJsTargetDsl? = null
         private set
 
+    @Deprecated("Use js() instead", ReplaceWith("js()"))
     override var target: KotlinJsTargetDsl
         get() {
             if (_target == null) {
@@ -116,8 +117,8 @@ open class KotlinJsProjectExtension :
 
     open fun js(
         compiler: KotlinJsCompilerType = defaultJsCompilerType,
-        body: KotlinJsTargetDsl.() -> Unit
-    ) {
+        body: KotlinJsTargetDsl.() -> Unit = { }
+    ): KotlinJsTargetDsl {
         if (_target == null) {
             val target: KotlinJsTargetDsl = when (compiler) {
                 LEGACY -> legacyPreset
@@ -145,11 +146,24 @@ open class KotlinJsProjectExtension :
         }
 
         target.run(body)
+
+        return target
     }
 
-    open fun js(
-        body: KotlinJsTargetDsl.() -> Unit
+    fun js(
+        body: KotlinJsTargetDsl.() -> Unit = { }
     ) = js(compiler = defaultJsCompilerType, body = body)
+
+    fun js() = js { }
+
+    fun js(compiler: KotlinJsCompilerType, configure: Closure<*>) =
+        js(compiler = compiler) {
+            ConfigureUtil.configure(configure, this)
+        }
+
+    fun js(configure: Closure<*>) = js {
+        ConfigureUtil.configure(configure, this)
+    }
 
     @Deprecated("Use js instead", ReplaceWith("js(body)"))
     open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
