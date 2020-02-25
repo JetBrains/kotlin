@@ -12,7 +12,29 @@ fun test() {
     flow {
         emit(1)
     }.flatMapLatest<Int, Long> {
-        flow {}
+        flow {
+            expectInt(42)
+        }
+    }
+
+    flow {
+        emit(1)
+    }.flatMapLatest<Int, Long> {
+        flow {
+            expectInt(42)
+            hang {
+                expectInt(0)
+            }
+        }
+    }
+
+    flow {
+        emit(1)
+    }.flatMap {
+        if (it == 1)
+            flow { expectGeneric(42) }
+        else
+            flow<Int> {}
     }
 
     flow {
@@ -32,6 +54,11 @@ fun test() {
         else flow {}
     }
 }
+
+fun expectInt(i: Int) {}
+fun <K> expectGeneric(i: K) {}
+
+suspend inline fun hang(onCancellation: () -> Unit) {}
 
 fun <T> Flow<T>.flatMap(mapper: suspend (T) -> Flow<T>): Flow<T> = TODO()
 
