@@ -61,6 +61,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             description = "don't link unused libraries even explicitly specified").default(false)
     val tempDir by argParser.option(ArgType.String, TEMP_DIR,
             description = "save temporary files to the given directory")
+    val kotlincOption by argParser.option(ArgType.String, "Xkotlinc-option",
+            description = "additional kotlinc compiler option").multiple()
 
     companion object {
         const val MODE_SOURCECODE = "sourcecode"

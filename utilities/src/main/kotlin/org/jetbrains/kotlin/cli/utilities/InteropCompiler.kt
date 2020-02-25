@@ -67,7 +67,8 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         repos.flatMap { listOf("-repo", it) } +
         (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
         (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
-        (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray())
+        (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
+        arguments.kotlincOption
 }
 
 
