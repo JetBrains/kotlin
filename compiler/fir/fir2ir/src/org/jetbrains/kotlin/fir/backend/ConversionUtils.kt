@@ -50,25 +50,31 @@ internal fun <T : IrElement> FirElement.convertWithOffsets(
 
 internal fun createErrorType(): IrErrorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
 
-fun FirTypeRef.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage, irBuiltIns: IrBuiltIns): IrType {
+fun FirTypeRef.toIrType(
+    session: FirSession,
+    declarationStorage: Fir2IrDeclarationStorage,
+    irBuiltIns: IrBuiltIns,
+    forSetter: Boolean = false
+): IrType {
     if (this !is FirResolvedTypeRef) {
         return createErrorType()
     }
-    return type.toIrType(session, declarationStorage, irBuiltIns)
+    return type.toIrType(session, declarationStorage, irBuiltIns, forSetter = forSetter)
 }
 
 fun ConeKotlinType.toIrType(
     session: FirSession,
     declarationStorage: Fir2IrDeclarationStorage,
     irBuiltIns: IrBuiltIns,
-    definitelyNotNull: Boolean = false
+    definitelyNotNull: Boolean = false,
+    forSetter: Boolean = false
 ): IrType {
     return when (this) {
         is ConeKotlinErrorType -> createErrorType()
         is ConeLookupTagBasedType -> {
             val irSymbol = getArrayType(this.classId, irBuiltIns) ?: run {
                 val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
-                firSymbol.toIrSymbol(session, declarationStorage)
+                firSymbol.toIrSymbol(session, declarationStorage, forSetter)
             }
             // TODO: annotations
             IrSimpleTypeImpl(
@@ -132,10 +138,14 @@ fun ConeTypeProjection.toIrTypeArgument(
     }
 }
 
-fun FirClassifierSymbol<*>.toIrSymbol(session: FirSession, declarationStorage: Fir2IrDeclarationStorage): IrClassifierSymbol {
+fun FirClassifierSymbol<*>.toIrSymbol(
+    session: FirSession,
+    declarationStorage: Fir2IrDeclarationStorage,
+    forSetter: Boolean = false
+): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
-            toTypeParameterSymbol(declarationStorage)
+            toTypeParameterSymbol(declarationStorage, forSetter)
         }
         is FirTypeAliasSymbol -> {
             val typeAlias = fir
@@ -178,8 +188,11 @@ fun FirClassSymbol<*>.toClassSymbol(declarationStorage: Fir2IrDeclarationStorage
     return declarationStorage.getIrClassSymbol(this)
 }
 
-fun FirTypeParameterSymbol.toTypeParameterSymbol(declarationStorage: Fir2IrDeclarationStorage): IrTypeParameterSymbol {
-    return declarationStorage.getIrTypeParameterSymbol(this)
+fun FirTypeParameterSymbol.toTypeParameterSymbol(
+    declarationStorage: Fir2IrDeclarationStorage,
+    forSetter: Boolean = false
+): IrTypeParameterSymbol {
+    return declarationStorage.getIrTypeParameterSymbol(this, forSetter)
 }
 
 fun FirFunctionSymbol<*>.toFunctionSymbol(declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {

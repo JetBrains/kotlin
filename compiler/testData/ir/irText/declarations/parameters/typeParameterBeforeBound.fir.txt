@@ -25,12 +25,16 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
     TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?]
     BLOCK_BODY
   PROPERTY name:test3 visibility:public modality:FINAL [var]
-    FUN name:<get-test3> visibility:public modality:FINAL <> ($receiver:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>>) returnType:kotlin.Unit
+    FUN name:<get-test3> visibility:public modality:FINAL <T, U> ($receiver:<root>.Test1<T of <root>.<get-test3>, U of <root>.<get-test3>>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>>
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.<get-test3>]
+      TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.<get-test3>, U of <root>.<get-test3>>
       BLOCK_BODY
-    FUN name:<set-test3> visibility:public modality:FINAL <> ($receiver:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>>, value:kotlin.Unit) returnType:kotlin.Unit
+    FUN name:<set-test3> visibility:public modality:FINAL <T, U> ($receiver:<root>.Test1<T of <root>.<get-test3>, U of <root>.<get-test3>>, value:kotlin.Unit) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>>
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.<get-test3>]
+      TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.<get-test3>, U of <root>.<get-test3>>
       VALUE_PARAMETER name:value index:0 type:kotlin.Unit
       BLOCK_BODY

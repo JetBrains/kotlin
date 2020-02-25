@@ -37,18 +37,20 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
             receiver: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<set-bar>' type=<root>.Derived1<T of <root>.Derived1> origin=null
             value: GET_VAR '<set-?>: T of <root>.Derived1 declared in <root>.Derived1.<set-bar>' type=T of <root>.Derived1 origin=null
     PROPERTY name:exn visibility:public modality:FINAL [var]
-      FUN name:<get-exn> visibility:public modality:FINAL <> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <uninitialized parent>) returnType:T of <root>.Derived1
+      FUN name:<get-exn> visibility:public modality:FINAL <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<get-exn>) returnType:T of <root>.Derived1
         correspondingProperty: PROPERTY name:exn visibility:public modality:FINAL [var]
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
-        $receiver: VALUE_PARAMETER name:<this> type:Z of <uninitialized parent>
+        $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Derived1.<get-exn>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-exn> (): T of <root>.Derived1 declared in <root>.Derived1'
+          RETURN type=kotlin.Nothing from='public final fun <get-exn> <Z> (): T of <root>.Derived1 declared in <root>.Derived1'
             CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Base' type=T of <root>.Derived1 origin=null
               $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-exn>' type=<root>.Derived1<T of <root>.Derived1> origin=null
-      FUN name:<set-exn> visibility:public modality:FINAL <> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <uninitialized parent>, value:T of <root>.Derived1) returnType:kotlin.Unit
+      FUN name:<set-exn> visibility:public modality:FINAL <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<set-exn>, value:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:exn visibility:public modality:FINAL [var]
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
-        $receiver: VALUE_PARAMETER name:<this> type:Z of <uninitialized parent>
+        $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Derived1.<set-exn>
         VALUE_PARAMETER name:value index:0 type:T of <root>.Derived1
         BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]

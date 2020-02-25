@@ -31,14 +31,16 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Base
     PROPERTY name:exn visibility:public modality:ABSTRACT [var]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-exn> visibility:public modality:ABSTRACT <> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <uninitialized parent>) returnType:T of <root>.Base
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-exn> visibility:public modality:ABSTRACT <Z> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <root>.Base.<get-exn>) returnType:T of <root>.Base
         correspondingProperty: PROPERTY name:exn visibility:public modality:ABSTRACT [var]
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
-        $receiver: VALUE_PARAMETER name:<this> type:Z of <uninitialized parent>
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <uninitialized parent>, <set-?>:T of <root>.Base) returnType:kotlin.Unit
+        $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Base.<get-exn>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <Z> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <root>.Base.<set-exn>, <set-?>:T of <root>.Base) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:exn visibility:public modality:ABSTRACT [var]
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
-        $receiver: VALUE_PARAMETER name:<this> type:Z of <uninitialized parent>
+        $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Base.<set-exn>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Base
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
