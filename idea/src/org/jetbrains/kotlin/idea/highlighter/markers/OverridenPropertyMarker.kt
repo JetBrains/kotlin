@@ -113,8 +113,8 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
 
     return NavigationPopupDescriptor(
         navigatingOverrides,
-        KotlinBundle.message("overridden.marker.implementations.choose.implementation.title", propertyOrParameter.name),
-        KotlinBundle.message("overridden.marker.implementations.choose.implementation.find.usages", propertyOrParameter.name), renderer
+        KotlinBundle.message("overridden.marker.implementations.choose.implementation.title", propertyOrParameter.name.toString()),
+        KotlinBundle.message("overridden.marker.implementations.choose.implementation.find.usages", propertyOrParameter.name.toString()), renderer
     )
 }
 

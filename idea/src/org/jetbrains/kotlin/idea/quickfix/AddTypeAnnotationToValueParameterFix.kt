@@ -57,7 +57,7 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
     override fun getFamilyName() = KotlinBundle.message("fix.add.type.annnotation.family")
 
     override fun getText() =
-        element?.let { KotlinBundle.message("fix.add.type.annnotation.text", typeNameShort, it.name) } ?: ""
+        element?.let { KotlinBundle.message("fix.add.type.annnotation.text", typeNameShort.toString(), it.name.toString()) } ?: ""
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

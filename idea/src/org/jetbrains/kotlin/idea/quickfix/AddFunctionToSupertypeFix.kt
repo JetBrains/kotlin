@@ -117,7 +117,7 @@ class AddFunctionToSupertypeFix private constructor(
     private fun actionName(functionData: FunctionData): String {
         return KotlinBundle.message(
             "fix.add.function.supertype.add.to",
-            functionData.signaturePreview, functionData.targetClass.name
+            functionData.signaturePreview, functionData.targetClass.name.toString()
         )
     }
 

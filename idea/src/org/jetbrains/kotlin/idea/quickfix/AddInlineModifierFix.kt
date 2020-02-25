@@ -25,7 +25,7 @@ class AddInlineModifierFix(
     override fun getText(): String {
         val element = this.element
         return when {
-            element != null -> KotlinBundle.message("fix.add.modifier.inline.parameter.text", modifier.value, element.name)
+            element != null -> KotlinBundle.message("fix.add.modifier.inline.parameter.text", modifier.value, element.name.toString())
             else -> null
         } ?: ""
     }

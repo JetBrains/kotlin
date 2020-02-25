@@ -92,7 +92,7 @@ class AddPropertyToSupertypeFix private constructor(
     }
 
     private fun actionName(propertyData: PropertyData): String {
-        return KotlinBundle.message("fix.add.property.to.supertype.text", propertyData.signaturePreview, propertyData.targetClass.name)
+        return KotlinBundle.message("fix.add.property.to.supertype.text", propertyData.signaturePreview, propertyData.targetClass.name.toString())
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

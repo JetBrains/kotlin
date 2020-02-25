@@ -61,7 +61,7 @@ fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescr
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
     val functionsText = descriptors.joinToString(separator = " and ") { "'${MEMBER_RENDERER.render(it)}'" }
-    val message = KotlinBundle.message("action.generate.functions.already.defined", functionsText, targetClass.name)
+    val message = KotlinBundle.message("action.generate.functions.already.defined", functionsText, targetClass.name.toString())
     return Messages.showYesNoDialog(
         targetClass.project, message,
         CodeInsightBundle.message("generate.equals.and.hashcode.already.defined.title"),

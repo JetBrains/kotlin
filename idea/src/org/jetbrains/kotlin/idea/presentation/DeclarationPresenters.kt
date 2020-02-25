@@ -32,7 +32,7 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
         if ((declaration is KtFunction && declaration.isLocal) || (declaration is KtClassOrObject && declaration.isLocal)) {
             val containingDeclaration = declaration.getStrictParentOfType<KtNamedDeclaration>() ?: return null
             val containerName = containingDeclaration.fqName ?: containingDeclaration.name
-            return KotlinBundle.message("presentation.text.in.container.paren", containerName)
+            return KotlinBundle.message("presentation.text.in.container.paren", containerName.toString())
         }
 
         val name = declaration.fqName
