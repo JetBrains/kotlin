@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
@@ -49,7 +50,7 @@ fun PsiNamedElement.qualifiedClassNameForRendering(): String {
         is PsiClass -> qualifiedName
         else -> throw AssertionError("Not a class: ${getElementTextWithContext()}")
     }
-    return fqName ?: name ?: "[Anonymous]"
+    return fqName ?: name ?: KotlinBundle.message("text.anonymous")
 }
 
 fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
