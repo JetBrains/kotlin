@@ -6,6 +6,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.featureStatistics.FeatureUsageTracker;
+import com.intellij.find.FindBundle;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindSettings;
 import com.intellij.find.UsagesPreviewPanelProvider;
@@ -57,6 +58,7 @@ import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupUpdateProcessor;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewBundle;
+import com.intellij.usageView.UsageViewUtil;
 import com.intellij.usages.*;
 import com.intellij.usages.impl.*;
 import com.intellij.usages.rules.UsageFilteringRuleProvider;
@@ -222,9 +224,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     PsiElement[] primaryElements = handler.getPrimaryElements();
     PsiElement[] secondaryElements = handler.getSecondaryElements();
     UsageSearcher usageSearcher = FindUsagesManager.createUsageSearcher(handler, primaryElements, secondaryElements, options);
+    String searchTitle = FindBundle.message(
+      "find.usages.of.element.in.scope.panel.title",
+      options.generateUsagesString(), UsageViewUtil.getLongName(handler.getPsiElement()), options.searchScope.getDisplayName()
+    );
+
     showElementUsages(
       project, editor, popupPosition, getUsagesPageSize(), minWidth,
-      findUsagesManager.createPresentation(handler, options),
+      () -> searchTitle,
       usageSearcher,
       new ShowUsagesActionHandler() {
 
@@ -275,7 +282,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                         @NotNull RelativePoint popupPosition,
                                         int maxUsages,
                                         @NotNull IntRef minWidth,
-                                        @NotNull UsageViewPresentation presentation,
+                                        @NotNull UsageSearchPresentation presentation,
                                         @NotNull UsageSearcher usageSearcher,
                                         @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
@@ -526,7 +533,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                           @NotNull UsageViewImpl usageView,
                                           @NotNull JTable table,
                                           @NotNull Runnable itemChoseCallback,
-                                          @NotNull UsageViewPresentation presentation,
+                                          @NotNull UsageSearchPresentation presentation,
                                           @NotNull TitlePanel statusPanel,
                                           @NotNull IntRef minWidth,
                                           @NotNull Runnable showDialogAndFindUsagesRunnable,
@@ -534,7 +541,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
-    String title = presentation.getTabText();
+    String title = presentation.getSearchTitle();
     builder.setTitle(XmlStringUtil.wrapInHtml("<body><nobr>" + StringUtil.escapeXmlEntities(title) + "</nobr></body>"));
     builder.setAdText(getSecondInvocationTitle(actionHandler));
 
