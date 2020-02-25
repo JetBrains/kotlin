@@ -19,23 +19,15 @@ class KotlinBuildProperties(
     private val propertiesProvider: PropertiesProvider
 ) {
     private val localProperties: Properties = Properties()
-    private val rootProperties: Properties = Properties()
 
     init {
-        loadPropertyFile("local.properties", localProperties)
-        loadPropertyFile("gradle.properties", rootProperties)
-    }
-
-    private fun loadPropertyFile(fileName: String, propertiesDestination: Properties) {
-        val propertiesFile = propertiesProvider.rootProjectDir.resolve(fileName)
-        if (propertiesFile.isFile) {
-            propertiesFile.reader().use(propertiesDestination::load)
+        val localPropertiesFile = propertiesProvider.rootProjectDir.resolve("local.properties")
+        if (localPropertiesFile.isFile) {
+            localPropertiesFile.reader().use(localProperties::load)
         }
     }
 
     private operator fun get(key: String): Any? = localProperties.getProperty(key) ?: propertiesProvider.getProperty(key)
-
-    private fun getLocalOrRoot(key: String): Any? = get(key) ?: rootProperties.getProperty(key)
 
     private fun getBoolean(key: String, default: Boolean = false): Boolean =
         this[key]?.toString()?.trim()?.toBoolean() ?: default
@@ -102,10 +94,6 @@ class KotlinBuildProperties(
     val buildCacheUser: String? = get("kotlin.build.cache.user") as String?
 
     val buildCachePassword: String? = get("kotlin.build.cache.password") as String?
-
-    val kotlinBootstrapVersion: String? = getLocalOrRoot("kotlin.build.version") as String?
-
-    val kotlinBootstrapLocalRepo: String? = get("kotlin.build.local.repo") as String?
 }
 
 private const val extensionName = "kotlinBuildProperties"

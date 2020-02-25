@@ -1,10 +1,10 @@
 extra["versions.native-platform"] = "0.14"
 
 buildscript {
-
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
+    val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
+    val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
 
     repositories {
         if (cacheRedirectorEnabled) {
@@ -15,21 +15,21 @@ buildscript {
             maven("https://kotlin.bintray.com/kotlin-dependencies")
         }
 
-        project.bootstrapKotlinRepo?.let {
+        buildSrcKotlinRepo?.let {
             maven(url = it)
         }
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.10")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$buildSrcKotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$buildSrcKotlinVersion")
     }
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-logger.info("buildSrcKotlinVersion: " + extra["bootstrapKotlinVersion"])
+logger.info("buildSrcKotlinVersion: " + extra["buildSrcKotlinVersion"])
 logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)
 logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 
@@ -83,14 +83,14 @@ repositories {
     maven("https://kotlin.bintray.com/kotlin-dependencies")
     gradlePluginPortal()
 
-    extra["bootstrapKotlinRepo"]?.let {
+    extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
 }
 
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.10")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
 
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
