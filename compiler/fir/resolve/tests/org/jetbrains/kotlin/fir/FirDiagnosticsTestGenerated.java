@@ -1535,6 +1535,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             public void testBoundSmartcastsInBranches() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts/boundSmartcastsInBranches.kt");
             }
+
+            @TestMetadata("functionCallBound.kt")
+            public void testFunctionCallBound() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts/functionCallBound.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures")

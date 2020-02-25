@@ -63,7 +63,7 @@ fun kt4565_2(a: SomeClass?) {
     }
     val extra = (a as? SubClass)?.extra
     if (extra != null) {
-        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        a.extra.hashCode()
     }
 }
 

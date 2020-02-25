@@ -552,7 +552,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 flow,
                 variable notEq null,
                 shouldFork,
-                shouldRemoveSynthetics = true
+                shouldRemoveSynthetics = false
             )
         }
 

@@ -19,8 +19,8 @@ fun g(a: SomeClass?) {
     val b = (a as? SomeSubClass)?.foo
     if (b != null) {
         // 'a' can be cast to SomeSubClass
-        a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
-        a.<!UNRESOLVED_REFERENCE!>foo<!>
+        a.hashCode()
+        a.foo
         (a as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
         (a as SomeSubClass).foo
     }

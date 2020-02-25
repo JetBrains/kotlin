@@ -257,6 +257,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun removeAllAboutVariable(flow: PersistentFlow, variable: RealVariable) {
+        flow.logicStatements -= variable
         flow.approvedTypeStatements -= variable
         flow.approvedTypeStatementsDiff -= variable
         // TODO: should we search variable in all logic statements?
