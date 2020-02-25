@@ -92,20 +92,8 @@ public class EditorSearchSession implements SearchSession,
 
     myComponent = SearchReplaceComponent
       .buildFor(project, myEditor.getContentComponent())
-      .addPrimarySearchActions(new PrevOccurrenceAction(),
-                               new NextOccurrenceAction(),
-                               new FindAllAction(),
-                               new Separator(),
-                               new AddOccurrenceAction(),
-                               new RemoveOccurrenceAction(),
-                               new SelectAllAction(),
-                               new Separator())
-      .addSecondarySearchActions(new ToggleAnywhereAction(),
-                                 new ToggleInCommentsAction(),
-                                 new ToggleInLiteralsOnlyAction(),
-                                 new ToggleExceptCommentsAction(),
-                                 new ToggleExceptLiteralsAction(),
-                                 new ToggleExceptCommentsAndLiteralsAction())
+      .addPrimarySearchActions(createPrimarySearchActions())
+      .addSecondarySearchActions(createSecondarySearchActions())
       .addPrimarySearchActions(new ToggleSelectionOnlyAction())
       .addExtraSearchActions(new ToggleMatchCase(),
                              new ToggleWholeWordsOnlyAction(),
@@ -201,6 +189,32 @@ public class EditorSearchSession implements SearchSession,
     myEditor.getSelectionModel().addSelectionListener(this, myDisposable);
 
     FindUtil.triggerUsedOptionsStats(FIND_TYPE, findModel);
+  }
+
+  @NotNull
+  protected AnAction[] createPrimarySearchActions() {
+    return new AnAction[]{
+      new PrevOccurrenceAction(),
+      new NextOccurrenceAction(),
+      new FindAllAction(),
+      new Separator(),
+      new AddOccurrenceAction(),
+      new RemoveOccurrenceAction(),
+      new SelectAllAction(),
+      new Separator()
+    };
+  }
+
+  @NotNull
+  protected AnAction[] createSecondarySearchActions() {
+    return new AnAction[] {
+      new ToggleAnywhereAction(),
+      new ToggleInCommentsAction(),
+      new ToggleInLiteralsOnlyAction(),
+      new ToggleExceptCommentsAction(),
+      new ToggleExceptLiteralsAction(),
+      new ToggleExceptCommentsAndLiteralsAction()
+    };
   }
 
   private void saveInitialSelection() {
