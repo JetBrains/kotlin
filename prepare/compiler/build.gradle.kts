@@ -222,13 +222,15 @@ dependencies {
 
 publish()
 
-val packCompiler by task<ShadowJar> {
-    configurations = emptyList()
+val packCompiler by task<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(File(buildDir, "libs"))
     archiveClassifier.set("before-proguard")
 
-    from(fatJarContents)
+    dependsOn(fatJarContents)
+    from {
+        fatJarContents.map(::zipTree)
+    }
 
     dependsOn(fatJarContentsStripServices)
     from {
