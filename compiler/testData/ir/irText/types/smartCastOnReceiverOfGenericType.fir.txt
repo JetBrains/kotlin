@@ -33,8 +33,10 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Outer.Inner.use]>#' type=IrErrorType
-        GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Int origin=null
-        GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.String origin=null
+        TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+          GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
+        TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+          GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
   FUN name:testNonSubstitutedTypeParameter visibility:public modality:FINAL <T> (a:kotlin.Any, b:kotlin.Any) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:kotlin.Any

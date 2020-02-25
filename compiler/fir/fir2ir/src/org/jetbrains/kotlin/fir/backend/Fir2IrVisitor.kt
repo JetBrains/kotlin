@@ -936,7 +936,7 @@ class Fir2IrVisitor(
 
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
         // Generate the expression with the original type and then cast it to the smart cast type.
-        val value = expressionWithSmartcast.toIrExpression(expressionWithSmartcast.originalType).applyReceivers(expressionWithSmartcast)
+        val value = expressionWithSmartcast.originalExpression.toIrExpression()
         val castType = expressionWithSmartcast.typeRef.toIrType(session, declarationStorage)
         if (value.type == castType) return value
         return IrTypeOperatorCallImpl(

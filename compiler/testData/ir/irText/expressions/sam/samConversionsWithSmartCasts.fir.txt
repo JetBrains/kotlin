@@ -87,7 +87,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
       TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/J.run1]>#' type=IrErrorType
-        GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function0<kotlin.Unit> origin=null
+        TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+          GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
   FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY

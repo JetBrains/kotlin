@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class Test1 {
     fun test1(): String {
         if (this is Test2) {
