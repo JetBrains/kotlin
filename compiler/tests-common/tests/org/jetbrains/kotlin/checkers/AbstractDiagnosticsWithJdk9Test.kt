@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.checkers
 
-package org.jetbrains.kotlin.checkers;
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.TestJdkKind;
+abstract class AbstractDiagnosticsWithJdk9Test : AbstractDiagnosticsTest() {
+    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
 
-import java.util.List;
-
-public abstract class AbstractDiagnosticsWithJdk9Test extends AbstractDiagnosticsTest {
-    @NotNull
-    @Override
-    protected ConfigurationKind getConfigurationKind() {
-        return ConfigurationKind.ALL;
-    }
-
-    @NotNull
-    @Override
-    protected TestJdkKind getTestJdkKind(@NotNull List<TestFile> testFiles) {
-        return TestJdkKind.FULL_JDK_9;
+    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
+        return TestJdkKind.FULL_JDK_9
     }
 }

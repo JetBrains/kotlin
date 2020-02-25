@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.cfg
 
-package org.jetbrains.kotlin.cfg;
+import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TestJdkKind
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.TestJdkKind;
-
-import java.util.List;
-
-public abstract class AbstractDiagnosticsWithModifiedMockJdkTest extends AbstractDiagnosticsTest {
-    @NotNull
-    @Override
-    protected ConfigurationKind getConfigurationKind() {
-        return ConfigurationKind.ALL;
+abstract class AbstractDiagnosticsWithModifiedMockJdkTest : AbstractDiagnosticsTest() {
+    override fun getConfigurationKind(): ConfigurationKind {
+        return ConfigurationKind.ALL
     }
 
-    @NotNull
-    @Override
-    protected TestJdkKind getTestJdkKind(@NotNull List<TestFile> testFiles) {
-        return TestJdkKind.MODIFIED_MOCK_JDK;
+    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
+        return TestJdkKind.MODIFIED_MOCK_JDK
     }
 }

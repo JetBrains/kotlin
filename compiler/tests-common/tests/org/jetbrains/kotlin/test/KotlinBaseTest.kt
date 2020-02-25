@@ -36,7 +36,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         doMultiFileTest(file, createTestFilesFromFile(file, expectedText))
     }
 
-    protected abstract fun createTestFilesFromFile(file: File, expectedText: String?): List<F>
+    protected abstract fun createTestFilesFromFile(file: File, expectedText: String): List<F>
 
     @Throws(java.lang.Exception::class)
     protected open fun doMultiFileTest(

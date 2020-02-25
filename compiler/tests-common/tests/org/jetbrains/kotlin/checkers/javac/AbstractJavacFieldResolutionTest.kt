@@ -25,7 +25,7 @@ abstract class AbstractJavacFieldResolutionTest : AbstractDiagnosticsTest() {
 
     private var useJavac = true
 
-    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: MutableList<TestFile>) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {
         if (useJavac) {
             val groupedByModule = files.groupBy(TestFile::module)
             val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }

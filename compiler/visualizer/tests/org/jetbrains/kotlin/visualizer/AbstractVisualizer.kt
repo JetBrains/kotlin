@@ -12,23 +12,23 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule?, KotlinBaseTest.TestFile>() {
+abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule, KotlinBaseTest.TestFile>() {
     lateinit var replacement: Pair<String, String>
 
     override fun createTestModule(
         name: String,
-        dependencies: MutableList<String>,
-        friends: MutableList<String>
+        dependencies: List<String>,
+        friends: List<String>
     ): TestModule? = null
 
 
-    override fun createTestFile(module: TestModule?, fileName: String?, text: String?, directives: MutableMap<String, String>?): TestFile? =
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? =
         null
 
 
-    override fun doMultiFileTest(file: File, files: List<TestFile>) {
-        val environment = createEnvironment(file, files)
-        doVisualizerTest(file, environment)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        val environment = createEnvironment(wholeFile, files)
+        doVisualizerTest(wholeFile, environment)
     }
 
     abstract fun doVisualizerTest(file: File, environment: KotlinCoreEnvironment)
@@ -37,7 +37,7 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
         return true
     }
 
-    override fun getTestJdkKind(testFiles: MutableList<TestFile>): TestJdkKind {
+    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
         return TestJdkKind.FULL_JDK
     }
 

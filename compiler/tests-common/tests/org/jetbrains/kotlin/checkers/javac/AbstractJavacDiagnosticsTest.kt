@@ -26,7 +26,7 @@ abstract class AbstractJavacDiagnosticsTest : AbstractDiagnosticsTest() {
 
     private var useJavac = true
 
-    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: MutableList<TestFile>) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {
         if (useJavac) {
             val groupedByModule = files.groupBy(TestFile::module)
             val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }
@@ -46,7 +46,7 @@ abstract class AbstractJavacDiagnosticsTest : AbstractDiagnosticsTest() {
         return specialFile.takeIf { it.exists() } ?: super.getExpectedDiagnosticsFile(testDataFile)
     }
 
-    override fun createTestFiles(file: File, expectedText: String, modules: MutableMap<String, ModuleAndDependencies>?): List<TestFile> {
+    override fun createTestFiles(file: File, expectedText: String, modules: MutableMap<String?, ModuleAndDependencies>): List<TestFile> {
         val specialFile = getExpectedDiagnosticsFile(file)
         if (file.path == specialFile.path) {
             return super.createTestFiles(file, expectedText, modules)

@@ -28,7 +28,7 @@ abstract class AbstractJavacForeignJava8AnnotationsTest : AbstractForeignJava8An
         return isSkipJavacTest(wholeFile, files)
     }
 
-    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: MutableList<TestFile>) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {
         val groupedByModule = files.groupBy(TestFile::module)
         val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }
         environment.registerJavac(kotlinFiles = allKtFiles)

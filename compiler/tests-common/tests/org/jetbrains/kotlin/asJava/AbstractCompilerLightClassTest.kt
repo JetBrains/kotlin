@@ -50,8 +50,8 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
 
     override fun createTestModule(
         name: String,
-        dependencies: MutableList<String>,
-        friends: MutableList<String>
+        dependencies: List<String>,
+        friends: List<String>
     ): TestModule? = null
 
     override fun createTestFile(

@@ -29,7 +29,7 @@ abstract class AbstractDiagnosticsUsingJavacTest : AbstractDiagnosticsTest() {
         return isJavacSkipTest(wholeFile, files)
     }
 
-    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: MutableList<TestFile>) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {
         val testDataFileText = testDataFile.readText()
         val groupedByModule = files.groupBy(TestFile::module)
         val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }

@@ -13,7 +13,7 @@ abstract class AbstractFirDiagnosticsWithStdlibTest : AbstractFirDiagnosticsTest
         return ConfigurationKind.ALL
     }
 
-    override fun getTestJdkKind(testFiles: MutableList<TestFile>): TestJdkKind {
+    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
         return TestJdkKind.FULL_JDK
     }
 }
