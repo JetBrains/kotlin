@@ -526,7 +526,7 @@ fun IrClass.addFakeOverrides() {
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
-                overriddenSymbols += overriddenFunctions.map { it.symbol }
+                overriddenSymbols = overriddenFunctions.map { it.symbol }
                 copyParameterDeclarationsFrom(irFunction)
                 copyAttributes(irFunction)
             }
@@ -537,7 +537,9 @@ fun IrClass.addFakeOverrides() {
         .associate { it.value.first() to createFakeOverride(it.value) }
         .toMutableMap()
 
-    declarations += fakeOverriddenFunctions.values
+    for (fo in fakeOverriddenFunctions.values) {
+        addChild(fo)
+    }
 }
 
 fun createStaticFunctionWithReceivers(

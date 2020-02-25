@@ -177,6 +177,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 name = superMethod.name
                 returnType = function.returnType
                 isSuspend = superMethod.isSuspend
+                isOperator = superMethod.isOperator
             }.apply {
                 overriddenSymbols = listOf(superMethod.symbol)
                 dispatchReceiverParameter = clazz.createDispatchReceiver().also { it.parent = this }

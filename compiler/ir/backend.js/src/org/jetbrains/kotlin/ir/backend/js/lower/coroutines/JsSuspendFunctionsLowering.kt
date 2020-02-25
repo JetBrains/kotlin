@@ -158,7 +158,9 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
                 }
             }
         }
-        simplifiedFunction.explicitParameters.forEach {
+        val isSuspendLambda = transformingFunction.parent === coroutineClass
+        val parameters = if (isSuspendLambda) simplifiedFunction.valueParameters else simplifiedFunction.explicitParameters
+        parameters.forEach {
             localToPropertyMap.getOrPut(it.symbol) {
                 argumentToPropertiesMap.getValue(it).symbol
             }

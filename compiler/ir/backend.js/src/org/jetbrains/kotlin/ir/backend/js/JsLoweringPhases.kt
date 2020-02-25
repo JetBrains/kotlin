@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.RemoveSuspendLambdas
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -360,12 +359,6 @@ private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
     description = "Transform suspend functions into CoroutineImpl instance and build state machine"
 )
 
-private val suspendLambdasRemovalLoweringPhase = makeDeclarationTransformerPhase(
-    { RemoveSuspendLambdas() },
-    name = "RemoveSuspendLambdas",
-    description = "Remove suspend lambdas"
-)
-
 private val privateMembersLoweringPhase = makeDeclarationTransformerPhase(
     ::PrivateMembersLowering,
     name = "PrivateMembersLowering",
@@ -632,7 +625,6 @@ val loweringList = listOf<Lowering>(
     enumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
     suspendFunctionsLoweringPhase,
-    suspendLambdasRemovalLoweringPhase,
     interopCallableReferenceLoweringPhase,
     returnableBlockLoweringPhase,
     forLoopsLoweringPhase,
