@@ -4,6 +4,7 @@ package com.intellij.completion.ml.common
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionUtilCore.DUMMY_IDENTIFIER
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 
 object LocationFeaturesUtil {
@@ -77,6 +78,8 @@ object LocationFeaturesUtil {
       val positionLine = line(completionParameters.position) ?: return null
       val elementLine = line(completionElement) ?: return null
       return positionLine - elementLine
+    } catch (e: ProcessCanceledException) {
+      throw e
     } catch (e: Throwable) {
       LOG.error("Error while calculating lines diff", e)
       return null
