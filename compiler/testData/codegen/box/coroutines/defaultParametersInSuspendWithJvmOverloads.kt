@@ -39,7 +39,7 @@ import java.util.*;
 import kotlin.coroutines.*;
 
 public class J {
-    private List<String> result = new ArrayList<>();
+    private List<String> result = new ArrayList<String>();
 
     public List<String> foo() {
         MyContinuation continuation = new MyContinuation();
