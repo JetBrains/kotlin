@@ -86,7 +86,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
       return DocumentationManager.getProviderFromElement(owner).generateRenderedDoc(owner);
     }
     catch (IndexNotReadyException e) {
-      LOG.debug(e);
+      LOG.warn(e);
       return CodeInsightBundle.message("doc.render.dumb.mode.text");
     }
   }
