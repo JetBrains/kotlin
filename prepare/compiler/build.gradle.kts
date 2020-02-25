@@ -253,7 +253,6 @@ val proguard by task<ProGuardTask> {
 
     inputs.files(packCompiler.get().outputs.files.singleFile)
     outputs.file(outputJar)
-    outputs.cacheIf { true }
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraries)
 
