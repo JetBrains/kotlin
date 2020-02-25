@@ -263,7 +263,7 @@ private class MappingExtensions(
                 Flag.Property.IS_DECLARATION,
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.Property.HAS_CONSTANT.takeIf { kind is PropertyStub.Kind.Constant },
-                Flag.Property.HAS_GETTER.takeIf { kind !is PropertyStub.Kind.Constant },
+                Flag.Property.HAS_GETTER,
                 Flag.Property.HAS_SETTER.takeIf { kind is PropertyStub.Kind.Var },
                 when (kind) {
                     is PropertyStub.Kind.Val -> null
@@ -276,14 +276,21 @@ private class MappingExtensions(
         get() = when (kind) {
             is PropertyStub.Kind.Val -> kind.getter.flags
             is PropertyStub.Kind.Var -> kind.getter.flags
-            is PropertyStub.Kind.Constant -> flagsOf()
+            is PropertyStub.Kind.Constant -> kind.flags
         }
+
+    val PropertyStub.Kind.Constant.flags: Flags
+        get() = flagsOfNotNull(
+                Flag.IS_PUBLIC,
+                Flag.IS_FINAL
+        )
 
     private val PropertyAccessor.Getter.flags: Flags
         get() = flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.IS_PUBLIC,
                 Flag.IS_FINAL,
+                Flag.PropertyAccessor.IS_NOT_DEFAULT,
                 Flag.PropertyAccessor.IS_EXTERNAL.takeIf { this is PropertyAccessor.Getter.ExternalGetter }
         )
 
@@ -296,6 +303,7 @@ private class MappingExtensions(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.IS_PUBLIC,
                 Flag.IS_FINAL,
+                Flag.PropertyAccessor.IS_NOT_DEFAULT,
                 Flag.PropertyAccessor.IS_EXTERNAL.takeIf { this is PropertyAccessor.Setter.ExternalSetter }
         )
 
