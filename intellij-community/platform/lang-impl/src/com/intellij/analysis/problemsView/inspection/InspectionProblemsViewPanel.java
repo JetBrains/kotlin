@@ -2,18 +2,22 @@
 package com.intellij.analysis.problemsView.inspection;
 
 import com.intellij.analysis.problemsView.AnalysisProblem;
+import com.intellij.analysis.problemsView.AnalysisProblemBundle;
 import com.intellij.analysis.problemsView.AnalysisProblemsTableModel;
 import com.intellij.analysis.problemsView.AnalysisProblemsViewPanel;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Toggleable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.event.MarkupModelListener;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
@@ -84,11 +88,53 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
 
     addAutoScrollToSourceAction(group);
     addGroupBySeverityAction(group);
-    //group.addAction(new InspectionProblemsViewPanel.FilterProblemsAction());
+    group.addAction(new FilterProblemsAction());
     group.addSeparator();
   }
 
-  void addProblem(@NotNull AnalysisProblem problem) {
+  private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
+    FilterProblemsAction() {
+      super(AnalysisProblemBundle.lazyMessage("filter.problems"), AnalysisProblemBundle.lazyMessage("filter.problems.description"), AllIcons.General.Filter);
+    }
+
+    @Override
+    public void update(@NotNull final AnActionEvent e) {
+      // show icon as toggled on if any filter is active
+      Toggleable.setSelected(e.getPresentation(), myPresentationHelper.areFiltersApplied());
+    }
+
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent e) {
+      showFiltersPopup();
+    }
+  }
+
+  private void showFiltersPopup() {
+    final InspectionProblemsFilterForm filterForm = new InspectionProblemsFilterForm();
+    filterForm.reset(getPresentationHelper());
+    filterForm.addListener(new InspectionProblemsFilterForm.FilterListener() {
+      @Override
+      public void filtersChanged() {
+        getPresentationHelper().updateFromFilterSettingsUI(filterForm);
+        fireGroupingOrFilterChanged();
+      }
+
+      @Override
+      public void filtersResetRequested() {
+        getPresentationHelper().resetAllFilters();
+        filterForm.reset(getPresentationHelper());
+        fireGroupingOrFilterChanged();
+      }
+    });
+
+    createAndShowPopup("Problems Filter", filterForm.getMainPanel());
+  }
+
+  private InspectionProblemsPresentationHelper getPresentationHelper() {
+    return myPresentationHelper;
+  }
+
+  private void addProblem(@NotNull AnalysisProblem problem) {
     AnalysisProblem oldSelectedProblem = myTable.getSelectedObject();
     AnalysisProblemsTableModel model = getModel();
     model.removeRows(p -> p.equals(problem));

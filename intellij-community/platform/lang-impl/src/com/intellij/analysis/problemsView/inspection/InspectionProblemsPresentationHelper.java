@@ -127,4 +127,10 @@ class InspectionProblemsPresentationHelper extends AnalysisProblemsPresentationH
 
     return builder.toString();
   }
+
+  void updateFromFilterSettingsUI(@NotNull InspectionProblemsFilterForm form) {
+    mySettings.showErrors = form.isShowErrors();
+    mySettings.showWarnings = form.isShowWarnings();
+    mySettings.showHints = form.isShowHints();
+  }
 }
