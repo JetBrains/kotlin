@@ -113,7 +113,7 @@ class IdeaResolverForProject(
                 commonPlatformParameters,
                 jvmPlatformParameters,
                 platform,
-                platform.findAnalyzerServices(projectContext.project) as CompositeAnalyzerServices
+                CompositeAnalyzerServices(platform.componentPlatforms.map { it.findAnalyzerServices() })
             )
         }
     }
