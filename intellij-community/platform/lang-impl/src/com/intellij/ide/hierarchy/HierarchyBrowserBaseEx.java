@@ -455,6 +455,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   @NotNull
   private OccurenceNavigator getOccurrenceNavigator() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
     String currentViewType = getCurrentViewType();
     if (currentViewType != null) {
       OccurenceNavigator navigator = myType2Sheet.get(currentViewType).myOccurenceNavigator;
@@ -493,7 +494,8 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   }
 
   @NotNull
-  public StructureTreeModel getTreeModel(@NotNull String viewType) {
+  public StructureTreeModel<?> getTreeModel(@NotNull String viewType) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
     return myType2Sheet.get(viewType).myStructureTreeModel;
   }
 
@@ -507,7 +509,7 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   }
 
   @Override
-  StructureTreeModel getCurrentBuilder() {
+  StructureTreeModel<?> getCurrentBuilder() {
     String viewType = getCurrentViewType();
     if (viewType == null) {
       return null;
@@ -566,6 +568,8 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
   }
 
   protected void doRefresh(boolean currentBuilderOnly) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+
     if (currentBuilderOnly) LOG.assertTrue(getCurrentViewType() != null);
 
     if (!isValidBase()) return;
