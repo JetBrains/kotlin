@@ -9,6 +9,7 @@ import com.intellij.concurrency.JobLauncher
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.InlayModel
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.util.Disposer
@@ -61,7 +62,10 @@ class InlayHintsPass(
   }
 
   override fun doApplyInformationToEditor() {
+    val positionKeeper = EditorScrollingPositionKeeper(editor)
+    positionKeeper.savePosition()
     applyCollected(allHints, rootElement, editor)
+    positionKeeper.restorePosition(false)
     if (rootElement === myFile) {
       InlayHintsPassFactory.putCurrentModificationStamp(myEditor, myFile)
     }
