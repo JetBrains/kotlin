@@ -93,6 +93,10 @@ public abstract class KotlinMultiFileTestWithJava<M extends KotlinBaseTest.TestM
 
     }
 
+    protected void setupEnvironment(@NotNull KotlinCoreEnvironment environment) {
+
+    }
+
     @NotNull
     protected ConfigurationKind getConfigurationKind() {
         return ConfigurationKind.JDK_ONLY;

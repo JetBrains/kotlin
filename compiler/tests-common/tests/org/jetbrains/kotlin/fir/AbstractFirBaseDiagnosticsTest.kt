@@ -54,12 +54,10 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
     }
 
-    override fun createEnvironment(file: File): KotlinCoreEnvironment {
-        return super.createEnvironment(file).apply {
-            Extensions.getArea(this.project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .unregisterExtension(JavaElementFinder::class.java)
-        }
+    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
+        Extensions.getArea(environment.project)
+            .getExtensionPoint(PsiElementFinder.EP_NAME)
+            .unregisterExtension(JavaElementFinder::class.java)
     }
 
     open fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>, useLightTree: Boolean = false) {
