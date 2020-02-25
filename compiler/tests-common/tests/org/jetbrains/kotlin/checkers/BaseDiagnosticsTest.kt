@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -91,9 +92,16 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         files: List<TestFile>
     ) {
         environment = createEnvironment(wholeFile)
+        //after environment initialization cause of `tearDown` logic, maybe it's obsolete
+        if (shouldSkipTest(wholeFile, files)) {
+            println("${wholeFile.name} test is skipped")
+            return
+        }
         setupEnvironment(environment)
         analyzeAndCheck(wholeFile, files)
     }
+
+    protected open fun shouldSkipTest(wholeFile: File, files: List<TestFile>) : Boolean = false
 
     protected abstract fun analyzeAndCheck(testDataFile: File, files: List<TestFile>)
 
@@ -476,6 +484,23 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         fun loadTestDataWithoutDiagnostics(file: File): String {
             val textWithoutDiagnostics = KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
             return StringUtil.convertLineSeparators(textWithoutDiagnostics.trim()).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        }
+
+        fun isJavacSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+            val testDataFileText = wholeFile.readText()
+            if (isDirectiveDefined(testDataFileText, "// JAVAC_SKIP")) {
+                return true
+            }
+            return false
+        }
+
+        //TODO: merge with isJavacSkipTest
+        fun isSkipJavacTest(wholeFile: File, files: List<TestFile>): Boolean {
+            val testDataFileText = wholeFile.readText()
+            if (isDirectiveDefined(testDataFileText, "// SKIP_JAVAC")) {
+                return true
+            }
+            return false
         }
     }
 

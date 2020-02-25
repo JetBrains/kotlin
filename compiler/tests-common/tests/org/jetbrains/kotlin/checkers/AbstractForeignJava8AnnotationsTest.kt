@@ -28,9 +28,8 @@ abstract class AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest : Abst
     override val annotationsPath: String
         get() = JAVA8_ANNOTATION_SOURCES_PATH
 
-    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
-        if (skipForCompiledVersion(files)) return
-        super.analyzeAndCheck(testDataFile, files)
+    override fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+        return skipForCompiledVersion(files)
     }
 }
 
@@ -39,9 +38,8 @@ abstract class AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClas
     override val annotationsPath: String
         get() = JAVA8_ANNOTATION_SOURCES_PATH
 
-    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
-        if (skipForCompiledVersion(files)) return
-        super.analyzeAndCheck(testDataFile, files)
+    override fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+        return skipForCompiledVersion(files)
     }
 }
 
