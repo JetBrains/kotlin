@@ -109,13 +109,11 @@ class CoroutineInferenceSession(
         initialStorage: ConstraintStorage,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType>? {
-        if (partiallyResolvedCallsInfo.isEmpty() && commonCalls.isEmpty()) {
-            val emptyCommonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns)
-            updateCalls(lambda, emptyCommonSystem)
+        val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
+        if (effectivelyEmptyConstraintSystem) {
+            updateCalls(lambda, commonSystem)
             return null
         }
-
-        val commonSystem = buildCommonSystem(initialStorage)
 
         val context = commonSystem.asConstraintSystemCompleterContext()
         kotlinConstraintSystemCompleter.completeConstraintSystem(
@@ -146,7 +144,7 @@ class CoroutineInferenceSession(
         storage: ConstraintStorage,
         nonFixedToVariablesSubstitutor: NewTypeSubstitutor,
         shouldIntegrateAllConstraints: Boolean
-    ) {
+    ): Boolean {
         storage.notFixedTypeVariables.values.forEach { commonSystem.registerVariable(it.typeVariable) }
 
         /*
@@ -158,11 +156,15 @@ class CoroutineInferenceSession(
         * */
         val callSubstitutor = storage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
 
+        var introducedConstraint = false
+
         for (initialConstraint in storage.initialConstraints) {
             val lower = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)) // TODO: SUB
             val upper = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.b as UnwrappedType)) // TODO: SUB
 
             if (commonSystem.isProperType(lower) && commonSystem.isProperType(upper)) continue
+
+            introducedConstraint = true
 
             when (initialConstraint.constraintKind) {
                 ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
@@ -182,28 +184,38 @@ class CoroutineInferenceSession(
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerVariable(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, CoroutinePosition())
+                introducedConstraint = true
             }
         }
+
+        return introducedConstraint
     }
 
-    private fun buildCommonSystem(initialStorage: ConstraintStorage): NewConstraintSystemImpl {
+    private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {
         val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns)
 
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
         integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
 
+        var effectivelyEmptyCommonSystem = true
+
         for (call in commonCalls) {
-            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
+            val hasConstraints =
+                integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
+            if (hasConstraints) effectivelyEmptyCommonSystem = false
         }
         for (call in partiallyResolvedCallsInfo) {
-            integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
+            val hasConstraints =
+                integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
+            if (hasConstraints) effectivelyEmptyCommonSystem = false
         }
+
         for (diagnostic in diagnostics) {
             commonSystem.addError(diagnostic)
         }
 
-        return commonSystem
+        return commonSystem to effectivelyEmptyCommonSystem
     }
 
     private fun updateCalls(lambda: ResolvedLambdaAtom, commonSystem: NewConstraintSystemImpl) {
