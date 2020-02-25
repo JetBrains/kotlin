@@ -6796,6 +6796,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/regression/tmpInsidePrimaryConstructor.kt");
         }
 
+        @TestMetadata("wrappers.kt")
+        public void testWrappers() throws Exception {
+            runTest("js/js.translator/testData/box/regression/wrappers.kt");
+        }
+
         @TestMetadata("js/js.translator/testData/box/regression/stdlibTestSnippets")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
