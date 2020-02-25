@@ -8,6 +8,8 @@ import kotlin.concurrent.write
  * Reference to [ArrayList]
  * Reference to [fixedRateTimer]
  * Reference to [kotlin.concurrent.read]
+ * Reference to [Lock.withLock]
+ * Reference to [java.util.concurrent.locks.ReentrantReadWriteLock.write]
  */
 fun foo() {
 }
