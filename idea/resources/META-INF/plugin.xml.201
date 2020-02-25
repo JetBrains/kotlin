@@ -30,6 +30,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
   <depends optional="true" config-file="stream-debugger.xml">org.jetbrains.debugger.streams</depends>
 
+  <depends>com.intellij.stats.completion</depends>
+
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
