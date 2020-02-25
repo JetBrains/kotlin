@@ -44,8 +44,8 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private val autoReloadExternalChangesProperty = AtomicBooleanProperty(true)
   private val projectChangeOperation = AnonymousParallelOperationTrace(debugName = "Project change operation")
   private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
-  private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, null, project)
-  val backgroundExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("project tracker", 1)
+  private val dispatcher = MergingUpdateQueue("AutoImportProjectTracker.dispatcher", AUTO_REPARSE_DELAY, false, null, project)
+  private val backgroundExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("AutoImportProjectTracker.backgroundExecutor", 1)
 
   override var isAutoReloadExternalChanges by autoReloadExternalChangesProperty
 
@@ -154,7 +154,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     val activationProperty = AtomicBooleanProperty(false)
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
     val parentDisposable = Disposer.newDisposable(projectId.readableName)
-    val settingsTracker = ProjectSettingsTracker(project, this, projectAware, parentDisposable)
+    val settingsTracker = ProjectSettingsTracker(project, this, backgroundExecutor, projectAware, parentDisposable)
     val projectData = ProjectData(projectStatus, activationProperty, projectAware, settingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 

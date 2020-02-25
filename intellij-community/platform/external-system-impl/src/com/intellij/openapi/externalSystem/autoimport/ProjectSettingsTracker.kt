@@ -21,12 +21,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.LocalTimeCounter.currentTime
 import org.jetbrains.annotations.ApiStatus
 import java.io.File
+import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicReference
 
 @ApiStatus.Internal
 class ProjectSettingsTracker(
   private val project: Project,
   private val projectTracker: AutoImportProjectTracker,
+  private val backgroundExecutor: Executor,
   private val projectAware: ExternalSystemProjectAware,
   private val parentDisposable: Disposable
 ) {
@@ -140,7 +142,7 @@ class ProjectSettingsTracker(
     ReadAction.nonBlocking<Set<String>> { collectSettingsFiles() }
       .expireWith(parentDisposable)
       .finishOnUiThread(ModalityState.defaultModalityState(), action)
-      .submit(projectTracker.backgroundExecutor)
+      .submit(backgroundExecutor)
   }
 
   private fun submitSettingsFilesCRCCalculation(action: (Map<String, Long>) -> Unit) {
@@ -151,7 +153,7 @@ class ProjectSettingsTracker(
     ReadAction.nonBlocking<Map<String, Long>> { calculateSettingsFilesCRC() }
       .expireWith(parentDisposable)
       .finishOnUiThread(ModalityState.defaultModalityState(), action)
-      .submit(projectTracker.backgroundExecutor)
+      .submit(backgroundExecutor)
   }
 
   private fun invokeLater(action: () -> Unit) {
@@ -183,7 +185,7 @@ class ProjectSettingsTracker(
   }
 
   init {
-    AsyncFilesChangesProviderImpl(projectTracker.backgroundExecutor, ::collectSettingsFiles)
+    AsyncFilesChangesProviderImpl(backgroundExecutor, ::collectSettingsFiles)
       .subscribe(ProjectSettingsListener(), parentDisposable)
   }
 
