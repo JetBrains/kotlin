@@ -179,7 +179,7 @@ private fun checkSubCallArgument(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
 ): ResolvedAtom {
-    val subCallResult = subCallArgument.callResult
+    val subCallResult = ResolvedSubCallArgument(subCallArgument)
 
     if (expectedType == null) return subCallResult
 

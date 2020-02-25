@@ -85,6 +85,12 @@ class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : 
     }
 }
 
+class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument) : ResolvedAtom() {
+    init {
+        setAnalyzedResults(listOf(atom.callResult))
+    }
+}
+
 interface PostponedResolvedAtomMarker {
     val inputTypes: Collection<KotlinTypeMarker>
     val outputType: KotlinTypeMarker?

@@ -77,6 +77,7 @@ class ResolvedAtomCompleter(
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
+            is ResolvedSubCallArgument -> completeSubCallArgument(resolvedAtom)
             is PartialCallResolutionResult -> completeResolvedCall(resolvedAtom.resultCallAtom, resolvedAtom.diagnostics)
         }
     }
@@ -88,6 +89,17 @@ class ResolvedAtomCompleter(
             completeAll(subKtPrimitive)
         }
         complete(resolvedAtom)
+    }
+
+    fun completeSubCallArgument(resolvedSubCallArgument: ResolvedSubCallArgument) {
+        val contextWithoutExpectedType = topLevelCallContext.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+        kotlinToResolvedCallTransformer.updateRecordedType(
+            resolvedSubCallArgument.atom.psiExpression ?: return,
+            parameter = null,
+            context = contextWithoutExpectedType,
+            reportErrorForTypeMismatch = true,
+            convertedArgumentType = null
+        )
     }
 
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
