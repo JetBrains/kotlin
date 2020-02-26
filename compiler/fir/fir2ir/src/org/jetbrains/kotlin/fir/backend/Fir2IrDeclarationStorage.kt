@@ -967,7 +967,11 @@ class Fir2IrDeclarationStorage(
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val firDeclaration = firVariableSymbol.fir) {
             is FirEnumEntry -> {
-                val irEnumEntry = getIrEnumEntry(firDeclaration)
+                val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
+                val irEnumEntry = getIrEnumEntry(
+                    firDeclaration,
+                    origin = if (containingFile == null) IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB else IrDeclarationOrigin.DEFINED
+                )
                 irSymbolTable.referenceEnumEntry(irEnumEntry.descriptor)
             }
             is FirValueParameter -> {
