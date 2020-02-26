@@ -118,7 +118,7 @@ constructor(
             it.compileKotlinTask.configureCommonJsOptions()
 
             binaries
-                .filterIsInstance<JsBinary>()
+                .filterIsInstance<JsIrBinary>()
                 .forEach {
                     it.linkTask.configure { linkTask ->
                         linkTask.configureCommonJsOptions()

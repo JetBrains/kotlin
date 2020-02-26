@@ -44,7 +44,7 @@ abstract class KotlinJsIrSubTarget(
         target.compilations.all {
             val npmProject = it.npmProject
             it.binaries
-                .withType(JsBinary::class.java)
+                .withType(JsIrBinary::class.java)
                 .all { binary ->
                     binary.linkTask.configure {
                         it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
@@ -75,7 +75,7 @@ abstract class KotlinJsIrSubTarget(
 
     protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
         target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }.all { compilation ->
-            compilation.binaries.executableInternal(compilation)
+            compilation.binaries.executableIrInternal(compilation)
             configureTestsRun(testRun, compilation)
         }
     }
@@ -92,7 +92,7 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            val testExecutableTask = compilation.binaries.getBinary(
+            val testExecutableTask = compilation.binaries.getIrBinary(
                 KotlinJsBinaryType.DEVELOPMENT
             ).linkTask
 

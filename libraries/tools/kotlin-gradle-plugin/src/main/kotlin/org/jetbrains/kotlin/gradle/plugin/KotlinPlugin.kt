@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
-import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -354,7 +354,7 @@ internal class KotlinJsIrSourceSetProcessor(
         val compilation = kotlinCompilation as KotlinJsIrCompilation
 
         compilation.binaries
-            .withType(JsBinary::class.java)
+            .withType(JsIrBinary::class.java)
             .all { binary ->
                 registerKotlinCompileTask(
                     binary.linkTaskName

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -28,7 +28,7 @@ open class KotlinJsCompilation(
         target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             target,
-            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+            WrapUtil.toDomainObjectSet(JsIrBinary::class.java)
         )
 
     override val processResourcesTaskName: String

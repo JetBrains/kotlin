@@ -24,8 +24,8 @@ open class KotlinJsBinaryContainer
 @Inject
 constructor(
     val target: KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>,
-    backingContainer: DomainObjectSet<JsBinary2>
-) : DomainObjectSet<JsBinary2> by backingContainer {
+    backingContainer: DomainObjectSet<JsBinary>
+) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project
         get() = target.project
 
@@ -46,7 +46,7 @@ constructor(
                 (this as KotlinJsIrSubTarget).produceExecutable()
             }
 
-            compilation.binaries.executableInternal(compilation)
+            compilation.binaries.executableIrInternal(compilation)
         }
 
         if (target is KotlinJsTarget) {
@@ -65,7 +65,7 @@ constructor(
         }
     }
 
-    internal fun executableInternal(compilation: KotlinJsCompilation) = createBinaries(
+    internal fun executableIrInternal(compilation: KotlinJsCompilation) = createBinaries(
         compilation = compilation,
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = ::Executable
@@ -75,7 +75,7 @@ constructor(
         compilation = compilation,
         jsBinaryType = JsBinaryType.EXECUTABLE,
         create = { compilation, name, type ->
-            object : JsBinary2 {
+            object : JsBinary {
                 override val compilation: KotlinJsCompilation = compilation
                 override val name: String = name
                 override val type: KotlinJsBinaryType = type
@@ -83,14 +83,14 @@ constructor(
         }
     )
 
-    internal fun getBinary(
+    internal fun getIrBinary(
         type: KotlinJsBinaryType
-    ): JsBinary =
+    ): JsIrBinary =
         matching { it.type == type }
-            .withType(JsBinary::class.java)
+            .withType(JsIrBinary::class.java)
             .single()
 
-    private fun <T : JsBinary2> createBinaries(
+    private fun <T : JsBinary> createBinaries(
         compilation: KotlinJsCompilation,
         types: Collection<KotlinJsBinaryType> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
