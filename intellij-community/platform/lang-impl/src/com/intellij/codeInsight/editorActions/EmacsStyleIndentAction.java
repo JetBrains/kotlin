@@ -26,8 +26,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class EmacsStyleIndentAction extends BaseCodeInsightAction implements DumbAware {
@@ -39,7 +41,8 @@ public class EmacsStyleIndentAction extends BaseCodeInsightAction implements Dum
 
   @Override
   protected boolean isValidForFile(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
-    return LanguageFormatting.INSTANCE.forContext(file) != null;
+    PsiElement context = ObjectUtils.notNull(file.findElementAt(editor.getCaretModel().getOffset()), file);
+    return LanguageFormatting.INSTANCE.forContext(context) != null;
   }
 
   private static class Handler implements CodeInsightActionHandler {
