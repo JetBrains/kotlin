@@ -107,9 +107,27 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
   @Nullable
   private static PsiElement getIdentifyingElement(@NotNull PsiElement targetElement) {
     if (targetElement instanceof PsiNameIdentifierOwner) {
-      return ((PsiNameIdentifierOwner)targetElement).getIdentifyingElement();
+      return getIdentifyingElement((PsiNameIdentifierOwner)targetElement);
     }
     return null;
+  }
+
+  @Nullable
+  private static PsiElement getIdentifyingElement(@NotNull PsiNameIdentifierOwner nameIdentifierOwner) {
+    PsiElement identifyingElement = nameIdentifierOwner.getIdentifyingElement();
+    if (identifyingElement == null) {
+      return null;
+    }
+    TextRange identifyingElementRange = identifyingElement.getTextRange();
+    if (identifyingElementRange == null) {
+      LOG.error("Identifying element has no text range;\n" +
+                "target: " + nameIdentifierOwner + ";\n" +
+                "target class: " + nameIdentifierOwner.getClass().getName() + ";\n" +
+                "identifying element: " + identifyingElement + ";\n" +
+                "identifying element class: " + identifyingElement.getClass().getName());
+      return null;
+    }
+    return identifyingElement;
   }
 
   /**
