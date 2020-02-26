@@ -73,16 +73,20 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
     return rangeOf(declaringElement);
   }
 
-  @NotNull
+  @Nullable
   static PsiSymbolDeclaration createFromPom(@NotNull PomTarget target, @NotNull PsiElement declaringElement) {
+    TextRange declarationRange = getDeclarationRangeFromPom(target, declaringElement);
+    if (declarationRange == null) {
+      return null;
+    }
     return new PsiElement2Declaration(
       PomService.convertToPsi(declaringElement.getProject(), target),
       declaringElement,
-      getDeclarationRangeFromPom(target, declaringElement)
+      declarationRange
     );
   }
 
-  @NotNull
+  @Nullable
   private static TextRange getDeclarationRangeFromPom(@NotNull PomTarget target, @NotNull PsiElement declaringElement) {
     if (target instanceof PsiDeclaredTarget) {
       PsiDeclaredTarget declaredTarget = (PsiDeclaredTarget)target;
@@ -92,10 +96,17 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
         if (navigationElement == declaringElement) {
           return nameIdentifierRange;
         }
-        else {
-          LOG.assertTrue(navigationElement.getContainingFile() == declaringElement.getContainingFile());
+        else if (navigationElement.getContainingFile() == declaringElement.getContainingFile()) {
           int delta = declaringElement.getTextRange().getStartOffset() - navigationElement.getTextRange().getStartOffset();
           return nameIdentifierRange.shiftLeft(delta);
+        }
+        else {
+          LOG.error("Navigation element file differs from declaring element file;\n" +
+                    "target: " + target + ";\n" +
+                    "target class: " + target.getClass().getName() + ";\n" +
+                    "navigation element file: " + navigationElement.getContainingFile() + ";\n" +
+                    "declaring element file: " + declaringElement.getContainingFile());
+          return null;
         }
       }
     }

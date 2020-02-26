@@ -19,10 +19,10 @@ class DefaultPsiSymbolDeclarationProvider : PsiSymbolDeclarationProvider {
 
     for (searcher in PomDeclarationSearcher.EP_NAME.extensions) {
       ProgressManager.checkCanceled()
-      val result = SmartList<PsiSymbolDeclaration>()
+      val result: MutableList<PsiSymbolDeclaration> = SmartList()
       searcher.findDeclarationsAt(element, offsetInElement, fun(target: PomTarget) {
         ProgressManager.checkCanceled()
-        result += PsiElement2Declaration.createFromPom(target, element)
+        result += PsiElement2Declaration.createFromPom(target, element) ?: return
       })
       if (result.isNotEmpty()) {
         return listOf(result.first())
