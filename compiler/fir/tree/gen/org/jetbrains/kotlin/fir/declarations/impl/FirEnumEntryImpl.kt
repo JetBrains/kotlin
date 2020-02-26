@@ -82,6 +82,10 @@ internal class FirEnumEntryImpl(
         return this
     }
 
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         return this
     }

@@ -79,6 +79,10 @@ internal class FirFieldImpl(
         return this
     }
 
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        return this
+    }
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }

@@ -76,6 +76,10 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        return this
+    }
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         return this
     }

@@ -134,6 +134,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         assert(variable.isLocal)
         val resolutionMode = withExpectedType(variable.returnTypeRef)
         variable.transformInitializer(transformer, resolutionMode)
+            .transformDelegate(transformer, resolutionMode)
             .transformOtherChildren(transformer, resolutionMode)
             .transformInitializer(integerLiteralTypeApproximator, null)
         if (variable.initializer != null) {
@@ -150,6 +151,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         val data = withExpectedType(returnTypeRef)
         return transformReturnTypeRef(transformer, data)
             .transformInitializer(transformer, data)
+            .transformDelegate(transformer, data)
             .transformOtherChildren(transformer, data)
     }
 

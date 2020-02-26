@@ -47,6 +47,8 @@ abstract class FirVariable<F : FirVariable<F>> : FirPureAbstractElement(), FirCa
 
     abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
+    abstract fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirVariable<F>
+
     abstract fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
     abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
