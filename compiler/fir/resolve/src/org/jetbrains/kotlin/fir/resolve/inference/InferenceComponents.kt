@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
@@ -36,6 +37,20 @@ class InferenceComponents(
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
     private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
+
+    @set:PrivateForInline
+    var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
+
+    @UseExperimental(PrivateForInline::class)
+    inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
+        val oldSession = this.inferenceSession
+        this.inferenceSession = inferenceSession
+        return try {
+            block()
+        } finally {
+            this.inferenceSession = oldSession
+        }
+    }
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
         return NewConstraintSystemImpl(injector, ctx)

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -30,9 +30,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.StubTypeMarker
@@ -42,7 +41,9 @@ class FirCallCompleter(
     private val transformer: FirBodyResolveTransformer,
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) : BodyResolveComponents by components {
-    private val completer = ConstraintSystemCompleter(components.inferenceComponents)
+    val completer = ConstraintSystemCompleter(components.inferenceComponents)
+    private val inferenceSession
+        get() = inferenceComponents.inferenceSession
 
     fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): T
             where T : FirResolvable, T : FirStatement {
@@ -51,7 +52,7 @@ class FirCallCompleter(
             if (call is FirExpression) {
                 call.resultType = typeRef
             }
-            return if (call is FirFunctionCall) {
+            val errorCall = if (call is FirFunctionCall) {
                 call.transformArguments(
                     transformer,
                     ResolutionMode.WithExpectedType(typeRef.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type))
@@ -59,7 +60,10 @@ class FirCallCompleter(
             } else {
                 call
             }
+            inferenceSession.addErrorCall(errorCall)
+            return errorCall
         }
+
         val candidate = call.candidate() ?: return call
         val initialSubstitutor = candidate.substitutor
 
@@ -75,31 +79,50 @@ class FirCallCompleter(
 
         val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
 
-        val analyzer =
-            PostponedArgumentsAnalyzer(
-                LambdaAnalyzerImpl(), inferenceComponents, candidate,
-                transformer.components.callResolver
-            )
-
+        val analyzer = createPostponedArgumentsAnalyzer()
         call.transformSingle(InvocationKindTransformer, null)
-        completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType) {
-            analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it)
-        }
 
-        if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
-            val finalSubstitutor =
-                candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
-            return call.transformSingle(
-                FirCallCompletionResultsWriterTransformer(
-                    session, finalSubstitutor, returnTypeCalculator,
-                    inferenceComponents.approximator,
-                    integerOperatorsTypeUpdater,
-                    integerLiteralTypeApproximator
-                ),
-                null
-            )
+        return when (completionMode) {
+            ConstraintSystemCompletionMode.FULL -> {
+                if (inferenceSession.shouldRunCompletion(candidate)) {
+                    completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType) {
+                        analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
+                    }
+                    val finalSubstitutor =
+                        candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
+                    val completedCall = call.transformSingle(
+                        FirCallCompletionResultsWriterTransformer(
+                            session, finalSubstitutor, returnTypeCalculator,
+                            inferenceComponents.approximator,
+                            integerOperatorsTypeUpdater,
+                            integerLiteralTypeApproximator
+                        ),
+                        null
+                    )
+                    inferenceSession.addCompetedCall(completedCall)
+                    completedCall
+                } else {
+                    inferenceSession.addPartiallyResolvedCall(call)
+                    call
+                }
+            }
+
+            ConstraintSystemCompletionMode.PARTIAL -> {
+                completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType) {
+                    analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
+                }
+                val approximatedCall = call.transformSingle(integerOperatorsTypeUpdater, null)
+                inferenceSession.addPartiallyResolvedCall(approximatedCall)
+                approximatedCall
+            }
         }
-        return call.transformSingle(integerOperatorsTypeUpdater, null)
+    }
+
+    fun createPostponedArgumentsAnalyzer(): PostponedArgumentsAnalyzer {
+        return PostponedArgumentsAnalyzer(
+            LambdaAnalyzerImpl(), inferenceComponents,
+            transformer.components.callResolver
+        )
     }
 
     private inner class LambdaAnalyzerImpl : LambdaAnalyzer {
@@ -111,8 +134,7 @@ class FirCallCompleter(
             expectedReturnType: ConeKotlinType?,
             rawReturnType: ConeKotlinType,
             stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
-        ): Pair<List<FirStatement>, InferenceSession> {
-
+        ): ReturnArgumentsAnalysisResult {
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
             val itParam = when {
@@ -153,7 +175,9 @@ class FirCallCompleter(
             lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
 
             val returnArguments = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
-            return returnArguments to InferenceSession.default
+
+            // TODO: add detecting of coroutine inference session
+            return ReturnArgumentsAnalysisResult(returnArguments, null)
         }
     }
 
