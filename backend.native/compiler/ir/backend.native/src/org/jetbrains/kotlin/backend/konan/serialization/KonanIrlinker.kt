@@ -98,7 +98,7 @@ class KonanIrLinker(
         val fwdModule = forwardModuleDescriptor ?: error("Forward declaration module should not be null")
 
         return with(idSig as IdSignature.PublicSignature) {
-            val classId = ClassId(packageFqn, classFqn, false)
+            val classId = ClassId(packageFqn, declarationFqn, false)
             fwdModule.findClassAcrossModuleDependencies(classId)
         }
     }
