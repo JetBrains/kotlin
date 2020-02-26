@@ -318,6 +318,4 @@ class IrBuiltIns(
         const val ANDAND = "ANDAND"
         const val OROR = "OROR"
     }
-
-    val function1: IrClassSymbol = builtIns.getFunction(1).toIrSymbol()
 }

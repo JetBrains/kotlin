@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.anyOfOverriddenFunctionsReturnsNonUnit
-import org.jetbrains.kotlin.backend.jvm.codegen.isKnownToBeTailCall
+import org.jetbrains.kotlin.backend.jvm.codegen.hasContinuation
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
@@ -77,10 +74,7 @@ private class TailCallOptimizationData(val function: IrFunction) {
     }
 
     init {
-        if (function.isSuspend && function.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && !function.isKnownToBeTailCall() &&
-            // See `disableTailCallOptimizationForFunctionReturningUnit` in `generateStateMachineForNamedFunction`:
-            !(returnsUnit && function.anyOfOverriddenFunctionsReturnsNonUnit())
-        ) {
+        if (function.hasContinuation()) {
             when (val body = function.body) {
                 is IrBlockBody -> body.statements.findTailCall(returnsUnit)?.let(::findCallsOnTailPositionWithoutImmediateReturn)
                 is IrExpressionBody -> findCallsOnTailPositionWithoutImmediateReturn(body.expression)

@@ -143,16 +143,6 @@ open class FunctionCodegen(
             context.suspendLambdaToOriginalFunctionMap[irFunction.parentAsClass.attributeOwnerId]!!.symbol.descriptor.psiElement)
                 as KtElement
 
-    private fun IrFunction.hasContinuation(): Boolean = isSuspend &&
-            // We do not generate continuation and state-machine for synthetic accessors, bridges, and delegated members,
-            // in a sense, they are tail-call
-            !isKnownToBeTailCall() &&
-            // This is suspend lambda parameter of inline function
-            origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
-            // This is just a template for inliner
-            origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
-            origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
-
     private fun IrFunction.continuationClass(): IrClass =
             (body as IrBlockBody).statements.first { it is IrClass && it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS } as IrClass
 

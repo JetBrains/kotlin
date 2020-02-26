@@ -185,7 +185,7 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
     }
 }
 
-private fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
+fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
         IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
             it.parent = this
@@ -198,22 +198,6 @@ fun IrFunction.copyValueParametersFrom(from: IrFunction) {
     copyReceiverParametersFrom(from)
     val shift = valueParameters.size
     valueParameters += from.valueParameters.map { it.copyTo(this, index = it.index + shift) }
-}
-
-fun IrFunction.copyValueParametersInsertingContinuationFrom(from: IrFunction, insertContinuation: () -> Unit) {
-    copyReceiverParametersFrom(from)
-    val shift = valueParameters.size
-    var additionalShift = 0
-    from.valueParameters.forEach {
-        // The continuation parameter goes before the default argument mask and handler.
-        if (it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION && additionalShift == 0) {
-            insertContinuation()
-            additionalShift = 1
-        }
-        valueParameters += it.copyTo(this, index = it.index + shift + additionalShift)
-    }
-    // If there was no default argument mask and handler, the continuation goes last.
-    if (additionalShift == 0) insertContinuation()
 }
 
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
