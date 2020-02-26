@@ -418,7 +418,7 @@ class Fir2IrVisitor(
                 ).apply {
                     val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
                     if (typeArguments?.isNotEmpty() == true) {
-                        val irType = (typeArguments.first() as ConeTypedProjection).type.toIrType(session, declarationStorage, irBuiltIns)
+                        val irType = (typeArguments.first() as ConeKotlinTypeProjection).type.toIrType(session, declarationStorage, irBuiltIns)
                         putTypeArgument(0, irType)
                     }
                 }

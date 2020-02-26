@@ -25,27 +25,25 @@ enum class ProjectionKind {
     }
 }
 
-sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
+sealed class ConeTypeProjection : TypeArgumentMarker {
     abstract val kind: ProjectionKind
 
     companion object {
-        val EMPTY_ARRAY = arrayOf<ConeKotlinTypeProjection>()
+        val EMPTY_ARRAY = arrayOf<ConeTypeProjection>()
     }
 }
 
-object ConeStarProjection : ConeKotlinTypeProjection() {
+object ConeStarProjection : ConeTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.STAR
 }
 
-data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection(),
-    ConeTypedProjection {
+data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.IN
 }
 
-data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection(),
-    ConeTypedProjection {
+data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.OUT
 }
@@ -53,13 +51,12 @@ data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : Cone
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
 sealed class ConeKotlinType : ConeKotlinTypeProjection(),
-    ConeTypedProjection,
     KotlinTypeMarker,
     TypeArgumentListMarker {
     override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
-    abstract val typeArguments: Array<out ConeKotlinTypeProjection>
+    abstract val typeArguments: Array<out ConeTypeProjection>
 
     override val type: ConeKotlinType
         get() = this
@@ -73,8 +70,8 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(),
 
 sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
 
-interface ConeTypedProjection {
-    val type: ConeKotlinType
+sealed class ConeKotlinTypeProjection : ConeTypeProjection() {
+    abstract val type: ConeKotlinType
 }
 
 typealias ConeKotlinErrorType = ConeClassErrorType
@@ -85,7 +82,7 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
+    override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
 
     override val nullability: ConeNullability
@@ -109,7 +106,7 @@ open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
         require(upperBound is SimpleTypeMarker, message)
     }
 
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
+    override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 
     override val nullability: ConeNullability
@@ -139,7 +136,7 @@ fun ConeKotlinType.upperBoundIfFlexible() = (this as? ConeFlexibleType)?.upperBo
 fun ConeKotlinType.lowerBoundIfFlexible() = (this as? ConeFlexibleType)?.lowerBound ?: this
 
 class ConeCapturedTypeConstructor(
-    val projection: ConeKotlinTypeProjection,
+    val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,
     val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker
@@ -151,7 +148,7 @@ class ConeCapturedType(
     val constructor: ConeCapturedTypeConstructor
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
     constructor(
-        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeKotlinTypeProjection,
+        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
         typeParameterMarker: TypeParameterMarker
     ) : this(
         captureStatus,
@@ -162,7 +159,7 @@ class ConeCapturedType(
         )
     )
 
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
+    override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 }
 
@@ -170,11 +167,11 @@ data class ConeTypeVariableType(
     override val nullability: ConeNullability,
     override val lookupTag: ConeClassifierLookupTag
 ) : ConeLookupTagBasedType() {
-    override val typeArguments: Array<out ConeKotlinTypeProjection> get() = emptyArray()
+    override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
 }
 
 data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
+    override val typeArguments: Array<out ConeTypeProjection>
         get() = original.typeArguments
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
@@ -193,7 +190,7 @@ class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : Cone
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>
 ) : ConeSimpleKotlinType(), TypeConstructorMarker {
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
+    override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 
     override val nullability: ConeNullability
@@ -205,7 +202,7 @@ fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): Con
 }
 
 class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
+    override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 }
 
@@ -226,7 +223,7 @@ abstract class ConeIntegerLiteralType(val value: Long) : ConeSimpleKotlinType(),
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
-    override val typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray()
+    override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
     override val nullability: ConeNullability = ConeNullability.NOT_NULL
 
     abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType

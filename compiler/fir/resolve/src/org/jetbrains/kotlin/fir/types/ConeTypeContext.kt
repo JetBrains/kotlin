@@ -175,12 +175,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
-        require(this is ConeKotlinTypeProjection)
+        require(this is ConeTypeProjection)
         return this is ConeStarProjection
     }
 
     override fun TypeArgumentMarker.getVariance(): TypeVariance {
-        require(this is ConeKotlinTypeProjection)
+        require(this is ConeTypeProjection)
 
         return when (this.kind) {
             ProjectionKind.STAR -> error("Nekorrektno (c) Stas")
@@ -191,8 +191,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
-        require(this is ConeKotlinTypeProjection)
-        require(this is ConeTypedProjection) { "No type for StarProjection" }
+        require(this is ConeTypeProjection)
+        require(this is ConeKotlinTypeProjection) { "No type for StarProjection" }
         return this.type
     }
 
@@ -310,7 +310,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT) return@Array argument
 
             val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
-                (argument as ConeTypedProjection).type
+                (argument as ConeKotlinTypeProjection).type
             } else {
                 null
             }
@@ -516,7 +516,7 @@ class ConeTypeCheckerContext(
         val substitutor = if (declaration is FirTypeParametersOwner) {
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
-                    parameter.symbol to ((argument as? ConeTypedProjection)?.type
+                    parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.type)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
             substitutorByMap(substitution)

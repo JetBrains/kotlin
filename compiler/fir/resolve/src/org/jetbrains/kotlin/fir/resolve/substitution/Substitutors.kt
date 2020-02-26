@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
-    protected fun wrapProjection(old: ConeKotlinTypeProjection, newType: ConeKotlinType): ConeKotlinTypeProjection {
+    protected fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
         return when (old) {
             is ConeStarProjection -> old
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
@@ -21,8 +21,8 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     abstract fun substituteType(type: ConeKotlinType): ConeKotlinType?
-    open fun substituteArgument(projection: ConeKotlinTypeProjection): ConeKotlinTypeProjection? {
-        val type = (projection as? ConeTypedProjection)?.type ?: return null
+    open fun substituteArgument(projection: ConeTypeProjection): ConeTypeProjection? {
+        val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         val newType = substituteOrNull(type) ?: return null
         return wrapProjection(projection, newType)
     }
@@ -88,7 +88,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     private fun ConeKotlinType.substituteArguments(): ConeKotlinType? {
-        val newArguments by lazy { arrayOfNulls<ConeKotlinTypeProjection>(typeArguments.size) }
+        val newArguments by lazy { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
         for ((index, typeArgument) in this.typeArguments.withIndex()) {
             newArguments[index] = substituteArgument(typeArgument)?.also {
@@ -106,7 +106,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             return when (this) {
                 is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
-                    newArguments as Array<ConeKotlinTypeProjection>,
+                    newArguments as Array<ConeTypeProjection>,
                     nullability.isNullable
                 )
                 is ConeClassLikeType -> error("Unknown class-like type to substitute: $this, ${this::class}")

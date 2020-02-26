@@ -63,7 +63,7 @@ internal val JavaClass.classKind: ClassKind
     }
 
 internal fun ClassId.toConeKotlinType(
-    typeArguments: Array<ConeKotlinTypeProjection>,
+    typeArguments: Array<ConeTypeProjection>,
     isNullable: Boolean
 ): ConeLookupTagBasedType {
     val lookupTag = ConeClassLikeLookupTagImpl(this)
@@ -152,8 +152,8 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
 }
 
 private fun ClassId.toConeFlexibleType(
-    typeArguments: Array<ConeKotlinTypeProjection>,
-    typeArgumentsForUpper: Array<ConeKotlinTypeProjection> = typeArguments
+    typeArguments: Array<ConeTypeProjection>,
+    typeArgumentsForUpper: Array<ConeTypeProjection> = typeArguments
 ) = ConeFlexibleType(
     toConeKotlinType(typeArguments, isNullable = false),
     toConeKotlinType(typeArgumentsForUpper, isNullable = true)
@@ -367,7 +367,7 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
     session: FirSession,
     javaTypeParameterStack: JavaTypeParameterStack,
     boundTypeParameter: FirTypeParameter?
-): ConeKotlinTypeProjection {
+): ConeTypeProjection {
     return when (this) {
         null -> ConeStarProjection
         is JavaWildcardType -> {

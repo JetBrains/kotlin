@@ -81,7 +81,7 @@ class FirSamResolverImpl(
                     .map { it.symbol }
                     .zip(
                         type.typeArguments.map {
-                            (it as? ConeTypedProjection)?.type
+                            (it as? ConeKotlinTypeProjection)?.type
                                 ?: firSession.builtinTypes.nullableAnyType.type
                             //ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
                         },

@@ -50,7 +50,7 @@ fun ConeKotlinType.render(): String {
     } + nullabilitySuffix
 }
 
-private fun ConeKotlinTypeProjection.render(): String {
+private fun ConeTypeProjection.render(): String {
     return when (this) {
         ConeStarProjection -> "*"
         is ConeKotlinTypeProjectionIn -> "in ${type.render()}"

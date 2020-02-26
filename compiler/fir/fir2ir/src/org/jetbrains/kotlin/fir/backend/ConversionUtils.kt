@@ -110,7 +110,7 @@ private fun getArrayType(classId: ClassId?, irBuiltIns: IrBuiltIns): IrClassifie
     return irType?.let { irBuiltIns.primitiveArrayForType.getValue(it) }
 }
 
-fun ConeKotlinTypeProjection.toIrTypeArgument(
+fun ConeTypeProjection.toIrTypeArgument(
     session: FirSession,
     declarationStorage: Fir2IrDeclarationStorage,
     irBuiltIns: IrBuiltIns

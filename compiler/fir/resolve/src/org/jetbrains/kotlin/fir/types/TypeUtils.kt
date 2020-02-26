@@ -85,7 +85,7 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(): ConeKotlinType {
     return ConeDefinitelyNotNullType.create(this) ?: this.withNullability(ConeNullability.NOT_NULL)
 }
 
-fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProjection>): T {
+fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
     if (this.typeArguments === arguments) {
         return this
     }
@@ -175,7 +175,7 @@ fun coneFlexibleOrSimpleType(
     }
 }
 
-fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
+fun ConeKotlinType.toTypeProjection(variance: Variance): ConeTypeProjection =
     when (variance) {
         Variance.INVARIANT -> this
         Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(this)
@@ -183,13 +183,13 @@ fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjectio
     }
 
 fun ConeClassLikeLookupTag.constructClassType(
-    typeArguments: Array<out ConeKotlinTypeProjection>,
+    typeArguments: Array<out ConeTypeProjection>,
     isNullable: Boolean,
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this, typeArguments, isNullable)
 }
 
-fun ConeClassifierLookupTag.constructType(typeArguments: Array<out ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+fun ConeClassifierLookupTag.constructType(typeArguments: Array<out ConeTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable)
         is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable)

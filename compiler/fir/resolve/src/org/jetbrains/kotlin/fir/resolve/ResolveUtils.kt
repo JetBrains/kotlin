@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -121,11 +119,11 @@ private fun mapTypeAliasArguments(
             return null
         }
 
-        override fun substituteArgument(projection: ConeKotlinTypeProjection): ConeKotlinTypeProjection? {
-            val type = (projection as? ConeTypedProjection)?.type ?: return null
+        override fun substituteArgument(projection: ConeTypeProjection): ConeTypeProjection? {
+            val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
             val symbol = (type as? ConeTypeParameterType)?.lookupTag?.toSymbol() ?: return super.substituteArgument(projection)
             val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection)
-            val mappedType = (mappedProjection as? ConeTypedProjection)?.type ?: return mappedProjection
+            val mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type ?: return mappedProjection
             val resultingKind = mappedProjection.kind + projection.kind
             return when (resultingKind) {
                 ProjectionKind.STAR -> ConeStarProjection
@@ -148,7 +146,7 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierS
 
 fun ConeTypeParameterLookupTag.toSymbol(): FirTypeParameterSymbol = this.symbol as FirTypeParameterSymbol
 
-fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is FirTypeParameterSymbol -> {
             ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable)
@@ -184,7 +182,7 @@ fun FirClassifierSymbol<*>.constructType(
         }
 
 
-private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeKotlinTypeProjection> = flatMap {
+private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> = flatMap {
     it.typeArguments.map { typeArgument ->
         when (typeArgument) {
             is FirStarProjection -> ConeStarProjection

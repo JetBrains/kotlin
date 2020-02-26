@@ -80,7 +80,7 @@ fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
 
 fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef, session: FirSession): ConeKotlinType? {
     if (isBuiltinFunctionalType(session) && expectedTypeRef.isExtensionFunctionType(session)) {
-        return ((this as ConeClassLikeType).fullyExpandedType(session).typeArguments.first() as ConeTypedProjection).type
+        return ((this as ConeClassLikeType).fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
     }
     return null
 }
@@ -88,13 +88,13 @@ fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef, session: FirSession
 fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType? {
     require(this is ConeClassLikeType)
     val projection = fullyExpandedType(session).typeArguments.last()
-    return (projection as? ConeTypedProjection)?.type
+    return (projection as? ConeKotlinTypeProjection)?.type
 }
 
 private fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType?> {
     require(this is ConeClassLikeType)
     return fullyExpandedType(session).typeArguments.dropLast(1).map {
-        (it as? ConeTypedProjection)?.type
+        (it as? ConeKotlinTypeProjection)?.type
     }
 }
 
@@ -119,7 +119,7 @@ private fun extraLambdaInfo(
     val receiverType = argument.receiverType
     val returnType =
         argument.returnType
-            ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeTypedProjection>()?.type?.takeIf { isFunctionSupertype }
+            ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeKotlinTypeProjection>()?.type?.takeIf { isFunctionSupertype }
             ?: typeVariable.defaultType
 
     val nothingType = argument.session.builtinTypes.nothingType.type

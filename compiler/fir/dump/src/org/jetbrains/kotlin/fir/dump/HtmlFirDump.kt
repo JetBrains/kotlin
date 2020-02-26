@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
@@ -697,10 +696,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(variableAssignment.rValue)
     }
 
-    private fun FlowContent.generate(projection: ConeKotlinTypeProjection) {
+    private fun FlowContent.generate(projection: ConeTypeProjection) {
         when (projection) {
             is ConeStarProjection -> +"*"
-            is ConeTypedProjection -> {
+            is ConeKotlinTypeProjection -> {
                 when (projection.kind) {
                     ProjectionKind.IN -> keyword("in ")
                     ProjectionKind.OUT -> keyword("out ")

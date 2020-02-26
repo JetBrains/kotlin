@@ -32,7 +32,7 @@ fun ConeKotlinType.arrayElementType(session: FirSession): ConeKotlinType? {
     if (type !is ConeClassLikeType) return null
     val classId = type.lookupTag.classId
     if (classId == StandardClassIds.Array)
-        return (type.typeArguments.first() as ConeTypedProjection).type
+        return (type.typeArguments.first() as ConeKotlinTypeProjection).type
     val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId]
     if (elementType != null) {
         return elementType.invoke(session.firSymbolProvider).constructType(emptyArray(), isNullable = false)

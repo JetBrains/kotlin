@@ -58,7 +58,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return when (constructor) {
             is FirClassLikeSymbol<*> -> ConeClassLikeTypeImpl(
                 constructor.toLookupTag(),
-                (arguments as List<ConeKotlinTypeProjection>).toTypedArray(),
+                (arguments as List<ConeTypeProjection>).toTypedArray(),
                 nullable
             )
             is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(
@@ -107,7 +107,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
         var maxArgumentDepth = 0
         for (arg in typeArguments) {
-            val current = if (arg is ConeStarProjection) 1 else (arg as ConeTypedProjection).type.typeDepth()
+            val current = if (arg is ConeStarProjection) 1 else (arg as ConeKotlinTypeProjection).type.typeDepth()
             if (current > maxArgumentDepth) {
                 maxArgumentDepth = current
             }
@@ -217,7 +217,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         captureStatus: CaptureStatus
     ): CapturedTypeMarker {
         require(lowerType is ConeKotlinType?)
-        require(constructorProjection is ConeKotlinTypeProjection)
+        require(constructorProjection is ConeTypeProjection)
         return ConeCapturedType(
             captureStatus,
             lowerType,
@@ -236,7 +236,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return this.withArguments(newArguments.cast<List<ConeKotlinTypeProjection>>().toTypedArray())
+        return this.withArguments(newArguments.cast<List<ConeTypeProjection>>().toTypedArray())
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {

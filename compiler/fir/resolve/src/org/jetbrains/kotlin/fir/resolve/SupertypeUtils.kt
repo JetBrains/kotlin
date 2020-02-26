@@ -57,13 +57,13 @@ fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: Sco
 /* TODO REMOVE */
 fun createSubstitution(
     typeParameters: List<FirTypeParameter>,
-    typeArguments: Array<out ConeKotlinTypeProjection>,
+    typeArguments: Array<out ConeTypeProjection>,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
     return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
         val typeParameterSymbol = typeParameter.symbol
         typeParameterSymbol to when (typeArgument) {
-            is ConeTypedProjection -> {
+            is ConeKotlinTypeProjection -> {
                 typeArgument.type
             }
             else /* StarProjection */ -> {
