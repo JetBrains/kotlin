@@ -34,7 +34,10 @@ class KotlinSuggestedRefactoringExecution(
             KotlinTypeInfo(text = newSignature.type, isCovariant = true)
         }
 
-        require(descriptorWithNewSignature.valueParameters.size == newSignature.parameters.size)
+        require(descriptorWithNewSignature.valueParameters.size == newSignature.parameters.size) {
+            "Number of parameters of newSignature is ${newSignature.parameters.size} and of the descriptor is ${descriptorWithNewSignature.valueParameters.size}"
+        }
+
         val parameterTypeInfos = descriptorWithNewSignature.valueParameters.zip(newSignature.parameters)
             .map { (parameterDescriptor, parameterData) ->
                 val type = parameterDescriptor.varargElementType ?: parameterDescriptor.type
