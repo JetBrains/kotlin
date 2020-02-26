@@ -26,6 +26,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
@@ -247,8 +248,11 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         super.setUp()
         val javaHome = IdeaTestUtil.requireRealJdkHome()
         ApplicationManager.getApplication().runWriteAction {
-            addSdk(SimpleJavaSdkType().createJdk(DEFAULT_SDK, javaHome))
+            val defaultJDK = SimpleJavaSdkType().createJdk(DEFAULT_SDK, javaHome)
+            addSdk(defaultJDK)
             addSdk(SimpleJavaSdkType().createJdk("_other", javaHome))
+
+            ProjectRootManager.getInstance(ProjectManager.getInstance().defaultProject).projectSdk = defaultJDK
 
             println("ProjectWizardTestCase.configureJdk:")
             println(listOf(*getProjectJdkTableSafe().allJdks))
