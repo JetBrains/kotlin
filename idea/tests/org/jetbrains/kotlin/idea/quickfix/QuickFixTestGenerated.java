@@ -7950,6 +7950,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/implement/local.kt");
         }
 
+        @TestMetadata("menyImplMemberNotImplemented.kt")
+        public void testMenyImplMemberNotImplemented() throws Exception {
+            runTest("idea/testData/quickfix/implement/menyImplMemberNotImplemented.kt");
+        }
+
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("idea/testData/quickfix/implement/nested.kt");
