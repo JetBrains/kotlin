@@ -7,7 +7,7 @@ package com.jetbrains.konan.debugger
 
 import com.jetbrains.cidr.ArchitectureType
 import com.jetbrains.cidr.CidrPathManager
-import com.jetbrains.cidr.execution.debugger.backend.LLDBDriverConfiguration
+import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.TargetSupportException
