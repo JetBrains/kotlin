@@ -48,6 +48,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/companion.kt");
     }
 
+    @TestMetadata("companionObjectCall.kt")
+    public void testCompanionObjectCall() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/companionObjectCall.kt");
+    }
+
     @TestMetadata("companionUsesNested.kt")
     public void testCompanionUsesNested() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/companionUsesNested.kt");
