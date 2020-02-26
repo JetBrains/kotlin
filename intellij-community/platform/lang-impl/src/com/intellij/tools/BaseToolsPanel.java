@@ -164,7 +164,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
   public void reset() {
     mutatorHelper.clear();
     for (ToolsGroup<T> group : getToolManager().getGroups()) {
-      insertNewGroup(mutatorHelper.copy(group));
+      addGroupNode(mutatorHelper.copy(group));
     }
 
     if ((getTreeRoot()).getChildCount() > 0) {
@@ -217,19 +217,18 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
 
 
   @NotNull
-  private CheckedTreeNode insertNewGroup(@NotNull ToolsGroup<T> groupCopy) {
-    CheckedTreeNode groupNode = new CheckedTreeNode(groupCopy);
+  private CheckedTreeNode addGroupNode(@NotNull ToolsGroup<T> group) {
+    CheckedTreeNode groupNode = new CheckedTreeNode(group);
     getTreeRoot().add(groupNode);
-    for (T tool : groupCopy.getElements()) {
-      insertNewTool(groupNode, tool);
+    for (T tool : group.getElements()) {
+      addToolNode(groupNode, tool);
     }
     return groupNode;
   }
 
-  private CheckedTreeNode insertNewTool(@NotNull CheckedTreeNode groupNode, @NotNull Tool toolCopy) {
-    CheckedTreeNode toolNode = new CheckedTreeNode(toolCopy);
-    toolNode.setChecked(toolCopy.isEnabled());
-    ((ToolsGroup)groupNode.getUserObject()).addElement(toolCopy);
+  private CheckedTreeNode addToolNode(@NotNull CheckedTreeNode groupNode, @NotNull Tool tool) {
+    CheckedTreeNode toolNode = new CheckedTreeNode(tool);
+    toolNode.setChecked(tool.isEnabled());
     groupNode.add(toolNode);
     nodeWasInserted(toolNode);
     return toolNode;
@@ -309,13 +308,21 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
 
   private void insertNewTool(@NotNull Tool newTool, boolean setSelection) {
     CheckedTreeNode groupNode = findGroupNode(newTool.getGroup());
+    ToolsGroup group;
     if (groupNode == null) {
-      groupNode = insertNewGroup(new ToolsGroup(newTool.getGroup()));
+      group = new ToolsGroup<>(newTool.getGroup());
+      groupNode = addGroupNode(group);
       nodeWasInserted(groupNode);
+    } else {
+      //noinspection unchecked
+      group = (ToolsGroup<T>)groupNode.getUserObject();
     }
-    CheckedTreeNode tool = insertNewTool(groupNode, newTool);
+
+    CheckedTreeNode toolNode = addToolNode(groupNode, newTool);
+    group.addElement(newTool);
+
     if (setSelection) {
-      TreePath treePath = new TreePath(tool.getPath());
+      TreePath treePath = new TreePath(toolNode.getPath());
       myTree.expandPath(treePath);
       myTree.getSelectionModel().setSelectionPath(treePath);
     }
@@ -431,7 +438,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
   private void editSelected() {
     CheckedTreeNode node = getSelectedToolNode();
     if (node != null && node.getUserObject() instanceof Tool) {
-      Tool selected = (Tool)node.getUserObject();
+      T selected = (T)node.getUserObject();
       if (selected != null) {
         String oldGroupName = selected.getGroup();
         ToolEditorDialog dlg = createToolEditorDialog(ToolsBundle.message("tools.edit.title"));
@@ -442,7 +449,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
           if (!Comparing.equal(oldGroupName, newGroupName)) {
             CheckedTreeNode oldGroupNode = (CheckedTreeNode)node.getParent();
             removeNodeFromParent(node);
-            ((ToolsGroup)oldGroupNode.getUserObject()).removeElement(selected);
+            ((ToolsGroup<T>)oldGroupNode.getUserObject()).removeElement(selected);
             if (oldGroupNode.getChildCount() == 0) {
               removeNodeFromParent(oldGroupNode);
             }
