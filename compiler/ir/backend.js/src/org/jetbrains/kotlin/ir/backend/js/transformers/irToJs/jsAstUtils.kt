@@ -62,11 +62,10 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     return function
 }
 
-private fun isNativeInvoke(call: IrCall): Boolean {
+private fun isNativeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
+    if (receiver == null || receiver is JsThisRef) return false
     val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
-
-    if (simpleFunction.isSuspend) return false
 
     if (call.origin === InteropCallableReferenceLowering.Companion.EXPLICIT_INVOKE) return false
 
@@ -105,7 +104,7 @@ fun translateCall(
         }
     }
 
-    if (isNativeInvoke(expression)) {
+    if (isNativeInvoke(jsDispatchReceiver, expression)) {
         return JsInvocation(jsDispatchReceiver!!, arguments)
     }
 
