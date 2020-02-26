@@ -49,7 +49,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
             extension.target.compilations.matching {
                 it.compilationName == "release"
             }.all {
-                project.configureKotlinCompilation(it)
+                project.configureKotlinCompilation(it, useOutput = true)
             }
         }
 
@@ -66,17 +66,22 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
     }
 }
 
-private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<KotlinCommonOptions>) {
+private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<KotlinCommonOptions>, useOutput: Boolean = false) {
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
-
     val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
         onlyIf { apiCheckEnabled }
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
-        inputClassesDirs = files(provider<Any> { if (isEnabled) compilation.output.allOutputs else emptyList<Any>() })
-        inputDependencies = files(provider<Any> { if (isEnabled) compilation.compileDependencyFiles else emptyList<Any>() })
+        if (useOutput) {
+            // Workaround for #4
+            inputClassesDirs = files(provider<Any> { if (isEnabled) compilation.output.classesDirs else emptyList<Any>() })
+            inputDependencies = files(provider<Any> { if (isEnabled) compilation.output.classesDirs else emptyList<Any>() })
+        } else {
+            inputClassesDirs = files(provider<Any> { if (isEnabled) compilation.output.classesDirs else emptyList<Any>() })
+            inputDependencies = files(provider<Any> { if (isEnabled) compilation.compileDependencyFiles else emptyList<Any>() })
+        }
         outputApiDir = apiBuildDir
     }
     configureCheckTasks(apiBuildDir, apiBuild)
