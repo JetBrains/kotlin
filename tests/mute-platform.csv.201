@@ -204,6 +204,8 @@ org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testCon
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testFileAttributesUpdateAfterChangeOutsideSectionsOfOtherFile, Assert: some script configuration loading tasks should be scheduled
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testLoadedConfigurationWhenExternalFileChanged, Assert: some script configuration loading tasks should be scheduled
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testTwoFilesChanged, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.jps.build.IncrementalConstantSearchTest.testJavaConstantChangedUsedInKotlin, Incremental compilation in 201
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testConstantChanged, Incremental compilation in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Function.testExternalFunctionalInterface, NJ2K in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_19604, NJ2K in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_19606, NJ2K in 201
