@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import kotlin.contracts.contract
 
 class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefactoringSupport) :
     SuggestedRefactoringAvailability(refactoringSupport)
@@ -51,6 +52,7 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
                 descriptorWithOldSignature.valueParameters[oldIndex].type,
                 descriptorWithNewSignature.valueParameters[newIndex].type
             )
+            // oldType and newType may not be null because arguments of refineType call were all non-null
             improvedOldParameterTypesById[id] = oldType!!
             improvedNewParameterTypesById[id] = newType!!
         }
