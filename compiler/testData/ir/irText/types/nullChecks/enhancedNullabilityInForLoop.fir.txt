@@ -148,23 +148,23 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.P'
-          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=null
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.P'
-          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=null
+          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.P, x:kotlin.Int, y:kotlin.Int) returnType:<root>.P
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
-          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=null
+          CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.P declared in <root>.P.copy' type=<root>.P origin=null
       VALUE_PARAMETER name:y index:1 type:kotlin.Int
         EXPRESSION_BODY
-          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=null
+          CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.P declared in <root>.P.copy' type=<root>.P origin=null
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
           args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             SPREAD_ELEMENT
               CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>) declared in kotlin.IntArray' type=kotlin.IntArray origin=null
-                size: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=null
+                size: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
                   $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> [vararg] declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
                 init: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int

@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         GET_CLASS type=kotlin.reflect.KClass<kotlin.Int>
-          CALL 'public final fun <get-qux> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          CALL 'public final fun <get-qux> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<kotlin.Int>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY

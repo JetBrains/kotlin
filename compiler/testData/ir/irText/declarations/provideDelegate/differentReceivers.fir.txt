@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     VALUE_PARAMETER name:p index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String [operator] declared in <root>'
-        CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=null
+        CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR '<this>: <root>.MyClass declared in <root>.provideDelegate' type=<root>.MyClass origin=null
   FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String [operator]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
@@ -77,8 +77,8 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
-          $this: CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=null
-          other: CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          $this: CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+          other: CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testOK visibility:public modality:FINAL [val]
       BLOCK_BODY

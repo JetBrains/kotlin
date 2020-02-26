@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               BLOCK_BODY
                 VAR name:channel type:<root>.ChannelCoroutine<kotlin.Any> [val]
                   TYPE_OP type=<root>.ChannelCoroutine<kotlin.Any> origin=CAST typeOperand=<root>.ChannelCoroutine<kotlin.Any>
-                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<kotlin.Any> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=null
+                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<kotlin.Any> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in special.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
                 CALL 'public abstract fun collect (collector: <root>.FlowCollector<kotlin.Any?>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
                   $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asChannel.<anonymous>'
                           CALL 'public abstract fun send (e: kotlin.Any): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
-                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<kotlin.Any> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=null
+                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<kotlin.Any> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
                               $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in special.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
                             e: BLOCK type=kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]

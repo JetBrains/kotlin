@@ -57,11 +57,11 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-          $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=null
+          $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=GET_PROPERTY
             $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
           index: CONST Int type=kotlin.Int value=0
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-        $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=null
+        $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=GET_PROPERTY
           $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
         index: CONST Int type=kotlin.Int value=0
         value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null

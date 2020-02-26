@@ -189,7 +189,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+              arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
               arg1: CONST Int type=kotlin.Int value=4
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -201,7 +201,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+              arg0: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
               arg1: CONST Int type=kotlin.Int value=5
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -210,7 +210,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-ext> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
+              arg0: CALL 'public final fun <get-ext> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
                 $this: CONST Int type=kotlin.Int value=5
                 $receiver: CONST Int type=kotlin.Int value=5
               arg1: CONST Int type=kotlin.Int value=6
@@ -231,7 +231,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-g2> <T> (): T of <root>.C.<get-g2> declared in <root>.C' type=kotlin.String origin=null
+              arg0: CALL 'public final fun <get-g2> <T> (): T of <root>.C.<get-g2> declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
                 <T>: kotlin.String
                 $this: CONST String type=kotlin.String value="8"
                 $receiver: CONST String type=kotlin.String value="8"
@@ -253,7 +253,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-fromClass> <T> (): T of <root>.BaseClass.<get-fromClass> declared in <root>.BaseClass' type=kotlin.String origin=null
+              arg0: CALL 'public final fun <get-fromClass> <T> (): T of <root>.BaseClass.<get-fromClass> declared in <root>.BaseClass' type=kotlin.String origin=GET_PROPERTY
                 <T>: kotlin.String
                 $this: CONST String type=kotlin.String value="10"
                 $receiver: CONST String type=kotlin.String value="10"

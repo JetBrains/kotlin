@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGeneric1 (x: kotlin.String): T of <root>.<get-gk> declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.<get-gk> origin=INVOKE
-          $this: CALL 'public final fun <get-gk> <T> (): kotlin.Function0<T of <root>.<get-gk>> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
+          $this: CALL 'public final fun <get-gk> <T> (): kotlin.Function0<T of <root>.<get-gk>> declared in <root>' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
             <T>: kotlin.String
             $receiver: GET_VAR 'x: kotlin.String declared in <root>.testGeneric1' type=kotlin.String origin=null
   PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
@@ -35,6 +35,6 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): T of <root>.<get-kt26531Val> declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.<get-kt26531Val> origin=INVOKE
-          $this: CALL 'public final fun <get-kt26531Val> <T> (): kotlin.Function0<T of <root>.<get-kt26531Val>> declared in <root>' type=kotlin.Function0<kotlin.Int> origin=null
+          $this: CALL 'public final fun <get-kt26531Val> <T> (): kotlin.Function0<T of <root>.<get-kt26531Val>> declared in <root>' type=kotlin.Function0<kotlin.Int> origin=GET_PROPERTY
             <T>: kotlin.Int
             $receiver: CONST Int type=kotlin.Int value=7

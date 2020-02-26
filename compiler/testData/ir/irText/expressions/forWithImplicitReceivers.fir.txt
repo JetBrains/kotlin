@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean [operator] declared in <root>.IReceiver'
           CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
-            arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=null
+            arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.hasNext' type=<root>.IntCell origin=null
             arg1: CONST Int type=kotlin.Int value=0
     FUN name:next visibility:public modality:OPEN <> ($this:<root>.IReceiver, $receiver:<root>.IntCell) returnType:kotlin.Int [operator]
@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
         RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Int [operator] declared in <root>.IReceiver'
           BLOCK type=kotlin.Int origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-              CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=null
+              CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.next' type=<root>.IntCell origin=null
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.next' type=<root>.IntCell origin=null

@@ -24,11 +24,11 @@ FILE fqName:<root> fileName:/classReference.kt
         GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
-      CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null
+      CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
         <T>: <root>.A
         $receiver: GET_CLASS type=kotlin.reflect.KClass<<root>.A>
           GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null
+      CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
         <T>: <root>.A
         $receiver: GET_CLASS type=kotlin.reflect.KClass<<root>.A>
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null

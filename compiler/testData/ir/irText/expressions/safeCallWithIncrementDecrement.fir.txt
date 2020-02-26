@@ -51,7 +51,7 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     VALUE_PARAMETER name:nc index:0 type:test.C?
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
-        CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=null
+        CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=GET_PROPERTY
           $receiver: GET_VAR 'nc: test.C? declared in test.testProperty' type=test.C? origin=null
       ERROR_CALL 'Unresolved reference: R|test/p|' type=IrErrorType
       GET_VAR 'val tmp_0: kotlin.Int? [val] declared in test.testProperty' type=kotlin.Int? origin=null
@@ -60,11 +60,11 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in test' type=kotlin.Int origin=null
-          $receiver: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=null
+          $receiver: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=GET_PROPERTY
             $receiver: GET_VAR 'nc: test.C? declared in test.testArrayAccess' type=test.C? origin=null
           index: CONST Int type=kotlin.Int value=0
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in test' type=kotlin.Unit origin=null
-        $receiver: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=null
+        $receiver: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=GET_PROPERTY
           $receiver: GET_VAR 'nc: test.C? declared in test.testArrayAccess' type=test.C? origin=null
         index: CONST Int type=kotlin.Int value=0
         value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null

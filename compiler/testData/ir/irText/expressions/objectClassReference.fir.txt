@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/objectClassReference.kt
     BLOCK_BODY
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
         GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-      CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null
+      CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
         <T>: <root>.A
         $receiver: GET_CLASS type=kotlin.reflect.KClass<<root>.A>
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A

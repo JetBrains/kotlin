@@ -708,7 +708,7 @@ class Fir2IrVisitor(
                 symbol is IrPropertySymbol && symbol.isBound -> {
                     val getter = symbol.owner.getter
                     if (getter != null) {
-                        IrCallImpl(startOffset, endOffset, type, getter.symbol)
+                        IrCallImpl(startOffset, endOffset, type, getter.symbol, origin = IrStatementOrigin.GET_PROPERTY)
                     } else {
                         IrErrorCallExpressionImpl(startOffset, endOffset, type, "No getter found for ${calleeReference.render()}")
                     }
