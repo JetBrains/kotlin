@@ -61,10 +61,16 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         fun TypeParameter.isReified() = originalDeclaration.hasModifier(KtTokens.REIFIED_KEYWORD)
         val shouldBeInline = config.descriptor.typeParameters.any { it.isReified() }
 
+
+        val annotations = if (config.descriptor.annotations.isEmpty()) {
+            ""
+        } else {
+            config.descriptor.annotations.joinToString(separator = "\n", postfix = "\n") { renderer.renderAnnotation(it) }
+        }
         val extraModifiers = config.descriptor.modifiers.map { it.value } +
                 listOfNotNull(if (shouldBeInline) KtTokens.INLINE_KEYWORD.value else null)
         val modifiers = if (visibility.isNotEmpty()) listOf(visibility) + extraModifiers else extraModifiers
-        modifier(modifiers.joinToString(separator = " "))
+        modifier(annotations + modifiers.joinToString(separator = " "))
 
         typeParams(
             config.descriptor.typeParameters.map {

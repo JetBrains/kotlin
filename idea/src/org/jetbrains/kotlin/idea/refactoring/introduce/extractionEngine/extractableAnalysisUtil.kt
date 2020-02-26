@@ -708,6 +708,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
     }
 
+    for (analyser in AdditionalExtractableAnalyser.EP_NAME.extensions) {
+        descriptor = analyser.amendDescriptor(descriptor)
+    }
 
     return AnalysisResult(
         descriptor,
