@@ -124,8 +124,11 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
     return rangeOf(declaringElement);
   }
 
+  /**
+   * @return range of {@code element} relative to itself
+   */
   @NotNull
-  private static TextRange rangeOf(@NotNull PsiElement declaringElement) {
-    return TextRange.from(0, declaringElement.getTextLength());
+  private static TextRange rangeOf(@NotNull PsiElement element) {
+    return TextRange.from(0, element.getTextLength());
   }
 }
