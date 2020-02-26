@@ -916,6 +916,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("floatingPointCompanionAccess.kt")
+        public void testFloatingPointCompanionAccess() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/floatingPointCompanionAccess.kt");
+        }
+
         @TestMetadata("kt14258_1.kt")
         public void testKt14258_1() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/companion/kt14258_1.kt");
