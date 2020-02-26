@@ -62,3 +62,11 @@ class Executable(
             null
         )
 }
+
+// Hack for legacy
+internal val JsBinary.executeTaskBaseName: String
+    get() = generateBinaryName(
+        compilation,
+        type,
+        null
+    )

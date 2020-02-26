@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
+import org.jetbrains.kotlin.gradle.targets.js.ir.executeTaskBaseName
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -173,10 +174,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         assembleTask.dependsOn(distributeResourcesTask)
 
         compilation.binaries
-            .matching { it is Executable }
             .all { binary ->
-                binary as Executable
-
                 val type = binary.type
 
                 val webpackTask = project.registerTask<KotlinWebpack>(
