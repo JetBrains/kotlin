@@ -648,5 +648,7 @@ class QuickFixRegistrar : QuickFixContributor {
         TOPLEVEL_TYPEALIASES_ONLY.registerFactory(MoveTypeAliasToTopLevelFix)
 
         CONFLICTING_JVM_DECLARATIONS.registerFactory(AddJvmNameAnnotationFix)
+
+        AMBIGUOUS_SUPER.registerFactory(SpecifySuperTypeFix)
     }
 }
