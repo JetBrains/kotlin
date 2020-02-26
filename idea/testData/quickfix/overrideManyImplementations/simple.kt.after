@@ -1,0 +1,13 @@
+// "Override 'foo'" "true"
+interface A {
+    fun foo() {}
+}
+
+open class B {
+    open fun foo() {}
+}
+
+class C : A, B() {
+    override fun foo() {
+    }
+}

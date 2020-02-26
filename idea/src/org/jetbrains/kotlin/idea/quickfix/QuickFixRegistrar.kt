@@ -642,5 +642,7 @@ class QuickFixRegistrar : QuickFixContributor {
         MUST_BE_INITIALIZED.registerFactory(ChangeVariableMutabilityFix.MUST_BE_INITIALIZED_FACTORY)
 
         TOO_MANY_ARGUMENTS.registerFactory(RemoveArgumentFix)
+
+        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerFactory(OverrideManyImplementationsFix)
     }
 }

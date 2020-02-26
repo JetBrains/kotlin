@@ -4,6 +4,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Extract 'X' from current file
+// ACTION: Override 'foo'
 
 interface D {
     fun foo()
