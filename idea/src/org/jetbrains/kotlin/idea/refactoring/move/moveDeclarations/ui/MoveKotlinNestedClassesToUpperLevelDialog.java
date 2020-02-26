@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
@@ -73,7 +74,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         this.innerClass = innerClass;
         this.targetContainer = targetContainer;
         this.innerClassDescriptor = (ClassDescriptor) ResolutionUtils.unsafeResolveToDescriptor(innerClass, BodyResolveMode.FULL);
-        setTitle("Move Nested Classes to Upper Level");
+        setTitle(KotlinBundle.message("title.move.nested.classes.to.upper.level"));
         init();
         packageNameLabel.setLabelFor(packageNameField.getChildComponent());
         classNameLabel.setLabelFor(classNameField);
@@ -89,7 +90,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
     @Override
     protected String getMovePropertySuffix() {
-        return "Nested Classes to Upper Level";
+        return KotlinBundle.message("text.nested.classes.to.upper.level");
     }
 
     @Override
@@ -99,7 +100,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
     @Override
     protected String getCbTitle() {
-        return "Open moved member in editor";
+        return KotlinBundle.message("checkbox.text.open.moved.files.in.editor");
     }
 
     public String getClassName() {

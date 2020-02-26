@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
@@ -33,7 +34,10 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
 class ChangePackageIntention :
-    SelfTargetingOffsetIndependentIntention<KtPackageDirective>(KtPackageDirective::class.java, "Change package") {
+    SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
+        KtPackageDirective::class.java,
+        KotlinBundle.message("intention.change.package.text")
+    ) {
     companion object {
         private const val PACKAGE_NAME_VAR = "PACKAGE_NAME"
     }
@@ -79,27 +83,35 @@ class ChangePackageIntention :
                 }
 
                 override fun templateFinished(template: Template, brokenOff: Boolean) {
-                    if (brokenOff || enteredName == null || affectedRange == null) return
+                    if (brokenOff) return
+                    val name = enteredName ?: return
+                    val range = affectedRange ?: return
 
                     // Restore original name and run refactoring
 
                     val document = editor.document
                     project.executeWriteCommand(text) {
                         document.replaceString(
-                            affectedRange!!.startOffset,
-                            affectedRange!!.endOffset,
+                            range.startOffset,
+                            range.endOffset,
                             FqName(currentName).quoteSegmentsIfNeeded()
                         )
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(document)
                     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
 
-                    if (!FqNameUnsafe(enteredName!!).hasIdentifiersOnly()) {
-                        CodeInsightUtils.showErrorHint(project, editor, "$enteredName is not a valid package name", "Change package", null)
+                    if (!FqNameUnsafe(name).hasIdentifiersOnly()) {
+                        CodeInsightUtils.showErrorHint(
+                            project,
+                            editor,
+                            KotlinBundle.message("text.0.is.not.valid.package.name", name),
+                            KotlinBundle.message("intention.change.package.text"),
+                            null
+                        )
                         return
                     }
 
-                    KotlinChangePackageRefactoring(file).run(FqName(enteredName!!))
+                    KotlinChangePackageRefactoring(file).run(FqName(name))
                 }
             }
         )

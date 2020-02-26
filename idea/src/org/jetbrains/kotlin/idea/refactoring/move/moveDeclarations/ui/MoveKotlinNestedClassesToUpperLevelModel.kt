@@ -22,6 +22,7 @@ import com.intellij.refactoring.util.RefactoringMessageUtil
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -140,7 +141,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
 
         if (targetContainer is PsiDirectory || targetContainer is KtFile) {
             val targetPackageFqName = getTargetPackageFqName(target)
-                ?: throw ConfigurationException("No package corresponds to this directory")
+                ?: throw ConfigurationException(KotlinBundle.message("text.no.package.corresponds.to.directory"))
 
             val existingClass = DescriptorUtils
                 .getContainingModule(innerClassDescriptor)
@@ -148,7 +149,9 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
                 .memberScope
                 .getContributedClassifier(Name.identifier(className), NoLookupLocation.FROM_IDE)
             if (existingClass != null) {
-                throw ConfigurationException("Class $className already exists in package $targetPackageFqName")
+                throw ConfigurationException(
+                    KotlinBundle.message("text.class.0.already.exists.in.package.1", className, targetPackageFqName)
+                )
             }
 
             val targetDir = targetContainer as? PsiDirectory ?: targetContainer.containingFile.containingDirectory
@@ -156,7 +159,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             if (message != null) throw ConfigurationException(message)
         }
 
-        return targetContainer ?: throw ConfigurationException("Invalid target specified")
+        return targetContainer ?: throw ConfigurationException(KotlinBundle.message("text.invalid.target.specified"))
     }
 
     @Throws(ConfigurationException::class)
@@ -166,7 +169,7 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             val targetDir = target
 
             val targetPackageFqName = getTargetPackageFqName(target)
-                ?: throw ConfigurationException("Cannot find target package name")
+                ?: throw ConfigurationException(KotlinBundle.message("text.cannot.find.target.package.name"))
 
             val suggestedName = KotlinNameSuggester.suggestNameByName(className) {
                 targetDir.findFile(it + "." + KotlinFileType.EXTENSION) == null
