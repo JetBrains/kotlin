@@ -1,12 +1,12 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
-    synthetic final @org.jetbrains.annotations.NotNull field a: java.lang.String
-    synthetic final field b: long
-    synthetic final field c: long
-    synthetic final field d: long
-    synthetic final field e: long
-    synthetic final field f: long
+    synthetic @org.jetbrains.annotations.NotNull field a: java.lang.String
+    synthetic field b: long
+    synthetic field c: long
+    synthetic field d: long
+    synthetic field e: long
+    synthetic field f: long
     field label: int
     inner class LambdaWithMultipleParametersKt$box$1
     inner class LambdaWithMultipleParametersKt$box$1$1
