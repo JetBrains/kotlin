@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.Copy
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -37,8 +37,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val distribution: Distribution = BrowserDistribution()
-
-    private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -84,59 +82,66 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val compileKotlinTask = compilation.compileKotlinTask
 
-        buildVariants.all { buildVariant ->
-            val kind = buildVariant.kind
-            val runTask = project.registerTask<KotlinWebpack>(
-                disambiguateCamelCased(
-                    buildVariant.name,
-                    RUN_TASK_NAME
-                )
-            ) {
-                it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    target.project.tasks.named(compilation.processResourcesTaskName)
-                )
+        val commonRunTask = project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
-                it.configureOptimization(kind)
+        compilation.binaries
+            .matching { it is Executable }
+            .all { binary ->
+                binary as Executable
 
-                it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
-                it.compilation = compilation
-                it.description = "start ${kind.name.toLowerCase()} webpack dev server"
+                val type = binary.type
 
-                it.devServer = KotlinWebpackConfig.DevServer(
-                    open = true,
-                    contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-                )
+                val runTask = project.registerTask<KotlinWebpack>(
+                    disambiguateCamelCased(
+                        binary.executeTaskBaseName,
+                        RUN_TASK_NAME
+                    )
+                ) {
+                    it.dependsOn(
+                        nodeJs.npmInstallTask,
+                        target.project.tasks.named(compilation.processResourcesTaskName)
+                    )
 
-                it.outputs.upToDateWhen { false }
+                    it.configureOptimization(type)
 
-                when (kind) {
-                    BuildVariantKind.PRODUCTION -> {
-                        // Breaking of Task Configuration Avoidance is not so critical
-                        // because this task is dependent on DCE task
-                        it.entry = dceTaskProvider.get()
-                            .destinationDir
-                            .resolve(compileKotlinTask.outputFile.name)
-                        it.resolveFromModulesFirst = true
-                        it.dependsOn(dceTaskProvider)
+                    it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    it.compilation = compilation
+                    it.description = "start ${type.name.toLowerCase()} webpack dev server"
+
+                    it.devServer = KotlinWebpackConfig.DevServer(
+                        open = true,
+                        contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
+                    )
+
+                    it.outputs.upToDateWhen { false }
+
+                    when (type) {
+                        BuildVariantKind.PRODUCTION -> {
+                            // Breaking of Task Configuration Avoidance is not so critical
+                            // because this task is dependent on DCE task
+                            it.entry = dceTaskProvider.get()
+                                .destinationDir
+                                .resolve(compileKotlinTask.outputFile.name)
+                            it.resolveFromModulesFirst = true
+                            it.dependsOn(dceTaskProvider)
+                        }
+                        BuildVariantKind.DEVELOPMENT -> {
+                            it.dependsOn(compileKotlinTask)
+                        }
                     }
-                    BuildVariantKind.DEVELOPMENT -> {
-                        it.dependsOn(compileKotlinTask)
+
+                    commonRunConfigurations.forEach { configure ->
+                        it.configure()
                     }
                 }
 
-                commonRunConfigurations.forEach { configure ->
-                    it.configure()
+                if (type == BuildVariantKind.DEVELOPMENT) {
+                    target.runTask.dependsOn(runTask)
+                    commonRunTask.configure {
+                        it.dependsOn(runTask)
+                    }
                 }
             }
-
-            if (kind == BuildVariantKind.DEVELOPMENT) {
-                target.runTask.dependsOn(runTask)
-                project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {
-                    it.dependsOn(runTask)
-                }
-            }
-        }
     }
 
     private fun configureBuild(
@@ -167,60 +172,65 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         assembleTask.dependsOn(distributeResourcesTask)
 
-        buildVariants.all { buildVariant ->
-            val kind = buildVariant.kind
-            val webpackTask = project.registerTask<KotlinWebpack>(
-                disambiguateCamelCased(
-                    buildVariant.name,
-                    WEBPACK_TASK_NAME
+        compilation.binaries
+            .matching { it is Executable }
+            .all { binary ->
+                binary as Executable
 
-                )
-            ) {
-                it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    processResourcesTask,
-                    distributeResourcesTask
-                )
+                val type = binary.type
 
-                it.configureOptimization(kind)
+                val webpackTask = project.registerTask<KotlinWebpack>(
+                    disambiguateCamelCased(
+                        binary.executeTaskBaseName,
+                        WEBPACK_TASK_NAME
 
-                it.compilation = compilation
-                it.description = "build webpack ${kind.name.toLowerCase()} bundle"
-                it.destinationDirectory = distribution.directory!!
-
-                when (kind) {
-                    BuildVariantKind.PRODUCTION -> {
-                        // Breaking of Task Configuration Avoidance is not so critical
-                        // because this task is dependent on DCE task
-                        it.entry = dceTaskProvider.get()
-                            .destinationDir
-                            .resolve(compileKotlinTask.outputFile.name)
-                        it.resolveFromModulesFirst = true
-                        it.dependsOn(dceTaskProvider)
-                    }
-                    BuildVariantKind.DEVELOPMENT -> {
-                        it.dependsOn(compileKotlinTask)
-                    }
-                }
-
-                commonWebpackConfigurations.forEach { configure ->
-                    it.configure()
-                }
-            }
-
-            if (kind == BuildVariantKind.PRODUCTION) {
-                assembleTask.dependsOn(webpackTask)
-                val webpackCommonTask = project.registerTask<Task>(
-                    disambiguateCamelCased(WEBPACK_TASK_NAME)
+                    )
                 ) {
-                    it.dependsOn(webpackTask)
+                    it.dependsOn(
+                        nodeJs.npmInstallTask,
+                        processResourcesTask,
+                        distributeResourcesTask
+                    )
+
+                    it.configureOptimization(type)
+
+                    it.compilation = compilation
+                    it.description = "build webpack ${type.name.toLowerCase()} bundle"
+                    it.destinationDirectory = distribution.directory
+
+                    when (type) {
+                        BuildVariantKind.PRODUCTION -> {
+                            // Breaking of Task Configuration Avoidance is not so critical
+                            // because this task is dependent on DCE task
+                            it.entry = dceTaskProvider.get()
+                                .destinationDir
+                                .resolve(compileKotlinTask.outputFile.name)
+                            it.resolveFromModulesFirst = true
+                            it.dependsOn(dceTaskProvider)
+                        }
+                        BuildVariantKind.DEVELOPMENT -> {
+                            it.dependsOn(compileKotlinTask)
+                        }
+                    }
+
+                    commonWebpackConfigurations.forEach { configure ->
+                        it.configure()
+                    }
                 }
-                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
-                    it.dependsOn(webpackCommonTask)
-                    it.dependsOn(distributeResourcesTask)
+
+                if (type == BuildVariantKind.PRODUCTION) {
+                    assembleTask.dependsOn(webpackTask)
+                    val webpackCommonTask = project.registerTask<Task>(
+                        disambiguateCamelCased(WEBPACK_TASK_NAME)
+                    ) {
+                        it.dependsOn(webpackTask)
+                    }
+                    project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                        it.dependsOn(webpackCommonTask)
+                        it.dependsOn(distributeResourcesTask)
+                    }
                 }
             }
-        }
     }
 
     private fun configureDce(compilation: KotlinJsCompilation): TaskProvider<KotlinJsDceTask> {
@@ -273,16 +283,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     ): T = when (kind) {
         BuildVariantKind.PRODUCTION -> releaseValue
         BuildVariantKind.DEVELOPMENT -> debugValue
-    }
-
-    override fun configureBuildVariants() {
-        buildVariants = project.container(BuildVariant::class.java)
-        buildVariants.create(PRODUCTION) {
-            it.kind = BuildVariantKind.PRODUCTION
-        }
-        buildVariants.create(DEVELOPMENT) {
-            it.kind = BuildVariantKind.DEVELOPMENT
-        }
     }
 
     companion object {

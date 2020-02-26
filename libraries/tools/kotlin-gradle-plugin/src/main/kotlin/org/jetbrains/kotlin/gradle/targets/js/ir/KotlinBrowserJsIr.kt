@@ -168,7 +168,9 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 if (type == BuildVariantKind.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
-                    val webpackCommonTask = project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                    val webpackCommonTask = project.registerTask<Task>(
+                        disambiguateCamelCased(WEBPACK_TASK_NAME)
+                    ) {
                         it.dependsOn(webpackTask)
                     }
                     project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {

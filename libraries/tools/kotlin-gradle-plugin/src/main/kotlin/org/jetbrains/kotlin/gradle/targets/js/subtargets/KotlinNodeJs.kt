@@ -44,7 +44,4 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         }
         target.runTask.dependsOn(runTaskHolder)
     }
-
-    override fun configureBuildVariants() {
-    }
 }
