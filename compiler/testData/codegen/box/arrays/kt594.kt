@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 package array_test
 
 fun box() : String {

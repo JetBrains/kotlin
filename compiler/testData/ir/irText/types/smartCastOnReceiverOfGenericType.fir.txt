@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testFunction' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'b: kotlin.Any declared in <root>.testFunction' type=kotlin.Any origin=null
-      CALL 'public abstract fun add (element: kotlin.String): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+      CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
         $this: TYPE_OP type=kotlin.collections.MutableList<kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.collections.MutableList<kotlin.String>
           GET_VAR 'a: kotlin.Any declared in <root>.testFunction' type=kotlin.Any origin=null
         element: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter> origin=CAST typeOperand=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>
         GET_VAR 'b: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.Any origin=null
-      CALL 'public abstract fun add (element: kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+      CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
         $this: TYPE_OP type=kotlin.collections.MutableList<kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>> origin=IMPLICIT_CAST typeOperand=kotlin.collections.MutableList<kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>>
           GET_VAR 'a: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.Any origin=null
         element: TYPE_OP type=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter> origin=IMPLICIT_CAST typeOperand=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>

@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
-          kmember: PROPERTY_REFERENCE 'public final value: T of <root>.<get-additionalValue> [var]' field=null getter='public final fun <get-value> (): T of <root>.<get-additionalValue> declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <uninitialized parent>): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalValue>>, T of <root>.<get-additionalValue>> origin=null
+          kmember: PROPERTY_REFERENCE 'public final value: T of <root>.Value [var]' field='FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:private' getter='public final fun <get-value> (): T of <root>.Value declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <root>.Value): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalValue>>, T of <root>.<get-additionalValue>> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL <T> ($receiver:<root>.Value<T of <root>.<get-additionalValue>>) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]

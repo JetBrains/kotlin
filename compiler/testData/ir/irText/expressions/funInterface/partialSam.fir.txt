@@ -33,11 +33,11 @@ FILE fqName:<root> fileName:/partialSam.kt
       VALUE_PARAMETER name:f2 index:1 type:<root>.Fn<kotlin.Int, kotlin.String>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J'
-          CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.String): kotlin.Int declared in <root>.Fn' type=kotlin.Int origin=null
+          CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn' type=kotlin.Int origin=null
             $this: GET_VAR 'f1: <root>.Fn<kotlin.String, kotlin.Int> declared in <root>.J.runConversion' type=<root>.Fn<kotlin.String, kotlin.Int> origin=null
             s: CONST String type=kotlin.String value="Bar"
             i: CONST Int type=kotlin.Int value=1
-            t: CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.Int): kotlin.String declared in <root>.Fn' type=kotlin.String origin=null
+            t: CALL 'public abstract fun run (s: kotlin.String, i: kotlin.Int, t: T of <root>.Fn): R of <root>.Fn declared in <root>.Fn' type=kotlin.String origin=null
               $this: GET_VAR 'f2: <root>.Fn<kotlin.Int, kotlin.String> declared in <root>.J.runConversion' type=<root>.Fn<kotlin.Int, kotlin.String> origin=null
               s: CONST String type=kotlin.String value="Foo"
               i: CONST Int type=kotlin.Int value=42

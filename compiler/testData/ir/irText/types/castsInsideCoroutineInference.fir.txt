@@ -80,16 +80,16 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               BLOCK_BODY
                 VAR name:channel type:<root>.ChannelCoroutine<kotlin.Any> [val]
                   TYPE_OP type=<root>.ChannelCoroutine<kotlin.Any> origin=CAST typeOperand=<root>.ChannelCoroutine<kotlin.Any>
-                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<kotlin.Any> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
+                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in special.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
-                CALL 'public abstract fun collect (collector: <root>.FlowCollector<kotlin.Any?>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
+                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
                   $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
                   collector: FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit
                       VALUE_PARAMETER name:value index:0 type:kotlin.Any?
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asFairChannel.<anonymous>'
-                          CALL 'public final fun sendFair (element: kotlin.Any): kotlin.Unit [suspend] declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
+                          CALL 'public final fun sendFair (element: E of <root>.ChannelCoroutine): kotlin.Unit [suspend] declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
                             $this: GET_VAR 'val channel: <root>.ChannelCoroutine<kotlin.Any> [val] declared in <root>.asFairChannel.<anonymous>' type=<root>.ChannelCoroutine<kotlin.Any> origin=null
                             element: BLOCK type=kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
@@ -116,15 +116,15 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit
               $receiver: VALUE_PARAMETER name:<this> type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
-                CALL 'public abstract fun collect (collector: <root>.FlowCollector<kotlin.Any?>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
+                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
                   $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
                   collector: FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit
                       VALUE_PARAMETER name:value index:0 type:kotlin.Any?
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asChannel.<anonymous>'
-                          CALL 'public abstract fun send (e: kotlin.Any): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
-                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<kotlin.Any> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
+                          CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
+                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
                               $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in special.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
                             e: BLOCK type=kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]

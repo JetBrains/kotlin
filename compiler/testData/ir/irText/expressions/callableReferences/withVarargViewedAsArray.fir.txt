@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.nsum'
                         CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
-                          $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Number [operator] declared in kotlin.Array' type=kotlin.Number origin=null
+                          $this: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=kotlin.Number origin=null
                             $this: GET_VAR 'args: kotlin.Array<out kotlin.Number> [vararg] declared in <root>.nsum' type=kotlin.Array<out kotlin.Number> origin=null
                             index: GET_VAR 'it: kotlin.Int declared in <root>.nsum.<anonymous>' type=kotlin.Int origin=null
   FUN name:zap visibility:public modality:FINAL <> (b:kotlin.Array<out kotlin.String>, k:kotlin.Int) returnType:kotlin.Unit

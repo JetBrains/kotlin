@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
   FUN name:test2 visibility:public modality:FINAL <> (mc:kotlin.collections.MutableCollection<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:mc index:0 type:kotlin.collections.MutableCollection<kotlin.String>
     BLOCK_BODY
-      CALL 'public abstract fun add (element: kotlin.String): kotlin.Boolean declared in kotlin.collections.MutableCollection' type=kotlin.Boolean origin=null
+      CALL 'public abstract fun add (element: E of kotlin.collections.MutableCollection): kotlin.Boolean declared in kotlin.collections.MutableCollection' type=kotlin.Boolean origin=null
         $this: GET_VAR 'mc: kotlin.collections.MutableCollection<kotlin.String> declared in <root>.test2' type=kotlin.collections.MutableCollection<kotlin.String> origin=null
         element: CONST String type=kotlin.String value=""
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit

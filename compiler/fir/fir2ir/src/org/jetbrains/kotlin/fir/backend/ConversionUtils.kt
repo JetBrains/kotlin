@@ -161,7 +161,18 @@ fun FirClassifierSymbol<*>.toIrSymbol(
 
 fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? {
     return when (this) {
-        is FirResolvedNamedReference -> resolvedSymbol.toSymbol(declarationStorage)
+        is FirResolvedNamedReference -> {
+            when (val resolvedSymbol = resolvedSymbol) {
+                is FirCallableSymbol<*> -> {
+                    val originalCallableSymbol =
+                        resolvedSymbol.overriddenSymbol?.takeIf { it.callableId == resolvedSymbol.callableId } ?: resolvedSymbol
+                    originalCallableSymbol.toSymbol(declarationStorage)
+                }
+                else -> {
+                    resolvedSymbol.toSymbol(declarationStorage)
+                }
+            }
+        }
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol?.toSymbol(declarationStorage)) {
                 is IrClassSymbol -> boundSymbol.owner.thisReceiver?.symbol
