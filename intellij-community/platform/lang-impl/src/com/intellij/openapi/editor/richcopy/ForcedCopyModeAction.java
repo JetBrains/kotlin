@@ -4,6 +4,7 @@ package com.intellij.openapi.editor.richcopy;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.richcopy.settings.RichCopySettings;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +21,14 @@ public abstract class ForcedCopyModeAction extends DumbAwareAction {
     Presentation p = e.getPresentation();
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     p.setVisible(RichCopySettings.getInstance().isEnabled() != myRichCopyEnabled &&
-                 (e.isFromActionToolbar() || (editor != null && editor.getSelectionModel().hasSelection(true))));
+                 (e.isFromActionToolbar() || (editor != null && editor.getSelectionModel().hasSelection(true))) &&
+                 (editor == null || isRichCopyPossible(editor)));
     p.setEnabled(true);
+  }
+
+  private static boolean isRichCopyPossible(@NotNull Editor editor) {
+    // ideally, we'd also want to check for the presence of PsiFile (CopyHandler won't work without it), but it might be more expensive
+    return FileDocumentManager.getInstance().getFile(editor.getDocument()) != null;
   }
 
   @Override
