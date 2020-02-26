@@ -42,7 +42,7 @@ public final class Override5Kt$inlineMe$1$generic$2 {
     inner class Override5Kt$inlineMe$1$generic$2
     static method <clinit>(): void
     public method <init>(): void
-    public synthetic method invoke(): java.lang.Object
+    public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
 

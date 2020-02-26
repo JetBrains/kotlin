@@ -8,7 +8,7 @@ public final class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1$2 {
     inner class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1
     inner class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1$2
     public method <init>(): void
-    public synthetic @org.jetbrains.annotations.Nullable method invoke(): java.lang.Object
+    public synthetic bridge @org.jetbrains.annotations.Nullable method invoke(): java.lang.Object
     public final method invoke(): void
 }
 
@@ -47,7 +47,7 @@ public final class Override5Kt$inlineMe$1$generic$2 {
     inner class Override5Kt$inlineMe$1
     inner class Override5Kt$inlineMe$1$generic$2
     public method <init>(): void
-    public synthetic @org.jetbrains.annotations.Nullable method invoke(): java.lang.Object
+    public synthetic bridge @org.jetbrains.annotations.Nullable method invoke(): java.lang.Object
     public final method invoke(): void
 }
 
