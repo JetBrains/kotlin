@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -361,6 +362,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitOperatorCall(operatorCall: FirOperatorCall) {
         visitElement(operatorCall)
+    }
+
+    open fun visitComparisonExpression(comparisonExpression: FirComparisonExpression) {
+        visitElement(comparisonExpression)
     }
 
     open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
@@ -813,6 +818,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Nothing?) {
         visitOperatorCall(operatorCall)
+    }
+
+    final override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Nothing?) {
+        visitComparisonExpression(comparisonExpression)
     }
 
     final override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?) {

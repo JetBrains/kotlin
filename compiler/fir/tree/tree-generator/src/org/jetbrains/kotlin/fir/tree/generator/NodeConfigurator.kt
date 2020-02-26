@@ -185,6 +185,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("operation", operationType)
         }
 
+        comparisonExpression.configure {
+            +field("operation", operationType)
+            +field("compareToCall", functionCall)
+        }
+
         typeOperatorCall.configure {
             +field("operation", operationType)
             +field("conversionTypeRef", typeRef)
