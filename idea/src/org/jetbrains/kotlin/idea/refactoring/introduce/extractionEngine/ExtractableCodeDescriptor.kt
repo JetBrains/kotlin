@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
@@ -357,7 +358,8 @@ data class ExtractableCodeDescriptor(
     val replacementMap: MultiMap<KtSimpleNameExpression, Replacement>,
     val controlFlow: ControlFlow,
     val returnType: KotlinType,
-    val modifiers: List<KtKeywordToken> = emptyList()
+    val modifiers: List<KtKeywordToken> = emptyList(),
+    val annotations: List<AnnotationDescriptor> = emptyList()
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
@@ -393,7 +395,8 @@ fun ExtractableCodeDescriptor.copy(
         newReplacementMap,
         controlFlow.copy(oldToNewParameters),
         returnType ?: this.returnType,
-        modifiers
+        modifiers,
+        annotations
     )
 }
 
