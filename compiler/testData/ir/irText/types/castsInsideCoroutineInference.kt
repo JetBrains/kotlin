@@ -9,6 +9,12 @@ private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> = p
     }
 }
 
+private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> = produce {
+    flow.collect { value ->
+        return@collect channel.send(value ?: Any())
+    }
+}
+
 suspend inline fun <T> Flow<T>.collect(crossinline action: suspend (value: T) -> Unit) {}
 
 open class ChannelCoroutine<E> {
@@ -35,4 +41,6 @@ interface ProducerScope<in E> : CoroutineScope, SendChannel<E> {
     val channel: SendChannel<E>
 }
 
-interface SendChannel<in E>
+interface SendChannel<in E> {
+    suspend fun send(e: E)
+}
