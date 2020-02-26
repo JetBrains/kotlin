@@ -9,7 +9,6 @@ import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.RunManager
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectModelBuildableElement
@@ -24,14 +23,12 @@ class MobileBuildAction : CidrBuildTargetAction(true, MobileBundle.message("buil
     override fun isEnabled(project: Project): Boolean =
         selectedRunConfiguration(project) != null
 
-    override fun createContext(dataContext: DataContext): ProjectTaskContext {
-        val project = dataContext.getData(CommonDataKeys.PROJECT)!!
-        return MobileProjectTaskRunner.Context(
+    override fun createContext(project: Project, dataContext: DataContext): ProjectTaskContext =
+        MobileProjectTaskRunner.Context(
             dataContext,
             selectedRunConfiguration(project)!!,
             ExecutionTargetManager.getActiveTarget(project) as Device
         )
-    }
 
     override fun getBuildableElements(project: Project): List<ProjectModelBuildableElement> {
         if (selectedRunConfiguration(project) == null) return emptyList()
