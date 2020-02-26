@@ -218,6 +218,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/javaStaticScopeInheritance.kt");
     }
 
+    @TestMetadata("lambdaArgInScopeFunction.kt")
+    public void testLambdaArgInScopeFunction() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/lambdaArgInScopeFunction.kt");
+    }
+
+    @TestMetadata("lambdaPropertyTypeInference.kt")
+    public void testLambdaPropertyTypeInference() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/lambdaPropertyTypeInference.kt");
+    }
+
     @TestMetadata("localFunctionsHiding.kt")
     public void testLocalFunctionsHiding() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/localFunctionsHiding.kt");
