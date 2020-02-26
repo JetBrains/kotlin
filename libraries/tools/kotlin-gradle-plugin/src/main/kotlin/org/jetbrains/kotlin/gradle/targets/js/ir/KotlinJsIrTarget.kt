@@ -117,11 +117,13 @@ constructor(
         compilations.all {
             it.compileKotlinTask.configureCommonJsOptions()
 
-            binaries.forEach {
-                it.linkTask.configure { linkTask ->
-                    linkTask.configureCommonJsOptions()
+            binaries
+                .filterIsInstance<JsBinary>()
+                .forEach {
+                    it.linkTask.configure { linkTask ->
+                        linkTask.configureCommonJsOptions()
+                    }
                 }
-            }
         }
     }
 

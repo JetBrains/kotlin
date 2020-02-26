@@ -43,11 +43,13 @@ abstract class KotlinJsIrSubTarget(
 
         target.compilations.all {
             val npmProject = it.npmProject
-            it.binaries.all { binary ->
-                binary.linkTask.configure {
-                    it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            it.binaries
+                .withType(JsBinary::class.java)
+                .all { binary ->
+                    binary.linkTask.configure {
+                        it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+                    }
                 }
-            }
         }
     }
 

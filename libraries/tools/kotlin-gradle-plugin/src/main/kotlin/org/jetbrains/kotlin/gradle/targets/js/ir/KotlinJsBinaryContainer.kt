@@ -24,8 +24,8 @@ open class KotlinJsBinaryContainer
 @Inject
 constructor(
     val target: KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>,
-    backingContainer: DomainObjectSet<JsBinary>
-) : DomainObjectSet<JsBinary> by backingContainer {
+    backingContainer: DomainObjectSet<JsBinary2>
+) : DomainObjectSet<JsBinary2> by backingContainer {
     val project: Project
         get() = target.project
 
@@ -45,6 +45,8 @@ constructor(
             target.whenNodejsConfigured {
                 (this as KotlinJsIrSubTarget).produceExecutable()
             }
+
+            compilation.binaries.executableInternal(compilation)
         }
 
         if (target is KotlinJsTarget) {
@@ -58,9 +60,9 @@ constructor(
             target.whenNodejsConfigured {
                 (this as KotlinJsSubTarget).produceExecutable()
             }
-        }
 
-        compilation.binaries.executableInternal(compilation)
+            compilation.binaries.executableLegacyInternal(compilation)
+        }
     }
 
     internal fun executableInternal(compilation: KotlinJsCompilation) = createBinaries(
@@ -69,13 +71,26 @@ constructor(
         create = ::Executable
     )
 
+    private fun executableLegacyInternal(compilation: KotlinJsCompilation) = createBinaries(
+        compilation = compilation,
+        jsBinaryType = JsBinaryType.EXECUTABLE,
+        create = { compilation, name, type ->
+            object : JsBinary2 {
+                override val compilation: KotlinJsCompilation = compilation
+                override val name: String = name
+                override val type: KotlinJsBinaryType = type
+            }
+        }
+    )
+
     internal fun getBinary(
         type: KotlinJsBinaryType
     ): JsBinary =
         matching { it.type == type }
+            .withType(JsBinary::class.java)
             .single()
 
-    private fun <T : JsBinary> createBinaries(
+    private fun <T : JsBinary2> createBinaries(
         compilation: KotlinJsCompilation,
         types: Collection<KotlinJsBinaryType> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,

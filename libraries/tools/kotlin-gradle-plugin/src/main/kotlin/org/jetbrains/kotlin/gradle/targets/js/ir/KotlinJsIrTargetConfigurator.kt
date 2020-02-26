@@ -73,11 +73,13 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                 )
             }
 
-            it.binaries.forEach {
-                it.linkTask.configure { linkTask ->
-                    linkTask.kotlinOptions.configureOptions()
+            it.binaries
+                .filterIsInstance<JsBinary>()
+                .forEach {
+                    it.linkTask.configure { linkTask ->
+                        linkTask.kotlinOptions.configureOptions()
+                    }
                 }
-            }
         }
     }
 

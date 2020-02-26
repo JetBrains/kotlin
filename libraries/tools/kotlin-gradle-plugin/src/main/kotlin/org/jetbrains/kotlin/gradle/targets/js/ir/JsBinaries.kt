@@ -13,11 +13,17 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
+interface JsBinary2 {
+    val compilation: KotlinJsCompilation
+    val name: String
+    val type: KotlinJsBinaryType
+}
+
 sealed class JsBinary(
-    internal val compilation: KotlinJsCompilation,
-    internal val name: String,
-    internal val type: KotlinJsBinaryType
-) {
+    override val compilation: KotlinJsCompilation,
+    override val name: String,
+    override val type: KotlinJsBinaryType
+) : JsBinary2 {
     val linkTaskName: String = linkTaskName()
 
     val linkTask: TaskProvider<KotlinJsIrLink>
