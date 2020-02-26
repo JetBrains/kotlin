@@ -13,6 +13,7 @@ import com.intellij.codeInsight.hint.TooltipGroup;
 import com.intellij.codeInsight.hint.TooltipRenderer;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.ide.actions.BaseNavigateToSourceAction;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -918,7 +919,9 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       if (!Registry.is("editor.new.mouse.hover.popups")) {
         return;
       }
-      if (action instanceof HintManagerImpl.ActionToIgnore || action instanceof ActionGroup) return;
+      if (action instanceof HintManagerImpl.ActionToIgnore ||
+          action instanceof ActionGroup ||
+          action instanceof BaseNavigateToSourceAction) return;
       getInstance().cancelProcessingAndCloseHint();
     }
 
