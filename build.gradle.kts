@@ -1,6 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 
@@ -448,17 +447,12 @@ allprojects {
 }
 
 gradle.taskGraph.whenReady {
-    if (isTeamcityBuild) {
-        logger.warn("CI build profile is active (IC is off, proguard is on). Use -Pteamcity=false to reproduce local build")
-        for (task in allTasks) {
-            when (task) {
-                is AbstractKotlinCompile<*> -> task.incremental = false
-                is JavaCompile -> task.options.isIncremental = false
-            }
-        }
-    } else {
-        logger.warn("Local build profile is active (IC is on, proguard is off). Use -Pteamcity=true to reproduce TC build")
-    }
+    fun Boolean.toOnOff(): String = if (this) "on" else "off"
+    val profile = if (isTeamcityBuild) "CI" else "Local"
+
+    logger.warn("$profile build profile is active (proguard is ${kotlinBuildProperties.proguard.toOnOff()}" +
+                            ", jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()})." +
+                            " Use -Pteamcity=<true|false> to reproduce CI/local build")
 
     allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
         task.entryCompression = if (kotlinBuildProperties.jarCompression)
