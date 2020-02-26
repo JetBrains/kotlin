@@ -162,19 +162,21 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val constructor = expression.symbol.owner
         val lambdaClass = constructor.parentAsClass
         val invokeFun = lambdaClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invoke" }
+        val superInvokeFun = invokeFun.overriddenSymbols.single { it.owner.isSuspend == invokeFun.isSuspend }.owner
         val lambdaName = Name.identifier("${lambdaClass.name.asString()}\$lambda")
 
         val lambdaDeclaration = buildFun {
             startOffset = invokeFun.startOffset
             endOffset = invokeFun.endOffset
-            returnType = invokeFun.returnType
+            // Since box/unbox is done on declaration side in case of suspend function use the specified type
+            returnType = if (invokeFun.isSuspend) invokeFun.returnType else superInvokeFun.returnType
             name = lambdaName
             isSuspend = invokeFun.isSuspend
         }
 
         lambdaDeclaration.parent = factoryFunction
 
-        lambdaDeclaration.valueParameters = invokeFun.valueParameters.map { it.copyTo(lambdaDeclaration) }
+        lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.map { it.copyTo(lambdaDeclaration) }
 
         val statements = ArrayList<IrStatement>(4)
 
