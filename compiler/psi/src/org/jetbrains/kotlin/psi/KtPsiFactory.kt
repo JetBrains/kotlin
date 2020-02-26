@@ -299,7 +299,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return (dummyFun.bodyExpression as KtLambdaExpression).functionLiteral.valueParameters.first()
     }
 
-    fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
+    fun <TDeclaration : KtDeclaration> createDeclaration(@NonNls text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.declarations
         checkWithAttachment(declarations.size == 1, { "unexpected ${declarations.size} declarations" }) {

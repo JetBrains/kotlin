@@ -348,7 +348,7 @@ class KotlinChangeSignatureDialog(
         for (item in parametersTableModel.items) {
             if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null) {
                 val paramText = if (item.parameter != parametersTableModel.receiver)
-                    KotlinBundle.message("text.parameter", item.parameter.name)
+                    KotlinBundle.message("text.parameter.0", item.parameter.name)
                 else
                     KotlinBundle.message("text.receiver")
                 if (Messages.showOkCancelDialog(

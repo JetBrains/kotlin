@@ -22,6 +22,7 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import java.util.*
 
-fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtExpression =
+fun KtPsiFactory.createExpressionByPattern(@NonNls pattern: String, vararg args: Any, reformat: Boolean = true): KtExpression =
     createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
 
 fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtValueArgumentList =
