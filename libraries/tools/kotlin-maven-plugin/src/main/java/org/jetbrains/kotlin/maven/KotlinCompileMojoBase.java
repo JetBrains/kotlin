@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 
 public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> extends AbstractMojo {
+
     @Component
     protected PlexusContainer container;
 
@@ -191,7 +192,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         getLog().debug("Kotlin version " + KotlinCompilerVersion.VERSION +
                 " (JRE " + System.getProperty("java.runtime.version") + ")");
 
-        if (!hasKotlinFilesInSources()) {
+        if (!hasKotlinFilesInSources() && !isForceExecuteWithoutKotlinSources()) {
             getLog().warn("No sources found skipping Kotlin compile");
             return;
         }
@@ -211,6 +212,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         if (exitCode != ExitCode.OK) {
             messageCollector.throwKotlinCompilerException();
         }
+    }
+
+    protected boolean isForceExecuteWithoutKotlinSources() {
+        return false;
     }
 
     @NotNull
