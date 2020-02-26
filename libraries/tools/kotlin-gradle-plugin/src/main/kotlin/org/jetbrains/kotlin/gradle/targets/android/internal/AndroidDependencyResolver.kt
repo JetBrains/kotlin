@@ -23,7 +23,6 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
-import kotlin.reflect.full.findParameterByName
 
 data class AndroidDependency(
     val name: String? = null,
@@ -38,12 +37,7 @@ data class AndroidDependency(
 object AndroidDependencyResolver {
     private fun getAndroidSdkJar(project: Project): AndroidDependency? {
         val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
-        val sdkLocation = getClassOrNull("com.android.build.gradle.internal.SdkLocator")?.let { sdkLocatorClass ->
-            val sdkLocation =
-                sdkLocatorClass.getMethodOrNull("getSdkLocation", File::class.java)?.invoke(sdkLocatorClass, project.rootDir)
-            sdkLocation?.javaClass?.getMethodOrNull("getDirectory")?.invoke(sdkLocation) as? File
-        } ?: return null
-        val sdkHandler = AndroidSdkHandler.getInstance(sdkLocation)
+        val sdkHandler = AndroidSdkHandler.getInstance(androidExtension.sdkDirectory)
         val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
         val androidTarget =
             sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger) ?: return null
