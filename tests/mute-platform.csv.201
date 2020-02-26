@@ -213,6 +213,7 @@ org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.ObjectLiteral.testKt_36149, NJ2K in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Types.testCapturedWildcardTypeAsLambdaParameter, NJ2K in 201
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Types.testUnusedCapturedWildcardTypeInSAM, NJ2K in 201
+org.jetbrains.kotlin.search.TodoSearchTest.testTodoCall, Duplicate TODO items
 org.jetbrains.uast.test.kotlin.KotlinUastReferencesTest.`test original getter is visible when reference is under renaming`, Extensions API changed
 org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testEnumValueMembers, values and valueOf
 org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testEnumValuesConstructors, values and valueOf
