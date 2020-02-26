@@ -11,10 +11,12 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -36,20 +38,24 @@ constructor(
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
-        if (compilation !is KotlinJsIrCompilation) {
-            project.logger.warn(
-                "binaries.executable configuration is useless with IR compiler." +
-                        "Use produceExecutable() instead"
-            )
-            return
-        }
-
         (target as KotlinJsSubTargetContainerDsl).whenBrowserConfigured {
-            (this as KotlinJsIrSubTarget).produceExecutable()
+            if (target is KotlinJsIrTarget) {
+                (this as KotlinJsIrSubTarget).produceExecutable()
+            }
+
+            if (target is KotlinJsTarget) {
+                (this as KotlinJsSubTarget).produceExecutable()
+            }
         }
 
-        target.whenNodejsConfigured {
-            (this as KotlinJsIrSubTarget).produceExecutable()
+        (target as KotlinJsSubTargetContainerDsl).whenNodejsConfigured {
+            if (target is KotlinJsIrTarget) {
+                (this as KotlinJsIrSubTarget).produceExecutable()
+            }
+
+            if (target is KotlinJsTarget) {
+                (this as KotlinJsSubTarget).produceExecutable()
+            }
         }
 
         compilation.binaries.executableInternal(compilation)

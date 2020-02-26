@@ -8,18 +8,19 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
@@ -79,17 +80,13 @@ constructor(
         }
     }
 
-    var producingType: KotlinJsProducingType? = null
-
-    @Deprecated("Use produceExecutable instead", ReplaceWith("produceExecutable()"))
     override val binaries: KotlinJsBinaryContainer
         get() {
-            return irTarget?.binaries
-                ?: project.objects.newInstance(
-                    KotlinJsBinaryContainer::class.java,
-                    this,
-                    WrapUtil.toDomainObjectSet(JsBinary::class.java)
-                )
+            irTarget?.let { throw IllegalStateException("Unfortunately you can't use binaries in 'both' mode") }
+            return compilations.withType(KotlinJsCompilation::class.java)
+                .named(MAIN_COMPILATION_NAME)
+                .map { it.binaries }
+                .get()
         }
 
     var irTarget: KotlinJsIrTarget? = null
@@ -148,35 +145,6 @@ constructor(
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
         irTarget?.nodejs(body)
-    }
-
-    override fun produceExecutable() {
-        produce(KotlinJsProducingType.EXECUTABLE) {
-            (this as KotlinJsSubTarget).produceExecutable()
-        }
-    }
-
-    private fun produce(
-        producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTargetDsl.() -> Unit = {}
-    ) {
-        check(this.producingType == null || this.producingType == producingType) {
-            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
-        }
-
-        this.producingType = producingType
-
-        whenBrowserConfigured {
-            if (this is KotlinBrowserJs) {
-                producer()
-            }
-        }
-
-        whenNodejsConfigured {
-            if (this is KotlinNodeJs) {
-                producer()
-            }
-        }
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {

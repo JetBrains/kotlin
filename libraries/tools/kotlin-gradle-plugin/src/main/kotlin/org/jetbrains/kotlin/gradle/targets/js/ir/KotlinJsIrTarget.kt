@@ -97,11 +97,6 @@ constructor(
         body(nodejs)
     }
 
-    @Deprecated("Use binaries.executable instead", ReplaceWith("binaries.executable()"))
-    override fun produceExecutable() {
-        project.logger.warn("produceExecutable configuration is useless with IR compiler")
-    }
-
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
         if (browserLazyDelegate.isInitialized()) {
             browser(body)
