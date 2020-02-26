@@ -449,6 +449,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         public void testVararg() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/vararg.kt");
         }
+
+        @TestMetadata("varargProjection.kt")
+        public void testVarargProjection() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/varargProjection.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/builtins")

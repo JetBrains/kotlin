@@ -3,5 +3,5 @@
 fun printAll(vararg a : Any) {}
 
 fun main(args: Array<String>) {
-    <!INAPPLICABLE_CANDIDATE!>printAll<!>(*args) // Shouldn't be an error
+    printAll(*args) // Shouldn't be an error
 }

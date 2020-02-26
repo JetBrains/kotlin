@@ -12,5 +12,5 @@ fun Foo.bar(vararg x: Int) = ""
 
 
 fun actualTest() {
-    <!INAPPLICABLE_CANDIDATE!>test<!>(<!UNRESOLVED_REFERENCE!>Foo::bar<!>)
+    test(Foo::bar)
 }

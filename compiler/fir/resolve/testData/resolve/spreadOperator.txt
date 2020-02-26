@@ -1,5 +1,5 @@
 FILE: Main.kt
-    public final fun <T> myListOf(vararg elements: R|kotlin/Array<T>|): R|kotlin/collections/List<T>| {
+    public final fun <T> myListOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/collections/List<T>| {
         ^myListOf Null(null)!!
     }
     public final fun <T> myListOf(element: R|T|): R|kotlin/collections/List<T>| {

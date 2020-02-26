@@ -136,7 +136,7 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
         val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
         transformReturnTypeRef(
             StoreType,
-            returnTypeRef.withReplacedConeType(returnType.createArrayOf(session))
+            returnTypeRef.withReplacedConeType(ConeKotlinTypeProjectionOut(returnType).createArrayOf(session))
         )
     }
 }

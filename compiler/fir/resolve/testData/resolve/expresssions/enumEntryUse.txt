@@ -27,7 +27,7 @@ FILE: enumEntryUse.kt
     }
     public final fun useEnum(some: R|TestEnum|): R|kotlin/Unit| {
     }
-    public final fun useVararg(vararg some: R|kotlin/Array<TestEnum>|): R|kotlin/Unit| {
+    public final fun useVararg(vararg some: R|kotlin/Array<out TestEnum>|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
         R|/use|(Q|TestEnum|.R|/TestEnum.FIRST|)
