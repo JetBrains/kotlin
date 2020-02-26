@@ -104,24 +104,36 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
       TextRange nameIdentifierRange = declaredTarget.getNameIdentifierRange();
       if (nameIdentifierRange != null) {
         PsiElement navigationElement = declaredTarget.getNavigationElement();
-        if (navigationElement == declaringElement) {
-          return nameIdentifierRange;
-        }
-        else if (navigationElement.getContainingFile() == declaringElement.getContainingFile()) {
-          int delta = declaringElement.getTextRange().getStartOffset() - navigationElement.getTextRange().getStartOffset();
-          return nameIdentifierRange.shiftLeft(delta);
-        }
-        else {
-          LOG.error("Navigation element file differs from declaring element file;\n" +
-                    "target: " + target + ";\n" +
-                    "target class: " + target.getClass().getName() + ";\n" +
-                    "navigation element file: " + navigationElement.getContainingFile() + ";\n" +
-                    "declaring element file: " + declaringElement.getContainingFile());
-          return null;
-        }
+        return relateRange(target, navigationElement, nameIdentifierRange, declaringElement);
       }
     }
     return rangeOf(declaringElement);
+  }
+
+  /**
+   * @return range in identifying element relative to range of declaring element,
+   * or {@code null} if the elements are from different files
+   */
+  @Nullable
+  private static TextRange relateRange(@NotNull Object target, // PomTarget or PsiElement; used only for logging
+                                       @NotNull PsiElement identifyingElement,
+                                       @NotNull TextRange rangeInIdentifyingElement,
+                                       @NotNull PsiElement declaringElement) {
+    if (identifyingElement == declaringElement) {
+      return rangeInIdentifyingElement;
+    }
+    else if (identifyingElement.getContainingFile() == declaringElement.getContainingFile()) {
+      int delta = declaringElement.getTextRange().getStartOffset() - identifyingElement.getTextRange().getStartOffset();
+      return rangeInIdentifyingElement.shiftLeft(delta);
+    }
+    else {
+      LOG.error("Identifying element file differs from declaring element file;\n" +
+                "target: " + target + ";\n" +
+                "target class: " + target.getClass().getName() + ";\n" +
+                "identifying element file: " + identifyingElement.getContainingFile() + ";\n" +
+                "declaring element file: " + declaringElement.getContainingFile());
+      return null;
+    }
   }
 
   /**
