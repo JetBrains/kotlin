@@ -12068,6 +12068,69 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/specifySuperType")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecifySuperType extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSpecifySuperType() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/specifySuperType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("fullyQualifiedSuperType.kt")
+        public void testFullyQualifiedSuperType() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/fullyQualifiedSuperType.kt");
+        }
+
+        @TestMetadata("fullyQualifiedSuperTypeHasAnnotations.kt")
+        public void testFullyQualifiedSuperTypeHasAnnotations() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/fullyQualifiedSuperTypeHasAnnotations.kt");
+        }
+
+        @TestMetadata("fullyQualifiedSuperTypeHasTypeArguments.kt")
+        public void testFullyQualifiedSuperTypeHasTypeArguments() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/fullyQualifiedSuperTypeHasTypeArguments.kt");
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/function.kt");
+        }
+
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/property.kt");
+        }
+
+        @TestMetadata("superExpressionHasLabel.kt")
+        public void testSuperExpressionHasLabel() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/superExpressionHasLabel.kt");
+        }
+
+        @TestMetadata("superTypeHasAnnotations.kt")
+        public void testSuperTypeHasAnnotations() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/superTypeHasAnnotations.kt");
+        }
+
+        @TestMetadata("superTypeHasTypeArguments.kt")
+        public void testSuperTypeHasTypeArguments() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/superTypeHasTypeArguments.kt");
+        }
+
+        @TestMetadata("superTypeIsExtendedByOtherSuperType.kt")
+        public void testSuperTypeIsExtendedByOtherSuperType() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/superTypeIsExtendedByOtherSuperType.kt");
+        }
+
+        @TestMetadata("typeMismatch.kt")
+        public void testTypeMismatch() throws Exception {
+            runTest("idea/testData/quickfix/specifySuperType/typeMismatch.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/specifyVisibilityInExplicitApiMode")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
