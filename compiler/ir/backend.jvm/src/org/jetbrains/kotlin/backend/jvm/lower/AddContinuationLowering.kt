@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -596,33 +597,28 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     }
 
     private fun addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
-            private val functionsStack = arrayListOf<IrFunction>()
-            private val suspendFunctionsCapturingCrossinline = mutableSetOf<IrFunction>()
-            private val functionsToAdd = arrayListOf<MutableSet<IrFunction>>()
-
-            override fun visitClass(declaration: IrClass): IrStatement {
-                functionsToAdd.push(mutableSetOf())
-                return (super.visitClass(declaration) as IrClass).also { irClass ->
-                    for (function in functionsToAdd.pop()) {
-                        function.parent = irClass
-                        irClass.declarations.add(function)
-                    }
+        class MutableFlag(var capturesCrossinline: Boolean)
+        irFile.accept(object : IrElementTransformer<MutableFlag?> {
+            override fun visitClass(declaration: IrClass, data: MutableFlag?): IrStatement {
+                declaration.transformDeclarationsFlat {
+                    if (it is IrSimpleFunction && it.isSuspend && it.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
+                        return@transformDeclarationsFlat transformToView(it)
+                    it.accept(this, null)
+                    null
                 }
+                return declaration
             }
 
-            override fun visitFunction(declaration: IrFunction): IrStatement {
-                functionsStack.push(declaration)
-                val function = super.visitFunction(declaration) as IrFunction
-                functionsStack.pop()
-                if (!function.isSuspend || function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return function
+            private fun transformToView(function: IrSimpleFunction): List<IrFunction>? {
+                val flag = MutableFlag(false)
+                function.accept(this, flag)
 
                 val view = function.getOrCreateSuspendFunctionViewIfNeeded(context) as IrSimpleFunction
+                val result = mutableListOf(view)
+                if (function.body == null || !function.hasContinuation()) return result
 
-                if (function.body == null || !function.hasContinuation()) return view
-
-                if (function in suspendFunctionsCapturingCrossinline || function.isInline) {
-                    val newFunction = buildFunWithDescriptorForInlining(view.descriptor) {
+                if (flag.capturesCrossinline || function.isInline) {
+                    result += buildFunWithDescriptorForInlining(view.descriptor) {
                         name = Name.identifier(view.name.asString() + FOR_INLINE_SUFFIX)
                         returnType = view.returnType
                         modality = view.modality
@@ -637,44 +633,29 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         copyAttributes(view)
                         body = view.copyBodyTo(this)
                     }
-                    registerNewFunction(newFunction)
                 }
 
-                val newFunction = if ((function as IrSimpleFunction).isOverridable) {
+                val newFunction = if (function.isOverridable) {
                     // Create static method for the suspend state machine method so that reentering the method
                     // does not lead to virtual dispatch to the wrong method.
-                    registerNewFunction(view)
-                    createStaticSuspendImpl(view)
+                    createStaticSuspendImpl(view).also { result += it }
                 } else view
 
                 newFunction.body = context.createIrBuilder(newFunction.symbol).irBlockBody {
-                    +generateContinuationClassForNamedFunction(
-                        newFunction,
-                        view.dispatchReceiverParameter,
-                        declaration as IrAttributeContainer
-                    )
+                    +generateContinuationClassForNamedFunction(newFunction, view.dispatchReceiverParameter, function)
                     for (statement in newFunction.body!!.statements) {
                         +statement
                     }
                 }
-                return newFunction
-            }
-
-            private fun registerNewFunction(function: IrFunction) {
-                functionsToAdd.peek()!!.add(function)
-            }
-
-            override fun visitFieldAccess(expression: IrFieldAccessExpression): IrExpression {
-                val result = super.visitFieldAccess(expression)
-                val function = functionsStack.peek() ?: return result
-                if (function.isSuspend &&
-                    expression.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
-                ) {
-                    suspendFunctionsCapturingCrossinline += function
-                }
                 return result
             }
-        })
+
+            override fun visitFieldAccess(expression: IrFieldAccessExpression, data: MutableFlag?): IrExpression {
+                if (expression.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE)
+                    data?.capturesCrossinline = true
+                return super.visitFieldAccess(expression, data)
+            }
+        }, null)
     }
 
     private class SuspendLambdaInfo(val reference: IrFunctionReference) {
