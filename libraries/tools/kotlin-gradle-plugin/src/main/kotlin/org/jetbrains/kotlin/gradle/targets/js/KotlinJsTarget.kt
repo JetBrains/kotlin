@@ -81,13 +81,10 @@ constructor(
     }
 
     override val binaries: KotlinJsBinaryContainer
-        get() {
-            irTarget?.let { throw IllegalStateException("Unfortunately you can't use binaries in 'both' mode") }
-            return compilations.withType(KotlinJsCompilation::class.java)
-                .named(MAIN_COMPILATION_NAME)
-                .map { it.binaries }
-                .get()
-        }
+        get() = compilations.withType(KotlinJsCompilation::class.java)
+            .named(MAIN_COMPILATION_NAME)
+            .map { it.binaries }
+            .get()
 
     var irTarget: KotlinJsIrTarget? = null
 

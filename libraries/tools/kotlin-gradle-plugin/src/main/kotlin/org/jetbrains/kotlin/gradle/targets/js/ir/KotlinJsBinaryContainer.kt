@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.PRODUCTION
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -38,22 +37,25 @@ constructor(
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
-        (target as KotlinJsSubTargetContainerDsl).whenBrowserConfigured {
-            if (target is KotlinJsIrTarget) {
+        if (target is KotlinJsIrTarget) {
+            target.whenBrowserConfigured {
                 (this as KotlinJsIrSubTarget).produceExecutable()
             }
 
-            if (target is KotlinJsTarget) {
-                (this as KotlinJsSubTarget).produceExecutable()
+            target.whenNodejsConfigured {
+                (this as KotlinJsIrSubTarget).produceExecutable()
             }
         }
 
-        (target as KotlinJsSubTargetContainerDsl).whenNodejsConfigured {
-            if (target is KotlinJsIrTarget) {
-                (this as KotlinJsIrSubTarget).produceExecutable()
+        if (target is KotlinJsTarget) {
+            target.irTarget
+                ?.let { throw IllegalStateException("Unfortunately you can't use `executable()` with 'both' compiler type") }
+
+            target.whenBrowserConfigured {
+                (this as KotlinJsSubTarget).produceExecutable()
             }
 
-            if (target is KotlinJsTarget) {
+            target.whenNodejsConfigured {
                 (this as KotlinJsSubTarget).produceExecutable()
             }
         }
