@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
@@ -80,7 +81,8 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteMemberScope: FirScope,
     declaration: FirClassLikeDeclaration<*>,
-    builder: ScopeSession
+    builder: ScopeSession,
+    derivedClassId: ClassId? = null
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
@@ -95,10 +97,14 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
             val javaTypeParameters = javaClass.typeParameters
             val javaSubstitution = createSubstitution(javaTypeParameters, typeArguments, session)
             FirClassSubstitutionScope(
-                session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution, skipPrivateMembers = true
+                session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution,
+                skipPrivateMembers = true, derivedClassId = derivedClassId
             )
         } else {
-            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution, skipPrivateMembers = true)
+            FirClassSubstitutionScope(
+                session, useSiteMemberScope, builder, originalSubstitution,
+                skipPrivateMembers = true, derivedClassId = derivedClassId
+            )
         }
     }
 }

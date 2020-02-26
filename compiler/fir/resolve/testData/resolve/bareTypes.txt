@@ -13,7 +13,7 @@ FILE: bareTypes.kt
     }
     public final fun test2(a: R|A<kotlin/String>|): R|kotlin/Unit| {
         lval b: R|MutableString| = (R|<local>/a| as R|MutableString|)
-        R|<local>/b|.R|FakeOverride</MutableA.add: R|kotlin/Unit|>|(String())
+        R|<local>/b|.R|FakeOverride</MutableString.add: R|kotlin/Unit|>|(String())
     }
     public final fun test3(a: R|A<kotlin/String>|): R|kotlin/Unit| {
         when () {

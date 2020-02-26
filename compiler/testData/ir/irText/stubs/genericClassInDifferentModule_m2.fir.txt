@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       VALUE_PARAMETER name:y index:0 type:Y of <root>.Derived1.foo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo <Y> (y: Y of <root>.Derived1.foo): T of <root>.Derived1 declared in <root>.Derived1'
-          CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Base' type=T of <root>.Derived1 origin=GET_PROPERTY
+          CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.foo' type=<root>.Derived1<T of <root>.Derived1> origin=null
     PROPERTY name:bar visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
         $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Derived1.<get-exn>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-exn> <Z> (): T of <root>.Derived1 declared in <root>.Derived1'
-            CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Base' type=T of <root>.Derived1 origin=GET_PROPERTY
+            CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-exn>' type=<root>.Derived1<T of <root>.Derived1> origin=null
       FUN name:<set-exn> visibility:public modality:FINAL <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<set-exn>, value:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:exn visibility:public modality:FINAL [var]

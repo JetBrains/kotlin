@@ -557,6 +557,11 @@ class Fir2IrDeclarationStorage(
             return if (shouldLeaveScope) cached else cached.enterLocalScope(function)
         }
         val created = create()
+        if (function.symbol.callableId.isKFunctionInvoke()) {
+            (function.symbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
+                created.overriddenSymbols += (it.toFunctionSymbol(this) as IrSimpleFunctionSymbol)
+            }
+        }
         functionCache[function] = created
         return created
     }
@@ -901,11 +906,6 @@ class Fir2IrDeclarationStorage(
             is FirSimpleFunction -> {
                 val irDeclaration = getIrFunction(firDeclaration, irParent, shouldLeaveScope = true).apply {
                     setAndModifyParent(irParent)
-                }
-                if (firFunctionSymbol.callableId.isKFunctionInvoke()) {
-                    (firFunctionSymbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
-                        irDeclaration.overriddenSymbols += (it.toFunctionSymbol(this) as IrSimpleFunctionSymbol)
-                    }
                 }
                 irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
             }

@@ -77,7 +77,9 @@ class JavaScopeProvider(
                             // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
                             val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
                             visitedSymbols.remove(symbol)
-                            useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, scope, symbol.fir, scopeSession)
+                            useSiteSuperType.wrapSubstitutionScopeIfNeed(
+                                useSiteSession, scope, symbol.fir, scopeSession, regularClass.classId
+                            )
                         } else {
                             null
                         }

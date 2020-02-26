@@ -318,7 +318,7 @@ class Fir2IrVisitor(
             val containingClass = if (firOverriddenSymbol == null || firFunctionSymbol == null) {
                 lastClass
             } else {
-                val callableId = firFunctionSymbol.callableId
+                val callableId = firFunctionSymbol.deepestOverriddenSymbol().callableId
                 val ownerClassId = callableId.classId
                 if (ownerClassId == null) {
                     lastClass
