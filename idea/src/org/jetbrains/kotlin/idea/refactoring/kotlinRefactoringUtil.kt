@@ -48,6 +48,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.getAccessorLightMethods
@@ -852,7 +853,7 @@ val PsiElement.isInsideInjectedFragment: Boolean
 fun checkSuperMethods(
     declaration: KtDeclaration,
     ignore: Collection<PsiElement>?,
-    actionString: String
+    @Nls actionString: String
 ): List<PsiElement> {
     fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
         return overriddenElementsToDescriptor.entries.map { entry ->
