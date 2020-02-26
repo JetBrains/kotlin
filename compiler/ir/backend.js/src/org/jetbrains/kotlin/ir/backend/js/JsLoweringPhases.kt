@@ -132,12 +132,6 @@ val createScriptFunctionsPhase = makeJsModulePhase(
     description = "Create functions for initialize and evaluate script"
 ).toModuleLowering()
 
-private val moveBodilessDeclarationsToSeparatePlacePhase = makeDeclarationTransformerPhase(
-    ::MoveBodilessDeclarationsToSeparatePlaceLowering,
-    name = "MoveBodilessDeclarationsToSeparatePlaceLowering",
-    description = "Move bodiless declarations to a separate place"
-)
-
 private val expectDeclarationsRemovingPhase = makeDeclarationTransformerPhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -166,13 +160,6 @@ private val stripTypeAliasDeclarationsPhase = makeDeclarationTransformerPhase(
     { StripTypeAliasDeclarationsLowering() },
     name = "StripTypeAliasDeclarations",
     description = "Strip typealias declarations"
-)
-
-// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeBodyLoweringPhase(
-    { ProvisionalFunctionExpressionLowering() },
-    name = "FunctionExpression",
-    description = "Transform IrFunctionExpression to a local function reference"
 )
 
 private val arrayConstructorPhase = makeBodyLoweringPhase(
@@ -282,10 +269,10 @@ private val sharedVariablesLoweringPhase = makeBodyLoweringPhase(
     description = "Box captured mutable variables"
 )
 
-private val callableReferenceLoweringX = makeBodyLoweringPhase(
+private val callableReferenceLowering = makeBodyLoweringPhase(
     ::CallableReferenceLowering,
-    name = "CallableReferenceLoweringXX",
-    description = "Build a callable reference class and capture arguments"
+    name = "CallableReferenceLowering",
+    description = "Build a lambda/callable reference class"
 )
 
 private val returnableBlockLoweringPhase = makeBodyLoweringPhase(
@@ -373,13 +360,13 @@ private val privateMemberUsagesLoweringPhase = makeBodyLoweringPhase(
 
 private val interopCallableReferenceLoweringPhase = makeBodyLoweringPhase(
     ::InteropCallableReferenceLowering,
-    name = "CallableReferenceLowering",
-    description = "Handle callable references",
+    name = "InteropCallableReferenceLowering",
+    description = "Interop layer for function references and lambdas",
     prerequisite = setOf(
         suspendFunctionsLoweringPhase,
         localDeclarationsLoweringPhase,
         localDelegatedPropertiesLoweringPhase,
-        callableReferenceLoweringX
+        callableReferenceLowering
     )
 )
 
@@ -595,7 +582,7 @@ val loweringList = listOf<Lowering>(
     functionInliningPhase,
     copyInlineFunctionBodyLoweringPhase,
     createScriptFunctionsPhase,
-    callableReferenceLoweringX,
+    callableReferenceLowering,
     singleAbstractMethodPhase,
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
