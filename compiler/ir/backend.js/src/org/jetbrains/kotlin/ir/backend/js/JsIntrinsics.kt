@@ -96,7 +96,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // Type checks:
 
     val jsInstanceOf = binOpBool("jsInstanceOf")
-    val jsTypeOf = unOp("jsTypeOf", irBuiltIns.stringType)
+    val jsTypeOf = getInternalFunction("jsTypeOf")
 
     // Number conversions:
 
