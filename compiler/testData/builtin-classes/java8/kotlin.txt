@@ -289,16 +289,20 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, jav
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val MAX_VALUE: kotlin.Double
+        public const final val MAX_VALUE: kotlin.Double
             public final fun <get-MAX_VALUE>(): kotlin.Double
-        public final val MIN_VALUE: kotlin.Double
+        public const final val MIN_VALUE: kotlin.Double
             public final fun <get-MIN_VALUE>(): kotlin.Double
-        public final val NEGATIVE_INFINITY: kotlin.Double
+        public const final val NEGATIVE_INFINITY: kotlin.Double
             public final fun <get-NEGATIVE_INFINITY>(): kotlin.Double
-        public final val NaN: kotlin.Double
+        public const final val NaN: kotlin.Double
             public final fun <get-NaN>(): kotlin.Double
-        public final val POSITIVE_INFINITY: kotlin.Double
+        public const final val POSITIVE_INFINITY: kotlin.Double
             public final fun <get-POSITIVE_INFINITY>(): kotlin.Double
+        @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 
@@ -389,16 +393,20 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val MAX_VALUE: kotlin.Float
+        public const final val MAX_VALUE: kotlin.Float
             public final fun <get-MAX_VALUE>(): kotlin.Float
-        public final val MIN_VALUE: kotlin.Float
+        public const final val MIN_VALUE: kotlin.Float
             public final fun <get-MIN_VALUE>(): kotlin.Float
-        public final val NEGATIVE_INFINITY: kotlin.Float
+        public const final val NEGATIVE_INFINITY: kotlin.Float
             public final fun <get-NEGATIVE_INFINITY>(): kotlin.Float
-        public final val NaN: kotlin.Float
+        public const final val NaN: kotlin.Float
             public final fun <get-NaN>(): kotlin.Float
-        public final val POSITIVE_INFINITY: kotlin.Float
+        public const final val POSITIVE_INFINITY: kotlin.Float
             public final fun <get-POSITIVE_INFINITY>(): kotlin.Float
+        @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 
