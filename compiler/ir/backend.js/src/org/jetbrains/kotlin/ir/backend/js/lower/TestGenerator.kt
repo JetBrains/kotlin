@@ -56,7 +56,7 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
     ): FunctionWithBody {
         val body = JsIrBuilder.buildBlockBody(emptyList())
 
-        val function = JsIrBuilder.buildFunction("$name test fun", context.irBuiltIns.unitType, parentFunction)
+        val function = JsIrBuilder.buildFunction("$name test fun", context.irBuiltIns.anyNType, parentFunction)
         function.body = body
 
         val parentBody = parentFunction.body as IrBlockBody

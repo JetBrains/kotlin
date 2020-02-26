@@ -53,7 +53,7 @@ internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
 }
 
 @JsName("test")
-internal fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
+internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
 }
 
