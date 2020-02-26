@@ -104,11 +104,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberAndNonExtensionCompatibility.kt");
             }
 
-            @TestMetadata("classMemberDirectCache.kt")
-            public void testClassMemberDirectCache() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberDirectCache.kt");
-            }
-
             @TestMetadata("classMemberOverridden.kt")
             public void testClassMemberOverridden() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberOverridden.kt");
