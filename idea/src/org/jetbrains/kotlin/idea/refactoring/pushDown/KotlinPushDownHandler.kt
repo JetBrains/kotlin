@@ -15,6 +15,8 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.refactoring.AbstractPullPushMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
@@ -27,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 
-const val PUSH_MEMBERS_DOWN = "Push Members Down"
+val PUSH_MEMBERS_DOWN: String get() = RefactoringBundle.message("push.members.down.title")
 
 class KotlinPushDownHandler : AbstractPullPushMembersHandler(
     refactoringName = PUSH_MEMBERS_DOWN,
@@ -35,6 +37,7 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
     wrongPositionMessage = RefactoringBundle.message("the.caret.should.be.positioned.inside.a.class.to.push.members.from")
 ) {
     companion object {
+        @NonNls
         const val PUSH_DOWN_TEST_HELPER_KEY = "PUSH_DOWN_TEST_HELPER_KEY"
     }
 
@@ -44,7 +47,7 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
 
     private fun reportFinalClassOrObject(project: Project, editor: Editor?, classOrObject: KtClassOrObject) {
         val message = RefactoringBundle.getCannotRefactorMessage(
-            "${RefactoringUIUtil.getDescription(classOrObject, false)} is final".capitalize()
+            KotlinBundle.message("text.class.0.is.final", RefactoringUIUtil.getDescription(classOrObject, false)).capitalize()
         )
         CommonRefactoringUtil.showErrorHint(project, editor, message, PULL_MEMBERS_UP, HelpID.MEMBERS_PULL_UP)
     }
