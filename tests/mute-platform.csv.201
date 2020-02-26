@@ -157,8 +157,10 @@ org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.test
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.testUseJavaSAMFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.ChangeSignature.Jk.testJkKeepValOnParameterTypeChange, Unprocessed
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.AddMissingActualMembers.testClassFunctionWithIncompatibleConstructor, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertActualSealedClassToEnum, Enum reorder
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertExpectSealedClassToEnum, Enum reorder
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateSecondaryConstructor.testNoneApplicable, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertSuper, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertSuper, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertThis, Range must be inside element being annotated
