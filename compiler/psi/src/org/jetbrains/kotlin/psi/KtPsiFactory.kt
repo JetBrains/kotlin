@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -58,7 +59,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createProperty("val x =\n$text").initializer
     }
 
-    fun createExpression(text: String): KtExpression {
+    fun createExpression(@NonNls text: String): KtExpression {
         val expression = doCreateExpression(text) ?: error("Failed to create expression from text: '$text'")
         assert(expression.text == text) {
             "Failed to create expression from text: '$text', resulting expression's text was: '${expression.text}'"
@@ -169,7 +170,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createWhiteSpace("\n".repeat(lineBreaks))
     }
 
-    fun createClass(text: String): KtClass {
+    fun createClass(@NonNls text: String): KtClass {
         return createDeclaration(text)
     }
 
@@ -253,7 +254,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createProperty(name, type, isVar, null)
     }
 
-    fun createProperty(text: String): KtProperty {
+    fun createProperty(@NonNls text: String): KtProperty {
         return createDeclaration(text)
     }
 
@@ -327,7 +328,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return createSimpleName(name).getIdentifier()!!
     }
 
-    fun createFunction(funDecl: String): KtNamedFunction {
+    fun createFunction(@NonNls funDecl: String): KtNamedFunction {
         return createDeclaration(funDecl)
     }
 

@@ -26,6 +26,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
@@ -101,7 +102,7 @@ internal fun checkVisibilityInAbstractedMembers(
                 val targetDescriptor = target.resolveToDescriptorWrapperAware(resolutionFacade)
                 val memberText = memberDescriptor.renderForConflicts()
                 val targetText = targetDescriptor.renderForConflicts()
-                val message = "$memberText uses $targetText which won't be accessible from the subclass."
+                val message = KotlinBundle.message("text.0.uses.1.which.will.not.be.accessible.from.subclass", memberText, targetText)
                 conflicts.putValue(target, message.capitalize())
             }
         }
@@ -131,8 +132,8 @@ fun DeclarationDescriptor.renderForConflicts(): String {
     return when (this) {
         is ClassDescriptor -> "${DescriptorRenderer.getClassifierKindPrefix(this)} " +
                 IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(this)
-        is FunctionDescriptor -> "function '${CALLABLE_RENDERER.render(this)}'"
-        is PropertyDescriptor -> "property '${CALLABLE_RENDERER.render(this)}'"
+        is FunctionDescriptor -> KotlinBundle.message("text.function.in.ticks.0", CALLABLE_RENDERER.render(this))
+        is PropertyDescriptor -> KotlinBundle.message("text.property.in.ticks.0", CALLABLE_RENDERER.render(this))
         is PackageFragmentDescriptor -> fqName.asString()
         is PackageViewDescriptor -> fqName.asString()
         else -> ""
@@ -149,7 +150,11 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
     memberDescriptor: DeclarationDescriptor,
     conflicts: MultiMap<PsiElement, String>
 ) {
-    val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
+    val message = KotlinBundle.message(
+        "text.class.0.already.contains.member.1",
+        targetClassDescriptor.renderForConflicts(),
+        memberDescriptor.renderForConflicts()
+    )
 
     if (member is KtParameter) {
         if (((targetClass as? KtClass)?.primaryConstructorParameters ?: emptyList()).any { it.name == member.name }) {
@@ -198,9 +203,11 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
                         memberDescriptorInSubClass?.let { subClassDescriptor.findCallableMemberBySignature(it) } ?: return
                     val clashingMember = clashingMemberDescriptor.source.getPsi() ?: return
 
-                    val message = memberDescriptor.renderForConflicts() +
-                            " in super class would clash with existing member of " +
-                            it.resolveToDescriptorWrapperAware(resolutionFacade).renderForConflicts()
+                    val message = KotlinBundle.message(
+                        "text.member.0.in.super.class.will.clash.with.existing.member.of.1",
+                        memberDescriptor.renderForConflicts(),
+                        it.resolveToDescriptorWrapperAware(resolutionFacade).renderForConflicts()
+                    )
                     conflicts.putValue(clashingMember, message.capitalize())
                 }
         }
@@ -213,7 +220,7 @@ private fun KotlinPullUpData.checkInnerClassToInterface(
     conflicts: MultiMap<PsiElement, String>
 ) {
     if (isInterfaceTarget && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
-        val message = "${memberDescriptor.renderForConflicts()} is an inner class. It can not be moved to the interface"
+        val message = KotlinBundle.message("text.inner.class.0.cannot.be.moved.to.intefrace", memberDescriptor.renderForConflicts())
         conflicts.putValue(member, message.capitalize())
     }
 }
