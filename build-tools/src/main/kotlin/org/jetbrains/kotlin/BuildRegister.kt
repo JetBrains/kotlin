@@ -42,7 +42,7 @@ open class BuildRegister : DefaultTask() {
     val buildInfoTokens: Int = 4
     val additionalInfoTokens: Int = 3
     val compileTimeSamplesNumber: Int = 2
-    val buildNumberTokens: Int = 3
+    val buildNumberRegex: Regex = "\\d+(\\.\\d+)+(-M\\d)?-(\\w+)-\\d+".toRegex()
     val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg"
 
     private fun sendPostRequest(url: String, body: String) : String {
@@ -174,11 +174,8 @@ open class BuildRegister : DefaultTask() {
             }
         }
 
-        val buildNumberParts = buildNumber.split("-")
-        if (buildNumberParts.size != buildNumberTokens) {
-            error("Wrong format of build number $buildNumber.")
-        }
-        val (_, buildType, _) = buildNumberParts
+        val matchResult = buildNumberRegex.find(buildNumber) ?: error("Wrong format of build number $buildNumber.")
+        val buildType = matchResult.groups[3]!!.value
 
         // Send post request to register build.
         val requestBody = buildString {

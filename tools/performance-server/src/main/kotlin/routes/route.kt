@@ -49,7 +49,7 @@ object LocalCache {
             buildsDescription.forEach {
                 if (!it.isEmpty()) {
                     val buildNumber = it.substringBefore(',')
-                    if (!"\\d+(\\.\\d+)+-\\w+-\\d+".toRegex().matches(buildNumber)) {
+                    if (!"\\d+(\\.\\d+)+(-M\\d)?-\\w+-\\d+".toRegex().matches(buildNumber)) {
                         error("Build number $buildNumber differs from expected format. File with data for " +
                                 "target $onlyTarget could be corrupted.")
                     }

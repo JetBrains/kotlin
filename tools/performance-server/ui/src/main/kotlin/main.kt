@@ -263,7 +263,7 @@ fun main(args: Array<String>) {
     val branchesUrl = "$serverUrl/branches/${parameters["target"]}"
 
     val branches: Array<String> = JSON.parse(sendGetRequest(branchesUrl))
-    val releaseBranches = branches.filter { "^v\\d+\\.\\d+\\.\\d+-fixes$".toRegex().find(it) != null }
+    val releaseBranches = branches.filter { "^v\\d+(\\.\\d+)+(-M\\d)?-fixes$".toRegex().find(it) != null }
 
     // Fill autocomplete list.
     val buildsNumbersUrl = "$serverUrl/buildsNumbers/${parameters["target"]}"

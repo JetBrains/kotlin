@@ -55,7 +55,7 @@ open class CollisionDetector : DefaultTask() {
                                 resolvedConflicts[outputPath] = processedFile
                             } else {
                                 // Skip class files from ignored libraries if version of libraries had collision are the same.
-                                val versionRegex = "\\d+\\.\\d+(\\.\\d+)?(-\\w+(-\\d+)?)?".toRegex()
+                                val versionRegex = "\\d+\\.\\d+(\\.\\d+)?(-M\\d)?(-\\w+(-\\d+)?)?".toRegex()
                                 val currentVersion = versionRegex.find(processedFile.name)?.groupValues?.get(0)
                                 val collisionLibVersion = versionRegex.find(filesInfo.getValue(outputPath))?.groupValues?.get(0)
                                 if (outputPath.endsWith(".class") && currentVersion == collisionLibVersion) {
