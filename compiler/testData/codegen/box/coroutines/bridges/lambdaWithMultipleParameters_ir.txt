@@ -30,14 +30,6 @@ final class LambdaWithMultipleParametersKt$box$1 {
 }
 
 @kotlin.Metadata
-final class LambdaWithMultipleParametersKt$call$1 {
-    field label: int
-    @org.jetbrains.annotations.NotNull field result: java.lang.Object
-    public method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
-}
-
-@kotlin.Metadata
 public final class LambdaWithMultipleParametersKt {
     inner class LambdaWithMultipleParametersKt$box$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

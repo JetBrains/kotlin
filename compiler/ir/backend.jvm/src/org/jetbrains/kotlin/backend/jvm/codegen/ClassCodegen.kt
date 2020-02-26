@@ -181,9 +181,7 @@ open class ClassCodegen protected constructor(
 
         generateKotlinMetadataAnnotation()
 
-        if (irClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
-            context.continuationClassBuilders[irClass.attributeOwnerId as IrSimpleFunction] = visitor
-        } else {
+        if (irClass.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
             done()
         }
         return reifiedTypeParametersUsages
@@ -341,8 +339,11 @@ open class ClassCodegen protected constructor(
     }
 
     fun generateLocalClass(klass: IrClass, parentFunction: IrFunction): ReifiedTypeParametersUsages {
-        return ClassCodegen(klass, context, this, parentFunction, withinInline = withinInline || parentFunction.isInline).generate()
+        return createLocalClassCodegen(klass, parentFunction).generate()
     }
+
+    fun createLocalClassCodegen(klass: IrClass, parentFunction: IrFunction): ClassCodegen =
+            ClassCodegen(klass, context, this, parentFunction, withinInline = withinInline || parentFunction.isInline)
 
     private fun generateField(field: IrField) {
         if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return

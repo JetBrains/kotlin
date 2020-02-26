@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMar
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -36,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -161,13 +159,13 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
 
 internal fun generateFakeContinuationConstructorCall(
     v: InstructionAdapter,
-    containingClassBuilder: ClassBuilder,
-    classBuilder: ClassBuilder,
+    classCodegen: ClassCodegen,
+    continuationClass: IrClass,
     irFunction: IrFunction
 ) {
-    val continuationType = Type.getObjectType(classBuilder.thisName)
+    val continuationType = classCodegen.typeMapper.mapClass(continuationClass)
     // TODO: This is different in case of DefaultImpls
-    val thisNameType = Type.getObjectType(containingClassBuilder.thisName.replace(".", "/"))
+    val thisNameType = Type.getObjectType(classCodegen.visitor.thisName.replace(".", "/"))
     val continuationIndex = listOfNotNull(irFunction.dispatchReceiverParameter, irFunction.extensionReceiverParameter).size +
             irFunction.valueParameters.size - 1
     with(v) {
@@ -186,3 +184,5 @@ internal fun generateFakeContinuationConstructorCall(
         pop()
     }
 }
+
+internal fun IrFunction.continuationClass(): IrClass = (body as IrBlockBody).statements.firstIsInstance<IrClass>()

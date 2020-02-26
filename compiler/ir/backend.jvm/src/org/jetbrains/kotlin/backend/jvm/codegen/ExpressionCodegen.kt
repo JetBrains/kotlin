@@ -223,12 +223,7 @@ class ExpressionCodegen(
             it.attributeOwnerId == (irFunction as? IrSimpleFunction)?.attributeOwnerId &&
                     it.name.asString() == irFunction.name.asString().removeSuffix(FOR_INLINE_SUFFIX)
         }?.body?.statements?.firstIsInstance<IrClass>() ?: error("could not find continuation for ${irFunction.render()}")
-        generateFakeContinuationConstructorCall(
-            mv,
-            classCodegen.visitor,
-            context.continuationClassBuilders[(continuationClass as IrClass).attributeOwnerId]!!,
-            irFunction
-        )
+        generateFakeContinuationConstructorCall(mv, classCodegen, continuationClass, irFunction)
     }
 
     private fun generateNonNullAssertions() {
@@ -618,8 +613,10 @@ class ExpressionCodegen(
         )
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
-        classCodegen.generateLocalClass(declaration, generateSequence(this) { it.inlinedInto }.last().irFunction).also {
-            closureReifiedMarkers[declaration] = it
+        if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
+            classCodegen.generateLocalClass(declaration, generateSequence(this) { it.inlinedInto }.last().irFunction).also {
+                closureReifiedMarkers[declaration] = it
+            }
         }
         return immaterialUnitValue
     }

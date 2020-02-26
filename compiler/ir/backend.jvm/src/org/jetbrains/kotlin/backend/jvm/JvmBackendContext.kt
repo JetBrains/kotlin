@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
-import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -114,7 +113,6 @@ class JvmBackendContext(
     override val internalPackageFqn = FqName("kotlin.jvm")
 
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrFunctionReference, IrFunction>()
-    val continuationClassBuilders = mutableMapOf<IrSimpleFunction, ClassBuilder>()
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
     val suspendFunctionOriginalToStub = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)

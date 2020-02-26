@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -43,6 +44,10 @@ open class FunctionCodegen(
 ) {
     val context = classCodegen.context
     val state = classCodegen.state
+
+    val continuationClassBuilder by lazy {
+        classCodegen.createLocalClassCodegen(irFunction.continuationClass(), irFunction).also { it.generate() }.visitor
+    }
 
     fun generate(): JvmMethodGenericSignature =
         try {
@@ -90,13 +95,20 @@ open class FunctionCodegen(
             val frameMap = createFrameMapWithReceivers()
             methodVisitor = when {
                 irFunction.hasContinuation() -> {
+                    if (irFunction.parentAsClass.declarations.any {
+                        (it as? IrAttributeContainer)?.attributeOwnerId == (irFunction as IrAttributeContainer).attributeOwnerId &&
+                                it.nameForIrSerialization.asString() == irFunction.nameForIrSerialization.asString() + FOR_INLINE_SUFFIX &&
+                                it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+                        }
+                    ) {
+                        // force generation of fake continuation for inliner.
+                        continuationClassBuilder
+                    }
                     generateStateMachineForNamedFunction(
                         irFunction, classCodegen, methodVisitor,
                         access = flags,
                         signature = signature,
-                        obtainContinuationClassBuilder = {
-                            context.continuationClassBuilders[continuationClass().attributeOwnerId]!!
-                        },
+                        obtainContinuationClassBuilder = { continuationClassBuilder },
                         element = psiElement()
                     )
                 }
@@ -107,11 +119,6 @@ open class FunctionCodegen(
             }
             ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, inlinedInto).generate()
             methodVisitor.visitMaxs(-1, -1)
-            if (irFunction.hasContinuation()) {
-                context.continuationClassBuilders[continuationClass().attributeOwnerId].sure {
-                    "Could not find continuation class builder for ${continuationClass().render()}"
-                }.done()
-            }
         }
         methodVisitor.visitEnd()
 
@@ -142,9 +149,6 @@ open class FunctionCodegen(
             // This is just a template for inliner
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
-
-    private fun continuationClass() =
-        irFunction.body!!.statements.firstIsInstance<IrClass>()
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {
