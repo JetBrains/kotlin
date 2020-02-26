@@ -17,9 +17,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.cidr.execution.CidrExecutableDataHolder
 import com.jetbrains.cidr.execution.CidrRunConfiguration
-import com.jetbrains.cidr.execution.ExecutableData
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.mobile.isAndroid
 import com.jetbrains.mobile.isApple
@@ -29,8 +27,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
 
 abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
-    CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name),
-    CidrExecutableDataHolder {
+    CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name) {
 
     private var _module = RunConfigurationModule(project).also { it.module = project.allModules().first { module -> isSuitable(module) } }
     var module: Module?
@@ -71,23 +68,14 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
-    private var _executableData: ExecutableData? = null
-
-    override fun getExecutableData() = _executableData
-    override fun setExecutableData(executableData: ExecutableData?) {
-        _executableData = executableData
-    }
-
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
         _module.writeExternal(element)
-        _executableData?.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
         super.readExternal(element)
         _module.readExternal(element)
-        _executableData = ExecutableData.loadExternal(element)
     }
 
     override fun clone(): MobileRunConfiguration {
