@@ -12,6 +12,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.ui.impl.watch.*
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.xdebugger.frame.XValueChildrenList
 import com.sun.jdi.*
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -175,6 +176,8 @@ class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDe
 
     private fun isHidden(variable: LocalVariableProxyImpl, inlineDepth: Int): Boolean {
         val name = variable.name()
+        if (Registry.`is`("kotlin.debugger.show_hidden_vars"))
+            return false
         return isFakeLocalVariableForInline(name)
                 || name.startsWith(DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX)
                 || name.startsWith(AsmUtil.LOCAL_FUNCTION_VARIABLE_PREFIX)

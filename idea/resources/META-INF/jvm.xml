@@ -189,6 +189,10 @@
                    description="Enable debugging for coroutines in Kotlin/JVM"
                    defaultValue="false"
                    restartRequired="false"/>
+        <registryKey key="kotlin.debugger.show_hidden_vars"
+                     description="Show hidden variables Kotlin/JVM"
+                     defaultValue="false"
+                     restartRequired="false"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">
