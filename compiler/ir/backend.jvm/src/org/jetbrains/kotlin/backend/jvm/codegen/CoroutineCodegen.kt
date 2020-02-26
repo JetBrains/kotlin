@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
-import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMarker
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,13 +29,9 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal fun generateStateMachineForNamedFunction(
     irFunction: IrFunction,
@@ -101,45 +96,49 @@ internal fun generateStateMachineForLambda(
     )
 }
 
+internal fun IrFunction.continuationParameter(): IrValueParameter? = when {
+    isInvokeSuspendOfLambda() || isInvokeSuspendForInlineOfLambda() -> dispatchReceiverParameter
+    else -> valueParameters.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
+}
+
 internal fun IrFunction.isInvokeSuspendOfLambda(): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
-internal fun IrFunction.isInvokeSuspendForInlineOfLambda(): Boolean =
+private fun IrFunction.isInvokeSuspendForInlineOfLambda(): Boolean =
     origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
             && parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
 internal fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
-internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspend && name.asString() == "invoke" &&
-        parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-
-// Wrapper of suspend main is always tail-call and it is not generated as suspend function.
-private fun IrFunction.isInvokeOfSuspendMainWrapper(): Boolean = !isSuspend && name.asString() == "invoke" &&
-        parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
+    isSuspend && name.asString() == "invoke" && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     isSuspend && this is IrSimpleFunction && parentAsClass.functions.any {
         it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX && it.attributeOwnerId == attributeOwnerId
     }
 
-internal fun IrFunction.isKnownToBeTailCall(): Boolean =
-    when (origin) {
-        IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-        JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-        JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE,
-        JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
-        JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE,
-        IrDeclarationOrigin.BRIDGE,
-        IrDeclarationOrigin.BRIDGE_SPECIAL,
-        IrDeclarationOrigin.DELEGATED_MEMBER -> true
-        else -> isInvokeOfSuspendMainWrapper() || isInvokeOfSuspendCallableReference() || isBridgeToSuspendImplMethod()
-    }
+internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
+        // These are tail-call bridges and do not require any bytecode modifications.
+        origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
+        origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
+        origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
+        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
+        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
+        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC &&
+        origin != JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE &&
+        origin != IrDeclarationOrigin.BRIDGE &&
+        origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
+        origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
+        !isInvokeOfSuspendCallableReference() &&
+        !isBridgeToSuspendImplMethod()
 
-internal fun IrFunction.shouldNotContainSuspendMarkers(): Boolean =
-    isInvokeSuspendOfContinuation() || isKnownToBeTailCall()
+internal fun IrFunction.hasContinuation(): Boolean = isSuspend && shouldContainSuspendMarkers() &&
+        // These are templates for the inliner; the continuation will be generated after it runs.
+        origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
+        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
+        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
 
 internal fun IrExpression?.isReadOfCrossinline(): Boolean = when (this) {
     is IrGetValue -> (symbol.owner as? IrValueParameter)?.isCrossinline == true
@@ -156,31 +155,3 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
     context.ir.symbols.continuationClass.createType(true, listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.INVARIANT))),
     "FAKE_CONTINUATION"
 )
-
-internal fun generateFakeContinuationConstructorCall(
-    v: InstructionAdapter,
-    classCodegen: ClassCodegen,
-    continuationClass: IrClass,
-    irFunction: IrFunction
-) {
-    val continuationType = classCodegen.typeMapper.mapClass(continuationClass)
-    // TODO: This is different in case of DefaultImpls
-    val thisNameType = Type.getObjectType(classCodegen.visitor.thisName.replace(".", "/"))
-    val continuationIndex = listOfNotNull(irFunction.dispatchReceiverParameter, irFunction.extensionReceiverParameter).size +
-            irFunction.valueParameters.size - 1
-    with(v) {
-        addFakeContinuationConstructorCallMarker(this, true)
-        anew(continuationType)
-        dup()
-        if (irFunction.dispatchReceiverParameter != null) {
-            load(0, AsmTypes.OBJECT_TYPE)
-            load(continuationIndex, Type.getObjectType("kotlin/coroutines/Continuation"))
-            invokespecial(continuationType.internalName, "<init>", "(${thisNameType}Lkotlin/coroutines/Continuation;)V", false)
-        } else {
-            load(continuationIndex, Type.getObjectType("kotlin/coroutines/Continuation"))
-            invokespecial(continuationType.internalName, "<init>", "(Lkotlin/coroutines/Continuation;)V", false)
-        }
-        addFakeContinuationConstructorCallMarker(this, false)
-        pop()
-    }
-}

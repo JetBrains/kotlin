@@ -226,7 +226,23 @@ class ExpressionCodegen(
             it.attributeOwnerId == (irFunction as? IrSimpleFunction)?.attributeOwnerId &&
                     it.name.asString() == irFunction.name.asString().removeSuffix(FOR_INLINE_SUFFIX)
         }?.body?.statements?.firstIsInstance<IrClass>() ?: error("could not find continuation for ${irFunction.render()}")
-        generateFakeContinuationConstructorCall(mv, classCodegen, continuationClass, irFunction)
+        val continuationType = typeMapper.mapClass(continuationClass)
+        val continuationIndex = frameMap.getIndex(irFunction.continuationParameter()!!.symbol)
+        with(mv) {
+            addFakeContinuationConstructorCallMarker(this, true)
+            anew(continuationType)
+            dup()
+            if (irFunction.dispatchReceiverParameter != null) {
+                load(0, OBJECT_TYPE)
+                load(continuationIndex, Type.getObjectType("kotlin/coroutines/Continuation"))
+                invokespecial(continuationType.internalName, "<init>", "(${classCodegen.type}Lkotlin/coroutines/Continuation;)V", false)
+            } else {
+                load(continuationIndex, Type.getObjectType("kotlin/coroutines/Continuation"))
+                invokespecial(continuationType.internalName, "<init>", "(Lkotlin/coroutines/Continuation;)V", false)
+            }
+            addFakeContinuationConstructorCallMarker(this, false)
+            pop()
+        }
     }
 
     private fun generateNonNullAssertions() {
@@ -444,7 +460,7 @@ class ExpressionCodegen(
             }
             expression is IrConstructorCall ->
                 MaterialValue(this, asmType, expression.type)
-            !irFunction.shouldNotContainSuspendMarkers() && expression.type.isUnit() -> {
+            expression.type.isUnit() && irFunction.shouldContainSuspendMarkers() -> {
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
                 // Also, if the callee is a suspend function with a suspending tail call, the next `resumeWith`
                 // will continue from here, but the value passed to it might not have been `Unit`. An exception
@@ -469,7 +485,7 @@ class ExpressionCodegen(
     }
 
     private fun IrFunctionAccessExpression.isSuspensionPoint(): Boolean = when {
-        !symbol.owner.isSuspend || irFunction.shouldNotContainSuspendMarkers() -> false
+        !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() -> false
         // Copy-pasted bytecode blocks are not suspension points.
         symbol.owner.isInline ->
             symbol.owner.fqNameForIrSerialization == FqName("kotlin.coroutines.intrinsics.IntrinsicsKt.suspendCoroutineUninterceptedOrReturn")
