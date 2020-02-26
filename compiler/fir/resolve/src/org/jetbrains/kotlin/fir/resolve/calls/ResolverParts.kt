@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -469,6 +471,27 @@ internal object CheckVisibility : CheckerStage() {
             if (classSymbol is FirRegularClassSymbol) {
                 checkVisibility(classSymbol.fir, classSymbol, sink, callInfo)
             }
+        }
+    }
+}
+
+internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
+    private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
+        ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
+
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val annotations = when (val fir = candidate.symbol.fir) {
+            is FirSimpleFunction -> fir.annotations
+            is FirProperty -> fir.annotations
+            else -> return
+        }
+        val hasLowPriorityAnnotation = annotations.any {
+            val lookupTag = ((it.annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)?.lookupTag ?: return@any false
+            lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+        }
+
+        if (hasLowPriorityAnnotation) {
+            sink.reportApplicability(CandidateApplicability.RESOLVED_LOW_PRIORITY)
         }
     }
 }

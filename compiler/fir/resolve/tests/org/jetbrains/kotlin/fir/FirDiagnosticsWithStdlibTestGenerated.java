@@ -163,6 +163,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/listPlusAssign.kt");
     }
 
+    @TestMetadata("lowPriorityInResolution.kt")
+    public void testLowPriorityInResolution() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/lowPriorityInResolution.kt");
+    }
+
     @TestMetadata("mapList.kt")
     public void testMapList() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/mapList.kt");

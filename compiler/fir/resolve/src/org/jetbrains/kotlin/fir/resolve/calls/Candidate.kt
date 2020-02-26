@@ -71,6 +71,7 @@ enum class CandidateApplicability {
     PARAMETER_MAPPING_ERROR,
     INAPPLICABLE,
     SYNTHETIC_RESOLVED,
+    RESOLVED_LOW_PRIORITY,
     RESOLVED
 }
 
