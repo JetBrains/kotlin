@@ -177,36 +177,28 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
                     else
                         LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
-                    isFinal = true
+                    isFinal = info.reference.getValueArgument(it.index) != null
                     visibility = JavaVisibilities.PACKAGE_VISIBILITY
                 }
             }
-            val parametersWithoutArguments = parametersFields.withIndex()
-                .mapNotNull { (i, field) -> if (info.reference.getValueArgument(i) == null) field else null }
-            val parametersWithArguments = parametersFields.withIndex()
-                .filter { info.reference.getValueArgument(it.index) != null }
-            val fieldsForArguments = parametersWithArguments.map(IndexedValue<IrField>::value)
-            val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, fieldsForArguments, insideInlineFunction)
+            val fieldsForBound = parametersFields.filter { it.isFinal }
+            val fieldsForUnbound = listOfNotNull(receiverField) + parametersFields.filter { !it.isFinal }
+            val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, fieldsForBound, insideInlineFunction)
             val invokeToOverride = functionNClass.functions.single {
                 it.owner.valueParameters.size == info.arity + 1 && it.owner.name.asString() == "invoke"
+            }
+            val createToOverride = suspendLambda.symbol.functions.singleOrNull {
+                it.owner.valueParameters.size == info.arity + 1 && it.owner.name.asString() == "create"
             }
             val invokeSuspend = addInvokeSuspendForLambda(info.function, parametersFields, receiverField)
             if (info.capturesCrossinline) {
                 addInvokeSuspendForInlineForLambda(invokeSuspend)
             }
-            info.function.parentAsClass.declarations.remove(info.function)
-            if (info.arity <= 1) {
-                val singleParameterField = receiverField ?: parametersWithoutArguments.singleOrNull()
-                val create = addCreate(constructor, suspendLambda, info, parametersWithArguments, singleParameterField)
-                addInvokeCallingCreate(create, invokeSuspend, invokeToOverride, singleParameterField)
+            if (createToOverride != null) {
+                val create = addCreate(constructor, createToOverride, fieldsForBound, fieldsForUnbound)
+                addInvokeCallingCreate(create, invokeSuspend, invokeToOverride)
             } else {
-                addInvokeCallingConstructor(
-                    constructor,
-                    invokeSuspend,
-                    invokeToOverride,
-                    fieldsForArguments,
-                    listOfNotNull(receiverField) + parametersWithoutArguments
-                )
+                addInvokeCallingConstructor(constructor, invokeSuspend, invokeToOverride, fieldsForBound, fieldsForUnbound)
             }
 
             context.suspendLambdaToOriginalFunctionMap[attributeOwnerId as IrFunctionReference] = info.function
@@ -215,28 +207,21 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
-    private fun IrClass.addInvokeSuspendForLambda(
-        irFunction: IrFunction,
-        fields: List<IrField>,
-        receiverField: IrField?
-    ): IrFunction {
+    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, fields: List<IrField>, receiverField: IrField?): IrFunction {
         val superMethod = context.ir.symbols.suspendLambdaClass.functions.single {
             it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type.isKotlinResult()
         }.owner
         return addFunctionOverride(superMethod).apply {
-            val parametersToFields = mutableMapOf<IrValueParameter, IrField>()
-            assert(irFunction.dispatchReceiverParameter == null) // LocalDeclarationsLowering-generated methods are static
-            irFunction.extensionReceiverParameter?.let { parametersToFields[it] = receiverField!! }
-            irFunction.valueParameters.zip(fields).toMap(parametersToFields)
-            body = irFunction.moveBodyTo(this, mapOf())
-            body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+            body = irFunction.moveBodyTo(this, mapOf())?.transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    val field = parametersToFields[expression.symbol.owner] ?: return expression
+                    val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
+                        ?: return expression
+                    val field = if (parameter.index < 0) receiverField!! else fields[parameter.index]
                     val receiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter!!.symbol)
                     return IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type, receiver)
                 }
-            })
+            }, null)
         }
     }
 
@@ -265,125 +250,90 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         })
     }
 
-    private fun IrDeclarationContainer.addFunctionOverride(
-        function: IrSimpleFunction,
-        modality: Modality = Modality.FINAL
-    ): IrSimpleFunction =
-        addFunction(function.name.asString(), function.returnType, modality).apply {
+    private fun IrDeclarationContainer.addFunctionOverride(function: IrSimpleFunction): IrSimpleFunction =
+        addFunction(function.name.asString(), function.returnType).apply {
             overriddenSymbols += function.symbol
             valueParameters += function.valueParameters.map { it.copyTo(this) }
+        }
+
+    private fun IrDeclarationContainer.addFunctionOverride(
+        function: IrSimpleFunction,
+        makeBody: IrBlockBodyBuilder.(IrFunction) -> Unit
+    ): IrSimpleFunction =
+        addFunctionOverride(function).apply {
+            body = context.createIrBuilder(symbol).irBlockBody { makeBody(this@apply) }
         }
 
     // Invoke function in lambdas is responsible for
     //   1) calling `create`
     //   2) starting newly created coroutine by calling `invokeSuspend`.
     // Thus, it creates a clone of suspend lambda and starts it.
+    // TODO: fix the generic signature -- type parameters of FunctionN should be substituted
     private fun IrClass.addInvokeCallingCreate(
         create: IrFunction,
         invokeSuspend: IrFunction,
-        invokeToOverride: IrSimpleFunctionSymbol,
-        receiverField: IrField?
-    ) {
-        val unitClass = context.irBuiltIns.unitClass
-        val unitField = context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
-        addFunctionOverride(invokeToOverride.owner).also { function ->
-            function.body = context.createIrBuilder(function.symbol).irBlockBody {
-                // Call `create`
-                val newlyCreatedObject = irTemporary(irCall(create).also { createCall ->
-                    createCall.dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
-                    if (receiverField != null) {
-                        createCall.putValueArgument(0, irGet(function.valueParameters[0]))
-                    }
-                    createCall.putValueArgument(if (receiverField != null) 1 else 0, irGet(function.valueParameters.last()))
-                }, "create", irType = defaultType)
-                // Start coroutine
-                +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
-                    invokeSuspendCall.dispatchReceiver = irGet(newlyCreatedObject)
-                    invokeSuspendCall.putValueArgument(0, irGetField(null, unitField))
-                })
+        invokeToOverride: IrSimpleFunctionSymbol
+    ) = addFunctionOverride(invokeToOverride.owner) { function ->
+        val newlyCreatedObject = irCall(create).also { createCall ->
+            createCall.dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
+            for ((index, param) in function.valueParameters.withIndex()) {
+                createCall.putValueArgument(index, irGet(param))
             }
         }
+        +irReturn(callInvokeSuspend(invokeSuspend, irImplicitCast(newlyCreatedObject, defaultType)))
     }
 
-    // The same as @see addInvokeCallingCreate, but without `create`.
-    // In old BE 'create' function was responsible for putting arguments into fields, but in IR_BE we do not generate create,
-    // unless suspend lambda has no or one parameter, including extension receiver.
-    // This is because 'create' is called only from 'createCoroutineUnintercepted' from stdlib. And we have only versions
-    // for suspend lambdas without parameters and for ones with exactly one parameter (or extension receiver).
-    // And since we still value method count, we do not want to inflate it with unnecessary functions.
-    // Thus, we put arguments into fields in 'invoke', instead of `create`.
+    // Same as above, but with `create` inlined. `create` is only defined in `SuspendLambda` in unary and binary
+    // versions; for other lambdas, there's no point in generating a non-overriding `create` separately.
     private fun IrClass.addInvokeCallingConstructor(
         constructor: IrFunction,
         invokeSuspend: IrFunction,
         invokeToOverride: IrSimpleFunctionSymbol,
-        parametersWithArguments: List<IrField>,
-        parametersWithoutArguments: List<IrField>
-    ) {
-        val unitClass = context.irBuiltIns.unitClass
-        val unitField = context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
-        addFunctionOverride(invokeToOverride.owner).also { function ->
-            function.body = context.createIrBuilder(function.symbol).irBlockBody {
-                // Create a copy
-                val newlyCreatedObject = irTemporary(irCall(constructor).also { constructorCall ->
-                    for (typeParameter in typeParameters) {
-                        constructorCall.putTypeArgument(typeParameter.index, typeParameter.defaultType)
-                    }
-                    for ((index, field) in parametersWithArguments.withIndex()) {
-                        constructorCall.putValueArgument(index, irGetField(irGet(function.dispatchReceiverParameter!!), field))
-                    }
-                    constructorCall.putValueArgument(parametersWithArguments.size, irGet(function.valueParameters.last()))
-                }, "constructor", irType = defaultType)
-                // Move parameters into fields (instead of `create`)
-                if (parametersWithoutArguments.isNotEmpty()) {
-                    for ((index, param) in function.valueParameters.dropLast(1).withIndex()) {
-                        +irSetField(irGet(newlyCreatedObject), parametersWithoutArguments[index], irGet(param))
-                    }
-                }
-                // Start coroutine
-                +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
-                    invokeSuspendCall.dispatchReceiver = irGet(newlyCreatedObject)
-                    invokeSuspendCall.putValueArgument(0, irGetField(null, unitField))
-                })
-            }
-        }
+        fieldsForBound: List<IrField>,
+        fieldsForUnbound: List<IrField>
+    ) = addFunctionOverride(invokeToOverride.owner) { function ->
+        +irReturn(callInvokeSuspend(invokeSuspend, cloneLambda(function, constructor, fieldsForBound, fieldsForUnbound)))
     }
 
     private fun IrClass.addCreate(
         constructor: IrFunction,
-        superType: IrClass,
-        info: SuspendLambdaInfo,
-        parametersWithArguments: List<IndexedValue<IrField>>,
-        singleParameterField: IrField?
-    ): IrFunction {
-        val create = superType.functions.single {
-            it.name.asString() == "create" && it.valueParameters.size == info.arity + 1 &&
-                    it.valueParameters.last().type.isContinuation() &&
-                    if (info.arity == 1) it.valueParameters.first().type.isNullableAny() else true
-        }
-        return addFunctionOverride(create).also { function ->
-            function.body = context.createIrBuilder(function.symbol).irBlockBody {
-                var index = 0
-                val constructorCall = irCall(constructor).also {
-                    for (typeParameter in typeParameters) {
-                        it.putTypeArgument(typeParameter.index, typeParameter.defaultType)
-                    }
-                    for ((i, field) in parametersWithArguments) {
-                        if (info.reference.getValueArgument(i) == null) continue
-                        it.putValueArgument(index++, irGetField(irGet(function.dispatchReceiverParameter!!), field))
-                    }
-                    it.putValueArgument(index, irGet(function.valueParameters.last()))
-                }
-                if (singleParameterField != null) {
-                    assert(function.valueParameters.size == 2)
-                    val result = irTemporary(constructorCall, "result")
-                    +irSetField(irGet(result), singleParameterField, irGet(function.valueParameters.first()))
-                    +irReturn(irGet(result))
-                } else {
-                    assert(function.valueParameters.size == 1)
-                    +irReturn(constructorCall)
-                }
+        createToOverride: IrSimpleFunctionSymbol,
+        fieldsForBound: List<IrField>,
+        fieldsForUnbound: List<IrField>
+    ) = addFunctionOverride(createToOverride.owner) { function ->
+        +irReturn(cloneLambda(function, constructor, fieldsForBound, fieldsForUnbound))
+    }
+
+    private fun IrBlockBodyBuilder.cloneLambda(
+        scope: IrFunction,
+        constructor: IrFunction,
+        fieldsForBound: List<IrField>,
+        fieldsForUnbound: List<IrField>
+    ): IrExpression {
+        val constructorCall = irCall(constructor).also {
+            for (typeParameter in constructor.parentAsClass.typeParameters) {
+                it.putTypeArgument(typeParameter.index, typeParameter.defaultType)
             }
+            for ((index, field) in fieldsForBound.withIndex()) {
+                it.putValueArgument(index, irGetField(irGet(scope.dispatchReceiverParameter!!), field))
+            }
+            it.putValueArgument(fieldsForBound.size, irGet(scope.valueParameters.last()))
         }
+        if (fieldsForUnbound.isEmpty()) {
+            return constructorCall
+        }
+        val result = irTemporary(constructorCall, "result")
+        for ((index, field) in fieldsForUnbound.withIndex()) {
+            +irSetField(irGet(result), field, irGet(scope.valueParameters[index]))
+        }
+        return irGet(result)
+    }
+
+    private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrFunction, lambda: IrExpression): IrExpression {
+        // SingletonReferencesLowering has finished a while ago, so `irUnit()` won't work anymore.
+        val unitClass = context.irBuiltIns.unitClass
+        val unitField = this@AddContinuationLowering.context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
+        return irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irGetField(null, unitField))
     }
 
     private fun IrClass.createContinuationClassFor(
@@ -495,13 +445,6 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
-
-    private fun Name.toSuspendImplementationName() = when {
-        isSpecial -> Name.special(asString() + SUSPEND_IMPL_NAME_SUFFIX)
-        else -> Name.identifier(asString() + SUSPEND_IMPL_NAME_SUFFIX)
-    }
-
-
     private fun IrClass.addInvokeSuspendForNamedFunction(
         irFunction: IrFunction,
         resultField: IrField,
@@ -512,56 +455,59 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         val backendContext = context
         val invokeSuspend = context.ir.symbols.continuationImplClass.owner.functions
             .single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
-        addFunctionOverride(invokeSuspend).also { function ->
-            function.body = context.createIrBuilder(function.symbol).irBlockBody {
-                +irSetField(irGet(function.dispatchReceiverParameter!!), resultField, irGet(function.valueParameters[0]))
-                // There can be three kinds of suspend function call:
-                // 1) direct call from another suspend function/lambda
-                // 2) resume of coroutines via resumeWith call on continuation object
-                // 3) recursive call
-                // To distinguish case 1 from 2 and 3, we use simple INSTANCEOF check.
-                // However, this check shows the same in cases 2 and 3.
-                // Thus, we flip sign bit of label field in case 2 and leave it untouched in case 3.
-                // Since this is literally case 2 (resumeWith calls invokeSuspend), flip the bit.
-                val signBit = 1 shl 31
-                +irSetField(
-                    irGet(function.dispatchReceiverParameter!!), labelField,
-                    irCallOp(
-                        context.irBuiltIns.intClass.functions.single { it.owner.name == OperatorNameConventions.OR },
-                        context.irBuiltIns.intType,
-                        irGetField(irGet(function.dispatchReceiverParameter!!), labelField),
-                        irInt(signBit)
-                    )
+        addFunctionOverride(invokeSuspend) { function ->
+            +irSetField(irGet(function.dispatchReceiverParameter!!), resultField, irGet(function.valueParameters[0]))
+            // There can be three kinds of suspend function call:
+            // 1) direct call from another suspend function/lambda
+            // 2) resume of coroutines via resumeWith call on continuation object
+            // 3) recursive call
+            // To distinguish case 1 from 2 and 3, we use simple INSTANCEOF check.
+            // However, this check shows the same in cases 2 and 3.
+            // Thus, we flip sign bit of label field in case 2 and leave it untouched in case 3.
+            // Since this is literally case 2 (resumeWith calls invokeSuspend), flip the bit.
+            val signBit = 1 shl 31
+            +irSetField(
+                irGet(function.dispatchReceiverParameter!!), labelField,
+                irCallOp(
+                    context.irBuiltIns.intClass.functions.single { it.owner.name == OperatorNameConventions.OR },
+                    context.irBuiltIns.intType,
+                    irGetField(irGet(function.dispatchReceiverParameter!!), labelField),
+                    irInt(signBit)
                 )
+            )
 
-                +irReturn(irCall(irFunction).also {
-                    for (i in irFunction.typeParameters.indices) {
-                        it.putTypeArgument(i, typeParameters[i].defaultType)
-                    }
-                    val capturedThisValue = capturedThisField?.let { irField ->
-                        irGetField(irGet(function.dispatchReceiverParameter!!), irField)
-                    }
-                    if (irFunction.dispatchReceiverParameter != null) {
-                        it.dispatchReceiver = capturedThisValue
-                    }
-                    irFunction.extensionReceiverParameter?.let { extensionReceiverParameter ->
-                        it.extensionReceiver = extensionReceiverParameter.type.defaultValue(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext
-                        )
-                    }
-                    for ((i, parameter) in irFunction.valueParameters.dropLast(1).withIndex()) {
-                        it.putValueArgument(i, parameter.type.defaultValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext))
-                    }
-                    it.putValueArgument(
-                        irFunction.valueParameters.size - 1,
-                        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.dispatchReceiverParameter!!.symbol)
+            +irReturn(irCall(irFunction).also {
+                for (i in irFunction.typeParameters.indices) {
+                    it.putTypeArgument(i, typeParameters[i].defaultType)
+                }
+                val capturedThisValue = capturedThisField?.let { irField ->
+                    irGetField(irGet(function.dispatchReceiverParameter!!), irField)
+                }
+                if (irFunction.dispatchReceiverParameter != null) {
+                    it.dispatchReceiver = capturedThisValue
+                }
+                irFunction.extensionReceiverParameter?.let { extensionReceiverParameter ->
+                    it.extensionReceiver = extensionReceiverParameter.type.defaultValue(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext
                     )
-                    if (isStaticSuspendImpl) {
-                        it.putValueArgument(0, capturedThisValue)
-                    }
-                })
-            }
+                }
+                for ((i, parameter) in irFunction.valueParameters.dropLast(1).withIndex()) {
+                    it.putValueArgument(i, parameter.type.defaultValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext))
+                }
+                it.putValueArgument(
+                    irFunction.valueParameters.size - 1,
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.dispatchReceiverParameter!!.symbol)
+                )
+                if (isStaticSuspendImpl) {
+                    it.putValueArgument(0, capturedThisValue)
+                }
+            })
         }
+    }
+
+    private fun Name.toSuspendImplementationName() = when {
+        isSpecial -> Name.special(asString() + SUSPEND_IMPL_NAME_SUFFIX)
+        else -> Name.identifier(asString() + SUSPEND_IMPL_NAME_SUFFIX)
     }
 
     private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
