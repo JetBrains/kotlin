@@ -31,6 +31,7 @@
     <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mobile.execution.MobileBeforeRunTaskProvider"/>
+    <projectTaskRunner implementation="com.jetbrains.mobile.execution.MobileProjectTaskRunner" order="first"/>
 
     <applicationService serviceImplementation="com.jetbrains.mobile.execution.testing.AppleXCTestLocator"
                         serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
@@ -98,6 +99,8 @@
   </extensions>
 
   <actions>
+    <action id="Build" class="com.jetbrains.mobile.execution.MobileBuildAction" use-shortcut-of="CompileDirty"/>
+
     <group id="CIDR.Swift.NewGroup">
       <reference id="Swift.NewGroup"/>
       <add-to-group group-id="CIDR.Lang.NewGroup" anchor="first"/>
