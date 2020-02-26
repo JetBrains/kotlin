@@ -66,7 +66,7 @@ class FirCallResolver(
         inferenceComponents.session.callConflictResolverFactory
             .create(TypeSpecificityComparator.NONE, inferenceComponents)
 
-    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, file: FirFile): FirFunctionCall {
+    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         var functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
@@ -150,7 +150,7 @@ class FirCallResolver(
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
-    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, file: FirFile): FirStatement {
+    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         qualifiedResolver.initProcessingQualifiedAccess(qualifiedAccess, callee)
