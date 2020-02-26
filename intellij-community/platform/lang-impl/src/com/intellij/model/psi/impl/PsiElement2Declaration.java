@@ -53,11 +53,9 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
    */
   @Nullable
   static PsiSymbolDeclaration createFromTargetPsiElement(@NotNull PsiElement targetElement) {
-    if (targetElement instanceof PsiNameIdentifierOwner) {
-      PsiElement identifyingElement = ((PsiNameIdentifierOwner)targetElement).getIdentifyingElement();
-      if (identifyingElement != null) {
-        return new PsiElement2Declaration(targetElement, identifyingElement, rangeOf(identifyingElement));
-      }
+    PsiElement identifyingElement = getIdentifyingElement(targetElement);
+    if (identifyingElement != null) {
+      return new PsiElement2Declaration(targetElement, identifyingElement, rangeOf(identifyingElement));
     }
     return null;
   }
@@ -75,11 +73,9 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
 
   @NotNull
   private static TextRange getDeclarationRangeFromPsi(@NotNull PsiElement declaringElement) {
-    if (declaringElement instanceof PsiNameIdentifierOwner) {
-      PsiElement identifyingElement = ((PsiNameIdentifierOwner)declaringElement).getIdentifyingElement();
-      if (identifyingElement != null) {
-        return identifyingElement.getTextRange().shiftLeft(declaringElement.getTextRange().getStartOffset());
-      }
+    PsiElement identifyingElement = getIdentifyingElement(declaringElement);
+    if (identifyingElement != null) {
+      return identifyingElement.getTextRange().shiftLeft(declaringElement.getTextRange().getStartOffset());
     }
     return rangeOf(declaringElement);
   }
@@ -108,6 +104,14 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
       }
     }
     return rangeOf(declaringElement);
+  }
+
+  @Nullable
+  private static PsiElement getIdentifyingElement(@NotNull PsiElement targetElement) {
+    if (targetElement instanceof PsiNameIdentifierOwner) {
+      return ((PsiNameIdentifierOwner)targetElement).getIdentifyingElement();
+    }
+    return null;
   }
 
   /**
