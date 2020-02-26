@@ -66,12 +66,15 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
    * @param declaredElement  target element (symbol); used for target-based actions, e.g. Find Usages
    * @param declaringElement element at caret from which {@code declaredElement} was obtained; used to determine the declaration range
    */
-  @NotNull
+  @Nullable
   static PsiSymbolDeclaration createFromDeclaredPsiElement(@NotNull PsiElement declaredElement, @NotNull PsiElement declaringElement) {
-    PsiElement identifyingElement = getIdentifyingElement(declaringElement);
+    PsiElement identifyingElement = getIdentifyingElement(declaredElement);
     TextRange declarationRange = identifyingElement == null
                                  ? rangeOf(declaringElement)
-                                 : identifyingElement.getTextRange().shiftLeft(declaringElement.getTextRange().getStartOffset());
+                                 : relateRange(declaredElement, identifyingElement, rangeOf(identifyingElement), declaringElement);
+    if (declarationRange == null) {
+      return null;
+    }
     return new PsiElement2Declaration(declaredElement, declaringElement, declarationRange);
   }
 
