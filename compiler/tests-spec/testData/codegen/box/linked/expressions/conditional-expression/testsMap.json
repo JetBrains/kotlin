@@ -7,12 +7,6 @@
           "casesNumber": 0,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean, otherwise it is an error",
           "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-220",
-          "casesNumber": 0,
-          "description": "The type of the condition expression must be a subtype of kotlin.Boolean, otherwise it is an error",
-          "unexpectedBehaviour": false
         }
       ]
     }
