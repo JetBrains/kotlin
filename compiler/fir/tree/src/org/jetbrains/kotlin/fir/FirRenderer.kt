@@ -1020,6 +1020,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitCall(operatorCall)
     }
 
+    override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression) {
+        print("CMP(${comparisonExpression.operation.operator}, ")
+        comparisonExpression.compareToCall.accept(this)
+        print(")")
+    }
+
     override fun visitComponentCall(componentCall: FirComponentCall) {
         componentCall.annotations.renderAnnotations()
         componentCall.explicitReceiver.accept(this)

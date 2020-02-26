@@ -8,7 +8,7 @@ fun f(): Unit {
     x = null
     x <!INAPPLICABLE_CANDIDATE!>+<!> 1
     x <!INAPPLICABLE_CANDIDATE!>plus<!> 1
-    x < 1
+    x <!INAPPLICABLE_CANDIDATE!><<!> 1
     <!UNRESOLVED_REFERENCE!>x += 1<!>
 
     x == 1

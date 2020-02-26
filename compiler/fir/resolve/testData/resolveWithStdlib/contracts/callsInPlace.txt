@@ -22,14 +22,14 @@ FILE: callsInPlace.kt
     public final fun test_4(): R|kotlin/Unit| {
         Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(<L> = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
             String(test_4)
-            ^ >(R|<local>/it|, Int(0))
+            ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(0)))
         }
         )
     }
     public final fun test_5(): R|kotlin/Unit| {
         Int(1).R|kotlin/takeUnless|<R|kotlin/Int|>(predicate = takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
             String(test_5)
-            ^ >(R|<local>/it|, Int(0))
+            ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(0)))
         }
         )
     }

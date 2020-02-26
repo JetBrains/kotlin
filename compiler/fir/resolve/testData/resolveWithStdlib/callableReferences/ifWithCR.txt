@@ -11,7 +11,7 @@ FILE: ifWithCR.kt
         private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|
     public final fun main(x: R|kotlin/Int|): R|kotlin/Unit| {
         lval x: R|kotlin/reflect/KMutableProperty0<kotlin/CharSequence?>| = when () {
-            >(R|<local>/x|, Int(1)) ->  {
+            CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1))) ->  {
                 R|<local>/x|::R|/readOnlyWrapper|
             }
             else ->  {

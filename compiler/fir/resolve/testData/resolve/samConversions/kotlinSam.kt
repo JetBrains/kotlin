@@ -30,10 +30,10 @@ fun main() {
     foo1 { x -> x > 1 }
     foo1(f)
 
-    <!INAPPLICABLE_CANDIDATE!>foo2<!> { x -> x > 1 }
+    <!INAPPLICABLE_CANDIDATE!>foo2<!> { x -> x <!UNRESOLVED_REFERENCE!>><!> 1 }
     <!INAPPLICABLE_CANDIDATE!>foo2<!>(f)
 
-    <!INAPPLICABLE_CANDIDATE!>foo3<!> { x -> x > 1 }
+    <!INAPPLICABLE_CANDIDATE!>foo3<!> { x -> x <!UNRESOLVED_REFERENCE!>><!> 1 }
     <!INAPPLICABLE_CANDIDATE!>foo3<!>(f)
 
     foo4 { x -> x > 1 }

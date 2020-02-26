@@ -159,6 +159,7 @@ private fun CFGNode<*>.render(): String =
 
                 is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
                 is OperatorCallNode -> "Operator ${fir.operation.operator}"
+                is ComparisonExpressionNode -> "Comparison ${fir.operation.operator}"
                 is TypeOperatorCallNode -> "Type operator: \"${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}\""
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"

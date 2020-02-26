@@ -1,7 +1,7 @@
 FILE: fib.kt
     public final fun fibIterative(n: R|kotlin/Int|): R|kotlin/Int| {
         when () {
-            <(R|<local>/n|, Int(2)) ->  {
+            CMP(<, R|<local>/n|.R|kotlin/Int.compareTo|(Int(2))) ->  {
                 ^fibIterative Int(1)
             }
         }
