@@ -45,7 +45,7 @@
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="To p&amp;ackage:"/>
+                      <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="label.text.to.package"/>
                     </properties>
                   </component>
                   <component id="9ea97" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="fileChooser">
@@ -59,7 +59,7 @@
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="To &amp;file:"/>
+                      <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="label.text.to.file"/>
                     </properties>
                   </component>
                   <component id="67853" class="javax.swing.JTextField" binding="tfFileNameInPackage" default-binding="true">
@@ -79,7 +79,7 @@
                     <properties>
                       <horizontalAlignment value="2"/>
                       <horizontalTextPosition value="11"/>
-                      <text value="File &amp;name:"/>
+                      <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="label.text.file.name"/>
                     </properties>
                   </component>
                   <grid id="ce694" binding="targetPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -96,7 +96,7 @@
                         </constraints>
                         <properties>
                           <labelFor value="36327"/>
-                          <text value="&amp;Destination directory:"/>
+                          <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="label.text.destination.directory"/>
                         </properties>
                       </component>
                       <component id="36327" class="com.intellij.ui.ComboboxWithBrowseButton" binding="destinationFolderCB" custom-create="true">
@@ -113,7 +113,7 @@
                     </constraints>
                     <properties>
                       <selected value="true"/>
-                      <text value="&amp;Update package directive"/>
+                      <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="label.text.update.package.directive"/>
                     </properties>
                   </component>
                   <grid id="69aba" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -148,7 +148,7 @@
                         </constraints>
                         <properties>
                           <selected value="true"/>
-                          <text value="Search &amp;references"/>
+                          <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="checkbox.text.search.references"/>
                         </properties>
                       </component>
                       <component id="cc60e" class="javax.swing.JCheckBox" binding="cbDeleteEmptySourceFiles">
@@ -157,7 +157,7 @@
                         </constraints>
                         <properties>
                           <selected value="true"/>
-                          <text value="&amp;Delete empty source files"/>
+                          <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="checkbox.text.delete.empty.source.files"/>
                         </properties>
                       </component>
                     </children>

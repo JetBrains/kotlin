@@ -30,6 +30,7 @@ import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
 import com.intellij.ui.components.JBLabelDecorator
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
@@ -63,8 +64,10 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
-    private val searchReferencesCb = NonFocusableCheckBox("Search r${UIUtil.MNEMONIC}eferences").apply { isSelected = true }
-    private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
+    private val searchReferencesCb = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.search.references")).apply {
+        isSelected = true
+    }
+    private val openInEditorCb = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.open.moved.files.in.editor"))
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
     override fun getHelpId() = HELP_ID
@@ -144,7 +147,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
             val singleFile = jetFiles.singleOrNull()
             isSelected = singleFile == null || singleFile.packageMatchesDirectoryOrImplicit()
-            text = "Update package directive (Kotlin files)"
+            text = KotlinBundle.message("checkbox.text.update.package.directive")
         }
     }
 
@@ -169,7 +172,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         val elementsToMove = directory?.let { existentDirectory ->
             val choice = if (psiElements.size > 1 || psiElements[0] is PsiDirectory) intArrayOf(-1) else null
             psiElements.filterNot {
-                it is PsiFile && CopyFilesOrDirectoriesHandler.checkFileExist(existentDirectory, choice, it, it.name, "Move")
+                it is PsiFile && CopyFilesOrDirectoriesHandler.checkFileExist(existentDirectory, choice, it, it.name, title)
             }
         } ?: psiElements.toList()
 
