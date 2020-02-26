@@ -1373,6 +1373,10 @@ class RawFirBuilder(
                     return rightArgument.generateContainsOperation(
                         leftArgument, operationToken == NOT_IN, expression, expression.operationReference,
                     )
+                in OperatorConventions.COMPARISON_OPERATIONS ->
+                    return leftArgument.generateComparisonExpression(
+                        rightArgument, operationToken, expression, expression.operationReference,
+                    )
             }
             val conventionCallName = operationToken.toBinaryName()
             return if (conventionCallName != null || operationToken == IDENTIFIER) {

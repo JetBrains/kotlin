@@ -257,17 +257,10 @@ fun FirExpression.generateContainsOperation(
     operationReference: KtOperationReferenceExpression?,
 ): FirFunctionCall {
     val baseSource = base?.toFirSourceElement()
-    val operationReferenceSource = operationReference?.toFirSourceElement()
-    val containsCall = buildFunctionCall {
-        source = baseSource
-        calleeReference = buildSimpleNamedReference {
-            source = operationReferenceSource
-            name = OperatorNameConventions.CONTAINS
-        }
-        explicitReceiver = this@generateContainsOperation
-        arguments += argument
-    }
+    val containsCall = createConventionCall(operationReference, baseSource, argument, OperatorNameConventions.CONTAINS)
     if (!inverted) return containsCall
+
+    val operationReferenceSource = operationReference?.toFirSourceElement()
     return buildFunctionCall {
         source = baseSource
         calleeReference = buildSimpleNamedReference {
@@ -275,6 +268,52 @@ fun FirExpression.generateContainsOperation(
             name = OperatorNameConventions.NOT
         }
         explicitReceiver = containsCall
+    }
+}
+
+fun FirExpression.generateComparisonExpression(
+    argument: FirExpression,
+    operatorToken: IElementType,
+    base: KtExpression?,
+    operationReference: KtOperationReferenceExpression?,
+): FirComparisonExpression {
+    require(operatorToken in OperatorConventions.COMPARISON_OPERATIONS) {
+        "$operatorToken is not in ${OperatorConventions.COMPARISON_OPERATIONS}"
+    }
+
+    val baseSource = base?.toFirSourceElement()
+    val compareToCall = createConventionCall(operationReference, baseSource, argument, OperatorNameConventions.COMPARE_TO)
+
+    val firOperation = when (operatorToken) {
+        KtTokens.LT -> FirOperation.LT
+        KtTokens.GT -> FirOperation.GT
+        KtTokens.LTEQ -> FirOperation.LT_EQ
+        KtTokens.GTEQ -> FirOperation.GT_EQ
+        else -> error("Unknown $operatorToken")
+    }
+
+    return buildComparisonExpression {
+        this.source = baseSource
+        this.operation = firOperation
+        this.compareToCall = compareToCall
+    }
+}
+
+private fun FirExpression.createConventionCall(
+    operationReference: KtOperationReferenceExpression?,
+    baseSource: FirPsiSourceElement?,
+    argument: FirExpression,
+    conventionName: Name
+): FirFunctionCall {
+    val operationReferenceSource = operationReference?.toFirSourceElement()
+    return buildFunctionCall {
+        source = baseSource
+        calleeReference = buildSimpleNamedReference {
+            source = operationReferenceSource
+            name = conventionName
+        }
+        explicitReceiver = this@createConventionCall
+        arguments += argument
     }
 }
 

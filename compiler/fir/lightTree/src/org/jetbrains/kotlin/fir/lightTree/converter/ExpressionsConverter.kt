@@ -209,18 +209,23 @@ class ExpressionsConverter(
         }
 
         val operationToken = operationTokenName.getOperationSymbol()
+        val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
         when (operationToken) {
             ELVIS ->
-                return getAsFirExpression<FirExpression>(leftArgNode, "No left operand").generateNotNullOrOther(
+                return leftArgAsFir.generateNotNullOrOther(
                     baseSession, rightArgAsFir, "elvis", null
                 )
             ANDAND, OROR ->
-                return getAsFirExpression<FirExpression>(leftArgNode, "No left operand").generateLazyLogicalOperation(
+                return leftArgAsFir.generateLazyLogicalOperation(
                     rightArgAsFir, operationToken == ANDAND, null
                 )
             in OperatorConventions.IN_OPERATIONS ->
                 return rightArgAsFir.generateContainsOperation(
-                    getAsFirExpression(leftArgNode, "No left operand"), operationToken == NOT_IN, null, null
+                    leftArgAsFir, operationToken == NOT_IN, null, null
+                )
+            in OperatorConventions.COMPARISON_OPERATIONS ->
+                return leftArgAsFir.generateComparisonExpression(
+                    rightArgAsFir, operationToken, null, null
                 )
         }
         val conventionCallName = operationToken.toBinaryName()
@@ -230,7 +235,7 @@ class ExpressionsConverter(
                 calleeReference = buildSimpleNamedReference {
                     name = conventionCallName ?: operationTokenName.nameAsSafeName()
                 }
-                explicitReceiver = getAsFirExpression(leftArgNode, "No left operand")
+                explicitReceiver = leftArgAsFir
                 arguments += rightArgAsFir
             }
         } else {
@@ -241,7 +246,7 @@ class ExpressionsConverter(
                 buildOperatorCall {
                     source = binaryExpression.toFirSourceElement()
                     operation = firOperation
-                    arguments += getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
+                    arguments += leftArgAsFir
                     arguments += rightArgAsFir
                 }
             }
