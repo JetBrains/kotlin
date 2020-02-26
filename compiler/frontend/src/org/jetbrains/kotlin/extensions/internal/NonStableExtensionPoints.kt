@@ -60,6 +60,7 @@ interface CallResolutionInterceptorExtension {
         tracing: TracingStrategy
     ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
+    @JvmDefault
     fun interceptCandidates(
         callResolutionResult: CallResolutionResult,
         context: BasicCallResolutionContext,
