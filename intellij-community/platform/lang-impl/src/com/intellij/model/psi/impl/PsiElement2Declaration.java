@@ -46,8 +46,13 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
     return myDeclarationRange;
   }
 
+  /**
+   * Adapts target element of unknown origin to a {@code PsiSymbolDeclaration}.
+   * E.g. when searching for declarations of a {@link Psi2Symbol PsiElement symbol} we lose info about origin,
+   * because the symbol could be obtained from reference or another declaration or any other old code.
+   */
   @Nullable
-  static PsiSymbolDeclaration createFromPsi(@NotNull PsiElement targetElement) {
+  static PsiSymbolDeclaration createFromTargetPsiElement(@NotNull PsiElement targetElement) {
     if (targetElement instanceof PsiNameIdentifierOwner) {
       PsiElement identifyingElement = ((PsiNameIdentifierOwner)targetElement).getIdentifyingElement();
       if (identifyingElement != null) {
@@ -57,9 +62,15 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
     return null;
   }
 
+  /**
+   * Adapts target element obtained from an element at caret to a {@code PsiSymbolDeclaration}.
+   *
+   * @param declaredElement  target element (symbol); used for target-based actions, e.g. Find Usages
+   * @param declaringElement element at caret from which {@code declaredElement} was obtained; used to determine the declaration range
+   */
   @NotNull
-  static PsiSymbolDeclaration createFromPsi(@NotNull PsiElement targetElement, @NotNull PsiElement declaringElement) {
-    return new PsiElement2Declaration(targetElement, declaringElement, getDeclarationRangeFromPsi(declaringElement));
+  static PsiSymbolDeclaration createFromDeclaredPsiElement(@NotNull PsiElement declaredElement, @NotNull PsiElement declaringElement) {
+    return new PsiElement2Declaration(declaredElement, declaringElement, getDeclarationRangeFromPsi(declaringElement));
   }
 
   @NotNull

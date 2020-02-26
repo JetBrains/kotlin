@@ -44,7 +44,7 @@ class PsiElementDeclarationSearcher : PsiSymbolDeclarationSearcher {
 
   private fun fromPsiElement(psi: PsiElement, searchScope: SearchScope): PsiSymbolDeclaration? {
     if (psi in searchScope) {
-      return PsiElement2Declaration.createFromPsi(psi)
+      return PsiElement2Declaration.createFromTargetPsiElement(psi)
     }
     else {
       return null

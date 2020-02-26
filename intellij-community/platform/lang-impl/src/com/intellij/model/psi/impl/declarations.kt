@@ -30,7 +30,7 @@ fun PsiFile.allDeclarationsAround(offsetInFile: Int): Collection<PsiSymbolDeclar
   for ((leaf, _) in leavesAroundOffset(offsetInFile)) {
     val namedElement: PsiElement? = TargetElementUtil.getNamedElement(leaf)
     if (namedElement != null) {
-      return listOf(PsiElement2Declaration.createFromPsi(namedElement, leaf))
+      return listOf(PsiElement2Declaration.createFromDeclaredPsiElement(namedElement, leaf))
     }
   }
   return emptyList()
