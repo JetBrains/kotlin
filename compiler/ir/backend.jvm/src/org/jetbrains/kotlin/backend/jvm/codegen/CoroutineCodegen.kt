@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
-internal fun generateStateMachineForNamedFunction(
+internal fun generateStateMachine(
     irFunction: IrFunction,
     classCodegen: ClassCodegen,
     methodVisitor: MethodVisitor,
@@ -42,12 +42,11 @@ internal fun generateStateMachineForNamedFunction(
     obtainContinuationClassBuilder: () -> ClassBuilder,
     element: KtElement
 ): MethodVisitor {
-    assert(irFunction.isSuspend)
     val state = classCodegen.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
-        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, null, null,
+        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
         lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
@@ -55,12 +54,12 @@ internal fun generateStateMachineForNamedFunction(
         languageVersionSettings = languageVersionSettings,
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
         containingClassInternalName = classCodegen.visitor.thisName,
-        isForNamedFunction = true,
-        needDispatchReceiver = irFunction.dispatchReceiverParameter != null
-                || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+        isForNamedFunction = irFunction.isSuspend, // SuspendLambda.invokeSuspend is not suspend
+        needDispatchReceiver = irFunction.isSuspend && (irFunction.dispatchReceiverParameter != null
+                || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.visitor.thisName,
         putContinuationParameterToLvt = false,
-        disableTailCallOptimizationForFunctionReturningUnit = irFunction.suspendFunctionOriginal().let {
+        disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
         }
     )
@@ -70,30 +69,6 @@ internal fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean {
     return (this as? IrSimpleFunction)?.allOverridden()?.toList()?.let { functions ->
         functions.isNotEmpty() && functions.any { !it.returnType.isUnit() }
     } == true
-}
-
-internal fun generateStateMachineForLambda(
-    classCodegen: ClassCodegen,
-    methodVisitor: MethodVisitor,
-    access: Int,
-    signature: JvmMethodGenericSignature,
-    element: KtElement
-): MethodVisitor {
-    val state = classCodegen.state
-    val languageVersionSettings = state.languageVersionSettings
-    assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
-    return CoroutineTransformerMethodVisitor(
-        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
-        obtainClassBuilderForCoroutineState = { classCodegen.visitor },
-        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
-        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
-        sourceFile = classCodegen.irClass.file.name,
-        languageVersionSettings = languageVersionSettings,
-        shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-        containingClassInternalName = classCodegen.visitor.thisName,
-        isForNamedFunction = false,
-        disableTailCallOptimizationForFunctionReturningUnit = false
-    )
 }
 
 internal fun IrFunction.continuationParameter(): IrValueParameter? = when {
