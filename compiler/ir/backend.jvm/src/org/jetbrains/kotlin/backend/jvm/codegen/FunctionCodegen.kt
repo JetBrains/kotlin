@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -31,9 +30,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -93,29 +90,25 @@ open class FunctionCodegen(
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
             val frameMap = createFrameMapWithReceivers()
-            methodVisitor = when {
-                irFunction.hasContinuation() -> {
-                    if (irFunction.parentAsClass.declarations.any {
-                        (it as? IrAttributeContainer)?.attributeOwnerId == (irFunction as IrAttributeContainer).attributeOwnerId &&
-                                it.nameForIrSerialization.asString() == irFunction.nameForIrSerialization.asString() + FOR_INLINE_SUFFIX &&
+            if (irFunction.hasContinuation() || irFunction.isInvokeSuspendOfLambda()) {
+                if (irFunction is IrSimpleFunction && irFunction.parentAsClass.declarations.any {
+                        it is IrSimpleFunction && it.attributeOwnerId == irFunction.attributeOwnerId &&
                                 it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
-                        }
-                    ) {
-                        // force generation of fake continuation for inliner.
-                        continuationClassCodegen.value
                     }
-                    generateStateMachineForNamedFunction(
-                        irFunction, classCodegen, methodVisitor,
-                        access = flags,
-                        signature = signature,
-                        obtainContinuationClassBuilder = { continuationClassCodegen.value.visitor },
-                        element = psiElement()
-                    )
+                ) {
+                    // Force generation of fake continuation for inliner.
+                    continuationClassCodegen.value
                 }
-                irFunction.isInvokeSuspendOfLambda() -> generateStateMachineForLambda(
-                    classCodegen, methodVisitor, flags, signature, psiElement()
+                // This has to be done lazily to avoid generating the class if tail call optimization makes it redundant.
+                val getContinuation = {
+                    if (irFunction.isSuspend)
+                        continuationClassCodegen.value.visitor
+                    else
+                        classCodegen.visitor
+                }
+                methodVisitor = generateStateMachine(
+                    irFunction, classCodegen, methodVisitor, flags, signature, getContinuation, psiElement()
                 )
-                else -> methodVisitor
             }
             ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, inlinedInto).generate()
             methodVisitor.visitMaxs(-1, -1)
