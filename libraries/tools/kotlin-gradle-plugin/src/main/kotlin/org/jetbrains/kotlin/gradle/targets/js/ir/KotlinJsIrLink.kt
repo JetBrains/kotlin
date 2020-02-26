@@ -11,9 +11,9 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.DEVELOPMENT
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
@@ -21,7 +21,7 @@ import java.io.File
 @CacheableTask
 open class KotlinJsIrLink : Kotlin2JsCompile() {
     @Input
-    lateinit var type: BuildVariantKind
+    lateinit var type: KotlinJsBinaryType
 
     // Not check sources, only klib module
     @Internal

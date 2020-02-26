@@ -116,7 +116,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     it.outputs.upToDateWhen { false }
 
                     when (type) {
-                        BuildVariantKind.PRODUCTION -> {
+                        KotlinJsBinaryType.PRODUCTION -> {
                             // Breaking of Task Configuration Avoidance is not so critical
                             // because this task is dependent on DCE task
                             it.entry = dceTaskProvider.get()
@@ -125,7 +125,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                             it.resolveFromModulesFirst = true
                             it.dependsOn(dceTaskProvider)
                         }
-                        BuildVariantKind.DEVELOPMENT -> {
+                        KotlinJsBinaryType.DEVELOPMENT -> {
                             it.dependsOn(compileKotlinTask)
                         }
                     }
@@ -135,7 +135,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     }
                 }
 
-                if (type == BuildVariantKind.DEVELOPMENT) {
+                if (type == KotlinJsBinaryType.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
                     commonRunTask.configure {
                         it.dependsOn(runTask)
@@ -199,7 +199,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     it.destinationDirectory = distribution.directory
 
                     when (type) {
-                        BuildVariantKind.PRODUCTION -> {
+                        KotlinJsBinaryType.PRODUCTION -> {
                             // Breaking of Task Configuration Avoidance is not so critical
                             // because this task is dependent on DCE task
                             it.entry = dceTaskProvider.get()
@@ -208,7 +208,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                             it.resolveFromModulesFirst = true
                             it.dependsOn(dceTaskProvider)
                         }
-                        BuildVariantKind.DEVELOPMENT -> {
+                        KotlinJsBinaryType.DEVELOPMENT -> {
                             it.dependsOn(compileKotlinTask)
                         }
                     }
@@ -218,7 +218,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     }
                 }
 
-                if (type == BuildVariantKind.PRODUCTION) {
+                if (type == KotlinJsBinaryType.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
                     val webpackCommonTask = project.registerTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
@@ -262,7 +262,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
-    private fun KotlinWebpack.configureOptimization(kind: BuildVariantKind) {
+    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryType) {
         mode = getByKind(
             kind = kind,
             releaseValue = Mode.PRODUCTION,
@@ -277,12 +277,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     private fun <T> getByKind(
-        kind: BuildVariantKind,
+        kind: KotlinJsBinaryType,
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
-        BuildVariantKind.PRODUCTION -> releaseValue
-        BuildVariantKind.DEVELOPMENT -> debugValue
+        KotlinJsBinaryType.PRODUCTION -> releaseValue
+        KotlinJsBinaryType.DEVELOPMENT -> debugValue
     }
 
     companion object {

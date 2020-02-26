@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -332,7 +332,7 @@ internal class KotlinJsIrSourceSetProcessor(
     private fun registerJsLink(
         project: Project,
         taskName: String,
-        type: BuildVariantKind,
+        type: KotlinJsBinaryType,
         configureAction: (Kotlin2JsCompile) -> Unit
     ): TaskProvider<out KotlinJsIrLink> {
         return tasksProvider.registerKotlinJsIrTask(

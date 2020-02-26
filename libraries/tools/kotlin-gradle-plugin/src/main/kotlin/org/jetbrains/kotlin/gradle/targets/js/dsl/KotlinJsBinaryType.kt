@@ -5,17 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-import org.gradle.api.Named
-
-class BuildVariant(private val name: String) : Named {
-    var kind: BuildVariantKind = BuildVariantKind.PRODUCTION
-
-    override fun getName(): String {
-        return name
-    }
-}
-
-enum class BuildVariantKind {
+enum class KotlinJsBinaryType {
     PRODUCTION,
     DEVELOPMENT
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
@@ -91,7 +91,7 @@ abstract class KotlinJsIrSubTarget(
             testJs.description = testTaskDescription
 
             val testExecutableTask = compilation.binaries.getBinary(
-                BuildVariantKind.DEVELOPMENT
+                KotlinJsBinaryType.DEVELOPMENT
             ).linkTask
 
             testJs.inputFileProperty.set(

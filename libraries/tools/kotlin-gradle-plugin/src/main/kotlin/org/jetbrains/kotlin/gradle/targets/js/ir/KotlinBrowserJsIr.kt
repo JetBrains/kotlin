@@ -102,7 +102,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     }
                 }
 
-                if (type == BuildVariantKind.DEVELOPMENT) {
+                if (type == KotlinJsBinaryType.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
                     commonRunTask.configure {
                         it.dependsOn(runTask)
@@ -166,7 +166,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     }
                 }
 
-                if (type == BuildVariantKind.PRODUCTION) {
+                if (type == KotlinJsBinaryType.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
                     val webpackCommonTask = project.registerTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
@@ -181,7 +181,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
     }
 
-    private fun KotlinWebpack.configureOptimization(kind: BuildVariantKind) {
+    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryType) {
         mode = getByKind(
             kind = kind,
             releaseValue = Mode.PRODUCTION,
@@ -196,12 +196,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun <T> getByKind(
-        kind: BuildVariantKind,
+        kind: KotlinJsBinaryType,
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
-        BuildVariantKind.PRODUCTION -> releaseValue
-        BuildVariantKind.DEVELOPMENT -> debugValue
+        KotlinJsBinaryType.PRODUCTION -> releaseValue
+        KotlinJsBinaryType.DEVELOPMENT -> debugValue
     }
 
     companion object {
