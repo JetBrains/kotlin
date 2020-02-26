@@ -83,6 +83,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/concurrentMapOfAliases.kt");
     }
 
+    @TestMetadata("delegateTypeMismatch.kt")
+    public void testDelegateTypeMismatch() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegateTypeMismatch.kt");
+    }
+
     @TestMetadata("delegationByMap.kt")
     public void testDelegationByMap() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegationByMap.kt");
@@ -683,11 +688,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("cloneArray.kt")
         public void testCloneArray() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/cloneArray.kt");
-        }
-
-        @TestMetadata("delegateTypeMismatch.kt")
-        public void testDelegateTypeMismatch() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/delegateTypeMismatch.kt");
         }
 
         @TestMetadata("invokePriority.kt")

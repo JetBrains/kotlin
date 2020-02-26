@@ -150,7 +150,7 @@ open class FirBodyResolveTransformer(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
-        return expressionsTransformer.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
+        return declarationsTransformer.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
     }
 
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: ResolutionMode): CompositeTransformResult<FirStatement> {

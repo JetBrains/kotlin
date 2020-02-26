@@ -33,12 +33,12 @@ FILE: delegateTypeMismatch.kt
             )
         }
 
-        public final var classifierNamePolicy: R|ClassifierNamePolicy|by this@R|/A|.R|/A.property|<R|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|>(Q|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|)
+        public final var classifierNamePolicy: R|ClassifierNamePolicy|by this@R|/A|.R|/A.property|<R|ClassifierNamePolicy|>(Q|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|)
             public get(): R|ClassifierNamePolicy| {
-                ^ D|/A.classifierNamePolicy|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|>|(this@R|/A|, ::R|/A.classifierNamePolicy|)
+                ^ D|/A.classifierNamePolicy|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|ClassifierNamePolicy|>|(this@R|/A|, ::R|/A.classifierNamePolicy|)
             }
             public set(<set-?>: R|ClassifierNamePolicy|): R|kotlin/Unit| {
-                D|/A.classifierNamePolicy|.<Inapplicable(INAPPLICABLE): [kotlin/properties/ReadWriteProperty.setValue]>#(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
+                D|/A.classifierNamePolicy|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
             }
 
         public final var typeNormalizer: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by <Inapplicable(INAPPLICABLE): [/A.property]>#<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(): R|ERROR CLASS: Unresolved name: it| {

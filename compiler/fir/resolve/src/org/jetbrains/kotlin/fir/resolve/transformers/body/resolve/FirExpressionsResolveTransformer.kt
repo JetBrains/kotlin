@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -476,20 +479,6 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 type = kClassSymbol.constructType(arrayOf(typeOfExpression), false)
             }
         return transformedGetClassCall.compose()
-    }
-
-    override fun transformWrappedDelegateExpression(
-        wrappedDelegateExpression: FirWrappedDelegateExpression,
-        data: ResolutionMode,
-    ): CompositeTransformResult<FirStatement> {
-        transformExpression(wrappedDelegateExpression, data)
-        with(wrappedDelegateExpression) {
-            val delegateProviderTypeRef = delegateProvider.typeRef
-            val useDelegateProvider = delegateProviderTypeRef is FirResolvedTypeRef &&
-                    delegateProviderTypeRef !is FirErrorTypeRef &&
-                    delegateProviderTypeRef.type !is ConeKotlinErrorType
-            return if (useDelegateProvider) delegateProvider.compose() else expression.compose()
-        }
     }
 
     override fun <T> transformConstExpression(
