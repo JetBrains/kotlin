@@ -76,7 +76,8 @@ dependencies {
         }
     }
 
-    testCompile(j2v8idString)
+    testCompileOnly("com.eclipsesource.j2v8:j2v8_linux_x86_64:4.8.0")
+    testRuntimeOnly(j2v8idString)
 
     testRuntime(kotlinStdlib())
     testJsRuntime(kotlinStdlib("js"))
