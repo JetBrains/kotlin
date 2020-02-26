@@ -26,7 +26,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.jetbrains.annotations.NotNull;
@@ -40,8 +39,7 @@ public class EmacsStyleIndentAction extends BaseCodeInsightAction implements Dum
 
   @Override
   protected boolean isValidForFile(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
-    PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
-    return context != null && LanguageFormatting.INSTANCE.forContext(context) != null;
+    return LanguageFormatting.INSTANCE.forContext(file) != null;
   }
 
   private static class Handler implements CodeInsightActionHandler {
