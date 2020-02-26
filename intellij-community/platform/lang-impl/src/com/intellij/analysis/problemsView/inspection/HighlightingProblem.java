@@ -66,8 +66,8 @@ class HighlightingProblem implements AnalysisProblem {
   public int getLineNumber() {
     PsiFile psiFile = PsiManager.getInstance(myProject).findFile(myVirtualFile);
     Document document = psiFile == null ? null : PsiDocumentManager.getInstance(myProject).getDocument(psiFile);
-    if (document == null) return 0;
-    return document.getLineNumber(myInfo.getActualStartOffset()) + 1;
+    int offset = document == null ? -1 : myInfo.getActualStartOffset();
+    return 0 <= offset && offset < document.getTextLength() ? document.getLineNumber(offset) + 1 : 0;
   }
 
   @Override
