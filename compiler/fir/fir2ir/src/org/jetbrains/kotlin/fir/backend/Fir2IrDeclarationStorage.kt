@@ -968,8 +968,11 @@ class Fir2IrDeclarationStorage(
         return when (val firDeclaration = firVariableSymbol.fir) {
             is FirEnumEntry -> {
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
+                val parentClassSymbol = firVariableSymbol.callableId.classId?.let { firSymbolProvider.getClassLikeSymbolByFqName(it) }
+                val irParentClass = (parentClassSymbol?.fir as? FirClass<*>)?.let { getIrClass(it, setParentAndContent = false) }
                 val irEnumEntry = getIrEnumEntry(
                     firDeclaration,
+                    irParent = irParentClass,
                     origin = if (containingFile == null) IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB else IrDeclarationOrigin.DEFINED
                 )
                 irSymbolTable.referenceEnumEntry(irEnumEntry.descriptor)
