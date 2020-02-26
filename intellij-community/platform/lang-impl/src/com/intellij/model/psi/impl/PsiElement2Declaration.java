@@ -68,16 +68,11 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
    */
   @NotNull
   static PsiSymbolDeclaration createFromDeclaredPsiElement(@NotNull PsiElement declaredElement, @NotNull PsiElement declaringElement) {
-    return new PsiElement2Declaration(declaredElement, declaringElement, getDeclarationRangeFromPsi(declaringElement));
-  }
-
-  @NotNull
-  private static TextRange getDeclarationRangeFromPsi(@NotNull PsiElement declaringElement) {
     PsiElement identifyingElement = getIdentifyingElement(declaringElement);
-    if (identifyingElement != null) {
-      return identifyingElement.getTextRange().shiftLeft(declaringElement.getTextRange().getStartOffset());
-    }
-    return rangeOf(declaringElement);
+    TextRange declarationRange = identifyingElement == null
+                                 ? rangeOf(declaringElement)
+                                 : identifyingElement.getTextRange().shiftLeft(declaringElement.getTextRange().getStartOffset());
+    return new PsiElement2Declaration(declaredElement, declaringElement, declarationRange);
   }
 
   @Nullable
