@@ -37,9 +37,6 @@ class ClosureAnnotator(body: IrBody, declaration: IrDeclaration) {
 
     init {
         // Collect all closures for classes and functions. Collect call graph
-        if (declaration is IrSimpleFunction && declaration.name.asString() == "arrayIterator") {
-            1
-        }
         body.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
     }
 

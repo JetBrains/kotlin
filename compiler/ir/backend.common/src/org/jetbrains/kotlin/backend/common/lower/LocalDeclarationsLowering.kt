@@ -90,7 +90,7 @@ object BOUND_RECEIVER_PARAMETER : IrDeclarationOriginImpl("BOUND_RECEIVER_PARAME
   to proceed nevertheless.
 */
 class LocalDeclarationsLowering(
-    val context: BackendContext,
+    val context: CommonBackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT
 ) :
@@ -463,6 +463,9 @@ class LocalDeclarationsLowering(
 
             irClass.declarations += localClassContext.capturedValueToField.values
 
+            context.mapping.capturedFields[irClass] =
+                (context.mapping.capturedFields[irClass] ?: emptyList()) + localClassContext.capturedValueToField.values
+
             for (constructorContext in constructorsCallingSuper) {
                 val blockBody = constructorContext.declaration.body as? IrBlockBody
                     ?: throw AssertionError("Unexpected constructor body: ${constructorContext.declaration.body}")
@@ -733,6 +736,7 @@ class LocalDeclarationsLowering(
             newDeclaration.metadata = oldDeclaration.metadata
 
             transformedDeclarations[oldDeclaration] = newDeclaration
+            context.mapping.capturedConstructors[oldDeclaration] = newDeclaration
         }
 
         private fun createFieldForCapturedValue(

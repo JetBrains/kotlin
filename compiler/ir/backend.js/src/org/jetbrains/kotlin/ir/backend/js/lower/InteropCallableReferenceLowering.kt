@@ -202,7 +202,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val functionExpression =
             expression.run { IrFunctionExpressionImpl(startOffset, endOffset, type, lambdaDeclaration, expression.origin!!) }
 
-        val nameGetter = lambdaClass.declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.correspondingPropertySymbol != null }
+        val nameGetter = context.mapping.reflectedNameAccessor[lambdaClass]
 
         if (nameGetter != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)

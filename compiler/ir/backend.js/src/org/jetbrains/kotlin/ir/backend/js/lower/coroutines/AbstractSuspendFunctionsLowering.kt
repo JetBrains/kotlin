@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -258,7 +257,9 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun buildConstructor(): IrConstructor {
             if (isSuspendLambda) {
-                return coroutineClass.declarations.filterIsInstance<IrConstructor>().single()
+                return coroutineClass.declarations.filterIsInstance<IrConstructor>().single().let {
+                    context.mapping.capturedConstructors[it] ?: it
+                }
             }
 
             return WrappedClassConstructorDescriptor().let { d ->
@@ -401,9 +402,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                     val thisReceiver = this.dispatchReceiverParameter!!
 
-                    val boundFields = coroutineClass.declarations.filterIsInstance<IrField>().filter { f ->
-                        f.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE || f.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
-                    }
+                    val boundFields =
+                        context.mapping.capturedFields[coroutineClass] ?: error("No captured values for class ${coroutineClass.render()}")
 
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
@@ -422,9 +422,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                         assert(createValueParameters.size - 1 == argumentToPropertiesMap.size)
 
-                        val ptofMap = createValueParameters.zip(argumentToPropertiesMap.values)
-
-                        for ((p, f) in ptofMap) {
+                        for ((p, f) in createValueParameters.zip(argumentToPropertiesMap.values)) {
                             +irSetField(irGet(instanceVal), f, irGet(p))
                         }
 
@@ -460,8 +458,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         fun build(): BuiltCoroutine {
             val coroutineConstructor = buildConstructor()
 
+            val implementedMembers = ArrayList<IrSimpleFunction>(2)
+
             val superInvokeSuspendFunction = coroutineBaseClass.owner.simpleFunctions().single { it.name == stateMachineMethodName }
             val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction)
+
+            implementedMembers.add(invokeSuspendMethod)
 
             if (isSuspendLambda) {
                 // Suspend lambda - create factory methods.
@@ -471,13 +473,14 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     }
 
                 val createMethod = buildCreateMethod(createFunction, coroutineConstructor)
+                implementedMembers.add(createMethod)
 
                 transformInvokeMethod(createMethod, invokeSuspendMethod)
             } else {
                 coroutineClass.superTypes += coroutineBaseClass.defaultType
             }
 
-            coroutineClass.addFakeOverrides()
+            coroutineClass.addFakeOverrides(implementedMembers)
 
             initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)
 

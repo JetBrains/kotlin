@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.addChild
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 //This lower takes part of old LocalDeclarationLowering job to pop up local classes from functions
 open class LocalClassPopupLowering(val context: BackendContext) : BodyLoweringPass {
@@ -44,7 +48,20 @@ open class LocalClassPopupLowering(val context: BackendContext) : BodyLoweringPa
 
         for ((local, newContainer) in extractedLocalClasses) {
             newContainer.addChild(local)
-            context.extractedLocalClasses += local
+
+            local.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitBody(body: IrBody) {
+                }
+
+                override fun visitClass(declaration: IrClass) {
+                    super.visitClass(declaration)
+                    context.extractedLocalClasses += declaration
+                }
+            })
         }
     }
 

@@ -311,9 +311,10 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
             // TODO find out how `doResume` gets removed
             if (klass.symbol == context.ir.symbols.coroutineImpl) {
                 ArrayList(klass.declarations).forEach {
-                    if (it is IrSimpleFunction && it.name.asString() == "doResume") {
+                    // TODO: fix the heck
+//                    if (it is IrSimpleFunction && it.name.asString() == "doResume") {
                         it.enqueue()
-                    }
+//                    }
                 }
             }
         }

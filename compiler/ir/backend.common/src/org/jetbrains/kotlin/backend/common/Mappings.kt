@@ -15,6 +15,9 @@ interface Mapping {
     val suspendFunctionToCoroutineConstructor: Delegate<IrFunction, IrConstructor>
     val lateInitFieldToNullableField: Delegate<IrField, IrField>
     val inlineClassMemberToStatic: Delegate<IrFunction, IrSimpleFunction>
+    val capturedFields: Delegate<IrClass, Collection<IrField>>
+    val capturedConstructors: Delegate<IrConstructor, IrConstructor>
+    val reflectedNameAccessor: Delegate<IrClass, IrSimpleFunction>
 
     abstract class Delegate<K : IrDeclaration, V> {
         abstract operator fun get(key: K): V?
@@ -36,6 +39,9 @@ open class DefaultMapping : Mapping {
     override val suspendFunctionToCoroutineConstructor: Mapping.Delegate<IrFunction, IrConstructor> = newMapping()
     override val lateInitFieldToNullableField: Mapping.Delegate<IrField, IrField> = newMapping()
     override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = newMapping()
+    override val capturedFields: Mapping.Delegate<IrClass, Collection<IrField>> = newMapping()
+    override val capturedConstructors: Mapping.Delegate<IrConstructor, IrConstructor> = newMapping()
+    override val reflectedNameAccessor: Mapping.Delegate<IrClass, IrSimpleFunction> = newMapping()
 
     protected open fun <K : IrDeclaration, V> newMapping() = object : Mapping.Delegate<K, V>() {
         private val map: MutableMap<K, V> = mutableMapOf()

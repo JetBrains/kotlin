@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
@@ -24,13 +27,21 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 class CallableReferenceLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+
+    override fun lower(irFile: IrFile) {
+        runOnFilePostfix(irFile, withLocalDeclarations = true)
+    }
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val realContainer = container as? IrDeclarationParent ?: container.parent
         irBody.transformChildrenVoid(ReferenceTransformer(realContainer))
@@ -40,6 +51,11 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
     private val stringType = context.irBuiltIns.stringType
 
     private inner class ReferenceTransformer(private val container: IrDeclarationParent) : IrElementTransformerVoid() {
+
+        override fun visitBody(body: IrBody): IrBody {
+            return body
+        }
+
         override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
             expression.transformChildrenVoid(this)
 
@@ -316,6 +332,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                     )
                 )
             )
+
+            context.mapping.reflectedNameAccessor[clazz] = getter
         }
 
         fun build(): Pair<IrClass, IrConstructor> {
