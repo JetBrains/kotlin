@@ -84,9 +84,14 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
 
     @JvmStatic
     fun showSettingsDialogForLanguage(project: Project, language: Language) {
-      val displayName = language.displayName
+      val languages = hashSetOf<Language>()
+      var current: Language? = language
+      while (current != null) {
+        languages.add(current)
+        current = current.baseLanguage
+      }
       ShowSettingsUtil.getInstance()
-        .showSettingsDialog(project, { it.displayName == displayName && it is SingleLanguageInlayHintsConfigurable }, {})
+        .showSettingsDialog(project, { it is SingleLanguageInlayHintsConfigurable && it.language in languages }, {})
     }
   }
 
