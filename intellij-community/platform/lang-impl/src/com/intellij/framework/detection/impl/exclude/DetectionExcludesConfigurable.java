@@ -17,6 +17,7 @@ package com.intellij.framework.detection.impl.exclude;
 
 import com.intellij.framework.FrameworkType;
 import com.intellij.framework.detection.impl.FrameworkDetectorRegistry;
+import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -34,8 +35,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -70,41 +71,43 @@ public class DetectionExcludesConfigurable implements Configurable {
   public JComponent createComponent() {
     myEnabledDetectionCheckBox = new JCheckBox("Enable framework detection");
     myEnabledDetectionCheckBox.setBorder(new EmptyBorder(10, 10, 0, 0));
-    final JBList excludesList = new JBList(myModel);
-    final ColoredListCellRenderer renderer = new ColoredListCellRenderer() {
+    final JBList<ExcludeListItem> excludesList = new JBList<>(myModel);
+    final ColoredListCellRenderer<ExcludeListItem> renderer = new ColoredListCellRenderer<ExcludeListItem>() {
       final JPanel panel = new JPanel(new BorderLayout());
       {
-        panel.setBorder(new EmptyBorder(2, 10, 2, 0));
+        panel.setBorder(JBUI.Borders.empty(2, 10, 2, 0));
         panel.add(this);
       }
 
       @Override
-      protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
+      protected void customizeCellRenderer(@NotNull JList<? extends ExcludeListItem> list, ExcludeListItem value, int index, boolean selected, boolean hasFocus) {
         setIconTextGap(4);
-        if (value instanceof ExcludeListItem) {
-          ((ExcludeListItem)value).renderItem(this);
-          setBorder(new EmptyBorder(0, 10, 0, 0));
+        if (value != null) {
+          value.renderItem(this);
+          setBorder(JBUI.Borders.emptyLeft(10));
         }
       }
 
       @Override
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+      public Component getListCellRendererComponent(JList<? extends ExcludeListItem> list, ExcludeListItem value, int index, boolean selected, boolean hasFocus) {
         super.getListCellRendererComponent(list, value, index, selected, hasFocus);
-        panel.setBackground(UIUtil.getListBackground(selected));
+        panel.setBackground(UIUtil.getListBackground(selected, hasFocus));
         return panel;
       }
     };
-    renderer.setMyBorder(new EmptyBorder(0,0,0,0));
+    renderer.setMyBorder(JBUI.Borders.empty());
     excludesList.setCellRenderer(renderer);
-    final ToolbarDecorator decorator = ToolbarDecorator.createDecorator(excludesList)
-      .disableUpAction().disableDownAction()
+    ToolbarDecorator decorator = ToolbarDecorator.createDecorator(excludesList)
+      .setToolbarPosition(ActionToolbarPosition.TOP)
+      .setPanelBorder(JBUI.Borders.empty())
+      .disableUpAction()
+      .disableDownAction()
       .setAddAction(new AnActionButtonRunnable() {
         @Override
         public void run(AnActionButton button) {
           doAddAction(button);
         }
       });
-    decorator.setPanelBorder(new CustomLineBorder(1, 0, 0, 0));
     myMainPanel = new JPanel(new BorderLayout(0, 5));
     myMainPanel.add(myEnabledDetectionCheckBox, BorderLayout.NORTH);
     final LabeledComponent<JPanel> excludesComponent = LabeledComponent.create(decorator.createPanel(), "   Exclude from detection:");

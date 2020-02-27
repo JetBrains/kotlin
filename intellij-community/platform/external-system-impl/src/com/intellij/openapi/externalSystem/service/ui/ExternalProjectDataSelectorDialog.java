@@ -42,7 +42,6 @@ import com.intellij.util.CachedValueImpl;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -145,8 +144,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
       addExtraAction(new UnselectAllButton()).
       addExtraAction(new ShowSelectedOnlyButton()).
       addExtraAction(new SelectRequiredButton()).
-      setToolbarPosition(ActionToolbarPosition.BOTTOM).
-      setToolbarBorder(JBUI.Borders.empty());
+      setToolbarPosition(ActionToolbarPosition.BOTTOM);
 
     contentPanel.add(decorator.createPanel());
     loadingPanel = new JBLoadingPanel(new BorderLayout(), getDisposable());
