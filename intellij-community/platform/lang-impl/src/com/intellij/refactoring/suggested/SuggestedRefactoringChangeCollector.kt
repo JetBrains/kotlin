@@ -4,6 +4,11 @@ package com.intellij.refactoring.suggested
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.command.undo.DocumentReferenceManager
+import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.command.undo.UndoableAction
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.SuggestedRefactoringState.ErrorLevel
@@ -23,6 +28,11 @@ class SuggestedRefactoringChangeCollector(
     state = refactoringSupport.stateChanges.createInitialState(declaration)
     updateAvailabilityIndicator()
     amendStateInBackground()
+
+    val project = declaration.project
+    val document = PsiDocumentManager.getInstance(project).getDocument(declaration.containingFile)!!
+    // add UndoableAction which will reset signature tracking state to initial
+    UndoManager.getInstance(project).undoableActionPerformed(EditingStartedUndoableAction(document, project))
   }
 
   override fun nextSignature(declaration: PsiElement, refactoringSupport: SuggestedRefactoringSupport) {
@@ -108,4 +118,19 @@ class SuggestedRefactoringChangeCollector(
         }
       }
     }
+
+  private class EditingStartedUndoableAction(document: Document, private val project: Project) : UndoableAction {
+    val documentReference = DocumentReferenceManager.getInstance().create(document)
+
+    override fun undo() {
+      SuggestedRefactoringProvider.getInstance(project).reset()
+    }
+
+    override fun redo() {
+    }
+
+    override fun isGlobal() = false
+
+    override fun getAffectedDocuments() = arrayOf(documentReference)
+  }
 }
