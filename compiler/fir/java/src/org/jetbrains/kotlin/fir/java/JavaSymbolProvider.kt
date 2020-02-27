@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.toFirSourceElement
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -77,23 +76,33 @@ class JavaSymbolProvider(
         }
     }
 
-    private fun JavaTypeParameter.toFirTypeParameter(javaTypeParameterStack: JavaTypeParameterStack): FirTypeParameterBuilder {
-        javaTypeParameterStack.getBuilder(this)?.let { return it }
+    private fun JavaTypeParameter.toFirTypeParameterSymbol(
+        javaTypeParameterStack: JavaTypeParameterStack
+    ): Pair<FirTypeParameterSymbol, Boolean> {
+        val stored = javaTypeParameterStack.safeGet(this)
+        if (stored != null) return stored to true
         val firSymbol = FirTypeParameterSymbol()
+        javaTypeParameterStack.add(this, firSymbol)
+        return firSymbol to false
+    }
+
+    private fun JavaTypeParameter.toFirTypeParameter(
+        firSymbol: FirTypeParameterSymbol,
+        javaTypeParameterStack: JavaTypeParameterStack
+    ): FirTypeParameter {
         return FirTypeParameterBuilder().apply {
-            session = this@JavaSymbolProvider.session
-            name = this@toFirTypeParameter.name
+            this.session = this@JavaSymbolProvider.session
+            this.name = this@toFirTypeParameter.name
             symbol = firSymbol
             variance = INVARIANT
             isReified = false
-        }.also {
-            javaTypeParameterStack.add(this, it)
-        }
+            addBounds(this@toFirTypeParameter, javaTypeParameterStack)
+        }.build()
     }
 
     private fun FirTypeParameterBuilder.addBounds(
         javaTypeParameter: JavaTypeParameter,
-        stack: JavaTypeParameterStack,
+        stack: JavaTypeParameterStack
     ) {
         for (upperBound in javaTypeParameter.upperBounds) {
             bounds += upperBound.toFirResolvedTypeRef(
@@ -107,14 +116,12 @@ class JavaSymbolProvider(
     }
 
     private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> {
-        return this
-            .map { it.toFirTypeParameter(stack) }
-            .mapIndexed { index, typeParameterBuilder ->
-                if (typeParameterBuilder.bounds.isEmpty()) {
-                    typeParameterBuilder.addBounds(this[index], stack)
-                }
-                typeParameterBuilder.build()
-            }
+        return map { it.toFirTypeParameterSymbol(stack) }.mapIndexed { index, (symbol, initialized) ->
+            // This nasty logic is required, because type parameter bound can refer other type parameter from the list
+            // So we have to create symbols first, and type parameters themselves after them
+            if (initialized) symbol.fir
+            else this[index].toFirTypeParameter(symbol, stack)
+        }
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {

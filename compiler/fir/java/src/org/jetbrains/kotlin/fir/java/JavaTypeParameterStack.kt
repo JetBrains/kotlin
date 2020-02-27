@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 
 internal class JavaTypeParameterStack {
 
-    private val typeParameterMap = mutableMapOf<JavaTypeParameter, FirTypeParameterBuilder>()
+    private val typeParameterMap = mutableMapOf<JavaTypeParameter, FirTypeParameterSymbol>()
 
-    fun add(javaTypeParameter: JavaTypeParameter, firTypeParameterBuilder: FirTypeParameterBuilder) {
-        typeParameterMap[javaTypeParameter] = firTypeParameterBuilder
+    fun add(javaTypeParameter: JavaTypeParameter, symbol: FirTypeParameterSymbol) {
+        typeParameterMap[javaTypeParameter] = symbol
     }
 
     fun addStack(javaTypeParameterStack: JavaTypeParameterStack) {
@@ -30,9 +29,7 @@ internal class JavaTypeParameterStack {
             ?: throw IllegalArgumentException("Cannot find Java type parameter $javaTypeParameter in stack")
     }
 
-    fun safeGet(javaTypeParameter: JavaTypeParameter) = typeParameterMap[javaTypeParameter]?.symbol
-
-    fun getBuilder(javaTypeParameter: JavaTypeParameter) = typeParameterMap[javaTypeParameter]
+    fun safeGet(javaTypeParameter: JavaTypeParameter) = typeParameterMap[javaTypeParameter]
 
     companion object {
         val EMPTY: JavaTypeParameterStack = JavaTypeParameterStack()
