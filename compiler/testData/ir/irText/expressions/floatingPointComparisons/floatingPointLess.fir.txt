@@ -111,7 +111,13 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: ERROR_CALL 'Comparison of arguments with different types: kotlin/Float, kotlin/Double' type=kotlin.Boolean
+            then: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+              arg0: CALL 'public final fun compareTo (other: kotlin.Double): kotlin.Int [operator] declared in kotlin.Float' type=kotlin.Int origin=null
+                $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
+                other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -131,7 +137,13 @@ FILE fqName:<root> fileName:/floatingPointLess.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: ERROR_CALL 'Comparison of arguments with different types: kotlin/Double, kotlin/Float' type=kotlin.Boolean
+            then: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+              arg0: CALL 'public final fun compareTo (other: kotlin.Float): kotlin.Int [operator] declared in kotlin.Double' type=kotlin.Int origin=null
+                $this: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
+                other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
