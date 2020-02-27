@@ -50,53 +50,72 @@ internal fun <T : IrElement> FirElement.convertWithOffsets(
 
 internal fun createErrorType(): IrErrorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
 
+internal enum class ConversionTypeOrigin {
+    DEFAULT,
+    SETTER
+}
+
+class ConversionTypeContext internal constructor(
+    internal val definitelyNotNull: Boolean,
+    internal val origin: ConversionTypeOrigin
+) {
+    fun definitelyNotNull() = ConversionTypeContext(true, origin)
+
+    fun inSetter() = ConversionTypeContext(definitelyNotNull, ConversionTypeOrigin.SETTER)
+
+    companion object {
+        internal val DEFAULT = ConversionTypeContext(
+            definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT
+        )
+    }
+}
+
 fun FirTypeRef.toIrType(
     session: FirSession,
     declarationStorage: Fir2IrDeclarationStorage,
     irBuiltIns: IrBuiltIns,
-    forSetter: Boolean = false
+    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
 ): IrType {
     if (this !is FirResolvedTypeRef) {
         return createErrorType()
     }
-    return type.toIrType(session, declarationStorage, irBuiltIns, forSetter = forSetter)
+    return type.toIrType(session, declarationStorage, irBuiltIns, typeContext)
 }
 
 fun ConeKotlinType.toIrType(
     session: FirSession,
     declarationStorage: Fir2IrDeclarationStorage,
     irBuiltIns: IrBuiltIns,
-    definitelyNotNull: Boolean = false,
-    forSetter: Boolean = false
+    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
 ): IrType {
     return when (this) {
         is ConeKotlinErrorType -> createErrorType()
         is ConeLookupTagBasedType -> {
             val irSymbol = getArrayType(this.classId, irBuiltIns) ?: run {
                 val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
-                firSymbol.toIrSymbol(session, declarationStorage, forSetter)
+                firSymbol.toIrSymbol(session, declarationStorage, typeContext)
             }
             // TODO: annotations
             IrSimpleTypeImpl(
-                irSymbol, !definitelyNotNull && this.isMarkedNullable,
+                irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
                 typeArguments.map { it.toIrTypeArgument(session, declarationStorage, irBuiltIns) },
                 emptyList()
             )
         }
         is ConeFlexibleType -> {
             // TODO: yet we take more general type. Not quite sure it's Ok
-            upperBound.toIrType(session, declarationStorage, irBuiltIns, definitelyNotNull)
+            upperBound.toIrType(session, declarationStorage, irBuiltIns, typeContext)
         }
         is ConeCapturedType -> TODO()
         is ConeDefinitelyNotNullType -> {
-            original.toIrType(session, declarationStorage, irBuiltIns, definitelyNotNull = true)
+            original.toIrType(session, declarationStorage, irBuiltIns, typeContext.definitelyNotNull())
         }
         is ConeIntersectionType -> {
             // TODO: add intersectionTypeApproximation
-            intersectedTypes.first().toIrType(session, declarationStorage, irBuiltIns, definitelyNotNull)
+            intersectedTypes.first().toIrType(session, declarationStorage, irBuiltIns, typeContext)
         }
         is ConeStubType -> createErrorType()
-        is ConeIntegerLiteralType -> getApproximatedType().toIrType(session, declarationStorage, irBuiltIns, definitelyNotNull)
+        is ConeIntegerLiteralType -> getApproximatedType().toIrType(session, declarationStorage, irBuiltIns, typeContext)
     }
 }
 
@@ -141,11 +160,11 @@ fun ConeTypeProjection.toIrTypeArgument(
 fun FirClassifierSymbol<*>.toIrSymbol(
     session: FirSession,
     declarationStorage: Fir2IrDeclarationStorage,
-    forSetter: Boolean = false
+    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
-            toTypeParameterSymbol(declarationStorage, forSetter)
+            toTypeParameterSymbol(declarationStorage, typeContext)
         }
         is FirTypeAliasSymbol -> {
             val typeAlias = fir
@@ -201,9 +220,9 @@ fun FirClassSymbol<*>.toClassSymbol(declarationStorage: Fir2IrDeclarationStorage
 
 fun FirTypeParameterSymbol.toTypeParameterSymbol(
     declarationStorage: Fir2IrDeclarationStorage,
-    forSetter: Boolean = false
+    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
 ): IrTypeParameterSymbol {
-    return declarationStorage.getIrTypeParameterSymbol(this, forSetter)
+    return declarationStorage.getIrTypeParameterSymbol(this, typeContext)
 }
 
 fun FirFunctionSymbol<*>.toFunctionSymbol(declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {

@@ -102,8 +102,11 @@ class Fir2IrDeclarationStorage(
         irSymbolTable.leaveScope(descriptor)
     }
 
-    private fun FirTypeRef.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage, forSetter: Boolean = false) =
-        toIrType(session, declarationStorage, irBuiltIns, forSetter)
+    private fun FirTypeRef.toIrType(
+        session: FirSession,
+        declarationStorage: Fir2IrDeclarationStorage,
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    ) = toIrType(session, declarationStorage, irBuiltIns, typeContext)
 
     private fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return fragmentCache.getOrPut(fqName) {
@@ -151,14 +154,17 @@ class Fir2IrDeclarationStorage(
         owner.typeParameters.mapIndexed { index, typeParameter ->
             getIrTypeParameter(typeParameter, index)
             if (owner is FirProperty && owner.isVar) {
-                getIrTypeParameter(typeParameter, index, forSetter = true)
+                getIrTypeParameter(typeParameter, index, ConversionTypeContext.DEFAULT.inSetter())
             }
         }
     }
 
-    private fun IrTypeParametersContainer.setTypeParameters(owner: FirTypeParametersOwner, forSetter: Boolean = false) {
+    private fun IrTypeParametersContainer.setTypeParameters(
+        owner: FirTypeParametersOwner,
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    ) {
         typeParameters = owner.typeParameters.mapIndexed { index, typeParameter ->
-            getIrTypeParameter(typeParameter, index, forSetter).apply { parent = this@setTypeParameters }
+            getIrTypeParameter(typeParameter, index, typeContext).apply { parent = this@setTypeParameters }
         }
     }
 
@@ -328,12 +334,16 @@ class Fir2IrDeclarationStorage(
         }.declareSupertypesAndTypeParameters(anonymousObject)
     }
 
-    private fun getIrTypeParameter(typeParameter: FirTypeParameter, index: Int = -1, forSetter: Boolean = false): IrTypeParameter {
+    private fun getIrTypeParameter(
+        typeParameter: FirTypeParameter,
+        index: Int = -1,
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    ): IrTypeParameter {
         // Here transformation is a bit difficult because one FIR property type parameter
         // can be transformed to two different type parameters: one for getter and another one for setter
         val simpleCachedParameter = typeParameterCache[typeParameter]
         if (simpleCachedParameter != null) {
-            if (!forSetter) {
+            if (typeContext.origin != ConversionTypeOrigin.SETTER) {
                 return simpleCachedParameter
             }
             if (index < 0) {
@@ -343,7 +353,7 @@ class Fir2IrDeclarationStorage(
                 }
             }
         }
-        if (forSetter) {
+        if (typeContext.origin == ConversionTypeOrigin.SETTER) {
             typeParameterCacheForSetter[typeParameter]?.let { return it }
         }
         return typeParameter.run {
@@ -368,7 +378,7 @@ class Fir2IrDeclarationStorage(
                 }
 
             // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
-            if (forSetter) {
+            if (typeContext.origin == ConversionTypeOrigin.SETTER) {
                 typeParameterCacheForSetter[typeParameter] = irTypeParameter
             } else {
                 typeParameterCache[typeParameter] = irTypeParameter
@@ -445,9 +455,13 @@ class Fir2IrDeclarationStorage(
             setTypeParameters(function)
         }
         val forSetter = function is FirPropertyAccessor && function.isSetter
+        val typeContext = ConversionTypeContext(
+            definitelyNotNull = false,
+            origin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+        )
         if (function is FirDefaultPropertySetter) {
             val type = function.valueParameters.first().returnTypeRef.toIrType(
-                session, this@Fir2IrDeclarationStorage, forSetter = true
+                session, this@Fir2IrDeclarationStorage, ConversionTypeContext.DEFAULT.inSetter()
             )
             declareDefaultSetterParameter(type)
         } else if (function != null) {
@@ -455,7 +469,7 @@ class Fir2IrDeclarationStorage(
                 createAndSaveIrParameter(
                     valueParameter, index,
                     useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
-                    forSetter = forSetter
+                    typeContext
                 ).apply {
                     this.parent = parent
                 }
@@ -468,7 +482,7 @@ class Fir2IrDeclarationStorage(
                 extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
                     declareThisReceiverParameter(
                         parent,
-                        thisType = receiverTypeRef.toIrType(session, this@Fir2IrDeclarationStorage, forSetter),
+                        thisType = receiverTypeRef.toIrType(session, this@Fir2IrDeclarationStorage, typeContext),
                         thisOrigin = thisOrigin,
                         startOffset = startOffset,
                         endOffset = endOffset
@@ -657,10 +671,13 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                 isOperator = false
             ).apply {
-                setTypeParameters(property, forSetter = isSetter)
+                setTypeParameters(property, ConversionTypeContext(
+                    definitelyNotNull = false,
+                    origin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+                ))
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(
-                        property.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage, forSetter = true)
+                        property.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage, ConversionTypeContext.DEFAULT.inSetter())
                     )
                 }
             }.bindAndDeclareParameters(
@@ -799,7 +816,7 @@ class Fir2IrDeclarationStorage(
         valueParameter: FirValueParameter,
         index: Int = -1,
         useStubForDefaultValueStub: Boolean = true,
-        forSetter: Boolean = false
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ): IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
@@ -813,7 +830,7 @@ class Fir2IrDeclarationStorage(
                     valueParameter.name, index, type,
                     if (!valueParameter.isVararg) null
                     else valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.arrayElementType(session)?.toIrType(
-                        session, this, irBuiltIns, forSetter
+                        session, this, irBuiltIns, typeContext
                     ),
                     valueParameter.isCrossinline, valueParameter.isNoinline
                 ).apply {
@@ -894,8 +911,11 @@ class Fir2IrDeclarationStorage(
         return irSymbolTable.referenceClass(irClass.descriptor)
     }
 
-    fun getIrTypeParameterSymbol(firTypeParameterSymbol: FirTypeParameterSymbol, forSetter: Boolean): IrTypeParameterSymbol {
-        val irTypeParameter = getIrTypeParameter(firTypeParameterSymbol.fir, forSetter = forSetter)
+    fun getIrTypeParameterSymbol(
+        firTypeParameterSymbol: FirTypeParameterSymbol,
+        typeContext: ConversionTypeContext
+    ): IrTypeParameterSymbol {
+        val irTypeParameter = getIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)
         return irSymbolTable.referenceTypeParameter(irTypeParameter.descriptor)
     }
 
