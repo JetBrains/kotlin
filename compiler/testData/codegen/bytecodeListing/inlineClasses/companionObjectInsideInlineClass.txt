@@ -1,19 +1,18 @@
 @kotlin.Metadata
 public final class Foo$Companion {
-    inner class Foo$Companion
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method funInCompanion(): void
+    inner class Foo$Companion
 }
 
 @kotlin.Metadata
 public final class Foo {
-    public final static field Companion: Foo$Companion
-    private final static field constValInCompanion: int
-    private final field x: int
-    inner class Foo$Companion
     static method <clinit>(): void
     private synthetic method <init>(p0: int): void
+    private final static field constValInCompanion: int
+    private final field x: int
+    public final static field Companion: Foo$Companion
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Foo
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
@@ -23,6 +22,7 @@ public final class Foo {
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
     public final static method inInlineClass-impl(p0: int): void
+    inner class Foo$Companion
     public method toString(): java.lang.String
     public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int

@@ -1,12 +1,12 @@
 @kotlin.Metadata
 final class OomInReturnUnitKt$test$1 {
+    method <init>(p0: kotlin.coroutines.experimental.Continuation): void
     field L$0: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
-    inner class OomInReturnUnitKt$test$1
-    method <init>(p0: kotlin.coroutines.experimental.Continuation): void
     public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
     synthetic final method getLabel(): int
+    inner class OomInReturnUnitKt$test$1
     synthetic final method setLabel(p0: int): void
 }
 

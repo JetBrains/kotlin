@@ -13,20 +13,20 @@ public interface C {
 
 @kotlin.Metadata
 public final class D$DefaultImpls {
-    inner class D$DefaultImpls
     public static method baz(p0: D): int
+    inner class D$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface D {
-    inner class D$DefaultImpls
     public abstract method baz(): int
+    inner class D$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class E$InsideE {
-    inner class E$InsideE
     public method <init>(): void
+    inner class E$InsideE
 }
 
 @kotlin.Metadata

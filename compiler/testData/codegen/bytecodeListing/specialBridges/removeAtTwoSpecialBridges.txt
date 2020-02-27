@@ -3,8 +3,8 @@ public class A0 {
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
-    public method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method addAll(p0: int, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method clear(): void
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean

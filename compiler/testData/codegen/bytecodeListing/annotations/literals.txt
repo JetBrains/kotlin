@@ -19,18 +19,18 @@ public annotation class FunAnn
 
 @kotlin.Metadata
 final class LiteralsKt$foo$1 {
+    method <init>(p0: int): void
     synthetic final field $arg: int
     inner class LiteralsKt$foo$1
-    method <init>(p0: int): void
     public final @FunAnn method invoke(): int
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
 final class LiteralsKt$foo$2 {
+    method <init>(p0: int): void
     synthetic final field $arg: int
     inner class LiteralsKt$foo$2
-    method <init>(p0: int): void
     public final method invoke(): int
     public synthetic bridge method invoke(): java.lang.Object
 }
@@ -38,27 +38,27 @@ final class LiteralsKt$foo$2 {
 @ClsAnn
 @kotlin.Metadata
 public final class LiteralsKt$foo$3 {
-    inner class LiteralsKt$foo$3
     method <init>(): void
+    inner class LiteralsKt$foo$3
 }
 
 @kotlin.Metadata
 final class LiteralsKt$foo$x$1 {
+    method <init>(p0: int): void
     synthetic final field $arg: int
     inner class LiteralsKt$foo$x$1
-    method <init>(p0: int): void
     public final @FunAnn method invoke(): int
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class LiteralsKt {
+    public final static method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
+    public final static @org.jetbrains.annotations.NotNull method foo(p0: int): My
     inner class LiteralsKt$foo$1
     inner class LiteralsKt$foo$2
     inner class LiteralsKt$foo$3
     inner class LiteralsKt$foo$x$1
-    public final static method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
-    public final static @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }
 
 @kotlin.Metadata

@@ -20,8 +20,8 @@ public final class NullabilityInExpansionKt {
 
 @kotlin.Metadata
 public final class Q1 {
-    private final @org.jetbrains.annotations.Nullable field x: java.lang.Integer
     private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
+    private final @org.jetbrains.annotations.Nullable field x: java.lang.Integer
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): Q1
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.Integer
     public method equals(p0: java.lang.Object): boolean
@@ -37,8 +37,8 @@ public final class Q1 {
 
 @kotlin.Metadata
 public final class Q2 {
-    private final @org.jetbrains.annotations.NotNull field z: java.lang.Integer
     private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): void
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.Integer
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): Q2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): java.lang.Integer
     public method equals(p0: java.lang.Object): boolean
@@ -54,8 +54,8 @@ public final class Q2 {
 
 @kotlin.Metadata
 public final class QN {
-    private final @org.jetbrains.annotations.Nullable field z: Q1
     private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: Q1): void
+    private final @org.jetbrains.annotations.Nullable field z: Q1
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: Q1): QN
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: Q1): Q1
     public method equals(p0: java.lang.Object): boolean
@@ -71,8 +71,8 @@ public final class QN {
 
 @kotlin.Metadata
 public final class S1 {
-    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): S1
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
@@ -88,8 +88,8 @@ public final class S1 {
 
 @kotlin.Metadata
 public final class S2 {
-    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): S2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
@@ -105,8 +105,8 @@ public final class S2 {
 
 @kotlin.Metadata
 public final class SN {
-    private final @org.jetbrains.annotations.Nullable field z: java.lang.String
     private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    private final @org.jetbrains.annotations.Nullable field z: java.lang.String
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): SN
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
@@ -122,8 +122,8 @@ public final class SN {
 
 @kotlin.Metadata
 public final class SN2 {
-    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): SN2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
@@ -139,8 +139,8 @@ public final class SN2 {
 
 @kotlin.Metadata
 public final class W1 {
-    private final @org.jetbrains.annotations.Nullable field x: java.lang.String
     private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    private final @org.jetbrains.annotations.Nullable field x: java.lang.String
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): W1
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
@@ -156,8 +156,8 @@ public final class W1 {
 
 @kotlin.Metadata
 public final class W2 {
-    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): W2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
@@ -173,8 +173,8 @@ public final class W2 {
 
 @kotlin.Metadata
 public final class WN {
-    private final @org.jetbrains.annotations.Nullable field z: W1
     private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: W1): void
+    private final @org.jetbrains.annotations.Nullable field z: W1
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: W1): WN
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: W1): W1
     public method equals(p0: java.lang.Object): boolean
@@ -190,8 +190,8 @@ public final class WN {
 
 @kotlin.Metadata
 public final class Z1 {
-    private final field x: int
     private synthetic method <init>(p0: int): void
+    private final field x: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z1
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
@@ -207,8 +207,8 @@ public final class Z1 {
 
 @kotlin.Metadata
 public final class Z2 {
-    private final field z: int
     private synthetic method <init>(p0: int): void
+    private final field z: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z2
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
@@ -224,8 +224,8 @@ public final class Z2 {
 
 @kotlin.Metadata
 public final class ZN {
-    private final @org.jetbrains.annotations.Nullable field z: Z1
     private synthetic method <init>(@org.jetbrains.annotations.Nullable p0: Z1): void
+    private final @org.jetbrains.annotations.Nullable field z: Z1
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.Nullable p0: Z1): ZN
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: Z1): Z1
     public method equals(p0: java.lang.Object): boolean
@@ -241,8 +241,8 @@ public final class ZN {
 
 @kotlin.Metadata
 public final class ZN2 {
-    private final @org.jetbrains.annotations.NotNull field z: Z1
     private synthetic method <init>(@org.jetbrains.annotations.NotNull p0: Z1): void
+    private final @org.jetbrains.annotations.NotNull field z: Z1
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(@org.jetbrains.annotations.NotNull p0: Z1): ZN2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: Z1): Z1
     public method equals(p0: java.lang.Object): boolean
