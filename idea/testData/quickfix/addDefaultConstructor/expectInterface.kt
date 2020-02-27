@@ -1,4 +1,4 @@
-// "Add default constructor to expect class" "false"
+// "Add default constructor to 'expect' class" "false"
 // ENABLE_MULTIPLATFORM
 // ACTION: Create subclass
 // ACTION: Introduce import alias

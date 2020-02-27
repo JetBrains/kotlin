@@ -1,4 +1,4 @@
-// "Make 'foo' abstract" "false"
+// "Make 'foo' 'abstract'" "false"
 // ACTION: Add function body
 // ACTION: Create test
 // ACTION: Make internal

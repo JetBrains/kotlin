@@ -89,7 +89,7 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
 
     @Test
     fun testAddKotlinReflect() {
-        doTest("Add kotlin-reflect.jar to the classpath")
+        doTest("Add 'kotlin-reflect.jar' to the classpath")
     }
 
     private fun doTest(intentionName: String) {

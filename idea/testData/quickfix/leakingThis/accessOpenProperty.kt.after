@@ -1,4 +1,4 @@
-// "Make 'x' final" "true"
+// "Make 'x' 'final'" "true"
 
 open class My(val x: Int) {
     val y = x

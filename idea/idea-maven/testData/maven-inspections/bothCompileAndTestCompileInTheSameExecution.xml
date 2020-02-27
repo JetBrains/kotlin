@@ -40,4 +40,4 @@
     </build>
 </project>
 
-<!-- problem: on <goals><goal>compile</goal><goal>test-compile</goal></goals>, title It is not recommended to have both test and compile goals in the same execution -->
+<!-- problem: on <goals><goal>compile</goal><goal>test-compile</goal></goals>, title It is not recommended to have both 'compile' and 'test' goals in the same execution -->

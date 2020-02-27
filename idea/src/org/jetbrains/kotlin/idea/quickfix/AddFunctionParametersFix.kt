@@ -84,9 +84,9 @@ class AddFunctionParametersFix(
             }
             is Kind.AddParameterGeneric -> {
                 if (isConstructor()) {
-                    KotlinBundle.message("fix.add.function.parameters.add.parameter.generic.constructor", declarationName)
+                    KotlinBundle.message("fix.add.function.parameters.add.parameter.generic.constructor", newParametersCnt, declarationName)
                 } else {
-                    KotlinBundle.message("fix.add.function.parameters.add.parameter.generic.function", declarationName)
+                    KotlinBundle.message("fix.add.function.parameters.add.parameter.generic.function", newParametersCnt, declarationName)
                 }
             }
             is Kind.AddParameter -> {
