@@ -3,6 +3,7 @@ package com.intellij.openapi.util.registry;
 
 import com.intellij.openapi.application.ExperimentalFeature;
 import com.intellij.openapi.application.Experiments;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.MissingResourceException;
@@ -64,6 +65,6 @@ final class ExperimentalFeatureRegistryValueWrapper extends RegistryValue {
   @NotNull
   @Override
   public String getDescription() {
-    return myFeature.description;
+    return StringUtil.notNullize(myFeature.description);
   }
 }
