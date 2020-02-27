@@ -727,24 +727,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         }
     }
 
-
-    protected ConfigurationKind extractConfigurationKind(@NotNull List<TestFile> files) {
-        boolean addRuntime = false;
-        boolean addReflect = false;
-        for (TestFile file : files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
-                addRuntime = true;
-            }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
-                addReflect = true;
-            }
-        }
-
-        return addReflect ? ConfigurationKind.ALL :
-               addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
-               ConfigurationKind.JDK_ONLY;
-    }
-
     @NotNull
     protected static List<String> extractJavacOptions(@NotNull List<TestFile> files) {
         List<String> javacOptions = new ArrayList<>(0);

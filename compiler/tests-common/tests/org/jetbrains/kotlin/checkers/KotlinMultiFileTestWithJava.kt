@@ -45,7 +45,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         files: List<F>
     ): KotlinCoreEnvironment {
         val configuration = KotlinTestUtils.newConfiguration(
-            getConfigurationKind(),
+            extractConfigurationKind(files),
             getTestJdkKind(files),
             getClasspath(file),
             if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList()

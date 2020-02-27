@@ -55,6 +55,21 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         return TestJdkKind.MOCK_JDK
     }
 
+    protected open fun extractConfigurationKind(files: List<F>): ConfigurationKind {
+        var addRuntime = false
+        var addReflect = false
+        for (file in files) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                addRuntime = true
+            }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
+                addReflect = true
+            }
+        }
+        return if (addReflect) ConfigurationKind.ALL else if (addRuntime) ConfigurationKind.NO_KOTLIN_REFLECT else ConfigurationKind.JDK_ONLY
+    }
+
+
     open class TestFile(@JvmField val name: String, @JvmField val content: String) : Comparable<TestFile> {
         override operator fun compareTo(other: TestFile): Int {
             return name.compareTo(other.name)
