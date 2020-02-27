@@ -75,8 +75,15 @@ public class EditorFoldingInfo {
     myFoldRegionToSmartPointerMap.remove(region);
   }
 
-  public void dispose() {
+  void dispose() {
     myFoldRegionToSmartPointerMap.clear();
+  }
+
+  static void disposeForEditor(@NotNull Editor editor) {
+    EditorFoldingInfo info = editor.getUserData(KEY);
+    if (info != null) {
+      info.dispose();
+    }
   }
 
   private static class EditorFoldingInfoWindow extends EditorFoldingInfo {
@@ -103,7 +110,7 @@ public class EditorFoldingInfo {
     }
 
     @Override
-    public void dispose() {
+    void dispose() {
       myDelegate.dispose();
     }
 

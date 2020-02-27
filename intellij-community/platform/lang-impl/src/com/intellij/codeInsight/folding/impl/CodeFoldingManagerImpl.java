@@ -93,14 +93,7 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
   @Override
   public void releaseFoldings(@NotNull Editor editor) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    final Project project = editor.getProject();
-    if (project != null && (!project.equals(myProject) || !project.isOpen())) return;
-
-    Document document = editor.getDocument();
-    PsiFile file = PsiDocumentManager.getInstance(myProject).getPsiFile(document);
-    if (file == null || !file.getViewProvider().isPhysical() || !file.isValid()) return;
-
-    EditorFoldingInfo.get(editor).dispose();
+    EditorFoldingInfo.disposeForEditor(editor);
   }
 
   @Override
