@@ -34,6 +34,17 @@ object JvmBackendFacade {
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, signaturer = signaturer)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
 
+        val stubGenerator = DeclarationStubGenerator(
+            psi2irContext.moduleDescriptor, psi2irContext.symbolTable, psi2irContext.irBuiltIns.languageVersionSettings, extensions
+        )
+        val deserializer = JvmIrLinker(
+            EmptyLoggingContext, psi2irContext.irBuiltIns, psi2irContext.symbolTable
+        )
+        psi2irContext.moduleDescriptor.allDependencyModules.filter { it.getCapability(KlibModuleOrigin.CAPABILITY) != null }.forEach {
+            deserializer.deserializeIrModuleHeader(it)
+        }
+        val irProviders = listOf(deserializer, stubGenerator)
+
         for (extension in IrGenerationExtension.getInstances(state.project)) {
             psi2ir.addPostprocessingStep { module ->
                 extension.generate(
@@ -44,7 +55,8 @@ object JvmBackendFacade {
                         psi2irContext.languageVersionSettings,
                         psi2irContext.symbolTable,
                         psi2irContext.typeTranslator,
-                        psi2irContext.irBuiltIns
+                        psi2irContext.irBuiltIns,
+                        irProviders = irProviders
                     )
                 )
             }
@@ -53,6 +65,7 @@ object JvmBackendFacade {
         val stubGenerator = DeclarationStubGenerator(
             psi2irContext.moduleDescriptor, psi2irContext.symbolTable, psi2irContext.irBuiltIns.languageVersionSettings, extensions
         )
+        stubGenerator.setIrProviders(irProviders)
         val deserializer = JvmIrLinker(
             EmptyLoggingContext, psi2irContext.irBuiltIns, psi2irContext.symbolTable
         )
