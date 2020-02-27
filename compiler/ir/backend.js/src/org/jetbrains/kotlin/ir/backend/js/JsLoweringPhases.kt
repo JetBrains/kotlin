@@ -358,6 +358,12 @@ private val privateMemberUsagesLoweringPhase = makeBodyLoweringPhase(
     description = "Rewrite the private member usages"
 )
 
+private val propertyReferenceLoweringPhase = makeBodyLoweringPhase(
+    ::PropertyReferenceLowering,
+    name = "PropertyReferenceLowering",
+    description = "Transform property references"
+)
+
 private val interopCallableReferenceLoweringPhase = makeBodyLoweringPhase(
     ::InteropCallableReferenceLowering,
     name = "InteropCallableReferenceLowering",
@@ -612,6 +618,7 @@ val loweringList = listOf<Lowering>(
     enumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
     suspendFunctionsLoweringPhase,
+    propertyReferenceLoweringPhase,
     interopCallableReferenceLoweringPhase,
     returnableBlockLoweringPhase,
     forLoopsLoweringPhase,

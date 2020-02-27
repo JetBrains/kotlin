@@ -204,14 +204,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateSuperClasses(): JsPropertyInitializer {
-        val functionTypeOrSubtype = irClass.defaultType.isFunctionTypeOrSubtype()
         return JsPropertyInitializer(
             JsNameRef(Namer.METADATA_INTERFACES),
             JsArrayLiteral(
                 irClass.superTypes.mapNotNull {
                     val symbol = it.classifierOrFail as IrClassSymbol
+                    val isFunctionType = it.run { isFunctionOrKFunction() || isSuspendFunctionOrKFunction() }
                     // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
-                    if (symbol.isInterface && !functionTypeOrSubtype && !symbol.isEffectivelyExternal) {
+                    if (symbol.isInterface && !isFunctionType && !symbol.isEffectivelyExternal) {
                         JsNameRef(context.getNameForClass(symbol.owner))
                     } else null
                 }
