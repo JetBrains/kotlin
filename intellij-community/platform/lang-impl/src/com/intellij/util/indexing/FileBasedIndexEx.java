@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
+import com.intellij.util.containers.ConcurrentBitSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
@@ -333,8 +334,8 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   @Override
   public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, @Nullable ProgressIndicator indicator) {
     final ProgressIndicator finalIndicator = indicator == null ? new EmptyProgressIndicator() : indicator;
-    Set<IndexableFilesProvider> providers = getIndexableFilesProviders(project, finalIndicator);
-    VisitedFileSet visitedFileSet = new VisitedFileSet();
+    List<IndexableFilesProvider> providers = getOrderedIndexableFilesProviders(project, finalIndicator);
+    ConcurrentBitSet visitedFileSet = new ConcurrentBitSet();
     for (IndexableFilesProvider provider : providers) {
       if (!provider.iterateFiles(project, processor, visitedFileSet)) {
         break;
@@ -342,38 +343,41 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
     }
   }
 
+  /**
+   * Returns providers of files to be indexed. Indexing is performed in the order corresponding to the resulting list.
+   */
   @NotNull
-  public Set<IndexableFilesProvider> getIndexableFilesProviders(@NotNull Project project,
-                                                                @NotNull ProgressIndicator indicator) {
+  public List<IndexableFilesProvider> getOrderedIndexableFilesProviders(@NotNull Project project,
+                                                                        @NotNull ProgressIndicator indicator) {
     if (LightEdit.owns(project)) {
-      return Collections.emptySet();
+      return Collections.emptyList();
     }
     return ReadAction.compute(() -> {
       if (project.isDisposed()) {
-        return Collections.emptySet();
+        return Collections.emptyList();
       }
 
+      Set<Library> seenLibraries = new HashSet<>();
+      Set<Sdk> seenSdks = new HashSet<>();
       Set<OrderEntry> allEntries = new THashSet<>();
-      Set<IndexableFilesProvider> providers = new HashSet<>();
-      Module[] modules = ModuleManager.getInstance(project).getModules();
+
+      List<IndexableFilesProvider> providers = new ArrayList<>();
+      Module[] modules = ModuleManager.getInstance(project).getSortedModules();
       for (Module module : modules) {
-        if (module.isDisposed()) continue;
         providers.add(new ModuleIndexableFilesProvider(module));
 
-        // iterate associated libraries
         OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         for (OrderEntry orderEntry : orderEntries) {
           allEntries.add(orderEntry);
-          if (!orderEntry.isValid()) continue;
           if (orderEntry instanceof LibraryOrderEntry) {
             Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
-            if (library != null) {
+            if (library != null && seenLibraries.add(library)) {
               providers.add(new LibraryIndexableFilesProvider(library));
             }
           }
           if (orderEntry instanceof JdkOrderEntry) {
             Sdk sdk = ((JdkOrderEntry)orderEntry).getJdk();
-            if (sdk != null) {
+            if (sdk != null && seenSdks.add(sdk)) {
               providers.add(new SdkIndexableFilesProvider(sdk));
             }
           }
@@ -384,7 +388,6 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
         providers.add(new IndexableSetContributorFilesProvider(contributor));
       }
 
-      // iterate synthetic project libraries
       for (AdditionalLibraryRootsProvider provider : AdditionalLibraryRootsProvider.EP_NAME.getExtensionList()) {
         for (SyntheticLibrary library : provider.getAdditionalProjectLibraries(project)) {
           providers.add(new SyntheticLibraryIndexableFilesProvider(library, project));
