@@ -425,8 +425,8 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded,
                                                   boolean leaf, int row, boolean hasFocus) {
-      Color background = isSelected ? UIUtil.getTreeSelectionBackground(hasFocus) : tree.getBackground();
-      Color foreground = isSelected ? UIUtil.getTreeSelectionForeground(hasFocus) : tree.getForeground();
+      Color background = isSelected ? UIUtil.getTreeSelectionBackground(hasFocus) : UIUtil.getTreeBackground(tree);
+      Color foreground = isSelected ? UIUtil.getTreeSelectionForeground(hasFocus) : UIUtil.getTreeForeground(tree);
       if (value instanceof MyToggleTreeNode) {
         MyToggleTreeNode treeNode = (MyToggleTreeNode)value;
 
