@@ -1,7 +1,7 @@
 // "Create enum constant 'PUBLIC'" "true"
 enum class TopicState {
     PRIVATE,
-    <caret>PUBLIC
+    <caret>PUBLIC,
 }
 
 fun foo() {

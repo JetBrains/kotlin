@@ -3138,6 +3138,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasComma.kt");
                 }
 
+                @TestMetadata("enumEntryHasCommaAndSemicolon.kt")
+                public void testEnumEntryHasCommaAndSemicolon() throws Exception {
+                    runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasCommaAndSemicolon.kt");
+                }
+
+                @TestMetadata("enumEntryHasCommaAndSemicolon2.kt")
+                public void testEnumEntryHasCommaAndSemicolon2() throws Exception {
+                    runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasCommaAndSemicolon2.kt");
+                }
+
                 @TestMetadata("enumEntryHasNoLineBreak.kt")
                 public void testEnumEntryHasNoLineBreak() throws Exception {
                     runTest("testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasNoLineBreak.kt");
