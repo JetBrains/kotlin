@@ -3894,7 +3894,7 @@ public abstract interface class kotlin/properties/ReadOnlyProperty {
 	public abstract fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 }
 
-public abstract interface class kotlin/properties/ReadWriteProperty {
+public abstract interface class kotlin/properties/ReadWriteProperty : kotlin/properties/ReadOnlyProperty {
 	public abstract fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public abstract fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }

@@ -35,14 +35,14 @@ public interface ReadOnlyProperty<in T, out V> {
  * @param T the type of object which owns the delegated property.
  * @param V the type of the property value.
  */
-public interface ReadWriteProperty<in T, V> {
+public interface ReadWriteProperty<in T, V> : ReadOnlyProperty<T, V> {
     /**
      * Returns the value of the property for the given object.
      * @param thisRef the object for which the value is requested.
      * @param property the metadata for the property.
      * @return the property value.
      */
-    public operator fun getValue(thisRef: T, property: KProperty<*>): V
+    public override operator fun getValue(thisRef: T, property: KProperty<*>): V
 
     /**
      * Sets the value of the property for the given object.
