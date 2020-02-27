@@ -5,6 +5,7 @@
 
 package test
 
+import java.util.*
 import kotlin.test.assertEquals
 
 public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
@@ -27,3 +28,6 @@ internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
 }
 public actual fun testOnJvm(action: () -> Unit) = action()
 public actual fun testOnJs(action: () -> Unit) {}
+
+@Suppress("HasPlatformType", "UNCHECKED_CAST")
+public fun <T> platformNull() = Collections.singletonList(null as T).first()
