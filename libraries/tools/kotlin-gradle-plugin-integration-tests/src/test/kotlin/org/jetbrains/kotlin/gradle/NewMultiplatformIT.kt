@@ -2525,7 +2525,14 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNativeArgsWithSpaces() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
         setupWorkingDir()
-        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/path with spaces and special symbols like \"")
+        val compilcatedDirectoryName = if (HostManager.hostIsMingw) {
+            // Windows doesn't allow creating a file with " in its name.
+            "path with spaces"
+        } else {
+            "path with spaces and \""
+        }
+
+        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/$compilcatedDirectoryName")
             .apply { mkdirs() }
             .resolve("B.kt")
         fileWithSpacesInPath.writeText("fun foo() = 42")
