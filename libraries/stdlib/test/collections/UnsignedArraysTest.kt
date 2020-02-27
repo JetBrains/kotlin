@@ -86,6 +86,8 @@ class UnsignedArraysTest {
         uintArrayOf(1u, UInt.MAX_VALUE, UInt.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         ushortArrayOf(1u, UShort.MAX_VALUE, UShort.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         ubyteArrayOf(1u, UByte.MAX_VALUE, UByte.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+
+        (null as ULongArray?).let { assertEquals(it?.toList().hashCode(), it.contentHashCode()) }
     }
 
     @Test
@@ -94,6 +96,8 @@ class UnsignedArraysTest {
         uintArrayOf(1u, UInt.MAX_VALUE, UInt.MIN_VALUE).let { assertEquals(it.toList().toString(), it.contentToString()) }
         ushortArrayOf(1u, UShort.MAX_VALUE, UShort.MIN_VALUE).let { assertEquals(it.toList().toString(), it.contentToString()) }
         ubyteArrayOf(1u, UByte.MAX_VALUE, UByte.MIN_VALUE).let { assertEquals(it.toList().toString(), it.contentToString()) }
+
+        (null as UIntArray?).let { assertEquals(it?.toList().toString(), it.contentToString()) }
     }
 
     @Test
@@ -114,6 +118,10 @@ class UnsignedArraysTest {
             assertTrue(arr contentEquals UByteArray(arr.size, arr::get))
             assertFalse(arr contentEquals UByteArray(arr.size - 1, arr::get))
         }
+
+        assertTrue((null as UShortArray?) contentEquals null)
+        assertFalse(null contentEquals ubyteArrayOf(1u))
+        assertFalse(ulongArrayOf() contentEquals null)
     }
 
     @Test

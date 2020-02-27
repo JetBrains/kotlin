@@ -3015,9 +3015,10 @@ public inline fun ShortArray.asUShortArray(): UShortArray {
  * i.e. contain the same number of the same elements in the same order.
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
-    return storage.contentEquals(other.storage)
+    return this.contentEquals(other)
 }
 
 /**
@@ -3025,9 +3026,10 @@ public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
  * i.e. contain the same number of the same elements in the same order.
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
-    return storage.contentEquals(other.storage)
+    return this.contentEquals(other)
 }
 
 /**
@@ -3035,9 +3037,10 @@ public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
  * i.e. contain the same number of the same elements in the same order.
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
-    return storage.contentEquals(other.storage)
+    return this.contentEquals(other)
 }
 
 /**
@@ -3045,45 +3048,126 @@ public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
  * i.e. contain the same number of the same elements in the same order.
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public infix fun UShortArray.contentEquals(other: UShortArray): Boolean {
-    return storage.contentEquals(other.storage)
+    return this.contentEquals(other)
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public infix fun UIntArray?.contentEquals(other: UIntArray?): Boolean {
+    return this?.storage.contentEquals(other?.storage)
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public infix fun ULongArray?.contentEquals(other: ULongArray?): Boolean {
+    return this?.storage.contentEquals(other?.storage)
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public infix fun UByteArray?.contentEquals(other: UByteArray?): Boolean {
+    return this?.storage.contentEquals(other?.storage)
+}
+
+/**
+ * Returns `true` if the two specified arrays are *structurally* equal to one another,
+ * i.e. contain the same number of the same elements in the same order.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public infix fun UShortArray?.contentEquals(other: UShortArray?): Boolean {
+    return this?.storage.contentEquals(other?.storage)
 }
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun UIntArray.contentHashCode(): Int {
-    return storage.contentHashCode()
+    return this.contentHashCode()
 }
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun ULongArray.contentHashCode(): Int {
-    return storage.contentHashCode()
+    return this.contentHashCode()
 }
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun UByteArray.contentHashCode(): Int {
-    return storage.contentHashCode()
+    return this.contentHashCode()
 }
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun UShortArray.contentHashCode(): Int {
-    return storage.contentHashCode()
+    return this.contentHashCode()
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun UIntArray?.contentHashCode(): Int {
+    return this?.storage.contentHashCode()
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun ULongArray?.contentHashCode(): Int {
+    return this?.storage.contentHashCode()
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun UByteArray?.contentHashCode(): Int {
+    return this?.storage.contentHashCode()
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun UShortArray?.contentHashCode(): Int {
+    return this?.storage.contentHashCode()
 }
 
 /**
@@ -3092,9 +3176,10 @@ public fun UShortArray.contentHashCode(): Int {
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun UIntArray.contentToString(): String {
-    return joinToString(", ", "[", "]")
+    return this.contentToString()
 }
 
 /**
@@ -3103,9 +3188,10 @@ public fun UIntArray.contentToString(): String {
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun ULongArray.contentToString(): String {
-    return joinToString(", ", "[", "]")
+    return this.contentToString()
 }
 
 /**
@@ -3114,9 +3200,10 @@ public fun ULongArray.contentToString(): String {
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun UByteArray.contentToString(): String {
-    return joinToString(", ", "[", "]")
+    return this.contentToString()
 }
 
 /**
@@ -3125,9 +3212,54 @@ public fun UByteArray.contentToString(): String {
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
 @SinceKotlin("1.3")
+@kotlin.internal.LowPriorityInOverloadResolution
 @ExperimentalUnsignedTypes
 public fun UShortArray.contentToString(): String {
-    return joinToString(", ", "[", "]")
+    return this.contentToString()
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun UIntArray?.contentToString(): String {
+    return this?.joinToString(", ", "[", "]") ?: "null"
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun ULongArray?.contentToString(): String {
+    return this?.joinToString(", ", "[", "]") ?: "null"
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun UByteArray?.contentToString(): String {
+    return this?.joinToString(", ", "[", "]") ?: "null"
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentToString
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+public fun UShortArray?.contentToString(): String {
+    return this?.joinToString(", ", "[", "]") ?: "null"
 }
 
 /**
