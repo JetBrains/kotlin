@@ -172,7 +172,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     }
   }
 
-  public static int getIndexingThreadsNumber() {
+  public static int getNumberOfIndexingThreads() {
     int threadsCount = Registry.intValue("caches.indexerThreadsCount");
     if (threadsCount <= 0) {
       int coresToLeaveForOtherActivity = ApplicationManager.getApplication().isCommandLine() ? 0 : 1;
