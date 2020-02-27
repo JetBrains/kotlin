@@ -4076,7 +4076,6 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             enableMultiplatform true
             extraOpts '-tr',
                     '-Xuse-experimental=kotlin.Experimental,kotlin.ExperimentalStdlibApi',
-                    '-XXLanguage:-NewInference',
                     "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
         }
