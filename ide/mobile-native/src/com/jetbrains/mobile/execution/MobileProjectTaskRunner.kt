@@ -43,11 +43,10 @@ object MobileBuildTaskRunner : CidrTaskRunner {
         task: ProjectTask,
         callback: ProjectTaskNotification?,
         sessionId: Any,
-        taskContext: ProjectTaskContext
+        context: ProjectTaskContext
     ) {
         val success = try {
-            val context = taskContext as MobileProjectTaskRunner.Context
-            val configuration = context.runConfiguration as MobileRunConfiguration
+            val configuration = (context as MobileProjectTaskRunner.Context).runConfiguration as MobileRunConfiguration
             MobileBuild.build(configuration, context.device)
         } catch (e: Throwable) {
             log.error(e)
