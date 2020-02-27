@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -106,7 +107,8 @@ fun KotlinLibrary.createKlibPackageFragmentProvider(
     storageManager: StorageManager,
     metadataModuleDescriptorFactory: KlibMetadataModuleDescriptorFactory,
     languageVersionSettings: LanguageVersionSettings,
-    moduleDescriptor: ModuleDescriptor
+    moduleDescriptor: ModuleDescriptor,
+    lookupTracker: LookupTracker
 ): PackageFragmentProvider? {
     if (!getCompatibilityInfo().isCompatible) return null
 
@@ -119,6 +121,7 @@ fun KotlinLibrary.createKlibPackageFragmentProvider(
         storageManager = storageManager,
         moduleDescriptor = moduleDescriptor,
         configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-        compositePackageFragmentAddend = null
+        compositePackageFragmentAddend = null,
+        lookupTracker = lookupTracker
     )
 }

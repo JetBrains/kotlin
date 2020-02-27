@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
 import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -84,7 +85,8 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
                 storageManager = storageManager,
                 metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
                 languageVersionSettings = languageVersionSettings,
-                moduleDescriptor = moduleDescriptor
+                moduleDescriptor = moduleDescriptor,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
     }
 

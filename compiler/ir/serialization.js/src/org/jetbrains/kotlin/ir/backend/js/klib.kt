@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -316,7 +317,8 @@ fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, Mo
         LanguageVersionSettingsImpl.DEFAULT,
         LockBasedStorageManager.NO_LOCKS,
         null,
-        packageAccessHandler = null // TODO: This is a speed optimization used by Native. Don't bother for now.
+        packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
+        lookupTracker = LookupTracker.DO_NOTHING
     )
 //    if (isBuiltIns) runtimeModule = md
 
@@ -397,12 +399,14 @@ private class ModulesStructure(
     fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
         val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
+        val lookupTracker = compilerConfiguration[CommonConfigurationKeys.LOOKUP_TRACKER] ?: LookupTracker.DO_NOTHING
         val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             current,
             languageVersionSettings,
             storageManager,
             runtimeModule?.builtIns,
-            packageAccessHandler = null // TODO: This is a speed optimization used by Native. Don't bother for now.
+            packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
+            lookupTracker = lookupTracker
         )
         if (isBuiltIns) runtimeModule = md
 
