@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ui.tabs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -90,6 +90,7 @@ public final class FileColorManagerImpl extends FileColorManager {
   @Override
   @Nullable
   public Color getColor(@NotNull String name) {
+    if (!isEnabled()) return null;
     Color color = ourDefaultColors.get(name);
     return color == null ? ColorUtil.fromHex(name, null) : color;
   }
@@ -134,6 +135,7 @@ public final class FileColorManagerImpl extends FileColorManager {
   @Override
   @Nullable
   public Color getFileColor(@NotNull VirtualFile file) {
+    if (!isEnabled()) return null;
     String colorName = myInitializedModel.getValue().getColor(file, getProject());
     return colorName == null ? null : getColor(colorName);
   }
@@ -141,6 +143,7 @@ public final class FileColorManagerImpl extends FileColorManager {
   @Override
   @Nullable
   public Color getScopeColor(@NotNull String scopeName) {
+    if (!isEnabled()) return null;
     String colorName = myInitializedModel.getValue().getScopeColor(scopeName, getProject());
     return colorName == null ? null : getColor(colorName);
   }

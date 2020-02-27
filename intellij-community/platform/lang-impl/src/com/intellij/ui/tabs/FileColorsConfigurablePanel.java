@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ui.tabs;
 
@@ -56,6 +56,9 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
     myProjectViewEnabledCheckBox = new JCheckBox(EditorBundle.message("file.colors.use.in.project.vew"));
     myProjectViewEnabledCheckBox.setMnemonic('P');
     topPanel.add(myProjectViewEnabledCheckBox);
+
+    updateCheckBoxes();
+    myEnabledCheckBox.addChangeListener(event -> updateCheckBoxes());
 
     topPanel.add(Box.createHorizontalGlue());
 
@@ -149,6 +152,11 @@ public class FileColorsConfigurablePanel extends JPanel implements Disposable {
 
     myLocalTable.getEmptyText().setText(EditorBundle.message("file.colors.no.local.colors"));
     mySharedTable.getEmptyText().setText(EditorBundle.message("file.colors.no.shared.colors"));
+  }
+
+  private void updateCheckBoxes() {
+    myTabsEnabledCheckBox.setEnabled(myEnabledCheckBox.isSelected());
+    myProjectViewEnabledCheckBox.setEnabled(myEnabledCheckBox.isSelected());
   }
 
   private void unshare() {
