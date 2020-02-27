@@ -28,6 +28,26 @@ class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollec
         runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(typeAlias, it) }
     }
 
+    override fun visitConstructor(constructor: FirConstructor) {
+        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(constructor, it) }
+    }
+
+    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        runCheck { DeclarationCheckers.DECLARATIONS.check(anonymousFunction, it) }
+    }
+
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        runCheck { DeclarationCheckers.DECLARATIONS.check(propertyAccessor, it) }
+    }
+
+    override fun visitValueParameter(valueParameter: FirValueParameter) {
+        runCheck { DeclarationCheckers.DECLARATIONS.check(valueParameter, it) }
+    }
+
+    override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+        runCheck { DeclarationCheckers.DECLARATIONS.check(enumEntry, it) }
+    }
+
     private fun <D : FirDeclaration> List<FirDeclarationChecker<D>>.check(declaration: D, reporter: DiagnosticReporter) {
         for (checker in this) {
             checker.check(declaration, reporter)
