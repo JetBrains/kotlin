@@ -18,6 +18,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.annotations.TestOnly
 
 class SuggestedRefactoringAvailabilityIndicator(private val project: Project) {
   private class Data(
@@ -115,7 +116,7 @@ class SuggestedRefactoringAvailabilityIndicator(private val project: Project) {
     }
   }
 
-  // for tests
+  @get:TestOnly
   val hasData: Boolean
     get() = data != null
 

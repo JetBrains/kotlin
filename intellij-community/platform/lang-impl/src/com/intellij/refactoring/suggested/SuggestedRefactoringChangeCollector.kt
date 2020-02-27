@@ -8,6 +8,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.SuggestedRefactoringState.ErrorLevel
 import com.intellij.util.concurrency.AppExecutorUtil
+import org.jetbrains.annotations.TestOnly
 
 class SuggestedRefactoringChangeCollector(
   private val availabilityIndicator: SuggestedRefactoringAvailabilityIndicator
@@ -92,7 +93,7 @@ class SuggestedRefactoringChangeCollector(
     availabilityIndicator.update(state.declaration, refactoringData, refactoringSupport)
   }
 
-  // for tests
+  @set:TestOnly
   var _amendStateInBackgroundEnabled = !ApplicationManager.getApplication().isUnitTestMode
     set(value) {
       if (value != field) {

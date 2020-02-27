@@ -4,6 +4,7 @@ package com.intellij.refactoring.suggested
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.annotations.TestOnly
 
 class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringProvider {
   val availabilityIndicator = SuggestedRefactoringAvailabilityIndicator(project)
@@ -29,7 +30,7 @@ class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringP
     listener.suppressForCurrentDeclaration()
   }
 
-  // for tests
+  @set:TestOnly
   var _amendStateInBackgroundEnabled: Boolean
     get() = changeCollector._amendStateInBackgroundEnabled
     set(value) { changeCollector._amendStateInBackgroundEnabled = value }

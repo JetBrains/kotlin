@@ -32,6 +32,7 @@ import com.intellij.refactoring.suggested.SuggestedRefactoringExecution.NewParam
 import com.intellij.refactoring.suggested.SuggestedRefactoringState.ErrorLevel
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.ui.awt.RelativePoint
+import org.jetbrains.annotations.TestOnly
 import java.awt.Font
 import java.awt.Insets
 import java.awt.Point
@@ -367,5 +368,5 @@ private fun SuggestedRefactoringSupport.anchorOffset(declaration: PsiElement): I
   return nameRange(declaration)?.startOffset ?: declaration.startOffset
 }
 
-// for testing
+@set:TestOnly
 var _suggestedChangeSignatureNewParameterValuesForTests: ((index: Int) -> NewParameterValue)? = null
