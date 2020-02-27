@@ -220,6 +220,11 @@ class ArraysTest {
         checkArray(longArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
         checkArray(doubleArrayOf(Double.NaN, -0.0, 0.0, Double.POSITIVE_INFINITY, 1.0),
                    { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { this[1] = 0.0 })
+
+        assertTrue((null as BooleanArray?) contentEquals null)
+        assertFalse(null contentEquals shortArrayOf(1))
+        assertFalse((emptyArray<String>() as Array<String>?) contentEquals null)
+        assertFalse(null.contentEquals(arrayOf("0", null)))
     }
 
     @Test fun contentDeepEquals() {
@@ -245,6 +250,11 @@ class ArraysTest {
 
         arr5[0][0] = 0.0
         assertTrue(arr5 contentDeepEquals arr6)
+
+        assertTrue((null as Array<String>?) contentDeepEquals null)
+        assertTrue(null contentDeepEquals (null as Array<String>?))
+        assertFalse(arrayOf("") contentDeepEquals null)
+        assertFalse(null contentDeepEquals arrayOf<Any?>(null))
     }
 
     @Test fun contentToString() {
@@ -253,6 +263,8 @@ class ArraysTest {
         intArrayOf(1, 10, 42).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
         longArrayOf(1L, 5L, Long.MAX_VALUE).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
         doubleArrayOf(0.0, Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
+
+        (null as ByteArray?).let { arr -> assertEquals(arr?.asList().toString(), arr.contentToString()) }
     }
 
     @Test fun contentDeepToString() {
@@ -263,6 +275,8 @@ class ArraysTest {
             doubleArrayOf(3.14), floatArrayOf(1.25f)
         )
         assertEquals("[aa, 1, null, [[foo]], [d], [false], [-1], [-1], [-1], [-1], [4294967295], [18446744073709551615], [65535], [255], [3.14], [1.25]]", arr.contentDeepToString())
+
+        assertEquals("null", (null as Array<Int>?).contentDeepToString())
     }
 
     @Test fun contentDeepToStringNoRecursion() {
@@ -290,6 +304,8 @@ class ArraysTest {
         charArrayOf('a', Char.MAX_VALUE, Char.MIN_VALUE).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         doubleArrayOf(1.0, -0.0, 0.0, Double.NaN, Double.POSITIVE_INFINITY).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
         floatArrayOf(1.0f, -0.0f, 0.0f, Float.NaN, Float.POSITIVE_INFINITY).let { assertEquals(it.toList().hashCode(), it.contentHashCode()) }
+
+        (null as IntArray?).let { assertEquals(it?.toList().hashCode(), it.contentHashCode()) }
     }
 
     @Test fun contentDeepHashCode() {
@@ -310,6 +326,8 @@ class ArraysTest {
         val uintList2 = listOf(listOf(1u, 2u), listOf(3u, 4u))
 
         assertEquals(uintList2.hashCode(), uintArray2.contentDeepHashCode())
+
+        assertEquals(0, (null as Array<Any>?).contentDeepHashCode())
     }
 
 
