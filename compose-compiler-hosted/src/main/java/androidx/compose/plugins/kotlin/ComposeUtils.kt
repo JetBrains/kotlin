@@ -36,6 +36,10 @@ object ComposeUtils {
 
     fun composeFqName(cname: String) = FqName("${generateComposePackageName()}.$cname")
 
+    fun composeInternalFqName(cname: String? = null) = FqName(
+        "${generateComposePackageName()}.internal${cname?.let { ".$it"} ?: ""}"
+    )
+
     fun setterMethodFromPropertyName(name: String): String {
         return "set${name[0].toUpperCase()}${name.slice(1 until name.length)}"
     }

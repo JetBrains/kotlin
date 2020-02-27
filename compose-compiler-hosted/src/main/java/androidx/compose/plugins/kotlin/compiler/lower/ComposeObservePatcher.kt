@@ -147,8 +147,9 @@ class ComposeObservePatcher(
 
         // Check if the descriptor has restart scope calls resolved
         if (descriptor is SimpleFunctionDescriptor &&
-            // Lambdas that make are not lowered earlier should be ignored.
-            // All composable lambdas are already lowered to a class with an invoke() method.
+            // Lambdas should be ignored. All composable lambdas are wrapped by a restartable
+            // function wrapper by ComposerLambdaMemoization which supplies the startRestartGroup/
+            // endRestartGroup pair on behalf of the lambda.
             declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
             declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE) {
 

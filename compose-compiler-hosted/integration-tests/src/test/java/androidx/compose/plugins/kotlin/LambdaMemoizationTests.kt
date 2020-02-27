@@ -35,6 +35,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
 
             @Composable
             fun EventHolder(event: () -> Unit, block: @Composable() () -> Unit) {
+              workToBeAvoided()
               block()
             }
 
@@ -71,12 +72,18 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             fun eventFired() { }
 
             @Composable
-            fun EventHolder(event: () -> Unit) {}
+            fun EventHolder(event: () -> Unit, block: @Composable() () -> Unit) {
+              workToBeAvoided()
+              block()
+            }
 
             @Composable
             fun Example(model: String) {
               workToBeRepeated()
-              EventHolder(event = ::eventFired)
+              EventHolder(event = ::eventFired) {
+                workToBeRepeated()
+                ValidateModel(text = model)
+              }
             }
         """)
 
@@ -413,7 +420,9 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
 
         @Composable
         fun Wrap(block: @Composable() () -> Unit) {
+          workToBeAvoided()
           block()
+          workToBeAvoided()
         }
 
         @Composable
@@ -462,6 +471,206 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
              ExpectModified(event = { eventFired(number) })
              ExpectUnmodified(event = { eventFired(5) })
            }
+        }
+    """)
+
+    @Test
+    fun wrapLambaExpressions() = skipping("""
+            @Composable
+            fun Wrapper(block: @Composable() () -> Unit) {
+               workToBeAvoided()
+               block()
+               workToBeAvoided()
+            }
+
+            @Composable
+            fun Example(model: String) {
+              workToBeRepeated()
+              Wrapper {
+                workToBeRepeated()
+                ValidateModel(model)
+              }
+            }
+        """)
+
+    @Test
+    fun nonCapturingComposableLambda() = skipping("""
+            @Composable
+            fun Wrapper1(block: @Composable() () -> Unit) {
+              workToBeAvoided("Wrapper1.1")
+              block()
+              workToBeAvoided("Wrapper1.2")
+            }
+
+            @Composable
+            fun Wrapper2(block: @Composable() () -> Unit) {
+              workToBeAvoided("Wrapper2.1")
+              Wrapper1(block = block)
+              workToBeAvoided("Wrapper2.2")
+            }
+
+            @Composable
+            fun Wrapper3(block: @Composable() () -> Unit) {
+              workToBeAvoided("Wrapper3.1")
+              Wrapper2 {
+                block()
+              }
+              workToBeAvoided("Wrapper3.2")
+            }
+
+            @Composable
+            fun Example(model: String) {
+              Wrapper3 {
+                workToBeRepeated("Example1.1")
+                ValidateModel(model)
+                Wrapper3 {
+                  workToBeRepeated("Example1.2")
+                  ValidateModel(model)
+                }
+              }
+            }
+        """)
+
+    @Test
+    fun wrappingOneParameter() = skipping("""
+        @Composable
+        fun Wrap(block: @Composable() (p1: String) -> Unit) {
+          workToBeAvoided()
+          block("test")
+          workToBeAvoided()
+        }
+
+        @Composable
+        fun Example(model: String) {
+          workToBeRepeated()
+          Wrap { p1 ->
+            require(p1 == "test")
+            workToBeRepeated()
+            Display(p1)
+            ValidateModel(model)
+          }
+        }
+     """)
+
+    @Test // Selecting 23 as 22 is the maximum number handled by RestartingFunction
+    fun wrapping23Parameters() = skipping("""
+        @Composable
+        fun Wrap(block: @Composable() (
+            p1: String,
+            p2: String,
+            p3: String,
+            p4: String,
+            p5: String,
+            p6: String,
+            p7: String,
+            p8: String,
+            p9: String,
+            p10: String,
+            p11: String,
+            p12: String,
+            p13: String,
+            p14: String,
+            p15: String,
+            p16: String,
+            p17: String,
+            p18: String,
+            p19: String,
+            p20: String,
+            p21: String,
+            p22: String,
+            p23: String
+          ) -> Unit) {
+          workToBeAvoided()
+          block(
+            "test1", "test2", "test3", "test4", "test5",
+            "test6", "test7", "test8", "test9", "test10",
+            "test11", "test12", "test13", "test14", "test15",
+            "test16", "test17", "test18", "test19", "test20",
+            "test21", "test22", "test23"
+          )
+          workToBeAvoided()
+        }
+
+        @Composable
+        fun Example(model: String) {
+          workToBeRepeated()
+          Wrap {
+            p1, p2, p3, p4, p5, p6, p7, p8, p9, p10,
+            p11, p12, p13, p14, p15, p16, p17, p18, p19, p20,
+            p21, p22, p23 ->
+            require(p1 == "test1") { "p1 should be test1 but was ${'$'}p1" }
+            require(p2 == "test2") { "p2 should be test2 but was ${'$'}p2" }
+            require(p3 == "test3") { "p3 should be test3 but was ${'$'}p3" }
+            require(p4 == "test4") { "p4 should be test4 but was ${'$'}p4" }
+            require(p5 == "test5") { "p5 should be test5 but was ${'$'}p5" }
+            require(p6 == "test6") { "p6 should be test6 but was ${'$'}p6" }
+            require(p7 == "test7") { "p7 should be test7 but was ${'$'}p7" }
+            require(p8 == "test8") { "p8 should be test8 but was ${'$'}p8" }
+            require(p9 == "test9") { "p9 should be test9 but was ${'$'}p9" }
+            require(p10 == "test10") { "p10 should be test10 but was ${'$'}p10" }
+            require(p11 == "test11") { "p11 should be test11 but was ${'$'}p11" }
+            require(p12 == "test12") { "p12 should be test12 but was ${'$'}p12" }
+            require(p13 == "test13") { "p13 should be test13 but was ${'$'}p13" }
+            require(p14 == "test14") { "p14 should be test14 but was ${'$'}p14" }
+            require(p15 == "test15") { "p15 should be test15 but was ${'$'}p15" }
+            require(p16 == "test16") { "p16 should be test16 but was ${'$'}p16" }
+            require(p17 == "test17") { "p17 should be test17 but was ${'$'}p17" }
+            require(p18 == "test18") { "p18 should be test18 but was ${'$'}p18" }
+            require(p19 == "test19") { "p19 should be test19 but was ${'$'}p19" }
+            require(p20 == "test20") { "p20 should be test20 but was ${'$'}p20" }
+            require(p21 == "test21") { "p21 should be test21 but was ${'$'}p21" }
+            require(p22 == "test22") { "p22 should be test22 but was ${'$'}p22" }
+            require(p23 == "test23") { "p23 should be test23 but was ${'$'}p23" }
+            workToBeRepeated()
+            Display(p1)
+            ValidateModel(model)
+          }
+        }
+     """)
+
+    @Test
+    fun wrappingReceiverParameter() = skipping("""
+        class Receiver() { }
+
+        @Composable
+        fun Wrapper(block: @Composable() Receiver.() -> Unit) {
+          workToBeAvoided()
+          val receiver = Receiver()
+          receiver.block()
+          workToBeAvoided()
+        }
+
+        @Composable
+        fun Example(model: String) {
+          workToBeRepeated()
+          Wrapper {
+            workToBeRepeated()
+            ValidateModel(model)
+          }
+        }
+    """)
+
+    @Test
+    fun untrackedLambdasShouldNotForceEvaluation() = skipping("""
+        @Composable
+        fun Wrapper(block: @Composable() () -> Unit) {
+          workToBeAvoided()
+          block()
+          workToBeAvoided()
+        }
+
+        @Composable
+        fun Example(model: String) {
+          workToBeRepeated()
+          Wrapper @Untracked {
+            workToBeAvoided()
+            ValidateModel(model)
+          }
+          Wrapper {
+            workToBeRepeated()
+            ValidateModel(model)
+          }
+          workToBeRepeated()
         }
     """)
 
