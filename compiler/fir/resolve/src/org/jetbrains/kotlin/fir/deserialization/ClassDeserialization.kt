@@ -63,9 +63,18 @@ fun deserializeClassToSymbol(
             classProto.typeParameterList,
             nameResolver,
             TypeTable(classProto.typeTable),
-            classId.relativeClassName
+            classId.relativeClassName,
+            ProtoContainer.Class(
+                classProto,
+                parentContext.containingDeclaration as? ProtoContainer.Class,
+                classId,
+                null
+            )
         ) ?: FirDeserializationContext.createForClass(
-            classId, classProto, nameResolver, session,
+            classId,
+            classProto,
+            nameResolver,
+            session,
             defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
         )
     classBuilder.apply {
