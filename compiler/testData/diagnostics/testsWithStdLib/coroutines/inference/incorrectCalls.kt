@@ -1,7 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
-// NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -26,12 +25,12 @@ val test2 = generate {
     notYield(3)
 }
 
-val test3 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test3 = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
-    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>yieldBarReturnType(3)<!>
+    yieldBarReturnType(3)
 }
 
-val test4 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test4 = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
-    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>barReturnType()<!>
+    barReturnType()
 }

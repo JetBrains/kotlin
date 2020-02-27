@@ -1967,6 +1967,16 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt15516.kt");
             }
 
+            @TestMetadata("kt32097.kt")
+            public void testKt32097() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt32097.kt");
+            }
+
+            @TestMetadata("kt32203.kt")
+            public void testKt32203() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt32203.kt");
+            }
+
             @TestMetadata("kt32271.kt")
             public void testKt32271() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt32271.kt");
@@ -1977,9 +1987,24 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt33542.kt");
             }
 
+            @TestMetadata("kt35306.kt")
+            public void testKt35306() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt35306.kt");
+            }
+
             @TestMetadata("kt35684.kt")
             public void testKt35684() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt35684.kt");
+            }
+
+            @TestMetadata("kt36202.kt")
+            public void testKt36202() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt36202.kt");
+            }
+
+            @TestMetadata("kt36220.kt")
+            public void testKt36220() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt36220.kt");
             }
 
             @TestMetadata("nestedLambdaInferenceWithListMap.kt")

@@ -50,11 +50,16 @@ data class ReturnArgumentsInfo(
     val lastExpression: KotlinCallArgument?,
     val lastExpressionCoercedToUnit: Boolean,
     val returnArgumentsExist: Boolean
-)
+) {
+    companion object {
+        val empty = ReturnArgumentsInfo(emptyList(), null, lastExpressionCoercedToUnit = false, returnArgumentsExist = false)
+    }
+}
 
 data class ReturnArgumentsAnalysisResult(
     val returnArgumentsInfo: ReturnArgumentsInfo,
-    val inferenceSession: InferenceSession?
+    val inferenceSession: InferenceSession?,
+    val hasInapplicableCallForBuilderInference: Boolean = false
 )
 
 // This components hold state (trace). Work with this carefully.
