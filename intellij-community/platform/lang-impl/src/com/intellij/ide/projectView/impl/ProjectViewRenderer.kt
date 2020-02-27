@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl
 
 import com.intellij.ide.projectView.ProjectViewNode
@@ -13,7 +14,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.util.text.DateFormatUtil
+import com.intellij.util.text.JBDateFormat
 import com.intellij.util.ui.tree.TreeUtil
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -59,7 +60,7 @@ open class ProjectViewRenderer : NodeRenderer() {
         if (attr != null) {
             append("  ")
             val attributes = SimpleTextAttributes.GRAYED_SMALL_ATTRIBUTES
-            append(DateFormatUtil.formatDateTime(attr.lastModifiedTime().toMillis()), attributes)
+            append(JBDateFormat.getFormatter().formatDateTime(attr.lastModifiedTime().toMillis()), attributes)
             append(", " + StringUtil.formatFileSize(attr.size()), attributes)
         }
 
