@@ -1,3 +1,4 @@
+// FULL_JDK
 fun testPlus() {
     val x = 1 + 2
     val y = 3.0 + 4.0

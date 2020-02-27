@@ -12,8 +12,4 @@ abstract class AbstractFirDiagnosticsWithStdlibTest : AbstractFirDiagnosticsTest
     override fun getConfigurationKind(): ConfigurationKind {
         return ConfigurationKind.ALL
     }
-
-    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
-        return TestJdkKind.FULL_JDK
-    }
 }

@@ -1,3 +1,4 @@
+// FULL_JDK
 import java.util.*
 import java.util.function.BiConsumer
 

@@ -1,3 +1,4 @@
+// FULL_JDK
 import java.util.*
 
 interface ArgsInfo
