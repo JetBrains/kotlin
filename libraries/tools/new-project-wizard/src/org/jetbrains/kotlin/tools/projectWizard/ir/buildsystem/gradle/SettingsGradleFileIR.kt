@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
 data class SettingsGradleFileIR(
     val projectName: String,
     val subProjects: List<String>,
-    override val irs: List<BuildSystemIR>
+    override val irs: PersistentList<BuildSystemIR>
 ) : FileIR, GradleIR {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SettingsGradleFileIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): SettingsGradleFileIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
         irsOfTypeOrNull<PluginManagementIR>()?.let { pluginManagementIrs ->

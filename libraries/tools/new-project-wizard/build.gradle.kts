@@ -9,6 +9,7 @@ dependencies {
 
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDep("junit:junit"))
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.2")
 }
 
 sourceSets {

@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.core.buildPersistenceList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
@@ -41,7 +43,7 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(moduleSubType),
-            createInnerTargetIrs(module)
+            createInnerTargetIrs(module).toPersistentList()
         )
     }
 }
@@ -65,7 +67,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
     override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
-            buildList {
+            buildPersistenceList {
                 +RawGradleIR {
                     sectionCall("browser") {}
                 }
@@ -83,7 +85,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js),
-            buildList {
+            buildPersistenceList {
                 +RawGradleIR {
                     sectionCall("nodejs") {}
                 }

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import kotlinx.collections.immutable.toPersistentList
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -94,6 +95,9 @@ class ListBuilder<T> {
 
 fun <T> buildList(builder: ListBuilder<T>.() -> Unit) =
     ListBuilder<T>().apply(builder).build()
+
+fun <T> buildPersistenceList(builder: ListBuilder<T>.() -> Unit) =
+    buildList(builder).toPersistentList()
 
 object RandomIdGenerator {
     private val chars = ('a'..'z') + ('A'..'Z') + ('0'..'9')

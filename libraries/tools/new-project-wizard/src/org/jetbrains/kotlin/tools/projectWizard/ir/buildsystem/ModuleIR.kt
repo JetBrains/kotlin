@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
@@ -24,12 +25,12 @@ sealed class ModuleIR : IrsOwner, BuildSystemIR {
 data class SingleplatformModuleIR(
     override val name: String,
     override val path: Path,
-    override val irs: List<BuildSystemIR>,
+    override val irs: PersistentList<BuildSystemIR>,
     override val template: Template?,
     override val originalModule: Module,
     override val sourcesets: List<SingleplatformSourcesetIR>
 ) : ModuleIR() {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformModuleIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): SingleplatformModuleIR = copy(irs = irs)
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
@@ -49,12 +50,12 @@ data class SingleplatformModuleIR(
 data class MultiplatformModuleIR(
     override val name: String,
     override val path: Path,
-    override val irs: List<BuildSystemIR>,
+    override val irs: PersistentList<BuildSystemIR>,
     override val template: Template?,
     override val originalModule: Module,
     override val sourcesets: List<MultiplatformSourcesetIR>
 ) : GradleIR, ModuleIR() {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): MultiplatformModuleIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): MultiplatformModuleIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
         sourcesets.map { sourceset ->

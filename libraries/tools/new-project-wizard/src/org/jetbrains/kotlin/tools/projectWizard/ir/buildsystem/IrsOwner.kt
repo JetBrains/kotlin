@@ -1,13 +1,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import kotlinx.collections.immutable.*
+
 
 interface IrsOwner {
-    val irs: List<BuildSystemIR>
-    fun withReplacedIrs(irs: List<BuildSystemIR>): IrsOwner
+    val irs: PersistentList<BuildSystemIR>
+    fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): IrsOwner
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <I : IrsOwner> I.withIrs(irs: List<BuildSystemIR>) = withReplacedIrs(irs = this.irs + irs) as I
+fun <I : IrsOwner> I.withIrs(irs: List<BuildSystemIR>) = withReplacedIrs(irs = this.irs + irs.toPersistentList()) as I
 
 @Suppress("UNCHECKED_CAST")
 fun <I : IrsOwner> I.withIrs(vararg irs: BuildSystemIR) = withReplacedIrs(irs = this.irs + irs) as I

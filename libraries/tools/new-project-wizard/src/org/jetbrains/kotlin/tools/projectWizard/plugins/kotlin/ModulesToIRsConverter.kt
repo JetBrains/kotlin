@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
@@ -79,9 +81,9 @@ class ModulesToIRsConverter(
         BuildFileIR(
             projectName,
             projectPath,
-            RootFileModuleStructureIR(emptyList()),
+            RootFileModuleStructureIR(persistentListOf()),
             pomIr,
-            rootBuildFileIrs
+            rootBuildFileIrs.toPersistentList()
         )
     }
 
@@ -102,7 +104,7 @@ class ModulesToIRsConverter(
         val modulePath = calculatePathForModule(module, state.parentPath)
         writingContext.mutateProjectStructureByModuleConfigurator(module, modulePath)
         val configurator = module.configurator
-        val dependenciesIRs = buildList<BuildSystemIR> {
+        val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
             +module.sourcesets.flatMap { sourceset ->
                 sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
             }
@@ -129,7 +131,7 @@ class ModulesToIRsConverter(
                 SingleplatformSourcesetIR(
                     sourceset.sourcesetType,
                     modulePath / Defaults.SRC_DIR / sourceset.sourcesetType.name,
-                    sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) },
+                    sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }.toPersistentList(),
                     sourceset
                 )
             }
@@ -139,7 +141,7 @@ class ModulesToIRsConverter(
             modulePath,
             SingleplatformModulesStructureWithSingleModuleIR(
                 moduleIr,
-                emptyList()
+                persistentListOf()
             ),
             pomIr.copy(artifactId = module.name),
             createBuildFileIRs(module, state)
@@ -173,10 +175,10 @@ class ModulesToIRsConverter(
             MultiplatformModulesStructureIR(
                 targetIrs,
                 targetModuleIrs,
-                emptyList()
+                persistentListOf()
             ),
             pomIr,
-            buildList {
+            buildPersistenceList {
                 +createBuildFileIRs(module, state)
                 module.subModules.forEach { +createBuildFileIRs(it, state) }
             }
@@ -206,14 +208,14 @@ class ModulesToIRsConverter(
                 sourceset.sourcesetType,
                 modulePath / Defaults.SRC_DIR / sourcesetName,
                 target.name,
-                sourcesetIrs,
+                sourcesetIrs.toPersistentList(),
                 sourceset
             )
         }
         return MultiplatformModuleIR(
             target.name,
             modulePath,
-            with(target.configurator) { createModuleIRs(this@createTargetModule, data, target) },
+            with(target.configurator) { createModuleIRs(this@createTargetModule, data, target) }.toPersistentList(),
             target.template,
             target,
             sourcesetss
@@ -236,7 +238,7 @@ class ModulesToIRsConverter(
     private fun ReadingContext.createBuildFileIRs(
         module: Module,
         state: ModulesToIrsState
-    ) = buildList<BuildSystemIR> {
+    ) = buildPersistenceList<BuildSystemIR> {
         val kotlinPlugin = module.configurator.createKotlinPluginIR(data, module)
             ?.let { plugin ->
                 // do not print version for non-root modules for gradle

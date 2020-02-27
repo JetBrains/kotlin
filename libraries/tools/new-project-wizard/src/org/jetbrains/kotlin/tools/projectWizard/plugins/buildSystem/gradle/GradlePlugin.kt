@@ -126,7 +126,10 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
             val settingsGradleIR = SettingsGradleFileIR(
                 StructurePlugin::name.settingValue,
                 allModulesPaths.map { path -> path.joinToString(separator = "") { ":$it" } },
-                repositories + GradlePlugin::settingsGradleFileIRs.propertyValue
+                buildPersistenceList {
+                    +repositories
+                    +GradlePlugin::settingsGradleFileIRs.propertyValue
+                }
             )
             val buildFileText = createBuildFile().printBuildFile { settingsGradleIR.render(this) }
             service<FileSystemWizardService>().createFile(

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
@@ -21,9 +22,9 @@ data class BuildFileIR(
     val directoryPath: Path,
     val modules: ModulesStructureIR,
     val pom: PomIR,
-    override val irs: List<BuildSystemIR>
+    override val irs: PersistentList<BuildSystemIR>
 ) : FileIR {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): BuildFileIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): BuildFileIR = copy(irs = irs)
 
     @Suppress("UNCHECKED_CAST")
     fun withModulesUpdated(updater: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<BuildFileIR> =
@@ -139,12 +140,12 @@ sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
 data class MultiplatformModulesStructureIR(
     val targets: List<BuildSystemIR>,
     override val modules: List<MultiplatformModuleIR>,
-    override val irs: List<BuildSystemIR>
+    override val irs: PersistentList<BuildSystemIR>
 ) : GradleIR, ModulesStructureIR() {
     @Suppress("UNCHECKED_CAST")
     override fun withModules(modules: List<ModuleIR>) = copy(modules = modules as List<MultiplatformModuleIR>)
 
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
         sectionCall("kotlin") {
@@ -173,10 +174,10 @@ fun MultiplatformModulesStructureIR.updateTargets(
 
 data class SingleplatformModulesStructureWithSingleModuleIR(
     val module: SingleplatformModuleIR,
-    override val irs: List<BuildSystemIR>
+    override val irs: PersistentList<BuildSystemIR>
 ) : ModulesStructureIR() {
     override val modules: List<SingleplatformModuleIR> = listOf(module)
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformModulesStructureWithSingleModuleIR =
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): SingleplatformModulesStructureWithSingleModuleIR =
         copy(irs = irs)
 
     @Suppress("UNCHECKED_CAST")
@@ -188,10 +189,10 @@ data class SingleplatformModulesStructureWithSingleModuleIR(
     }
 }
 
-data class RootFileModuleStructureIR(override val irs: List<BuildSystemIR>) : ModulesStructureIR() {
+data class RootFileModuleStructureIR(override val irs: PersistentList<BuildSystemIR>) : ModulesStructureIR() {
     override val modules = emptyList<ModuleIR>()
 
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): RootFileModuleStructureIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): RootFileModuleStructureIR = copy(irs = irs)
 
     override fun BuildFilePrinter.render() = when (this) {
         is MavenPrinter -> {
