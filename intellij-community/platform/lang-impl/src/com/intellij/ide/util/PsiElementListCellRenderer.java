@@ -75,7 +75,7 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
     return accessibleContext;
   }
 
-  @Nullable
+  @NotNull
   protected static Color getBackgroundColor(@Nullable Object value) {
     PsiElement psiElement = NavigationItemListCellRenderer.getPsiElement(value);
     VirtualFile virtualFile = PsiUtilCore.getVirtualFile(psiElement);
