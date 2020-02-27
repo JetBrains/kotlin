@@ -3,6 +3,9 @@ package com.intellij.util.indexing;
 
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 
 class FileBasedIndexPluginListener implements DynamicPluginListener {
@@ -39,5 +42,8 @@ class FileBasedIndexPluginListener implements DynamicPluginListener {
 
   private void afterPluginSetChanged() {
     mySwitcher.turnOn();
+    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+      DumbService.getInstance(project).queueTask(new UnindexedFilesUpdater(project));
+    }
   }
 }
