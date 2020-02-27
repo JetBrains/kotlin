@@ -224,7 +224,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                     bridgeTarget = when {
                         irFunction.isJvmAbstract -> {
                             irClass.declarations.remove(irFunction)
-                            irClass.addAbstractMethodStub(irFunction)
+                            irClass.addAbstractMethodStub(irFunction, specialBridge.methodInfo?.needsArgumentBoxing == true)
                         }
                         irFunction.modality != Modality.FINAL -> {
                             val superTarget = irFunction.overriddenSymbols.first { !it.owner.parentAsClass.isInterface }.owner
@@ -332,7 +332,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             it.specialBridgeOrNull?.signature?.takeIf { bridgeSignature -> bridgeSignature != it.jvmMethod }
     }
 
-    private fun IrClass.addAbstractMethodStub(irFunction: IrSimpleFunction) =
+    private fun IrClass.addAbstractMethodStub(irFunction: IrSimpleFunction, needsArgumentBoxing: Boolean) =
         addFunction {
             updateFrom(irFunction)
             modality = Modality.ABSTRACT
@@ -340,9 +340,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             name = irFunction.name
             returnType = irFunction.returnType
         }.apply {
-            dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
-            extensionReceiverParameter = irFunction.extensionReceiverParameter?.copyTo(this)
-            valueParameters = irFunction.valueParameters.map { it.copyTo(this) }
+            copyParametersWithErasure(this@addAbstractMethodStub, irFunction, needsArgumentBoxing)
         }
 
     private fun IrClass.addBridge(bridge: Bridge, target: IrSimpleFunction): IrSimpleFunction =
