@@ -114,7 +114,7 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
 
   @Nullable
   private static PsiElement getIdentifyingElement(@NotNull PsiNameIdentifierOwner nameIdentifierOwner) {
-    PsiElement identifyingElement = nameIdentifierOwner.getIdentifyingElement();
+    PsiElement identifyingElement = nameIdentifierOwner.getNameIdentifier();
     if (identifyingElement == null) {
       return null;
     }
