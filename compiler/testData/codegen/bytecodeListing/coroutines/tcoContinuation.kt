@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO: KT-36987 KT-37084 KT-37093
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
-// WITH_COROUTINES
 
 // There should be no $foo$$inlined$map$1$1 class
 

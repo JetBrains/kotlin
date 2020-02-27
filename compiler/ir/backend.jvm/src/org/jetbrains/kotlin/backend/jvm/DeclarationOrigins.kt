@@ -42,5 +42,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object SUSPEND_LAMBDA : IrDeclarationOriginImpl("SUSPEND_LAMBDA")
     object FOR_INLINE_STATE_MACHINE_TEMPLATE : IrDeclarationOriginImpl("FOR_INLINE_TEMPLATE")
     object FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE : IrDeclarationOriginImpl("FOR_INLINE_TEMPLATE_CROSSINLINE")
+    object CONTINUATION_CLASS_RESULT_FIELD: IrDeclarationOriginImpl("CONTINUATION_CLASS_RESULT_FIELD", isSynthetic = true)
     object COMPANION_PROPERTY_BACKING_FIELD : IrDeclarationOriginImpl("COMPANION_MOVED_PROPERTY_BACKING_FIELD")
 }

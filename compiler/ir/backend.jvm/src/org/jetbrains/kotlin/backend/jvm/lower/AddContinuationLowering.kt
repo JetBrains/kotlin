@@ -161,7 +161,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     annotations = emptyList()
                 )
 
-            addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType)
+            addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PACKAGE_VISIBILITY)
 
             val receiverField = info.function.extensionReceiverParameter?.let {
                 assert(info.arity != 0)
@@ -410,6 +410,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         addConstructor {
             isPrimary = true
             returnType = defaultType
+            visibility = JavaVisibilities.PACKAGE_VISIBILITY
         }.also { constructor ->
             for ((param, arg) in reference.getArguments()) {
                 constructor.addValueParameter(name = param.name.asString(), type = arg.type)
@@ -446,12 +447,21 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             .createContinuationClassFor(irFunction, JvmLoweredDeclarationOrigin.CONTINUATION_CLASS, JavaVisibilities.PACKAGE_VISIBILITY)
             .apply {
                 copyTypeParametersFrom(irFunction)
-                val resultField = addField(
-                    context.state.languageVersionSettings.dataFieldName(),
-                    context.irBuiltIns.anyType,
-                    JavaVisibilities.PACKAGE_VISIBILITY
-                )
-                val capturedThisField = dispatchReceiverParameter?.let { addField("this\$0", it.type) }
+                val resultField = addField {
+                    origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
+                    name = Name.identifier(context.state.languageVersionSettings.dataFieldName())
+                    type = context.irBuiltIns.anyNType
+                    visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                }
+                val capturedThisField = dispatchReceiverParameter?.let {
+                    addField {
+                        name = Name.identifier("this$0")
+                        type = it.type
+                        origin = DeclarationFactory.FIELD_FOR_OUTER_THIS
+                        visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                        isFinal = true
+                    }
+                }
                 val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PACKAGE_VISIBILITY)
                 addConstructorForNamedFunction(capturedThisField)
                 addInvokeSuspendForNamedFunction(
@@ -468,6 +478,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrClass.addConstructorForNamedFunction(capturedThisField: IrField?): IrConstructor = addConstructor {
         isPrimary = true
         returnType = defaultType
+        visibility = JavaVisibilities.PACKAGE_VISIBILITY
     }.also { constructor ->
         val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
         val completionParameterSymbol = constructor.addCompletionValueParameter()

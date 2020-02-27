@@ -291,7 +291,7 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    private fun done() {
+    fun done() {
         writeInnerClasses()
         writeOuterClassAndEnclosingMethod()
 

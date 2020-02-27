@@ -18,10 +18,11 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         compile(files)
         val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
 
-        val prefixes =
-            if (coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()) {
-                listOf("_1_3", "")
-            } else listOf("")
+        val prefixes = when {
+            backend.isIR -> listOf("_ir", "_1_3", "")
+            coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
+            else -> listOf("")
+        }
 
         val txtFile =
             prefixes.firstNotNullResult { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }

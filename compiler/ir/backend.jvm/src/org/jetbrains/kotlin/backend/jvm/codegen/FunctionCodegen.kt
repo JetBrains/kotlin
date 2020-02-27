@@ -45,8 +45,10 @@ open class FunctionCodegen(
     val context = classCodegen.context
     val state = classCodegen.state
 
-    val continuationClassBuilder by lazy {
-        classCodegen.createLocalClassCodegen(irFunction.continuationClass(), irFunction).also { it.generate() }.visitor
+    var continuationClassHasBeenGenerated = false
+    val continuationClassCodegen by lazy {
+        continuationClassHasBeenGenerated = true
+        classCodegen.createLocalClassCodegen(irFunction.continuationClass(), irFunction).also { it.generate() }
     }
 
     fun generate(): JvmMethodGenericSignature =
@@ -102,13 +104,13 @@ open class FunctionCodegen(
                         }
                     ) {
                         // force generation of fake continuation for inliner.
-                        continuationClassBuilder
+                        continuationClassCodegen
                     }
                     generateStateMachineForNamedFunction(
                         irFunction, classCodegen, methodVisitor,
                         access = flags,
                         signature = signature,
-                        obtainContinuationClassBuilder = { continuationClassBuilder },
+                        obtainContinuationClassBuilder = { continuationClassCodegen.visitor },
                         element = psiElement()
                     )
                 }
@@ -121,6 +123,9 @@ open class FunctionCodegen(
             methodVisitor.visitMaxs(-1, -1)
         }
         methodVisitor.visitEnd()
+        if (continuationClassHasBeenGenerated) {
+            continuationClassCodegen.done()
+        }
 
         return signature
     }
