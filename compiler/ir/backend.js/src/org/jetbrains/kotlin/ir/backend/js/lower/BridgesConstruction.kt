@@ -126,7 +126,7 @@ class BridgesConstruction(val context: CommonBackendContext) : DeclarationTransf
             bridge.returnType,
             function.parent,
             bridge.visibility,
-            bridge.modality, // TODO: should copy modality?
+            Modality.FINAL,
             isInline = bridge.isInline,
             isExternal = bridge.isExternal,
             isTailrec = bridge.isTailrec,
