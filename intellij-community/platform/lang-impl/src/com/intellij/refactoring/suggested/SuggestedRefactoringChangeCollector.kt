@@ -47,7 +47,8 @@ class SuggestedRefactoringChangeCollector(
 
   private fun amendStateInBackground() {
     if (!_amendStateInBackgroundEnabled) return
-    val initialState = state ?: return
+    var initialState = state ?: return
+    val stateLock = Any()
     require(initialState.errorLevel != ErrorLevel.INCONSISTENT)
     val psiFile = initialState.declaration.containingFile
     val project = initialState.declaration.project
@@ -58,17 +59,21 @@ class SuggestedRefactoringChangeCollector(
         val states = initialState.refactoringSupport.availability.amendStateInBackground(initialState)
         states.forEach { newState ->
           ApplicationManager.getApplication().invokeLater {
-            if (state === initialState) {
+            synchronized(stateLock) {
+              if (state !== initialState) return@invokeLater
               state = newState
-              if (psiDocumentManager.isCommitted(document)) { // we can't update availability indicator if document is not committed
-                updateAvailabilityIndicator()
-              }
+              initialState = newState // update initialState so that condition of expireWhen remains false
+            }
+            if (psiDocumentManager.isCommitted(document)) { // we can't update availability indicator if document is not committed
+              updateAvailabilityIndicator()
             }
           }
         }
       }
       .inSmartMode(project)
-      .expireWhen { state !== initialState }
+      .expireWhen {
+        synchronized(stateLock) { state !== initialState }
+      }
       .expireWith(project)
       .submit(AppExecutorUtil.getAppExecutorService())
   }
