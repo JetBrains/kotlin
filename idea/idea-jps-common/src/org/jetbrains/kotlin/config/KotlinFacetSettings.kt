@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -18,6 +19,9 @@ import org.jetbrains.kotlin.platform.compat.toIdePlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.findAnnotation
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
@@ -187,6 +191,20 @@ class KotlinFacetSettings {
             field = value?.unfrozen() as CompilerSettings?
             updateMergedArguments()
         }
+
+    /*
+    This function is needed as some setting values may not be present in compilerArguments
+    but present in additional arguments instead, so we have to check both cases manually
+     */
+    inline fun <reified A : CommonCompilerArguments> isCompilerSettingPresent(settingReference: KProperty1<A, Boolean>): Boolean {
+        val isEnabledByCompilerArgument = compilerArguments?.safeAs<A>()?.let(settingReference::get)
+        if (isEnabledByCompilerArgument == true) return true
+        val isEnabledByAdditionalSettings = run {
+            val stringArgumentName = settingReference.findAnnotation<Argument>()?.value ?: return@run null
+            compilerSettings?.additionalArguments?.contains(stringArgumentName, ignoreCase = true)
+        }
+        return isEnabledByAdditionalSettings ?: false
+    }
 
     var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }

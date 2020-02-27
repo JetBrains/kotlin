@@ -30,6 +30,8 @@ import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -41,10 +43,12 @@ import org.jetbrains.kotlin.idea.fir.firResolveState
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirWithDiagnostics
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.reflect.*
 import java.util.*
 
@@ -236,6 +240,9 @@ private class ElementAnnotator(
         val diagnostic = diagnostics.first()
         val factory = diagnostic.factory
 
+        // hack till the root cause #KT-21246 is fixed
+        if (isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic)) return
+
         assert(diagnostics.all { it.psiElement == element && it.factory == factory })
 
         val ranges = diagnostic.textRanges
@@ -312,6 +319,14 @@ private class ElementAnnotator(
         }
 
         data.processDiagnostics(holder, diagnostics, fixesMap)
+    }
+
+    private fun isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic: Diagnostic): Boolean {
+        if (diagnostic.factory != Errors.IR_COMPILED_CLASS) return false
+        val module = element.module ?: return false
+        val moduleFacetSettings = KotlinFacetSettingsProvider.getInstance(element.project)?.getSettings(module) ?: return false
+        return moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useIR)
+                || moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::allowJvmIrDependencies)
     }
 
     companion object {
