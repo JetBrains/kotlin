@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeUtils
+import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
 import androidx.compose.plugins.kotlin.irTrace
@@ -30,13 +31,16 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irBoolean
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
@@ -47,6 +51,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -56,6 +61,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -68,18 +74,31 @@ private class CaptureCollector {
     }
 }
 
-private sealed class MemoizationContext {
-    open val composable get() = false
-    open fun declareLocal(local: IrValueDeclaration?) { }
-    open fun recordCapture(local: IrValueDeclaration?) { }
-    open fun pushCollector(collector: CaptureCollector) { }
-    open fun popCollector(collector: CaptureCollector) { }
+private abstract class DeclarationContext {
+    abstract val composable: Boolean
+    abstract val symbol: IrSymbol
+    abstract fun declareLocal(local: IrValueDeclaration?)
+    abstract fun recordCapture(local: IrValueDeclaration?)
+    abstract fun pushCollector(collector: CaptureCollector)
+    abstract fun popCollector(collector: CaptureCollector)
 }
 
-private class ClassContext : MemoizationContext()
+private class SymbolOwnerContext(val declaration: IrSymbolOwner) : DeclarationContext() {
+    override val composable get() = false
+    override val symbol get() = declaration.symbol
+    override fun declareLocal(local: IrValueDeclaration?) { }
+    override fun recordCapture(local: IrValueDeclaration?) { }
+    override fun pushCollector(collector: CaptureCollector) { }
+    override fun popCollector(collector: CaptureCollector) { }
+}
 
-private class FunctionContext(val declaration: IrFunction, override val composable: Boolean) :
-    MemoizationContext() {
+private class FunctionContext(
+    val declaration: IrFunction,
+    override val composable: Boolean,
+    val canRemember: Boolean
+) : DeclarationContext() {
+    override val symbol get() = declaration.symbol
+
     val locals = mutableSetOf<IrValueDeclaration>()
     var collectors = mutableListOf<CaptureCollector>()
 
@@ -113,6 +132,11 @@ private class FunctionContext(val declaration: IrFunction, override val composab
     }
 }
 
+const val RESTARTABLE_FUNCTION = "restartableFunction"
+const val RESTARTABLE_FUNCTION_N = "restartableFunctionN"
+const val RESTARTABLE_FUNCTION_INSTANCE = "restartableFunctionInstance"
+const val RESTARTABLE_FUNCTION_N_INSTANCE = "restartableFunctionNInstance"
+
 class ComposerLambdaMemoization(
     context: JvmBackendContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -121,46 +145,49 @@ class ComposerLambdaMemoization(
     AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     ModuleLoweringPass {
 
-    private val memoizationContextStack = mutableListOf<MemoizationContext>()
+    private val declarationContextStack = mutableListOf<DeclarationContext>()
 
     override fun lower(module: IrModuleFragment) = module.transformChildrenVoid(this)
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        memoizationContextStack.push(ClassContext())
-        val result = super.visitClass(declaration)
-        memoizationContextStack.pop()
+    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+        if (declaration is IrFunction) return super.visitDeclaration(declaration)
+        val symbolOwner = declaration as? IrSymbolOwner
+        if (symbolOwner != null) declarationContextStack.push(SymbolOwnerContext(declaration))
+        val result = super.visitDeclaration(declaration)
+        if (symbolOwner != null) declarationContextStack.pop()
         return result
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val descriptor = declaration.descriptor
-        val composable = descriptor.isComposable() &&
-                // Don't memoize in an inline function
+        val composable = descriptor.isComposable()
+        val canRemember = composable &&
+                // Don't use remember in an inline function
                 !descriptor.isInline &&
-                // Don't memoize if in a composable that returns a value
-                // TODO(b/150390108): Consider allowing memoization in effects
+                // Don't use remember if in a composable that returns a value
+                // TODO(b/150390108): Consider allowing remember in effects
                 descriptor.returnType.let { it != null && it.isUnit() }
 
-        memoizationContextStack.push(FunctionContext(declaration, composable))
+        declarationContextStack.push(FunctionContext(declaration, composable, canRemember))
         val result = super.visitFunction(declaration)
-        memoizationContextStack.pop()
+        declarationContextStack.pop()
         return result
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
-        memoizationContextStack.peek()?.declareLocal(declaration)
+        declarationContextStack.peek()?.declareLocal(declaration)
         return super.visitVariable(declaration)
     }
 
     override fun visitValueAccess(expression: IrValueAccessExpression): IrExpression {
-        memoizationContextStack.forEach { it.recordCapture(expression.symbol.owner) }
+        declarationContextStack.forEach { it.recordCapture(expression.symbol.owner) }
         return super.visitValueAccess(expression)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        // Memoize the instance created by using the :: prefix
+        // Memoize the instance created by using the :: operator
         val result = super.visitFunctionReference(expression)
-        val memoizationContext = memoizationContextStack.peek() as? FunctionContext
+        val functionContext = declarationContextStack.peek() as? FunctionContext
             ?: return result
         if (expression.valueArgumentsCount != 0) {
             // If this syntax is as a curry syntax in the future, don't memoize.
@@ -172,7 +199,7 @@ class ComposerLambdaMemoization(
             // receivers are treated below.
             return result
         }
-        if (memoizationContext.composable) {
+        if (functionContext.canRemember) {
             // Memoize the reference for <expr>::<method>
             val dispatchReceiver = expression.dispatchReceiver
             val extensionReceiver = expression.extensionReceiver
@@ -182,7 +209,7 @@ class ComposerLambdaMemoization(
                 // Save the receivers into a temporaries and memoize the function reference using
                 // the resulting temporaries
                 val builder = context.createIrBuilder(
-                    memoizationContext.declaration.symbol,
+                    functionContext.declaration.symbol,
                     startOffset = expression.startOffset,
                     endOffset = expression.endOffset
                 )
@@ -203,7 +230,7 @@ class ComposerLambdaMemoization(
                     }
 
                     +rememberExpression(
-                        memoizationContext,
+                        functionContext,
                         IrFunctionReferenceImpl(
                             startOffset,
                             endOffset,
@@ -218,18 +245,30 @@ class ComposerLambdaMemoization(
                     )
                 }
             } else if (dispatchReceiver == null) {
-                return rememberExpression(memoizationContext, result, emptyList())
+                return rememberExpression(functionContext, result, emptyList())
             }
         }
         return result
     }
 
-    override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
-        // Start recording variables captured in this scope
-        val composableFunction = memoizationContextStack.peek() as? FunctionContext
+    private fun visitNonComposableFunctionExpression(
+        expression: IrFunctionExpression,
+        declarationContext: DeclarationContext
+    ): IrExpression {
+        val functionContext = declarationContext as? FunctionContext
             ?: return super.visitFunctionExpression(expression)
-        if (!composableFunction.composable) return super.visitFunctionExpression(expression)
 
+        if (
+            // Only memoize non-composable lambdas in a context we can use remember
+            !functionContext.canRemember ||
+            // Don't memoize inlined lambdas
+            expression.isInlineArgument() ||
+            // Don't memoize untracked function
+            !expression.isTracked()) {
+            return super.visitFunctionExpression(expression)
+        }
+
+        // Record capture variables for this scope
         val collector = CaptureCollector()
         startCollector(collector)
         // Wrap composable functions expressions or memoize non-composable function expressions
@@ -239,45 +278,105 @@ class ComposerLambdaMemoization(
         // If the ancestor converted this then return
         val functionExpression = result as? IrFunctionExpression ?: return result
 
-        // Ensure we don't transform targets of an inline function
-        if (functionExpression.isInlineArgument()) return functionExpression
-        if (functionExpression.isComposable()) {
-            return functionExpression
-        }
-
-        if (functionExpression.function.descriptor.hasUntrackedAnnotation())
-            return functionExpression
-
         return rememberExpression(
-            composableFunction,
+            functionContext,
             functionExpression,
             collector.captures.toList()
         )
     }
 
+    private fun visitComposableFunctionExpression(
+        expression: IrFunctionExpression,
+        declarationContext: DeclarationContext
+    ): IrExpression {
+        val result = super.visitFunctionExpression(expression)
+
+        // If the ancestor converted this then return
+        val functionExpression = result as? IrFunctionExpression ?: return result
+
+        // Do not wrap target of an inline function
+        if (expression.isInlineArgument()) return functionExpression
+
+        return wrapFunctionExpression(declarationContext, functionExpression)
+    }
+
+    override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
+        val declarationContext = declarationContextStack.peek()
+            ?: return super.visitFunctionExpression(expression)
+        return if (expression.isComposable())
+            visitComposableFunctionExpression(expression, declarationContext)
+        else
+            visitNonComposableFunctionExpression(expression, declarationContext)
+    }
+
     private fun startCollector(collector: CaptureCollector) {
-        for (memoizationContext in memoizationContextStack) {
-            memoizationContext.pushCollector(collector)
+        for (declarationContext in declarationContextStack) {
+            declarationContext.pushCollector(collector)
         }
     }
 
     private fun stopCollector(collector: CaptureCollector) {
-        for (memoizationContext in memoizationContextStack) {
-            memoizationContext.popCollector(collector)
+        for (declarationContext in declarationContextStack) {
+            declarationContext.popCollector(collector)
         }
     }
 
+    private fun wrapFunctionExpression(
+        declarationContext: DeclarationContext,
+        expression: IrFunctionExpression
+    ): IrExpression {
+        val function = expression.function
+        val argumentCount = function.descriptor.valueParameters.size
+        val useRestartableFunctionN = argumentCount > MAX_RESTART_ARGUMENT_COUNT
+        val restartFunctionFactory =
+            if (declarationContext.composable)
+                if (useRestartableFunctionN)
+                    RESTARTABLE_FUNCTION_N
+                else RESTARTABLE_FUNCTION
+            else if (useRestartableFunctionN)
+                RESTARTABLE_FUNCTION_N_INSTANCE
+                else RESTARTABLE_FUNCTION_INSTANCE
+        val restartFactorySymbol =
+            getTopLevelFunction(composeInternalFqName(restartFunctionFactory))
+        val irBuilder = context.createIrBuilder(
+            symbol = declarationContext.symbol,
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset
+        )
+
+        return irBuilder.irCall(restartFactorySymbol).apply {
+            var index = 0
+            // key parameter
+            putValueArgument(
+                index++, irBuilder.irInt(
+                    descriptor.fqNameSafe.hashCode() xor expression.startOffset
+                )
+            )
+
+            // tracked parameter
+            putValueArgument(index++, irBuilder.irBoolean(expression.isTracked()))
+
+            // RestartableFunctionN requires the arity
+            if (useRestartableFunctionN) {
+                // arity parameter
+                putValueArgument(index++, irBuilder.irInt(argumentCount))
+            }
+
+            // block parameter
+            putValueArgument(index, expression)
+        }.markAsSynthetic(mark = declarationContext.composable)
+    }
+
     private fun rememberExpression(
-        memoizationContext: FunctionContext,
+        functionContext: FunctionContext,
         expression: IrExpression,
         captures: List<IrValueDeclaration>
     ): IrExpression {
-
         if (captures.any {
             !((it as? IrVariable)?.isVar != true && it.type.toKotlinType().isStable())
         }) return expression
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
-        val declaration = memoizationContext.declaration
+        val declaration = functionContext.declaration
         val descriptor = declaration.descriptor
         val module = descriptor.module
         val rememberFunctions = module
@@ -302,7 +401,7 @@ class ComposerLambdaMemoization(
         val rememberFunctionSymbol = referenceSimpleFunction(rememberFunctionDescriptor)
 
         val irBuilder = context.createIrBuilder(
-            symbol = declaration.symbol,
+            symbol = functionContext.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
         )
@@ -352,16 +451,19 @@ class ComposerLambdaMemoization(
                     +irReturn(expression)
                 }
             ))
-        }.patchDeclarationParents(declaration).markAsSynthetic()
+        }.patchDeclarationParents(declaration).markAsSynthetic(mark = true)
     }
 
-    private fun <T : IrFunctionAccessExpression> T.markAsSynthetic(): T {
-        // Mark it so the ComposableCallTransformer will insert the correct code around this call
-        context.state.irTrace.record(
-            ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL,
-            this,
-            true
-        )
+    private fun <T : IrFunctionAccessExpression> T.markAsSynthetic(mark: Boolean): T {
+        if (mark) {
+            // Mark it so the ComposableCallTransformer will insert the correct code around this
+            // call
+            context.irTrace.record(
+                ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL,
+                this,
+                true
+            )
+        }
         return this
     }
 
@@ -383,5 +485,9 @@ class ComposerLambdaMemoization(
         return false
     }
 
-    fun IrExpression?.isNullOrStable() = this == null || type.toKotlinType().isStable()
+    private fun IrExpression?.isNullOrStable() = this == null || type.toKotlinType().isStable()
+    private fun IrFunctionExpression.isTracked() = !function.descriptor.hasUntrackedAnnotation()
 }
+
+// This must match the highest value of FunctionXX which is current Function22
+private const val MAX_RESTART_ARGUMENT_COUNT = 22

@@ -2351,7 +2351,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }.then {
             // Expect only NormalLambda(4) to be called
             assertEquals(
-                "TestSkipping, Container, NormalLambda(4)",
+                "TestSkipping, NormalLambda(4)",
                 output.joinToString()
             )
         }
@@ -2479,8 +2479,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
                 InvokeSelfCompose()
-            """,
-            dumpClasses = true
+            """
         ).then { activity ->
             assertEquals(activity.findViewById<TextView>(100).text, "f1=1, f2=10, m=0")
             val button = activity.findViewById<Button>(101)
