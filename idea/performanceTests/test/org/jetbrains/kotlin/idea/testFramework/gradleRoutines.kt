@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.idea.testFramework
 
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.project.ProjectData
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
-import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -58,41 +53,20 @@ private fun _attachGradleProjectAndRefresh(
             ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
         }
     }
-    //ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(false)
 
     ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project)
     val settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     if (settings.getLinkedProjectSettings(externalProjectPath) == null) {
         settings.linkProject(gradleProjectSettings)
     }
-    //ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, externalProjectPath, false, ProgressExecutionMode.MODAL_SYNC)
 
-    val progressExecutionMode = ProgressExecutionMode.MODAL_SYNC
-    val externalSystemId = GradleConstants.SYSTEM_ID
-    val callback = object : ExternalProjectRefreshCallback {
-        override fun onFailure(errorMessage: String, errorDetails: String?) {
-            super.onFailure(errorMessage, errorDetails)
-            throw RuntimeException(errorMessage)
-        }
-
-        override fun onFailure(
-            externalTaskId: ExternalSystemTaskId,
-            errorMessage: String,
-            errorDetails: String?
-        ) {
-            super.onFailure(externalTaskId, errorMessage, errorDetails)
-            throw RuntimeException(errorMessage)
-        }
-
-        override fun onSuccess(externalProject: DataNode<ProjectData>?) {
-            if (externalProject == null) {
-                return
-            }
-            val synchronous = progressExecutionMode == ProgressExecutionMode.MODAL_SYNC
-            ServiceManager.getService(
-                ProjectDataManager::class.java
-            ).importData(externalProject, project, synchronous)
-        }
+    StatefulTestGradleProjectRefreshCallback(externalProjectPath, project).use { callback ->
+        ExternalSystemUtil.refreshProject(
+            externalProjectPath,
+            ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+                .use(ProgressExecutionMode.MODAL_SYNC)
+                .callback(callback)
+                .build()
+        )
     }
-    ExternalSystemUtil.refreshProject(project, externalSystemId, externalProjectPath, callback, false, progressExecutionMode, true)
 }
