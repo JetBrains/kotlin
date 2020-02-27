@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.perf
 import org.jetbrains.kotlin.idea.perf.WholeProjectPerformanceTest.Companion.nsToMs
 import org.jetbrains.kotlin.idea.perf.profilers.*
 import org.jetbrains.kotlin.idea.testFramework.logMessage
+import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.*
 import kotlin.system.measureNanoTime
@@ -40,7 +41,7 @@ class Stats(
 
     private fun statFilePrefix() = if (name.isNotEmpty()) "-${plainname()}" else ""
 
-    private fun plainname() = name.toLowerCase().replace(' ', '-').replace('/', '_')
+    private fun plainname() = suggestOsNeutralFileName(name)
 
     private fun pathToResource(resource: String) = "build/$resource"
 

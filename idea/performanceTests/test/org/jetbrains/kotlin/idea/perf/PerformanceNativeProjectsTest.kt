@@ -19,13 +19,17 @@ import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
+import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestProject.*
+import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestTarget.IOS
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.GRADLE_PROJECT
 import org.jetbrains.kotlin.idea.testFramework.logMessage
+import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.library.KOTLIN_STDLIB_NAME
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.junit.Assume.assumeTrue
 import org.junit.Ignore
 import java.io.File
 
@@ -33,10 +37,41 @@ import java.io.File
 class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
 
     companion object {
-        private const val GRADLE_VERSION = "6.0.1"
-        private const val KOTLIN_PLUGIN_VERSION = "1.4.0-dev-3273" // TODO: use 1.4-M1 when it's published
-        
+        private const val TEST_DATA_PATH = "idea/testData/perfTest/native"
+
         private var warmedUp: Boolean = false
+    }
+
+    private enum class TestTarget {
+        IOS;
+
+        val alias get() = name.toLowerCase()
+        val enabled get() = true
+    }
+
+    private enum class TestProject(
+        val templateName: String,
+        val filesToHighlight: List<String>
+    ) {
+        HELLO_WORLD(
+            templateName = "HelloWorld",
+            filesToHighlight = listOf(
+                "src/main/HelloMain.kt", "src/main/HelloMain2.kt", "src/main/HelloMain3.kt",
+                "src/test/HelloTest.kt", "src/test/HelloTest2.kt", "src/test/HelloTest3.kt"
+            )
+        ),
+        CSV_PARSER(
+            templateName = "CsvParser",
+            filesToHighlight = listOf("src/main/CsvParser.kt", "src/main/CsvParser2.kt", "src/main/CsvParser3.kt")
+        ),
+        UI_KIT_APP(
+            templateName = "UIKitApp",
+            filesToHighlight = listOf("src/main/UIKitApp.kt", "src/main/UIKitApp2.kt", "src/main/UIKitApp3.kt")
+        );
+
+        init {
+            assertTrue(filesToHighlight.isNotEmpty())
+        }
     }
 
     override fun setUp() {
@@ -44,15 +79,22 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
 
         // warm up: open simple small project
         if (!warmedUp) {
-            val projectTemplate = "HelloWorld"
+            val testProject = HELLO_WORLD
             val enableCommonizer = true
 
-            val projectName = "${projectName(projectTemplate, enableCommonizer)}-$WARM_UP"
+            TestTarget.values().forEach { testTarget ->
+                if (!testTarget.enabled) {
+                    logMessage { "Warm-up for test target $testTarget is disabled" }
+                    return@forEach
+                }
 
-            // don't share this stats instance with another one used in "Hello World" test
-            Stats(projectName).use { stats ->
-                warmUpProject(stats, "src/iosX64Main/kotlin/HelloMain.kt") {
-                    perfOpenTemplateGradleProject(stats, projectTemplate, enableCommonizer, WARM_UP)
+                val projectName = "${projectName(testTarget, testProject, enableCommonizer)} $WARM_UP"
+
+                // don't share this stats instance with another one used in "Hello World" test
+                Stats(projectName).use { stats ->
+                    warmUpProject(stats, testProject.filesToHighlight.first()) {
+                        perfOpenTemplateGradleProject(stats, testTarget, testProject, enableCommonizer, WARM_UP)
+                    }
                 }
             }
 
@@ -60,107 +102,106 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
         }
     }
 
-    fun testHelloWorldProjectWithCommonizer() = doTestHighlighting(
-        "HelloWorld",
-        true,
-        "src/iosX64Main/kotlin/HelloMain.kt",
-        "src/iosX64Main/kotlin/HelloMain2.kt",
-        "src/iosX64Main/kotlin/HelloMain3.kt",
-        "src/iosX64Test/kotlin/HelloTest.kt",
-        "src/iosX64Test/kotlin/HelloTest2.kt",
-        "src/iosX64Test/kotlin/HelloTest3.kt"
-    )
+    fun testIosHelloWorldProjectWithCommonizer() = doTestHighlighting(IOS, HELLO_WORLD, enableCommonizer = true)
+    fun testIosHelloWorldProjectWithoutCommonizer() = doTestHighlighting(IOS, HELLO_WORLD, enableCommonizer = false)
 
-    fun testHelloWorldProjectWithoutCommonizer() = doTestHighlighting(
-        "HelloWorld",
-        false,
-        "src/iosX64Main/kotlin/HelloMain.kt",
-        "src/iosX64Main/kotlin/HelloMain2.kt",
-        "src/iosX64Main/kotlin/HelloMain3.kt",
-        "src/iosX64Test/kotlin/HelloTest.kt",
-        "src/iosX64Test/kotlin/HelloTest2.kt",
-        "src/iosX64Test/kotlin/HelloTest3.kt"
-    )
+    fun testIosCvsParserProjectWithCommonizer() = doTestHighlighting(IOS, CSV_PARSER, enableCommonizer = true)
+    fun testIosCvsParserProjectWithoutCommonizer() = doTestHighlighting(IOS, CSV_PARSER, enableCommonizer = false)
 
-    fun testCvsParserProjectWithCommonizer() = doTestHighlighting(
-        "CsvParser",
-        true,
-        "src/iosX64Main/kotlin/CsvParser.kt",
-        "src/iosX64Main/kotlin/CsvParser2.kt",
-        "src/iosX64Main/kotlin/CsvParser3.kt"
-    )
-
-    fun testCvsParserProjectWithoutCommonizer() = doTestHighlighting(
-        "CsvParser",
-        false,
-        "src/iosX64Main/kotlin/CsvParser.kt",
-        "src/iosX64Main/kotlin/CsvParser2.kt",
-        "src/iosX64Main/kotlin/CsvParser3.kt"
-    )
-
-    fun testUIKitAppProjectWithCommonizer() = doTestHighlighting(
-        "UIKitApp",
-        true,
-        "src/iosX64Main/kotlin/UIKitApp.kt",
-        "src/iosX64Main/kotlin/UIKitApp2.kt",
-        "src/iosX64Main/kotlin/UIKitApp3.kt"
-    )
-
-    fun testUIKitAppProjectWithoutCommonizer() = doTestHighlighting(
-        "UIKitApp",
-        false,
-        "src/iosX64Main/kotlin/UIKitApp.kt",
-        "src/iosX64Main/kotlin/UIKitApp2.kt",
-        "src/iosX64Main/kotlin/UIKitApp3.kt"
-    )
+    fun testIosUIKitAppProjectWithCommonizer() = doTestHighlighting(IOS, UI_KIT_APP, enableCommonizer = true)
+    fun testIosUIKitAppProjectWithoutCommonizer() = doTestHighlighting(IOS, UI_KIT_APP, enableCommonizer = false)
 
     private fun doTestHighlighting(
-        templateName: String,
-        enableCommonizer: Boolean,
-        vararg filesToHighlight: String
+        testTarget: TestTarget,
+        testProject: TestProject,
+        enableCommonizer: Boolean
     ) {
-        assertTrue(filesToHighlight.isNotEmpty())
+        assumeTrue(testTarget.enabled)
 
-        val projectName = projectName(templateName, enableCommonizer)
+        val projectName = projectName(testTarget, testProject, enableCommonizer)
         tcSuite(projectName) {
             Stats(projectName).use { stats ->
-                myProject = perfOpenTemplateGradleProject(stats, templateName, enableCommonizer)
+                myProject = perfOpenTemplateGradleProject(stats, testTarget, testProject, enableCommonizer)
 
                 // highlight
-                filesToHighlight.forEach { perfHighlightFile(it, stats) }
+                testProject.filesToHighlight.forEach { perfHighlightFile(it, stats) }
             }
         }
     }
 
     private fun perfOpenTemplateGradleProject(
         stats: Stats,
-        templateName: String,
+        testTarget: TestTarget,
+        testProject: TestProject,
         enableCommonizer: Boolean,
         note: String = ""
     ): Project {
-        val templateRoot = File("idea/testData/perfTest/native/").resolve(templateName)
+        val nativeTestsRoot = File(TEST_DATA_PATH)
+
+        val commonRoot = nativeTestsRoot.resolve("_common")
+        val targetRoot = nativeTestsRoot.resolve("_${testTarget.alias}")
+        val templateRoot = nativeTestsRoot.resolve(testProject.templateName)
+
         val projectRoot = FileUtil.createTempDirectory("project", "", false)
 
-        templateRoot.walkTopDown()
+        commonRoot.walkTopDown()
+            .onEnter { !it.name.startsWith('.') } // exclude any directory starting with dot '.'
             .filter { it.isFile }
-            .forEach { source ->
-                val destination = projectRoot.resolve(source.relativeTo(templateRoot))
-
-                val filename = source.name
-                if (filename == "build.gradle.kts" || filename == "gradle-wrapper.properties" || filename == "gradle.properties") {
-                    val text = source.readText()
-                        .replace("{{kotlin_plugin_version}}", KOTLIN_PLUGIN_VERSION)
-                        .replace("{{gradle_version}}", GRADLE_VERSION)
-                        .replace("{{disable_commonizer}}", (!enableCommonizer).toString())
-
-                    destination.parentFile.mkdirs()
-                    destination.writeText(text)
-                } else {
-                    source.copyTo(destination)
+            .forEach { sourceFile ->
+                val destinationFileName = with(sourceFile.name) {
+                    when {
+                        // choose the right variant based on whether commonizer is enabled or not
+                        endsWith(".with-commonizer") -> if (!enableCommonizer) return@forEach else removeSuffix(".with-commonizer")
+                        endsWith(".without-commonizer") -> if (enableCommonizer) return@forEach else removeSuffix(".without-commonizer")
+                        else -> this
+                    }
                 }
+
+                val destinationFile = projectRoot.resolve(sourceFile.resolveSibling(destinationFileName).relativeTo(commonRoot))
+                sourceFile.copyTo(destinationFile)
             }
 
-        val projectName = projectName(templateName, enableCommonizer, separator = '-')
+        targetRoot.copyRecursively(projectRoot)
+        templateRoot.copyRecursively(projectRoot)
+
+        // merge all files with ".header", ".middle", ".footer" suffixes
+        projectRoot.walkTopDown()
+            .filter { it.isFile && it.name.endsWith(".header") }
+            .forEach { headerFile ->
+                // locate middle and footer files
+                val destinationFileName = headerFile.name.removeSuffix(".header")
+
+                val middleFile = headerFile.resolveSibling("$destinationFileName.middle").also(::assertExists)
+                val footerFile = headerFile.resolveSibling("$destinationFileName.footer").also(::assertExists)
+
+                val destinationFile = headerFile.resolveSibling(destinationFileName).also(::assertDoesntExist)
+                destinationFile.writeText(headerFile.readText() + middleFile.readText() + footerFile.readText())
+
+                headerFile.delete()
+                middleFile.delete()
+                footerFile.delete()
+            }
+
+        // check no unmerged ".middle" and ".footer" files left
+        projectRoot.walkTopDown()
+            .filter { it.isFile && (it.name.endsWith(".middle") || it.name.endsWith(".footer")) }
+            .map { it.relativeTo(projectRoot).path }
+            .toList()
+            .sorted()
+            .takeIf { it.isNotEmpty() }
+            ?.let { unmergedFiles ->
+                fail("Some files have not been merged in project root directory: $projectRoot: ${unmergedFiles.joinToString()}")
+            }
+
+        // check all necessary files are there
+        listOf("build.gradle.kts", "settings.gradle.kts", "gradle.properties")
+            .filter { !projectRoot.resolve(it).exists() }
+            .takeIf { it.isNotEmpty() }
+            ?.let { missedFiles ->
+                fail("Some important files are missed in project root directory $projectRoot: ${missedFiles.joinToString()}")
+            }
+
+        val projectName = projectName(testTarget, testProject, enableCommonizer, fileSystemFriendlyName = true)
 
         val project = perfOpenProject(
             name = projectName,
@@ -222,10 +263,17 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
                 (nativeLibraries - KOTLIN_STDLIB_NAME).isNotEmpty()
             )
 
-            logMessage { "$module has ${nativeLibraries.size} native libraries" }
+            logMessage { "Native $module has ${nativeLibraries.size} native libraries" }
         }
     }
 
-    private fun projectName(templateName: String, enableCommonizer: Boolean, separator: Char = ' ') =
-        "$templateName project ${if (enableCommonizer) "with" else "without"} commonizer".replace(' ', separator)
+    private fun projectName(
+        testTarget: TestTarget,
+        testProject: TestProject,
+        enableCommonizer: Boolean,
+        fileSystemFriendlyName: Boolean = false
+    ): String {
+        val name = "${testProject.templateName} ($testTarget) ${if (enableCommonizer) "with" else "without"} commonizer"
+        return if (fileSystemFriendlyName) suggestOsNeutralFileName(name) else name
+    }
 }
