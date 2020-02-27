@@ -71,6 +71,10 @@ android {
         ktest1 {
             dimension "box"
         }
+
+        ktest2 {
+            dimension "box"
+        }
     }
 
 }
@@ -96,4 +100,5 @@ dependencies {
 
     ktest0Implementation fileTree(dir: 'libs/test', include: ['libtest0.jar'])
     ktest1Implementation fileTree(dir: 'libs/test', include: ['libtest1.jar'])
+    ktest2Implementation fileTree(dir: 'libs/test', include: ['libtest2.jar'])
 }

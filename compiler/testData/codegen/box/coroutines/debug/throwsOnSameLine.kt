@@ -3,10 +3,10 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FULL_JDK
+package test
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
