@@ -15,9 +15,9 @@
  */
 package com.intellij.packageDependencies.actions;
 
-import com.intellij.analysis.AnalysisBundle;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.PerformAnalysisInBackgroundOption;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -112,7 +112,7 @@ public abstract class DependenciesHandlerBase {
     }
     catch (IndexNotReadyException e) {
       DumbService.getInstance(myProject).showDumbModeNotification(
-        AnalysisBundle.message("analyze.dependencies.not.available.notification.indexing"));
+        CodeInsightBundle.message("analyze.dependencies.not.available.notification.indexing"));
       throw new ProcessCanceledException();
     }
   }

@@ -3,7 +3,10 @@
 package com.intellij.codeInspection.ex;
 
 import com.intellij.analysis.AnalysisBundle;
-import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.CommonProblemDescriptor;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemDescriptorUtil;
+import com.intellij.codeInspection.QuickFix;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
 import com.intellij.codeInspection.ui.InspectionToolPresentation;
@@ -139,7 +142,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
     }
     else {
       anchor.append("<font style=\"font-weight:bold; color:#FF0000\";>");
-      anchor.append(InspectionsBundle.message("inspection.export.results.invalidated.item"));
+      anchor.append(AnalysisBundle.message("inspection.export.results.invalidated.item"));
       anchor.append("</font>");
     }
 

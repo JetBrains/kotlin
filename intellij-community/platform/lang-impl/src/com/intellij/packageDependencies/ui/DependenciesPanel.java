@@ -3,7 +3,6 @@
 package com.intellij.packageDependencies.ui;
 
 import com.intellij.CommonBundle;
-import com.intellij.analysis.AnalysisBundle;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.PerformAnalysisInBackgroundOption;
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -561,8 +560,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class ShowModuleGroupsAction extends ToggleAction {
     ShowModuleGroupsAction() {
-      super(AnalysisBundle.message("analyze.dependencies.show.module.groups.action.text"),
-            AnalysisBundle.message("analyze.dependencies.show.module.groups.action.text"), AllIcons.Actions.GroupByModuleGroup);
+      super(CodeInsightBundle.message("analyze.dependencies.show.module.groups.action.text"),
+            CodeInsightBundle.message("analyze.dependencies.show.module.groups.action.text"), AllIcons.Actions.GroupByModuleGroup);
     }
 
     @Override
@@ -956,7 +955,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
                                         new NamedScope.UnnamedScope(rightPackageSet), true));
           rebuild();
         } else {
-          Messages.showErrorDialog(DependenciesPanel.this, AnalysisBundle
+          Messages.showErrorDialog(DependenciesPanel.this, CodeInsightBundle
                                      .message("analyze.dependencies.unable.to.create.rule.error.message", leftPackageSet.getText(), rightPackageSet.getText()),
                                    CodeInsightBundle.message("mark.dependency.illegal.text"));
         }
