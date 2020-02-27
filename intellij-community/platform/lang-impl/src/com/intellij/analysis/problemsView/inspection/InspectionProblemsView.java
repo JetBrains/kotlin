@@ -77,23 +77,27 @@ public class InspectionProblemsView implements PersistentStateComponent<Inspecti
         updateCurrentFile();
       }
     });
+    Alarm updateIcon = new Alarm(project);
     myProject.getMessageBus().connect().subscribe(DaemonCodeAnalyzer.DAEMON_EVENT_TOPIC, new DaemonCodeAnalyzer.DaemonListener() {
       @Override
       public void daemonStarting(@NotNull Collection<? extends FileEditor> fileEditors) {
         myAnalysisIsBusy = true;
-        updateIcon();
+        updateIcon.cancelAllRequests();
+        updateIcon.addRequest(()->updateIcon(), 200);
       }
 
       @Override
       public void daemonFinished(@NotNull Collection<? extends FileEditor> fileEditors) {
         myAnalysisIsBusy = false;
-        updateIcon();
+        updateIcon.cancelAllRequests();
+        updateIcon.addRequest(()->updateIcon(), 0);
       }
 
       @Override
       public void daemonCancelEventOccurred(@NotNull String reason) {
         myAnalysisIsBusy = false;
-        updateIcon();
+        updateIcon.cancelAllRequests();
+        updateIcon.addRequest(()->updateIcon(), 200);
       }
     });
 
