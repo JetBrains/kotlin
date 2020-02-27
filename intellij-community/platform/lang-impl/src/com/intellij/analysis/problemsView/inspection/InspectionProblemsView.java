@@ -79,13 +79,13 @@ public class InspectionProblemsView implements PersistentStateComponent<Inspecti
     });
     myProject.getMessageBus().connect().subscribe(DaemonCodeAnalyzer.DAEMON_EVENT_TOPIC, new DaemonCodeAnalyzer.DaemonListener() {
       @Override
-      public void daemonStarting(@NotNull Collection<FileEditor> fileEditors) {
+      public void daemonStarting(@NotNull Collection<? extends FileEditor> fileEditors) {
         myAnalysisIsBusy = true;
         updateIcon();
       }
 
       @Override
-      public void daemonFinished(@NotNull Collection<FileEditor> fileEditors) {
+      public void daemonFinished(@NotNull Collection<? extends FileEditor> fileEditors) {
         myAnalysisIsBusy = false;
         updateIcon();
       }

@@ -20,7 +20,7 @@ import java.util.Collection;
 class RunnableStatusListener implements DaemonCodeAnalyzer.DaemonListener {
 
   @Override
-  public void daemonFinished(@NotNull Collection<FileEditor> fileEditors) {
+  public void daemonFinished(@NotNull Collection<? extends FileEditor> fileEditors) {
     if (!LineMarkerSettings.getSettings().isEnabled(new RunLineMarkerProvider())) return;
 
     for (FileEditor fileEditor : fileEditors) {

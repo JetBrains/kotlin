@@ -847,7 +847,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   }
 
   @NotNull
-  private synchronized DaemonProgressIndicator createUpdateProgress(@NotNull Collection<FileEditor> fileEditors) {
+  private synchronized DaemonProgressIndicator createUpdateProgress(@NotNull Collection<? extends FileEditor> fileEditors) {
     DaemonProgressIndicator old = myUpdateProgress;
     if (!old.isCanceled()) {
       old.cancel();
@@ -862,9 +862,9 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
   private static class MyDaemonProgressIndicator extends DaemonProgressIndicator {
     private final Project myProject;
-    private Collection<FileEditor> myFileEditors;
+    private Collection<? extends FileEditor> myFileEditors;
 
-    MyDaemonProgressIndicator(@NotNull Project project, @NotNull Collection<FileEditor> fileEditors) {
+    MyDaemonProgressIndicator(@NotNull Project project, @NotNull Collection<? extends FileEditor> fileEditors) {
       myFileEditors = fileEditors;
       myProject = project;
     }
