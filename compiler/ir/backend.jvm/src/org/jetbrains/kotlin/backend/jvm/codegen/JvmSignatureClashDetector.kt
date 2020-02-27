@@ -27,9 +27,13 @@ class JvmSignatureClashDetector(
         fieldsBySignature.getOrPut(rawSignature) { SmartSet.create() }.add(irField)
     }
 
-    fun trackMethod(irFunction: IrFunction) {
-        if (irFunction is IrSimpleFunction && irFunction.isFakeOverride && irFunction.dispatchReceiverParameter != null) {
-            for (overriddenFunction in getOverriddenFunctions(irFunction)) {
+    fun trackMethod(irFunction: IrFunction, rawSignature: RawSignature) {
+        methodsBySignature.getOrPut(rawSignature) { SmartSet.create() }.add(irFunction)
+    }
+
+    fun trackFakeOverrideMethod(irFunction: IrFunction) {
+        if (irFunction.dispatchReceiverParameter != null) {
+            for (overriddenFunction in getOverriddenFunctions(irFunction as IrSimpleFunction)) {
                 trackMethod(irFunction, mapRawSignature(overriddenFunction))
             }
         } else {
@@ -40,10 +44,6 @@ class JvmSignatureClashDetector(
     private fun mapRawSignature(irFunction: IrFunction): RawSignature {
         val jvmSignature = context.methodSignatureMapper.mapSignatureSkipGeneric(irFunction)
         return RawSignature(jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, MemberKind.METHOD)
-    }
-
-    private fun trackMethod(irFunction: IrFunction, rawSignature: RawSignature) {
-        methodsBySignature.getOrPut(rawSignature) { SmartSet.create() }.add(irFunction)
     }
 
     private fun getOverriddenFunctions(irFunction: IrSimpleFunction): Set<IrFunction> {

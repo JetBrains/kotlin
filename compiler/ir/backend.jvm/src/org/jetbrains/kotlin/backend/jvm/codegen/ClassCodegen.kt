@@ -376,11 +376,13 @@ open class ClassCodegen protected constructor(
     }
 
     private fun generateMethod(method: IrFunction) {
-        jvmSignatureClashDetector.trackMethod(method)
+        if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+            jvmSignatureClashDetector.trackFakeOverrideMethod(method)
+            return
+        }
 
-        if (method.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
         val signature = FunctionCodegen(method, this).generate().asmMethod
-
+        jvmSignatureClashDetector.trackMethod(method, RawSignature(signature.name, signature.descriptor, MemberKind.METHOD))
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> {
                 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
