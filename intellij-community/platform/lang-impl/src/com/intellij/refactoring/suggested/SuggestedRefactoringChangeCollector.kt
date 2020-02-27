@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.SuggestedRefactoringState.ErrorLevel
 import com.intellij.util.concurrency.AppExecutorUtil
 
 class SuggestedRefactoringChangeCollector(
@@ -33,7 +34,7 @@ class SuggestedRefactoringChangeCollector(
 
   override fun inconsistentState() {
     ApplicationManager.getApplication().assertIsDispatchThread()
-    state = state?.withSyntaxError(true)
+    state = state?.withErrorLevel(ErrorLevel.INCONSISTENT)
     updateAvailabilityIndicator()
   }
 
@@ -46,6 +47,7 @@ class SuggestedRefactoringChangeCollector(
   private fun amendStateInBackground() {
     if (!_amendStateInBackgroundEnabled) return
     val initialState = state ?: return
+    require(initialState.errorLevel != ErrorLevel.INCONSISTENT)
     val psiFile = initialState.declaration.containingFile
     val project = initialState.declaration.project
     val psiDocumentManager = PsiDocumentManager.getInstance(project)
@@ -65,14 +67,14 @@ class SuggestedRefactoringChangeCollector(
         }
       }
       .inSmartMode(project)
-      .expireWhen { state !== initialState } //TODO: is explicit cancellation better?
+      .expireWhen { state !== initialState }
       .expireWith(project)
       .submit(AppExecutorUtil.getAppExecutorService())
   }
 
   private fun updateAvailabilityIndicator() {
     val state = this.state
-    if (state == null || state.oldSignature == state.newSignature && !state.syntaxError) {
+    if (state == null || state.oldSignature == state.newSignature && state.errorLevel == ErrorLevel.NO_ERRORS) {
       availabilityIndicator.clear()
       return
     }
@@ -83,7 +85,7 @@ class SuggestedRefactoringChangeCollector(
       return
     }
 
-    val refactoringData = if (!state.syntaxError)
+    val refactoringData = if (state.errorLevel == ErrorLevel.NO_ERRORS)
       refactoringSupport.availability.detectAvailableRefactoring(state)
     else
       null
@@ -95,7 +97,7 @@ class SuggestedRefactoringChangeCollector(
     set(value) {
       if (value != field) {
         field = value
-        if (value) {
+        if (value && state?.errorLevel != ErrorLevel.INCONSISTENT) {
           amendStateInBackground()
         }
       }

@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.refactoring.suggested.SuggestedRefactoringExecution.NewParameterValue
+import com.intellij.refactoring.suggested.SuggestedRefactoringState.ErrorLevel
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.ui.awt.RelativePoint
 import java.awt.Font
@@ -48,11 +49,12 @@ internal fun performSuggestedRefactoring(
 ) {
   PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-  val state = (SuggestedRefactoringProviderImpl.getInstance(project).state ?: return)
-    .let {
+  val state = SuggestedRefactoringProviderImpl.getInstance(project).state
+    ?.takeIf { it.errorLevel == ErrorLevel.NO_ERRORS }
+    ?.let {
       it.refactoringSupport.availability.refineSignaturesWithResolve(it)
-    }
-  if (state.syntaxError || state.oldSignature == state.newSignature) return
+    } ?: return
+  if (state.errorLevel != ErrorLevel.NO_ERRORS || state.oldSignature == state.newSignature) return
   val refactoringSupport = state.refactoringSupport
 
   when (val refactoringData = refactoringSupport.availability.detectAvailableRefactoring(state)) {
