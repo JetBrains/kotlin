@@ -50,6 +50,10 @@ kotlin {
         // Configure fields required by CocoaPods.
         summary = "Some description for a Kotlin/Native module"
         homepage = "Link to a Kotlin/Native module homepage"
+
+        // The name of the produced framework can be changed.
+        // The name of the Gradle project is used here by default.
+        frameworkName = "my_framework"
     }
 }
 ```
@@ -144,4 +148,3 @@ CocoaPods libraries, it can be build __only__ __from__ __Xcode__.
 
  - If a Kotlin/Native module uses a CocoaPods library, you can built this module only from an Xcode project.
  Otherwise the CocoaPods library cannot be resolved by the Kotlin/Native infrastructure.
- - [Subspecs](https://guides.cocoapods.org/syntax/podspec.html#group_subspecs) are not supported.
