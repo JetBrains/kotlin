@@ -14,6 +14,12 @@
   <depends>com.intellij.modules.mobile.ide</depends>
   <depends>org.jetbrains.kotlin</depends>
 
+  <application-components>
+    <component>
+      <implementation-class>com.jetbrains.swift.MobileSwiftInitializer</implementation-class>
+    </component>
+  </application-components>
+
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
