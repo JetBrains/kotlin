@@ -199,6 +199,7 @@ abstract class BaseGradleIT {
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
         val incrementalJs: Boolean? = null,
+        val incrementalJsKlib: Boolean? = null,
         val jsIrBackend: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
@@ -736,6 +737,7 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.incremental=$it")
             }
             options.incrementalJs?.let { add("-Pkotlin.incremental.js=$it") }
+            options.incrementalJsKlib?.let { add("-Pkotlin.incremental.js.klib=$it") }
             options.jsIrBackend?.let { add("-Pkotlin.js.useIrBackend=$it") }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }

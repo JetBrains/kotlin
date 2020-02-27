@@ -43,6 +43,7 @@ internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinComp
 
     if (task is Kotlin2JsCompile) {
         incrementalJs?.let { task.incremental = it }
+        incrementalJsKlib?.let { task.incrementalJsKlib = it }
     }
 }
 
@@ -75,6 +76,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val incrementalJs: Boolean?
         get() = booleanProperty("kotlin.incremental.js")
+
+    val incrementalJsKlib: Boolean?
+        get() = booleanProperty("kotlin.incremental.js.klib")
 
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
