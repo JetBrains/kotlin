@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
 import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -73,7 +75,8 @@ fun KotlinLibrary.createPackageFragmentProvider(
         storageManager,
         moduleDescriptor,
         deserializationConfiguration,
-        null
+        null,
+        LookupTracker.DO_NOTHING
     )
 }
 
@@ -151,7 +154,8 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
         storageManager,
         builtInsModule,
         deserializationConfiguration,
-        null
+        null,
+        LookupTracker.DO_NOTHING
     )
 
     builtInsModule.initialize(

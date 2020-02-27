@@ -155,7 +155,8 @@ class CompositeResolverForModuleFactory(
                 storageManager = moduleContext.storageManager,
                 moduleDescriptor = moduleDescriptor,
                 configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-                compositePackageFragmentAddend = null
+                compositePackageFragmentAddend = null,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
         }
         return listOfNotNull(metadataProvder, klibMetadataProvider)

@@ -25,7 +25,8 @@ object TopDownAnalyzerFacadeForJSIR : AbstractTopDownAnalyzerFacadeForJS() {
             incrementalData.compiledPackageParts.values.map { it.metadata },
             moduleContext.storageManager,
             moduleContext.module,
-            CompilerDeserializationConfiguration(languageVersionSettings)
+            CompilerDeserializationConfiguration(languageVersionSettings),
+            lookupTracker
         )
     }
 }
