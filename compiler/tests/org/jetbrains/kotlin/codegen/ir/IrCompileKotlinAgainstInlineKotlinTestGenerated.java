@@ -1556,6 +1556,16 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/innerClassConstuctorReference.kt");
                 }
 
+                @TestMetadata("mutableBoundPropertyReferenceFromClass.kt")
+                public void testMutableBoundPropertyReferenceFromClass() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/mutableBoundPropertyReferenceFromClass.kt");
+                }
+
+                @TestMetadata("mutablePropertyReferenceFromClass.kt")
+                public void testMutablePropertyReferenceFromClass() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/mutablePropertyReferenceFromClass.kt");
+                }
+
                 @TestMetadata("privateFunctionReference.kt")
                 public void testPrivateFunctionReference() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privateFunctionReference.kt");

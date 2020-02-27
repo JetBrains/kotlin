@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -60,7 +60,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
     open val hasDispatchReceiver = true
 
     fun addAllParameters(remapper: FieldRemapper): Parameters {
-        val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, invokeMethod.descriptor, this)
+        val builder = ParametersBuilder.initializeBuilderFrom(OBJECT_TYPE, invokeMethod.descriptor, this)
 
         for (info in capturedVars) {
             val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, ""))
@@ -140,8 +140,8 @@ abstract class DefaultLambda(
                 superName: String?,
                 interfaces: Array<out String>?
             ) {
-                isPropertyReference = superName?.startsWith("kotlin/jvm/internal/PropertyReference") ?: false
-                isFunctionReference = "kotlin/jvm/internal/FunctionReference" == superName
+                isPropertyReference = superName in PROPERTY_REFERENCE_SUPER_CLASSES
+                isFunctionReference = superName == FUNCTION_REFERENCE.internalName
 
                 super.visit(version, access, name, signature, superName, interfaces)
             }
@@ -202,6 +202,13 @@ abstract class DefaultLambda(
     }
 
     protected abstract fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method
+
+    private companion object {
+        val PROPERTY_REFERENCE_SUPER_CLASSES = listOf(
+            PROPERTY_REFERENCE0, PROPERTY_REFERENCE1, PROPERTY_REFERENCE2,
+            MUTABLE_PROPERTY_REFERENCE0, MUTABLE_PROPERTY_REFERENCE1, MUTABLE_PROPERTY_REFERENCE2
+        ).mapTo(HashSet(), Type::getInternalName)
+    }
 }
 
 internal fun Type.boxReceiverForBoundReference() =
