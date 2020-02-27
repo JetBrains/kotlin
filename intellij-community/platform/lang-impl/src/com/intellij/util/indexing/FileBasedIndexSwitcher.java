@@ -3,6 +3,12 @@ package com.intellij.util.indexing;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.project.DumbModeTask;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -11,6 +17,9 @@ public class FileBasedIndexSwitcher {
 
     @NotNull
     private final FileBasedIndexImpl myFileBasedIndex;
+
+    // accessed only in EDT
+    private Semaphore myDumbModeSemaphore;
 
     @TestOnly
     public FileBasedIndexSwitcher() {
@@ -22,17 +31,39 @@ public class FileBasedIndexSwitcher {
     }
 
     public void turnOff() {
-        LOG.assertTrue(ApplicationManager.getApplication().isWriteAccessAllowed());
+        LOG.assertTrue(ApplicationManager.getApplication().isDispatchThread());
+        LOG.assertTrue(!ApplicationManager.getApplication().isWriteAccessAllowed());
+        Project[] projects = ProjectManager.getInstance().getOpenProjects();
+        boolean unitTestMode = ApplicationManager.getApplication().isUnitTestMode();
+        if (!unitTestMode) {
+            myDumbModeSemaphore = new Semaphore(1);
+            for (Project project : projects) {
+                DumbService.getInstance(project).cancelAllTasksAndWait();
+                DumbService.getInstance(project).queueTask(new DumbModeTask() {
+                    @Override
+                    public void performInDumbMode(@NotNull ProgressIndicator indicator) {
+                        indicator.setText(IndexingBundle.message("indexes.reloading"));
+                        myDumbModeSemaphore.waitFor();
+                    }
+                });
+            }
+        }
         myFileBasedIndex.performShutdown(true);
         myFileBasedIndex.dropRegisteredIndexes();
         IndexingStamp.flushCaches();
     }
 
     public void turnOn() {
-        LOG.assertTrue(ApplicationManager.getApplication().isWriteAccessAllowed());
+        LOG.assertTrue(ApplicationManager.getApplication().isWriteThread());
         myFileBasedIndex.initComponent();
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
+        boolean unitTestMode = ApplicationManager.getApplication().isUnitTestMode();
+
+        if (unitTestMode) {
             myFileBasedIndex.waitUntilIndicesAreInitialized();
+        }
+
+        if (!unitTestMode) {
+            myDumbModeSemaphore.up();
         }
     }
 }
