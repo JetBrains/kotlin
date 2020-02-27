@@ -330,7 +330,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         addFunction {
             updateFrom(irFunction)
             modality = Modality.ABSTRACT
-            origin = IrDeclarationOrigin.DEFINED
+            origin = JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB
             name = irFunction.name
             returnType = irFunction.returnType
         }.apply {

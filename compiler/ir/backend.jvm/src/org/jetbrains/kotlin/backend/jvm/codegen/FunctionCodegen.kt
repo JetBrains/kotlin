@@ -63,7 +63,13 @@ open class FunctionCodegen(
             generateParameterNames(irFunction, methodVisitor, signature, state)
         }
 
-        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (
+            irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+            && irFunction.origin != IrDeclarationOrigin.BRIDGE
+            && irFunction.origin != IrDeclarationOrigin.BRIDGE_SPECIAL
+            && irFunction.origin != JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB
+            && irFunction.origin != JvmLoweredDeclarationOrigin.TO_ARRAY
+        ) {
             object : AnnotationCodegen(classCodegen, context) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
