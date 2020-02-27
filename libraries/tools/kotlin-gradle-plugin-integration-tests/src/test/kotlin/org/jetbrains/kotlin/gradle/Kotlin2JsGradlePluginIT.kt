@@ -4,6 +4,7 @@ import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
+import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
@@ -418,11 +419,19 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
     @Test
     fun testIncrementalCompilation() = Project("kotlin2JsICProject").run {
+        setupWorkingDir()
+        val modules = listOf("app", "lib")
+        val mainFiles = modules.flatMapTo(LinkedHashSet()) {
+            projectDir.resolve("$it/src/main").allKotlinFiles()
+        }
+
         build("build") {
             assertSuccessful()
             checkIrCompilationMessage()
-            if (!irBackend) { // TODO: Support incremental compilation
-                assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            if (irBackend) {
+                assertCompiledKotlinSources(project.relativize(mainFiles))
+            } else {
                 assertCompiledKotlinSources(project.relativize(allKotlinFiles))
             }
         }
@@ -438,10 +447,12 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         build("build") {
             assertSuccessful()
             checkIrCompilationMessage()
-            // TODO: Support incremental compilation in IR backend
-            if (!irBackend) {
-                assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                val affectedFiles = project.projectDir.getFilesByNames("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt")
+            assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            val affectedFiles = project.projectDir.getFilesByNames("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt")
+            if (irBackend) {
+                // only klib ic is supported for now, so tests are generated non-incrementally with ir backend
+                assertCompiledKotlinSources(project.relativize(affectedFiles.filter { it in mainFiles }))
+            } else {
                 assertCompiledKotlinSources(project.relativize(affectedFiles))
             }
         }
@@ -449,7 +460,9 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
     @Test
     fun testIncrementalCompilationDisabled() = Project("kotlin2JsICProject").run {
-        val options = defaultBuildOptions().copy(incrementalJs = false)
+        val options = defaultBuildOptions().run {
+            if (irBackend) copy(incrementalJsKlib = false) else copy(incrementalJs = false)
+        }
 
         build("build", options = options) {
             assertSuccessful()
