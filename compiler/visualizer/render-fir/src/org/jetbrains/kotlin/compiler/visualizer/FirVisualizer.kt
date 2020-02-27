@@ -397,8 +397,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: StringBuilder) {
-            data.append("CMP(${comparisonOperator.operation.operator}, ")
-            comparisonOperator.compareToCall.accept(this, data)
+            data.append("CMP(${comparisonExpression.operation.operator}, ")
+            comparisonExpression.compareToCall.accept(this, data)
             data.append(")")
         }
 
