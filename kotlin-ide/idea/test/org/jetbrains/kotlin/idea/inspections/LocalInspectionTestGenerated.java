@@ -10434,6 +10434,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testNonPair() throws Exception {
             runTest("testData/inspectionsLocal/replaceToWithInfixForm/nonPair.kt");
         }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            runTest("testData/inspectionsLocal/replaceToWithInfixForm/typeArguments.kt");
+        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)

@@ -26,7 +26,8 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return dotQualifiedExpressionVisitor(fun(expression) {
-            if (expression.callExpression?.valueArguments?.size != 1) return
+            val callExpression = expression.callExpression ?: return
+            if (callExpression.valueArguments.size != 1 || callExpression.typeArgumentList != null) return
             if (expression.calleeName !in compatibleNames) return
 
             val resolvedCall = expression.resolveToCall() ?: return
