@@ -16,13 +16,8 @@ import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorBundle;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -31,6 +26,7 @@ import com.intellij.openapi.editor.impl.event.MarkupModelListener;
 import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.options.ex.ConfigurableExtensionPointUtil;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -49,6 +45,7 @@ import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
+import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBValue;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -60,12 +57,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   private final Project myProject;
   private final Document myDocument;
   private final DaemonCodeAnalyzerImpl myDaemonCodeAnalyzer;
   private final SeverityRegistrar mySeverityRegistrar;
+  private final PsiManager myPsiManager;
   private Icon icon;
   String statistics;
   String statusLabel;
@@ -98,6 +97,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     myDaemonCodeAnalyzer = project == null ? null : (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
+    myPsiManager = myProject != null ? PsiManager.getInstance(myProject) : null;
 
     refresh(null);
 
@@ -473,11 +473,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
   }
 
-  private UIController myCurrentController; // This is cache. Don't access directly. Only via method below.
+  private UIController myCurrentController; // This is cache. Don't access directly. Only via the method below.
 
   private AnalyzerController getUIController() {
     PsiFile psiFile = getPsiFile();
-    if (myCurrentController == null || myCurrentController.myPsiFile != psiFile) {
+    if (myCurrentController == null || myPsiManager != null && !myPsiManager.areElementsEquivalent(myCurrentController.myPsiFile, psiFile)) {
       myCurrentController = new UIController(psiFile);
     }
 
@@ -489,6 +489,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     private final boolean notInLibrary;
     private final AnAction myMenuAction;
     private final List<LanguageHighlightLevel> myLevelsList;
+    private final List<HectorComponentPanel> myAdditionalPanels;
 
     private UIController(PsiFile psiFile) {
       myPsiFile = psiFile;
@@ -498,8 +499,13 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         VirtualFile virtualFile = psiFile.getVirtualFile();
         assert virtualFile != null;
         notInLibrary = !fileIndex.isInLibrary(virtualFile) || fileIndex.isInContent(virtualFile);
+        myAdditionalPanels = HectorComponentPanelsProvider.EP_NAME.extensions(myProject).
+          map(hp -> hp.createConfigurable(myPsiFile)).filter(p -> p != null).collect(Collectors.toList());
       }
-      else notInLibrary = true;
+      else {
+        notInLibrary = true;
+        myAdditionalPanels = Collections.emptyList();
+      }
 
       myMenuAction = initActions();
       myLevelsList = initLevels();
@@ -508,7 +514,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     private AnAction initActions() {
       MenuAction result = new MenuAction();
       if (myProject != null) { // Configure inspections
-        result.add(new DumbAwareAction(EditorBundle.message("hector.configure.inspections")) {
+        result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
           @Override
           public void update(@NotNull AnActionEvent e) {
             e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
@@ -529,18 +535,21 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       result.add(DaemonEditorPopup.createGotoGroup());
 
       if (myProject != null) { // Import popup
-        result.addAll(Separator.create(), new DumbAwareAction() {
+        result.addAll(Separator.create(), new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
           @Override
-          public void update(@NotNull AnActionEvent e) {
-            String actionText = myDaemonCodeAnalyzer.isImportHintsEnabled(myPsiFile) ? "Don't show import tooltip": "Show import tooltip";
-            e.getPresentation().setText(actionText);
-            e.getPresentation().setEnabled(notInLibrary);
+          public boolean isSelected(@NotNull AnActionEvent e) {
+            return myDaemonCodeAnalyzer.isImportHintsEnabled(myPsiFile);
           }
 
           @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
-            boolean hintEnabled = myDaemonCodeAnalyzer.isImportHintsEnabled(myPsiFile);
-            myDaemonCodeAnalyzer.setImportHintsEnabled(myPsiFile, !hintEnabled);
+          public void setSelected(@NotNull AnActionEvent e, boolean state) {
+            myDaemonCodeAnalyzer.setImportHintsEnabled(myPsiFile, state);
+          }
+
+          @Override
+          public void update(@NotNull AnActionEvent e) {
+            super.update(e);
+            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isAutohintsAvailable(myPsiFile));
           }
         });
       }
@@ -600,6 +609,33 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         myDaemonCodeAnalyzer.restart();
       }
     }
+
+    @Override
+    public void fillHectorPanels(@NotNull Container container, @NotNull GridBag gc) {
+      myAdditionalPanels.stream().peek(p -> p.reset()).map(p -> p.createComponent()).filter(c -> c != null).
+        forEach(c -> container.add(c, gc.nextLine().next().fillCellHorizontally().coverLine().weightx(1.0)));
+    }
+
+    @Override
+    public boolean onClose() {
+      if (myAdditionalPanels.stream().allMatch(p -> p.canClose())) {
+        if(myAdditionalPanels.stream().filter(p -> p.isModified()).peek(TrafficLightRenderer::applyPanel).count() > 0) {
+          InjectedLanguageManager.getInstance(myProject).dropFileCaches(myPsiFile);
+          myDaemonCodeAnalyzer.restart();
+        }
+
+        myAdditionalPanels.forEach(p -> p.disposeUIResources());
+        return true;
+      }
+      else return false;
+    }
+  }
+
+  private static void applyPanel(@NotNull HectorComponentPanel panel) {
+    try {
+      panel.apply();
+    }
+    catch (ConfigurationException ignored) {}
   }
 
   private static class MenuAction extends DefaultActionGroup implements HintManagerImpl.ActionToIgnore {
