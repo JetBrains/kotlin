@@ -180,7 +180,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
             fun y01() = Foo::prop.gett<caret>er
             """
         )
-        myFixture.launchAction(myFixture.findSingleIntention("Add kotlin-reflect.jar to the classpath"))
+        myFixture.launchAction(myFixture.findSingleIntention("Add 'kotlin-reflect.jar' to the classpath"))
         val kotlinRuntime = KotlinJavaModuleConfigurator.instance.getKotlinLibrary(module)!!
         val classes = kotlinRuntime.getFiles(OrderRootType.CLASSES).map { it.name }
         assertContainsElements(classes, "kotlin-reflect.jar")

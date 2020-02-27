@@ -1,4 +1,4 @@
-// "Make 'A' abstract" "true"
+// "Make 'A' 'abstract'" "true"
 interface I {
     fun foo()
 }
