@@ -160,6 +160,7 @@ class SuggestedRefactoringChangeListener(
       val document = event.document
       val psiFile = psiDocumentManager.getCachedPsiFile(document) ?: return
       if (!psiFile.isPhysical) return
+      if (psiFile is PsiCodeFragment) return
 
       val firstChangeInsideCommand = isFirstChangeInsideCommand
       isFirstChangeInsideCommand = false
