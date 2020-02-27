@@ -1,0 +1,11 @@
+// "Create enum constant 'C'" "true"
+enum class Bar {
+    A,
+    B,
+    <caret>C,
+    ;
+}
+
+fun main() {
+    Bar.C
+}

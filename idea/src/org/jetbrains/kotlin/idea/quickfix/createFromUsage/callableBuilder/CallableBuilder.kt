@@ -1162,9 +1162,24 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
     when (declaration) {
         is KtEnumEntry -> {
             val prevEnumEntry = declarationInPlace.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtEnumEntry>()
-            if ((prevEnumEntry?.prevSibling as? PsiWhiteSpace)?.text?.contains('\n') == true) {
-                val parent = declarationInPlace.parent
-                parent.addBefore(psiFactory.createNewLine(), declarationInPlace)
+            if (prevEnumEntry != null) {
+                if ((prevEnumEntry.prevSibling as? PsiWhiteSpace)?.text?.contains('\n') == true) {
+                    declarationInPlace.parent.addBefore(psiFactory.createNewLine(), declarationInPlace)
+                }
+                val comma = psiFactory.createComma()
+                if (prevEnumEntry.allChildren.any { it.node.elementType == KtTokens.COMMA }) {
+                    declarationInPlace.add(comma)
+                } else {
+                    prevEnumEntry.add(comma)
+                }
+                val semicolon = prevEnumEntry.allChildren.firstOrNull { it.node?.elementType == KtTokens.SEMICOLON }
+                if (semicolon != null) {
+                    (semicolon.prevSibling as? PsiWhiteSpace)?.text?.let {
+                        declarationInPlace.add(psiFactory.createWhiteSpace(it))
+                    }
+                    declarationInPlace.add(psiFactory.createSemicolon())
+                    semicolon.delete()
+                }
             }
         }
         !is KtPrimaryConstructor -> {
