@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,14 +53,27 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
             }
 
             val prevEntry = declaration.prevSiblingOfSameType()
-            if (prevEntry != null && !prevEntry.containsToken(KtTokens.COMMA)) {
+            if (prevEntry != null) {
+                if (declaration.getUserData(IS_ADDED_TRAILING_COMMA) != true) {
+                    if (prevEntry.containsToken(KtTokens.COMMA)) {
+                        declaration.add(comma)
+                        delta += comma.textLength
+                    }
+                    declaration.putUserData(IS_ADDED_TRAILING_COMMA, true)
+                }
                 val semicolon = prevEntry.allChildren.firstOrNull { it.node?.elementType == KtTokens.SEMICOLON }
                 if (semicolon != null) {
-                    semicolon.delete()
+                    (semicolon.prevSibling as? PsiWhiteSpace)?.text?.let {
+                        declaration.add(psiFactory.createWhiteSpace(it))
+                        delta += it.length
+                    }
                     declaration.add(psiFactory.createSemicolon())
+                    semicolon.delete()
                 }
-                prevEntry.add(comma)
-                delta += comma.textLength
+                if (!prevEntry.containsToken(KtTokens.COMMA)) {
+                    prevEntry.add(comma)
+                    delta += comma.textLength
+                }
             }
         } else {
             val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
@@ -80,6 +95,10 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
         }
 
         range = TextRange(range.startOffset, range.endOffset + delta)
+    }
+
+    companion object {
+        private val IS_ADDED_TRAILING_COMMA = Key.create<Boolean>("KotlinPreFormatProcessorIsAddedTrailingComma")
     }
 }
 
