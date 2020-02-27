@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components.AbstractDiagnosticCollectorComponent
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components.ExpressionCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components.DeclarationCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components.ErrorNodeDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -57,6 +58,7 @@ abstract class AbstractDiagnosticCollector {
 fun AbstractDiagnosticCollector.registerAllComponents() {
     initializeComponents(
         DeclarationCheckersDiagnosticComponent(this),
-        ErrorNodeDiagnosticCollectorComponent(this)
+        ExpressionCheckersDiagnosticComponent(this),
+        ErrorNodeDiagnosticCollectorComponent(this),
     )
 }
