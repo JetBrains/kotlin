@@ -104,4 +104,19 @@ class StringJVMTest {
         assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize(Locale.US))
         assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize(Locale.US))
     }
+
+    @Test
+    fun stringToBoolean() {
+        assertFalse(platformNull<String>().toBoolean())
+    }
+
+    @Test
+    fun stringEquals() {
+        assertFalse(platformNull<String>().equals("sample", ignoreCase = false))
+        assertFalse(platformNull<String>().equals("sample", ignoreCase = true))
+        assertFalse("sample".equals(platformNull<String>(), ignoreCase = false))
+        assertFalse("sample".equals(platformNull(), ignoreCase = true))
+        assertTrue(platformNull<String>().equals(platformNull(), ignoreCase = true))
+        assertTrue(platformNull<String>().equals(platformNull<String>(), ignoreCase = false))
+    }
 }

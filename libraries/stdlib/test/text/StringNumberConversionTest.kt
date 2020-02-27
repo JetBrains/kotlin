@@ -15,6 +15,7 @@ class StringNumberConversionTest {
         assertEquals(true, "True".toBoolean())
         assertEquals(false, "false".toBoolean())
         assertEquals(false, "not so true".toBoolean())
+        assertEquals(false, (null as String?).toBoolean())
     }
 
     @Test fun toByte() {
