@@ -40,7 +40,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
         init {
             // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { hwStats.close() }))
+            Runtime.getRuntime().addShutdownHook(Thread { hwStats.close() })
         }
 
         fun resetTimestamp() {
@@ -62,6 +62,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testHelloWorldProject() {
+
         tcSuite("Hello world project") {
             myProject = perfOpenHelloWorld(hwStats)
 
@@ -154,17 +155,6 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     perfOpenKotlinProjectFast(stat)
                 }
 
-//                runAndMeasure("type and autocomplete") {
-//                    perfTypeAndAutocomplete(
-//                        stat,
-//                        "build.gradle.kts",
-//                        "tasks {",
-//                        "default",
-//                        lookupElements = listOf("defaultJvmTarget"),
-//                        note = "tasks-create"
-//                    )
-//                }
-
                 runAndMeasure("type and autocomplete") {
                     perfTypeAndAutocomplete(
                         stat,
@@ -176,6 +166,16 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     )
                 }
 
+                runAndMeasure("type and undo") {
+                    perfTypeAndUndo(
+                        project(),
+                        stat,
+                        "build.gradle.kts",
+                        "tasks {",
+                        "register",
+                        note = "type-undo"
+                    )
+                }
 
             }
         }
@@ -281,14 +281,14 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                 val extraStats = Stats("${stats.name} $testName")
                 val extraTimingsNs = mutableListOf<Map<String, Any>?>()
 
-                val warmUpIterations = 3
-                val iterations = 10
+                val warmUpIterations = 20
+                val iterations = 30
 
                 performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
                     name(testName)
                     stats(stats)
-                    warmUpIterations(warmUpIterations)
-                    iterations(iterations)
+                    warmUpIterations(30)
+                    iterations(50)
                     setUp(perfKtsFileAnalysisSetUp(project, fileName))
                     test(perfKtsFileAnalysisTest())
                     tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))

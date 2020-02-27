@@ -41,6 +41,7 @@ import com.intellij.util.ArrayUtilRt
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.indexing.UnindexedFilesUpdater
 import com.intellij.util.io.exists
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
@@ -55,7 +56,6 @@ import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScript
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.openFileInEditor
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.openFixture
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
-import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.nio.file.Paths
 
@@ -280,18 +280,90 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
+        perfTypeAndDo(
+            project,
+            fileName,
+            "typeAndAutocomplete",
+            note,
+            stats,
+            marker,
+            typeAfterMarker,
+            surroundItems,
+            insertString,
+            setupBlock = {},
+            testBlock = { fixture: Fixture ->
+                fixture.complete()
+            },
+            tearDownCheck = { _, value: Array<LookupElement>? ->
+                val items = value?.map { e -> e.lookupString }?.toList() ?: emptyList()
+                for (lookupElement in lookupElements) {
+                    assertTrue("'$lookupElement' has to be present in items $items", items.contains(lookupElement))
+                }
+            },
+            revertChangesAtTheEnd = revertChangesAtTheEnd
+        )
+    }
+
+    fun perfTypeAndUndo(
+        project: Project,
+        stats: Stats,
+        fileName: String,
+        marker: String,
+        insertString: String,
+        surroundItems: String = "\n",
+        typeAfterMarker: Boolean = true,
+        revertChangesAtTheEnd: Boolean = true,
+        note: String = ""
+    ) {
+        var fileText: String? = null
+        perfTypeAndDo<Unit>(
+            project,
+            fileName,
+            "typeAndUndo",
+            note,
+            stats,
+            marker,
+            typeAfterMarker,
+            surroundItems,
+            insertString,
+            setupBlock = { fixture: Fixture ->
+                fileText = fixture.document.text
+            },
+            testBlock = { fixture: Fixture ->
+                fixture.performEditorAction(IdeActions.ACTION_UNDO)
+                UIUtil.dispatchAllInvocationEvents()
+            },
+            tearDownCheck = { fixture, _ ->
+                val text = fixture.document.text
+                assert(fileText != text) { "undo has to change document text\nbefore undo:\n$fileText\n\nafter undo:\n$text" }
+            },
+            revertChangesAtTheEnd = revertChangesAtTheEnd
+        )
+    }
+
+    private fun <V> perfTypeAndDo(
+        project: Project,
+        fileName: String,
+        typeTestPrefix: String,
+        note: String,
+        stats: Stats,
+        marker: String,
+        typeAfterMarker: Boolean,
+        surroundItems: String,
+        insertString: String,
+        setupBlock: (Fixture) -> Unit,
+        testBlock: (Fixture) -> V,
+        tearDownCheck: (Fixture, V?) -> Unit,
+        revertChangesAtTheEnd: Boolean
+    ) {
         openFixture(project, fileName).use { fixture ->
             val editor = fixture.editor
 
             val initialText = editor.document.text
             updateScriptDependenciesIfNeeded(fileName, fixture, project)
-            val scriptConfigurationManager = ScriptConfigurationManager.getInstance(fixture.project)
-            val configuration = scriptConfigurationManager.getConfiguration(fixture.psiFile as KtFile)
-            //scriptConfigurationManager.reloadScriptDefinitions()
-            //scriptConfigurationManager.forceReloadConfiguration(fixture.vFile, loaderForOutOfProjectScripts)
 
-            performanceTest<Pair<String, Fixture>, Array<LookupElement>> {
-                name("typeAndAutocomplete ${notePrefix(note)}$fileName")
+            performanceTest<Unit, V> {
+                name("$typeTestPrefix ${notePrefix(note)}$fileName")
                 stats(stats)
                 warmUpIterations(8)
                 iterations(15)
@@ -319,19 +391,14 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     }
 
                     fixture.type(insertString)
-
-                    it.setUpValue = Pair(initialText, fixture)
+                    setupBlock(fixture)
                 }
                 test {
-                    val fixture = it.setUpValue!!.second
-                    it.value = fixture.complete()
+                    it.value = testBlock(fixture)
                 }
                 tearDown {
-                    val items = it.value?.map { e -> e.lookupString }?.toList() ?: emptyList()
                     try {
-                        for (lookupElement in lookupElements) {
-                            assertTrue("'$lookupElement' has to be present in items $items", items.contains(lookupElement))
-                        }
+                        tearDownCheck(fixture, it.value)
                     } finally {
                         fixture.revertChanges(revertChangesAtTheEnd, initialText)
                         commitAllDocuments()
@@ -562,7 +629,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     protected fun perfScriptDependencies(name: String, stats: Stats, note: String = "") =
         perfScriptDependencies(project(), name, stats, note = note)
 
-    private fun project() = myProject ?: error("project has not been initialized")
+    protected fun project() = myProject ?: error("project has not been initialized")
 
     private fun perfScriptDependencies(
         project: Project,
@@ -574,6 +641,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         performanceTest<EditorFile, EditorFile> {
             name("updateScriptDependencies ${notePrefix(note)}${simpleFilename(fileName)}")
             stats(stats)
+            warmUpIterations(20)
+            iterations(50)
             setUp { it.setUpValue = openFileInEditor(project, fileName) }
             test {
                 ScriptConfigurationManager.updateScriptDependenciesSynchronously(it.setUpValue!!.psiFile, project)
@@ -587,6 +656,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 it.value?.let { v -> assertNotNull(v) }
             }
             profileEnabled(true)
+            checkStability(false)
         }
     }
 
