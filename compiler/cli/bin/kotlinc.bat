@@ -31,7 +31,7 @@ if not "%_KOTLIN_RUNNER%"=="" (
   "%_JAVACMD%" %JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
     org.jetbrains.kotlin.runner.Main %*
 ) else (
-  SET _ADDITIONAL_CLASSPATH=""
+  SET _ADDITIONAL_CLASSPATH=
 
   if not "%_KOTLIN_TOOL%"=="" (
     set _ADDITIONAL_CLASSPATH=;%_KOTLIN_HOME%\lib\%_KOTLIN_TOOL%
