@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.download.impl;
 
-import com.google.common.util.concurrent.AtomicDouble;
-import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
@@ -21,11 +19,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.containers.hash.LinkedHashMap;
 import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.download.FileDownloader;
 import com.intellij.util.io.HttpRequests;
 import com.intellij.util.net.IOExceptionDialog;
+import com.intellij.util.progress.ConcurrentTasksProgressManager;
+import com.intellij.util.progress.SubTaskProgressIndicator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,7 +148,7 @@ public class FileDownloaderImpl implements FileDownloader {
       final AtomicLong totalSize = new AtomicLong();
       for (final DownloadableFileDescription description : myFileDescriptions) {
         results.add(executor.submit(() -> {
-          SubTaskProgressIndicator indicator = progressManager.createSubTaskIndicator();
+          SubTaskProgressIndicator indicator = progressManager.createSubTaskIndicator(1);
           indicator.checkCanceled();
 
           final File existing = new File(targetDir, description.getDefaultFileName());
@@ -270,8 +269,7 @@ public class FileDownloaderImpl implements FileDownloader {
                                    @NotNull final File existingFile,
                                    @NotNull final ProgressIndicator indicator) throws IOException {
     final String presentableUrl = description.getPresentableDownloadUrl();
-    indicator.setText2(IdeBundle.message("progress.connecting.to.download.file.text", presentableUrl));
-    indicator.setIndeterminate(true);
+    indicator.setText(IdeBundle.message("progress.connecting.to.download.file.text", presentableUrl));
 
     return HttpRequests.request(description.getDownloadUrl()).connect(new HttpRequests.RequestProcessor<File>() {
       @Override
@@ -281,7 +279,7 @@ public class FileDownloaderImpl implements FileDownloader {
           return existingFile;
         }
 
-        indicator.setText2(IdeBundle.message("progress.download.file.text", description.getPresentableFileName(), presentableUrl));
+        indicator.setText(IdeBundle.message("progress.download.file.text", description.getPresentableFileName(), presentableUrl));
         return request.saveToFile(FileUtil.createTempFile("download.", ".tmp"), indicator);
       }
     });
@@ -304,85 +302,5 @@ public class FileDownloaderImpl implements FileDownloader {
   @Override
   public List<Pair<VirtualFile, DownloadableFileDescription>> downloadAndReturnWithDescriptions() {
     return downloadWithProgress(myDirectoryForDownloadedFilesPath, myProject, myParentComponent);
-  }
-
-  private static class ConcurrentTasksProgressManager {
-    private final ProgressIndicator myParent;
-    private final int myTasksCount;
-    private final AtomicDouble myTotalFraction;
-    private final Object myLock = new Object();
-    private final LinkedHashMap<SubTaskProgressIndicator, String> myText2Stack = new LinkedHashMap<>();
-
-    private ConcurrentTasksProgressManager(ProgressIndicator parent, int tasksCount) {
-      myParent = parent;
-      myTasksCount = tasksCount;
-      myTotalFraction = new AtomicDouble();
-    }
-
-    public void updateFraction(double delta) {
-      myTotalFraction.addAndGet(delta / myTasksCount);
-      myParent.setFraction(myTotalFraction.get());
-    }
-
-    public SubTaskProgressIndicator createSubTaskIndicator() {
-      return new SubTaskProgressIndicator(this);
-    }
-
-    public void setText2(@NotNull SubTaskProgressIndicator subTask, @Nullable String text) {
-      if (text != null) {
-        synchronized (myLock) {
-          myText2Stack.put(subTask, text);
-        }
-        myParent.setText2(text);
-      }
-      else {
-        String prev;
-        synchronized (myLock) {
-          myText2Stack.remove(subTask);
-          prev = myText2Stack.getLastValue();
-        }
-        if (prev != null) {
-          myParent.setText2(prev);
-        }
-      }
-    }
-  }
-
-  private static class SubTaskProgressIndicator extends SensitiveProgressWrapper {
-    private final AtomicDouble myFraction;
-    private final ConcurrentTasksProgressManager myProgressManager;
-
-    private SubTaskProgressIndicator(ConcurrentTasksProgressManager progressManager) {
-      super(progressManager.myParent);
-      myProgressManager = progressManager;
-      myFraction = new AtomicDouble();
-    }
-
-    @Override
-    public void setFraction(double newValue) {
-      double oldValue = myFraction.getAndSet(newValue);
-      myProgressManager.updateFraction(newValue - oldValue);
-    }
-
-    @Override
-    public void setIndeterminate(boolean indeterminate) {
-      if (myProgressManager.myTasksCount > 1) return;
-      super.setIndeterminate(indeterminate);
-    }
-
-    @Override
-    public void setText2(String text) {
-      myProgressManager.setText2(this, text);
-    }
-
-    @Override
-    public double getFraction() {
-      return myFraction.get();
-    }
-
-    public void finished() {
-      setFraction(1);
-      myProgressManager.setText2(this, null);
-    }
   }
 }
