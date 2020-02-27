@@ -1,12 +1,12 @@
 @kotlin.Metadata
 public final class A {
-    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
-    private @AnnField field p: int
-    private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
-    private final @AnnField field x: int
-    private field y: int
     static method <clinit>(): void
     public method <init>(@AnnParam p0: int, @AnnParam p1: int): void
+    private @AnnField field p: int
+    private final @AnnField field x: int
+    private field y: int
+    private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public synthetic deprecated static @AnnProp @AnnProp2 method getP$annotations(): void
     public final @AnnGetter method getP(): int
     public synthetic deprecated static @AnnProp @AnnProp2 @AnnDelegate method getS$annotations(): void

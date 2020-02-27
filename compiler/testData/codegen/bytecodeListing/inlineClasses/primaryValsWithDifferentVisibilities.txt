@@ -5,8 +5,8 @@ public interface IValue {
 
 @kotlin.Metadata
 public final class TestInternal {
-    private final field value: int
     private synthetic method <init>(p0: int): void
+    private final field value: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestInternal
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
@@ -21,8 +21,8 @@ public final class TestInternal {
 
 @kotlin.Metadata
 public final class TestOverriding {
-    private final field value: int
     private synthetic method <init>(p0: int): void
+    private final field value: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestOverriding
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
@@ -38,8 +38,8 @@ public final class TestOverriding {
 
 @kotlin.Metadata
 public final class TestPrivate {
-    private final field value: int
     private synthetic method <init>(p0: int): void
+    private final field value: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestPrivate
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
@@ -54,8 +54,8 @@ public final class TestPrivate {
 
 @kotlin.Metadata
 public final class TestPublic {
-    private final field value: int
     private synthetic method <init>(p0: int): void
+    private final field value: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestPublic
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean

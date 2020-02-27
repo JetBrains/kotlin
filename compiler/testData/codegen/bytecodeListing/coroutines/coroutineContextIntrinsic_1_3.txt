@@ -1,10 +1,10 @@
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class CoroutineContextIntrinsicKt$notTailCall$1 {
+    method <init>(p0: kotlin.coroutines.Continuation): void
     field label: int
     synthetic field result: java.lang.Object
     inner class CoroutineContextIntrinsicKt$notTailCall$1
-    method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
