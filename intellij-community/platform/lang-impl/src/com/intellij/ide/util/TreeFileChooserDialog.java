@@ -111,16 +111,6 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
 
     final ProjectAbstractTreeStructureBase treeStructure = new AbstractProjectTreeStructure(myProject) {
       @Override
-      public boolean isFlattenPackages() {
-        return false;
-      }
-
-      @Override
-      public boolean isShowMembers() {
-        return false;
-      }
-
-      @Override
       public boolean isHideEmptyMiddlePackages() {
         return true;
       }
@@ -128,11 +118,6 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
       @Override
       public Object @NotNull [] getChildElements(@NotNull final Object element) {
         return filterFiles(super.getChildElements(element));
-      }
-
-      @Override
-      public boolean isAbbreviatePackageNames() {
-        return false;
       }
 
       @Override

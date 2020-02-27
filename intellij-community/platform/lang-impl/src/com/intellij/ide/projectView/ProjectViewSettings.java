@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView;
 
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ProjectViewSettings extends ViewSettings {
-  boolean isShowExcludedFiles();
+  default boolean isShowExcludedFiles() {
+    return true;
+  }
 
   default boolean isShowVisibilityIcons() {
     return false;
@@ -113,11 +115,6 @@ public interface ProjectViewSettings extends ViewSettings {
     public boolean isShowMembers() {
       ProjectView view = getProjectView();
       return view != null && view.isShowMembers(getPaneID(view));
-    }
-
-    @Override
-    public boolean isStructureView() {
-      return false;
     }
 
     @Override
