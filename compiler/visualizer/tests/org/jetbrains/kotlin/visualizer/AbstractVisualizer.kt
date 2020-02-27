@@ -37,10 +37,6 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
         return true
     }
 
-    override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.ALL
-    }
-
     fun doFirBuilderDataTest(filePath: String) {
         replacement = "fir${File.separator}psi2fir" to "visualizer"
         doTest(filePath)

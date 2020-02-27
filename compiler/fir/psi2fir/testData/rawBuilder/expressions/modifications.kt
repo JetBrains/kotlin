@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun simple() {
     var x = 10
     x += 20
