@@ -143,8 +143,21 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
       return rangeInIdentifyingElement;
     }
     else if (identifyingElement.getContainingFile() == declaringElement.getContainingFile()) {
-      int delta = declaringElement.getTextRange().getStartOffset() - identifyingElement.getTextRange().getStartOffset();
-      return rangeInIdentifyingElement.shiftLeft(delta);
+      TextRange rangeInFile = rangeInIdentifyingElement.shiftRight(identifyingElement.getTextRange().getStartOffset());
+      TextRange declaringElementRange = declaringElement.getTextRange();
+      if (declaringElementRange.contains(rangeInFile)) {
+        return rangeInFile.shiftLeft(declaringElementRange.getStartOffset());
+      }
+      else {
+        LOG.error("Identifying range is outside of declaring range;\n" +
+                  "target: " + target + ";\n" +
+                  "target class: " + target.getClass().getName() + ";\n" +
+                  "identifying element: " + identifyingElement + ";\n" +
+                  "identifying element class: " + identifyingElement.getClass().getName() + ";\n" +
+                  "declaring element: " + declaringElement + ";\n" +
+                  "declaring element class: " + declaringElement.getClass().getName());
+        return null;
+      }
     }
     else {
       LOG.error("Identifying element file differs from declaring element file;\n" +
