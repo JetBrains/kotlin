@@ -28,8 +28,4 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, dumpToFile.path)
     }
-
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.NO_KOTLIN_REFLECT
-    }
 }

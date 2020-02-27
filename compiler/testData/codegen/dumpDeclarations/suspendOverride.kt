@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 interface A {
     suspend fun foo(): Boolean
 }
