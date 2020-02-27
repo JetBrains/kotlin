@@ -9,9 +9,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.stream.XMLOutputFactory
 
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
-
 plugins {
     base
 }
@@ -108,8 +105,7 @@ val nodeJSPlugin by configurations.creating
 val intellijRuntimeAnnotations = "intellij-runtime-annotations"
 
 val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File)
-    ?: (findProperty("agent.persistent.cache") as String?)?.let(::File)
-    ?: rootProject.gradle.gradleUserHomeDir.resolve("kotlin-build-dependencies")
+    ?: rootProject.rootDir.parentFile.resolve("dependencies")
 
 val customDepsRepoDir = dependenciesDir.resolve("repo")
 
@@ -146,29 +142,14 @@ dependencies {
     }
 }
 
-
-val cleanupIntellijCore = tasks.register<CleanDataTask>("cleanupIntellijCore") {
-    cleanableStoreProvider = provider { CleanableStore[repoDir.resolve("intellij-core").absolutePath] }
-}
-
-val cleanupIntellijAnnotation = tasks.register<CleanDataTask>("cleanupIntellijAnnotation") {
-    cleanableStoreProvider = provider { CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath] }
-}
-
-val cleanupDependencies = tasks.register("cleanupDependencies") {
-    dependsOn(cleanupIntellijCore)
-    dependsOn(cleanupIntellijAnnotation)
-}
-
-val makeIntellijCore = buildIvyRepositoryTaskAndRegisterCleanupTask(intellijCore, customDepsOrg, customDepsRepoDir)
+val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
 val makeIntellijAnnotations by tasks.registering(Copy::class) {
     dependsOn(makeIntellijCore)
 
-    val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
-    from(intellijCoreRepo.resolve("artifacts/annotations.jar"))
+    from(repoDir.resolve("intellij-core/$intellijVersion/artifacts/annotations.jar"))
 
-    val targetDir = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath][intellijVersion].use()
+    val targetDir = File(repoDir, "$intellijRuntimeAnnotations/$intellijVersion")
     into(targetDir)
 
     val ivyFile = File(targetDir, "$intellijRuntimeAnnotations.ivy.xml")
@@ -200,20 +181,20 @@ val mergeSources by tasks.creating(Jar::class.java) {
 val sourcesFile = mergeSources.outputs.files.singleFile
 
 val makeIde = if (androidStudioBuild != null) {
-    buildIvyRepositoryTaskAndRegisterCleanupTask(
+    buildIvyRepositoryTask(
         androidStudio,
         customDepsOrg,
         customDepsRepoDir,
         if (androidStudioOs == "mac")
-            ::skipContentsDirectory
-        else
+            ::skipContentsDirectory 
+        else 
             ::skipToplevelDirectory
     )
 } else {
     val task = if (installIntellijUltimate) {
-        buildIvyRepositoryTaskAndRegisterCleanupTask(intellijUltimate, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+        buildIvyRepositoryTask(intellijUltimate, customDepsOrg, customDepsRepoDir, null, sourcesFile)
     } else {
-        buildIvyRepositoryTaskAndRegisterCleanupTask(intellij, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+        buildIvyRepositoryTask(intellij, customDepsOrg, customDepsRepoDir, null, sourcesFile)
     }
 
     task.configure {
@@ -223,7 +204,8 @@ val makeIde = if (androidStudioBuild != null) {
     task
 }
 
-val buildJpsStandalone = buildIvyRepositoryTaskAndRegisterCleanupTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+val buildJpsStandalone = buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+val buildNodeJsPlugin = buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
 
 tasks.named("build") {
     dependsOn(
@@ -233,15 +215,10 @@ tasks.named("build") {
         makeIntellijAnnotations
     )
 
+    if (installIntellijUltimate) {
+        dependsOn(buildNodeJsPlugin)
+    }
 }
-
-if (installIntellijUltimate) {
-    val buildNodeJsPlugin =
-        buildIvyRepositoryTaskAndRegisterCleanupTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
-    tasks.named("build") { dependsOn(buildNodeJsPlugin) }
-}
-
-tasks.named("build") { dependsOn(cleanupDependencies) }
 
 // Task to delete legacy repo locations
 tasks.register<Delete>("cleanLegacy") {
@@ -250,114 +227,93 @@ tasks.register<Delete>("cleanLegacy") {
 }
 
 tasks.named<Delete>("clean") {
-    //TODO specify repos to clean? Use CleanDataTask
     delete(customDepsRepoDir)
 }
 
-fun buildIvyRepositoryTaskAndRegisterCleanupTask(
+fun buildIvyRepositoryTask(
     configuration: Configuration,
     organization: String,
     repoDirectory: File,
     pathRemap: ((String) -> String)? = null,
     sources: File? = null
-): TaskProvider<Task> {
-    fun ResolvedArtifact.storeDirectory(): CleanableStore =
-        CleanableStore[repoDirectory.resolve("$organization/${moduleVersion.id.name}").absolutePath]
+) = tasks.register("buildIvyRepositoryFor${configuration.name.capitalize()}") {
 
     fun ResolvedArtifact.moduleDirectory(): File =
-        storeDirectory()[moduleVersion.id.version].use()
+        File(repoDirectory, "$organization/${moduleVersion.id.name}/${moduleVersion.id.version}")
 
-    val buildIvyRepositoryTask = tasks.register("buildIvyRepositoryFor${configuration.name.capitalize()}") {
-        dependsOn(configuration)
-        inputs.files(configuration)
+    dependsOn(configuration)
+    inputs.files(configuration)
 
-        if (verifyDependencyOutput) {
-            outputs.dir(
-                provider {
-                    configuration.resolvedConfiguration.resolvedArtifacts.single().moduleDirectory()
+    if (verifyDependencyOutput) {
+        outputs.dir(provider {
+            configuration.resolvedConfiguration.resolvedArtifacts.single().moduleDirectory()
+        })
+    } else {
+        outputs.upToDateWhen {
+            configuration.resolvedConfiguration.resolvedArtifacts.single()
+                .moduleDirectory()
+                .exists()
+        }
+    }
+
+    doFirst {
+        configuration.resolvedConfiguration.resolvedArtifacts.single().run {
+            val moduleDirectory = moduleDirectory()
+            val artifactsDirectory = File(moduleDirectory(), "artifacts")
+
+            logger.info("Unpacking ${file.name} into ${artifactsDirectory.absolutePath}")
+            copy {
+                val fileTree = when (extension) {
+                    "tar.gz" -> tarTree(file)
+                    "zip" -> zipTree(file)
+                    else -> error("Unsupported artifact extension: $extension")
                 }
+
+                from(fileTree.matching {
+                    exclude("**/plugins/Kotlin/**")
+                })
+
+                into(artifactsDirectory)
+
+                if (pathRemap != null) {
+                    eachFile {
+                        path = pathRemap(path)
+                    }
+                }
+
+                includeEmptyDirs = false
+            }
+
+            writeIvyXml(
+                organization,
+                moduleVersion.id.name,
+                moduleVersion.id.version,
+                moduleVersion.id.name,
+                File(artifactsDirectory, "lib"),
+                File(artifactsDirectory, "lib"),
+                File(moduleDirectory, "ivy"),
+                *listOfNotNull(sources).toTypedArray()
             )
-        } else {
-            outputs.upToDateWhen {
-                configuration.resolvedConfiguration.resolvedArtifacts.single()
-                    .moduleDirectory()
-                    .exists()
-            }
-        }
 
-        doFirst {
-            configuration.resolvedConfiguration.resolvedArtifacts.single().run {
-                val moduleDirectory = moduleDirectory()
-                val artifactsDirectory = File(moduleDirectory(), "artifacts")
-
-                logger.info("Unpacking ${file.name} into ${artifactsDirectory.absolutePath}")
-                copy {
-                    val fileTree = when (extension) {
-                        "tar.gz" -> tarTree(file)
-                        "zip" -> zipTree(file)
-                        else -> error("Unsupported artifact extension: $extension")
+            val pluginsDirectory = File(artifactsDirectory, "plugins")
+            if (pluginsDirectory.exists()) {
+                file(File(artifactsDirectory, "plugins"))
+                    .listFiles { file: File -> file.isDirectory }
+                    .forEach {
+                        writeIvyXml(
+                            organization,
+                            it.name,
+                            moduleVersion.id.version,
+                            it.name,
+                            File(it, "lib"),
+                            File(it, "lib"),
+                            File(moduleDirectory, "ivy"),
+                            *listOfNotNull(sources).toTypedArray()
+                        )
                     }
-
-                    from(
-                        fileTree.matching {
-                            exclude("**/plugins/Kotlin/**")
-                        }
-                    )
-
-                    into(artifactsDirectory)
-
-                    if (pathRemap != null) {
-                        eachFile {
-                            path = pathRemap(path)
-                        }
-                    }
-
-                    includeEmptyDirs = false
-                }
-
-                writeIvyXml(
-                    organization,
-                    moduleVersion.id.name,
-                    moduleVersion.id.version,
-                    moduleVersion.id.name,
-                    File(artifactsDirectory, "lib"),
-                    File(artifactsDirectory, "lib"),
-                    File(moduleDirectory, "ivy"),
-                    *listOfNotNull(sources).toTypedArray()
-                )
-
-                val pluginsDirectory = File(artifactsDirectory, "plugins")
-                if (pluginsDirectory.exists()) {
-                    file(File(artifactsDirectory, "plugins"))
-                        .listFiles { file: File -> file.isDirectory }
-                        .forEach {
-                            writeIvyXml(
-                                organization,
-                                it.name,
-                                moduleVersion.id.version,
-                                it.name,
-                                File(it, "lib"),
-                                File(it, "lib"),
-                                File(moduleDirectory, "ivy"),
-                                *listOfNotNull(sources).toTypedArray()
-                            )
-                        }
-                }
             }
         }
     }
-
-    val cleanupIvyRepositoryTask = tasks.register<CleanDataTask>("cleanupIvyRepositoryFor${configuration.name.capitalize()}") {
-        cleanableStoreProvider = provider {
-            configuration.resolvedConfiguration.resolvedArtifacts.single().storeDirectory()
-        }
-    }
-
-    cleanupDependencies {
-        dependsOn(cleanupIvyRepositoryTask)
-    }
-
-    return buildIvyRepositoryTask
 }
 
 fun writeIvyXml(
