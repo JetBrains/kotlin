@@ -368,6 +368,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/whenAsReceiver.kt");
     }
 
+    @TestMetadata("whenElse.kt")
+    public void testWhenElse() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenElse.kt");
+    }
+
+    @TestMetadata("whenExpressionType.kt")
+    public void testWhenExpressionType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenExpressionType.kt");
+    }
+
     @TestMetadata("whenInference.kt")
     public void testWhenInference() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/whenInference.kt");
