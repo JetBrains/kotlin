@@ -340,7 +340,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                                             () -> actionHandler.showDialogAndShowUsages(editor),
                                                             actionHandler);
     ProgressIndicator indicator = new ProgressIndicatorBase();
-    if (popup != null) {
+    if (popup != null && !popup.isDisposed()) {
       Disposer.register(popup, usageView);
       Disposer.register(popup, indicator::cancel);
 
@@ -512,12 +512,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     });
   }
 
-  private static void showDialog(@NotNull FindUsagesHandlerBase handler, @NotNull Consumer<@NotNull FindUsagesOptions> optionsConsumer) {
+  private static void showDialog(@NotNull FindUsagesHandlerBase handler, @NotNull Consumer<? super FindUsagesOptions> optionsConsumer) {
     FUCounterUsageLogger.getInstance().logEvent("toolbar", "ShowUsagesPopup.showSettings");
     AbstractFindUsagesDialog dialog;
     if (handler instanceof FindUsagesHandlerUi) {
       dialog = ((FindUsagesHandlerUi)handler).getFindUsagesDialog(false, false, false);
-    } else {
+    }
+    else {
       dialog = FindUsagesHandler.createDefaultFindUsagesDialog(false, false, false, handler);
     }
     if (dialog.showAndGet()) {
@@ -776,7 +777,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                    @NotNull List<UsageNode> nodes,
                                    @NotNull ShowUsagesTable table,
                                    @Nullable JBPopup popup,
-                                   @NotNull Consumer<String> statusConsumer,
+                                   @NotNull Consumer<? super String> statusConsumer,
                                    @NotNull RelativePoint popupPosition,
                                    @NotNull IntRef minWidth,
                                    boolean findUsagesInProgress) {
@@ -963,14 +964,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }
     else {
       //opening editor is performing in invokeLater
-      IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() -> {
+      IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() ->
         editor.getScrollingModel().runActionOnScrollingFinished(() -> {
           // after new editor created, some editor resizing events are still bubbling. To prevent hiding hint, invokeLater this
-          IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() -> {
-            AsyncEditorLoader.performWhenLoaded(editor, runnable);
-          });
-        });
-      });
+          IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() -> AsyncEditorLoader.performWhenLoaded(editor, runnable));
+        })
+      );
     }
   }
 
