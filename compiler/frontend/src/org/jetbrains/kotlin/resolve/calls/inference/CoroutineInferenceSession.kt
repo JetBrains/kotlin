@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class CoroutineInferenceSession(
@@ -52,6 +53,7 @@ class CoroutineInferenceSession(
 ) {
     private val commonCalls = arrayListOf<PSICompletedCallInfo>()
     private val diagnostics = arrayListOf<KotlinCallDiagnostic>()
+    private var hasInapplicableCall = false
 
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         val system = candidate.getSystem() as NewConstraintSystemImpl
@@ -78,26 +80,40 @@ class CoroutineInferenceSession(
 
         commonCalls.add(callInfo)
 
+        val resultingDescriptor = callInfo.resolvedCall.resultingDescriptor
+
+        // This check is similar to one for old inference, see getCoroutineInferenceData() function
+        val checkCall = resultingDescriptor is LocalVariableDescriptor || anyReceiverContainStubType(resultingDescriptor)
+
+        if (!checkCall) return
+
         val isApplicableCall =
             callComponents.statelessCallbacks.isApplicableCallForBuilderInference(
-                callInfo.resolvedCall.resultingDescriptor,
+                resultingDescriptor,
                 callComponents.languageVersionSettings
             )
 
         if (!isApplicableCall) {
-            diagnostics.add(NonApplicableCallForBuilderInferenceDiagnostic(callInfo.callResolutionResult.resultCallAtom.atom))
+            hasInapplicableCall = true
         }
     }
+
+    private fun anyReceiverContainStubType(descriptor: CallableDescriptor): Boolean {
+        return descriptor.dispatchReceiverParameter?.type?.contains { it is StubType } == true ||
+                descriptor.extensionReceiverParameter?.type?.contains { it is StubType } == true
+    }
+
+    fun hasInapplicableCall(): Boolean = hasInapplicableCall
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean {
         return !skipCall(callInfo)
     }
 
     private fun skipCall(callInfo: SingleCallResolutionResult): Boolean {
-        // FakeCallableDescriptorForObject and LocalVariableDescriptor can't introduce new information for inference,
+        // FakeCallableDescriptorForObject can't introduce new information for inference,
         // so it's safe to complete it fully
         val descriptor = callInfo.resultCallAtom.candidateDescriptor
-        return descriptor is FakeCallableDescriptorForObject || descriptor is LocalVariableDescriptor
+        return descriptor is FakeCallableDescriptorForObject
     }
 
     override fun currentConstraintSystem(): ConstraintStorage {
