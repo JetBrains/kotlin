@@ -1,4 +1,5 @@
 // C
+// WITH_RUNTIME
 
 class C {
     companion object {

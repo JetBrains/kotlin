@@ -31,7 +31,6 @@ import org.junit.Assert
 import java.io.File
 
 abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule, KotlinBaseTest.TestFile>() {
-    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
 
     override fun isKotlinSourceRootNeeded(): Boolean = true
 
