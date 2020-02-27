@@ -16,14 +16,9 @@
 package org.jetbrains.kotlin.cfg
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractDiagnosticsWithModifiedMockJdkTest : AbstractDiagnosticsTest() {
-    override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.ALL
-    }
-
     override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
         return TestJdkKind.MODIFIED_MOCK_JDK
     }

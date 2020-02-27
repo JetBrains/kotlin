@@ -79,8 +79,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         setupEnvironment(environment)
     }
 
-    protected open fun getConfigurationKind() = ConfigurationKind.JDK_ONLY
-
     private fun getClasspath(file: File): List<File> {
         val result: MutableList<File> = ArrayList()
         result.add(KotlinTestUtils.getAnnotationsJar())

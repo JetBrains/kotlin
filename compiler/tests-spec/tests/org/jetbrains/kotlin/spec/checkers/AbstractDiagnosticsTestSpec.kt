@@ -47,7 +47,9 @@ abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.Abstr
         }
     }
 
-    override fun getConfigurationKind() = ConfigurationKind.ALL
+    override fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
+        return ConfigurationKind.ALL
+    }
 
     override fun skipDescriptorsValidation() = skipDescriptors
 

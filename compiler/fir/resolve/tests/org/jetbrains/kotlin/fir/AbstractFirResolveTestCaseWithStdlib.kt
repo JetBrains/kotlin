@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractFirDiagnosticsWithStdlibTest : AbstractFirDiagnosticsTest() {
-    override fun getConfigurationKind(): ConfigurationKind {
+
+    override fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
         return ConfigurationKind.ALL
     }
 }

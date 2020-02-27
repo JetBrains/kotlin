@@ -9,10 +9,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractDiagnosticsWithExplicitApi : AbstractDiagnosticsTest() {
-    override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.NO_KOTLIN_REFLECT
-    }
-
     override fun defaultLanguageVersionSettings(): LanguageVersionSettings =
         CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,

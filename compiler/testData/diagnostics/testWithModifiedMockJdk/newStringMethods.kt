@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // SKIP_TXT
+// WITH_RUNTIME
 
 fun foo(s: String) {
     s.isBlank()

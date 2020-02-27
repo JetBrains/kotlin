@@ -15,11 +15,9 @@
  */
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractDiagnosticsWithJdk9Test : AbstractDiagnosticsTest() {
-    override fun getConfigurationKind(): ConfigurationKind = ConfigurationKind.ALL
 
     override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
         return TestJdkKind.FULL_JDK_9

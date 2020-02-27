@@ -2,7 +2,7 @@
 // !WITH_NEW_INFERENCE
 // RENDER_PACKAGE: test
 // SKIP_COMPILED_JAVA
-
+// WITH_RUNTIME
 // FILE: spr/Nullable.java
 
 package spr;
