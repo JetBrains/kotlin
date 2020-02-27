@@ -166,24 +166,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
-    private fun createPodspecGenerationTask(
-        project: Project,
-        cocoapodsExtension: CocoapodsExtension
-    ) {
-        val dummyFrameworkTask = project.tasks.getByPath("generateDummyFramework")
-
-        project.tasks.register("podspec", PodspecTask::class.java) {
-            it.group = TASK_GROUP
-            it.description = "Generates a podspec file for CocoaPods import"
-            it.cocoapodsExtension = cocoapodsExtension
-            it.dependsOn(dummyFrameworkTask)
-            val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
-            if (generateWrapper) {
-                it.dependsOn(":wrapper")
-            }
-        }
-    }
-
     private fun createInterops(
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension,
@@ -447,7 +429,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             kotlinExtension.addExtension(EXTENSION_NAME, cocoapodsExtension)
             createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
             registerDummyFrameworkTask(project, cocoapodsExtension)
-            createPodspecGenerationTask(project, cocoapodsExtension)
+//            createPodspecGenerationTask(project, cocoapodsExtension)
             createSyncTask(project, kotlinExtension)
             registerPodGenerateSpecTask(project, cocoapodsExtension)
             registerPodInstallTask(project)

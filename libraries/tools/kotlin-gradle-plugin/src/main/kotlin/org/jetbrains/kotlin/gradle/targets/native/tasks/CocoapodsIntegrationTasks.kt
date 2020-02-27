@@ -10,7 +10,9 @@ import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -45,6 +47,20 @@ open class PodGenerateSpecTask : DefaultTask() {
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
 
+        val gradleWrapper = (project.rootProject.tasks.getByName("wrapper") as? Wrapper)?.scriptFile
+        require(gradleWrapper != null && gradleWrapper.exists()) {
+            """
+            The Gradle wrapper is required to run the build from Xcode.
+
+            Please run the same command with `-P${KotlinCocoapodsPlugin.GENERATE_WRAPPER_PROPERTY}=true` or run the `:wrapper` task to generate the wrapper manually.
+
+            See details about the wrapper at https://docs.gradle.org/current/userguide/gradle_wrapper.html
+            """.trimIndent()
+        }
+
+        val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
+        val syncTask = "${project.path}:${KotlinCocoapodsPlugin.SYNC_TASK_NAME}"
+
         outputFile.get().writeText(
             """
             |Pod::Spec.new do |spec|
@@ -63,6 +79,33 @@ open class PodGenerateSpecTask : DefaultTask() {
             |
             $dependencies
             |
+            |    spec.pod_target_xcconfig = {
+            |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
+            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '${KotlinCocoapodsPlugin.KOTLIN_TARGET_FOR_IOS_DEVICE}',
+            |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+            |        'KOTLIN_TARGET[sdk=watchos*]' => '${KotlinCocoapodsPlugin.KOTLIN_TARGET_FOR_WATCHOS_DEVICE}',
+            |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
+            |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
+            |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
+            |    }
+            |
+            |    spec.script_phases = [
+            |        {
+            |            :name => 'Build $specName',
+            |            :execution_position => :before_compile,
+            |            :shell_path => '/bin/sh',
+            |            :script => <<-SCRIPT
+            |                set -ev
+            |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/../"
+            |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
+            |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
+            |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
+            |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
+            |                    -P${KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY}="${'$'}HEADER_SEARCH_PATHS" \
+            |                    -P${KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY}="${'$'}FRAMEWORK_SEARCH_PATHS"
+            |            SCRIPT
+            |        }
+            |    ]
             |end
         """.trimMargin()
         )
@@ -155,7 +198,8 @@ open class PodSetupBuildTask : DefaultTask() {
             "-workspace", xcWorkspaceDirProvider.get().name,
             "-scheme", project.name.asValidFrameworkName(),
             "-configuration", DEFAULT_CONFIGURATION,
-            "-sdk", kotlinNativeTarget.toValidSDK
+            "-sdk", kotlinNativeTarget.toValidSDK,
+            "USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES=NO"
         ).apply {
             directory(xcWorkspaceDir)
         }.start()
@@ -166,7 +210,8 @@ open class PodSetupBuildTask : DefaultTask() {
                     "-workspace ${xcWorkspaceDirProvider.get().name} " +
                     "-scheme ${project.name.asValidFrameworkName()} " +
                     "-configuration $DEFAULT_CONFIGURATION " +
-                    "-sdk ${kotlinNativeTarget.toValidSDK}' " +
+                    "-sdk ${kotlinNativeTarget.toValidSDK}" +
+                    "USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES=NO' " +
                     "return code $buildSettingsRetCode"
         )
 
@@ -221,25 +266,28 @@ open class PodBuildTask : DefaultTask() {
 
         val podBuildSettings = fromBuildSettingsFile(buildSettingsFileProvider.get())
 
-        val podBuildProcess = ProcessBuilder(
-            "xcodebuild", "-workspace", xcWorkspaceDirProvider.get().name,
-            "-scheme", project.name.asValidFrameworkName(),
-            "-configuration", podBuildSettings.configuration,
-            "-sdk", kotlinNativeTarget.toValidSDK
-        ).apply {
-            directory(xcWorkspaceDir)
-            inheritIO()
-        }.start()
+        cocoapodsExtension.pods.all {
+            val podBuildProcess = ProcessBuilder(
+                "xcodebuild", "-workspace", xcWorkspaceDirProvider.get().name,
+                "-scheme", it.moduleName,
+                "-configuration", podBuildSettings.configuration,
+                "-sdk", kotlinNativeTarget.toValidSDK
+            ).apply {
+                directory(xcWorkspaceDir)
+                inheritIO()
+            }.start()
 
-        val podBuildRetCode = podBuildProcess.waitFor()
-        if (podBuildRetCode != 0) throw GradleException(
-            "Unable to run 'xcodebuild " +
-                    "-workspace ${xcWorkspaceDirProvider.get().name} " +
-                    "-scheme ${project.name.asValidFrameworkName()} " +
-                    "-configuration ${podBuildSettings.configuration} " +
-                    "-sdk ${kotlinNativeTarget.toValidSDK}' " +
-                    "return code $podBuildRetCode"
-        )
+            val podBuildRetCode = podBuildProcess.waitFor()
+            if (podBuildRetCode != 0) throw GradleException(
+                "Unable to run 'xcodebuild " +
+                        "-workspace ${xcWorkspaceDirProvider.get().name} " +
+                        "-scheme ${it.moduleName} " +
+                        "-configuration ${podBuildSettings.configuration} " +
+                        "-sdk ${kotlinNativeTarget.toValidSDK}' " +
+                        "return code $podBuildRetCode"
+            )
+        }
+
         buildDirHashFileProvider.get().writeText(getFileChecksumStr(project.file(podBuildSettings.buildDir)))
     }
 
