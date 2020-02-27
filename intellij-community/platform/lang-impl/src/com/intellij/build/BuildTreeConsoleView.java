@@ -47,7 +47,6 @@ import com.intellij.ui.*;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
 import com.intellij.ui.tree.TreeVisitor;
-import com.intellij.ui.tree.ui.DefaultTreeUI;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
@@ -79,6 +78,7 @@ import static com.intellij.build.BuildView.CONSOLE_VIEW_NAME;
 import static com.intellij.openapi.util.text.StringUtil.isEmpty;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
+import static com.intellij.ui.render.RenderingHelper.SHRINK_LONG_RENDERER;
 import static com.intellij.util.ObjectUtils.chooseNotNull;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static com.intellij.util.ui.UIUtil.getTreeSelectionForeground;
@@ -712,6 +712,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     new TreeSpeedSearch(tree).setComparator(new SpeedSearchComparator(false));
     TreeUtil.installActions(tree);
     tree.setCellRenderer(new MyNodeRenderer());
+    tree.putClientProperty(SHRINK_LONG_RENDERER, true);
     return tree;
   }
 
@@ -1001,10 +1002,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   private static class MyNodeRenderer extends NodeRenderer {
-    {
-      putClientProperty(DefaultTreeUI.SHRINK_LONG_RENDERER, true);
-    }
-
     private String myDurationText;
     private Color myDurationColor;
     private int myDurationWidth;
