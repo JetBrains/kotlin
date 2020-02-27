@@ -230,7 +230,8 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
                     languageVersionSettings,
                     symbolTable,
                     typeTranslator,
-                    irBuiltIns
+                    irBuiltIns,
+                    irProviders = irProviders
                 )
             )
         }

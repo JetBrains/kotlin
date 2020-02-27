@@ -27,6 +27,11 @@ object JvmBackendFacade {
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, mangler = JvmMangler)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = extensions)
 
+        val irProviders = generateTypicalIrProviderList(
+            psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, psi2irContext.symbolTable,
+            extensions = extensions
+        )
+
         for (extension in IrGenerationExtension.getInstances(state.project)) {
             psi2ir.addPostprocessingStep { module ->
                 extension.generate(
@@ -37,16 +42,13 @@ object JvmBackendFacade {
                         psi2irContext.languageVersionSettings,
                         psi2irContext.symbolTable,
                         psi2irContext.typeTranslator,
-                        psi2irContext.irBuiltIns
+                        psi2irContext.irBuiltIns,
+                        irProviders = irProviders
                     )
                 )
             }
         }
 
-        val irProviders = generateTypicalIrProviderList(
-            psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, psi2irContext.symbolTable,
-            extensions = extensions
-        )
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders = irProviders, expectDescriptorToSymbol = null)
         doGenerateFilesInternal(
             state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, irProviders, extensions
