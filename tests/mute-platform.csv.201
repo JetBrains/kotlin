@@ -188,6 +188,11 @@ org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAcciden
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testJavaEnumValueOf_JavaEnumValueOf, Enums in 201
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testOverloadsWithSameOrigin_OverloadsWithSameOrigin, Bad imports after rename
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testRenameKotlinMultifileFacadeClassWithJvmNameByRef_RenameKotlinMultifileFacadeClassWithJvmName, KT-34689
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.test1, Additional signature
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImport, Additional signature
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImportWithBlankLineInsertion, Additional signature
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImportWithBlankLinesRemoval, Additional signature
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testCommentTyping, Additional signature
 org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testBuiltInMember, KT-34825
 org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedClass, KT-34825
 org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedClassMember, KT-34825
