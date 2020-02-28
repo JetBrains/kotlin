@@ -7,13 +7,11 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
-import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.ReplHistory
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -33,23 +31,28 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
+import kotlin.script.experimental.api.SourceCode
+import kotlin.script.experimental.util.SnippetsHistory
 
-class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
-    private val topDownAnalysisContext: TopDownAnalysisContext
-    private val topDownAnalyzer: LazyTopDownAnalyzer
-    private val resolveSession: ResolveSession
-    private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
-    private val replState = ResettableAnalyzerState()
+open class ReplCodeAnalyzerBase(
+    environment: KotlinCoreEnvironment,
+    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace()
+) {
+    protected val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
+
+    protected val container: ComponentProvider
+    protected val topDownAnalysisContext: TopDownAnalysisContext
+    protected val topDownAnalyzer: LazyTopDownAnalyzer
+    protected val resolveSession: ResolveSession
+    protected val replState = ResettableAnalyzerState()
 
     val module: ModuleDescriptorImpl
-
-    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace()
 
     init {
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
         // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
         // because no symbol declared in the REPL session can be used from Java)
-        val container = TopDownAnalyzerFacadeForJVM.createContainer(
+        container = TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project,
             emptyList(),
             trace,
@@ -71,7 +74,10 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         val scriptDescriptor: ClassDescriptorWithResolutionScopes?
         val diagnostics: Diagnostics
 
-        data class Successful(override val scriptDescriptor: ClassDescriptorWithResolutionScopes, override val diagnostics: Diagnostics) :
+        data class Successful(
+            override val scriptDescriptor: ClassDescriptorWithResolutionScopes,
+            override val diagnostics: Diagnostics
+        ) :
             ReplLineAnalysisResult
 
         data class WithErrors(override val diagnostics: Diagnostics) :
@@ -80,41 +86,44 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
     }
 
-    fun resetToLine(lineId: ILineId): List<ReplCodeLine> = replState.resetToLine(lineId)
-
-    fun reset(): List<ReplCodeLine> = replState.reset()
-
     fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
         topDownAnalysisContext.scripts.clear()
         trace.clearDiagnostics()
 
         psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
 
-        return doAnalyze(psiFile, emptyList(), codeLine)
+        return doAnalyze(psiFile, emptyList(), codeLine.toSourceCode())
     }
 
-    fun analyzeReplLineWithImportedScripts(psiFile: KtFile, importedScripts: List<KtFile>, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+    fun analyzeReplLineWithImportedScripts(
+        psiFile: KtFile,
+        importedScripts: List<KtFile>,
+        codeLine: SourceCode,
+        priority: Int
+    ): ReplLineAnalysisResult {
         topDownAnalysisContext.scripts.clear()
         trace.clearDiagnostics()
 
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
+        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
 
         return doAnalyze(psiFile, importedScripts, codeLine)
     }
 
-    private fun doAnalyze(linePsi: KtFile, importedScripts: List<KtFile>, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+    private fun doAnalyze(linePsi: KtFile, importedScripts: List<KtFile>, codeLine: SourceCode): ReplLineAnalysisResult {
         scriptDeclarationFactory.setDelegateFactory(
             FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi) + importedScripts)
         )
-        replState.submitLine(linePsi, codeLine)
+        replState.submitLine(linePsi)
 
         val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)
 
         val diagnostics = trace.bindingContext.diagnostics
         val hasErrors = diagnostics.any { it.severity == Severity.ERROR }
         return if (hasErrors) {
-            replState.lineFailure(linePsi, codeLine)
-            ReplLineAnalysisResult.WithErrors(diagnostics)
+            replState.lineFailure(linePsi)
+            ReplLineAnalysisResult.WithErrors(
+                diagnostics
+            )
         } else {
             val scriptDescriptor = context.scripts[linePsi.script]!!
             replState.lineSuccess(linePsi, codeLine, scriptDescriptor)
@@ -123,10 +132,9 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
                 diagnostics
             )
         }
-
     }
 
-    private class ScriptMutableDeclarationProviderFactory : DeclarationProviderFactory {
+    protected class ScriptMutableDeclarationProviderFactory : DeclarationProviderFactory {
         private lateinit var delegateFactory: DeclarationProviderFactory
         private lateinit var rootPackageProvider: AdaptablePackageMemberDeclarationProvider
 
@@ -175,28 +183,21 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
     }
 
+    data class CompiledCode(val className: String, val source: SourceCode)
+
     // TODO: merge with org.jetbrains.kotlin.resolve.repl.ReplState when switching to new REPL infrastructure everywhere
     // TODO: review its place in the extracted state infrastructure (now the analyzer itself is a part of the state)
     class ResettableAnalyzerState {
-        private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
+        private val successfulLines =
+            SnippetsHistory<CompiledCode, LineInfo.SuccessfulLine>()
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
 
-        fun resetToLine(lineId: ILineId): List<ReplCodeLine> {
-            val removed = successfulLines.resetToLine(lineId.no)
-            removed.forEach { submittedLines.remove(it.second.linePsi) }
-            return removed.map { it.first }
-        }
-
-        fun reset(): List<ReplCodeLine> {
-            submittedLines.clear()
-            return successfulLines.reset().map { it.first }
-        }
-
-        fun submitLine(ktFile: KtFile, codeLine: ReplCodeLine) {
-            val line = LineInfo.SubmittedLine(
-                ktFile,
-                successfulLines.lastValue()
-            )
+        fun submitLine(ktFile: KtFile) {
+            val line =
+                LineInfo.SubmittedLine(
+                    ktFile,
+                    successfulLines.lastValue()
+                )
             submittedLines[ktFile] = line
             ktFile.fileScopesCustomizer = object : FileScopesCustomizer {
                 override fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
@@ -205,7 +206,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             }
         }
 
-        fun lineSuccess(ktFile: KtFile, codeLine: ReplCodeLine, scriptDescriptor: ClassDescriptorWithResolutionScopes) {
+        fun lineSuccess(ktFile: KtFile, codeLine: SourceCode, scriptDescriptor: ClassDescriptorWithResolutionScopes) {
             val successfulLine =
                 LineInfo.SuccessfulLine(
                     ktFile,
@@ -213,10 +214,15 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
                     scriptDescriptor
                 )
             submittedLines[ktFile] = successfulLine
-            successfulLines.add(CompiledReplCodeLine(ktFile.name, codeLine), successfulLine)
+            successfulLines.add(
+                CompiledCode(
+                    ktFile.name,
+                    codeLine
+                ), successfulLine
+            )
         }
 
-        fun lineFailure(ktFile: KtFile, codeLine: ReplCodeLine) {
+        fun lineFailure(ktFile: KtFile) {
             submittedLines[ktFile] =
                 LineInfo.FailedLine(
                     ktFile,
@@ -251,3 +257,11 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
     }
 }
+
+fun ReplCodeLine.toSourceCode(): SourceCode = SourceCodeByReplLine(code)
+
+internal data class SourceCodeByReplLine(
+    override val text: String,
+    override val name: String? = null,
+    override val locationId: String? = null
+) : SourceCode

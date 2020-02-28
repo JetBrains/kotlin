@@ -40,11 +40,11 @@ internal class KJvmCompiledScriptData(
 
     companion object {
         @JvmStatic
-        private val serialVersionUID = 4L
+        private val serialVersionUID = 5L
     }
 }
 
-class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
+open class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
     internal var data: KJvmCompiledScriptData,
     var compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
 ) : CompiledScript<ScriptBase>, Serializable {
@@ -197,7 +197,7 @@ fun KJvmCompiledScript<*>.toBytes(): ByteArray {
         oos = ObjectOutputStream(bos)
         oos.writeObject(this)
         oos.flush()
-        return bos.toByteArray()!!
+        return bos.toByteArray()
     } finally {
         try {
             oos?.close()

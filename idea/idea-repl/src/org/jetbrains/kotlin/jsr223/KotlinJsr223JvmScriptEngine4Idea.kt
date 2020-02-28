@@ -66,7 +66,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
 
     private val messageCollector = MyMessageCollector()
 
-    override val replCompiler: ReplCompiler by lazy {
+    override val replCompiler: ReplCompilerWithoutCheck by lazy {
         KotlinRemoteReplCompilerClient(
             daemon,
             makeAutodeletingFlagFile("idea-jsr223-repl-session"),

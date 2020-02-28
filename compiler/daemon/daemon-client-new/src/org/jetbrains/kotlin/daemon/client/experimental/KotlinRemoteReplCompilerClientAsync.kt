@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.daemon.client.experimental
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import org.jetbrains.kotlin.daemon.client.RemoteReplCompilerState
 
 // TODO: reduce number of ports used then SOCKET_ANY_FREE_PORT is passed (same problem with other calls)
 

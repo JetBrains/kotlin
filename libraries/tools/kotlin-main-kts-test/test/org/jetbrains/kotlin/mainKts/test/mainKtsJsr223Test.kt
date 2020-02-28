@@ -1,6 +1,6 @@
+package org.jetbrains.kotlin.mainKts.test
+
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.mainKts.test.TEST_DATA_ROOT
-import org.jetbrains.kotlin.mainKts.test.captureOut
 import org.junit.Assert
 import org.junit.Test
 import javax.script.ScriptEngineManager

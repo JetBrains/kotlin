@@ -25,7 +25,7 @@ const val KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY = "kotlin.script.engine"
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
-    protected abstract val replCompiler: ReplCompiler
+    protected abstract val replCompiler: ReplCompilerWithoutCheck
     protected abstract val replEvaluator: ReplFullEvaluator
 
     override fun eval(script: String, context: ScriptContext): Any? = compileAndEval(script, context)
@@ -72,7 +72,7 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
         val result = replCompiler.compile(state, codeLine)
         val compiled = when (result) {
             is ReplCompileResult.Error -> throw ScriptException("Error${result.locationString()}: ${result.message}")
-            is ReplCompileResult.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplCompileResult.Incomplete -> throw ScriptException("Error: incomplete code; ${result.message}")
             is ReplCompileResult.CompiledClasses -> result
         }
         return CompiledKotlinScript(this, codeLine, compiled)
@@ -103,7 +103,7 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
                         throw ScriptException(result.message, result.location.path, result.location.line, result.location.column)
                     else -> throw ScriptException(result.message)
                 }
-            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplEvalResult.Incomplete -> throw ScriptException("Error: incomplete code. ${result.message}")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }
     }

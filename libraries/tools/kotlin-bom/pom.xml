@@ -159,6 +159,11 @@
                 <artifactId>kotlin-scripting-jvm-host</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-ide-services</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
             <!-- Compiler dependency required by scripting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>

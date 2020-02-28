@@ -18,7 +18,7 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asErrorDiagnostics
 
-internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
+class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
 
     private val _diagnostics = arrayListOf<ScriptDiagnostic>()
 
@@ -78,17 +78,17 @@ private fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessa
     ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.EXCEPTION
 }
 
-internal fun failure(
+fun failure(
     messageCollector: ScriptDiagnosticsMessageCollector, vararg diagnostics: ScriptDiagnostic
 ): ResultWithDiagnostics.Failure =
     ResultWithDiagnostics.Failure(*messageCollector.diagnostics.toTypedArray(), *diagnostics)
 
-internal fun failure(
+fun failure(
     script: SourceCode, messageCollector: ScriptDiagnosticsMessageCollector, message: String
 ): ResultWithDiagnostics.Failure =
     failure(messageCollector, message.asErrorDiagnostics(path = script.locationId))
 
-internal class IgnoredOptionsReportingState {
+class IgnoredOptionsReportingState {
     var currentArguments = K2JVMCompilerArguments()
 }
 
