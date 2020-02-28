@@ -15,6 +15,9 @@ fun main() {
         assertEquals(next, null)
         next = this.ptr
         assertEquals(next, this.ptr)
+        // Check null pointer because it has Nothing? type.
+        next = null
+        assertEquals(next, null)
 
         assertEquals(vec4f, vectorOf(1.0f, 1.0f, 1.0f, 1.0f))
         vec4f = vectorOf(0.0f, 0.0f, 0.0f, 0.0f)
