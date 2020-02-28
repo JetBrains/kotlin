@@ -7,7 +7,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.impl.LaterInvocator;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbModeTask;
 import com.intellij.openapi.project.DumbServiceImpl;
@@ -33,15 +35,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public final class ChangedFilesCollector extends IndexedFilesListener {
+  private static final Logger LOG = Logger.getInstance(ChangedFilesCollector.class);
+
   private final IntObjectMap<VirtualFile> myFilesToUpdate = ContainerUtil.createConcurrentIntObjectMap();
   private final AtomicInteger myProcessedEventIndex = new AtomicInteger();
   private final Phaser myWorkersFinishedSync = new Phaser() {
@@ -257,7 +258,12 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
       myWorkersFinishedSync.arriveAndDeregister();
     }
 
-    myWorkersFinishedSync.awaitAdvance(phase);
+    try {
+      myWorkersFinishedSync.awaitAdvance(phase);
+    } catch (RejectedExecutionException e) {
+      LOG.warn(e);
+      throw new ProcessCanceledException(e);
+    }
 
     if (getEventMerger().getPublishedEventIndex() == publishedEventIndex) {
       myProcessedEventIndex.compareAndSet(processedEventIndex, publishedEventIndex);
