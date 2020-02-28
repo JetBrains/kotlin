@@ -45,7 +45,7 @@ class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreE
                         )
                     }
                     is ReplCompileResult.Incomplete -> ResultWithDiagnostics.Failure(
-                        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, "Incomplete code")
+                        ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code")
                     )
                     is ReplCompileResult.Error -> ResultWithDiagnostics.Failure(
                         ScriptDiagnostic(
