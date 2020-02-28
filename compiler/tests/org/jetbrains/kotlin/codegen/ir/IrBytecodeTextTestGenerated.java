@@ -259,6 +259,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/kt9603.kt");
     }
 
+    @TestMetadata("mapGetOrDefault.kt")
+    public void testMapGetOrDefault() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/mapGetOrDefault.kt");
+    }
+
     @TestMetadata("maxStackAfterOptimizations.kt")
     public void testMaxStackAfterOptimizations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/maxStackAfterOptimizations.kt");
