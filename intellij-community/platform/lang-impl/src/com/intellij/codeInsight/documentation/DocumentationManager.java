@@ -1127,13 +1127,13 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       LOG.debug("Using provider ", provider);
 
       if (provider instanceof ExternalDocumentationProvider) {
-        List<String> urls = ReadAction.compute(
+        List<String> urls = ReadAction.nonBlocking(
           () -> {
             SmartPsiElementPointer originalElementPtr = element.getUserData(ORIGINAL_ELEMENT_KEY);
             PsiElement originalElement = originalElementPtr != null ? originalElementPtr.getElement() : null;
             return provider.getUrlFor(element, originalElement);
           }
-        );
+        ).executeSynchronously();
         LOG.debug("External documentation URLs: ", urls);
         if (urls != null) {
           for (String url : urls) {
