@@ -3348,6 +3348,14 @@ createInterop("ccallbacksAndVarargs") {
     it.defFile 'interop/basics/ccallbacksAndVarargs.def'
 }
 
+createInterop("cmangling") {
+    it.defFile 'interop/basics/mangling.def'
+}
+
+createInterop("cmangling2") {
+    it.defFile 'interop/basics/mangling2.def'
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -3503,6 +3511,18 @@ interopTest("interop_types") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/types.kt"
     interop = 'ctypes'
+}
+
+interopTest("interop_mangling") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/mangling.kt"
+    interop = 'cmangling'
+}
+
+interopTest("interop_mangling2") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/mangling2.kt"
+    interop = 'cmangling2'
 }
 
 interopTest("interop_values") {

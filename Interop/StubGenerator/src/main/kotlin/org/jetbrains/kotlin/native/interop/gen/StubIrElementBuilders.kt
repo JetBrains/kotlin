@@ -88,6 +88,7 @@ internal class StructStubBuilder(
                 val fieldRefType = context.mirror(field.type)
                 val unwrappedFieldType = field.type.unwrapTypedefs()
                 val origin = StubOrigin.StructMember(field)
+                val fieldName = mangleSimple(field.name)
                 if (unwrappedFieldType is ArrayType) {
                     val type = (fieldRefType as TypeMirror.ByValue).valueType
                     val annotations = if (platform == KotlinPlatform.JVM) {
@@ -103,7 +104,7 @@ internal class StructStubBuilder(
                     }
                     val kind = PropertyStub.Kind.Val(getter)
                     // TODO: Should receiver be added?
-                    PropertyStub(field.name, type.toStubIrType(), kind, annotations = annotations, origin = origin)
+                    PropertyStub(fieldName, type.toStubIrType(), kind, annotations = annotations, origin = origin)
                 } else {
                     val pointedType = fieldRefType.pointedType.toStubIrType()
                     val pointedTypeArgument = TypeArgumentStub(pointedType)
@@ -121,14 +122,14 @@ internal class StructStubBuilder(
                             }
                         }
                         val kind = PropertyStub.Kind.Var(getter, setter)
-                        PropertyStub(field.name, fieldRefType.argType.toStubIrType(), kind, origin = origin)
+                        PropertyStub(fieldName, fieldRefType.argType.toStubIrType(), kind, origin = origin)
                     } else {
                         val accessor = when (context.generationMode) {
                             GenerationMode.SOURCE_CODE -> PropertyAccessor.Getter.MemberAt(offset, hasValueAccessor = false)
                             GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.MemberAt(offset)))
                         }
                         val kind = PropertyStub.Kind.Val(accessor)
-                        PropertyStub(field.name, pointedType, kind, origin = origin)
+                        PropertyStub(fieldName, pointedType, kind, origin = origin)
                     }
                 }
             } catch (e: Throwable) {
@@ -141,6 +142,7 @@ internal class StructStubBuilder(
             val typeInfo = typeMirror.info
             val kotlinType = typeMirror.argType
             val signed = field.type.isIntegerTypeSigned()
+            val fieldName = mangleSimple(field.name)
             val kind = when (context.generationMode) {
                 GenerationMode.SOURCE_CODE -> {
                     val readBits = PropertyAccessor.Getter.ReadBits(field.offset, field.size, signed)
@@ -155,7 +157,7 @@ internal class StructStubBuilder(
                     PropertyStub.Kind.Var(readBits, writeBits)
                 }
             }
-            PropertyStub(field.name, kotlinType.toStubIrType(), kind, origin = StubOrigin.StructMember(field))
+            PropertyStub(fieldName, kotlinType.toStubIrType(), kind, origin = StubOrigin.StructMember(field))
         }
 
         val superClass = context.platform.getRuntimeType("CStructVar")
@@ -277,7 +279,7 @@ internal class EnumStubBuilder(
                 .mapIndexed { index, constant ->
                     val literal = context.tryCreateIntegralStub(enumDef.baseType, constant.value)
                             ?: error("Cannot create enum value ${constant.value} of type ${enumDef.baseType}")
-                    val entry = EnumEntryStub(constant.name, literal, StubOrigin.EnumEntry(constant), index)
+                    val entry = EnumEntryStub(mangleSimple(constant.name), literal, StubOrigin.EnumEntry(constant), index)
                     val aliases = aliasConstants
                             .filter { it.value == constant.value }
                             .map { constructAliasProperty(it, entry) }

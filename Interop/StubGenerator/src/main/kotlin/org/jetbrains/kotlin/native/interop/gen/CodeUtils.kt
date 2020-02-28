@@ -45,6 +45,22 @@ fun String.asSimpleName(): String = if (this in kotlinKeywords || this.contains(
 }
 
 /**
+ * Yet another mangler, particularly to avoid secondary clash, e.g. when a property
+ * in prototype (interface) is mangled and that will cause another clash in the class
+ * which implements this interface.
+ * Rationale: keep algorithm simple but use the mangling characters which are rare
+ * in normal code, and keep mangling easy readable.
+ */
+internal fun mangleSimple(name: String): String {
+    val reserved = setOf("Companion")
+    val postfix = "\$"
+    return if (name in reserved)
+        "$name$postfix"
+    else
+        name
+}
+
+/**
  * Returns the expression to be parsed by Kotlin as string literal with given contents,
  * i.e. transforms `foo$bar` to `"foo\$bar"`.
  */

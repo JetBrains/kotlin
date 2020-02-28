@@ -336,3 +336,9 @@ BOOL customStringDeallocated = NO;
     return first + second;
 }
 @end;
+
+
+// [KT-36067] mangling
+@implementation FooMangled : NSObject
+@synthesize Companion;
+@end;

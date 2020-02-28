@@ -407,6 +407,7 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
     is EnumType -> {
         val pkg = declarationMapper.getPackageFor(type.def)
         val kotlinName = declarationMapper.getKotlinNameForValue(type.def)
+                .let { mangleSimple(it) } // enum class requires additional mangling
 
         when {
             declarationMapper.isMappedToStrict(type.def) -> {
