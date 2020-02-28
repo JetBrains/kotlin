@@ -899,10 +899,14 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 ?.takeIf { it.isConst }
                 ?: return null
 
-        return constantProperty.backingField
+        val irConstant = (constantProperty.backingField
                 ?.initializer
                 ?.expression
-                ?: error("Constant property ${constantProperty.name} has no initializer!")
+                ?: error("Constant property ${constantProperty.name} has no initializer!"))
+                as IrConst<*>
+
+        // Avoid node duplication
+        return irConstant.copy()
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
