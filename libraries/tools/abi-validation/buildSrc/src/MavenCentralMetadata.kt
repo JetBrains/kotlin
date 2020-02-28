@@ -13,7 +13,9 @@ import org.gradle.kotlin.dsl.*
 
 fun MavenPublication.mavenCentralMetadata() {
     pom {
-        name.set("Binary API validator")
+        if (!name.isPresent) {
+            name.set(artifactId)
+        }
         description.set("Kotlin binary public API management tool")
         url.set("https://github.com/Kotlin/binary-compatibility-validator")
         licenses {

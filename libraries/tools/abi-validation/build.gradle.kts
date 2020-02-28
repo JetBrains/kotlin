@@ -1,9 +1,11 @@
+import com.gradle.publish.*
 import kotlinx.validation.build.*
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     kotlin("jvm")
     `java-gradle-plugin`
+    id("com.gradle.plugin-publish") apply false
     `maven-publish`
 }
 
@@ -65,11 +67,21 @@ publishing {
 }
 
 apply(plugin = "org.gradle.java-gradle-plugin")
+apply(plugin = "com.gradle.plugin-publish")
+
+extensions.getByType(PluginBundleExtension::class).apply {
+    website = "https://github.com/Kotlin/binary-compatibility-validator"
+    vcsUrl = "https://github.com/Kotlin/binary-compatibility-validator"
+    tags = listOf("kotlin", "api-management", "binary-compatibility")
+}
+
 gradlePlugin {
     plugins {
         create("binary-compatibility-validator") {
-            id = "binary-compatibility-validator"
+            id = "org.jetbrains.kotlinx.binary-compatibility-validator"
             implementationClass = "kotlinx.validation.BinaryCompatibilityValidatorPlugin"
+            displayName = "Binary compatibility validator"
+            description = "Produces binary API dumps and compares them in order to verify that binary API is preserved"
         }
     }
 }
