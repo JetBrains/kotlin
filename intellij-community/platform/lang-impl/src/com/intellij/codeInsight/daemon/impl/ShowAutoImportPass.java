@@ -16,7 +16,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -64,12 +63,12 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
 
   @Override
   public void doApplyInformationToEditor() {
-    TransactionGuard.submitTransaction(myProject, this::showImports);
+    ApplicationManager.getApplication().invokeLater(this::showImports);
   }
 
   private void showImports() {
     Application application = ApplicationManager.getApplication();
-    application.assertIsWriteThread();
+    application.assertIsDispatchThread();
     if (!application.isHeadlessEnvironment() && !myEditor.getContentComponent().hasFocus()) return;
     if (DumbService.isDumb(myProject) || !myFile.isValid()) return;
     if (myEditor.isDisposed() || myEditor instanceof EditorWindow && !((EditorWindow)myEditor).isValid()) return;
