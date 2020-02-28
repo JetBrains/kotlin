@@ -90,7 +90,8 @@ public class InspectionProblemsView implements PersistentStateComponent<Inspecti
       public void daemonFinished(@NotNull Collection<? extends FileEditor> fileEditors) {
         myAnalysisIsBusy = false;
         updateIcon.cancelAllRequests();
-        updateIcon.addRequest(()->updateIcon(), 0);
+        // replace all problems in the table with current file highlightings. needed to get rid of "stuck" stale problems, disappearance of which was not fired for some reason
+        updateIcon.addRequest(()->setCurrentFile(getCurrentFile()), 0);
       }
 
       @Override

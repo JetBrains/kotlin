@@ -19,7 +19,6 @@ import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.event.MarkupModelListener;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -151,7 +150,7 @@ class InspectionProblemsViewPanel extends AnalysisProblemsViewPanel {
   public void setCurrentFile(@Nullable VirtualFile file) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     AnalysisProblemsTableModel model = getModel();
-    model.removeRows(problem -> !Comparing.equal(problem.getFile(), file));
+    model.removeRows(problem -> true); // remove everything, in case setCurrentFile() was called with the same file to refresh from highlights
     if (file != null) {
       PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
       Document document = psiFile == null ? null : PsiDocumentManager.getInstance(myProject).getDocument(psiFile);
