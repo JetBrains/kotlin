@@ -384,9 +384,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
   @Override
   public AnalyzerStatus getStatus(Editor editor) {
+    Color iconTextColor = editor.getColorsScheme().getDefaultForeground();
+
     if (PowerSaveMode.isEnabled()) {
       return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
-                                  "Code analysis is disabled in power save mode", this::getUIController);
+                                  "Code analysis is disabled in power save mode", null, this::getUIController);
     }
     else {
       DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
@@ -394,11 +396,27 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       Font editorFont = editor.getComponent().getFont();
       Font font = editorFont.deriveFont(Font.PLAIN, editorFont.getSize() - JBUIScale.scale(2));
 
-      StringBuilder statusTextBuilder = new StringBuilder();
       int currentSeverityErrors = 0;
 
       int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
       Icon mainIcon = lastNotNullIndex == -1 ? AllIcons.General.InspectionsOK : mySeverityRegistrar.getRendererIconByIndex(lastNotNullIndex);
+
+      String title;
+      StringBuilder detailsBuilder = new StringBuilder();
+
+      if (status.errorAnalyzingFinished) {
+        boolean isDumb = myProject != null && DumbService.isDumb(myProject);
+        if (isDumb) {
+          title = "<b>Shallow analysis completed</b>";
+          detailsBuilder.append("Complete results will be available after indexing");
+        }
+        else {
+          title = "<b>" + DaemonBundle.message("analysis.completed") + "</b>";
+        }
+      }
+      else {
+        title = "<b>" + DaemonBundle.message("performing.code.analysis") + "</b>";
+      }
 
       for (int i = lastNotNullIndex; i >= 0; i--) {
         int count = status.errorCount[i];
@@ -409,13 +427,12 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
             name = StringUtil.pluralize(name);
           }
 
-          if (currentSeverityErrors > 0) statusTextBuilder.append(", ");
-          statusTextBuilder.append(count).append(" ").append(name);
+          if (currentSeverityErrors > 0) detailsBuilder.append(", ");
+          detailsBuilder.append(count).append(" ").append(name);
           currentSeverityErrors += count;
 
           statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
-          TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]),
-                                       editor.getColorsScheme().getDefaultForeground(), null, 0);
+          TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]), iconTextColor, null, 0);
           icon.setFont(font);
           statusIcons.add(icon);
         }
@@ -438,35 +455,38 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
         }
 
-        if (!status.errorAnalyzingFinished) statusTextBuilder.append(" found so far");
+        if (!status.errorAnalyzingFinished) detailsBuilder.append(" found so far");
 
-        return new AnalyzerStatus(mainIcon, statusTextBuilder.toString(), this::getUIController).
+        return new AnalyzerStatus(mainIcon, title, detailsBuilder.toString(), this::getUIController).
           withNavigation().
           withExpandedIcon(statusIcon);
       }
       else {
         if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
-          TextIcon offIcon = new TextIcon("OFF", editor.getColorsScheme().getDefaultForeground(), null, 0);
+          TextIcon offIcon = new TextIcon("OFF", iconTextColor, null, 0);
           offIcon.setFont(font);
 
-          statusTextBuilder.append("No analysis has been performed:<br/>").append(status.reasonWhyDisabled);
-          return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff, statusTextBuilder.toString(), this::getUIController).
+          return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
+                                   "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::getUIController).
             withExpandedIcon(new LayeredIcon(offIcon));
         }
         else if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
-          TextIcon icon = new TextIcon("Indexing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+          TextIcon icon = new TextIcon("Indexing...", iconTextColor, null, 0);
           icon.setFont(font);
-          statusTextBuilder.append("Code analysis has been suspended:<br/>").append(status.reasonWhySuspended);
-          return new AnalyzerStatus(AllIcons.General.InspectionsPause, statusTextBuilder.toString(), this::getUIController).
+          return new AnalyzerStatus(AllIcons.General.InspectionsPause,
+                                    "<b>Code analysis has been suspended</b>",
+                                    status.reasonWhySuspended,
+                                    this::getUIController).
             withExpandedIcon(new LayeredIcon(icon));
         }
         else if (status.errorAnalyzingFinished) {
-          return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found", this::getUIController);
+          return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found",
+                                    detailsBuilder.toString(), this::getUIController);
         }
         else {
-          TextIcon icon = new TextIcon("Analyzing...", editor.getColorsScheme().getDefaultForeground(), null, 0);
+          TextIcon icon = new TextIcon("Analyzing...", iconTextColor, null, 0);
           icon.setFont(font);
-          return new AnalyzerStatus(AllIcons.General.InspectionsEye, "No problems found so far", this::getUIController).
+          return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::getUIController).
             withExpandedIcon(new LayeredIcon(icon));
         }
       }
