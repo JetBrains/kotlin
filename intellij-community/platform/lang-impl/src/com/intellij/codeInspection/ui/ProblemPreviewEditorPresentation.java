@@ -26,20 +26,18 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.UsagePreviewPanel;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProblemPreviewEditorPresentation {
@@ -82,8 +80,8 @@ public class ProblemPreviewEditorPresentation {
         PsiElement element = usage.getElement();
         Segment segment = usage.getSegment();
         assert element != null;
-        assert segment != null;
-        isUpdated |= makeVisible(foldingRegions, injectedLanguageManager.injectedToHost(element, TextRange.create(segment)), doc);
+        isUpdated |= makeVisible(foldingRegions, injectedLanguageManager.injectedToHost(element, segment != null ? TextRange.create(segment)
+                                                                                                                 : element.getTextRange()), doc);
       }
       if (isUpdated) {
         setupFoldings(editor, foldingRegions);
