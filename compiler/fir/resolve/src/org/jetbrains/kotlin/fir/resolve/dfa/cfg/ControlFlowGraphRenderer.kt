@@ -214,6 +214,8 @@ private fun CFGNode<*>.render(): String =
                 is PostponedLambdaEnterNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
 
+                is AnonymousObjectExitNode -> "Exit anonymous object"
+
                 else -> TODO(this@render.toString())
             },
         )

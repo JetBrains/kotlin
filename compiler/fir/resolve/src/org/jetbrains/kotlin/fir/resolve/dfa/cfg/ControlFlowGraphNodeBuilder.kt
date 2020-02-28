@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 
 fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(graph, levelCounter, createId())
@@ -187,3 +184,6 @@ fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunct
 
 fun ControlFlowGraphBuilder.createPostponedLambdaEnterNode(fir: FirAnonymousFunction): PostponedLambdaEnterNode =
     PostponedLambdaEnterNode(graph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObject): AnonymousObjectExitNode =
+    AnonymousObjectExitNode(graph, fir, levelCounter, createId())

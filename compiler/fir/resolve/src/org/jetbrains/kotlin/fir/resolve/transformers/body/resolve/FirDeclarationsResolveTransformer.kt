@@ -331,6 +331,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             val result = withLabelAndReceiverType(null, anonymousObject, type) {
                 transformDeclaration(anonymousObject, data)
             }
+            dataFlowAnalyzer.exitAnonymousObject(result.single as FirAnonymousObject)
             @Suppress("UNCHECKED_CAST")
             result as CompositeTransformResult<FirStatement>
         }

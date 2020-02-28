@@ -16,5 +16,5 @@ private val privateObj by MyDelegate {
 }
 
 fun test() {
-    privateObj.<!UNRESOLVED_REFERENCE!>x<!>
+    privateObj.x
 }

@@ -145,6 +145,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         exitNode.mergeIncomingFlow()
     }
 
+    // ----------------------------------- Anonymous object -----------------------------------
+
+    fun exitAnonymousObject(anonymousObject: FirAnonymousObject) {
+        graphBuilder.exitAnonymousObject(anonymousObject).mergeIncomingFlow()
+    }
+
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty) {
