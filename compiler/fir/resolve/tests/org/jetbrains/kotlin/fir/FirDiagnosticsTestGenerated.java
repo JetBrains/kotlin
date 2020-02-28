@@ -258,6 +258,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
     }
 
+    @TestMetadata("objectInnerClass.kt")
+    public void testObjectInnerClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/objectInnerClass.kt");
+    }
+
     @TestMetadata("problems2.kt")
     public void testProblems2() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/problems2.kt");
