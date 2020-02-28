@@ -1,3 +1,3 @@
 package
 
-public fun foo(/*0*/ first: kotlin.Array<kotlin.Any?>, /*1*/ second: kotlin.Array<kotlin.Any?>): kotlin.Pair<kotlin.collections.MutableCollection<in kotlin.Any?>, kotlin.collections.MutableCollection<in kotlin.Any?>>
+public fun foo(/*0*/ first: kotlin.Array<kotlin.Any?>, /*1*/ second: kotlin.Array<kotlin.Any?>): [ERROR : Error function type]
