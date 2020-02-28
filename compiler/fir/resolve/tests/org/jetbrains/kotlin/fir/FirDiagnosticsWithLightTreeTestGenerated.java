@@ -53,6 +53,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/companionUsesNested.kt");
     }
 
+    @TestMetadata("constantValues.kt")
+    public void testConstantValues() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/constantValues.kt");
+    }
+
     @TestMetadata("copy.kt")
     public void testCopy() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");

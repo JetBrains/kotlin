@@ -172,7 +172,7 @@ class VariableStorage(val session: FirSession) {
             property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> false
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir as? FirQualifiedAccess)?.dispatchReceiver ?: return false
-                val propertyClassName = (this as FirPropertySymbol).callableId.classId
+                val propertyClassName = (this as FirPropertySymbol).let { it.overriddenSymbol ?: it }.callableId.classId
                 val receiverType = dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return false
                 val receiverSymbol = receiverType.fullyExpandedType(session).lookupTag.toSymbol(session) ?: return false
                 val receiverClassName = receiverSymbol.classId
