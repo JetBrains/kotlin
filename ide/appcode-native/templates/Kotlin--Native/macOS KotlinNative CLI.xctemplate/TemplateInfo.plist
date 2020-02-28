@@ -55,7 +55,7 @@
       <string>import kotlinx.cinterop.*
 import platform.Foundation.*
 
-fun main(args: Array&lt;String&gt;) {
+fun main() {
     autoreleasepool {
         NSLog("Hello, World!")
     }

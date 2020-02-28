@@ -200,7 +200,11 @@ fun cidrUpdatePluginsXml(
         val updatePluginsXmlFile = cidrPluginZipPath.parentFile.resolve("updatePlugins-$cidrProductFriendlyVersion.xml")
         outputs.file(updatePluginsXmlFile)
 
-        val cidrPluginZipDeploymentUrl = URL(cidrCustomPluginRepoUrl, cidrPluginZipPath.name)
+        val cidrPluginZipDeploymentUrl = URL(
+                cidrCustomPluginRepoUrl.toExternalForm().let {
+                    (if (!it.endsWith('/')) "$it/" else it) + cidrPluginZipPath.name
+                }
+        )
         inputs.property("${project.name}-$name-cidrPluginZipDeploymentUrl", cidrPluginZipDeploymentUrl)
 
         fun generatePluginDescription(

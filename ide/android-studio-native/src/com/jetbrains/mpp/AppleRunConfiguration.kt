@@ -10,23 +10,25 @@ import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.MPPWorkspace
+import com.jetbrains.mpp.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
 import java.io.File
 
 class AppleRunConfiguration(project: Project, configurationFactory: MobileConfigurationFactory, name: String) :
-    LocatableConfigurationBase<Element>(project, configurationFactory, name) {
+    LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction {
 
     val xcodeproj: String?
-        get() = MPPWorkspace.getInstance(project).xcproject
-
+        get() = ProjectWorkspace.getInstance(project).xcproject
 
     val xcodeScheme: String = "iosApp" // TODO: Use provided.
 
-    val xcodeSdk: String = "iphonesimulator" // TODO: Use provided.
+    fun xcodeSdk(target: ExecutionTarget): String {
+        return if (target is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
+    }
 
     val iosBuildDirectory = "ios_build" // TODO: Allow configuration.
 
@@ -50,6 +52,9 @@ class AppleRunConfiguration(project: Project, configurationFactory: MobileConfig
     override fun canRunOn(target: ExecutionTarget): Boolean = target is Device
 
     fun getProductBundle(environment: ExecutionEnvironment): File {
-        return workingDirectory!!.resolve(iosBuildDirectory).resolve("Debug-iphonesimulator/$xcodeScheme.app")
+        val buildType = if (environment.executionTarget is ApplePhysicalDevice) "Debug-iphoneos" else "Debug-iphonesimulator"
+        return workingDirectory!!.resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
     }
+
+    var selectedDevice: Device? = null
 }

@@ -11,11 +11,7 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
-import com.jetbrains.konan.getKotlinNativeVersion
-import org.jetbrains.konan.debugger.PrettyPrintersFromPlugin.PP_1_3_AND_1_3_1
-import org.jetbrains.konan.debugger.PrettyPrintersFromPlugin.PP_PRE_1_2_RELEASE
 import org.jetbrains.konan.util.getKotlinNativeHome
-import org.jetbrains.kotlin.konan.MetaVersion
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -52,32 +48,28 @@ private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
 }
 
 private fun getPrettyPrintersLocation(kotlinNativeHome: String): Path {
-    // use custom (patched) pretty printers for certain versions of Kotlin/Native
-    val prettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.run {
-        when (major) {
-            0 -> PP_PRE_1_2_RELEASE
-            1 -> when (minor) {
-                0, 1 -> PP_PRE_1_2_RELEASE
-                2 -> if (meta != MetaVersion.RELEASE) PP_PRE_1_2_RELEASE else null
-                3 -> when (maintenance) {
-                    0, 1 -> PP_1_3_AND_1_3_1
-                    else -> null
-                }
-                else -> null
-            }
-            else -> null
-        }
-    } ?: return Paths.get(kotlinNativeHome, "tools", "konan_lldb.py")
-
-    val outOfPluginPrettyPrinters = createTempDir().resolve("konan_lldb.py")
-    outOfPluginPrettyPrinters.outputStream().use { outputStream ->
-        KonanValueRendererFactory::class.java.getResourceAsStream("/lldb/${prettyPrintersFromPlugin.filename}").copyTo(outputStream)
-    }
-
-    return outOfPluginPrettyPrinters.toPath()
+    return Paths.get(kotlinNativeHome, "tools", "konan_lldb.py")
 }
 
-private enum class PrettyPrintersFromPlugin(val filename: String) {
-    PP_PRE_1_2_RELEASE("konan_lldb.py-pre-1.2-release"),
-    PP_1_3_AND_1_3_1("konan_lldb.py-1.3-1.3.1");
-}
+// N.B. If you need to use custom LLDB bindings uncomment the code below and adjust it as necessary:
+
+//private fun getPrettyPrintersLocation(kotlinNativeHome: String): Path {
+//    // use custom (patched) pretty printers for certain versions of Kotlin/Native
+//    val prettyPrintersFromPlugin = getKotlinNativeVersion(kotlinNativeHome)?.run {
+//        if (major == 1 && minor == 3 && maintenance >= 70 && maintenance < 80)
+//            PP_1_3_7X
+//        else
+//            null
+//    } ?: return Paths.get(kotlinNativeHome, "tools", "konan_lldb.py")
+//
+//    val outOfPluginPrettyPrinters = createTempDir().resolve("konan_lldb.py")
+//    outOfPluginPrettyPrinters.outputStream().use { outputStream ->
+//        KonanValueRendererFactory::class.java.getResourceAsStream("/lldb/${prettyPrintersFromPlugin.filename}").copyTo(outputStream)
+//    }
+//
+//    return outOfPluginPrettyPrinters.toPath()
+//}
+//
+//private enum class PrettyPrintersFromPlugin(val filename: String) {
+//    PP_1_3_7X("konan_lldb.py-1.3.7x")
+//}

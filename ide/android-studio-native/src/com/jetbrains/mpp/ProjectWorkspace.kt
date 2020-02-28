@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.konan
+package com.jetbrains.mpp
 
+import com.intellij.execution.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
 
 internal object XCProject {
@@ -14,9 +16,22 @@ internal object XCProject {
     const val pathAttributeKey = "PATH"
 }
 
+private class TargetListener(private val workspace: ProjectWorkspace) : ExecutionTargetListener {
+    override fun activeTargetChanged(target: ExecutionTarget) {
+        val configuration = RunManager.getInstance(workspace.project).selectedConfiguration?.configuration ?: return
+        if (configuration !is AppleRunConfiguration) return
+        configuration.selectedDevice = target as? Device
+    }
+}
+
 @State(name = "MPPWorkspace", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
-class MPPWorkspace(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
+class ProjectWorkspace(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
     var xcproject: String? = null
+
+    init {
+        val connection = project.messageBus.connect()
+        connection.subscribe(ExecutionTargetManager.TOPIC, TargetListener(this))
+    }
 
     override fun getState(): Element? {
         val stateElement = Element("state")
@@ -38,7 +53,8 @@ class MPPWorkspace(val project: Project) : PersistentStateComponent<Element>, Pr
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): MPPWorkspace = project.getComponent(MPPWorkspace::class.java)
+        fun getInstance(project: Project): ProjectWorkspace = project.getComponent(
+            ProjectWorkspace::class.java)
     }
 }
 

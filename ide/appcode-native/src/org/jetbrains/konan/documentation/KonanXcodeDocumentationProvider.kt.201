@@ -9,8 +9,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.util.Function
 import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl.DocTokenType.*
+import com.jetbrains.cidr.documentation.CocoaDocumentationManagerImpl
+import com.jetbrains.cidr.documentation.CocoaDocumentationManagerImpl.DocTokenType.*
 import com.jetbrains.cidr.documentation.XcodeDocumentationCandidateInfo
 import com.jetbrains.cidr.documentation.XcodeDocumentationProvider
 import org.jetbrains.kotlin.asJava.finder.KtLightPackage

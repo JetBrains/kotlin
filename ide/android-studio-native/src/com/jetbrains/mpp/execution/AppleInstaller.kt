@@ -10,6 +10,7 @@ import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.jetbrains.cidr.execution.OCCommandLineConfigurator
 import com.jetbrains.cidr.execution.OCInstaller
+import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
@@ -42,6 +43,17 @@ abstract class AppleInstaller(
     }
 
     override fun getRunConfiguration(): AppleRunConfiguration = configuration
+
+    override fun getAppWorkingDir(): File? = null
+}
+
+class ApplePhysicalDeviceInstaller(
+    configuration: AppleRunConfiguration,
+    environment: ExecutionEnvironment,
+    appBundle: File,
+    raw: AMDevice
+) : AppleInstaller(configuration, environment, appBundle) {
+    val rawDevice: AMDevice = raw
 }
 
 class AppleSimulatorInstaller(
@@ -50,5 +62,4 @@ class AppleSimulatorInstaller(
     appBundle: File,
     raw: SimulatorConfiguration
 ) : AppleInstaller(configuration, environment, appBundle) {
-    override fun getAppWorkingDir(): File? = null
 }
