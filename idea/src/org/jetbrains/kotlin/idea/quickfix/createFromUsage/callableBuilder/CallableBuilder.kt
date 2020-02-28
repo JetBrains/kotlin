@@ -542,7 +542,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                     psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
                                 }
                                 else -> {
-                                    val openMod = if (open) "open " else ""
+                                    val openMod = if (open && kind != ClassKind.INTERFACE) "open " else ""
                                     val innerMod = if (inner || isInsideInnerOrLocalClass()) "inner " else ""
                                     val typeParamList = when (kind) {
                                         ClassKind.PLAIN_CLASS, ClassKind.INTERFACE -> "<>"
