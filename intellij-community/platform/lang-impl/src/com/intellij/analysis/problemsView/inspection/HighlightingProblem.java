@@ -6,7 +6,9 @@ import com.intellij.analysis.problemsView.AnalysisProblem;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -47,7 +49,7 @@ class HighlightingProblem implements AnalysisProblem {
 
   @Override
   public @Nullable String getUrl() {
-    return getFile().getUrl();
+    return null; // avoid useless "show documentation"
   }
 
   @Override
@@ -133,5 +135,10 @@ class HighlightingProblem implements AnalysisProblem {
   @Override
   public String toString() {
     return "H: "+getPresentableLocation();
+  }
+
+  @NotNull
+  List<Pair<HighlightInfo.IntentionActionDescriptor, RangeMarker>> getFixes() {
+    return ObjectUtils.notNull(myInfo.quickFixActionMarkers, Collections.emptyList());
   }
 }

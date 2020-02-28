@@ -195,17 +195,17 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   }
 
   public static boolean chooseActionAndInvoke(@NotNull PsiFile hostFile,
-                                              @NotNull final Editor hostEditor,
+                                              @Nullable final Editor hostEditor,
                                               @NotNull final IntentionAction action,
-                                              @NotNull String text) {
+                                              @NotNull String commandName) {
     final Project project = hostFile.getProject();
-    return chooseActionAndInvoke(hostFile, hostEditor, action, text, project);
+    return chooseActionAndInvoke(hostFile, hostEditor, action, commandName, project);
   }
 
   static boolean chooseActionAndInvoke(@NotNull PsiFile hostFile,
                                        @Nullable final Editor hostEditor,
                                        @NotNull final IntentionAction action,
-                                       @NotNull String text,
+                                       @NotNull String commandName,
                                        @NotNull final Project project) {
     FeatureUsageTracker.getInstance().triggerFeatureUsed("codeassists.quickFix");
     ((FeatureUsageTrackerImpl)FeatureUsageTracker.getInstance()).getFixesStats().registerInvocation();
@@ -216,7 +216,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     if (pair == null) return false;
 
     CommandProcessor.getInstance().executeCommand(project, () ->
-      invokeIntention(action, pair.second, pair.first), text, null);
+      invokeIntention(action, pair.second, pair.first), commandName, null);
 
     checkPsiTextConsistency(hostFile);
 
@@ -239,11 +239,11 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       return;
     }
 
-    Runnable r = () -> action.invoke(file.getProject(), editor, file);
     if (action.startInWriteAction()) {
-      WriteAction.run(r::run);
-    } else {
-      r.run();
+      WriteAction.run(() -> action.invoke(file.getProject(), editor, file));
+    }
+    else {
+      action.invoke(file.getProject(), editor, file);
     }
   }
 
