@@ -13,7 +13,7 @@ import java.util.*
 
 object KotlinNativeBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.ide.konan.KotlinNativeBundle"
+    private const val BUNDLE = "messages.KotlinNativeBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 
