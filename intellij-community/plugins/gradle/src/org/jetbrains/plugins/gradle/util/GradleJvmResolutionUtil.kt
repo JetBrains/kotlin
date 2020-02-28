@@ -3,6 +3,12 @@
 
 package org.jetbrains.plugins.gradle.util
 
+import com.intellij.ide.impl.ProjectViewSelectInTarget
+import com.intellij.ide.projectView.impl.ProjectViewPane
+import com.intellij.ide.util.EditorHelper
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
@@ -10,10 +16,15 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.psi.PsiManager
 import com.intellij.util.lang.JavaVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.plugins.gradle.service.project.GradleNotification.NOTIFICATION_GROUP
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleProperties.GradleProperty
+import javax.swing.event.HyperlinkEvent
 
 const val JAVA_HOME = "JAVA_HOME"
 
@@ -55,11 +66,26 @@ private class GradleJvmResolutionContext(
   val projectSdk: Sdk? by lazy { projectSdk ?: ProjectRootManager.getInstance(project).projectSdk }
 }
 
-private fun GradleJvmResolutionContext.resolveReference(sdk: Sdk): String {
+sealed class FailureReason {
+  object Invalid : FailureReason()
+  data class Unsupported(val javaVersion: JavaVersion, val gradleVersion: GradleVersion) : FailureReason()
+}
+
+private fun GradleJvmResolutionContext.resolveReference(sdk: Sdk?): String? {
   return when (sdk) {
+    null -> null
     projectSdk -> ExternalSystemJdkUtil.USE_PROJECT_JDK
     else -> sdk.name
   }
+}
+
+private fun GradleJvmResolutionContext.checkGradleJvm(javaHome: String): FailureReason? {
+  if (!ExternalSystemJdkUtil.isValidJdk(javaHome)) return FailureReason.Invalid
+  val javaSdkType = ExternalSystemJdkUtil.getJavaSdkType()
+  val versionString = javaSdkType.getVersionString(javaHome) ?: return FailureReason.Invalid
+  val javaVersion = JavaVersion.tryParse(versionString) ?: return FailureReason.Invalid
+  if (!isSupported(versionString)) return FailureReason.Unsupported(javaVersion, gradleVersion)
+  return null
 }
 
 private fun GradleJvmResolutionContext.isValidAndSupported(homePath: String): Boolean {
@@ -108,7 +134,6 @@ private fun GradleJvmResolutionContext.findOrAddGradleJdk(homePath: String): Sdk
   val canonicalHomePath = FileUtil.toCanonicalPath(homePath)
   val foundJdk = possibleGradleJvms.find { FileUtil.toCanonicalPath(it.homePath) == canonicalHomePath }
   if (foundJdk != null) return foundJdk
-  if (!isValidAndSupported(canonicalHomePath)) return null
   return ExternalSystemJdkUtil.addJdk(canonicalHomePath)
 }
 
@@ -123,12 +148,26 @@ private fun GradleJvmResolutionContext.getGradleJdkReference(): Sdk? {
 
 private fun GradleJvmResolutionContext.getOrAddGradleJavaHomeJdkReference(): Sdk? {
   val properties = getGradleProperties(externalProjectPath)
-  val javaHome = properties.javaHome ?: return null
+  val javaHomeProperty = properties.javaHomeProperty ?: return null
+  val javaHome = javaHomeProperty.value
+  val failureReason = checkGradleJvm(javaHome)
+  if (failureReason != null) {
+    notifyInvalidGradleJavaHomeWarning(javaHomeProperty, failureReason)
+  }
   return findOrAddJdk(javaHome)
 }
 
 private fun GradleJvmResolutionContext.getOrAddEnvJavaHomeJdkReference(): Sdk? {
-  val javaHome = Environment.getEnvVariable(JAVA_HOME) ?: return null
+  val javaHome = Environment.getEnvVariable(JAVA_HOME)
+  if (javaHome == null) {
+    notifyUndefinedJavaHomeWarning()
+    return null
+  }
+  val failureReason = checkGradleJvm(javaHome)
+  if (failureReason != null) {
+    notifyInvalidJavaHomeWarning(failureReason)
+    return null
+  }
   return findOrAddGradleJdk(javaHome)
 }
 
@@ -152,4 +191,51 @@ private fun GradleJvmResolutionContext.getAndAddExternalJdkReference(): Sdk? {
     .map { it to javaSdkType.getVersionString(it) }
     .maxWith(Comparator { (_, v1), (_, v2) -> versionComparator.compare(v1, v2) })
     ?.let { (homePath, _) -> findOrAddGradleJdk(homePath) }
+}
+
+private fun GradleJvmResolutionContext.notifyInvalidGradleJavaHomeWarning(javaHomeProperty: GradleProperty<String>, reason: FailureReason) {
+  val propertyLocation = createLinkToFile(javaHomeProperty.location)
+  val notificationContent = GradleBundle.message("gradle.notifications.java.home.property.content", propertyLocation)
+  notifyInvalidGradleJvmWarning(notificationContent, reason)
+}
+
+private fun GradleJvmResolutionContext.notifyInvalidJavaHomeWarning(reason: FailureReason) {
+  val notificationContent = GradleBundle.message("gradle.notifications.java.home.variable.content")
+  notifyInvalidGradleJvmWarning(notificationContent, reason)
+}
+
+private fun GradleJvmResolutionContext.createLinkToFile(path: String): String {
+  val presentablePath = when {
+    FileUtil.isAncestor(externalProjectPath, path, true) -> FileUtil.getRelativePath(externalProjectPath, path, '/')
+    else -> FileUtil.getLocationRelativeToUserHome(path)
+  }
+  return "<a href='$path'>$presentablePath</a>"
+}
+
+private fun GradleJvmResolutionContext.notifyInvalidGradleJvmWarning(notificationHint: String, reason: FailureReason) {
+  val notificationTitle = GradleBundle.message("gradle.notifications.java.home.invalid.title")
+  var notificationContent = notificationHint
+  if (reason is FailureReason.Unsupported) {
+    val javaVersion = reason.javaVersion.toString()
+    val gradleVersion = reason.gradleVersion.version
+    val additionalFailureHint = GradleBundle.message("gradle.notifications.java.home.unsupported.content", javaVersion, gradleVersion)
+    notificationContent = "$additionalFailureHint $notificationContent"
+  }
+  val hyperLinkProcessor = object : NotificationListener.Adapter() {
+    override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+      val file = LocalFileSystem.getInstance().findFileByPath(e.description) ?: return
+      ProjectViewSelectInTarget.select(project, file, ProjectViewPane.ID, null, file, true)
+      val psiFile = PsiManager.getInstance(project).findFile(file) ?: return
+      EditorHelper.openInEditor(psiFile)
+    }
+  }
+  val notification = NOTIFICATION_GROUP.createNotification(notificationTitle, notificationContent, WARNING, hyperLinkProcessor)
+  notification.notify(project)
+}
+
+private fun GradleJvmResolutionContext.notifyUndefinedJavaHomeWarning() {
+  val notificationTitle = GradleBundle.message("gradle.notifications.java.home.undefined.title")
+  val notificationContent = GradleBundle.message("gradle.notifications.java.home.undefined.content")
+  val notification = NOTIFICATION_GROUP.createNotification(notificationTitle, notificationContent, WARNING)
+  notification.notify(project)
 }

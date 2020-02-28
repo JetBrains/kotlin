@@ -3,7 +3,6 @@ package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -183,7 +182,7 @@ abstract class GradleJdkResolutionTestCase : SdkTestCase() {
 
   fun assertGradleProperties(java: TestSdk?) {
     val actualProperties = getGradleProperties(externalProjectPath)
-    assertEquals(java?.homePath, actualProperties.javaHome)
+    assertEquals(java?.homePath, actualProperties.javaHomeProperty?.value)
   }
 
   fun withGradleProperties(parentDirectory: String, java: TestSdk?, action: () -> Unit) {

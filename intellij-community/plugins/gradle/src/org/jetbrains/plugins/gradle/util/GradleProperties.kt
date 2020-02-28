@@ -3,9 +3,17 @@ package org.jetbrains.plugins.gradle.util
 
 interface GradleProperties {
 
-  val javaHome: String?
+  val javaHomeProperty: GradleProperty<String>?
+
+  /**
+   * Represents property in the properties file that is descripted by [location]
+   */
+  data class GradleProperty<T>(
+    val value: T,
+    val location: String
+  )
 
   object EMPTY : GradleProperties {
-    override val javaHome: String? = null
+    override val javaHomeProperty: Nothing? = null
   }
 }
