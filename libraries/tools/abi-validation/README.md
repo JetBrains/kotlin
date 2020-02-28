@@ -4,7 +4,7 @@
 
 # Binary compatibility validator
 
-The tool allows to dump binary API of a Kotlin libraries that is public in sense of Kotlin visibilities and ensures that the public binary API wasn't changed in a way that make this change binary incompatible.
+The tool allows to dump binary API of a Kotlin library that is public in sense of Kotlin visibilities and ensures that the public binary API wasn't changed in a way that make this change binary incompatible.
 
 ## Contents
 
