@@ -39,7 +39,7 @@ open class MobileRunConfigurationEditor(
 
     override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
         super.applyEditorTo(runConfiguration)
-        runConfiguration.module = modulesComboBox.selectedModule!!
+        runConfiguration.module = modulesComboBox.selectedModule
     }
 
     override fun resetEditorFrom(runConfiguration: MobileRunConfiguration) {
