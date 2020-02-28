@@ -12,11 +12,10 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.MovePropertyToConstructorIntention
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.hasUsages
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -71,10 +70,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
     }
 
     private fun KtParameter.isUsedInClassInitializer(containingClass: KtClass): Boolean {
-        val name = this.name
         val classInitializer = containingClass.body?.declarations?.firstIsInstanceOrNull<KtClassInitializer>() ?: return false
-        return classInitializer.anyDescendantOfType<KtNameReferenceExpression> {
-            it.text == name && it.mainReference.resolve() == this
-        }
+        return hasUsages(classInitializer)
     }
 }
