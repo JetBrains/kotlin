@@ -271,22 +271,26 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
 
   @Contract(pure = true)
   fun referenceOnHover(base: InlayPresentation, clickListener: ClickListener): InlayPresentation {
-    return object: ChangeOnHoverPresentation(base, hover = {
-      val handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-      editor.setCustomCursor(this@PresentationFactory, handCursor)
-      onClick(
-        base = withReferenceAttributes(base),
-        buttons = EnumSet.of(MouseButton.Left, MouseButton.Middle),
-        onClick = { e, p ->
-          clickListener.onClick(e, p)
-        }
-      )
-    }, onHoverPredicate = { true }) {
-      override fun mouseExited() {
-        super.mouseExited()
+    val delegate = DynamicDelegatePresentation(base)
+    val hovered = onClick(
+      base = withReferenceAttributes(base),
+      buttons = EnumSet.of(MouseButton.Left, MouseButton.Middle),
+      onClick = { e, p ->
+        clickListener.onClick(e, p)
+      }
+    )
+    return OnHoverPresentation(delegate, object : HoverListener {
+      override fun onHover(event: MouseEvent, translated: Point) {
+        val handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+        editor.setCustomCursor(this@PresentationFactory, handCursor)
+        delegate.delegate = hovered
+      }
+
+      override fun onHoverFinished() {
+        delegate.delegate = base
         editor.setCustomCursor(this@PresentationFactory, null)
       }
-    }
+    })
   }
 
   @Contract(pure = true)
