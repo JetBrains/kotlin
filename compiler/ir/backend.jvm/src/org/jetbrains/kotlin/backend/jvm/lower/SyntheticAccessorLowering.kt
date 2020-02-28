@@ -559,9 +559,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
 
         //`toArray` is always accessible cause mapped to public functions
-        if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray() || symbolOwner.isGenericToArray(context))) {
-            val parent = symbolOwner.parent
-            if (parent is IrClass && parent.isCollectionSubClass()) {
+        if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray(context) || symbolOwner.isGenericToArray(context))) {
+            if (symbolOwner.parentAsClass.isCollectionSubClass) {
                 return true
             }
         }
