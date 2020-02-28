@@ -1,18 +1,32 @@
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
+import TemplateTag
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.defaultTarget
+import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
+
+private fun Module.createTag(): TemplateTag? = when (configurator) {
+    is MppModuleConfigurator -> TemplateTag.MPP
+    is AndroidModuleConfigurator -> TemplateTag.ANDROID
+    is JSConfigurator -> TemplateTag.JS
+    is ModuleConfiguratorWithModuleType -> when (configurator.moduleType) {
+        ModuleType.jvm -> TemplateTag.JVM
+        ModuleType.js -> TemplateTag.JS
+        ModuleType.native -> TemplateTag.NATIVE
+        ModuleType.common -> null
+        null -> null
+    }
+    else -> null
+}
 
 sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val title: String
@@ -20,6 +34,16 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val htmlDescription: String
     abstract val suggestedProjectName: String
     abstract val projectKind: ProjectKind
+    val tags: List<TemplateTag>
+        get() = setsPluginSettings
+            .firstOrNull { it.setting == KotlinPlugin::modules.reference }
+            ?.value
+            ?.safeAs<List<Module>>()
+            ?.withAllSubModules(includeSourcesets = true)
+            ?.mapNotNull(Module::createTag)
+            ?.distinct()
+            ?.sortedBy(TemplateTag::priority)
+            .orEmpty()
 
     private val setsDefaultValues: List<SettingWithValue<*, *>>
         get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
@@ -101,6 +125,7 @@ object CustomSingleplatformProjectTemplate : ProjectTemplate() {
     override val htmlDescription = title
     override val suggestedProjectName = "myKotlinJvmProject"
     override val projectKind = ProjectKind.Singleplatform
+
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
             KotlinPlugin::modules withValue listOf(

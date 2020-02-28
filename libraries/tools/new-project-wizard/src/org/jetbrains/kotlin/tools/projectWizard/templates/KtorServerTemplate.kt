@@ -54,7 +54,7 @@ class KtorServerTemplate : Template() {
         FileTemplateDescriptor("$id/server.kt.vm", "server.kt".asPath()) asSrcOf SourcesetType.main
     )
 
-    val serverEngine by enumSetting<KtorServerEngine>("Ktor Server", GenerationPhase.PROJECT_GENERATION)
+    val serverEngine by enumSetting<KtorServerEngine>("Ktor Server Engine", GenerationPhase.PROJECT_GENERATION)
 
     val imports = InterceptionPoint("imports", emptyList<String>())
     val routes = InterceptionPoint("routes", emptyList<String>())

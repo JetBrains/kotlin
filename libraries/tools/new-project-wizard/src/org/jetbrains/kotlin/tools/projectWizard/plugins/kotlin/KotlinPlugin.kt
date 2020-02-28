@@ -123,7 +123,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 }
 
 enum class ProjectKind(override val text: String) : DisplayableSettingItem {
-    Singleplatform("Singleplatform JVM project"),
+    Singleplatform("Singleplatform project"),
     Multiplatform("Multiplatform project"),
     Android("Android project"),
     Js("Kotlin/JS project")

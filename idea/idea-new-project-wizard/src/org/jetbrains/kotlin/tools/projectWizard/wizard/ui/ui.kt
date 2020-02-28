@@ -1,15 +1,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
+import TemplateTag
 import com.intellij.icons.AllIcons
+import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.ui.JBColor
-import com.intellij.ui.JBSplitter
-import com.intellij.ui.PopupHandler
-import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.*
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
-import java.awt.BorderLayout
-import java.awt.Cursor
-import java.awt.Font
-import java.awt.LayoutManager
+import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
@@ -168,6 +165,16 @@ fun <C : JComponent> C.bordered(
         }
     )
 }
+
+class TemplateTagUIComponent(tag: TemplateTag) : TagComponent(tag.text) {
+    override fun isInClickableArea(pt: Point?) = false
+
+    init {
+        RelativeFont.TINY.install(this)
+        tag.tooltip?.let { toolTipText = it }
+    }
+}
+
 
 object UiConstants {
     const val GAP_BORDER_SIZE = 5
