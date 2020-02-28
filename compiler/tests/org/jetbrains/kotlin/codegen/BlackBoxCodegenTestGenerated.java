@@ -28199,6 +28199,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/toArray/toArrayAlreadyPresent.kt");
         }
 
+        @TestMetadata("toArrayFromJava.kt")
+        public void testToArrayFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/toArray/toArrayFromJava.kt");
+        }
+
         @TestMetadata("toArrayShouldBePublic.kt")
         public void testToArrayShouldBePublic() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/toArrayShouldBePublic.kt");

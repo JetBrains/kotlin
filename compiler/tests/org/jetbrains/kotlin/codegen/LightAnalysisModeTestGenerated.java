@@ -26983,6 +26983,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ToArray extends AbstractLightAnalysisModeTest {
+        @TestMetadata("toArrayFromJava.kt")
+        public void ignoreToArrayFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/toArray/toArrayFromJava.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
