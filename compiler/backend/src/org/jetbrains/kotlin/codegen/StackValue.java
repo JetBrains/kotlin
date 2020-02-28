@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
@@ -794,8 +795,11 @@ public abstract class StackValue {
             ResolvedCall resolvedCall,
             @NotNull ExpressionCodegen codegen
     ) {
-        if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type) {
-            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta, stackValue.kotlinType);
+        KotlinType kotlinType = stackValue.kotlinType;
+        if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type &&
+            kotlinType != null && KotlinBuiltIns.isPrimitiveType(kotlinType)
+        ) {
+            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta, kotlinType);
         }
         return new PrefixIncrement(type, stackValue, resolvedCall, codegen);
     }
