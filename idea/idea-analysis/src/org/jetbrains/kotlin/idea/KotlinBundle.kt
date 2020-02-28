@@ -20,7 +20,7 @@ import org.jetbrains.annotations.PropertyKey
 import org.jetbrains.kotlin.util.AbstractKotlinBundle
 
 @NonNls
-private const val BUNDLE = "org.jetbrains.kotlin.idea.KotlinBundle"
+private const val BUNDLE = "messages.KotlinBundle"
 
 object KotlinBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic

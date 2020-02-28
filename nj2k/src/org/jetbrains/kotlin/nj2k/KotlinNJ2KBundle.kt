@@ -13,7 +13,7 @@ import java.util.*
 
 object KotlinNJ2KBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.nj2k.KotlinNJ2KBundle"
+    private const val BUNDLE = "messages.KotlinNJ2KBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 

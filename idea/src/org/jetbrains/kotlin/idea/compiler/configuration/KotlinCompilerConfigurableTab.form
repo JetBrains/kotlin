@@ -26,14 +26,14 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.js.option.panel.title"/>
+        <border type="etched" title-resource-bundle="messages/KotlinBundle" title-key="kotlin.compiler.js.option.panel.title"/>
         <children>
           <component id="3ac8f" class="javax.swing.JLabel" binding="labelForOutputPrefixFile">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.prefix"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.output.prefix"/>
             </properties>
           </component>
           <component id="dd0c2" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPrefixFile">
@@ -47,7 +47,7 @@
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.postfix"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.output.postfix"/>
             </properties>
           </component>
           <component id="1bdb7" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPostfixFile">
@@ -80,7 +80,7 @@
             </constraints>
             <properties>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
             </properties>
           </component>
           <component id="915d" class="javax.swing.JLabel">
@@ -106,7 +106,7 @@
             </constraints>
             <properties>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
             </properties>
           </component>
           <component id="6484c" class="javax.swing.JLabel" binding="labelForSourceMapPrefix">
@@ -237,7 +237,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
+        <border type="etched" title-resource-bundle="messages/KotlinBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
         <children>
           <component id="9131b" class="javax.swing.JLabel">
             <constraints>
@@ -278,7 +278,7 @@
             <properties>
               <selected value="false"/>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
             </properties>
           </component>
         </children>
@@ -360,7 +360,7 @@
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
+          <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
         </properties>
       </component>
       <component id="df236" class="com.intellij.ui.RawCommandLineEditor" binding="additionalArgsOptionsField">
@@ -395,7 +395,7 @@
             <properties>
               <selected value="false"/>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.enable.new.inference.in.ide"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.option.enable.new.inference.in.ide"/>
             </properties>
           </component>
         </children>

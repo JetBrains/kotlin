@@ -13,7 +13,7 @@ import java.util.*
 
 object KotlinDebuggerEvaluationBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerEvaluationBundle"
+    private const val BUNDLE = "messages.KotlinDebuggerEvaluationBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 

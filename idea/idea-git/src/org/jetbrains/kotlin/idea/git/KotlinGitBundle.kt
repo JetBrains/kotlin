@@ -13,7 +13,7 @@ import java.util.*
 
 object KotlinGitBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.idea.git.KotlinGitBundle"
+    private const val BUNDLE = "messages.KotlinGitBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 

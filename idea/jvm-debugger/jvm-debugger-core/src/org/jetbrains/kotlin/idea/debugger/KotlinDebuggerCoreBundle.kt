@@ -13,7 +13,7 @@ import java.util.*
 
 object KotlinDebuggerCoreBundle : KotlinBundleBase() {
     @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle"
+    private const val BUNDLE = "messages.KotlinDebuggerCoreBundle"
 
     override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
 
