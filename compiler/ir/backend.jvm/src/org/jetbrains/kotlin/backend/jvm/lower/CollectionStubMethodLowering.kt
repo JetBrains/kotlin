@@ -184,8 +184,20 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
         val readOnlyClass: IrClassSymbol,
         val mutableClass: IrClassSymbol
     ) {
+        // Preserve old backend's logic to generate stubs for special cases where a mutable method
+        // has the same JVM signature as the immutable method. See KT-36724 for more details.
+        private val specialCaseStubSignaturesForOldBackend = setOf(
+            "listIterator()Ljava/util/ListIterator;",
+            "listIterator(I)Ljava/util/ListIterator;",
+            "subList(II)Ljava/util/List;"
+        )
+
         val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
-            val readOnlyMethodSignatures = readOnlyClass.functions.map { getSignature(it.owner) }.toHashSet()
+            val readOnlyMethodSignatures = readOnlyClass
+                .functions
+                .map { getSignature(it.owner) }
+                .filter { it !in specialCaseStubSignaturesForOldBackend }
+                .toHashSet()
             mutableClass.functions
                 .map { it.owner }
                 .filter { getSignature(it) !in readOnlyMethodSignatures }
