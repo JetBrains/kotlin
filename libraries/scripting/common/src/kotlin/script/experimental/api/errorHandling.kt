@@ -86,6 +86,7 @@ data class ScriptDiagnostic(
         const val unspecifiedInfo = 0
         const val unspecifiedError = -1
         const val unspecifiedException = -2
+        const val incompleteCode = -3
     }
 }
 
