@@ -75,7 +75,7 @@ class ReplTest : TestCase() {
                 "res1 * 3"
             ),
             sequenceOf(null, 7, 21),
-            simpleScriptompilationConfiguration.with {
+            simpleScriptCompilationConfiguration.with {
                 implicitReceivers(TestReceiver::class)
             },
             simpleScriptEvaluationConfiguration.with {
@@ -140,7 +140,7 @@ class ReplTest : TestCase() {
 
 fun evaluateInRepl(
     snippets: Sequence<String>,
-    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
+    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
     evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
     limit: Int = 0
 ): Sequence<ResultWithDiagnostics<EvaluationResult>> {
@@ -178,7 +178,7 @@ fun evaluateInRepl(
 fun checkEvaluateInReplDiags(
     snippets: Sequence<String>,
     expected: Sequence<ResultWithDiagnostics<Any?>>,
-    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
+    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
     evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
     limit: Int = 0
 ) {
@@ -221,7 +221,7 @@ fun checkEvaluateInReplDiags(
 fun checkEvaluateInRepl(
     snippets: Sequence<String>,
     expected: Sequence<Any?>,
-    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptompilationConfiguration,
+    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
     evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
     limit: Int = 0
 ) = checkEvaluateInReplDiags(
