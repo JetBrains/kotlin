@@ -84,6 +84,11 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
         return result
     }
 
+    override fun checkConfiguration() {
+        super.checkConfiguration()
+        _module.checkForWarning()
+    }
+
     companion object
 }
 
