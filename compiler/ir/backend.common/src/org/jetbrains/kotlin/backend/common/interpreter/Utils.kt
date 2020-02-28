@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.interpreter
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.FqName
@@ -81,15 +83,25 @@ fun IrFunction.isFakeOverridden(): Boolean {
 }
 
 fun State.toIrExpression(expression: IrExpression): IrExpression {
+    val start = expression.startOffset
+    val end = expression.endOffset
     return when (this) {
         is Primitive<*> ->
             when (this.value) {
                 // toIrConst call is necessary to replace ir offsets
                 is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double ->
-                    this.value.toIrConst(this.type, expression.startOffset, expression.endOffset)
-                null -> this.value.toIrConst(this.type, expression.startOffset, expression.endOffset)
+                    this.value.toIrConst(this.type, start, end)
+                null -> this.value.toIrConst(this.type, start, end)
                 else -> expression // TODO support for arrays
             }
+        is Complex -> {
+            val type = this.irClass.defaultType.toKotlinType()
+            when {
+                UnsignedTypes.isUnsignedType(type) ->
+                    (this.fields.single().state as Primitive<*>).value.toIrConst(this.irClass.defaultType, start, end)
+                else -> expression
+            }
+        }
         else -> expression // TODO support
     }
 }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -540,8 +541,27 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretConst(expression: IrConst<*>, data: Frame): Code {
-        data.pushReturnValue(expression.toPrimitive())
-        return Code.NEXT
+        fun getSignedType(unsignedClassName: String): IrType {
+            return when (unsignedClassName) {
+                "UByte" -> irBuiltIns.byteType
+                "UShort" -> irBuiltIns.shortType
+                "UInt" -> irBuiltIns.intType
+                "ULong" -> irBuiltIns.longType
+                else -> throw AssertionError("")
+            }
+        }
+
+        return if (UnsignedTypes.isUnsignedType(expression.type.toKotlinType())) {
+            val unsignedClass = expression.type.classOrNull!!
+            val constructor = unsignedClass.constructors.single().owner
+            val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+            constructorCall.putValueArgument(0, expression.value.toIrConst(getSignedType(unsignedClass.owner.name.asString())))
+
+            constructorCall.interpret(data)
+        } else {
+            data.pushReturnValue(expression.toPrimitive())
+            Code.NEXT
+        }
     }
 
     private suspend fun interpretStatements(statements: List<IrStatement>, data: Frame): Code {
