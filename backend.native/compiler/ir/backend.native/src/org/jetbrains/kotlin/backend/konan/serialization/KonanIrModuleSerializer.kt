@@ -29,5 +29,5 @@ class KonanIrModuleSerializer(
             file.fileEntry.name != IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName
 
     override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
-            KonanIrFileSerializer(logger, DeclarationTable(globalDeclarationTable), expectDescriptorToSymbol, skipExpects = skipExpects)
+            KonanIrFileSerializer(logger, KonanDeclarationTable(globalDeclarationTable), expectDescriptorToSymbol, skipExpects = skipExpects)
 }
