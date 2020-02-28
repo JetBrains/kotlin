@@ -96,7 +96,6 @@ class InspectionProblemsPresentationHelper extends AnalysisProblemsPresentationH
     return mySettings.showHints;
   }
 
-
   @Override
   @Nullable
   public VirtualFile getCurrentFile() {
@@ -104,15 +103,13 @@ class InspectionProblemsPresentationHelper extends AnalysisProblemsPresentationH
   }
 
   @Override
-  public boolean shouldShowProblem(@NotNull final AnalysisProblem problem) {
+  public boolean shouldShowProblem(@NotNull AnalysisProblem problem) {
     if (!isShowErrors() && AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) return false;
     if (!isShowWarnings() && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
     if (!isShowHints() && AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) return false;
 
-
     return true;
   }
-
 
   @Override
   @NotNull

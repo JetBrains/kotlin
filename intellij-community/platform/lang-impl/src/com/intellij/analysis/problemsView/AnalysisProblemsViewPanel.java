@@ -131,7 +131,7 @@ public abstract class AnalysisProblemsViewPanel extends SimpleToolWindowPanel im
 
   protected abstract void addQuickFixActions(@NotNull DefaultActionGroup group, @Nullable AnalysisProblem problem);
 
-  void addDiagnosticMessageActions(@NotNull DefaultActionGroup group, @Nullable AnalysisProblem problem){
+  private void addDiagnosticMessageActions(@NotNull DefaultActionGroup group, @Nullable AnalysisProblem problem){
     final List<AnalysisProblem> diagnosticMessages = problem != null ? problem.getSecondaryMessages() : null;
     if (diagnosticMessages == null || diagnosticMessages.isEmpty()) return;
 
