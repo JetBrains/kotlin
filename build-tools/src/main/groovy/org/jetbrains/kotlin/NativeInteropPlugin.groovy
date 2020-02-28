@@ -225,6 +225,9 @@ class NamedNativeInteropConfig implements Named {
                 args '-natives', nativeLibsDir
                 args '-Xtemporary-files-dir', temporaryFilesDir
                 args '-flavor', this.flavor
+                if (flavor == "jvm") {
+                    args '-mode', 'sourcecode'
+                }
                 // Uncomment to debug.
                 // args '-verbose', 'true'
 
