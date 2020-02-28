@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,23 +7,15 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.cli.common.repl.BasicReplStageHistory
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
 import org.junit.Assert
 import org.junit.Test
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
-import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.jvm
 
 class ReplTest : TestCase() {
-
-    companion object {
-        const val TEST_DATA_DIR = "libraries/scripting/jvm-host-test/testData"
-    }
 
     @Test
     fun testCompileAndEval() {
@@ -156,103 +148,98 @@ class ReplTest : TestCase() {
             limit = 100
         )
     }
-}
 
-fun evaluateInRepl(
-    snippets: Sequence<String>,
-    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-    limit: Int = 0
-): Sequence<ResultWithDiagnostics<EvaluationResult>> {
-    val replCompilerProxy =
-        KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
-    val compilationState = replCompilerProxy.createReplCompilationState(compilationConfiguration)
-    val compilationHistory = BasicReplStageHistory<ScriptDescriptor>()
-    val replEvaluator = BasicJvmScriptEvaluator()
-    var currentEvalConfig = evaluationConfiguration ?: ScriptEvaluationConfiguration()
-    val snipetsLimited = if (limit == 0) snippets else snippets.take(limit)
-    return snipetsLimited.mapIndexed { snippetNo, snippetText ->
-        val snippetSource =
-            snippetText.toScriptSource("Line_$snippetNo.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}")
-        val snippetId = ReplSnippetIdImpl(snippetNo, 0, snippetSource)
-        replCompilerProxy.compileReplSnippet(compilationState, snippetSource, snippetId, compilationHistory)
-            .onSuccess {
-                runBlocking {
-                    replEvaluator(it, currentEvalConfig)
-                }
-            }
-            .onSuccess {
-                val snippetClass = it.returnValue.scriptClass
-                currentEvalConfig = ScriptEvaluationConfiguration(currentEvalConfig) {
-                    previousSnippets.append(it.returnValue.scriptInstance)
-                    if (snippetClass != null) {
-                        jvm {
-                            baseClassLoader(snippetClass.java.classLoader)
-                        }
+    companion object {
+        private fun evaluateInRepl(
+            snippets: Sequence<String>,
+            compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
+            evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+            limit: Int = 0
+        ): Sequence<ResultWithDiagnostics<EvaluatedSnippet>> {
+            val replCompiler = KJvmReplCompilerBase.create(defaultJvmScriptingHostConfiguration)
+            val replEvaluator = BasicJvmReplEvaluator()
+            val currentEvalConfig = evaluationConfiguration ?: ScriptEvaluationConfiguration()
+            val snipetsLimited = if (limit == 0) snippets else snippets.take(limit)
+            return snipetsLimited.mapIndexed { snippetNo, snippetText ->
+                val snippetSource =
+                    snippetText.toScriptSource("Line_$snippetNo.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}")
+                runBlocking { replCompiler.compile(snippetSource, compilationConfiguration) }
+                    .onSuccess {
+                        runBlocking { replEvaluator.eval(it, currentEvalConfig) }
                     }
-                }
-                it.asSuccess()
-            }
-    }
-}
-
-fun checkEvaluateInReplDiags(
-    snippets: Sequence<String>,
-    expected: Sequence<ResultWithDiagnostics<Any?>>,
-    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-    limit: Int = 0
-) {
-    val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
-    evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
-        val expectedRes = expectedIter.next()
-        when {
-            res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
-                Assert.assertTrue(
-                    "#$index: Expected $expectedRes, got $res. Messages are different",
-                    res.reports.map { it.message } == expectedRes.reports.map { it.message }
-                )
-                Assert.assertTrue(
-                    "#$index: Expected $expectedRes, got $res. Locations are different",
-                    res.reports.map { it.location }.zip(expectedRes.reports.map { it.location }).all {
-                        it.second == null || it.second == it.first
+                    .onSuccess {
+                        it.get().asSuccess()
                     }
-                )
-            }
-            res is ResultWithDiagnostics.Success && expectedRes is ResultWithDiagnostics.Success -> {
-                val expectedVal = expectedRes.value
-                when (val resVal = res.value.returnValue) {
-                    is ResultValue.Value -> Assert.assertEquals(
-                        "#$index: Expected $expectedVal, got $resVal",
-                        expectedVal,
-                        resVal.value
-                    )
-                    is ResultValue.Unit -> Assert.assertTrue("#$index: Expected $expectedVal, got Unit", expectedVal == null)
-                    is ResultValue.Error -> Assert.assertTrue(
-                        "#$index: Expected $expectedVal, got Error: ${resVal.error}",
-                        expectedVal is Throwable && expectedVal.message == resVal.error.message
-                    )
-                    else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $resVal", expectedVal == null)
-                }
-            }
-            else -> {
-                Assert.fail("#$index: Expected $expectedRes, got $res")
             }
         }
-    }
-    if (expectedIter.hasNext()) {
-        Assert.fail("Expected ${expectedIter.next()} got end of results stream")
+
+        fun checkEvaluateInReplDiags(
+            snippets: Sequence<String>,
+            expected: Sequence<ResultWithDiagnostics<Any?>>,
+            compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
+            evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+            limit: Int = 0
+        ) {
+            val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
+            evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
+                val expectedRes = expectedIter.next()
+                when {
+                    res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
+
+                        val resReports = res.reports.filter {
+                            it.code != ScriptDiagnostic.incompleteCode
+                        }
+                        Assert.assertTrue(
+                            "#$index: Expected $expectedRes, got $res. Messages are different",
+                            resReports.map { it.message } == expectedRes.reports.map { it.message }
+                        )
+                        Assert.assertTrue(
+                            "#$index: Expected $expectedRes, got $res. Locations are different",
+                            resReports.map { it.location }.zip(expectedRes.reports.map { it.location }).all {
+                                it.second == null || it.second == it.first
+                            }
+                        )
+                    }
+                    res is ResultWithDiagnostics.Success && expectedRes is ResultWithDiagnostics.Success -> {
+                        val expectedVal = expectedRes.value
+                        val resVal = res.value.result
+                        when (resVal) {
+                            is ResultValue.Value -> Assert.assertEquals(
+                                "#$index: Expected $expectedVal, got $resVal",
+                                expectedVal,
+                                resVal.value
+                            )
+                            is ResultValue.Unit -> Assert.assertNull("#$index: Expected $expectedVal, got Unit", expectedVal)
+                            is ResultValue.Error -> Assert.assertTrue(
+                                "#$index: Expected $expectedVal, got Error: ${resVal.error}",
+                                expectedVal is Throwable && expectedVal.message == resVal.error?.message
+                            )
+                            else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $resVal", expectedVal == null)
+                        }
+                    }
+                    else -> {
+                        Assert.fail("#$index: Expected $expectedRes, got $res")
+                    }
+                }
+            }
+            if (expectedIter.hasNext()) {
+                Assert.fail("Expected ${expectedIter.next()} got end of results stream")
+            }
+        }
+
+        fun checkEvaluateInRepl(
+            snippets: Sequence<String>,
+            expected: Sequence<Any?>,
+            compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
+            evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
+            limit: Int = 0
+        ) = checkEvaluateInReplDiags(
+            snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit
+        )
+
+        class TestReceiver(
+            @Suppress("unused")
+            val prop1: Int = 3
+        )
     }
 }
-
-fun checkEvaluateInRepl(
-    snippets: Sequence<String>,
-    expected: Sequence<Any?>,
-    compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
-    evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-    limit: Int = 0
-) = checkEvaluateInReplDiags(
-    snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit
-)
-
-class TestReceiver(val prop1: Int = 3)

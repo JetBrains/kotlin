@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.jvm.impl
 
+import org.jetbrains.annotations.TestOnly
 import java.io.*
 import java.net.URL
 import java.net.URLClassLoader
@@ -39,13 +40,13 @@ internal class KJvmCompiledScriptData(
 
     companion object {
         @JvmStatic
-        private val serialVersionUID = 4L
+        private val serialVersionUID = 5L
     }
 }
 
-class KJvmCompiledScript internal constructor(
+open class KJvmCompiledScript internal constructor(
     internal var data: KJvmCompiledScriptData,
-    var compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
+    internal var compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
 ) : CompiledScript, Serializable {
 
     constructor(
@@ -92,6 +93,9 @@ class KJvmCompiledScript internal constructor(
             )
         )
     }
+
+    @TestOnly
+    fun getCompiledModule() = compiledModule
 
     private fun writeObject(outputStream: ObjectOutputStream) {
         outputStream.writeObject(data)
@@ -177,7 +181,7 @@ fun KJvmCompiledScript.toBytes(): ByteArray {
         oos = ObjectOutputStream(bos)
         oos.writeObject(this)
         oos.flush()
-        return bos.toByteArray()!!
+        return bos.toByteArray()
     } finally {
         try {
             oos?.close()

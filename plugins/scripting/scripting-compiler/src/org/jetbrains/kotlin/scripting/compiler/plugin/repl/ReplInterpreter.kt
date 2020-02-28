@@ -76,7 +76,7 @@ class ReplInterpreter(
     }
 
     // TODO: add script definition with project-based resolving for IDEA repl
-    private val scriptCompiler: ReplCompiler by lazy {
+    private val scriptCompiler: ReplCompilerWithoutCheck by lazy {
         GenericReplCompiler(
             disposable,
             REPL_LINE_AS_SCRIPT_DEFINITION,

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.util.Logger
@@ -132,7 +132,7 @@ fun readLibrariesFromConfiguration(configuration: CompilerConfiguration): List<M
         .map { descriptorMap.getOrPut(it.libraryName) { getModuleDescriptorByLibrary(it, descriptorMap) } }
 }
 
-fun createCompileResult(code: String) = createCompileResult(LineId(ReplCodeLine(0, 0, "")), code)
+fun createCompileResult(code: String) = createCompileResult(LineId(0, 0, 0), code)
 
 fun createCompileResult(lineId: LineId, code: String): ReplCompileResult.CompiledClasses {
     return ReplCompileResult.CompiledClasses(
@@ -219,7 +219,7 @@ class JsReplCompilationState(
     lock: ReentrantReadWriteLock,
     nameTables: NameTables,
     dependencies: List<ModuleDescriptor>,
-    val replState: ReplCodeAnalyzer.ResettableAnalyzerState,
+    val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState,
     val symbolTable: SymbolTable
 ) : JsCompilationState(lock, nameTables, dependencies)
 

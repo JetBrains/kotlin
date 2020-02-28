@@ -24,16 +24,13 @@ import kotlin.concurrent.write
 
 data class LineId(override val no: Int, override val generation: Int, private val codeHash: Int) : ILineId, Serializable {
 
-    constructor(codeLine: ReplCodeLine): this(codeLine.no, codeLine.generation, codeLine.code.hashCode())
-
-    override fun compareTo(other: ILineId): Int = (other as? LineId)?.let {
-        no.compareTo(it.no).takeIf { it != 0 }
-        ?: generation.compareTo(it.generation).takeIf { it != 0 }
-        ?: codeHash.compareTo(it.codeHash)
+    override fun compareTo(other: ILineId): Int = (other as? LineId)?.let { lineId ->
+        no.compareTo(lineId.no).takeIf { no -> no != 0 }
+            ?: codeHash.compareTo(lineId.codeHash)
     } ?: -1 // TODO: check if it doesn't break something
 
     companion object {
-        private val serialVersionUID: Long = 8328353000L
+        private const val serialVersionUID: Long = 8328354000L
     }
 }
 

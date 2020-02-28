@@ -27,8 +27,8 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
         try {
             if (compiledScript !is KJvmCompiledScript)
                 return failure("Cannot generate classes: unsupported compiled script type $compiledScript")
-            val module = (compiledScript.compiledModule as? KJvmCompiledModuleInMemory)
-                ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.compiledModule}")
+            val module = (compiledScript.getCompiledModule() as? KJvmCompiledModuleInMemory)
+                ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.getCompiledModule()}")
             for ((path, bytes) in module.compilerOutputFiles) {
                 File(outputDir, path).apply {
                     if (!parentFile.isDirectory) {
@@ -47,8 +47,8 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
 }
 
 fun KJvmCompiledScript.saveToJar(outputJar: File) {
-    val module = (compiledModule as? KJvmCompiledModuleInMemory)
-        ?: throw IllegalArgumentException("Unsupported module type $compiledModule")
+    val module = (getCompiledModule() as? KJvmCompiledModuleInMemory)
+        ?: throw IllegalArgumentException("Unsupported module type ${getCompiledModule()}")
     val dependenciesFromScript = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
         ?.filterIsInstance<JvmDependency>()
         ?.flatMap { it.classpath }

@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
 open class GenericReplCompilingEvaluatorBase(
-    val compiler: ReplCompiler,
+    val compiler: ReplCompilerWithoutCheck,
     val evaluator: ReplEvaluator,
     private val fallbackScriptArgs: ScriptArgsWithTypes? = null
 ) : ReplFullEvaluator {
@@ -46,7 +46,7 @@ open class GenericReplCompilingEvaluatorBase(
                     }
                     ReplEvalResult.Error.CompileTime(compiled.message, compiled.location)
                 }
-                is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete()
+                is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete(compiled.message)
                 is ReplCompileResult.CompiledClasses -> {
                     val result = eval(state, compiled, scriptArgs, invokeWrapper)
                     when (result) {
@@ -75,8 +75,6 @@ open class GenericReplCompilingEvaluatorBase(
     override fun eval(state: IReplStageState<*>, compileResult: ReplCompileResult.CompiledClasses, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
         evaluator.eval(state, compileResult, scriptArgs, invokeWrapper)
 
-    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = compiler.check(state, codeLine)
-
     override fun compileToEvaluable(state: IReplStageState<*>, codeLine: ReplCodeLine, defaultScriptArgs: ScriptArgsWithTypes?): Pair<ReplCompileResult, Evaluable?> {
         val compiled = compiler.compile(state, codeLine)
         return when (compiled) {
@@ -96,7 +94,7 @@ open class GenericReplCompilingEvaluatorBase(
 }
 
 class GenericReplCompilingEvaluator(
-    compiler: ReplCompiler,
+    compiler: ReplCompilerWithoutCheck,
     baseClasspath: Iterable<File>,
     baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
     fallbackScriptArgs: ScriptArgsWithTypes? = null,

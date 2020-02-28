@@ -7,6 +7,7 @@ package kotlin.script.experimental.jvmhost.repl
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.common.repl.ReplEvaluator
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 import kotlin.reflect.KClass
@@ -15,6 +16,7 @@ import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.util.LinkedSnippetImpl
 
 /**
  * REPL Evaluation wrapper for "legacy" REPL APIs defined in the org.jetbrains.kotlin.cli.common.repl package
@@ -35,8 +37,12 @@ class JvmReplEvaluator(
     ): ReplEvalResult = state.lock.write {
         val evalState = state.asState(JvmReplEvaluatorState::class.java)
         val history = evalState.history as ReplStageHistoryWithReplace
-        val compiledScript = (compileResult.data as? KJvmCompiledScript)
-            ?: return ReplEvalResult.Error.CompileTime("Unable to access compiled script: ${compileResult.data}")
+        val compiledScriptList = (compileResult.data as? LinkedSnippetImpl<*>)
+            ?: return ReplEvalResult.Error.CompileTime("Unable to access compiled list script: ${compileResult.data}")
+
+        val compiledScript = (compiledScriptList.get() as? KJvmCompiledScript)
+            ?: return ReplEvalResult.Error.CompileTime("Unable to access compiled script: ${compiledScriptList.get()}")
+
 
         val lastSnippetClass = history.peek()?.item?.first
         val historyBeforeSnippet = history.previousItems(compileResult.lineId).map { it.second }.toList()

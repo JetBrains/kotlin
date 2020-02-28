@@ -11,29 +11,35 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.messages.DiagnosticMessageHolder
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.write
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ReplCompilerStageHistory(private val state: GenericReplCompilerState) : BasicReplStageHistory<ScriptDescriptor>(state.lock) {
 
     override fun reset(): Iterable<ILineId> {
-        val removedCompiledLines = super.reset()
-        val removedAnalyzedLines = state.analyzerEngine.reset()
+        lock.write {
+            val removedCompiledLines = super.reset()
+            val removedAnalyzedLines = state.analyzerEngine.reset()
 
-        checkConsistent(removedCompiledLines, removedAnalyzedLines)
-        return removedCompiledLines
+            checkConsistent(removedCompiledLines, removedAnalyzedLines)
+            return removedCompiledLines
+        }
     }
 
     override fun resetTo(id: ILineId): Iterable<ILineId> {
-        val removedCompiledLines = super.resetTo(id)
-        val removedAnalyzedLines = state.analyzerEngine.resetToLine(id)
+        lock.write {
+            val removedCompiledLines = super.resetTo(id)
+            val removedAnalyzedLines = state.analyzerEngine.resetToLine(id)
 
-        checkConsistent(removedCompiledLines, removedAnalyzedLines)
-        return removedCompiledLines
+            checkConsistent(removedCompiledLines, removedAnalyzedLines)
+            return removedCompiledLines
+        }
     }
 
-    private fun checkConsistent(removedCompiledLines: Iterable<ILineId>, removedAnalyzedLines: List<ReplCodeLine>) {
+
+    private fun checkConsistent(removedCompiledLines: Iterable<ILineId>, removedAnalyzedLines: List<SourceCodeByReplLine>) {
         removedCompiledLines.zip(removedAnalyzedLines).forEach { (removedCompiledLine, removedAnalyzedLine) ->
-            if (removedCompiledLine != LineId(removedAnalyzedLine)) {
+            if (removedCompiledLine.no != removedAnalyzedLine.no) {
                 throw IllegalStateException("History mismatch when resetting lines: ${removedCompiledLine.no} != $removedAnalyzedLine")
             }
         }
@@ -59,7 +65,7 @@ class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val 
 
     override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()
 
-    val analyzerEngine = ReplCodeAnalyzer(environment)
+    val analyzerEngine = ReplCodeAnalyzerBase(environment)
 
     var lastDependencies: ScriptDependencies? = null
 }

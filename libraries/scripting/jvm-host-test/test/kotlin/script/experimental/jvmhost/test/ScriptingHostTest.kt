@@ -21,7 +21,6 @@ import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import java.util.jar.JarFile
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -348,7 +347,7 @@ class ScriptingHostTest : TestCase() {
         assertTrue(compiledScript is ResultWithDiagnostics.Success)
 
         val jvmCompiledScript = compiledScript.valueOrNull()!! as KJvmCompiledScript
-        val jvmCompiledModule = jvmCompiledScript.compiledModule as KJvmCompiledModuleInMemoryImpl
+        val jvmCompiledModule = jvmCompiledScript.getCompiledModule() as KJvmCompiledModuleInMemoryImpl
         val bytes = jvmCompiledModule.compilerOutputFiles["SavedScript.class"]!!
 
         var classFileVersion: Int? = null

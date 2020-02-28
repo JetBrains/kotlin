@@ -59,7 +59,7 @@ open class GenericReplCompiler(
                 if (compilerState.lastLineState == null || compilerState.lastLineState!!.codeLine != codeLine) {
                     val res = checker.check(state, codeLine)
                     when (res) {
-                        is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete()
+                        is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete("Code is incomplete")
                         is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
                         is ReplCheckResult.Ok -> {
                         } // continue
@@ -81,10 +81,10 @@ open class GenericReplCompiler(
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
             val scriptDescriptor = when (analysisResult) {
-                is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> {
+                is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> {
                     return ReplCompileResult.Error(errorHolder.renderMessage())
                 }
-                is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> {
+                is ReplCodeAnalyzerBase.ReplLineAnalysisResult.Successful -> {
                     (analysisResult.scriptDescriptor as? ScriptDescriptor)
                         ?: error("Unexpected script descriptor type ${analysisResult.scriptDescriptor::class}")
                 }
@@ -108,12 +108,12 @@ open class GenericReplCompiler(
                 setOf(psiFile.script!!.containingKtFile)
             )
 
-            compilerState.history.push(LineId(codeLine), scriptDescriptor)
+            compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)
 
             val classes = generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) }
 
             return ReplCompileResult.CompiledClasses(
-                LineId(codeLine),
+                LineId(codeLine.no, 0, codeLine.hashCode()),
                 compilerState.history.map { it.id },
                 scriptDescriptor.name.identifier,
                 classes,
