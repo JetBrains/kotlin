@@ -5,9 +5,33 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.ThrowableComputable
+import org.jetbrains.annotations.Nls
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.concurrent.Future
 
 object ProgressIndicatorUtils {
+    fun <T> underModalProgress(
+        project: Project,
+        @Nls progressTitle: String,
+        computable: Computable<T>
+    ): T {
+        val dumbService = DumbService.getInstance(project)
+        val useAlternativeResolve = dumbService.isAlternativeResolveEnabled
+        val inReadAction =
+            ThrowableComputable<T, RuntimeException> { runReadAction { return@runReadAction computable.compute() } }
+        val prioritizedRunnable =
+            ThrowableComputable<T, RuntimeException> { ProgressManager.getInstance().computePrioritized(inReadAction) }
+        val process =
+            if (useAlternativeResolve) ThrowableComputable { dumbService.computeWithAlternativeResolveEnabled(prioritizedRunnable) } else prioritizedRunnable
+        return ProgressManager.getInstance().runProcessWithProgressSynchronously(process, progressTitle, true, project)
+    }
+
     @JvmStatic
     fun <T> awaitWithCheckCanceled(future: Future<T>) =
         com.intellij.openapi.progress.util.BackgroundTaskUtil.awaitWithCheckCanceled(future)
