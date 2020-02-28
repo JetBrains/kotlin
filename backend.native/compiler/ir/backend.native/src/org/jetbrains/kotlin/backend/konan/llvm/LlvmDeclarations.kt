@@ -340,6 +340,9 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         val llvmFunction = if (declaration.isExternal) {
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
+                    // All call-sites to external accessors to interop properties
+                    // are lowered by InteropLowering.
+                    || (declaration.isAccessor && declaration.isFromMetadataInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
             context.llvm.externalFunction(declaration.symbolName, llvmFunctionType,

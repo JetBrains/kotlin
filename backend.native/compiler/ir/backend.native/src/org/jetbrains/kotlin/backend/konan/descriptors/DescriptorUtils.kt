@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -293,3 +294,6 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 }
 
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR
+
+fun IrDeclaration.isFromMetadataInteropLibrary() =
+        descriptor.module.isFromInteropLibrary()
