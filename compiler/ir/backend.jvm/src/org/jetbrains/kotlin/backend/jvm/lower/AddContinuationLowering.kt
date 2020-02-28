@@ -186,7 +186,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             val parametersWithArguments = parametersFields.withIndex()
                 .filter { info.reference.getValueArgument(it.index) != null }
             val fieldsForArguments = parametersWithArguments.map(IndexedValue<IrField>::value)
-            val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, fieldsForArguments)
+            val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, fieldsForArguments, insideInlineFunction)
             val invokeToOverride = functionNClass.functions.single {
                 it.owner.valueParameters.size == info.arity + 1 && it.owner.name.asString() == "invoke"
             }
@@ -405,12 +405,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrClass.addPrimaryConstructorForLambda(
         arity: Int,
         reference: IrFunctionReference,
-        fields: List<IrField>
+        fields: List<IrField>,
+        insideInlineFunction: Boolean
     ): IrConstructor =
         addConstructor {
             isPrimary = true
             returnType = defaultType
-            visibility = JavaVisibilities.PACKAGE_VISIBILITY
+            visibility = if (insideInlineFunction) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
         }.also { constructor ->
             for ((param, arg) in reference.getArguments()) {
                 constructor.addValueParameter(name = param.name.asString(), type = arg.type)

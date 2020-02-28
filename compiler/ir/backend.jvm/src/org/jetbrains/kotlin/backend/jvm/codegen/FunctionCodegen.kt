@@ -45,9 +45,7 @@ open class FunctionCodegen(
     val context = classCodegen.context
     val state = classCodegen.state
 
-    var continuationClassHasBeenGenerated = false
-    val continuationClassCodegen by lazy {
-        continuationClassHasBeenGenerated = true
+    val continuationClassCodegen = lazy {
         classCodegen.createLocalClassCodegen(irFunction.continuationClass(), irFunction).also { it.generate() }
     }
 
@@ -104,13 +102,13 @@ open class FunctionCodegen(
                         }
                     ) {
                         // force generation of fake continuation for inliner.
-                        continuationClassCodegen
+                        continuationClassCodegen.value
                     }
                     generateStateMachineForNamedFunction(
                         irFunction, classCodegen, methodVisitor,
                         access = flags,
                         signature = signature,
-                        obtainContinuationClassBuilder = { continuationClassCodegen.visitor },
+                        obtainContinuationClassBuilder = { continuationClassCodegen.value.visitor },
                         element = psiElement()
                     )
                 }
@@ -123,8 +121,8 @@ open class FunctionCodegen(
             methodVisitor.visitMaxs(-1, -1)
         }
         methodVisitor.visitEnd()
-        if (continuationClassHasBeenGenerated) {
-            continuationClassCodegen.done()
+        if (continuationClassCodegen.isInitialized()) {
+            continuationClassCodegen.value.done()
         }
 
         return signature
@@ -154,6 +152,9 @@ open class FunctionCodegen(
             // This is just a template for inliner
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
             origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+
+    private fun IrFunction.continuationClass(): IrClass =
+            (body as IrBlockBody).statements.first { it is IrClass && it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS } as IrClass
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {

@@ -184,5 +184,3 @@ internal fun generateFakeContinuationConstructorCall(
         pop()
     }
 }
-
-internal fun IrFunction.continuationClass(): IrClass = (body as IrBlockBody).statements.firstIsInstance<IrClass>()
