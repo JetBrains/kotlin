@@ -153,15 +153,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                     (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue()
                 }
 
-                // Special hack for `IntrinsicsJs.kt` support
-                if (declaration.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }) {
-                    declaration.declarations.forEach {
-                        if (it is IrSimpleFunction && it.name.asString().startsWith("invoke")) {
-                            it.enqueue()
-                        }
-                    }
-                }
-
                 // TODO find out how `doResume` gets removed
                 if (declaration.symbol == context.ir.symbols.coroutineImpl) {
                     declaration.declarations.forEach {
@@ -295,16 +286,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 if (declaration is IrProperty) {
                     declaration.getter?.let { if (it.overridesUsefulFunction()) it.enqueue() }
                     declaration.setter?.let { if (it.overridesUsefulFunction()) it.enqueue() }
-                }
-            }
-
-            // TODO deduplicate
-            // Special hack for `IntrinsicsJs.kt` support
-            if (klass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }) {
-                ArrayList(klass.declarations).forEach {
-                    if (it is IrSimpleFunction && it.name.asString().startsWith("invoke")) {
-                        it.enqueue()
-                    }
                 }
             }
 
