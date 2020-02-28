@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -28,16 +29,17 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
         val typeRefParent = element.parent.parent
         if (typeRefParent is KtConstructorCalleeExpression) return Collections.emptyList()
 
-        val interfaceExpected = typeRefParent is KtSuperTypeEntry
-
         val isQualifier = (element.parent as? KtUserType)?.let { it.qualifier == element } ?: false
 
         val typeReference = element.parent as? KtTypeReference
         val isUpperBound =
             typeReference?.getParentOfTypeAndBranch<KtTypeParameter> { extendsBound } != null || typeReference?.getParentOfTypeAndBranch<KtTypeConstraint> { boundTypeReference } != null
 
-        return when {
-            interfaceExpected -> Collections.singletonList(ClassKind.INTERFACE)
+        return when (typeRefParent) {
+            is KtSuperTypeEntry -> listOfNotNull(
+                ClassKind.INTERFACE,
+                if (typeRefParent.classExpected()) ClassKind.PLAIN_CLASS else null
+            )
             else -> ClassKind.values().filter {
                 val noTypeArguments = element.typeArgumentsAsTypes.isEmpty()
                 when (it) {
@@ -49,6 +51,11 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
                 }
             }
         }
+    }
+
+    private fun KtSuperTypeEntry.classExpected(): Boolean {
+        val containingClass = getStrictParentOfType<KtClass>() ?: return false
+        return containingClass.primaryConstructor == null && containingClass.secondaryConstructors.isNotEmpty()
     }
 
     private fun getExpectedUpperBound(element: KtUserType, context: BindingContext): KotlinType? {
@@ -64,7 +71,8 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
 
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): ClassInfo? {
         val name = element.referenceExpression?.getReferencedName() ?: return null
-        if (element.parent.parent is KtConstructorCalleeExpression) return null
+        val typeRefParent = element.parent.parent
+        if (typeRefParent is KtConstructorCalleeExpression) return null
 
         val (context, module) = element.analyzeAndGetResult()
         val qualifier = element.qualifier?.referenceExpression
@@ -79,6 +87,7 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
             name = name,
             targetParents = targetParents,
             expectedTypeInfo = expectedUpperBound?.let { TypeInfo.ByType(it, Variance.INVARIANT) } ?: TypeInfo.Empty,
+            open = typeRefParent is KtSuperTypeEntry && typeRefParent.classExpected(),
             typeArguments = element.typeArgumentsAsTypes.map {
                 if (it != null) TypeInfo(it, Variance.INVARIANT) else TypeInfo(anyType, Variance.INVARIANT)
             }

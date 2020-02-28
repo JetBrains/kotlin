@@ -3234,6 +3234,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/classDelegatorToSuperclass.kt");
                 }
 
+                @TestMetadata("createSuperClassFromSuperTypeEntry.kt")
+                public void testCreateSuperClassFromSuperTypeEntry() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntry.kt");
+                }
+
+                @TestMetadata("createSuperClassFromSuperTypeEntry2.kt")
+                public void testCreateSuperClassFromSuperTypeEntry2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntry2.kt");
+                }
+
+                @TestMetadata("createSuperClassFromSuperTypeEntry3.kt")
+                public void testCreateSuperClassFromSuperTypeEntry3() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntry3.kt");
+                }
+
                 @TestMetadata("createSuperclassInsideSubclass.kt")
                 public void testCreateSuperclassInsideSubclass() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperclassInsideSubclass.kt");
