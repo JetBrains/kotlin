@@ -64,7 +64,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 FirIntegerLiteralTypeScope(useSiteSession)
             } as FirScope
         }
-        else -> error("Failed type $this")
+        else -> null
     }
 }
 

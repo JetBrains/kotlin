@@ -594,6 +594,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/delegates/delegateWithLambda.kt");
         }
 
+        @TestMetadata("extensionGenericGetValue.kt")
+        public void testExtensionGenericGetValue() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/extensionGenericGetValue.kt");
+        }
+
+        @TestMetadata("extensionGetValueWithTypeVariableAsReceiver.kt")
+        public void testExtensionGetValueWithTypeVariableAsReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/extensionGetValueWithTypeVariableAsReceiver.kt");
+        }
+
         @TestMetadata("provideDelegate.kt")
         public void testProvideDelegate() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/delegates/provideDelegate.kt");
