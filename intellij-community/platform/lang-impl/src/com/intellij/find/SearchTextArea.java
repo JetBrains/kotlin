@@ -112,22 +112,27 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
 
     myTextArea.addPropertyChangeListener("background", this);
     myTextArea.addPropertyChangeListener("font", this);
-    myTextArea.registerKeyboardAction(e -> {
-      if (allowInsertTabInMultiline && myTextArea.getText().contains("\n")) {
-        if (myTextArea.isEditable() && myTextArea.isEnabled()) {
-          myTextArea.replaceSelection("\t");
+    new DumbAwareAction() {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        if (allowInsertTabInMultiline && myTextArea.getText().contains("\n")) {
+          if (myTextArea.isEditable() && myTextArea.isEnabled()) {
+            myTextArea.replaceSelection("\t");
+          }
+          else {
+            UIManager.getLookAndFeel().provideErrorFeedback(myTextArea);
+          }
         }
         else {
-          UIManager.getLookAndFeel().provideErrorFeedback(myTextArea);
-        }
+          myTextArea.transferFocus();
+        }      }
+    }.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0)), myTextArea);
+    new DumbAwareAction() {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        myTextArea.transferFocusBackward();
       }
-      else {
-        myTextArea.transferFocus();
-      }
-    }, KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), WHEN_FOCUSED);
-
-    myTextArea.registerKeyboardAction(e -> myTextArea.transferFocusBackward(), KeyStroke.getKeyStroke(KeyEvent.VK_TAB, SHIFT_DOWN_MASK),
-                                      WHEN_FOCUSED);
+    }.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, SHIFT_DOWN_MASK)), myTextArea);
     KeymapUtil.reassignAction(myTextArea, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), NEW_LINE_KEYSTROKE, WHEN_FOCUSED);
     myTextArea.setDocument(new PlainDocument() {
       @Override
@@ -458,7 +463,7 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
     @Override
     @NotNull
     public String getLayoutConstraints() {
-      Insets i = SystemInfo.isLinux ? JBUI.insets(2) : JBUI.insets(3);
+      Insets i = SystemInfo.isLinux ? JBUI.insets(2) : JBUI.insets(1);
       return "flowx, ins " + i.top + " " + i.left + " " + i.bottom + " " + i.right + ", gapx " + JBUIScale.scale(3);
     }
 

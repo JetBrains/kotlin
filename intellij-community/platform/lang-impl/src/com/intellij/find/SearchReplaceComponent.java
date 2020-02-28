@@ -61,6 +61,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   private final ActionToolbarImpl mySearchActionsToolbar1;
   private final ActionToolbarImpl mySearchActionsToolbar2;
   private final List<AnAction> myEmbeddedSearchActions = new ArrayList<>();
+  private final List<Component> myExtraSearchButtons = new ArrayList<>();
   @NotNull
   private final ActionToolbarImpl.PopupStateModifier mySearchToolbar1PopupStateModifier;
 
@@ -68,6 +69,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   private final ActionToolbarImpl myReplaceActionsToolbar1;
   private final ActionToolbarImpl myReplaceActionsToolbar2;
   private final List<AnAction> myEmbeddedReplaceActions = new ArrayList<>();
+  private final List<Component> myExtraReplaceButtons = new ArrayList<>();
 
   private final JPanel myReplaceToolbarWrapper;
 
@@ -222,10 +224,21 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
 
     // it's assigned after all action updates so that actions don't get access to uninitialized components
     myDataProviderDelegate = dataProvider;
-
-    setFocusCycleRoot(true);
-
-    setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+    // A workaround to suppress editor-specific TabAction
+    new DumbAwareAction() {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        Component focusOwner = IdeFocusManager.getInstance(myProject).getFocusOwner();
+        if (UIUtil.isAncestor(SearchReplaceComponent.this, focusOwner)) focusOwner.transferFocus();
+      }
+    }.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0)), this);
+    new DumbAwareAction() {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        Component focusOwner = IdeFocusManager.getInstance(myProject).getFocusOwner();
+        if (UIUtil.isAncestor(SearchReplaceComponent.this, focusOwner)) focusOwner.transferFocusBackward();
+      }
+    }.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK)), this);
   }
 
   public void resetUndoRedoActions() {
@@ -425,6 +438,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     if (needToResetSearchFocus) mySearchTextComponent.requestFocusInWindow();
     updateBindings();
     updateActions();
+    List<Component> focusOrder = new ArrayList<>();
+    focusOrder.add(mySearchTextComponent);
+    focusOrder.addAll(myExtraSearchButtons);
+    focusOrder.add(myReplaceTextComponent);
+    focusOrder.addAll(myExtraReplaceButtons);
+    setFocusCycleRoot(true);
+    setFocusTraversalPolicy(new ListFocusTraversalPolicy(focusOrder));
     revalidate();
     repaint();
   }
@@ -467,9 +487,11 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     final JTextArea textComponent;
     SearchTextArea textArea = new SearchTextArea(search);
     if (search) {
-      textArea.setExtraActions(myEmbeddedSearchActions.toArray(AnAction.EMPTY_ARRAY));
+      myExtraSearchButtons.clear();
+      myExtraSearchButtons.addAll(textArea.setExtraActions(myEmbeddedSearchActions.toArray(AnAction.EMPTY_ARRAY)));
     } else {
-      textArea.setExtraActions(myEmbeddedReplaceActions.toArray(AnAction.EMPTY_ARRAY));
+      myExtraReplaceButtons.clear();
+      myExtraReplaceButtons.addAll(textArea.setExtraActions(myEmbeddedReplaceActions.toArray(AnAction.EMPTY_ARRAY)));
     }
     textComponent = textArea.getTextArea();
     textComponent.setRows(isMultiline() ? 2 : 1);
