@@ -3,7 +3,6 @@ package com.intellij.codeInspection;
 
 import com.google.common.collect.Lists;
 import com.intellij.analysis.AnalysisScope;
-import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.ex.*;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.conversion.ConversionListener;
@@ -33,7 +32,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vcs.VcsException;
@@ -50,19 +48,14 @@ import com.intellij.util.containers.ConcurrentMultiMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.messages.MessageBusConnection;
-import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import one.util.streamex.StreamEx;
 import org.jdom.JDOMException;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -94,11 +87,6 @@ public final class InspectionApplication implements CommandLineInspectionProgres
   private InspectionProfileImpl myInspectionProfile;
 
   public boolean myErrorCodeRequired = true;
-
-  @NonNls public static final String DESCRIPTIONS = ".descriptions";
-  @NonNls public static final String PROFILE = "profile";
-  @NonNls public static final String INSPECTIONS_NODE = "inspections";
-  @NonNls public static final String XML_EXTENSION = ".xml";
 
   public void startup() {
     if (myProjectPath == null) {
@@ -312,10 +300,10 @@ public final class InspectionApplication implements CommandLineInspectionProgres
 
     final List<Path> inspectionsResults = new ArrayList<>();
     runUnderProgress(project, projectPath, context, scope, resultsDataPath, inspectionsResults);
-    final Path descriptionsFile = resultsDataPath.resolve(DESCRIPTIONS + XML_EXTENSION);
-    describeInspections(descriptionsFile,
+    final Path descriptionsFile = resultsDataPath.resolve(InspectionsResultUtil.DESCRIPTIONS + InspectionsResultUtil.XML_EXTENSION);
+    InspectionsResultUtil.describeInspections(descriptionsFile,
                         myRunWithEditorSettings ? null : inspectionProfile.getName(),
-                        inspectionProfile);
+                                              inspectionProfile);
     inspectionsResults.add(descriptionsFile);
     // convert report
     if (reportConverter != null) {
@@ -713,53 +701,6 @@ public final class InspectionApplication implements CommandLineInspectionProgres
   public void reportMessage(int minVerboseLevel, String message) {
     if (myVerboseLevel >= minVerboseLevel) {
       System.out.println(message);
-    }
-  }
-
-  private static void describeInspections(@NonNls Path outputPath, @Nullable String name, @NotNull InspectionProfile profile) throws IOException {
-    final InspectionToolWrapper[] toolWrappers = profile.getInspectionTools(null);
-    final Map<String, Set<InspectionToolWrapper>> map = new HashMap<>();
-    for (InspectionToolWrapper toolWrapper : toolWrappers) {
-      final String groupName = toolWrapper.getGroupDisplayName();
-      Set<InspectionToolWrapper> groupInspections = map.computeIfAbsent(groupName, __ -> new HashSet<>());
-      groupInspections.add(toolWrapper);
-    }
-
-    try (Writer fw = new OutputStreamWriter(Files.newOutputStream(outputPath), StandardCharsets.UTF_8)) {
-      @NonNls final PrettyPrintWriter xmlWriter = new PrettyPrintWriter(fw);
-      xmlWriter.startNode(INSPECTIONS_NODE);
-      if (name != null) {
-        xmlWriter.addAttribute(PROFILE, name);
-      }
-      List<String> inspectionsWithoutDescriptions = new ArrayList<>(1);
-      for (Map.Entry<String, Set<InspectionToolWrapper>> entry : map.entrySet()) {
-        xmlWriter.startNode("group");
-        String groupName = entry.getKey();
-        xmlWriter.addAttribute("name", groupName);
-        final Set<InspectionToolWrapper> entries = entry.getValue();
-        for (InspectionToolWrapper toolWrapper : entries) {
-          xmlWriter.startNode("inspection");
-          final String shortName = toolWrapper.getShortName();
-          xmlWriter.addAttribute("shortName", shortName);
-          xmlWriter.addAttribute("displayName", toolWrapper.getDisplayName());
-          final boolean toolEnabled = profile.isToolEnabled(HighlightDisplayKey.find(shortName));
-          xmlWriter.addAttribute("enabled", Boolean.toString(toolEnabled));
-          final String description = toolWrapper.loadDescription();
-          if (description != null) {
-            xmlWriter.setValue(description);
-          }
-          else {
-            inspectionsWithoutDescriptions.add(shortName);
-          }
-          xmlWriter.endNode();
-        }
-        xmlWriter.endNode();
-      }
-      xmlWriter.endNode();
-
-      if (!inspectionsWithoutDescriptions.isEmpty()) {
-        LOG.error("Descriptions are missed for tools: " + StringUtil.join(inspectionsWithoutDescriptions, ", "));
-      }
     }
   }
 

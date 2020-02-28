@@ -4,7 +4,7 @@ package com.intellij.codeInspection.ex;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
-import com.intellij.codeInspection.InspectionApplication;
+import com.intellij.codeInspection.InspectionsResultUtil;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -70,7 +70,7 @@ public class JsonSingleFileInspectionsReportConverter extends JsonInspectionsRep
         Set<String> seenProblemIds = new HashSet<>();
 
         for (File result : inspectionsResults) {
-          if (!FileUtil.getNameWithoutExtension(result).equals(InspectionApplication.DESCRIPTIONS)) {
+          if (!FileUtil.getNameWithoutExtension(result).equals(InspectionsResultUtil.DESCRIPTIONS)) {
             seenProblemIds.add(FileUtil.getNameWithoutExtension(result));
             Document doc = JDOMUtil.loadDocument(result);
             for (Element problem : doc.getRootElement().getChildren(PROBLEM)) {
@@ -81,7 +81,7 @@ public class JsonSingleFileInspectionsReportConverter extends JsonInspectionsRep
         jsonWriter.endArray();
 
         File descriptionsFile = ContainerUtil.find(inspectionsResults,
-                                                   (file) -> FileUtil.getNameWithoutExtension(file).equals(InspectionApplication.DESCRIPTIONS));
+                                                   (file) -> FileUtil.getNameWithoutExtension(file).equals(InspectionsResultUtil.DESCRIPTIONS));
         if (descriptionsFile != null) {
           convertDescriptionsContents(jsonWriter, JDOMUtil.loadDocument(descriptionsFile), (id) -> seenProblemIds.contains(id));
         }

@@ -4,7 +4,6 @@ package com.intellij.codeInspection.ex;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefManagerImpl;
-import com.intellij.codeInspection.ui.InspectionToolPresentation;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -38,7 +37,7 @@ public class BatchModeDescriptorsUtil {
                                     @NotNull GlobalInspectionContext context,
                                     @Nullable LocalInspectionTool tool,
                                     @NotNull TripleFunction<? super LocalInspectionTool, ? super PsiElement, ? super GlobalInspectionContext, ? extends RefElement> getProblemElementFunction,
-                                    @NotNull InspectionToolPresentation dpi) {
+                                    @NotNull InspectionToolResultExporter dpi) {
     if (descriptors.isEmpty()) return;
 
     Map<RefElement, List<ProblemDescriptor>> problems = new HashMap<>();
@@ -75,7 +74,7 @@ public class BatchModeDescriptorsUtil {
   }
 
   public static void addProblemDescriptors(@NotNull List<? extends ProblemDescriptor> descriptors,
-                                           @NotNull InspectionToolPresentation dpi,
+                                           @NotNull InspectionToolResultExporter dpi,
                                            boolean filterSuppressed,
                                            @NotNull GlobalInspectionContext inspectionContext,
                                            @NotNull LocalInspectionTool tool) {

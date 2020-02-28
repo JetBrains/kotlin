@@ -2,7 +2,7 @@
 
 package com.intellij.codeInspection.offlineViewer;
 
-import com.intellij.codeInspection.InspectionApplication;
+import com.intellij.codeInspection.InspectionsResultUtil;
 import com.intellij.codeInspection.offline.OfflineProblemDescriptor;
 import com.intellij.codeInspection.reference.SmartRefElementPointerImpl;
 import com.intellij.util.containers.Interner;
@@ -127,7 +127,7 @@ public class OfflineViewParseUtil {
   public static String parseProfileName(Reader descriptorReader) {
     final XppReader reader = new XppReader(descriptorReader, new MXParser());
     try {
-      return reader.getAttribute(InspectionApplication.PROFILE);
+      return reader.getAttribute(InspectionsResultUtil.PROFILE);
     }
     catch (Exception e) {
       return null;

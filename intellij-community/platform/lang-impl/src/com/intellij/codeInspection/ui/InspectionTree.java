@@ -4,6 +4,7 @@ package com.intellij.codeInspection.ui;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.CommonProblemDescriptor;
+import com.intellij.codeInspection.InspectionToolResultExporter;
 import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.codeInspection.ex.BatchModeDescriptorsUtil;
 import com.intellij.codeInspection.ex.GlobalInspectionContextImpl;
@@ -492,7 +493,7 @@ public class InspectionTree extends Tree {
       return node.getChildren().stream().allMatch(this::shouldDelete);
     }
     else if (node instanceof InspectionNode) {
-      InspectionToolPresentation presentation = myView.getGlobalInspectionContext().getPresentation(((InspectionNode)node).getToolWrapper());
+      InspectionToolResultExporter presentation = myView.getGlobalInspectionContext().getPresentation(((InspectionNode)node).getToolWrapper());
       SynchronizedBidiMultiMap<RefEntity, CommonProblemDescriptor> problemElements = presentation.getProblemElements();
       if (problemElements.isEmpty()) {
         return true;

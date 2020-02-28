@@ -4,8 +4,8 @@ package com.intellij.codeInspection.ex;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
-import com.intellij.codeInspection.InspectionApplication;
 import com.intellij.codeInspection.InspectionsReportConverter;
+import com.intellij.codeInspection.InspectionsResultUtil;
 import com.intellij.codeInspection.ui.DefaultInspectionToolPresentation;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -93,7 +93,7 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
       try (Writer writer = Files.newBufferedWriter(jsonFile.toPath(), CharsetToolkit.UTF8_CHARSET);
            JsonWriter jsonWriter = gson.newJsonWriter(writer)) {
         Document doc = builder.build(inspectionDataFile);
-        if (InspectionApplication.DESCRIPTIONS.equals(fileNameWithoutExt)) {
+        if (InspectionsResultUtil.DESCRIPTIONS.equals(fileNameWithoutExt)) {
           convertDescriptions(jsonWriter, doc);
         }
         else if (PROJECT_FINGERPRINT.equals(fileNameWithoutExt)) {
@@ -235,7 +235,7 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
                                                     @NotNull Document descriptions,
                                                     @Nullable Predicate<String> inspectionFilter) throws IOException {
     Element inspectionsElement = descriptions.getRootElement();
-    writer.name(InspectionApplication.PROFILE).value(inspectionsElement.getAttributeValue(InspectionApplication.PROFILE));
+    writer.name(InspectionsResultUtil.PROFILE).value(inspectionsElement.getAttributeValue(InspectionsResultUtil.PROFILE));
     writer.name(GROUPS);
     writer.beginArray();
     for (Element group : inspectionsElement.getChildren(GROUP)) {
@@ -257,7 +257,7 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
     }
     writer.beginObject();
     writer.name(NAME).value(group.getAttributeValue(NAME));
-    writer.name(InspectionApplication.INSPECTIONS_NODE).beginArray();
+    writer.name(InspectionsResultUtil.INSPECTIONS_NODE).beginArray();
     for (Element inspection : group.getChildren(INSPECTION)) {
       if (inspectionFilter != null && !inspectionFilter.test(inspection.getAttributeValue(SHORT_NAME))) continue;
       convertInspectionDescription(writer, inspection);

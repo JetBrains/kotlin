@@ -20,9 +20,9 @@ import com.intellij.analysis.AnalysisScope;
 import com.intellij.analysis.PerformAnalysisInBackgroundOption;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
-import com.intellij.codeInspection.InspectionApplication;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.InspectionsBundle;
+import com.intellij.codeInspection.InspectionsResultUtil;
 import com.intellij.codeInspection.ex.*;
 import com.intellij.codeInspection.offline.OfflineProblemDescriptor;
 import com.intellij.codeInspection.offlineViewer.OfflineInspectionRVContentProvider;
@@ -85,7 +85,7 @@ public class ViewOfflineResultsAction extends AnAction {
       @Override
       public Icon getIcon(VirtualFile file) {
         if (file.isDirectory() &&
-            file.findChild(InspectionApplication.DESCRIPTIONS + "." + StdFileTypes.XML.getDefaultExtension()) != null) {
+            file.findChild(InspectionsResultUtil.DESCRIPTIONS + "." + StdFileTypes.XML.getDefaultExtension()) != null) {
           return AllIcons.Nodes.InspectionResults;
         }
         return super.getIcon(file);
@@ -114,7 +114,7 @@ public class ViewOfflineResultsAction extends AnAction {
             final String extension = inspectionFile.getExtension();
             File inspectionIoFile = VfsUtilCore.virtualToIoFile(inspectionFile);
             try {
-              if (shortName.equals(InspectionApplication.DESCRIPTIONS)) {
+              if (shortName.equals(InspectionsResultUtil.DESCRIPTIONS)) {
                 profileName[0] = ReadAction.compute(() -> OfflineViewParseUtil.parseProfileName(inspectionIoFile));
               }
               else if (StdFileTypes.XML.getDefaultExtension().equals(extension)) {
