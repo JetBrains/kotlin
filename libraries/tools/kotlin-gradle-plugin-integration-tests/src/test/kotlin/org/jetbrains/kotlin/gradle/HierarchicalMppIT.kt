@@ -396,7 +396,12 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(Project("hierarchical-mpp-project-dependency")) {
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(
+        Project(
+            "hierarchical-mpp-project-dependency",
+            GradleVersionRequired.AtLeast("5.0") // Bug in Gradle versions < 5.0: Gradle can't pick build dependencies from nested provider
+        )
+    ) {
         publishThirdPartyLib(withGranularMetadata = true)
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
