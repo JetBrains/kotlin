@@ -5111,8 +5111,8 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @TestMetadata("createCoroutinesOnManualInstances.kt")
-        public void testCreateCoroutinesOnManualInstances() throws Exception {
-            runTest("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt");
+        public void testCreateCoroutinesOnManualInstances_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("crossInlineWithCapturedOuterReceiver.kt")
@@ -5729,8 +5729,8 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @TestMetadata("suspendFunctionIsAs.kt")
-            public void testSuspendFunctionIsAs() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionIsAs.kt");
+            public void testSuspendFunctionIsAs_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionIsAs.kt", "kotlin.coroutines");
             }
 
             @TestMetadata("suspendInlineSuspendFinally.kt")
@@ -5761,13 +5761,17 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
                 }
 
+                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                    KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInCallableReference() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
 
                 @TestMetadata("bigArity.kt")
-                public void testBigArity() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt");
+                public void testBigArity_1_3() throws Exception {
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt", "kotlin.coroutines");
                 }
 
                 @TestMetadata("longArgs.kt")
@@ -6101,13 +6105,17 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
                 }
 
+                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                    KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInAnonymous() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
 
                 @TestMetadata("simple.kt")
-                public void testSimple() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
+                public void testSimple_1_3() throws Exception {
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt", "kotlin.coroutines");
                 }
             }
 

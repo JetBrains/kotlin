@@ -6151,8 +6151,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("createCoroutinesOnManualInstances.kt")
-        public void testCreateCoroutinesOnManualInstances() throws Exception {
-            runTest("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt");
+        public void testCreateCoroutinesOnManualInstances_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("createCoroutinesOnManualInstances.kt")
+        public void testCreateCoroutinesOnManualInstances_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("crossInlineWithCapturedOuterReceiver.kt")
@@ -7411,13 +7416,22 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
+                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInCallableReference() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
 
                 @TestMetadata("bigArity.kt")
-                public void testBigArity() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt");
+                public void testBigArity_1_2() throws Exception {
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt", "kotlin.coroutines.experimental");
+                }
+
+                @TestMetadata("bigArity.kt")
+                public void testBigArity_1_3() throws Exception {
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt", "kotlin.coroutines");
                 }
 
                 @TestMetadata("fromJava.kt")
@@ -7998,12 +8012,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Anonymous extends AbstractLightAnalysisModeTest {
                 @TestMetadata("simple.kt")
-                public void ignoreSimple() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
+                public void ignoreSimple_1_2() throws Exception {
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt", "kotlin.coroutines.experimental");
+                }
+
+                @TestMetadata("simple.kt")
+                public void ignoreSimple_1_3() throws Exception {
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt", "kotlin.coroutines");
                 }
 
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInAnonymous() throws Exception {
@@ -8273,6 +8296,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
             public void testAllFilesPresentInReflect() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("bigArity.kt")
+            public void testBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/reflect/bigArity.kt");
             }
 
             @TestMetadata("callSuspend.kt")

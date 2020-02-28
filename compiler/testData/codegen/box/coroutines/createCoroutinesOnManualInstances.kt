@@ -1,10 +1,13 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
+import helpers.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 import helpers.ContinuationAdapter
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 fun runCustomLambdaAsCoroutine(e: Throwable? = null, x: (Continuation<String>) -> Any?): String {
     var result = "fail"
