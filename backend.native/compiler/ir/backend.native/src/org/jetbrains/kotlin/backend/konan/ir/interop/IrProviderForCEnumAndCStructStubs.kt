@@ -116,9 +116,13 @@ internal class IrProviderForCEnumAndCStructStubs(
     private fun irParentFor(descriptor: ClassDescriptor): IrDeclarationContainer {
         val packageFragmentDescriptor = descriptor.findPackage()
         return filesMap.getOrPut(packageFragmentDescriptor) {
-            IrFileImpl(NaiveSourceBasedFileEntryImpl("CTypeDefinitions"), packageFragmentDescriptor).also {
+            IrFileImpl(NaiveSourceBasedFileEntryImpl(cTypeDefinitionsFileName), packageFragmentDescriptor).also {
                 this@IrProviderForCEnumAndCStructStubs.module?.files?.add(it)
             }
         }
+    }
+
+    companion object {
+        const val cTypeDefinitionsFileName = "CTypeDefinitions"
     }
 }
