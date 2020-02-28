@@ -45,8 +45,12 @@ internal class ScriptChangesNotifier(
                 }
 
                 private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
-                    AppExecutorUtil.getAppExecutorService().submit {
+                    if (ApplicationManager.getApplication().isUnitTestMode) {
                         getListener(project, file)?.editorActivated(file, updater)
+                    } else {
+                        AppExecutorUtil.getAppExecutorService().submit {
+                            getListener(project, file)?.editorActivated(file, updater)
+                        }
                     }
                 }
             },
