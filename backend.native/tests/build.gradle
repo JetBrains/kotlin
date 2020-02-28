@@ -2994,6 +2994,11 @@ task inline_correctOrderFunctionReference(type: KonanLocalTest) {
     source = "codegen/inline/correctOrderFunctionReference.kt"
 }
 
+task inline_coercionToUnit(type: KonanLocalTest) {
+    goldValue = "kotlin.Unit\n"
+    source = "codegen/inline/coercionToUnit.kt"
+}
+
 task classDeclarationInsideInline(type: KonanLocalTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
     goldValue = "test1: 1.0\n1\ntest2\n"

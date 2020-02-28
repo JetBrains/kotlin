@@ -1818,11 +1818,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val bbExit = returnableBlockScope.bbExit
         if (bbExit != null) {
             if (!functionGenerationContext.isAfterTerminator()) {                 // TODO should we solve this problem once and for all
-                if (returnableBlockScope.resultPhi != null) {
-                    functionGenerationContext.unreachable()
-                } else {
-                    functionGenerationContext.br(bbExit)
-                }
+                functionGenerationContext.unreachable()
             }
             functionGenerationContext.positionAtEnd(bbExit)
         }
