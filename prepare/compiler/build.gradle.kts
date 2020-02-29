@@ -25,6 +25,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         extendsFrom(fatJarContents)
         extendsFrom(fatJarContentsStripMetadata)
         extendsFrom(fatJarContentsStripServices)
+        extendsFrom(compilerVersion)
     }
 }
 
