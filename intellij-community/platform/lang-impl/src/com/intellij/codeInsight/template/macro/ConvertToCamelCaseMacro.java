@@ -56,7 +56,7 @@ public class ConvertToCamelCaseMacro extends MacroBase {
 
   public static class ReplaceUnderscoresToCamelCaseMacro extends ConvertToCamelCaseMacro {
     public ReplaceUnderscoresToCamelCaseMacro() {
-      super("underscoresToCamelCase", CodeInsightBundle.message("macro.undescoresToCamelCase.string"));
+      super("underscoresToCamelCase", CodeInsightBundle.message("macro.underscoresToCamelCase.string"));
     }
 
     @Override

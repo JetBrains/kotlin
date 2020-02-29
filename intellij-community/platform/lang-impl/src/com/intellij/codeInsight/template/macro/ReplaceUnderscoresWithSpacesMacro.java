@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ReplaceUnderscoresWithSpacesMacro extends MacroBase {
   public ReplaceUnderscoresWithSpacesMacro() {
-    super("underscoresToSpaces", CodeInsightBundle.message("macro.undescoresToSpaces.string"));
+    super("underscoresToSpaces", CodeInsightBundle.message("macro.underscoresToSpaces.string"));
   }
 
   @Override
