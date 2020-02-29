@@ -4,6 +4,7 @@ package com.intellij.find;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.editorHeaderActions.Utils;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.laf.PluggableLafInfo;
 import com.intellij.ide.ui.laf.SearchTextAreaPainter;
@@ -501,6 +502,11 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
       setLook(focusable ? FIELD_INPLACE_LOOK : ActionButtonLook.INPLACE_LOOK);
       setFocusable(focusable);
       updateIcon();
+    }
+
+    @Override
+    protected DataContext getDataContext() {
+      return DataManager.getInstance().getDataContext(this);
     }
 
     @Override
