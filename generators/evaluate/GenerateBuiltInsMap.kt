@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.evaluate
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.compileTimeAnnotation
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -88,8 +89,14 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
     val arrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
 
     fun CallableDescriptor.isCompileTime(classDescriptor: ClassDescriptor): Boolean {
-        return (this as? FunctionDescriptor)?.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                (this.annotations.hasAnnotation(compileTimeAnnotation) || classDescriptor.annotations.hasAnnotation(compileTimeAnnotation))
+        val thisIsCompileTime = this.annotations.hasAnnotation(compileTimeAnnotation)
+        val classIsCompileTime = classDescriptor.annotations.hasAnnotation(compileTimeAnnotation)
+        val isPrimitive = KotlinBuiltIns.isPrimitiveClass(classDescriptor)
+        val isFakeOverridden = (this as? FunctionDescriptor)?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        return when {
+            isPrimitive -> thisIsCompileTime || classIsCompileTime
+            else -> !isFakeOverridden && (thisIsCompileTime || classIsCompileTime)
+        }
     }
 
     for (classDescriptor in allPrimitiveTypes + builtIns.string + arrays + builtIns.any) {
