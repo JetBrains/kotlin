@@ -7,6 +7,7 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.render.RenderingUtil;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.JBUI;
@@ -425,8 +426,8 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded,
                                                   boolean leaf, int row, boolean hasFocus) {
-      Color background = isSelected ? UIUtil.getTreeSelectionBackground(hasFocus) : UIUtil.getTreeBackground(tree);
-      Color foreground = isSelected ? UIUtil.getTreeSelectionForeground(hasFocus) : UIUtil.getTreeForeground(tree);
+      Color background = RenderingUtil.getBackground(tree, isSelected);
+      Color foreground = RenderingUtil.getForeground(tree, isSelected);
       if (value instanceof MyToggleTreeNode) {
         MyToggleTreeNode treeNode = (MyToggleTreeNode)value;
 

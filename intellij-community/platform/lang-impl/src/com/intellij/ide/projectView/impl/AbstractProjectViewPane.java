@@ -36,6 +36,7 @@ import com.intellij.problems.ProblemListener;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.move.MoveHandler;
+import com.intellij.ui.render.RenderingUtil;
 import com.intellij.ui.tree.TreePathUtil;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.tree.project.ProjectFileNode;
@@ -45,7 +46,6 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.ImageUtil;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -801,8 +801,8 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
 
       final JLabel label = new JLabel(count + " " + StringUtil.pluralize("item", count));
       label.setOpaque(true);
-      label.setForeground(UIUtil.getTreeForeground(myTree));
-      label.setBackground(UIUtil.getTreeBackground(myTree));
+      label.setForeground(RenderingUtil.getForeground(myTree));
+      label.setBackground(RenderingUtil.getBackground(myTree));
       label.setFont(myTree.getFont());
       label.setSize(label.getPreferredSize());
       final BufferedImage image = ImageUtil.createImage(label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_ARGB);
