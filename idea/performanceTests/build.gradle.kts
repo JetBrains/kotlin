@@ -9,6 +9,7 @@ plugins {
 dependencies {
     testRuntimeOnly(intellijDep())
     testRuntimeOnly(intellijRuntimeAnnotations())
+    testRuntimeOnly(toolsJar())
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":plugins:android-extensions-ide"))
     testRuntimeOnly(project(":plugins:kapt3-idea"))
