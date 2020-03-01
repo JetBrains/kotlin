@@ -38,8 +38,8 @@ class KotlinNativeIdeInitializer {
         )
 
         val JAVA_PLUGIN_IDS = setOf(
-                "com.intellij.kotlinNative.platformDeps", // Platform Deps (Java)
-                "com.intellij.java" // Java
+            "com.intellij.kotlinNative.platformDeps", // Platform Deps (Java)
+            "com.intellij.java" // Java
         )
     }
 
