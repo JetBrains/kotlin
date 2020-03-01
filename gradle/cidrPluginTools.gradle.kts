@@ -449,7 +449,7 @@ fun customPluginRepos(releaseType: ReleaseType, kotlinBuildNumber: String, inden
         )
         ReleaseType.DEV -> listOf(
                 "https://dl.bintray.com/kotlin/kotlin-dev",
-                "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$kotlinBuildNumber,branch:default:any/artifacts/content/maven/"
+                "https://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinDev_Aggregate),number:$kotlinBuildNumber,branch:default:any/artifacts/content/maven/"
         )
         ReleaseType.SNAPSHOT -> listOf(
                 "https://oss.sonatype.org/content/repositories/snapshots"
@@ -460,7 +460,7 @@ fun customPluginRepos(releaseType: ReleaseType, kotlinBuildNumber: String, inden
 }
 
 fun pluginResolutionRules(releaseType: ReleaseType): String = when (releaseType) {
-    ReleaseType.SNAPSHOT -> """
+    ReleaseType.SNAPSHOT, ReleaseType.DEV -> """
         |
         |    resolutionStrategy {
         |        eachPlugin {
