@@ -103,7 +103,8 @@ public class ContentEntryTreeEditor {
       }
     });
     excludePatternsPanel.add(myExcludePatternsField, gridBag.next().fillCellHorizontally());
-    JBLabel excludePatternsLegendLabel = new JBLabel(XmlStringUtil.wrapInHtml("Use <b>;</b> to separate name patterns, <b>*</b> for any number of symbols, <b>?</b> for one."));
+    JBLabel excludePatternsLegendLabel =
+      new JBLabel(XmlStringUtil.wrapInHtml(ProjectBundle.message("label.content.entry.separate.name.patterns")));
     excludePatternsLegendLabel.setForeground(JBColor.GRAY);
     excludePatternsPanel.add(excludePatternsLegendLabel, gridBag.nextLine().next().next().fillCellHorizontally());
     myTreePanel = new MyPanel(new BorderLayout());
