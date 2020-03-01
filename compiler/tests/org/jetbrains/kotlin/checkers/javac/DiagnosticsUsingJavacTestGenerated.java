@@ -9948,6 +9948,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/expectedTypeWithGenerics.kt");
             }
 
+            @TestMetadata("extensionLambdasAndArrow.kt")
+            public void testExtensionLambdasAndArrow() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/extensionLambdasAndArrow.kt");
+            }
+
             @TestMetadata("findViewById.kt")
             public void testFindViewById() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/findViewById.kt");

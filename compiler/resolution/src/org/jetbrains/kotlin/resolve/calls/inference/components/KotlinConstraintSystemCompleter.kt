@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -172,7 +173,7 @@ class KotlinConstraintSystemCompleter(
         val atomToAnalyze = when (postponedAtom) {
             is PostponedCallableReferenceAtom -> postponedAtom.preparePostponedAtomWithTypeVariableAsExpectedType(
                 c, csBuilder, expectedTypeVariable,
-                condition = { true },
+                parameterTypes = null,
                 isSuitable = KotlinType::isBuiltinFunctionalTypeOrSubtype,
                 typeVariableCreator = { TypeVariableForCallableReferenceReturnType(builtIns, "_Q") },
                 newAtomCreator = { returnVariable, expectedType ->
@@ -183,7 +184,7 @@ class KotlinConstraintSystemCompleter(
             )
             is LambdaWithTypeVariableAsExpectedTypeAtom -> postponedAtom.preparePostponedAtomWithTypeVariableAsExpectedType(
                 c, csBuilder, expectedTypeVariable,
-                condition = { it.atom.parametersTypes?.all { type -> type != null } != true },
+                parameterTypes = postponedAtom.atom.parametersTypes,
                 isSuitable = KotlinType::isBuiltinFunctionalType,
                 typeVariableCreator = { TypeVariableForLambdaReturnType(postponedAtom.atom, builtIns, "_R") },
                 newAtomCreator = { returnVariable, expectedType ->
@@ -200,17 +201,19 @@ class KotlinConstraintSystemCompleter(
         c: Context,
         csBuilder: ConstraintSystemBuilder,
         variable: TypeConstructor,
-        condition: (T) -> Boolean,
+        parameterTypes: Array<out KotlinType?>?,
         isSuitable: KotlinType.() -> Boolean,
         typeVariableCreator: () -> V,
         newAtomCreator: (V, SimpleType) -> PostponedResolvedAtom
     ): PostponedResolvedAtom {
-        if (!condition(this)) return this
         val functionalType = resultTypeResolver.findResultType(
             c,
             c.notFixedTypeVariables.getValue(variable),
             TypeVariableDirectionCalculator.ResolveDirection.TO_SUPERTYPE
         ) as KotlinType
+        val isExtensionWithoutParameters =
+            functionalType.isExtensionFunctionType && functionalType.arguments.size == 2 && parameterTypes?.isEmpty() == true
+        if (parameterTypes?.all { type -> type != null } == true && !isExtensionWithoutParameters) return this
         if (!functionalType.isSuitable()) return this
         val returnVariable = typeVariableCreator()
         csBuilder.registerVariable(returnVariable)

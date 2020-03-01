@@ -12845,6 +12845,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InlineClasses extends AbstractLightAnalysisModeTest {
+        @TestMetadata("anySuperCall.kt")
+        public void ignoreAnySuperCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
+        }
+
         @TestMetadata("fieldNameClash.kt")
         public void ignoreFieldNameClash() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
@@ -12871,11 +12876,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("annotatedMemberExtensionProperty.kt")
         public void testAnnotatedMemberExtensionProperty() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt");
-        }
-
-        @TestMetadata("anySuperCall.kt")
-        public void testAnySuperCall() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
         }
 
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
