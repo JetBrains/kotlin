@@ -69,7 +69,7 @@ public class DetectionExcludesConfigurable implements Configurable {
   @Override
   @NotNull
   public JComponent createComponent() {
-    myEnabledDetectionCheckBox = new JCheckBox("Enable framework detection");
+    myEnabledDetectionCheckBox = new JCheckBox(ProjectBundle.message("checkbox.text.enable.framework.detection"));
     myEnabledDetectionCheckBox.setBorder(new EmptyBorder(10, 10, 0, 0));
     final JBList<ExcludeListItem> excludesList = new JBList<>(myModel);
     final ColoredListCellRenderer<ExcludeListItem> renderer = new ColoredListCellRenderer<ExcludeListItem>() {
@@ -110,7 +110,8 @@ public class DetectionExcludesConfigurable implements Configurable {
       });
     myMainPanel = new JPanel(new BorderLayout(0, 5));
     myMainPanel.add(myEnabledDetectionCheckBox, BorderLayout.NORTH);
-    final LabeledComponent<JPanel> excludesComponent = LabeledComponent.create(decorator.createPanel(), "   Exclude from detection:");
+    final LabeledComponent<JPanel> excludesComponent =
+      LabeledComponent.create(decorator.createPanel(), ProjectBundle.message("label.exclude.from.detection"));
     myMainPanel.add(excludesComponent);
     myEnabledDetectionCheckBox.addActionListener(new ActionListener() {
       @Override
