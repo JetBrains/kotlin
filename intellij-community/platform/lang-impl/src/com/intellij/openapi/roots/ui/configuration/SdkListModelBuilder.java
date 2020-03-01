@@ -6,6 +6,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.SdkTypeId;
@@ -163,7 +164,7 @@ public final class SdkListModelBuilder {
       .build();
 
     if (subItems.size() > 3 && !newModel.build().isEmpty()) {
-      newModel.add(new GroupItem(AllIcons.General.Add, "Add SDK", subItems));
+      newModel.add(new GroupItem(AllIcons.General.Add, ProjectBundle.message("combobox.item.add.sdk"), subItems));
     }
     else {
       newModel.addAll(subItems);
