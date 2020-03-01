@@ -12,6 +12,7 @@ import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.FileColorManager;
+import com.intellij.ui.UIBundle;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,7 @@ public class FileColorConfigurationEditDialog extends DialogWrapper {
   public FileColorConfigurationEditDialog(@NotNull final FileColorManager manager, @Nullable final FileColorConfiguration configuration) {
     super(true);
 
-    setTitle(configuration == null ? "Add Color Label" : "Edit Color Label");
+    setTitle(configuration == null ? UIBundle.message("dialog.title.add.color.label") : UIBundle.message("dialog.title.edit.color.label"));
     setResizable(false);
 
     myManager = manager;
@@ -91,10 +92,10 @@ public class FileColorConfigurationEditDialog extends DialogWrapper {
     });
     new ComboboxSpeedSearch(myScopeComboBox);
 
-    final JLabel pathLabel = new JLabel("Scope:");
+    final JLabel pathLabel = new JLabel(UIBundle.message("label.scope"));
     pathLabel.setDisplayedMnemonic('S');
     pathLabel.setLabelFor(myScopeComboBox);
-    final JLabel colorLabel = new JLabel("Color:");
+    final JLabel colorLabel = new JLabel(UIBundle.message("label.color"));
 
     JPanel result = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
