@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.asNullable
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.safe
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderServiceImpl
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
@@ -23,17 +23,20 @@ import java.util.stream.Collectors
 class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizardService {
     override fun getKotlinVersion(): Version =
         KotlinCompilerVersion.getVersion()?.let { Version.fromString(it) }
-            ?: VersionsDownloader.getLatestEapOrStableKotlinVersion()
+            ?: VersionsDownloader.downloadLatestEapOrStableKotlinVersion()
             ?: KotlinVersionProviderServiceImpl.DEFAULT
 }
 
 private object VersionsDownloader {
-    fun getLatestEapOrStableKotlinVersion(): Version? {
+    fun downloadLatestEapOrStableKotlinVersion(): Version? = runWithProgressBar("Downloading Kotlin version") {
         val latestEap = EapVersionDownloader.getLatestEapVersion()
         val latestStable = getLatestStableVersion()
-        if (latestEap == null) return latestStable
-        if (latestStable == null) return latestEap
-        return if (latestEap > latestStable) latestEap else latestStable
+        when {
+            latestEap == null -> latestStable
+            latestStable == null -> latestEap
+            latestEap > latestStable -> latestEap
+            else -> latestStable
+        }
     }
 
     private fun getLatestStableVersion() = safe {

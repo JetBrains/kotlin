@@ -23,7 +23,7 @@ import java.nio.file.Path
 class KotlinPlugin(context: Context) : Plugin(context) {
     val version by property(KotlinVersionProviderServiceImpl.DEFAULT)
 
-    val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE) {
+    val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
         title = "Downloading list of Kotlin versions"
 
         withAction {

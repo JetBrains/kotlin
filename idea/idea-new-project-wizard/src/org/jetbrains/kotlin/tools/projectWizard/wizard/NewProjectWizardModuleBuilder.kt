@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PomWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.nio.file.Paths
@@ -211,16 +212,11 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
         component.onInit()
     }
 
-    private fun runPreparePhase() = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-        {
-            wizard.apply(emptyList(), setOf(GenerationPhase.PREPARE)) { task ->
-                ProgressManager.getInstance().progressIndicator.text = task.title ?: ""
-            }
-        },
-        "",
-        true,
-        null
-    )
+    private fun runPreparePhase() = runWithProgressBar(title = "") {
+        wizard.apply(emptyList(), setOf(GenerationPhase.PREPARE)) { task ->
+            ProgressManager.getInstance().progressIndicator.text = task.title ?: ""
+        }
+    }
 }
 
 class ModuleNewWizardSecondStep(

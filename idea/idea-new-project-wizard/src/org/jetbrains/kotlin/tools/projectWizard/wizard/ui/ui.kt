@@ -6,10 +6,11 @@ import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.ui.*
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
@@ -174,6 +175,14 @@ class TemplateTagUIComponent(tag: TemplateTag) : TagComponent(tag.text) {
         tag.tooltip?.let { toolTipText = it }
     }
 }
+
+fun <T> runWithProgressBar(title: String, action: () -> T): T =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        ThrowableComputable<T, Exception> { action() },
+        title,
+        true,
+        null
+    )
 
 
 object UiConstants {
