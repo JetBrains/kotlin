@@ -7153,7 +7153,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
 
         public void testAllFilesPresentInRedundantElvisReturnNull() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantElvisReturnNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantElvisReturnNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("basic.kt")
@@ -12172,6 +12172,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("reference4.kt")
         public void testReference4() throws Exception {
             runTest("idea/testData/inspectionsLocal/simpleRedundantLet/reference4.kt");
+        }
+
+        @TestMetadata("reference5.kt")
+        public void testReference5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/simpleRedundantLet/reference5.kt");
         }
 
         @TestMetadata("sameLets.kt")
