@@ -308,7 +308,7 @@ public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
           }
         }
 
-        yield(() -> {
+        yieldToEDT(() -> {
           if (isDisposed()) return;
           expandChild(kids, 0, nonStopCondition, file, element, async, indicator, target);
         });
