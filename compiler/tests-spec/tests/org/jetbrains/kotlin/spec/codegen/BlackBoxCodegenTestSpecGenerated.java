@@ -3582,14 +3582,14 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/3.1.kt");
                         }
 
-                        @TestMetadata("3.2.kt")
-                        public void test3_2() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/3.2.kt");
+                        @TestMetadata("4.2.kt")
+                        public void test4_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/4.2.kt");
                         }
 
-                        @TestMetadata("4.1.kt")
-                        public void test4_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/4.1.kt");
+                        @TestMetadata("5.1.kt")
+                        public void test5_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/5.1.kt");
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
