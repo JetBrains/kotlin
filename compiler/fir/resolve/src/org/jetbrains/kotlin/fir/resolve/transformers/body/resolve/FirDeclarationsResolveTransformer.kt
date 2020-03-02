@@ -542,7 +542,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 )
                 af = af.transformValueParameters(ImplicitToErrorTypeTransformer, null)
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
-                af = transformFunction(af, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
+                val labelName = af.label?.name?.let { Name.identifier(it) }
+                withLabelAndReceiverType(labelName, af, af.receiverTypeRef?.coneTypeSafe()) {
+                    af = transformFunction(af, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
+                }
                 // To separate function and separate commit
                 val writer = FirCallCompletionResultsWriterTransformer(
                     session,
@@ -601,49 +604,58 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     private inline fun <T> withLabelAndReceiverType(
         labelName: Name?,
         owner: FirDeclaration,
-        type: ConeKotlinType,
+        type: ConeKotlinType?,
         block: () -> T
     ): T {
-        val implicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
-        val implicitReceiverValue = when (owner) {
-            is FirClass<*> -> {
-                // Questionable: performance
-                (owner as? FirRegularClass)?.companionObject?.let { companion ->
-                    implicitCompanionValues += ImplicitDispatchReceiverValue(
-                        companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION
-                    )
-                }
-                lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session).mapNotNull {
-                    val superClass = (it as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
-                    superClass?.companionObject?.let { companion ->
+        val implicitCompanionValues: List<ImplicitReceiverValue<*>>
+        if (type != null) {
+            implicitCompanionValues = mutableListOf()
+            val implicitReceiverValue = when (owner) {
+                is FirClass<*> -> {
+                    // Questionable: performance
+                    (owner as? FirRegularClass)?.companionObject?.let { companion ->
                         implicitCompanionValues += ImplicitDispatchReceiverValue(
-                            companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION_FROM_SUPERTYPE
+                            companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION
                         )
                     }
+                    lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session).mapNotNull {
+                        val superClass = (it as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
+                        superClass?.companionObject?.let { companion ->
+                            implicitCompanionValues += ImplicitDispatchReceiverValue(
+                                companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION_FROM_SUPERTYPE
+                            )
+                        }
+                    }
+                    // ---
+                    ImplicitDispatchReceiverValue(owner.symbol, type, session, scopeSession)
                 }
-                // ---
-                ImplicitDispatchReceiverValue(owner.symbol, type, session, scopeSession)
+                is FirFunction<*> -> {
+                    ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
+                }
+                is FirVariable<*> -> {
+                    ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
+                }
+                else -> {
+                    throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
+                }
             }
-            is FirFunction<*> -> {
-                ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
+            for (implicitCompanionValue in implicitCompanionValues.asReversed()) {
+                implicitReceiverStack.add(null, implicitCompanionValue)
             }
-            is FirVariable<*> -> {
-                ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
-            }
-            else -> {
-                throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
+            implicitReceiverStack.add(labelName, implicitReceiverValue)
+        } else {
+            implicitCompanionValues = emptyList()
+        }
+        try {
+            return block()
+        } finally {
+            if (type != null) {
+                implicitReceiverStack.pop(labelName)
+                for (implicitCompanionValue in implicitCompanionValues) {
+                    implicitReceiverStack.pop(null)
+                }
             }
         }
-        for (implicitCompanionValue in implicitCompanionValues.asReversed()) {
-            implicitReceiverStack.add(null, implicitCompanionValue)
-        }
-        implicitReceiverStack.add(labelName, implicitReceiverValue)
-        val result = block()
-        implicitReceiverStack.pop(labelName)
-        for (implicitCompanionValue in implicitCompanionValues) {
-            implicitReceiverStack.pop(null)
-        }
-        return result
     }
 
     private fun storeVariableReturnType(variable: FirVariable<*>) {

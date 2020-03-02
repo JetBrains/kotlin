@@ -9,7 +9,7 @@ fun test(param: String) {
     val local_val = 4
     val bar = fun B.(fun_param: Int) {
         param.length
-        <!UNRESOLVED_REFERENCE!>b_fun<!>()
+        b_fun()
         val inner_bar = local_val + fun_param
 
         <!UNRESOLVED_REFERENCE!>bar<!>

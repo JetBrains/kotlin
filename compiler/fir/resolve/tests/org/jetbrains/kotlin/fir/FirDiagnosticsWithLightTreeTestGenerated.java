@@ -380,6 +380,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/arguments/defaultFromOverrides.kt");
         }
 
+        @TestMetadata("extensionLambdaInDefaultArgument.kt")
+        public void testExtensionLambdaInDefaultArgument() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/extensionLambdaInDefaultArgument.kt");
+        }
+
         @TestMetadata("fieldPlusAssign.kt")
         public void testFieldPlusAssign() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/fieldPlusAssign.kt");
@@ -1350,11 +1355,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("definitelyNotNullAndOriginalType.kt")
         public void testDefinitelyNotNullAndOriginalType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
-        }
-
-        @TestMetadata("extensionLambdaInDefaultArgument.kt")
-        public void testExtensionLambdaInDefaultArgument() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/extensionLambdaInDefaultArgument.kt");
         }
 
         @TestMetadata("javaAccessorConversion.kt")
