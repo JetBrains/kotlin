@@ -402,7 +402,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
       int result = Messages.showYesNoDialog(
         this,
         ToolsBundle.message("tools.delete.confirmation"),
-        "Delete Tool",
+        ToolsBundle.message("dialog.title.delete.tool"),
         Messages.getWarningIcon()
       );
       if (result != Messages.YES) {

@@ -192,12 +192,13 @@ public class ToolEditorDialog extends DialogWrapper {
   @Override
   protected ValidationInfo doValidate() {
     if (myNameField.getText().trim().isEmpty()) {
-      return new ValidationInfo("Specify the tool name", myNameField);
+      return new ValidationInfo(ToolsBundle.message("dialog.message.specify.the.tool.name"), myNameField);
     }
 
     for (String s : OUTPUT_FILTERS_SPLITTER.fun(myOutputFilterField.getText())) {
       if (!s.contains(RegexpFilter.FILE_PATH_MACROS)) {
-        return new ValidationInfo("Each output filter must contain " + RegexpFilter.FILE_PATH_MACROS + " macro", myOutputFilterField);
+        return new ValidationInfo(
+          ToolsBundle.message("dialog.message.each.output.filter.must.contain.0.macro", RegexpFilter.FILE_PATH_MACROS), myOutputFilterField);
       }
     }
 

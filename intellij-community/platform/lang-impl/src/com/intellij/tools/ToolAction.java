@@ -84,6 +84,6 @@ public class ToolAction extends AnAction implements DumbAware {
   @Nullable
   @Override
   public String getTemplateText() {
-    return "External Tool";
+    return ToolsBundle.message("action.text.external.tool");
   }
 }
