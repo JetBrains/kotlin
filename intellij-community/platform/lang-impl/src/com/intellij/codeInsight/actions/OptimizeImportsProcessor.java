@@ -41,23 +41,23 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
     super(project, module, getCommandName(), getProgressText(), false);
   }
 
-  public OptimizeImportsProcessor(@NotNull Project project, PsiDirectory directory, boolean includeSubdirs) {
+  public OptimizeImportsProcessor(@NotNull Project project, @NotNull PsiDirectory directory, boolean includeSubdirs) {
     super(project, directory, includeSubdirs, getProgressText(), getCommandName(), false);
   }
 
-  public OptimizeImportsProcessor(@NotNull Project project, PsiDirectory directory, boolean includeSubdirs, boolean processOnlyVcsChangedFiles) {
+  public OptimizeImportsProcessor(@NotNull Project project, @NotNull PsiDirectory directory, boolean includeSubdirs, boolean processOnlyVcsChangedFiles) {
     super(project, directory, includeSubdirs, getProgressText(), getCommandName(), processOnlyVcsChangedFiles);
   }
 
-  public OptimizeImportsProcessor(@NotNull Project project, PsiFile file) {
+  public OptimizeImportsProcessor(@NotNull Project project, @NotNull PsiFile file) {
     super(project, file, getProgressText(), getCommandName(), false);
   }
 
-  public OptimizeImportsProcessor(@NotNull Project project, PsiFile[] files, Runnable postRunnable) {
+  public OptimizeImportsProcessor(@NotNull Project project, PsiFile @NotNull [] files, Runnable postRunnable) {
     this(project, files, getCommandName(), postRunnable);
   }
 
-  public OptimizeImportsProcessor(@NotNull Project project, PsiFile[] files, String commandName, Runnable postRunnable) {
+  public OptimizeImportsProcessor(@NotNull Project project, PsiFile @NotNull [] files, String commandName, Runnable postRunnable) {
     super(project, files, getProgressText(), commandName, postRunnable, false);
   }
 
@@ -83,7 +83,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
       }
     }
 
-    Runnable runnable = !runnables.isEmpty() ? () -> {
+    Runnable runnable = runnables.isEmpty() ? EmptyRunnable.getInstance() : () -> {
       CodeStyleManagerImpl.setSequentialProcessingAllowed(false);
       try {
         for (Runnable runnable1 : runnables) {
@@ -95,7 +95,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
       finally {
         CodeStyleManagerImpl.setSequentialProcessingAllowed(true);
       }
-    } : EmptyRunnable.getInstance();
+    };
 
     return new FutureTask<>(runnable, true);
   }
@@ -132,8 +132,8 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   }
 
   static class NotificationInfo {
-    public static final NotificationInfo NOTHING_CHANGED_NOTIFICATION = new NotificationInfo(false, null);
-    public static final NotificationInfo SOMETHING_CHANGED_WITHOUT_MESSAGE_NOTIFICATION = new NotificationInfo(true, null);
+    static final NotificationInfo NOTHING_CHANGED_NOTIFICATION = new NotificationInfo(false, null);
+    static final NotificationInfo SOMETHING_CHANGED_WITHOUT_MESSAGE_NOTIFICATION = new NotificationInfo(true, null);
 
     private final boolean mySomethingChanged;
     private final String myMessage;

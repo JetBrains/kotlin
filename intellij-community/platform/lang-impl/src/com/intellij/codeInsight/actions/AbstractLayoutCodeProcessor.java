@@ -107,7 +107,7 @@ public abstract class AbstractLayoutCodeProcessor {
   }
 
   protected AbstractLayoutCodeProcessor(@NotNull Project project,
-                                        PsiDirectory directory,
+                                        @NotNull PsiDirectory directory,
                                         boolean includeSubdirs,
                                         String progressText,
                                         String commandName,
@@ -123,7 +123,7 @@ public abstract class AbstractLayoutCodeProcessor {
   }
 
   protected AbstractLayoutCodeProcessor(@NotNull Project project,
-                                        PsiFile file,
+                                        @NotNull PsiFile file,
                                         String progressText,
                                         String commandName,
                                         boolean processChangedTextOnly) {
@@ -137,7 +137,7 @@ public abstract class AbstractLayoutCodeProcessor {
   }
 
   protected AbstractLayoutCodeProcessor(@NotNull Project project,
-                                        PsiFile[] files,
+                                        PsiFile @NotNull [] files,
                                         String progressText,
                                         String commandName,
                                         @Nullable Runnable postRunnable,
