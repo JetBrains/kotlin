@@ -42,12 +42,12 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             return whenExpression
         }
 
-        val typeRef = (whenExpression.subjectVariable?.returnTypeRef
-            ?: (whenExpression.subject as? FirQualifiedAccessExpression)?.typeRef) as? FirResolvedTypeRef
+        val typeRef = whenExpression.subjectVariable?.returnTypeRef
+            ?: whenExpression.subject?.typeRef
             ?: return null
 
         // TODO: add some report logic about flexible type (see WHEN_ENUM_CAN_BE_NULL_IN_JAVA diagnostic in old frontend)
-        val type = typeRef.type.lowerBoundIfFlexible()
+        val type = (typeRef as? FirResolvedTypeRef)?.type?.lowerBoundIfFlexible() ?: return null
         val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return null
         val nullable = typeRef.type.nullability == ConeNullability.NULLABLE
         val isExhaustive = when {

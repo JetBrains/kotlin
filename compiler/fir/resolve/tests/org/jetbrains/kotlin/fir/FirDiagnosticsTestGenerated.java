@@ -108,6 +108,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/enumWithCompanion.kt");
     }
 
+    @TestMetadata("exhaustiveWhenAndDNNType.kt")
+    public void testExhaustiveWhenAndDNNType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveWhenAndDNNType.kt");
+    }
+
     @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
     public void testExhaustiveWhenAndFlexibleType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/exhaustiveWhenAndFlexibleType.kt");
