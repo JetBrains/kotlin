@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation.render;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.QuickDocUtil;
@@ -20,7 +21,6 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -51,8 +51,6 @@ import java.util.Map;
 import java.util.Objects;
 
 class DocRenderer implements EditorCustomElementRenderer {
-  static final Key<Boolean> RECREATE_COMPONENT = Key.create("doc.renderer.recreate.component");
-
   private static final int MIN_WIDTH = 350;
   private static final int MAX_WIDTH = 680;
   private static final int ARC_WIDTH = 5;
@@ -66,10 +64,19 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   private final DocRenderItem myItem;
   private boolean myRepaintRequested;
+  private boolean myContentUpdateNeeded;
   JEditorPane myPane;
 
-  DocRenderer(DocRenderItem item) {
+  DocRenderer(@NotNull DocRenderItem item) {
     myItem = item;
+  }
+
+  void updateContent() {
+    Inlay<DocRenderer> inlay = myItem.inlay;
+    if (inlay != null) {
+      myContentUpdateNeeded = true;
+      inlay.update();
+    }
   }
 
   @Override
@@ -161,7 +168,7 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   private JComponent getRendererComponent(Inlay inlay, int width, int height) {
     boolean newInstance = false;
-    if (myPane == null || Boolean.TRUE.equals(inlay.getUserData(RECREATE_COMPONENT) != null)) {
+    if (myPane == null || myContentUpdateNeeded) {
       newInstance = true;
       myPane = new JEditorPane() {
         @Override
@@ -179,13 +186,17 @@ class DocRenderer implements EditorCustomElementRenderer {
       fontAttributes.put(TextAttribute.KERNING, 0);
       myPane.setFont(myPane.getFont().deriveFont(fontAttributes));
       myPane.setForeground(getColorFromRegistry("editor.render.doc.comments.fg"));
-      myPane.setText(myItem.textToRender);
+      String textToRender = myItem.textToRender;
+      if (textToRender == null) {
+        textToRender = CodeInsightBundle.message("doc.render.loading.text");
+      }
+      myPane.setText(textToRender);
       myPane.addHyperlinkListener(e -> {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           activateLink(e);
         }
       });
-      inlay.putUserData(RECREATE_COMPONENT, null);
+      myContentUpdateNeeded = false;
     }
     AppUIUtil.targetToDevice(myPane, inlay.getEditor().getContentComponent());
     myPane.setSize(width, height < 0 ? (newInstance ? Integer.MAX_VALUE : myPane.getHeight()) : height);

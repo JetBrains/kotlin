@@ -29,6 +29,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 
 class DocRenderItem {
@@ -74,6 +74,7 @@ class DocRenderItem {
     }
     keepScrollingPositionWhile(editor, () -> {
       List<Runnable> foldingTasks = new ArrayList<>();
+      List<DocRenderItem> itemsToUpdateInlays = new ArrayList<>();
       boolean updated = false;
       for (Iterator<DocRenderItem> it = items.iterator(); it.hasNext(); ) {
         DocRenderItem item = it.next();
@@ -82,20 +83,24 @@ class DocRenderItem {
           updated |= item.remove(foldingTasks);
           it.remove();
         }
-        else {
-          updated |= item.update(matchingItem.textToRender);
+        else if (!matchingItem.textToRender.equals(item.textToRender)) {
+          item.textToRender = matchingItem.textToRender;
+          itemsToUpdateInlays.add(item);
         }
       }
       Collection<DocRenderItem> newRenderItems = new ArrayList<>();
       for (DocRenderPassFactory.Item item : itemsToSet) {
-        DocRenderItem newItem = new DocRenderItem(editor, item.textRange, item.textToRender);
+        DocRenderItem newItem = new DocRenderItem(editor, item.textRange, collapseNewItems ? null : item.textToRender);
         newRenderItems.add(newItem);
         if (collapseNewItems) {
           updated |= newItem.toggle(foldingTasks);
+          newItem.textToRender = item.textToRender;
+          itemsToUpdateInlays.add(newItem);
         }
       }
       editor.getFoldingModel().runBatchFoldingOperation(() -> foldingTasks.forEach(Runnable::run), true, false);
       newRenderItems.forEach(DocRenderItem::cleanup);
+      updated |= updateInlays(itemsToUpdateInlays);
       items.addAll(newRenderItems);
       return updated;
     });
@@ -146,8 +151,8 @@ class DocRenderItem {
     }
   }
 
-  static void keepScrollingPositionWhile(@NotNull Editor editor, @NotNull BooleanSupplier task) {
-    EditorScrollingPositionKeeper keeper = new EditorScrollingPositionKeeper(editor, true);
+  private static void keepScrollingPositionWhile(@NotNull Editor editor, @NotNull BooleanSupplier task) {
+    EditorScrollingPositionKeeper keeper = new EditorScrollingPositionKeeper(editor);
     keeper.savePosition();
     if (task.getAsBoolean()) keeper.restorePosition(false);
   }
@@ -166,7 +171,7 @@ class DocRenderItem {
     }).min(Comparator.comparingInt(i -> i.highlighter.getStartOffset())).orElse(null);
   }
 
-  private DocRenderItem(@NotNull Editor editor, @NotNull TextRange textRange, @NotNull String textToRender) {
+  private DocRenderItem(@NotNull Editor editor, @NotNull TextRange textRange, @Nullable String textToRender) {
     this.editor = editor;
     this.textToRender = textToRender;
     highlighter = editor.getMarkupModel()
@@ -217,19 +222,6 @@ class DocRenderItem {
     if (inlay != null && inlay.isValid()) {
       Disposer.dispose(inlay);
       updated = true;
-    }
-    return updated;
-  }
-
-  private boolean update(@NotNull String textToRender) {
-    boolean updated = false;
-    if (!textToRender.equals(this.textToRender)) {
-      this.textToRender = textToRender;
-      if (inlay != null) {
-        inlay.putUserData(DocRenderer.RECREATE_COMPONENT, Boolean.TRUE);
-        inlay.update();
-        updated = true;
-      }
     }
     return updated;
   }
@@ -295,15 +287,14 @@ class DocRenderItem {
     return null;
   }
 
+  private static boolean updateInlays(@NotNull Collection<DocRenderItem> items) {
+    return DocRenderItemUpdater.getInstance().updateInlays(ContainerUtil.mapNotNull(items, i -> i.inlay));
+  }
+
   private static void updateInlays(@NotNull Editor editor) {
     keepScrollingPositionWhile(editor, () -> {
-      AtomicBoolean updated = new AtomicBoolean();
-      editor.getInlayModel().getBlockElementsInRange(0, editor.getDocument().getTextLength(), DocRenderer.class).forEach(inlay -> {
-        updated.set(true);
-        inlay.putUserData(DocRenderer.RECREATE_COMPONENT, Boolean.TRUE);
-        inlay.update();
-      });
-      return updated.get();
+      Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
+      return items != null && updateInlays(items);
     });
   }
 
