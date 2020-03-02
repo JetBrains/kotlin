@@ -1,5 +1,6 @@
 package com.intellij.find.editorHeaderActions;
 
+import com.intellij.find.FindBundle;
 import com.intellij.find.SearchSession;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.lightEdit.LightEditCompatible;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ToggleSelectionOnlyAction extends ToggleAction implements ContextAwareShortcutProvider, DumbAware, LightEditCompatible {
   public ToggleSelectionOnlyAction() {
-    super(() -> null, () -> null, AllIcons.Actions.InSelection);
+    super(FindBundle.message("find.selection.only"), null, AllIcons.Actions.InSelection);
   }
 
   @Override
