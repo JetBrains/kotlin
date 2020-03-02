@@ -69,7 +69,7 @@ class JvmBackendContext(
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper, state.languageVersionSettings)
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, irBuiltIns)
 
     override val mapping: Mapping = DefaultMapping()
 
