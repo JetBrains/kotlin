@@ -120,8 +120,26 @@ internal object Devirtualization {
 
         private val symbolTable = moduleDFG.symbolTable
 
+        // TODO: Make custom hashtable.
+        class IntHashSet : Iterable<Int> {
+            private val hashSet = HashSet<Int>()
+            val size get() = hashSet.size
+            fun isEmpty() = size == 0
+            fun add(x: Int) = hashSet.add(x)
+
+            override operator fun iterator(): Iterator<Int> = Itr()
+
+            private inner class Itr : Iterator<Int> {
+                private val itr = hashSet.iterator()
+                override fun hasNext() = itr.hasNext()
+
+                override fun next() = itr.next()
+
+            }
+        }
+
         sealed class Node(val id: Int) {
-            var directEdges: IntArrayList? = null
+            var directEdges: IntHashSet? = null
             var reversedEdges: IntArrayList? = null
 
             var directCastEdges: MutableList<CastEdge>? = null
@@ -137,10 +155,11 @@ internal object Devirtualization {
             val multiNodeSize get() = multiNodeEnd - multiNodeStart
 
             fun addEdge(node: Node) {
-                if (directEdges == null) directEdges = IntArrayList()
-                node.directEdges!!.add(node.id)
-                if (node.reversedEdges == null) node.reversedEdges = IntArrayList()
-                node.reversedEdges!!.add(id)
+                if (directEdges == null) directEdges = IntHashSet()
+                if (directEdges!!.add(node.id)) {
+                    if (node.reversedEdges == null) node.reversedEdges = IntArrayList()
+                    node.reversedEdges!!.add(id)
+                }
             }
 
             fun addCastEdge(edge: CastEdge) {
