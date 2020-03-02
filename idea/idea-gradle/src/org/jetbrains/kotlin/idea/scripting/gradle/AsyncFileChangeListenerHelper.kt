@@ -9,16 +9,12 @@ import com.intellij.openapi.externalSystem.service.project.autoimport.AsyncFileC
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import java.util.*
 
 fun addVfsListener(watcher: GradleScriptInputsWatcher) {
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
-
-            private var files: Set<String> = Collections.emptySet()
-
             override fun isRelevant(path: String): Boolean {
-                return isInAffectedGradleProjectFiles(files, path)
+                return isInAffectedGradleProjectFiles(watcher.project, path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {
@@ -28,11 +24,9 @@ fun addVfsListener(watcher: GradleScriptInputsWatcher) {
             // do nothing
             override fun prepareFileDeletion(file: VirtualFile) {}
             override fun apply() {}
-            override fun reset() {
-                files = getAffectedGradleProjectFiles(watcher.project)
-            }
+            override fun reset() {}
 
         },
-        watcher.project,
+        watcher.project
     )
 }

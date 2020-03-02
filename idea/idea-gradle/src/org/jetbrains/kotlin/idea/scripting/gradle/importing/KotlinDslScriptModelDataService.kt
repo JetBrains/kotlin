@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
+import org.jetbrains.kotlin.idea.scripting.gradle.saveGradleProjectRootsAfterImport
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -55,7 +56,11 @@ class KotlinDslScriptModelDataService : AbstractProjectDataService<ProjectData, 
         gradleKotlinBuildScripts.clear()
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        val projectSettings = gradleSettings.getLinkedProjectSettings(projectData?.linkedExternalProjectPath ?: return) ?: return
+        val projectRoot = projectData?.linkedExternalProjectPath ?: return
+        val projectSettings = gradleSettings.getLinkedProjectSettings(projectRoot) ?: return
+
+        saveGradleProjectRootsAfterImport(projectSettings.modules.takeIf { it.isNotEmpty() } ?: setOf(projectRoot))
+
         val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
             project,
             projectSettings.externalProjectPath,
