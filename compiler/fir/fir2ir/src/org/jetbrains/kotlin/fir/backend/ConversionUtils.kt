@@ -69,7 +69,7 @@ fun FirClassifierSymbol<*>.toIrSymbol(
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
-            toTypeParameterSymbol(declarationStorage, typeContext)
+            declarationStorage.getIrTypeParameterSymbol(this, typeContext)
         }
         is FirTypeAliasSymbol -> {
             val typeAlias = fir
@@ -77,7 +77,7 @@ fun FirClassifierSymbol<*>.toIrSymbol(
             coneClassLikeType.lookupTag.toSymbol(session)!!.toIrSymbol(session, declarationStorage)
         }
         is FirClassSymbol -> {
-            toClassSymbol(declarationStorage)
+            declarationStorage.getIrClassSymbol(this)
         }
         else -> throw AssertionError("Should not be here: $this")
     }
@@ -109,41 +109,14 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
 }
 
 private fun AbstractFirBasedSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
-    is FirClassSymbol -> toClassSymbol(declarationStorage)
-    is FirFunctionSymbol<*> -> toFunctionSymbol(declarationStorage)
-    is FirPropertySymbol -> if (fir.isLocal) toValueSymbol(declarationStorage) else toPropertyOrFieldSymbol(declarationStorage)
-    is FirFieldSymbol -> toPropertyOrFieldSymbol(declarationStorage)
-    is FirBackingFieldSymbol -> toBackingFieldSymbol(declarationStorage)
-    is FirDelegateFieldSymbol<*> -> toBackingFieldSymbol(declarationStorage)
-    is FirVariableSymbol<*> -> toValueSymbol(declarationStorage)
+    is FirClassSymbol -> declarationStorage.getIrClassSymbol(this)
+    is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
+    is FirPropertySymbol -> if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
+    is FirFieldSymbol -> declarationStorage.getIrPropertyOrFieldSymbol(this)
+    is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
+    is FirDelegateFieldSymbol<*> -> declarationStorage.getIrBackingFieldSymbol(this)
+    is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
     else -> null
-}
-
-fun FirClassSymbol<*>.toClassSymbol(declarationStorage: Fir2IrDeclarationStorage): IrClassSymbol {
-    return declarationStorage.getIrClassSymbol(this)
-}
-
-fun FirTypeParameterSymbol.toTypeParameterSymbol(
-    declarationStorage: Fir2IrDeclarationStorage,
-    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
-): IrTypeParameterSymbol {
-    return declarationStorage.getIrTypeParameterSymbol(this, typeContext)
-}
-
-fun FirFunctionSymbol<*>.toFunctionSymbol(declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {
-    return declarationStorage.getIrFunctionSymbol(this)
-}
-
-fun FirVariableSymbol<*>.toPropertyOrFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
-    return declarationStorage.getIrPropertyOrFieldSymbol(this)
-}
-
-fun FirVariableSymbol<*>.toBackingFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
-    return declarationStorage.getIrBackingFieldSymbol(this)
-}
-
-fun FirVariableSymbol<*>.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
-    return declarationStorage.getIrValueSymbol(this)
 }
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {

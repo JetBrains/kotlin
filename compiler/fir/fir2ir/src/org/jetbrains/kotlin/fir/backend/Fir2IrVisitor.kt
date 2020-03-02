@@ -1452,7 +1452,7 @@ class Fir2IrVisitor(
             if (argument is FirResolvedReifiedParameterReference) {
                 IrClassReferenceImpl(
                     startOffset, endOffset, irType,
-                    argument.symbol.toTypeParameterSymbol(declarationStorage),
+                    declarationStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT),
                     argument.typeRef.toIrType()
                 )
             } else {

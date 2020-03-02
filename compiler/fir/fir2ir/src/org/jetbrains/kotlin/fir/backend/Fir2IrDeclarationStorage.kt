@@ -568,7 +568,7 @@ class Fir2IrDeclarationStorage(
         val created = create()
         if (function.symbol.callableId.isKFunctionInvoke()) {
             (function.symbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
-                created.overriddenSymbols += (it.toFunctionSymbol(this) as IrSimpleFunctionSymbol)
+                created.overriddenSymbols += getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
         }
         functionCache[function] = created
