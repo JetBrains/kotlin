@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Consumer;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -28,7 +29,7 @@ public class TestDialogBuilder implements CreateFileFromTemplateDialog.Builder {
   }
 
   @Override
-  public CreateFileFromTemplateDialog.Builder setTitle(String title) {
+  public CreateFileFromTemplateDialog.Builder setTitle(@Nls String title) {
     return this;
   }
 
@@ -39,7 +40,7 @@ public class TestDialogBuilder implements CreateFileFromTemplateDialog.Builder {
   }
 
   @Override
-  public CreateFileFromTemplateDialog.Builder addKind(@NotNull String kind, @Nullable Icon icon, @NotNull String templateName) {
+  public CreateFileFromTemplateDialog.Builder addKind(@Nls @NotNull String kind, @Nullable Icon icon, @NotNull String templateName) {
     return this;
   }
 

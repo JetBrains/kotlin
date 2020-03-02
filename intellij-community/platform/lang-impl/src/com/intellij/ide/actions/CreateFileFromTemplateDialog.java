@@ -23,6 +23,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,13 +141,13 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     }
 
     @Override
-    public Builder setTitle(String title) {
+    public Builder setTitle(@Nls String title) {
       myDialog.setTitle(title);
       return this;
     }
 
     @Override
-    public Builder addKind(@NotNull String name, @Nullable Icon icon, @NotNull String templateName) {
+    public Builder addKind(@Nls @NotNull String name, @Nullable Icon icon, @NotNull String templateName) {
       myDialog.getKindCombo().addItem(name, icon, templateName);
       if (myDialog.getKindCombo().getComboBox().getItemCount() > 1) {
         myDialog.setTemplateKindComponentsVisible(true);
@@ -222,13 +223,13 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     private NonBlockingPopupBuilderImpl(@NotNull Project project) {myProject = project;}
 
     @Override
-    public Builder setTitle(String title) {
+    public Builder setTitle(@Nls String title) {
       myTitle = title;
       return this;
     }
 
     @Override
-    public Builder addKind(@NotNull String kind, @Nullable Icon icon, @NotNull String templateName) {
+    public Builder addKind(@Nls @NotNull String kind, @Nullable Icon icon, @NotNull String templateName) {
       myTemplatesList.add(Trinity.create(kind, icon, templateName));
       return this;
     }
@@ -310,9 +311,9 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
   }
 
   public interface Builder {
-    Builder setTitle(String title);
+    Builder setTitle(@Nls String title);
     Builder setValidator(InputValidator validator);
-    Builder addKind(@NotNull String kind, @Nullable Icon icon, @NotNull String templateName);
+    Builder addKind(@NotNull @Nls String kind, @Nullable Icon icon, @NotNull String templateName);
     @Nullable
     <T extends PsiElement> T show(@NotNull String errorTitle, @Nullable String selectedItem, @NotNull FileCreator<T> creator);
 
