@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -80,49 +77,6 @@ abstract class AbstractBlockDecomposerLowering(
                 }
             }
         }
-
-//        irDeclarationContainer.transformChildrenVoid(CodeCleaner()) TODO
-    }
-
-    private inner class CodeCleaner : IrElementTransformerVoid() {
-
-        private fun IrStatementContainer.cleanUpStatements() {
-            var unreachable = false
-
-            val newStatements = statements.filter {
-                when {
-                    unreachable -> false
-                    it.isPure(true) -> false
-                    it is IrGetField -> it.receiver?.let { !it.isPure(true) } ?: false
-                    else -> {
-                        unreachable = it is IrExpression && it.type.isNothing()
-                        true
-                    }
-                }
-            }
-
-            statements.clear()
-
-            statements += newStatements
-        }
-
-        override fun visitBlock(expression: IrBlock): IrExpression {
-            expression.transformChildrenVoid(this)
-            expression.cleanUpStatements()
-            return expression
-        }
-
-        override fun visitBlockBody(body: IrBlockBody): IrBody {
-            body.transformChildrenVoid(this)
-            body.cleanUpStatements()
-            return body
-        }
-
-        override fun visitComposite(expression: IrComposite): IrExpression {
-            expression.transformChildrenVoid(this)
-            expression.cleanUpStatements()
-            return expression
-        }
     }
 
     private fun IrExpressionBody.toBlockBody(containingFunction: IrFunction): IrBlockBody {
@@ -146,7 +100,6 @@ class BlockDecomposerTransformer(
 
     private val constTrue get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val constFalse get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
-    private val nothingType = context.irBuiltIns.nothingNType
 
     private val unitType = context.irBuiltIns.unitType
     private val unitValue get() = JsIrBuilder.buildGetObjectValue(unitType, context.irBuiltIns.unitClass)
