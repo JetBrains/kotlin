@@ -22,18 +22,10 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -67,93 +59,6 @@ class ConversionTypeContext internal constructor(
         internal val DEFAULT = ConversionTypeContext(
             definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT
         )
-    }
-}
-
-fun FirTypeRef.toIrType(
-    session: FirSession,
-    declarationStorage: Fir2IrDeclarationStorage,
-    irBuiltIns: IrBuiltIns,
-    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
-): IrType {
-    if (this !is FirResolvedTypeRef) {
-        return createErrorType()
-    }
-    return type.toIrType(session, declarationStorage, irBuiltIns, typeContext)
-}
-
-fun ConeKotlinType.toIrType(
-    session: FirSession,
-    declarationStorage: Fir2IrDeclarationStorage,
-    irBuiltIns: IrBuiltIns,
-    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
-): IrType {
-    return when (this) {
-        is ConeKotlinErrorType -> createErrorType()
-        is ConeLookupTagBasedType -> {
-            val irSymbol = getArrayType(this.classId, irBuiltIns) ?: run {
-                val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
-                firSymbol.toIrSymbol(session, declarationStorage, typeContext)
-            }
-            // TODO: annotations
-            IrSimpleTypeImpl(
-                irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
-                typeArguments.map { it.toIrTypeArgument(session, declarationStorage, irBuiltIns) },
-                emptyList()
-            )
-        }
-        is ConeFlexibleType -> {
-            // TODO: yet we take more general type. Not quite sure it's Ok
-            upperBound.toIrType(session, declarationStorage, irBuiltIns, typeContext)
-        }
-        is ConeCapturedType -> TODO()
-        is ConeDefinitelyNotNullType -> {
-            original.toIrType(session, declarationStorage, irBuiltIns, typeContext.definitelyNotNull())
-        }
-        is ConeIntersectionType -> {
-            // TODO: add intersectionTypeApproximation
-            intersectedTypes.first().toIrType(session, declarationStorage, irBuiltIns, typeContext)
-        }
-        is ConeStubType -> createErrorType()
-        is ConeIntegerLiteralType -> getApproximatedType().toIrType(session, declarationStorage, irBuiltIns, typeContext)
-    }
-}
-
-private fun getArrayType(classId: ClassId?, irBuiltIns: IrBuiltIns): IrClassifierSymbol? {
-    val irType = when (classId) {
-        ClassId(FqName("kotlin"), FqName("Array"), false) -> return irBuiltIns.arrayClass
-        ClassId(FqName("kotlin"), FqName("BooleanArray"), false) -> irBuiltIns.booleanType
-        ClassId(FqName("kotlin"), FqName("ByteArray"), false) -> irBuiltIns.byteType
-        ClassId(FqName("kotlin"), FqName("CharArray"), false) -> irBuiltIns.charType
-        ClassId(FqName("kotlin"), FqName("DoubleArray"), false) -> irBuiltIns.doubleType
-        ClassId(FqName("kotlin"), FqName("FloatArray"), false) -> irBuiltIns.floatType
-        ClassId(FqName("kotlin"), FqName("IntArray"), false) -> irBuiltIns.intType
-        ClassId(FqName("kotlin"), FqName("LongArray"), false) -> irBuiltIns.longType
-        ClassId(FqName("kotlin"), FqName("ShortArray"), false) -> irBuiltIns.shortType
-        else -> null
-    }
-    return irType?.let { irBuiltIns.primitiveArrayForType.getValue(it) }
-}
-
-fun ConeTypeProjection.toIrTypeArgument(
-    session: FirSession,
-    declarationStorage: Fir2IrDeclarationStorage,
-    irBuiltIns: IrBuiltIns
-): IrTypeArgument {
-    return when (this) {
-        ConeStarProjection -> IrStarProjectionImpl
-        is ConeKotlinTypeProjectionIn -> {
-            val irType = this.type.toIrType(session, declarationStorage, irBuiltIns)
-            makeTypeProjection(irType, Variance.IN_VARIANCE)
-        }
-        is ConeKotlinTypeProjectionOut -> {
-            val irType = this.type.toIrType(session, declarationStorage, irBuiltIns)
-            makeTypeProjection(irType, Variance.OUT_VARIANCE)
-        }
-        is ConeKotlinType -> {
-            val irType = toIrType(session, declarationStorage, irBuiltIns)
-            makeTypeProjection(irType, Variance.INVARIANT)
-        }
     }
 }
 

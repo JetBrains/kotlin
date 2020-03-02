@@ -68,15 +68,12 @@ class Fir2IrVisitor(
 
     private val integerApproximator = IntegerLiteralTypeApproximationTransformer(session.firSymbolProvider, session.inferenceContext)
 
-    private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor, irBuiltIns)
+    private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor)
 
-    private val nothingType = session.builtinTypes.nothingType.toIrType(session, declarationStorage)
-
-    private val unitType = session.builtinTypes.unitType.toIrType(session, declarationStorage)
-
-    private val booleanType = session.builtinTypes.booleanType.toIrType(session, declarationStorage)
-
-    private val stringType = session.builtinTypes.stringType.toIrType(session, declarationStorage)
+    private val typeConverter = Fir2IrTypeConverter(session, declarationStorage, irBuiltIns).also {
+        declarationStorage.typeConverter = it
+        it.initBuiltinTypes()
+    }
 
     private fun ModuleDescriptor.findPackageFragmentForFile(file: FirFile): PackageFragmentDescriptor =
         getPackage(file.packageFqName).fragments.first()
@@ -143,8 +140,9 @@ class Fir2IrVisitor(
         return result
     }
 
-    private fun FirTypeRef.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage) =
-        toIrType(session, declarationStorage, irBuiltIns)
+    private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
+
+    private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     override fun visitElement(element: FirElement, data: Any?): IrElement {
         TODO("Should not be here: ${element.render()}")
@@ -403,7 +401,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrCallWithIndexedArgumentsBase? {
-        val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
+        val constructedIrType = constructedTypeRef.toIrType()
         val constructorSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
             ?: return null
         return convertWithOffsets { startOffset, endOffset ->
@@ -416,7 +414,7 @@ class Fir2IrVisitor(
                 ).apply {
                     val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
                     if (typeArguments?.isNotEmpty() == true) {
-                        val irType = (typeArguments.first() as ConeKotlinTypeProjection).type.toIrType(session, declarationStorage, irBuiltIns)
+                        val irType = (typeArguments.first() as ConeKotlinTypeProjection).type.toIrType()
                         putTypeArgument(0, irType)
                     }
                 }
@@ -451,7 +449,7 @@ class Fir2IrVisitor(
                 setFunctionContent(irFunction.descriptor, anonymousFunction)
             }
 
-            val type = anonymousFunction.typeRef.toIrType(session, declarationStorage)
+            val type = anonymousFunction.typeRef.toIrType()
 
             IrFunctionExpressionImpl(startOffset, endOffset, type, irFunction, IrStatementOrigin.LAMBDA)
         }
@@ -490,7 +488,7 @@ class Fir2IrVisitor(
         firInitializerExpression: FirExpression?,
         type: IrType? = null
     ): IrField {
-        val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType(session, declarationStorage)
+        val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType()
         return symbolTable.declareField(
             startOffset, endOffset, origin, descriptor, inferredType
         ) { symbol ->
@@ -519,7 +517,7 @@ class Fir2IrVisitor(
         val initializer = property.initializer
         val delegate = property.delegate
         val irParent = this.parent
-        val propertyType = property.returnTypeRef.toIrType(session, declarationStorage)
+        val propertyType = property.returnTypeRef.toIrType()
         // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
         // TODO (2): backing field should be created inside declaration storage
         if (property.modality != Modality.ABSTRACT && (irParent !is IrClass || !irParent.isInterface)) {
@@ -607,13 +605,13 @@ class Fir2IrVisitor(
                             startOffset, endOffset,
                             listOf(
                                 if (isSetter) {
-                                    IrSetFieldImpl(startOffset, endOffset, fieldSymbol, unitType).apply {
+                                    IrSetFieldImpl(startOffset, endOffset, fieldSymbol, typeConverter.unitType).apply {
                                         setReceiver(declaration)
                                         value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
                                     }
                                 } else {
                                     IrReturnImpl(
-                                        startOffset, endOffset, nothingType, symbol,
+                                        startOffset, endOffset, typeConverter.nothingType, symbol,
                                         IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
                                     )
                                 }
@@ -641,7 +639,7 @@ class Fir2IrVisitor(
             val result = returnExpression.result
             val descriptor = irTarget.descriptor
             IrReturnImpl(
-                startOffset, endOffset, nothingType,
+                startOffset, endOffset, typeConverter.nothingType,
                 when (descriptor) {
                     is ClassConstructorDescriptor -> symbolTable.referenceConstructor(descriptor)
                     else -> symbolTable.referenceSimpleFunction(descriptor)
@@ -657,9 +655,9 @@ class Fir2IrVisitor(
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: Any?): IrElement {
-        val irReturnType = varargArgumentsExpression.typeRef.toIrType(session, declarationStorage)
+        val irReturnType = varargArgumentsExpression.typeRef.toIrType()
         return IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irReturnType,
-                            varargArgumentsExpression.varargElementType.toIrType(session, declarationStorage),
+                            varargArgumentsExpression.varargElementType.toIrType(),
                             varargArgumentsExpression.arguments.map { arg ->
                                 arg.toIrExpression().run {
                                     if (arg is FirSpreadArgumentExpression) IrSpreadElementImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
@@ -687,7 +685,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirQualifiedAccess.toIrExpression(typeRef: FirTypeRef): IrExpression {
-        val type = typeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
+        val type = typeRef.toIrType()
         val symbol = calleeReference.toSymbol(declarationStorage)
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             if (calleeReference is FirSuperReference) {
@@ -725,7 +723,7 @@ class Fir2IrVisitor(
     private fun FirAnnotationCall.toIrExpression(): IrExpression {
         val coneType = (annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeLookupTagBasedType
         val firSymbol = coneType?.lookupTag?.toSymbol(session) as? FirClassSymbol
-        val type = coneType?.toIrType(session, declarationStorage, irBuiltIns)
+        val type = coneType?.toIrType()
         val symbol = type?.classifierOrNull
         return convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
@@ -790,10 +788,7 @@ class Fir2IrVisitor(
                 if (argumentsCount <= typeArgumentsCount) {
                     apply {
                         for ((index, argument) in access.typeArguments.withIndex()) {
-                            val argumentIrType = (argument as FirTypeProjectionWithVariance).typeRef.toIrType(
-                                session,
-                                declarationStorage
-                            )
+                            val argumentIrType = (argument as FirTypeProjectionWithVariance).typeRef.toIrType()
                             putTypeArgument(index, argumentIrType)
                         }
                     }
@@ -936,7 +931,7 @@ class Fir2IrVisitor(
     override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
         // Generate the expression with the original type and then cast it to the smart cast type.
         val value = expressionWithSmartcast.originalExpression.toIrExpression()
-        val castType = expressionWithSmartcast.typeRef.toIrType(session, declarationStorage)
+        val castType = expressionWithSmartcast.typeRef.toIrType()
         if (value.type == castType) return value
         return IrTypeOperatorCallImpl(
             value.startOffset,
@@ -950,7 +945,7 @@ class Fir2IrVisitor(
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
         val symbol = callableReferenceAccess.calleeReference.toSymbol(declarationStorage)
-        val type = callableReferenceAccess.typeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
+        val type = callableReferenceAccess.typeRef.toIrType()
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is IrPropertySymbol -> {
@@ -996,7 +991,7 @@ class Fir2IrVisitor(
             if (symbol != null && symbol.isBound) {
                 when (symbol) {
                     is IrFieldSymbol -> IrSetFieldImpl(
-                        startOffset, endOffset, symbol, unitType
+                        startOffset, endOffset, symbol, typeConverter.unitType
                     ).apply {
                         value = variableAssignment.rValue.toIrExpression()
                     }
@@ -1005,7 +1000,7 @@ class Fir2IrVisitor(
                         val backingField = irProperty.backingField
                         if (backingField != null) {
                             IrSetFieldImpl(
-                                startOffset, endOffset, backingField.symbol, unitType
+                                startOffset, endOffset, backingField.symbol, typeConverter.unitType
                             ).apply {
                                 value = variableAssignment.rValue.toIrExpression()
                             }
@@ -1044,7 +1039,7 @@ class Fir2IrVisitor(
             } as T ?: constExpression.value
             IrConstImpl(
                 startOffset, endOffset,
-                constExpression.typeRef.toIrType(session, declarationStorage),
+                constExpression.typeRef.toIrType(),
                 kind, value
             )
         }
@@ -1085,7 +1080,7 @@ class Fir2IrVisitor(
             is FirBlock -> convertToIrExpressionOrBlock()
             is FirUnitExpression -> convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
-                    startOffset, endOffset, unitType,
+                    startOffset, endOffset, typeConverter.unitType,
                     symbolTable.referenceClass(irBuiltIns.builtIns.unit)
                 )
             }
@@ -1123,7 +1118,7 @@ class Fir2IrVisitor(
                 startOffset, endOffset,
                 if (irStatements.isNotEmpty()) {
                     irStatements.filterNotNull().takeIf { it.isNotEmpty() }
-                        ?: listOf(IrBlockImpl(startOffset, endOffset, unitType, null, emptyList()))
+                        ?: listOf(IrBlockImpl(startOffset, endOffset, typeConverter.unitType, null, emptyList()))
                 } else {
                     emptyList()
                 }
@@ -1139,7 +1134,7 @@ class Fir2IrVisitor(
             }
         }
         val type =
-            (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType(this@Fir2IrVisitor.session, declarationStorage) ?: unitType
+            (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: typeConverter.unitType
         return convertWithOffsets { startOffset, endOffset ->
             IrBlockImpl(
                 startOffset, endOffset, type, origin,
@@ -1152,7 +1147,7 @@ class Fir2IrVisitor(
         return errorExpression.convertWithOffsets { startOffset, endOffset ->
             IrErrorExpressionImpl(
                 startOffset, endOffset,
-                errorExpression.typeRef.toIrType(session, declarationStorage),
+                errorExpression.typeRef.toIrType(),
                 errorExpression.diagnostic.reason
             )
         }
@@ -1189,7 +1184,7 @@ class Fir2IrVisitor(
             whenExpression.convertWithOffsets { startOffset, endOffset ->
                 val irWhen = IrWhenImpl(
                     startOffset, endOffset,
-                    whenExpression.typeRef.toIrType(session, declarationStorage),
+                    whenExpression.typeRef.toIrType(),
                     origin
                 ).apply {
                     for (branch in whenExpression.branches) {
@@ -1212,7 +1207,7 @@ class Fir2IrVisitor(
             val condition = whenBranch.condition
             val irResult = whenBranch.result.toIrExpression()
             if (condition is FirElseIfTrueCondition) {
-                IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, booleanType, true), irResult)
+                IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, typeConverter.booleanType, true), irResult)
             } else {
                 IrBranchImpl(startOffset, endOffset, condition.toIrExpression(), irResult)
             }
@@ -1231,7 +1226,7 @@ class Fir2IrVisitor(
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Any?): IrElement {
         return doWhileLoop.convertWithOffsets { startOffset, endOffset ->
             IrDoWhileLoopImpl(
-                startOffset, endOffset, unitType,
+                startOffset, endOffset, typeConverter.unitType,
                 IrStatementOrigin.DO_WHILE_LOOP
             ).apply {
                 loopMap[doWhileLoop] = this
@@ -1247,7 +1242,7 @@ class Fir2IrVisitor(
         return whileLoop.convertWithOffsets { startOffset, endOffset ->
             val origin = if (whileLoop.psi is KtForExpression) IrStatementOrigin.FOR_LOOP_INNER_WHILE
             else IrStatementOrigin.WHILE_LOOP
-            IrWhileLoopImpl(startOffset, endOffset, unitType, origin).apply {
+            IrWhileLoopImpl(startOffset, endOffset, typeConverter.unitType, origin).apply {
                 loopMap[whileLoop] = this
                 label = whileLoop.label?.name
                 condition = whileLoop.condition.toIrExpression()
@@ -1264,7 +1259,7 @@ class Fir2IrVisitor(
             val firLoop = target.labeledElement
             val irLoop = loopMap[firLoop]
             if (irLoop == null) {
-                IrErrorExpressionImpl(startOffset, endOffset, nothingType, "Unbound loop: ${render()}")
+                IrErrorExpressionImpl(startOffset, endOffset, typeConverter.nothingType, "Unbound loop: ${render()}")
             } else {
                 f(startOffset, endOffset, irLoop).apply {
                     label = irLoop.label.takeIf { target.labelName != null }
@@ -1275,26 +1270,26 @@ class Fir2IrVisitor(
 
     override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Any?): IrElement {
         return breakExpression.convertJumpWithOffsets { startOffset, endOffset, irLoop ->
-            IrBreakImpl(startOffset, endOffset, nothingType, irLoop)
+            IrBreakImpl(startOffset, endOffset, typeConverter.nothingType, irLoop)
         }
     }
 
     override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Any?): IrElement {
         return continueExpression.convertJumpWithOffsets { startOffset, endOffset, irLoop ->
-            IrContinueImpl(startOffset, endOffset, nothingType, irLoop)
+            IrContinueImpl(startOffset, endOffset, typeConverter.nothingType, irLoop)
         }
     }
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: Any?): IrElement {
         return throwExpression.convertWithOffsets { startOffset, endOffset ->
-            IrThrowImpl(startOffset, endOffset, nothingType, throwExpression.exception.toIrExpression())
+            IrThrowImpl(startOffset, endOffset, typeConverter.nothingType, throwExpression.exception.toIrExpression())
         }
     }
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: Any?): IrElement {
         return tryExpression.convertWithOffsets { startOffset, endOffset ->
             IrTryImpl(
-                startOffset, endOffset, tryExpression.typeRef.toIrType(session, declarationStorage),
+                startOffset, endOffset, tryExpression.typeRef.toIrType(),
                 tryExpression.tryBlock.convertToIrExpressionOrBlock(),
                 tryExpression.catches.map { it.accept(this, data) as IrCatch },
                 tryExpression.finallyBlock?.convertToIrExpressionOrBlock()
@@ -1328,7 +1323,7 @@ class Fir2IrVisitor(
             return primitiveOp2(
                 startOffset, endOffset,
                 symbol!!,
-                booleanType,
+                typeConverter.booleanType,
                 origin,
                 visitFunctionCall(comparisonExpression.compareToCall, null),
                 IrConstImpl.int(startOffset, endOffset, irBuiltIns.intType, 0)
@@ -1356,7 +1351,7 @@ class Fir2IrVisitor(
         val (symbol, origin) = getSymbolAndOriginForComparison(operation, simpleType.classifierOrFail)
 
         return primitiveOp2(
-            startOffset, endOffset, symbol!!, booleanType, origin,
+            startOffset, endOffset, symbol!!, typeConverter.booleanType, origin,
             comparisonExpression.left.toIrExpression(), comparisonExpression.right.toIrExpression()
         )
     }
@@ -1378,11 +1373,11 @@ class Fir2IrVisitor(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression {
         val (type, symbol, origin) = when (operation) {
-            FirOperation.EQ -> Triple(booleanType, irBuiltIns.eqeqSymbol, IrStatementOrigin.EQEQ)
-            FirOperation.NOT_EQ -> Triple(booleanType, irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ)
-            FirOperation.IDENTITY -> Triple(booleanType, irBuiltIns.eqeqeqSymbol, IrStatementOrigin.EQEQEQ)
-            FirOperation.NOT_IDENTITY -> Triple(booleanType, irBuiltIns.eqeqeqSymbol, IrStatementOrigin.EXCLEQEQ)
-            FirOperation.EXCL -> Triple(booleanType, irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL)
+            FirOperation.EQ -> Triple(typeConverter.booleanType, irBuiltIns.eqeqSymbol, IrStatementOrigin.EQEQ)
+            FirOperation.NOT_EQ -> Triple(typeConverter.booleanType, irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ)
+            FirOperation.IDENTITY -> Triple(typeConverter.booleanType, irBuiltIns.eqeqeqSymbol, IrStatementOrigin.EQEQEQ)
+            FirOperation.NOT_IDENTITY -> Triple(typeConverter.booleanType, irBuiltIns.eqeqeqSymbol, IrStatementOrigin.EXCLEQEQ)
+            FirOperation.EXCL -> Triple(typeConverter.booleanType, irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL)
             FirOperation.LT, FirOperation.GT,
             FirOperation.LT_EQ, FirOperation.GT_EQ,
             FirOperation.OTHER, FirOperation.ASSIGN, FirOperation.PLUS_ASSIGN,
@@ -1400,7 +1395,7 @@ class Fir2IrVisitor(
             primitiveOp2(startOffset, endOffset, symbol, type, origin, arguments[0].toIrExpression(), arguments[1].toIrExpression())
         }
         if (operation !in NEGATED_OPERATIONS) return result
-        return primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, booleanType, origin, result)
+        return primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, typeConverter.booleanType, origin, result)
     }
 
     override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Any?): IrElement {
@@ -1412,7 +1407,7 @@ class Fir2IrVisitor(
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Any?): IrElement {
         return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
             IrStringConcatenationImpl(
-                startOffset, endOffset, stringType,
+                startOffset, endOffset, typeConverter.stringType,
                 stringConcatenationCall.arguments.map { it.toIrExpression() }
             )
         }
@@ -1420,10 +1415,10 @@ class Fir2IrVisitor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Any?): IrElement {
         return typeOperatorCall.convertWithOffsets { startOffset, endOffset ->
-            val irTypeOperand = typeOperatorCall.conversionTypeRef.toIrType(session, declarationStorage)
+            val irTypeOperand = typeOperatorCall.conversionTypeRef.toIrType()
             val (irType, irTypeOperator) = when (typeOperatorCall.operation) {
-                FirOperation.IS -> booleanType to IrTypeOperator.INSTANCEOF
-                FirOperation.NOT_IS -> booleanType to IrTypeOperator.NOT_INSTANCEOF
+                FirOperation.IS -> typeConverter.booleanType to IrTypeOperator.INSTANCEOF
+                FirOperation.NOT_IS -> typeConverter.booleanType to IrTypeOperator.NOT_INSTANCEOF
                 FirOperation.AS -> irTypeOperand to IrTypeOperator.CAST
                 FirOperation.SAFE_AS -> irTypeOperand.makeNullable() to IrTypeOperator.SAFE_CAST
                 else -> TODO("Should not be here: ${typeOperatorCall.operation} in type operator call")
@@ -1440,11 +1435,11 @@ class Fir2IrVisitor(
         return checkNotNullCall.convertWithOffsets { startOffset, endOffset ->
             IrCallImpl(
                 startOffset, endOffset,
-                checkNotNullCall.typeRef.toIrType(session, declarationStorage),
+                checkNotNullCall.typeRef.toIrType(),
                 irBuiltIns.checkNotNullSymbol,
                 IrStatementOrigin.EXCLEXCL
             ).apply {
-                putTypeArgument(0, checkNotNullCall.argument.typeRef.toIrType(session, declarationStorage).makeNotNull())
+                putTypeArgument(0, checkNotNullCall.argument.typeRef.toIrType().makeNotNull())
                 putValueArgument(0, checkNotNullCall.argument.toIrExpression())
             }
         }
@@ -1453,12 +1448,12 @@ class Fir2IrVisitor(
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?): IrElement {
         return getClassCall.convertWithOffsets { startOffset, endOffset ->
             val argument = getClassCall.argument
-            val irType = getClassCall.typeRef.toIrType(session, declarationStorage)
+            val irType = getClassCall.typeRef.toIrType()
             if (argument is FirResolvedReifiedParameterReference) {
                 IrClassReferenceImpl(
                     startOffset, endOffset, irType,
                     argument.symbol.toTypeParameterSymbol(declarationStorage),
-                    argument.typeRef.toIrType(session, declarationStorage)
+                    argument.typeRef.toIrType()
                 )
             } else {
                 IrGetClassImpl(
@@ -1472,7 +1467,7 @@ class Fir2IrVisitor(
     override fun visitArraySetCall(arraySetCall: FirArraySetCall, data: Any?): IrElement {
         return arraySetCall.convertWithOffsets { startOffset, endOffset ->
             IrErrorCallExpressionImpl(
-                startOffset, endOffset, unitType,
+                startOffset, endOffset, typeConverter.unitType,
                 "FirArraySetCall (resolve isn't supported yet)"
             )
         }
@@ -1484,7 +1479,7 @@ class Fir2IrVisitor(
             return resolvedQualifier.convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
                     startOffset, endOffset,
-                    resolvedQualifier.typeRef.toIrType(session, declarationStorage),
+                    resolvedQualifier.typeRef.toIrType(),
                     classSymbol.toIrSymbol(session, declarationStorage) as IrClassSymbol
                 )
             }
