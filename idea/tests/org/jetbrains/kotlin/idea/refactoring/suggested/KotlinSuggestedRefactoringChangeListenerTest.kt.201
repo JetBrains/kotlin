@@ -9,13 +9,14 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.FileType
-import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeListenerTest
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.test.runTest
 
 class KotlinSuggestedRefactoringChangeListenerTest : BaseSuggestedRefactoringChangeListenerTest() {
     override val fileType: FileType
@@ -384,7 +385,11 @@ class KotlinSuggestedRefactoringChangeListenerTest : BaseSuggestedRefactoringCha
             commitAll()
         }
     }
-    
+
+    override fun runTest() {
+        runTest { super.runTest() }
+    }
+
     private fun addImport(fqName: String) {
         executeCommand {
             runWriteAction {
