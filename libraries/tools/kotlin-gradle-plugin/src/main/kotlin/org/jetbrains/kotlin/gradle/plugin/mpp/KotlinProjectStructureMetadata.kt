@@ -60,7 +60,10 @@ data class KotlinProjectStructureMetadata(
     val sourceSetModuleDependencies: Map<String, Set<ModuleDependencyIdentifier>>,
 
     @Input
-    val formatVersion: String = FORMAT_VERSION_0_2
+    val hostSpecificSourceSets: Set<String>,
+
+    @Input
+    val formatVersion: String = FORMAT_VERSION_0_3
 ) {
     @Suppress("UNUSED") // Gradle input
     @get:Input
@@ -69,7 +72,12 @@ data class KotlinProjectStructureMetadata(
 
     companion object {
         internal const val FORMAT_VERSION_0_1 = "0.1"
+
+        // + binaryFormat (klib, metadata/jar)
         internal const val FORMAT_VERSION_0_2 = "0.2"
+
+        // + 'hostSpecific' flag for source sets
+        internal const val FORMAT_VERSION_0_3 = "0.3"
     }
 }
 
@@ -107,6 +115,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
                 ModuleDependencyIdentifier(it.group.orEmpty(), it.name)
             }.toSet()
         },
+        hostSpecificSourceSets = getHostSpecificSourceSets(project).map { it.name }.toSet(),
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject(project)
         }
@@ -145,6 +154,9 @@ internal fun KotlinProjectStructureMetadata.toXmlDocument(): Document {
                         sourceSetBinaryLayout[sourceSet]?.let { binaryLayout ->
                             textNode("binaryLayout", binaryLayout.name)
                         }
+                        if (sourceSet in hostSpecificSourceSets) {
+                            textNode("hostSpecific", "true")
+                        }
                     }
                 }
             }
@@ -173,6 +185,7 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
     val sourceSetDependsOnRelation = mutableMapOf<String, Set<String>>()
     val sourceSetModuleDependencies = mutableMapOf<String, Set<ModuleDependencyIdentifier>>()
     val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
+    val hostSpecificSourceSets = mutableSetOf<String>()
 
     val sourceSetsNode = projectStructureNode.getElementsByTagName("sourceSets").item(0) ?: return null
 
@@ -194,6 +207,11 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
                         sourceSetBinaryLayout[sourceSetName] = binaryLayout
                     }
                 }
+                "hostSpecific" -> {
+                    if (node.textContent == "true") {
+                        hostSpecificSourceSets.add(sourceSetName)
+                    }
+                }
             }
         }
 
@@ -206,6 +224,7 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
         sourceSetDependsOnRelation,
         sourceSetBinaryLayout,
         sourceSetModuleDependencies,
+        hostSpecificSourceSets,
         formatVersion
     )
 }

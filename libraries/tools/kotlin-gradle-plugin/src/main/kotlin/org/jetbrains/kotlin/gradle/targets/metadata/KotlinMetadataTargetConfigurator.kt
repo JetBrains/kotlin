@@ -179,10 +179,11 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         // Do this after all targets are configured by the user build script
 
         val publishedCommonSourceSets: Set<KotlinSourceSet> = getPublishedCommonSourceSets(project)
+        val hostSpecificSourceSets: Set<KotlinSourceSet> = getHostSpecificSourceSets(project).toSet()
 
         val sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, AbstractKotlinCompilation<*>> =
             publishedCommonSourceSets.associate { sourceSet ->
-                sourceSet to createMetadataCompilation(target, sourceSet, allMetadataJar)
+                sourceSet to createMetadataCompilation(target, sourceSet, allMetadataJar, sourceSet in hostSpecificSourceSets)
             }
 
         if (project.isCompatibilityMetadataVariantEnabled) {
@@ -250,7 +251,8 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     private fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
-        allMetadataJar: Jar
+        allMetadataJar: Jar,
+        isHostSpecific: Boolean
     ): AbstractKotlinCompilation<*> {
         val project = target.project
 
@@ -270,8 +272,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             configureMetadataDependenciesForCompilation(this@apply)
 
-            val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
-            allMetadataJar.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) }
+            if (!isHostSpecific) {
+                val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
+                allMetadataJar.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) }
+            }
         }
     }
 
@@ -460,34 +464,34 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         }
     }
 
-    private fun getPublishedCommonSourceSets(project: Project): Set<KotlinSourceSet> {
-        val compilationsBySourceSet: Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
-            CompilationSourceSetUtil.compilationsBySourceSets(project)
-
-        val sourceSetsUsedInMultipleTargets = compilationsBySourceSet.filterValues { compilations ->
-            compilations.map { it.target.platformType }.distinct().run {
-                size > 1 && toSet() != setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) || (
-                        singleOrNull() == KotlinPlatformType.native &&
-                                compilations.map { it.target }.distinct().size > 1 &&
-                                compilations.any { (it as AbstractKotlinNativeCompilation).konanTarget.enabledOnCurrentHost }
-                        )
-                // TODO: platform-shared source sets other than Kotlin/Native ones are not yet supported; support will be needed for JVM, JS
-            }
-        }
-
-        // We don't want to publish source set metadata from source sets that don't participate in any compilation that is published,
-        // such as test or benchmark sources; find all published compilations:
-        val publishedCompilations = getPublishedPlatformCompilations(project).values
-
-        return sourceSetsUsedInMultipleTargets
-            .filterValues { compilations -> compilations.any { it in publishedCompilations } }
-            .keys
-    }
-
     private fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
         project.registerTask("generateProjectStructureMetadata") { task ->
             task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
         }
+}
+
+internal fun getPublishedCommonSourceSets(project: Project): Set<KotlinSourceSet> {
+    val compilationsBySourceSet: Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
+        CompilationSourceSetUtil.compilationsBySourceSets(project)
+
+    val sourceSetsUsedInMultipleTargets = compilationsBySourceSet.filterValues { compilations ->
+        compilations.map { it.target.platformType }.distinct().run {
+            size > 1 && toSet() != setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) || (
+                    singleOrNull() == KotlinPlatformType.native &&
+                            compilations.map { it.target }.distinct().size > 1 &&
+                            compilations.any { (it as AbstractKotlinNativeCompilation).konanTarget.enabledOnCurrentHost }
+                    )
+            // TODO: platform-shared source sets other than Kotlin/Native ones are not yet supported; support will be needed for JVM, JS
+        }
+    }
+
+    // We don't want to publish source set metadata from source sets that don't participate in any compilation that is published,
+    // such as test or benchmark sources; find all published compilations:
+    val publishedCompilations = getPublishedPlatformCompilations(project).values
+
+    return sourceSetsUsedInMultipleTargets
+        .filterValues { compilations -> compilations.any { it in publishedCompilations } }
+        .keys
 }
 
 internal fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsageContext, KotlinCompilation<*>> {
@@ -502,6 +506,7 @@ internal fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsage
             .forEach { component ->
                 component.usages
                     .filterIsInstance<KotlinUsageContext>()
+                    .filter { it.includeIntoProjectStructureMetadata }
                     .forEach { usage -> result[usage] = usage.compilation }
             }
     }
@@ -509,7 +514,7 @@ internal fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsage
     return result
 }
 
-private fun Project.filesWithUnpackedArchives(from: FileCollection, extensions: Set<String>): FileCollection =
+internal fun Project.filesWithUnpackedArchives(from: FileCollection, extensions: Set<String>): FileCollection =
     project.files(project.provider {
         from.map {
             if (it.extension in extensions)
