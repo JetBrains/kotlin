@@ -72,19 +72,20 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
         val calleeDescriptor = context[REFERENCE_TARGET, calleeReferenceExpression] as? CallableMemberDescriptor ?: return false
 
         val lambdaParameterType = lambdaExpression.lambdaParameterType(context)
-        if (lambdaParameterType?.isSuspendFunctionType == true) return false
         if (lambdaParameterType?.isExtensionFunctionType == true) {
             if (explicitReceiver != null && explicitReceiver !is KtThisExpression) return false
             val receiver = calleeDescriptor.dispatchReceiverParameter ?: calleeDescriptor.extensionReceiverParameter
             if (lambdaParameterType.getReceiverTypeFromFunctionType() != receiver?.type) return false
         }
 
+        val lambdaParameterIsSuspend = lambdaParameterType?.isSuspendFunctionType == true
+        val calleeFunctionIsSuspend = (calleeDescriptor as? FunctionDescriptor)?.isSuspend == true
+        if (lambdaParameterIsSuspend && !calleeFunctionIsSuspend || !lambdaParameterIsSuspend && calleeFunctionIsSuspend) return false
+
         // No references with type parameters
         if (calleeDescriptor.typeParameters.isNotEmpty()) return false
         // No references to Java synthetic properties
         if (calleeDescriptor is SyntheticJavaPropertyDescriptor) return false
-        // No suspend functions
-        if ((calleeDescriptor as? FunctionDescriptor)?.isSuspend == true) return false
 
         val descriptorHasReceiver = with(calleeDescriptor) {
             // No references to both member / extension
