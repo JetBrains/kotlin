@@ -208,7 +208,8 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
       SdkReferenceItem item = (SdkReferenceItem)value;
 
       SdkAppearanceService.getInstance()
-        .forSdk(item.getSdkType(), item.getName(), null, item.isValid(), false, selected);
+        .forSdk(item.getSdkType(), item.getName(), null, item.isValid(), false, selected)
+        .customize(this);
 
       String version = item.getVersionString();
       if (version == null) version = item.getSdkType().getPresentableName();

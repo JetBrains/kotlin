@@ -43,6 +43,15 @@ class SdkComboBox(model: SdkComboBoxModel) : SdkComboBoxBase<SdkListItem>(model.
     }
   }
 
+  fun setSelectedSdk(sdkName: String) {
+    reloadModel()
+    val sdkItem = model.listModel.findSdkItem(sdkName)
+    selectedItem = when (sdkItem) {
+      null -> showInvalidSdkItem(sdkName)
+      else -> sdkItem
+    }
+  }
+
   fun getSelectedSdk(): Sdk? {
     return when (val it = selectedItem) {
       is SdkListItem.ProjectSdkItem -> findSdk(model.sdksModel.projectSdk)

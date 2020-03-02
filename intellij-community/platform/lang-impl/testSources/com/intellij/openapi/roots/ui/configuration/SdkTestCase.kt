@@ -22,6 +22,8 @@ import kotlin.collections.LinkedHashMap
 
 abstract class SdkTestCase : LightPlatformTestCase() {
 
+  val projectSdk get() = ProjectRootManager.getInstance(project).projectSdk
+
   override fun setUp() {
     super.setUp()
 
@@ -63,7 +65,7 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     }
   }
 
-  fun removeSdk(sdk: TestSdk) {
+  fun removeSdk(sdk: Sdk) {
     invokeAndWaitIfNeeded {
       runWriteAction {
         val jdkTable = ProjectJdkTable.getInstance()
@@ -76,7 +78,7 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     sdks.forEach(::registerSdk)
   }
 
-  fun removeSdks(vararg sdks: TestSdk) {
+  fun removeSdks(vararg sdks: Sdk) {
     sdks.forEach(::removeSdk)
   }
 
@@ -89,13 +91,23 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     }
   }
 
+  fun withRegisteredSdks(vararg sdks: TestSdk, action: () -> Unit) {
+    registerSdks(*sdks)
+    try {
+      action()
+    }
+    finally {
+      removeSdks(*sdks)
+    }
+  }
+
   interface TestSdkType : JavaSdkType, SdkTypeId {
     companion object : SdkType("test-type"), TestSdkType {
       override fun getPresentableName(): String = name
       override fun isValidSdkHome(path: String?): Boolean = true
-      override fun suggestSdkName(currentSdkName: String?, sdkHome: String?): String = "sdk-name"
+      override fun suggestSdkName(currentSdkName: String?, sdkHome: String?): String = TestSdkGenerator.findTestSdk(sdkHome!!)!!.name
       override fun suggestHomePath(): String? = null
-      override fun suggestHomePaths(): Collection<String> = TestSdkGenerator.getAllSdks().map { it.homePath }
+      override fun suggestHomePaths(): Collection<String> = TestSdkGenerator.getAllTestSdks().map { it.homePath }
       override fun createAdditionalDataConfigurable(sdkModel: SdkModel, sdkModificator: SdkModificator): AdditionalDataConfigurable? = null
       override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {}
       override fun getBinPath(sdk: Sdk): String = File(sdk.homePath, "bin").path
@@ -162,7 +174,7 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     private var createdSdkCounter = 0
     private lateinit var createdSdks: MutableMap<String, TestSdk>
 
-    fun getAllSdks() = createdSdks.values
+    fun getAllTestSdks() = createdSdks.values
 
     fun findTestSdk(sdk: Sdk): TestSdk? = findTestSdk(sdk.homePath!!)
 
@@ -170,13 +182,22 @@ abstract class SdkTestCase : LightPlatformTestCase() {
 
     fun getCurrentSdk() = createdSdks.values.last()
 
-    fun createNextSdk(versionString: String = "11"): TestSdk {
+    fun reserveNextSdk(versionString: String = "11"): SdkInfo {
       val name = "test $versionString (${createdSdkCounter++})"
       val homePath = FileUtil.toCanonicalPath(FileUtil.join(FileUtil.getTempDirectory(), "jdk-$name"))
-      generateJdkStructure(homePath, versionString)
-      val sdk = TestSdk(name, homePath, versionString)
-      createdSdks[homePath] = sdk
+      return SdkInfo(name, versionString, homePath)
+    }
+
+    fun createSdk(sdkInfo: SdkInfo): TestSdk {
+      generateJdkStructure(sdkInfo.homePath, sdkInfo.versionString)
+      val sdk = TestSdk(sdkInfo.name, sdkInfo.homePath, sdkInfo.versionString)
+      createdSdks[sdkInfo.homePath] = sdk
       return sdk
+    }
+
+    fun createNextSdk(versionString: String = "11"): TestSdk {
+      val sdkInfo = reserveNextSdk(versionString)
+      return createSdk(sdkInfo)
     }
 
     fun createNextDependentSdk(): DependentTestSdk {
@@ -211,10 +232,12 @@ abstract class SdkTestCase : LightPlatformTestCase() {
       createdSdkCounter = 0
       createdSdks = LinkedHashMap()
     }
+
+    data class SdkInfo(val name: String, val versionString: String, val homePath: String)
   }
 
   companion object {
-    fun assertSdk(expected: Sdk, actual: Sdk) {
+    fun assertSdk(expected: TestSdk, actual: Sdk) {
       assertEquals(expected.name, actual.name)
       assertEquals(expected.sdkType, actual.sdkType)
       assertEquals(expected, TestSdkGenerator.findTestSdk(actual))

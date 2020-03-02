@@ -31,6 +31,16 @@ class SdkComboBoxTest : SdkComboBoxTestCase() {
     assertComboBoxSelection<SdkListItem.SdkItem>(comboBox, sdk3)
     comboBox.setSelectedSdk(sdk4)
     assertComboBoxSelection<SdkListItem.InvalidSdkItem>(comboBox, null)
+
+    comboBox.setSelectedSdk(sdk1.name)
+    assertComboBoxSelection<SdkListItem.SdkItem>(comboBox, sdk1)
+    comboBox.setSelectedSdk(sdk2.name)
+    assertComboBoxSelection<SdkListItem.SdkItem>(comboBox, sdk2)
+    comboBox.setSelectedSdk(sdk3.name)
+    assertComboBoxSelection<SdkListItem.SdkItem>(comboBox, sdk3)
+    comboBox.setSelectedSdk(sdk4.name)
+    assertComboBoxSelection<SdkListItem.InvalidSdkItem>(comboBox, null)
+
     comboBox.selectedItem = SdkListItem.NoneSdkItem()
     assertComboBoxSelection<SdkListItem.NoneSdkItem>(comboBox, null)
 

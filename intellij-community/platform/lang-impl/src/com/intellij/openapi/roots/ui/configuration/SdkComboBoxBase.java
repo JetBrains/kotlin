@@ -2,10 +2,12 @@
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.ComponentUtil;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
@@ -49,6 +51,13 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   @NotNull
   public SdkListItem showNoneSdkItem() {
     return myModel.showNoneSdkItem();
+  }
+
+  public @NotNull SdkListItem addSdkReferenceItem(@NotNull SdkType type,
+                                                  @NotNull String name,
+                                                  @Nullable String versionString,
+                                                  boolean isValid) {
+    return myModel.addSdkReferenceItem(type, name, versionString, isValid);
   }
 
   public void reloadModel() {

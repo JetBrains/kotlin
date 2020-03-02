@@ -29,6 +29,8 @@ import java.util.stream.Stream;
 import static com.intellij.openapi.util.Pair.pair;
 
 public class ExternalSystemJdkUtil {
+  public static final String JAVA_HOME = "JAVA_HOME";
+
   public static final String USE_INTERNAL_JAVA = "#JAVA_INTERNAL";
   public static final String USE_PROJECT_JDK = "#USE_PROJECT_JDK";
   public static final String USE_JAVA_HOME = "#JAVA_HOME";
@@ -89,7 +91,7 @@ public class ExternalSystemJdkUtil {
   }
 
   public static @Nullable String getJavaHome() {
-    return Environment.getVariable("JAVA_HOME");
+    return Environment.getVariable(JAVA_HOME);
   }
 
   @Nullable

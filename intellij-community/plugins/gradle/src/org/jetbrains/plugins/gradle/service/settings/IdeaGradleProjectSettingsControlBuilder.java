@@ -19,6 +19,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ui.configuration.SdkComboBox;
+import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.ui.ComboBox;
@@ -68,11 +69,13 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.getSelectedJdkReference;
-import static com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBoxUtil.setSelectedJdkReference;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSETS;
 import static com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.createUniqueSdkName;
 import static com.intellij.openapi.roots.ui.configuration.SdkComboBoxModel.createJdkComboBoxModel;
+import static com.intellij.openapi.roots.ui.configuration.SdkLookupProvider.SdkInfo;
+import static org.jetbrains.plugins.gradle.util.GradleJvmComboBoxUtil.*;
+import static org.jetbrains.plugins.gradle.util.GradleJvmResolutionUtil.getGradleJvmLookupProvider;
+import static org.jetbrains.plugins.gradle.util.GradleJvmUtil.nonblockingResolveGradleJvmInfo;
 
 /**
  * @author Vladislav.Soroka
@@ -483,13 +486,15 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   @Override
   public boolean validate(GradleProjectSettings settings) throws ConfigurationException {
     if(myGradleJdkComboBox != null && !ApplicationManager.getApplication().isUnitTestMode()) {
-      Sdk selectedJdk = myGradleJdkComboBox.getSelectedSdk();
-      if(selectedJdk == null) {
+      SdkInfo sdkInfo = getSelectedGradleJvmInfo(myGradleJdkComboBox);
+      if (sdkInfo instanceof SdkInfo.Undefined) {
         throw new ConfigurationException(GradleBundle.message("gradle.jvm.undefined"));
       }
-      String homePath = selectedJdk.getHomePath();
-      if(!ExternalSystemJdkUtil.isValidJdk(selectedJdk)) {
-        throw new ConfigurationException(GradleBundle.message("gradle.jvm.incorrect", homePath));
+      if (sdkInfo instanceof SdkInfo.Resolved) {
+        String homePath = ((SdkInfo.Resolved)sdkInfo).getHomePath();
+        if (!ExternalSystemJdkUtil.isValidJdk(homePath)) {
+          throw new ConfigurationException(GradleBundle.message("gradle.jvm.incorrect", homePath));
+        }
       }
     }
 
@@ -506,6 +511,18 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       }
     }
     return true;
+  }
+
+  private @NotNull SdkLookupProvider getSdkLookupProvider(@NotNull Project project) {
+    return getGradleJvmLookupProvider(project, myInitialSettings);
+  }
+
+  private @NotNull SdkInfo getSelectedGradleJvmInfo(@NotNull SdkComboBox comboBox) {
+    SdkLookupProvider sdkLookupProvider = getSdkLookupProvider(comboBox.getModel().getProject());
+    String externalProjectPath = myInitialSettings.getExternalProjectPath();
+    Sdk projectSdk = comboBox.getModel().getSdksModel().getProjectSdk();
+    String gradleJvm = getSelectedGradleJvmReference(comboBox, sdkLookupProvider);
+    return nonblockingResolveGradleJvmInfo(sdkLookupProvider, projectSdk, externalProjectPath, gradleJvm);
   }
 
   @Override
@@ -537,7 +554,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
     if (myGradleJdkComboBox != null) {
       wrapExceptions(() -> myGradleJdkComboBox.getModel().getSdksModel().apply());
-      final String gradleJvm = FileUtil.toCanonicalPath(getSelectedJdkReference(myGradleJdkComboBox));
+      SdkLookupProvider sdkLookupProvider = getSdkLookupProvider(myGradleJdkComboBox.getModel().getProject());
+      String gradleJvm = getSelectedGradleJvmReference(myGradleJdkComboBox, sdkLookupProvider);
       settings.setGradleJvm(StringUtil.isEmpty(gradleJvm) ? null : gradleJvm);
     }
 
@@ -600,7 +618,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     }
 
     if (myGradleJdkComboBox != null) {
-      if (!StringUtil.equals(getSelectedJdkReference(myGradleJdkComboBox), myInitialSettings.getGradleJvm())) {
+      SdkLookupProvider sdkLookupProvider = getSdkLookupProvider(myGradleJdkComboBox.getModel().getProject());
+      String gradleJvm = getSelectedGradleJvmReference(myGradleJdkComboBox, sdkLookupProvider);
+      if (!StringUtil.equals(gradleJvm, myInitialSettings.getGradleJvm())) {
         return true;
       }
       if (myGradleJdkComboBox.getModel().getSdksModel().isModified()) {
@@ -706,7 +726,11 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     Sdk projectSdk = wizardContext != null ? wizardContext.getProjectJdk() : null;
     setupProjectSdksModel(sdksModel, project, projectSdk);
     recreateGradleJdkComboBox(project, sdksModel);
-    setSelectedJdkReference(myGradleJdkComboBox, settings.getGradleJvm());
+
+    SdkLookupProvider sdkLookupProvider = getSdkLookupProvider(myGradleJdkComboBox.getModel().getProject());
+    String externalProjectPath = myInitialSettings.getExternalProjectPath();
+    addUsefulGradleJvmReferences(myGradleJdkComboBox, externalProjectPath);
+    setSelectedGradleJvmReference(myGradleJdkComboBox, sdkLookupProvider, externalProjectPath, settings.getGradleJvm());
   }
 
   private static void setupProjectSdksModel(@NotNull ProjectSdksModel sdksModel, @NotNull Project project, @Nullable Sdk projectSdk) {

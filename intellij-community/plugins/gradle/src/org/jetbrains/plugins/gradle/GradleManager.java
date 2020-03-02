@@ -35,7 +35,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -136,11 +135,7 @@ public final class GradleManager
                                                                    settings.getGradleVmOptions(),
                                                                    settings.isOfflineWork());
       final String rootProjectPath = projectLevelSettings != null ? projectLevelSettings.getExternalProjectPath() : projectPath;
-      final Sdk gradleJdk = gradleInstallationManager.getGradleJdk(project, rootProjectPath);
-      final String javaHome = gradleJdk != null ? gradleJdk.getHomePath() : null;
-      if (!StringUtil.isEmpty(javaHome)) {
-        LOG.info("Instructing gradle to use java from " + javaHome);
-      }
+      final String javaHome = gradleInstallationManager.getGradleJvmPath(project, rootProjectPath);
       result.setJavaHome(javaHome);
       String ideProjectPath;
       if (project.getBasePath() == null ||

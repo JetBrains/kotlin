@@ -3,15 +3,14 @@ package org.jetbrains.plugins.gradle.service;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkException;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
-import com.intellij.openapi.externalSystem.service.notification.callback.OpenExternalSystemSettingsCallback;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderEnumerator;
+import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
@@ -26,6 +25,7 @@ import org.gradle.util.DistributionLocator;
 import org.gradle.util.GradleVersion;
 import org.gradle.wrapper.PathAssembler;
 import org.gradle.wrapper.WrapperConfiguration;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +48,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.intellij.openapi.roots.ui.configuration.SdkLookupProvider.SdkInfo;
+import static org.jetbrains.plugins.gradle.util.GradleJvmResolutionUtil.getGradleJvmLookupProvider;
+import static org.jetbrains.plugins.gradle.util.GradleJvmUtil.nonblockingResolveGradleJvmInfo;
 
 /**
  * Encapsulates algorithm of gradle libraries discovery.
@@ -121,54 +125,41 @@ public class GradleInstallationManager {
     return doGetGradleHome(project, linkedProjectPath);
   }
 
-  @Nullable
-  public Sdk getGradleJdk(@Nullable Project project, @NotNull String linkedProjectPath) {
-    return doGetGradleJdk(project, linkedProjectPath);
+  /**
+   * @deprecated use {@link GradleInstallationManager#getGradleJvmPath(Project, String)} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.2")
+  public @Nullable Sdk getGradleJdk(@Nullable Project project, @NotNull String linkedProjectPath) {
+    if (project == null) return null;
+    String homePath = getGradleJvmPath(project, linkedProjectPath);
+    if (homePath == null) return null;
+    ExternalSystemJdkProvider jdkProvider = ExternalSystemJdkProvider.getInstance();
+    return jdkProvider.createJdk(null, homePath);
   }
 
-  @Nullable
-  private Sdk doGetGradleJdk(@Nullable Project project, String linkedProjectPath) {
-    if (project == null) {
-      return null;
-    }
-
+  public @Nullable String getGradleJvmPath(@NotNull Project project, @NotNull String linkedProjectPath) {
     final GradleProjectSettings settings = GradleSettings.getInstance(project).getLinkedProjectSettings(linkedProjectPath);
-    if (settings == null) {
-      Pair<String, Sdk> sdkPair = ExternalSystemJdkUtil.getAvailableJdk(project);
-      if (!ExternalSystemJdkUtil.USE_INTERNAL_JAVA.equals(sdkPair.first) ||
-          ExternalSystemJdkUtil.isValidJdk(sdkPair.second)) {
-        return sdkPair.second;
-      }
-      else {
-        return null;
-      }
-    }
+    if (settings == null) return getAvailableJavaHome(project);
 
-    final String gradleJvm = settings.getGradleJvm();
-    Sdk sdk;
-    try {
-      sdk = ExternalSystemJdkUtil.getJdk(project, gradleJvm);
-    }
-    catch (ExternalSystemJdkException e) {
-      throw new ExternalSystemJdkException(
-        String.format("Invalid Gradle JDK configuration found. <a href='%s'>Open Gradle Settings</a> \n",
-                      OpenExternalSystemSettingsCallback.ID), e, OpenExternalSystemSettingsCallback.ID);
-    }
+    String gradleJvm = settings.getGradleJvm();
+    SdkLookupProvider sdkLookupProvider = getGradleJvmLookupProvider(project, settings);
+    SdkInfo sdkInfo = nonblockingResolveGradleJvmInfo(sdkLookupProvider, project, linkedProjectPath, gradleJvm);
+    if (sdkInfo instanceof SdkInfo.Resolved) return ((SdkInfo.Resolved)sdkInfo).getHomePath();
+    return null;
+  }
 
-    if (sdk == null && gradleJvm != null) {
-      throw new ExternalSystemJdkException(
-        String.format("Invalid Gradle JDK configuration found. <a href='%s'>Open Gradle Settings</a> \n",
-                      OpenExternalSystemSettingsCallback.ID), null, OpenExternalSystemSettingsCallback.ID);
+  /**
+   * Allows to execute gradle tasks in non imported gradle project
+   *
+   * @see <a href="https://youtrack.jetbrains.com/issue/IDEA-199979">IDEA-199979</a>
+   */
+  private @Nullable String getAvailableJavaHome(@NotNull Project project) {
+    Pair<String, Sdk> sdkPair = ExternalSystemJdkUtil.getAvailableJdk(project);
+    if (ExternalSystemJdkUtil.isValidJdk(sdkPair.second)) {
+      return sdkPair.second.getHomePath();
     }
-
-    String sdkHomePath = sdk != null ? sdk.getHomePath() : null;
-    if (sdkHomePath != null && JdkUtil.checkForJre(sdkHomePath) && !JdkUtil.checkForJdk(sdkHomePath)) {
-      throw new ExternalSystemJdkException(
-        String.format("Please, use JDK instead of JRE for Gradle importer. <a href='%s'>Open Gradle Settings</a> \n",
-                      OpenExternalSystemSettingsCallback.ID), null, OpenExternalSystemSettingsCallback.ID);
-    }
-
-    return sdk;
+    return null;
   }
 
   /**

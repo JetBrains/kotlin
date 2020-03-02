@@ -86,7 +86,7 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     distributionType = GradleEnvironment.Headless.GRADLE_DISTRIBUTION_TYPE?.let(DistributionType::valueOf)
                        ?: DistributionType.DEFAULT_WRAPPED
     gradleHome = GradleEnvironment.Headless.GRADLE_HOME ?: suggestGradleHome()
-    gradleJvm = suggestGradleJvm(project, projectSdk, projectDirectory, resolveGradleVersion())
+    setupGradleJvm(project, projectSdk, this, projectDirectory, resolveGradleVersion())
   }
 
   private fun suggestGradleHome(): String? {

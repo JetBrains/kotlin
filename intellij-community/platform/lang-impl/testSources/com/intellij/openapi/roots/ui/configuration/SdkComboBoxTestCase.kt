@@ -130,7 +130,7 @@ abstract class SdkComboBoxTestCase : SdkTestCase() {
   }
 
   companion object {
-    fun assertSdkItem(expected: Sdk, item: SdkListItem.SdkItem) {
+    fun assertSdkItem(expected: TestSdk, item: SdkListItem.SdkItem) {
       assertSdk(expected, item.sdk)
     }
 
@@ -195,6 +195,7 @@ abstract class SdkComboBoxTestCase : SdkTestCase() {
         is SdkListItem.NoneSdkItem -> "[none]"
         is SdkListItem.ProjectSdkItem -> "[project] ${getProjectSdk()?.name}"
         is SdkListItem.InvalidSdkItem -> "[invalid] ${element.sdkName}"
+        is SdkListItem.SdkReferenceItem -> "[reference] ${element.name}"
         is SdkListItem.SdkItem -> "[sdk] ${element.sdk.name}"
         is SdkListItem.SuggestedItem -> "[suggested] ${element.homePath}"
         is SdkListItem.ActionItem -> "[action] ${element.myRole} ${element.myAction.sdkType.name}"

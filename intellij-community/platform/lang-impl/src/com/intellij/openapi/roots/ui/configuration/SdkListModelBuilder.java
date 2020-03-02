@@ -119,16 +119,12 @@ public final class SdkListModelBuilder {
   }
 
   public void removeSdkReferenceItem(@NotNull SdkReferenceItem item) {
-    boolean hasMatch = false;
     ImmutableList.Builder<SdkReferenceItem> builder = ImmutableList.builder();
     for (SdkReferenceItem element : myReferenceItems) {
       if (Objects.equals(element, item)) continue;
 
       builder.add(element);
-      hasMatch = true;
     }
-
-    if (!hasMatch) return;
 
     myReferenceItems = builder.build();
     syncModel();

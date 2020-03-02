@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nls
  */
 interface SdkLookup {
   fun createBuilder(): SdkLookupBuilder
-  fun lookup(lookup: SdkLookupBuilder)
+  fun lookup(lookup: SdkLookupParameters)
 
   companion object {
     @JvmStatic
@@ -50,9 +50,9 @@ interface SdkLookupBuilder {
 
   /**
    * Use these SDKs to test first, the [withSdkName] option has a higher priority
-  **/
+   **/
   @Contract(pure = true)
-  fun testSuggestedSdksFirst(sdks: Sequence<Sdk?>) : SdkLookupBuilder
+  fun testSuggestedSdksFirst(sdks: Sequence<Sdk?>): SdkLookupBuilder
 
   @Contract(pure = true)
   fun withSdkName(name: String): SdkLookupBuilder
@@ -61,7 +61,7 @@ interface SdkLookupBuilder {
   fun withSdkType(sdkType: SdkType): SdkLookupBuilder
 
   @Contract(pure = true)
-  fun withVersionFilter(filter: (String) -> Boolean) : SdkLookupBuilder
+  fun withVersionFilter(filter: (String) -> Boolean): SdkLookupBuilder
 
   @Contract(pure = true)
   fun withSdkHomeFilter(filter: (String) -> Boolean): SdkLookupBuilder
@@ -82,7 +82,7 @@ interface SdkLookupBuilder {
   fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> SdkLookupDecision): SdkLookupBuilder
 
   /**
-   * And SDK resoluition and delivery process can take time,
+   * And SDK resolution and delivery process can take time,
    * this callback is executed once we know for sure the exact name
    * and version of an SDK, but it's still on the way
    *
@@ -97,7 +97,7 @@ interface SdkLookupBuilder {
   fun onSdkNameResolved(callback: (Sdk?) -> Unit) : SdkLookupBuilder
 
   /**
-   * The [Sdk#sdkType] may not match the proposed [sdkType] if the
+   * The [Sdk.getSdkType] may not match the proposed sdk type [withSdkType] if the
    * same named SDK already exists. It is up to this code client
    * to resolve that situation.
    *
@@ -110,4 +110,27 @@ interface SdkLookupBuilder {
    */
   @Contract(pure = true)
   fun onSdkResolved(handler: (Sdk?) -> Unit): SdkLookupBuilder
+}
+
+interface SdkLookupParameters {
+  val project: Project?
+
+  val progressMessageTitle: String?
+  val progressIndicator: ProgressIndicator?
+
+  val sdkName: String?
+
+  val sdkType: SdkType?
+
+  val onBeforeSdkSuggestionStarted: () -> SdkLookupDecision
+  val onLocalSdkSuggested: (UnknownSdkLocalSdkFix) -> SdkLookupDecision
+  val onDownloadableSdkSuggested: (UnknownSdkDownloadableSdkFix) -> SdkLookupDecision
+
+  val sdkHomeFilter: ((String) -> Boolean)?
+  val versionFilter: ((String) -> Boolean)?
+
+  val testSdkSequence: Sequence<Sdk?>
+
+  val onSdkNameResolved: (Sdk?) -> Unit
+  val onSdkResolved: (Sdk?) -> Unit
 }

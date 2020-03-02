@@ -1,7 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.util
 
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.*
+import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_DIRECTORY_PATH_KEY
 import org.junit.Test
 
@@ -9,7 +10,7 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
   @Test
   fun `test simple gradle jvm resolution`() {
     withGradleProperties(externalProjectPath, java = latestSdk) {
-      assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
+      assertGradleJvmSuggestion(expected = USE_GRADLE_JAVA_HOME)
     }
     withRegisteredSdks(earliestSdk, latestSdk, unsupportedSdk) {
       withGradleLinkedProject(java = earliestSdk) {
@@ -18,12 +19,20 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
     }
     assertGradleJvmSuggestion(expected = USE_PROJECT_JDK, projectSdk = latestSdk)
     environment.withVariables(JAVA_HOME to latestSdk.homePath) {
-      assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
+      assertGradleJvmSuggestion(expected = USE_JAVA_HOME)
     }
     withRegisteredSdks(earliestSdk, latestSdk, unsupportedSdk) {
       assertGradleJvmSuggestion(expected = latestSdk)
     }
     assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
+  }
+
+  @Test
+  fun `test gradle jvm resolution (heuristic suggestion)`() {
+    TestUnknownSdkResolver.useLocalSdkFix = true
+    assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
+    TestUnknownSdkResolver.useLocalSdkFix = false
+    assertGradleJvmSuggestion(expected = { TestSdkGenerator.getCurrentSdk() }, expectsSdkRegistration = true)
   }
 
   @Test
@@ -50,9 +59,9 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
   @Test
   fun `test gradle jvm resolution (java home)`() {
     environment.variables(JAVA_HOME to earliestSdk.homePath)
-    assertGradleJvmSuggestion(expected = earliestSdk, expectsSdkRegistration = true)
+    assertGradleJvmSuggestion(expected = USE_JAVA_HOME)
     environment.variables(JAVA_HOME to latestSdk.homePath)
-    assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
+    assertGradleJvmSuggestion(expected = USE_JAVA_HOME)
     environment.variables(JAVA_HOME to unsupportedSdk.homePath)
     assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
   }
@@ -60,10 +69,10 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
   @Test
   fun `test gradle jvm resolution (gradle properties)`() {
     withGradleProperties(externalProjectPath, java = earliestSdk) {
-      assertGradleJvmSuggestion(expected = earliestSdk, expectsSdkRegistration = true)
+      assertGradleJvmSuggestion(expected = USE_GRADLE_JAVA_HOME)
     }
     withGradleProperties(externalProjectPath, java = latestSdk) {
-      assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
+      assertGradleJvmSuggestion(expected = USE_GRADLE_JAVA_HOME)
     }
     withGradleProperties(externalProjectPath, java = unsupportedSdk) {
       assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
@@ -71,25 +80,10 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
   }
 
   @Test
-  fun `test gradle jvm resolution (reference resolving)`() {
-    registerSdk(latestSdk)
-    withGradleProperties(externalProjectPath, java = latestSdk) {
-      assertGradleJvmSuggestion(expected = USE_PROJECT_JDK, projectSdk = latestSdk)
-    }
-    withGradleLinkedProject(java = latestSdk) {
-      assertGradleJvmSuggestion(expected = USE_PROJECT_JDK, projectSdk = latestSdk)
-    }
-    assertGradleJvmSuggestion(expected = USE_PROJECT_JDK, projectSdk = latestSdk)
-    environment.withVariables(JAVA_HOME to latestSdk.homePath) {
-      assertGradleJvmSuggestion(expected = USE_PROJECT_JDK, projectSdk = latestSdk)
-    }
-  }
-
-  @Test
   fun `test gradle properties resolution (project properties)`() {
     assertGradleProperties(java = null)
     withGradleProperties(externalProjectPath, java = earliestSdk) {
-      assertGradleJvmSuggestion(expected = earliestSdk, expectsSdkRegistration = true)
+      assertGradleProperties(java = earliestSdk)
     }
     withGradleProperties(externalProjectPath, java = latestSdk) {
       assertGradleProperties(java = latestSdk)

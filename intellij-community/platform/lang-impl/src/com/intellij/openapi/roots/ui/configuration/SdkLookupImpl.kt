@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
@@ -11,7 +10,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.progress.util.ProgressIndicatorListenerAdapter
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -20,59 +18,17 @@ import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.NlsContexts.ProgressTitle
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.util.Consumer
 import org.jetbrains.annotations.Nls
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Predicate
 
-private data class SdkLookupBuilderImpl(
-  val project: Project? = null,
-
-  @Nls
-  val progressMessageTitle: @ProgressTitle String? = null,
-  val progressIndicator: ProgressIndicator? = null,
-
-  val sdkName: String? = null,
-
-  val sdkType: SdkType? = null,
-
-  val onBeforeSdkSuggestionStarted: () -> Boolean = { true },
-  val onLocalSdkSuggested: (UnknownSdkLocalSdkFix) -> Boolean = { true },
-  val onDownloadableSdkSuggested: (UnknownSdkDownloadableSdkFix) -> Boolean = { true },
-
-  val sdkHomeFilter: ((String) -> Boolean)? = null,
-  val versionFilter: ((String) -> Boolean)? = null,
-
-  val testSdkSequence: Sequence<Sdk?> = emptySequence(),
-
-  private val onSdkNameResolved: (Sdk?) -> Unit = { },
-  private val onSdkResolved: (Sdk?) -> Unit = { }
-) : SdkLookupBuilder {
-  override fun withProject(project: Project?) = copy(project = project)
-  override fun withProgressMessageTitle(@Nls message: @ProgressTitle String) = copy(progressMessageTitle = message)
-  override fun withSdkName(name: String) = copy(sdkName = name)
-  override fun withSdkType(sdkType: SdkType) = copy(sdkType = sdkType)
-  override fun withVersionFilter(filter: (String) -> Boolean) = copy(versionFilter = filter)
-  override fun withSdkHomeFilter(filter: (String) -> Boolean) = copy(sdkHomeFilter = filter)
-  override fun withProgressIndicator(indicator: ProgressIndicator) = copy(progressIndicator = indicator)
-
-  override fun testSuggestedSdksFirst(sdks: Sequence<Sdk?>) = copy(testSdkSequence = testSdkSequence + sdks)
-
-  override fun onBeforeSdkSuggestionStarted(handler: () -> SdkLookupDecision) = copy(onBeforeSdkSuggestionStarted = { handler() == SdkLookupDecision.CONTINUE })
-  override fun onLocalSdkSuggested(handler: (UnknownSdkLocalSdkFix) -> SdkLookupDecision) = copy(onLocalSdkSuggested = { handler(it) == SdkLookupDecision.CONTINUE})
-  override fun onDownloadableSdkSuggested(handler: (UnknownSdkDownloadableSdkFix) -> SdkLookupDecision) = copy(onDownloadableSdkSuggested = { handler(it) == SdkLookupDecision.CONTINUE})
-
-  override fun onSdkResolved(handler: (Sdk?) -> Unit) = copy(onSdkResolved = handler)
-  override fun onSdkNameResolved(callback: (Sdk?) -> Unit) = copy(onSdkNameResolved = callback)
-
-  override fun executeLookup() = service<SdkLookup>().lookup(copy())
-
+private class SdkLookupBuilderImpl(private val lookupParameters: SdkLookupParameters) : SdkLookupParameters by lookupParameters {
   private val sdkNameCallbackExecuted = AtomicBoolean(false)
   private val sdkCallbackExecuted = AtomicBoolean(false)
 
-  val onSdkNameResolvedConsumer = Consumer<Sdk?> { onSdkResolved(it) }
+  val onSdkNameResolvedConsumer = Consumer<Sdk?> { onSdkNameResolved(it) }
   val onSdkResolvedConsumer = Consumer<Sdk?> { onSdkResolved(it) }
 
   fun onSdkNameResolved(sdk: Sdk?) {
@@ -106,9 +62,9 @@ private data class SdkLookupBuilderImpl(
 internal class SdkLookupImpl : SdkLookup {
   private val LOG = logger<SdkLookupImpl>()
 
-  override fun createBuilder() : SdkLookupBuilder = SdkLookupBuilderImpl()
+  override fun createBuilder(): SdkLookupBuilder = CommonSdkLookupBuilder { service<SdkLookup>().lookup(it) }
 
-  override fun lookup(lookup: SdkLookupBuilder): Unit = (lookup as SdkLookupBuilderImpl).copy().run {
+  override fun lookup(lookup: SdkLookupParameters): Unit = SdkLookupBuilderImpl(lookup).run {
     val rootProgressIndicator = ProgressIndicatorBase()
 
     if (progressIndicator is ProgressIndicatorEx) {
@@ -138,7 +94,7 @@ internal class SdkLookupImpl : SdkLookup {
       .firstOrNull()
 
     if (sdk != null) {
-      val disposable = Disposable {}
+      val disposable = Disposer.newDisposable()
       val onDownloadCompleted = Consumer<Boolean> { onSucceeded ->
         Disposer.dispose(disposable)
 
@@ -178,7 +134,7 @@ internal class SdkLookupImpl : SdkLookup {
       return
     }
 
-    if (!onBeforeSdkSuggestionStarted()) {
+    if (onBeforeSdkSuggestionStarted() == SdkLookupDecision.STOP) {
       onSdkResolved(null)
       return
     }
@@ -226,7 +182,7 @@ internal class SdkLookupImpl : SdkLookup {
     val localFix = resolvers
                      .asSequence()
                      .mapNotNull { it.proposeLocalFix(unknownSdk, indicator) }
-                     .filter { onLocalSdkSuggested.invoke(it) }
+                     .filter { onLocalSdkSuggested.invoke(it) == SdkLookupDecision.CONTINUE }
                      .filter { versionFilter?.invoke(it.versionString) != false }
                      .filter { sdkHomeFilter?.invoke(it.existingSdkHome) != false }
                      .firstOrNull() ?: return false
@@ -242,7 +198,7 @@ internal class SdkLookupImpl : SdkLookup {
     val downloadFix = resolvers
                         .asSequence()
                         .mapNotNull { it.proposeDownload(unknownSdk, indicator) }
-                        .filter { onDownloadableSdkSuggested.invoke(it) }
+                        .filter { onDownloadableSdkSuggested.invoke(it) == SdkLookupDecision.CONTINUE }
                         .filter { versionFilter?.invoke(it.versionString) != false }
                         .firstOrNull() ?: return false
 
