@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.incremental.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.incremental.ICReporterBase
+import org.jetbrains.kotlin.build.report.ICReporterBase
 import java.io.File
 
 class TestICReporter : ICReporterBase() {

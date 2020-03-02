@@ -5,6 +5,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
@@ -136,6 +138,10 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:Internal
     protected val javaSourceRoots: Set<File>
         get() = unfilteredJavaSourceRoots.filterTo(HashSet(), ::isRootAllowed)
+
+    @get:Internal
+    override val metrics: BuildMetricsReporter =
+        BuildMetricsReporterImpl()
 
     private fun isRootAllowed(file: File): Boolean =
         file.exists() &&

@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
@@ -45,9 +49,10 @@ fun makeJsIncrementally(
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
+    val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
     withJsIC {
         val compiler = IncrementalJsCompilerRunner(
-            cachesDir, reporter,
+            cachesDir, buildReporter,
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = EmptyModulesApiHistory,
             scopeExpansion = scopeExpansion
@@ -69,7 +74,7 @@ inline fun <R> withJsIC(fn: () -> R): R {
 
 class IncrementalJsCompilerRunner(
     private val workingDir: File,
-    reporter: ICReporter,
+    reporter: BuildReporter,
     buildHistoryFile: File,
     private val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER
@@ -90,14 +95,14 @@ class IncrementalJsCompilerRunner(
     override fun destinationDir(args: K2JSCompilerArguments): File =
         File(args.outputFile).parentFile
 
-    override fun calculateSourcesToCompile(
+    override fun calculateSourcesToCompileImpl(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JSCompilerArguments,
         messageCollector: MessageCollector
     ): CompilationMode {
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-            ?: return CompilationMode.Rebuild { "No information on previous build" }
+            ?: return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
 
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
@@ -107,16 +112,15 @@ class IncrementalJsCompilerRunner(
 
         @Suppress("UNUSED_VARIABLE") // for sealed when
         val unused = when (classpathChanges) {
-            is ChangesEither.Unknown -> return CompilationMode.Rebuild {
-                // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
-                "Could not get classpath's changes${classpathChanges.reason?.let { ": $it" }}"
+            is ChangesEither.Unknown -> {
+                reporter.report { "Could not get classpath's changes: ${classpathChanges.reason}" }
+                return CompilationMode.Rebuild(classpathChanges.reason)
             }
             is ChangesEither.Known -> {
                 dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
                 dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
             }
         }
-
 
         val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -316,7 +318,7 @@ class GenerateIrRuntime {
         withJsIC {
             val buildHistoryFile = File(cachesDir, "build-history.bin")
             val compiler = IncrementalJsCompilerRunner(
-                cachesDir, EmptyICReporter,
+                cachesDir, BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),
                 buildHistoryFile = buildHistoryFile,
                 modulesApiHistory = EmptyModulesApiHistory
             )
@@ -360,7 +362,7 @@ class GenerateIrRuntime {
             withJsIC {
                 val buildHistoryFile = File(cachesDir, "build-history.bin")
                 val compiler = IncrementalJsCompilerRunner(
-                    cachesDir, EmptyICReporter,
+                    cachesDir, BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),
                     buildHistoryFile = buildHistoryFile,
                     modulesApiHistory = EmptyModulesApiHistory
                 )

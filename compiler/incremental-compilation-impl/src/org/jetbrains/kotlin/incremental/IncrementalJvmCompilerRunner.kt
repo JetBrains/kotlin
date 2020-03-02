@@ -25,6 +25,10 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -64,11 +68,12 @@ fun makeIncrementally(
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
     args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
+    val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
     withIC {
         val compiler = IncrementalJvmCompilerRunner(
             cachesDir,
-            reporter,
+            buildReporter,
             // Use precise setting in case of non-Gradle build
             usePreciseJavaTracking = true,
             outputFiles = emptyList(),
@@ -104,7 +109,7 @@ inline fun <R> withIC(enabled: Boolean = true, fn: () -> R): R {
 
 class IncrementalJvmCompilerRunner(
     workingDir: File,
-    reporter: ICReporter,
+    reporter: BuildReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
     outputFiles: Collection<File>,
@@ -154,7 +159,7 @@ class IncrementalJvmCompilerRunner(
         else
             null
 
-    override fun calculateSourcesToCompile(
+    override fun calculateSourcesToCompileImpl(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
@@ -176,16 +181,20 @@ class IncrementalJvmCompilerRunner(
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
 
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
 
-        val classpathChanges = getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
+        val classpathChanges = reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
+            getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
+        }
 
         @Suppress("UNUSED_VARIABLE") // for sealed when
         val unused = when (classpathChanges) {
-            is ChangesEither.Unknown -> return CompilationMode.Rebuild {
-                // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
-                "Could not get classpath's changes${classpathChanges.reason?.let { ": $it" }}"
+            is ChangesEither.Unknown -> {
+                reporter.report {
+                    "Could not get classpath's changes: ${classpathChanges.reason}"
+                }
+                return CompilationMode.Rebuild(classpathChanges.reason)
             }
             is ChangesEither.Known -> {
                 dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
@@ -194,21 +203,26 @@ class IncrementalJvmCompilerRunner(
             }
         }
 
-        if (!usePreciseJavaTracking) {
-            val javaFilesChanges = javaFilesProcessor!!.process(changedFiles)
-            val affectedJavaSymbols = when (javaFilesChanges) {
-                is ChangesEither.Known -> javaFilesChanges.lookupSymbols
-                is ChangesEither.Unknown -> return CompilationMode.Rebuild { "Could not get changes for java files" }
-            }
-            dirtyFiles.addByDirtySymbols(affectedJavaSymbols)
-        } else {
-            if (!processChangedJava(changedFiles, caches)) {
-                return CompilationMode.Rebuild { "Could not get changes for java files" }
+        reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES) {
+            if (!usePreciseJavaTracking) {
+                val javaFilesChanges = javaFilesProcessor!!.process(changedFiles)
+                val affectedJavaSymbols = when (javaFilesChanges) {
+                    is ChangesEither.Known -> javaFilesChanges.lookupSymbols
+                    is ChangesEither.Unknown -> return CompilationMode.Rebuild(javaFilesChanges.reason)
+                }
+                dirtyFiles.addByDirtySymbols(affectedJavaSymbols)
+            } else {
+                val rebuildReason = processChangedJava(changedFiles, caches)
+                if (rebuildReason != null) return CompilationMode.Rebuild(rebuildReason)
             }
         }
 
-        val androidLayoutChanges = processLookupSymbolsForAndroidLayouts(changedFiles)
-        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
+        val androidLayoutChanges = reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_ANDROID_LAYOUTS) {
+            processLookupSymbolsForAndroidLayouts(changedFiles)
+        }
+        val removedClassesChanges = reporter.measure(BuildTime.IC_DETECT_REMOVED_CLASSES) {
+            getRemovedClassesChanges(caches, changedFiles)
+        }
 
         dirtyFiles.addByDirtySymbols(androidLayoutChanges)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
@@ -217,7 +231,7 @@ class IncrementalJvmCompilerRunner(
         return CompilationMode.Incremental(dirtyFiles)
     }
 
-    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): Boolean {
+    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
         val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
 
         for (javaFile in javaFiles) {
@@ -225,20 +239,20 @@ class IncrementalJvmCompilerRunner(
                 if (!javaFile.exists()) {
                     // todo: can we do this more optimal?
                     reporter.report { "Could not get changed for untracked removed java file $javaFile" }
-                    return false
+                    return BuildAttribute.JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED
                 }
 
                 val psiFile = psiFileProvider.javaFile(javaFile)
                 if (psiFile !is PsiJavaFile) {
                     reporter.report { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
-                    return false
+                    return BuildAttribute.JAVA_CHANGE_UNEXPECTED_PSI
                 }
 
                 for (psiClass in psiFile.classes) {
                     val qualifiedName = psiClass.qualifiedName
                     if (qualifiedName == null) {
                         reporter.report { "[Precise Java tracking] Class with unknown qualified name in $javaFile" }
-                        return false
+                        return BuildAttribute.JAVA_CHANGE_UNKNOWN_QUALIFIER
                     }
 
                     processChangedUntrackedJavaClass(psiClass, ClassId.topLevel(FqName(qualifiedName)))
@@ -247,7 +261,7 @@ class IncrementalJvmCompilerRunner(
         }
 
         caches.platformCache.markDirty(javaFiles)
-        return true
+        return null
     }
 
     private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
