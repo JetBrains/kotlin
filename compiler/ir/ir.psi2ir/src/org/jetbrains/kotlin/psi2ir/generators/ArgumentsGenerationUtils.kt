@@ -56,7 +56,13 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
     generateReceiver(ktDefaultElement.startOffsetSkippingComments, ktDefaultElement.endOffset, receiver)
 
 fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue {
-    val irReceiverType = receiver.type.toIrType()
+    val irReceiverType =
+        when (receiver) {
+            is ExtensionReceiver ->
+                receiver.declarationDescriptor.extensionReceiverParameter!!.type.toIrType()
+            else ->
+                receiver.type.toIrType()
+        }
 
     if (receiver is TransientReceiver) return TransientReceiverValue(irReceiverType)
 
