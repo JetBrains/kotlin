@@ -16,8 +16,14 @@ class NGramFeatureProvider : ElementFeatureProvider {
   override fun calculateFeatures(element: LookupElement,
                                  location: CompletionLocation,
                                  contextFeatures: ContextFeatures): Map<String, MLFeatureValue> {
-    val scoringFunction = contextFeatures.getUserData(NGram.NGRAM_SCORER_KEY) ?: return emptyMap()
-    return mapOf("file" to MLFeatureValue.float(scoringFunction.score(element.lookupString)))
+    val result = mutableMapOf<String, MLFeatureValue>()
+    contextFeatures.getUserData(NGram.NGRAM_SCORER_KEY)?.let {
+      result["file"] = MLFeatureValue.float(it.score(element.lookupString))
+    }
+    contextFeatures.getUserData(NGram.NGRAM_REVERSED_SCORER_KEY)?.let {
+      result["file_reversed"] = MLFeatureValue.float(it.score(element.lookupString))
+    }
+    return result
   }
 
 }

@@ -2,7 +2,6 @@
 package com.intellij.completion.ngram
 
 import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.completion.ngram.slp.modeling.Model
 import com.intellij.completion.ngram.slp.modeling.ngram.JMModel
 import com.intellij.completion.ngram.slp.modeling.runners.ModelRunner
 import com.intellij.completion.ngram.slp.translating.Vocabulary
@@ -15,10 +14,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
 import com.intellij.stats.CompletionStatsPolicy
 import kotlin.math.max
+import kotlin.math.min
 
 
 object NGram {
-  internal val NGRAM_SCORER_KEY: Key<ScoringFunction> = Key.create("NGRAM_SCORER")
+  internal val NGRAM_SCORER_KEY: Key<Scorer> = Key.create("NGRAM_SCORER")
+  internal val NGRAM_REVERSED_SCORER_KEY: Key<Scorer> = Key.create("NGRAM_REVERSED_SCORER")
+
   @Deprecated("Use CompletionStatsPolicy instead")
   private val SUPPORTED_LANGUAGES = setOf(
     "ecmascript 6",
@@ -31,7 +33,28 @@ object NGram {
     "scala",
     "shell script",
     "objectivec"
-    )
+  )
+  private const val TEXT_RANGE_LIMIT = 64 * 1024 // 128 KB of chars
+
+  internal fun getScorers(parameters: CompletionParameters, order: Int): Map<Key<Scorer>, Scorer> {
+    val language = parameters.originalFile.language
+    if (!isSupported(language)) return emptyMap()
+    val prefix = getNGramPrefix(parameters, order)
+    val reversedPostfix = getNGramReversedPostfix(parameters, order)
+    val lexedFile = lexPsiFile(parameters.originalFile)
+    return mapOf(NGRAM_SCORER_KEY to createScorer(prefix, lexedFile),
+                 NGRAM_REVERSED_SCORER_KEY to createReversedScorer(reversedPostfix, lexedFile))
+  }
+
+  private fun createScorer(prefix: Array<String>, lexedFile: List<String>): Scorer {
+    val modelRunner = createModelRunner(lexedFile)
+    return Scorer({ modelRunner.score(it) }, prefix)
+  }
+
+  private fun createReversedScorer(reversedPostfix: Array<String>, lexedFile: List<String>): Scorer {
+    val modelRunner = createModelRunner(lexedFile.reversed())
+    return Scorer({ modelRunner.score(it) }, reversedPostfix)
+  }
 
   private fun isSupported(language: Language): Boolean = language.id.toLowerCase() in SUPPORTED_LANGUAGES
                                                          || CompletionStatsPolicy.useNgramModel(language)
@@ -45,43 +68,41 @@ object NGram {
       .map { it.text }
       .reversed()
     if (precedingTokens.isEmpty()) return emptyArray()
-      return with(precedingTokens) {
-        if (last() == parameters.originalPosition?.text ?: "") dropLast(1) else drop(1)
-      }.toTypedArray()
+    return with(precedingTokens) {
+      if (last() == parameters.originalPosition?.text ?: "") dropLast(1) else drop(1)
+    }.toTypedArray()
   }
 
-  fun createScoringFunction(parameters: CompletionParameters, order: Int): ScoringFunction? {
-    if (!isSupported(parameters.originalFile.language)) return null
-    val modelRunner = createModelRunner()
-    //modelRunner.setSelfTesting(true)
-    modelRunner.learnPsiFile(parameters.originalFile)
-    val prefix = getNGramPrefix(parameters, order)
-    return ScoringFunction(prefix, modelRunner)
+  fun getNGramReversedPostfix(parameters: CompletionParameters, order: Int): Array<String> {
+    val followingTokens = SyntaxTraverser.psiTraverser()
+      .withRoot(parameters.originalFile)
+      .onRange(
+        TextRange(min(parameters.offset + (parameters.originalPosition?.textRange?.length ?: 0), TEXT_RANGE_LIMIT - 1), TEXT_RANGE_LIMIT))
+      .filter { shouldLex(it) }
+      .take(order)
+      .map { it.text }
+      .reversed()
+    if (followingTokens.isEmpty()) return emptyArray()
+    return with(followingTokens) {
+      if (last() == parameters.originalPosition?.text ?: "") dropLast(1) else drop(1)
+    }.toTypedArray()
   }
 
-  fun createModelRunner(
-    vocabulary: Vocabulary = Vocabulary(),
-    model: Model = JMModel()
-  ): ModelRunner = ModelRunner(model, vocabulary)
+  fun createModelRunner(tokens: List<String>): ModelRunner = ModelRunner(JMModel(), Vocabulary()).apply { learnTokens(tokens) }
 
-  fun score(modelRunner: ModelRunner, tokens: List<String>): Double {
-    return with(modelRunner) {
-      val queryIndices = vocabulary.toIndices(tokens).filterNotNull()
-      if (this.getSelfTesting()) model.forget(queryIndices)
-      val probability = model.modelToken(queryIndices, queryIndices.size - 1).first
-      if (this.getSelfTesting()) model.learn(queryIndices)
-      probability
-    }
+  private fun ModelRunner.learnTokens(tokens: List<String>) {
+    model.learn(vocabulary.toIndices(tokens).filterNotNull())
   }
 
-  private fun ModelRunner.learnPsiFile(file: PsiFile) {
-    model.learn(vocabulary.toIndices(lexPsiFile(file)).filterNotNull())
+  fun ModelRunner.score(tokens: List<String>): Double {
+    val queryIndices = vocabulary.toIndices(tokens).filterNotNull()
+    return model.modelToken(queryIndices, queryIndices.size - 1).first
   }
 
   private fun lexPsiFile(file: PsiFile): List<String> {
     return SyntaxTraverser.psiTraverser()
       .withRoot(file)
-      .onRange(TextRange(0, 64 * 1024)) // first 128 KB of chars
+      .onRange(TextRange(0, TEXT_RANGE_LIMIT))
       .filter { shouldLex(it) }
       .map { it.text }
       .toList()
@@ -93,12 +114,12 @@ object NGram {
            && element !is PsiComment
   }
 
-  class ScoringFunction(prefix: Array<String>, private val modelRunner: ModelRunner) {
+  internal class Scorer(private val scoringFunction: (List<String>) -> Double, prefix: Array<String>) {
     private val tokens: MutableList<String> = mutableListOf(*prefix, "!placeholder!")
 
     fun score(value: String): Double {
       tokens[tokens.lastIndex] = value
-      return score(modelRunner, (tokens))
+      return scoringFunction(tokens)
     }
   }
 }

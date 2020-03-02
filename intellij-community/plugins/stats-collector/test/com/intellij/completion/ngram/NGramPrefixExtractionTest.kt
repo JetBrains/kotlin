@@ -20,11 +20,14 @@ interface XRunnable {
   }
 
   fun `test ngram extraction`() {
-    invokeCompletionWithText("class T { void r() { XRunnable x; x.<caret> } }")
+    invokeCompletionWithText("class T { void r() { XRunnable x; x.<caret> }; boolean q() { return true; }}")
     myFixture.completeBasic()
     checkExpectedNGram(".")
     checkExpectedNGram("x", ".")
     checkExpectedNGram("(", ")", "{", "XRunnable", "x", ";", "x", ".")
+    checkExpectedReversedNGram("}")
+    checkExpectedReversedNGram(";", "}")
+    checkExpectedReversedNGram("return", "{", ")", "(", "q", "boolean", ";", "}")
   }
 
   fun `test ngram extraction in file beginning`() {
@@ -32,9 +35,15 @@ interface XRunnable {
     checkExpectedNGram()
   }
 
+  fun `test reversed ngram extraction in file end`() {
+    invokeCompletionWithText("class T { void r() { XRunnable x; } }<caret>")
+    checkExpectedReversedNGram()
+  }
+
   fun `test ngram extraction in empty file`() {
     invokeCompletionWithText("<caret>")
     checkExpectedNGram()
+    checkExpectedReversedNGram()
   }
 
   private fun invokeCompletionWithText(javaFileText: String) {
@@ -46,5 +55,11 @@ interface XRunnable {
     val parameters = CompletionUtil.getCurrentCompletionParameters()
                      ?: return fail("Completion parameters not found. Session should be started")
     assertThat(NGram.getNGramPrefix(parameters, ngram.size + 1)).isEqualTo(ngram)
+  }
+
+  private fun checkExpectedReversedNGram(vararg ngram: String) {
+    val parameters = CompletionUtil.getCurrentCompletionParameters()
+                     ?: return fail("Completion parameters not found. Session should be started")
+    assertThat(NGram.getNGramReversedPostfix(parameters, ngram.size + 1)).isEqualTo(ngram)
   }
 }

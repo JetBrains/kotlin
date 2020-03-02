@@ -24,7 +24,7 @@ class CommonLocationFeatures : ContextFeatureProvider {
     val lineStartOffset = editor.document.getLineStartOffset(logicalPosition.line)
     val linePrefix = editor.document.getText(TextRange(lineStartOffset, caretOffset))
 
-    putNGramScorer(environment)
+    putNGramScorers(environment)
 
     val result = mutableMapOf(
       "line_num" to MLFeatureValue.float(logicalPosition.line),
@@ -43,11 +43,9 @@ class CommonLocationFeatures : ContextFeatureProvider {
     return result
   }
 
-  private fun putNGramScorer(environment: CompletionEnvironment) {
-    val scoringFunction = NGram.createScoringFunction(environment.parameters, 4)
-    if(scoringFunction != null) {
-      environment.putUserData(NGram.NGRAM_SCORER_KEY, scoringFunction)
-    }
+  private fun putNGramScorers(environment: CompletionEnvironment) {
+    for ((key, scorer) in NGram.getScorers(environment.parameters, 4))
+      environment.putUserData(key, scorer)
   }
 
   private fun MutableMap<String, MLFeatureValue>.addPsiParents(position: PsiElement, numParents: Int) {
