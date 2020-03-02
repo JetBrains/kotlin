@@ -511,7 +511,7 @@ fun main(args: Array<String>) {
     }
 
     testGroup(
-        "compiler/tests", "compiler/testData",
+        "compiler/fir/fir2ir/tests", "compiler/testData",
         testRunnerMethodName = "runTestWithCustomIgnoreDirective",
         additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
     ) {

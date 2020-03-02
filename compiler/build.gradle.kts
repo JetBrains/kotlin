@@ -118,11 +118,3 @@ projectTest(parallel = true) {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
 
 testsJar()
-
-projectTest("firBlackBoxTest", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    filter {
-        includeTestsMatching("org.jetbrains.kotlin.codegen.ir.FirBlackBoxCodegenTestGenerated")
-    }
-}

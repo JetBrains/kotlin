@@ -559,7 +559,6 @@ tasks {
             ":compiler:fir:lightTree:test",
             ":compiler:fir:resolve:test",
             ":compiler:fir:fir2ir:test",
-            ":compiler:firBlackBox:test",
             ":idea:firTest"
         )
     }
