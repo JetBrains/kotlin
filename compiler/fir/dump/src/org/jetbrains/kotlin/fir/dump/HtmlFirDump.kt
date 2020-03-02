@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.left
+import org.jetbrains.kotlin.fir.backend.right
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
@@ -1474,9 +1476,22 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
                 is FirVarargArgumentsExpression -> generate(expression)
+                is FirResolvedReifiedParameterReference -> generate(expression)
+                is FirComparisonExpression -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }
+    }
+
+    private fun FlowContent.generate(comparisonExpression: FirComparisonExpression) {
+        generate(comparisonExpression.left)
+        +" ${comparisonExpression.operation.operator} "
+        generate(comparisonExpression.right)
+    }
+
+    private fun FlowContent.generate(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference) {
+        val typeParameter = resolvedReifiedParameterReference.symbol.fir
+        +typeParameter.name.identifier
     }
 
     private fun FlowContent.generate(varargArgumentExpression: FirVarargArgumentsExpression) {
