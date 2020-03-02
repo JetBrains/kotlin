@@ -53,14 +53,14 @@ class JdkInstaller {
   fun defaultInstallDir() : String {
     val home = FileUtil.toCanonicalPath(System.getProperty("user.home") ?: ".")
     val targetDir = when {
-      SystemInfo.isLinux ->  "$home/.jdks/"
+      SystemInfo.isLinux ->  "$home/.jdks"
       //see https://youtrack.jetbrains.com/issue/IDEA-206163#focus=streamItem-27-3270022.0-0
-      SystemInfo.isMac ->  "$home/Library/Java/JavaVirtualMachines/"
-      SystemInfo.isWindows -> "$home\\.jdks\\"
+      SystemInfo.isMac ->  "$home/Library/Java/JavaVirtualMachines"
+      SystemInfo.isWindows -> "$home\\.jdks"
       else -> error("Unsupported OS")
     }
 
-    return FileUtil.toSystemDependentName(targetDir)
+    return FileUtil.toSystemDependentName(FileUtil.toCanonicalPath(targetDir))
   }
 
   fun defaultInstallDir(newVersion: JdkItem) : String {
@@ -71,7 +71,7 @@ class JdkInstaller {
     while(File(uniqueDir).exists()) {
       uniqueDir = targetDir + "-" + count++
     }
-    return FileUtil.toSystemDependentName(uniqueDir)
+    return FileUtil.toSystemDependentName(FileUtil.toCanonicalPath(uniqueDir))
   }
 
 
