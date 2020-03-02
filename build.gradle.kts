@@ -387,8 +387,7 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        outputs.cacheIf { false }
-        // https://youtrack.jetbrains.com/issue/KT-37089
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
     }
 
     tasks {
