@@ -100,7 +100,7 @@ sourceSets {
 
 testsJar()
 
-projectTest(parallel = true) {
+projectTest(parallel = false) {
     workingDir = rootDir
     useAndroidSdk()
 
