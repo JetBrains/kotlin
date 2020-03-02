@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36812 Generate proper lifetime intervals for local variables in JVM_IR
-
 import kotlin.random.Random
 
 fun test(): Char {
