@@ -16,14 +16,13 @@ import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
-import kotlin.contracts.contract
 
 class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefactoringSupport) :
     SuggestedRefactoringAvailability(refactoringSupport)
 {
     override fun refineSignaturesWithResolve(state: SuggestedRefactoringState): SuggestedRefactoringState {
         val newDeclaration = state.declaration as? KtCallableDeclaration ?: return state
-        val oldDeclaration = state.createRestoredDeclarationCopy(refactoringSupport) as KtCallableDeclaration
+        val oldDeclaration = state.createRestoredDeclarationCopy(refactoringSupport) as? KtCallableDeclaration ?: return state
         oldDeclaration.containingKtFile.forcedModuleInfo = newDeclaration.getModuleInfo()
 
         val descriptorWithOldSignature = oldDeclaration.resolveToDescriptorIfAny() as CallableDescriptor
