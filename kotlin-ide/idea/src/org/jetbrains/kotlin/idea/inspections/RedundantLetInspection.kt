@@ -146,7 +146,7 @@ private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
 }
 
 private fun deleteCall(element: KtCallExpression) {
-    val parent = element.parent as? KtDotQualifiedExpression
+    val parent = element.parent as? KtQualifiedExpression
     if (parent != null) {
         val replacement = parent.selectorExpression?.takeIf { it != element } ?: parent.receiverExpression
         parent.replace(replacement)

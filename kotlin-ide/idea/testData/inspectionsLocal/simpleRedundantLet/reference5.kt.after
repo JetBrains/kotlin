@@ -1,0 +1,2 @@
+// WITH_RUNTIME
+val a = 1?.let { it }
