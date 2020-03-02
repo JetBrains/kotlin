@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
 import com.intellij.ide.lightEdit.LightEdit;
@@ -22,7 +22,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
 import com.intellij.util.containers.ConcurrentBitSet;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.hash.SharedIndexChunkConfiguration;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.roots.*;
 import gnu.trove.THashSet;
@@ -394,7 +393,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
         }
       }
 
-      SharedIndexChunkConfiguration.getInstance().locateIndexes(project, allEntries, indicator);
+      FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.processProjectEntries(project, allEntries, indicator));
 
       return providers;
     });
