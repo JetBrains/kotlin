@@ -14,8 +14,7 @@ fun addVfsListener(watcher: GradleScriptInputsWatcher) {
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
             override fun isRelevant(path: String): Boolean {
-                val files = getAffectedGradleProjectFiles(watcher.project)
-                return isInAffectedGradleProjectFiles(files, path)
+                return isInAffectedGradleProjectFiles(watcher.project, path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {
