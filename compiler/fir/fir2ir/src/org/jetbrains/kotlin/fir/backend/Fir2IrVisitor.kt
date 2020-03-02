@@ -68,8 +68,6 @@ class Fir2IrVisitor(
 
     private val integerApproximator = IntegerLiteralTypeApproximationTransformer(session.firSymbolProvider, session.inferenceContext)
 
-    private val typeContext = session.typeContext
-
     private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor, irBuiltIns)
 
     private val nothingType = session.builtinTypes.nothingType.toIrType(session, declarationStorage)
