@@ -454,11 +454,17 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       try {
         PersistentIndicesConfiguration.saveConfiguration();
 
-        for (VirtualFile file : getChangedFilesCollector().getAllFilesToUpdate()) {
-          if (!file.isValid()) {
-            removeDataFromIndicesForFile(Math.abs(getIdMaskingNonIdBasedFile(file)), file);
+        for (VirtualFile file : getChangedFilesCollector().getAllPossibleFilesToUpdate()) {
+          int fileId = getIdMaskingNonIdBasedFile(file);
+          if (file.isValid()) {
+            dropNontrivialIndexedStates(fileId);
+          }
+          else {
+            removeDataFromIndicesForFile(Math.abs(fileId), file);
           }
         }
+        getChangedFilesCollector().clearFilesToUpdate();
+
         IndexingStamp.flushCaches();
 
         IndexConfiguration state = getState();
@@ -1349,6 +1355,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
   @NotNull List<IndexableFileSet> getIndexableSets() {
     return myIndexableSets;
+  }
+
+  void dropNontrivialIndexedStates(int inputId) {
+    for (ID<?, ?> state : IndexingStamp.getNontrivialFileIndexedStates(inputId)) {
+      getIndex(state).resetIndexedStateForFile(inputId);
+    }
   }
 
   void doTransientStateChangeForFile(int fileId, @NotNull VirtualFile file) {

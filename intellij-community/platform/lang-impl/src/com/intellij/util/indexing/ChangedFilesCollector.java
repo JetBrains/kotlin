@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ConcurrencyUtil;
@@ -137,6 +138,24 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
     return new ArrayList<>(myFilesToUpdate.values());
   }
 
+  // it's important here to don't load any extension here, so we don't check scopes.
+  Collection<VirtualFile> getAllPossibleFilesToUpdate() {
+
+    ReadAction.run(() -> {
+      processFilesInReadAction(info -> {
+        myFilesToUpdate.put(info.getFileId(),
+                            info.isFileRemoved() ? new DeletedVirtualFileStub(((VirtualFileWithId)info.getFile())) : info.getFile());
+        return true;
+      });
+    });
+
+    return new ArrayList<>(myFilesToUpdate.values());
+  }
+
+  void clearFilesToUpdate() {
+    myFilesToUpdate.clear();
+  }
+
   @Override
   @NotNull
   public AsyncFileListener.ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
@@ -179,7 +198,7 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
     myManager.waitUntilIndicesAreInitialized();
 
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
-      processFilesInReadAction();
+      processFilesToUpdateInReadAction();
     }
     else {
       processFilesInReadActionWithYieldingToWriteAction();
@@ -222,7 +241,20 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
     }
   }
 
-  private void processFilesInReadAction() {
+  private void processFilesToUpdateInReadAction() {
+    processFilesInReadAction(info -> {
+      int fileId = info.getFileId();
+      VirtualFile file = info.getFile();
+      if (info.isTransientStateChanged()) myManager.doTransientStateChangeForFile(fileId, file);
+      if (info.isBeforeContentChanged()) myManager.doInvalidateIndicesForFile(fileId, file, true);
+      if (info.isContentChanged()) myManager.scheduleFileForIndexing(fileId, file, true);
+      if (info.isFileRemoved()) myManager.doInvalidateIndicesForFile(fileId, file, false);
+      if (info.isFileAdded()) myManager.scheduleFileForIndexing(fileId, file, false);
+      return true;
+    });
+  }
+
+  private void processFilesInReadAction(@NotNull VfsEventsMerger.VfsEventProcessor processor) {
     assert ApplicationManager.getApplication().isReadAccessAllowed(); // no vfs events -> event processing code can finish
 
     int publishedEventIndex = getEventMerger().getPublishedEventIndex();
@@ -238,13 +270,7 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
         ConcurrencyUtil.withLock(myManager.myWriteLock, () -> {
           try {
             ProgressManager.getInstance().executeNonCancelableSection(() -> {
-              int fileId = info.getFileId();
-              VirtualFile file = info.getFile();
-              if (info.isTransientStateChanged()) myManager.doTransientStateChangeForFile(fileId, file);
-              if (info.isBeforeContentChanged()) myManager.doInvalidateIndicesForFile(fileId, file, true);
-              if (info.isContentChanged()) myManager.scheduleFileForIndexing(fileId, file, true);
-              if (info.isFileRemoved()) myManager.doInvalidateIndicesForFile(fileId, file, false);
-              if (info.isFileAdded()) myManager.scheduleFileForIndexing(fileId, file, false);
+              processor.process(info);
             });
           }
           finally {
@@ -272,7 +298,7 @@ public final class ChangedFilesCollector extends IndexedFilesListener {
 
   private void processFilesInReadActionWithYieldingToWriteAction() {
     while (getEventMerger().hasChanges()) {
-      ReadAction.nonBlocking(this::processFilesInReadAction).executeSynchronously();
+      ReadAction.nonBlocking(() -> processFilesToUpdateInReadAction()).executeSynchronously();
     }
   }
 

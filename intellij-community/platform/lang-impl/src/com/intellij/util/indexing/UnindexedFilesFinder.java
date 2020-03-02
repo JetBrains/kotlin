@@ -62,9 +62,7 @@ class UnindexedFilesFinder implements VirtualFileFilter {
         if (!isDirectory && !myFileBasedIndex.isTooLarge(file)) {
 
           if (!myFileTypeIndex.isIndexedStateForFile(inputId, fileContent)) {
-            for (ID<?, ?> state : IndexingStamp.getNontrivialFileIndexedStates(inputId)) {
-              myFileBasedIndex.getIndex(state).resetIndexedStateForFile(inputId);
-            }
+            myFileBasedIndex.dropNontrivialIndexedStates(inputId);
             shouldIndexFile.set(true);
           } else {
             final List<ID<?, ?>> affectedIndexCandidates = myFileBasedIndex.getAffectedIndexCandidates(file);
@@ -96,9 +94,7 @@ class UnindexedFilesFinder implements VirtualFileFilter {
                     }
                     if (isInvalidatedChunk) {
                       myFileContentHashIndex.update(inputId, null).compute();
-                      for (ID<?, ?> state : IndexingStamp.getNontrivialFileIndexedStates(inputId)) {
-                        myFileBasedIndex.getIndex(state).resetIndexedStateForFile(inputId);
-                      }
+                      myFileBasedIndex.dropNontrivialIndexedStates(inputId);
                     }
                   }
                   if (fileIndexingState == FileBasedIndexImpl.FileIndexingState.SHOULD_INDEX) {
