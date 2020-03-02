@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
@@ -36,8 +38,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
             !KtPsiUtil.isLocal(it)
         } ?: return emptyList()
 
-        val factory = diagnostic.factory
-        val annotationFqName = when (factory) {
+        val annotationFqName = when (diagnostic.factory) {
             EXPERIMENTAL_API_USAGE -> EXPERIMENTAL_API_USAGE.cast(diagnostic).a
             EXPERIMENTAL_API_USAGE_ERROR -> EXPERIMENTAL_API_USAGE_ERROR.cast(diagnostic).a
             EXPERIMENTAL_OVERRIDE -> EXPERIMENTAL_OVERRIDE.cast(diagnostic).a
@@ -71,7 +72,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
             }
             result.add(
                 AddAnnotationFix(
-                    containingDeclaration, ExperimentalUsageChecker.OPT_IN_FQ_NAME, suffix, annotationFqName
+                    containingDeclaration, moduleDescriptor.OPT_IN_FQ_NAME, suffix, annotationFqName
                 )
             )
         }
@@ -84,7 +85,7 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
                 } else {
                     result.add(
                         AddAnnotationFix(
-                            containingClassOrObject, ExperimentalUsageChecker.OPT_IN_FQ_NAME, suffix, annotationFqName
+                            containingClassOrObject, moduleDescriptor.OPT_IN_FQ_NAME, suffix, annotationFqName
                         )
                     )
                 }
@@ -100,4 +101,11 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
 
         return result
     }
+
+    private val ModuleDescriptor.OPT_IN_FQ_NAME: FqName
+        get() = ExperimentalUsageChecker.OPT_IN_FQ_NAME.takeIf { fqNameIsExisting(it) }
+            ?: ExperimentalUsageChecker.OLD_USE_EXPERIMENTAL_FQ_NAME
+
+
+    fun ModuleDescriptor.fqNameIsExisting(fqName: FqName): Boolean = resolveClassByFqName(fqName, NoLookupLocation.FROM_IDE) != null
 }
