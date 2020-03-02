@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
@@ -43,7 +44,8 @@ public abstract class DependentSdkType extends SdkType {
   @Override
   public void showCustomCreateUI(@NotNull final SdkModel sdkModel, @NotNull JComponent parentComponent, @NotNull final Consumer<Sdk> sdkCreatedCallback) {
     if (!checkDependency(sdkModel)) {
-      if (Messages.showOkCancelDialog(parentComponent, getUnsatisfiedDependencyMessage(), "Cannot Create SDK", Messages.getWarningIcon()) != Messages.OK) {
+      if (Messages.showOkCancelDialog(parentComponent, getUnsatisfiedDependencyMessage(),
+                                      ProjectBundle.message("dialog.title.cannot.create.sdk"), Messages.getWarningIcon()) != Messages.OK) {
         return;
       }
       if (fixDependency(sdkModel, sdkCreatedCallback) == null) {

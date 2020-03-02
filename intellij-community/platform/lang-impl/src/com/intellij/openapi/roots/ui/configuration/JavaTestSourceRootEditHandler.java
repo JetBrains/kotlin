@@ -65,7 +65,7 @@ public class JavaTestSourceRootEditHandler extends JavaSourceRootEditHandlerBase
   @NotNull
   @Override
   public String getMarkRootButtonText() {
-    return "Tests";
+    return ProjectBundle.message("button.folder.type.tests");
   }
 
   @NotNull

@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.impl.ModuleRootManagerImpl;
@@ -57,8 +58,9 @@ public final class ClasspathStorage extends StateStorageBase<Boolean> {
     ClasspathStorageProvider provider = getProvider(storageType);
     if (provider == null) {
       if (module.getUserData(ERROR_NOTIFIED_KEY) == null) {
-        Notification n = new Notification(StorageUtilKt.NOTIFICATION_GROUP_ID, "Cannot load module '" + module.getName() + "'",
-                                          "Support for " + storageType + " format is not installed.", NotificationType.ERROR);
+        Notification n = new Notification(StorageUtilKt.NOTIFICATION_GROUP_ID,
+                                          ProjectBundle.message("notification.title.cannot.load.module.0", module.getName()),
+                                          ProjectBundle.message("notification.content.support.for.0.format.is.not.installed", storageType), NotificationType.ERROR);
         n.notify(module.getProject());
         module.putUserData(ERROR_NOTIFIED_KEY, Boolean.TRUE);
         LOG.info("Classpath storage provider " + storageType + " not found");

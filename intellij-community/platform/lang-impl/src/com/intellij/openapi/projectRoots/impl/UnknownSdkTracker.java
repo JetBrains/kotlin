@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.ui.configuration.*;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix;
@@ -100,20 +101,20 @@ public class UnknownSdkTracker {
     }
 
     ProgressManager.getInstance()
-      .run(new Task.Backgroundable(myProject, "Resolving SDKs", false, ALWAYS_BACKGROUND) {
+      .run(new Task.Backgroundable(myProject, ProjectBundle.message("progress.title.resolving.sdks"), false, ALWAYS_BACKGROUND) {
              @Override
              public void run(@NotNull ProgressIndicator indicator) {
-               indicator.setText("Resolving missing SDKs...");
+               indicator.setText(ProjectBundle.message("progress.text.resolving.missing.sdks"));
                List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
 
-               indicator.setText("Looking for local SDKs...");
+               indicator.setText(ProjectBundle.message("progress.text.looking.for.local.sdks"));
                Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
 
-               indicator.setText("Looking for downloadable SDKs...");
+               indicator.setText(ProjectBundle.message("progress.text.looking.for.downloadable.sdks"));
                Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
 
                if (!localFixes.isEmpty()) {
-                 indicator.setText("Configuring SDKs...");
+                 indicator.setText(ProjectBundle.message("progress.text.configuring.sdks"));
                  configureLocalSdks(localFixes);
                }
 
@@ -177,7 +178,8 @@ public class UnknownSdkTracker {
     } catch (Exception error) {
       LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
       ApplicationManager.getApplication().invokeLater(() -> {
-        Messages.showErrorDialog("Failed to download " + fix.getDownloadDescription() + ". " + error.getMessage(), title);
+        Messages.showErrorDialog(ProjectBundle.message("dialog.message.failed.to.download.0.1", fix.getDownloadDescription(),
+                                                       error.getMessage()), title);
       });
       onCompleted.consume(null);
       return;
@@ -209,7 +211,8 @@ public class UnknownSdkTracker {
       } catch (Exception error) {
         LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
         ApplicationManager.getApplication().invokeLater(() -> {
-          Messages.showErrorDialog("Failed to download " + fix.getDownloadDescription() + ". " + error.getMessage(), title);
+          Messages.showErrorDialog(
+            ProjectBundle.message("dialog.message.failed.to.download.0.1", fix.getDownloadDescription(), error.getMessage()), title);
         });
         onCompleted.consume(null);
       }

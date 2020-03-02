@@ -17,6 +17,7 @@ package com.intellij.ide.util.projectWizard;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.ProjectGeneratorPeer;
@@ -31,7 +32,7 @@ public class EmptyWebProjectTemplate extends WebProjectTemplate<Object> {
   @NotNull
   @Override
   public String getName() {
-    return "Empty Project";
+    return ProjectBundle.message("item.text.empty.project");
   }
 
   @Override

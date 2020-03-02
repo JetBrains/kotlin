@@ -92,7 +92,7 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
       // it is not modal warning at all
       //Messages.showWarningDialog(myProject, message, ProjectBundle.message("module.unknown.type.title"));
       Notifications.Bus.notify(new Notification(
-        "Module Manager",
+        ProjectBundle.message("notification.group.module.manager"),
         ProjectBundle.message("module.unknown.type.title"),
         message,
         NotificationType.WARNING

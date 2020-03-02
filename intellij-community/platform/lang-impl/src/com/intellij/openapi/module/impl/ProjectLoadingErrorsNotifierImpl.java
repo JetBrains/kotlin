@@ -85,7 +85,8 @@ public class ProjectLoadingErrorsNotifierImpl extends ProjectLoadingErrorsNotifi
       final String invalidElements = getInvalidElementsString(type, descriptions);
       final String errorText = ProjectBundle.message("error.message.configuration.cannot.load") + " " + invalidElements + " <a href=\"\">Details...</a>";
 
-      Notifications.Bus.notify(new Notification("Project Loading Error", "Error Loading Project", errorText, NotificationType.ERROR,
+      Notifications.Bus.notify(new Notification(ProjectBundle.message("notification.group.project.loading.error"),
+                                                ProjectBundle.message("notification.title.error.loading.project"), errorText, NotificationType.ERROR,
                                                 new NotificationListener() {
                                                   @Override
                                                   public void hyperlinkUpdate(@NotNull Notification notification,

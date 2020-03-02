@@ -7,7 +7,6 @@ import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.roots.IconActionComponent;
 import com.intellij.util.ui.FormBuilder;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
@@ -84,9 +83,9 @@ public abstract class JavaSourceRootEditHandlerBase extends ModuleSourceRootEdit
       myProperties = properties;
       setTitle(ProjectBundle.message("module.paths.edit.properties.title"));
       myPackagePrefixField = new JTextField();
-      myIsGeneratedCheckBox = new JCheckBox(UIUtil.replaceMnemonicAmpersand("For &generated sources"));
+      myIsGeneratedCheckBox = new JCheckBox(ProjectBundle.message("checkbox.for.generated.sources"));
       myMainPanel = FormBuilder.createFormBuilder()
-        .addLabeledComponent("Package &prefix:", myPackagePrefixField)
+        .addLabeledComponent(ProjectBundle.message("label.package.prefix"), myPackagePrefixField)
         .addComponent(myIsGeneratedCheckBox)
         .getPanel();
       myPackagePrefixField.setText(myProperties.getPackagePrefix());

@@ -118,7 +118,8 @@ public class ModuleDeleteProvider  implements DeleteProvider, TitledHandler  {
 
   @Override
   public String getActionTitle() {
-    return ProjectAttachProcessor.canAttachToProject() ? "Remove from Project View" : "Remove Module";
+    return ProjectAttachProcessor.canAttachToProject() ? ProjectBundle.message("action.text.remove.from.project.view")
+                                                       : ProjectBundle.message("action.text.remove.module");
   }
 
   public static void removeModule(@NotNull final Module moduleToRemove,

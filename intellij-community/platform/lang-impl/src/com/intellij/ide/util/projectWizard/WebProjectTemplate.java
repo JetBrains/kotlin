@@ -2,6 +2,7 @@
 package com.intellij.ide.util.projectWizard;
 
 import com.intellij.openapi.module.WebModuleBuilder;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.platform.ProjectTemplate;
 import com.intellij.platform.WebProjectGenerator;
@@ -50,7 +51,7 @@ public abstract class WebProjectTemplate<T> extends WebProjectGenerator<T> imple
   @NotNull
   public static JPanel createTitlePanel() {
     final JPanel titlePanel = new JPanel(new BorderLayout());
-    final JLabel title = new JLabel("New project");
+    final JLabel title = new JLabel(ProjectBundle.message("label.new.project"));
     title.setFont(title.getFont().deriveFont(Font.BOLD));
     titlePanel.add(title, BorderLayout.WEST);
     titlePanel.setBorder(JBUI.Borders.emptyBottom(10));

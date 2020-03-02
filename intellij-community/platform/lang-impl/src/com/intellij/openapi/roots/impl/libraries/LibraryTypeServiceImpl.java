@@ -4,6 +4,7 @@ package com.intellij.openapi.roots.impl.libraries;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.roots.libraries.LibraryTypeService;
@@ -32,7 +33,7 @@ public class LibraryTypeServiceImpl extends LibraryTypeService {
                                                         LibraryType<?> type,
                                                         final Project project) {
     final FileChooserDescriptor chooserDescriptor = descriptor.createAttachFilesChooserDescriptor(null);
-    chooserDescriptor.setTitle("Select Library Files");
+    chooserDescriptor.setTitle(ProjectBundle.message("chooser.title.select.library.files"));
     final VirtualFile[] rootCandidates = FileChooser.chooseFiles(chooserDescriptor, parentComponent, project, contextDirectory);
     if (rootCandidates.length == 0) {
       return null;

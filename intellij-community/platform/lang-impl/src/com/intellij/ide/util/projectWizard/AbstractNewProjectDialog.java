@@ -3,6 +3,7 @@ package com.intellij.ide.util.projectWizard;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.DialogWrapperPeer;
@@ -46,7 +47,8 @@ public abstract class AbstractNewProjectDialog extends DialogWrapper {
   @Nullable
   @Override
   protected JComponent createCenterPanel() {
-    setTitle(DirectoryProjectGenerator.EP_NAME.hasAnyExtensions() ? "New Project" : "Create Project");
+    setTitle(DirectoryProjectGenerator.EP_NAME.hasAnyExtensions() ? ProjectBundle.message("dialog.title.new.project")
+                                                                  : ProjectBundle.message("dialog.title.create.project"));
     DefaultActionGroup root = createRootStep();
     Disposer.register(getDisposable(), () -> root.removeAll());
 

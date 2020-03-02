@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
@@ -188,7 +189,7 @@ public class SdkDetector {
                                         @NotNull DetectedSdkListener callback) {
     Task.Backgroundable task = new Task.Backgroundable(
       project,
-      "Detecting SDKs",
+      ProjectBundle.message("progress.title.detecting.sdks"),
       true,
       PerformInBackgroundOption.ALWAYS_BACKGROUND) {
 

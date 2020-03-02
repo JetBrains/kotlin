@@ -164,11 +164,8 @@ public class SdkConfigurationUtil {
                "customSdkSuggestedName=[" + customSdkSuggestedName + "]; " +
                "sdk=[" + sdk + "]", e);
       if (!silent) {
-        Messages.showErrorDialog("Error configuring SDK: " +
-                                 e.getMessage() +
-                                 ".\nPlease make sure that " +
-                                 FileUtil.toSystemDependentName(homeDir.getPath()) +
-                                 " is a valid home path for this SDK type.", "Error Configuring SDK");
+        Messages.showErrorDialog(ProjectBundle.message("dialog.message.error.configuring.sdk.0.please.make.sure.that.1.is.a.valid.home.path.for.this.sdk.type", e.getMessage(),
+                                                       FileUtil.toSystemDependentName(homeDir.getPath())), ProjectBundle.message("dialog.title.error.configuring.sdk"));
       }
       return null;
     }
