@@ -10,7 +10,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -22,7 +21,7 @@ import org.w3c.dom.NodeList
 import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleDependencyIdentifier(
-    val groupId: String,
+    val groupId: String?,
     val moduleId: String
 )
 
@@ -68,7 +67,7 @@ data class KotlinProjectStructureMetadata(
     @Suppress("UNUSED") // Gradle input
     @get:Input
     internal val sourceSetModuleDependenciesInput: Map<String, Set<Pair<String, String>>>
-        get() = sourceSetModuleDependencies.mapValues { (_, ids) -> ids.map { (group, module) -> group to module }.toSet() }
+        get() = sourceSetModuleDependencies.mapValues { (_, ids) -> ids.map { (group, module) -> group.orEmpty() to module }.toSet() }
 
     companion object {
         internal const val FORMAT_VERSION_0_1 = "0.1"
@@ -111,9 +110,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
                 }.distinct()
                 else -> project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies
             }
-            sourceSet.name to sourceSetExportedDependencies.map {
-                ModuleDependencyIdentifier(it.group.orEmpty(), it.name)
-            }.toSet()
+            sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },
         hostSpecificSourceSets = getHostSpecificSourceSets(project).map { it.name }.toSet(),
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->

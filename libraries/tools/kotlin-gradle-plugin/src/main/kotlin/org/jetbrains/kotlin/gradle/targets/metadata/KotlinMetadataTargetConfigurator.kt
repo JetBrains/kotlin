@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
 import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import java.io.File
 import java.util.concurrent.Callable
 
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
@@ -374,17 +373,25 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             val (unrequested, requested) = metadataDependencyResolutions
                 .partition { it is MetadataDependencyResolution.ExcludeAsUnrequested }
 
-            unrequested.forEach { configuration.exclude(mapOf("group" to it.dependency.moduleGroup, "module" to it.dependency.moduleName)) }
+            unrequested.forEach {
+                val (group, name) = it.projectDependency?.run {
+                    /** Note: the project dependency notation here should be exactly this, group:name,
+                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
+                    ModuleDependencyIdentifier(group.toString(), name)
+                } ?: ModuleIds.fromComponent(project, it.dependency)
+                configuration.exclude(mapOf("group" to group, "module" to name))
+            }
 
-            requested.forEach {
-                val notation = listOf(it.dependency.moduleGroup, it.dependency.moduleName, it.dependency.moduleVersion).joinToString(":")
+            requested.filter { it.projectDependency == null }.forEach {
+                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
+                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
                 configuration.resolutionStrategy.force(notation)
             }
         }
     }
 
     private fun createTransformedMetadataClasspath(
-        fromFiles: Iterable<File>,
+        fromFiles: Configuration,
         compilation: AbstractKotlinCompilation<*>
     ): FileCollection {
         val project = compilation.target.project
@@ -400,17 +407,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
                 }
 
-                val allResolutionsByArtifactFile: Map<File, Iterable<MetadataDependencyResolution>> =
-                    mutableMapOf<File, MutableList<MetadataDependencyResolution>>().apply {
+                val allResolutionsByModule: Map<ModuleDependencyIdentifier, List<MetadataDependencyResolution>> =
+                    mutableMapOf<ModuleDependencyIdentifier, MutableList<MetadataDependencyResolution>>().apply {
                         transformationTaskHolders.forEach {
                             val resolutions = it.get().metadataDependencyResolutions
-
                             resolutions.forEach { resolution ->
-                                val artifacts = resolution.dependency.moduleArtifacts.map { it.file }
-
-                                artifacts.forEach { artifactFile ->
-                                    getOrPut(artifactFile) { mutableListOf() }.add(resolution)
-                                }
+                                getOrPut(ModuleIds.fromComponent(project, resolution.dependency)) { mutableListOf() }.add(resolution)
                             }
                         }
                     }
@@ -423,14 +425,22 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     dependencyCompilation.output.classesDirs.takeIf { hierarchySourceSet != sourceSet }
                 }
 
+                val artifactView = fromFiles.incoming.artifactView { view ->
+                    view.componentFilter { id ->
+                        val moduleId = ModuleIds.fromComponentId(project, id)
+                        allResolutionsByModule[moduleId].let { resolutions ->
+                            resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
+                        }
+                    }
+                }
+
                 mutableSetOf<Any /* File | FileCollection */>().apply {
-
                     addAll(dependsOnCompilationOutputs)
-
-                    fromFiles.forEach { file ->
-                        val resolutions = allResolutionsByArtifactFile[file]
+                    artifactView.artifacts.forEach { artifact ->
+                        val resolutions =
+                            allResolutionsByModule[ModuleIds.fromComponentId(project, artifact.id.componentIdentifier)]
                         if (resolutions == null) {
-                            add(file)
+                            add(artifact.file)
                         } else {
                             val chooseVisibleSourceSets =
                                 resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
@@ -439,7 +449,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                                 // Wrap the list into a FileCollection, as some older Gradle version failed to resolve the classpath
                                 add(project.files(chooseVisibleSourceSets.map { transformedFilesByResolution.getValue(it) }))
                             } else if (resolutions.any { it is MetadataDependencyResolution.KeepOriginalDependency }) {
-                                add(file)
+                                add(artifact.file)
                             } // else: all dependency transformations exclude this dependency as unrequested; don't add any files
                         }
                     }
