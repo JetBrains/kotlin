@@ -24938,6 +24938,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/reified/reifiedInlineIntoNonInlineableLambda.kt");
         }
 
+        @TestMetadata("reifiedIntersectionType.kt")
+        public void testReifiedIntersectionType() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/reifiedIntersectionType.kt");
+        }
+
         @TestMetadata("safecast.kt")
         public void testSafecast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/safecast.kt");

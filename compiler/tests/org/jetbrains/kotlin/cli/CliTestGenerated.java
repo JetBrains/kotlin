@@ -888,6 +888,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/outputPrefixFileNotFound.args");
         }
 
+        @TestMetadata("reifiedIntersectionType.args")
+        public void testReifiedIntersectionType() throws Exception {
+            runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
+        }
+
         @TestMetadata("simple2js.args")
         public void testSimple2js() throws Exception {
             runTest("compiler/testData/cli/js/simple2js.args");

@@ -246,6 +246,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
 
+        if (!arguments.getNewInference()) {
+            CommonConfigurationKeysKt.setLanguageVersionSettings(
+                    configuration,
+                    new JSLanguageVersionSettings(CommonConfigurationKeysKt.getLanguageVersionSettings(configuration))
+            );
+        }
+
         JsConfig config = new JsConfig(project, configuration);
         JsConfig.Reporter reporter = new JsConfig.Reporter() {
             @Override
