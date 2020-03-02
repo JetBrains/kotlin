@@ -22,7 +22,7 @@ public abstract class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;Ljava/l
     public @org.jetbrains.annotations.Nullable <null> method remove(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public bridge final <null> method remove(p0: java.lang.Object): java.lang.Object
     public bridge final <null> method size(): int
-    private synthetic final field <null> $$delegate_0: java.util.HashMap
+    private synthetic final field <Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/String;>;> $$delegate_0: java.util.HashMap
 }
 
 @kotlin.Metadata
@@ -49,5 +49,5 @@ public final class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;Ljava/lang
     public @org.jetbrains.annotations.Nullable <null> method remove(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public bridge final <null> method remove(p0: java.lang.Object): java.lang.Object
     public bridge final <null> method size(): int
-    private synthetic final field <null> $$delegate_0: java.util.HashMap
+    private synthetic final field <Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/String;>;> $$delegate_0: java.util.HashMap
 }

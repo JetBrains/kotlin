@@ -1176,7 +1176,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!fieldInfo.generateField) return;
 
         v.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC,
-                   fieldInfo.name, fieldInfo.type.getDescriptor(), /*TODO*/null, null);
+                   fieldInfo.name, fieldInfo.type.getDescriptor(), fieldInfo.genericSignature, null);
     }
 
     private void generateDelegates(

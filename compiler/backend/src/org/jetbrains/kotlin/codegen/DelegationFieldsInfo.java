@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -49,11 +50,17 @@ public class DelegationFieldsInfo {
         public final Type type;
         public final String name;
         public final boolean generateField;
+        public final String genericSignature;
 
-        private Field(Type type, String name, boolean generateField) {
+        private Field(Type type, String name, boolean generateField, String genericSignature) {
             this.type = type;
             this.name = name;
             this.generateField = generateField;
+            this.genericSignature = genericSignature;
+        }
+
+        private Field(Type type, String name, boolean generateField) {
+            this(type, name, generateField, null);
         }
 
         @NotNull
@@ -75,8 +82,8 @@ public class DelegationFieldsInfo {
                    new DelegationFieldsInfo.Field(typeMapper.mapType(propertyDescriptor), propertyDescriptor.getName().asString(), false));
     }
 
-    private void addField(KtDelegatedSuperTypeEntry specifier, Type type, String name) {
-        fields.put(specifier, new DelegationFieldsInfo.Field(type, name, true));
+    private void addField(KtDelegatedSuperTypeEntry specifier, Type type, String name, String genericSignature) {
+        fields.put(specifier, new DelegationFieldsInfo.Field(type, name, true, genericSignature));
     }
 
     @NotNull
@@ -97,13 +104,15 @@ public class DelegationFieldsInfo {
                 else {
                     KotlinType expressionType = bindingContext.getType(expression);
                     ClassDescriptor superClass = JvmCodegenUtil.getSuperClass(specifier, state, bindingContext);
+                    BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
                     Type asmType =
-                            expressionType != null ? typeMapper.mapType(expressionType) :
-                            superClass != null ? typeMapper.mapType(superClass) : null;
+                            expressionType != null ? typeMapper.mapType(expressionType, sw) :
+                            superClass != null ? typeMapper.mapType(superClass.getDefaultType(), sw) : null;
 
                     if (asmType == null) continue;
 
-                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, DELEGATE_SUPER_FIELD_PREFIX + n);
+                    String genericSignature = sw.makeJavaGenericSignature();
+                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, DELEGATE_SUPER_FIELD_PREFIX + n, genericSignature);
                 }
                 n++;
             }
