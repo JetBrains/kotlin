@@ -33,6 +33,10 @@ abstract class StorageBufferingHandler {
     }
   }
 
+  void resetState() {
+    myPreviousDataBufferingState = false;
+  }
+
   @NotNull
   protected abstract Stream<UpdatableIndex<?, ? ,?>> getIndexes();
 }
