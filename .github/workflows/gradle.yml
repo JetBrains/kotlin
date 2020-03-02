@@ -8,7 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+
+      - uses: gradle/wrapper-validation-action@v1
 
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
