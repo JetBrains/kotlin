@@ -17,7 +17,7 @@ public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Objec
     public <null> method getSize(): int
     public <null> method isEmpty(): boolean
     public bridge final <null> method size(): int
-    private synthetic final field <null> $$delegate_0: java.util.HashMap
+    private synthetic final field <Ljava/util/HashMap<TK;TV;>;> $$delegate_0: java.util.HashMap
 }
 
 @kotlin.Metadata
@@ -39,5 +39,5 @@ public final class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;L
     public <null> method getSize(): int
     public <null> method isEmpty(): boolean
     public bridge final <null> method size(): int
-    private synthetic final field <null> $$delegate_0: java.util.HashMap
+    private synthetic final field <Ljava/util/HashMap<TK;TV;>;> $$delegate_0: java.util.HashMap
 }

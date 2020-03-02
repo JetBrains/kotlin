@@ -21,7 +21,7 @@ public abstract class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<Lja
     public <null> method isEmpty(): boolean
     public synthetic bridge <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public bridge final <null> method size(): int
-    private synthetic final field <null> $$delegate_0: java.util.HashMap
+    private synthetic final field <Ljava/util/HashMap<Ljava/lang/String;TV;>;> $$delegate_0: java.util.HashMap
 }
 
 @kotlin.Metadata
@@ -47,5 +47,5 @@ public final class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<Ljava/
     public <null> method isEmpty(): boolean
     public synthetic bridge <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public bridge final <null> method size(): int
-    private synthetic final field <null> $$delegate_0: java.util.HashMap
+    private synthetic final field <Ljava/util/HashMap<Ljava/lang/String;TV;>;> $$delegate_0: java.util.HashMap
 }
