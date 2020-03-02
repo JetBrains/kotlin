@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
-// TODO KT-36648 Captured variables not optimized in JVM_IR
-// TODO KT-36812 Generate proper lifetime intervals for local variables in JVM_IR
+// TODO: JVM_IR uses ObjectRef instead of IntRef for the value
 
 fun test(): UInt {
     val c: UInt
@@ -11,4 +10,4 @@ fun test(): UInt {
 }
 
 // 2 ISTORE 0
-// 1 LOCALVARIABLE c I L1 L.* 0
+// 1 LOCALVARIABLE c I

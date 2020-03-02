@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
@@ -207,13 +208,6 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
                     refValue.localVarIndex = localVar.index
                 }
 
-                val startIndex = localVar.start.getIndex()
-                val initFieldInsns = refValue.putFieldInsns.filter { it.getIndex() < startIndex }
-                if (initFieldInsns.size != 1) {
-                    refValue.hazard = true
-                    continue
-                }
-
                 val cleanInstructions = findCleanInstructions(refValue, oldVarIndex, methodNode.instructions)
                 if (cleanInstructions.size > 1) {
                     refValue.hazard = true
@@ -227,14 +221,14 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             return InsnSequence(instructions).filterIsInstance<VarInsnNode>().filter {
                 it.opcode == Opcodes.ASTORE && it.`var` == oldVarIndex
             }.filter {
-                    it.previous?.opcode == Opcodes.ACONST_NULL
-                }.filter {
-                    val operationIndex = instructions.indexOf(it)
-                    val localVariableNode = refValue.localVar!!
-                    instructions.indexOf(localVariableNode.start) < operationIndex && operationIndex < instructions.indexOf(
-                        localVariableNode.end
-                    )
-                }.toList()
+                it.previous?.opcode == Opcodes.ACONST_NULL
+            }.filter {
+                val operationIndex = instructions.indexOf(it)
+                val localVariableNode = refValue.localVar!!
+                instructions.indexOf(localVariableNode.start) < operationIndex && operationIndex < instructions.indexOf(
+                    localVariableNode.end
+                )
+            }.toList()
         }
 
         private fun rewrite() {
@@ -250,9 +244,17 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
 
         private fun rewriteRefValue(capturedVar: CapturedVarDescriptor) {
             methodNode.instructions.run {
-                capturedVar.localVar!!.let {
-                    it.signature = null
-                    it.desc = capturedVar.valueType.descriptor
+                val localVar = capturedVar.localVar!!
+                localVar.signature = null
+                localVar.desc = capturedVar.valueType.descriptor
+
+                val loadOpcode = capturedVar.valueType.getOpcode(Opcodes.ILOAD)
+                val storeOpcode = capturedVar.valueType.getOpcode(Opcodes.ISTORE)
+
+                if (capturedVar.putFieldInsns.none { it.getIndex() < localVar.start.getIndex() }) {
+                    // variable needs to be initialized before its live range can begin
+                    insertBefore(capturedVar.newInsn, InsnNode(AsmUtil.defaultValueOpcode(capturedVar.valueType)))
+                    insertBefore(capturedVar.newInsn, VarInsnNode(storeOpcode, capturedVar.localVarIndex))
                 }
 
                 remove(capturedVar.newInsn)
@@ -260,14 +262,8 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
                 capturedVar.stackInsns.forEach { remove(it) }
                 capturedVar.aloadInsns.forEach { remove(it) }
                 capturedVar.astoreInsns.forEach { remove(it) }
-
-                capturedVar.getFieldInsns.forEach {
-                    set(it, VarInsnNode(capturedVar.valueType.getOpcode(Opcodes.ILOAD), capturedVar.localVarIndex))
-                }
-
-                capturedVar.putFieldInsns.forEach {
-                    set(it, VarInsnNode(capturedVar.valueType.getOpcode(Opcodes.ISTORE), capturedVar.localVarIndex))
-                }
+                capturedVar.getFieldInsns.forEach { set(it, VarInsnNode(loadOpcode, capturedVar.localVarIndex)) }
+                capturedVar.putFieldInsns.forEach { set(it, VarInsnNode(storeOpcode, capturedVar.localVarIndex)) }
 
                 //after visiting block codegen tries to delete all allocated references:
                 // see ExpressionCodegen.addLeaveTaskToRemoveLocalVariableFromFrameMap
