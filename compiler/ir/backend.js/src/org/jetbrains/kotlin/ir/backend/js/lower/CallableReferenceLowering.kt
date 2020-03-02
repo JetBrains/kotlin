@@ -67,7 +67,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             return expression.run {
                 val vpCount = if (function.isSuspend) 1 else 0
                 val ctorCall =
-                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount, CALLABLE_REFERNCE_CREATE).apply {
+                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount, CALLABLE_REFERENCE_CREATE).apply {
                         if (function.isSuspend) {
                             putValueArgument(0, IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType))
                         }
@@ -85,7 +85,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
             return expression.run {
                 val ctorCall =
-                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, 0, CALLABLE_REFERNCE_CREATE)
+                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, 0, CALLABLE_REFERENCE_CREATE)
                 IrCompositeImpl(startOffset, endOffset, type, origin, listOf(clazz, ctorCall))
             }
         }
@@ -211,16 +211,16 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         }
 
         fun getValue(d: IrValueDeclaration): IrGetValue =
-            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, CALLABLE_REFERNCE_INVOKE)
+            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, CALLABLE_REFERENCE_INVOKE)
 
 
         private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
             val callee = function
             val irCall =  reference.run {
                 if (callee is IrConstructor) {
-                    IrConstructorCallImpl(startOffset, endOffset, callee.parentAsClass.defaultType, callee.symbol, callee.typeParameters.size, 0 /* TODO */, callee.valueParameters.size, CALLABLE_REFERNCE_INVOKE)
+                    IrConstructorCallImpl(startOffset, endOffset, callee.parentAsClass.defaultType, callee.symbol, callee.typeParameters.size, 0 /* TODO */, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
                 } else {
-                    IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.typeParameters.size, callee.valueParameters.size, CALLABLE_REFERNCE_INVOKE)
+                    IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.typeParameters.size, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
                 }
             }
 
@@ -254,7 +254,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                                 boundReceiverField.symbol,
                                 boundReceiverField.type,
                                 thisValue,
-                                CALLABLE_REFERNCE_INVOKE
+                                CALLABLE_REFERENCE_INVOKE
                             )
 
                         if (funRef.dispatchReceiver != null) irCall.dispatchReceiver = value
@@ -352,8 +352,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
         object GENERATED_MEMBER_IN_CALLABLE_REFERENCE : IrDeclarationOriginImpl("GENERATED_MEMBER_IN_CALLABLE_REFERENCE")
 
-        object CALLABLE_REFERNCE_CREATE : IrStatementOriginImpl("CALLABLE_REFERENCE_CREATE")
-        object CALLABLE_REFERNCE_INVOKE : IrStatementOriginImpl("CALLABLE_REFERENCE_INVOKE")
+        object CALLABLE_REFERENCE_CREATE : IrStatementOriginImpl("CALLABLE_REFERENCE_CREATE")
+        object CALLABLE_REFERENCE_INVOKE : IrStatementOriginImpl("CALLABLE_REFERENCE_INVOKE")
 
         val THIS_NAME = Name.special("<this>")
         val BOUND_RECEIVER_NAME = Name.identifier("\$boundThis")

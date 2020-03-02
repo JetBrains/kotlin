@@ -35,7 +35,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
             addWithPredicate(
                 Name.special(Namer.KCALLABLE_GET_NAME),
                 { call ->
-                    call.origin != CallableReferenceLowering.Companion.CALLABLE_REFERNCE_INVOKE &&
+                    call.origin != CallableReferenceLowering.Companion.CALLABLE_REFERENCE_INVOKE &&
                     call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kCallableClass) } ?: false
                 },
                 { call ->

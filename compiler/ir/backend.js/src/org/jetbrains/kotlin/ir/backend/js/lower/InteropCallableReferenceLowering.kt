@@ -39,7 +39,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     inner class CallableReferenceLowerTransformer : IrElementTransformerVoid() {
         override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
             expression.transformChildrenVoid(this)
-            if (expression.origin === CallableReferenceLowering.Companion.CALLABLE_REFERNCE_CREATE) {
+            if (expression.origin === CallableReferenceLowering.Companion.CALLABLE_REFERENCE_CREATE) {
                 return transformToJavaScriptFunction(expression)
             }
             return expression
@@ -162,7 +162,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                         nameGetter.symbol,
                         0,
                         0,
-                        CallableReferenceLowering.Companion.CALLABLE_REFERNCE_INVOKE
+                        CallableReferenceLowering.Companion.CALLABLE_REFERENCE_INVOKE
                     ).apply {
                         dispatchReceiver = JsIrBuilder.buildGetValue(instanceVal.symbol)
                     }
