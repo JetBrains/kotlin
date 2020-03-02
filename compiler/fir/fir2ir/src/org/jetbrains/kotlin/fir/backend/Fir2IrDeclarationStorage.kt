@@ -484,7 +484,7 @@ class Fir2IrDeclarationStorage(
                     )
                 }
             }
-            if (containingClass != null && !isStatic) {
+            if (function !is FirAnonymousFunction && containingClass != null && !isStatic) {
                 dispatchReceiverParameter = declareThisReceiverParameter(
                     parent,
                     thisType = containingClass.thisReceiver!!.type,
@@ -502,6 +502,9 @@ class Fir2IrDeclarationStorage(
         shouldLeaveScope: Boolean,
         parentPropertyReceiverType: FirTypeRef? = null
     ): T {
+        if (irParent != null) {
+            parent = irParent
+        }
         descriptor.bind(this)
         enterScope(descriptor)
         declareParameters(function, irParent as? IrClass, isStatic, parentPropertyReceiverType)
@@ -729,7 +732,7 @@ class Fir2IrDeclarationStorage(
 
     fun getIrProperty(
         property: FirProperty,
-        irParent: IrDeclarationParent? = null,
+        irParent: IrDeclarationParent?,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrProperty {
         return propertyCache.getOrPut(property) {
@@ -755,6 +758,9 @@ class Fir2IrDeclarationStorage(
                         isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                     ).apply {
                         descriptor.bind(this)
+                        if (irParent != null) {
+                            parent = irParent
+                        }
                         val type = property.returnTypeRef.toIrType()
                         getter = createIrPropertyAccessor(
                             property.getter, property, this, type, irParent, false,
@@ -962,8 +968,9 @@ class Fir2IrDeclarationStorage(
     fun getIrBackingFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val fir = firVariableSymbol.fir) {
             is FirProperty -> {
-                val irProperty = getIrProperty(fir).apply {
-                    setAndModifyParent(findIrParent(fir))
+                val irParent = findIrParent(fir)
+                val irProperty = getIrProperty(fir, irParent).apply {
+                    setAndModifyParent(irParent)
                 }
                 irSymbolTable.referenceField(irProperty.backingField!!.descriptor)
             }

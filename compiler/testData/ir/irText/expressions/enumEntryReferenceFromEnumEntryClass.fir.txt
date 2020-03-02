@@ -47,8 +47,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
           FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:private [final]
             EXPRESSION_BODY
               FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Unit
-                  $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                   BLOCK_BODY
                     SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                       receiver: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null

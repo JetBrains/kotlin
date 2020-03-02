@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: inheritedProtectedCompanionAndOwnPrivateCompanion.kt
 import b.B
 
