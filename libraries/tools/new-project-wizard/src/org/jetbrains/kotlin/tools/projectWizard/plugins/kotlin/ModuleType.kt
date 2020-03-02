@@ -2,12 +2,14 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
 
+//TODO maybe split into interfaces like it made with module configurators
 @Suppress("EnumEntryName")
 enum class ModuleType(val projectTypeName: String) {
     jvm("Kotlin/JVM"),
     js("Kotlin/JS"),
     native("Kotlin/Native"),
-    common("Common")
+    common("Common"),
+    android("Android")
 
     ;
 
@@ -20,7 +22,8 @@ enum class ModuleType(val projectTypeName: String) {
 enum class ModuleSubType(val moduleType: ModuleType) {
     jvm(ModuleType.jvm),
     js(ModuleType.js),
-    android(ModuleType.jvm), androidNativeArm32(ModuleType.native), androidNativeArm64(ModuleType.native),
+    android(ModuleType.android),
+    androidNativeArm32(ModuleType.native), androidNativeArm64(ModuleType.native),
     iosArm32(ModuleType.native), iosArm64(ModuleType.native), iosX64(ModuleType.native),
     linuxArm32Hfp(ModuleType.native), linuxMips32(ModuleType.native), linuxMipsel32(ModuleType.native),
     linuxX64(ModuleType.native),
@@ -34,5 +37,6 @@ fun ModuleType.correspondingStdlib(): StdlibType? = when (this) {
     ModuleType.js -> StdlibType.StdlibJs
     ModuleType.native -> null
     ModuleType.common -> StdlibType.StdlibCommon
+    ModuleType.android -> StdlibType.StdlibJdk7
 }
 

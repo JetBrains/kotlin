@@ -41,7 +41,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     GradleModuleConfigurator {
 
     override val moduleType: ModuleType
-        get() = ModuleType.jvm
+        get() = ModuleType.android
     override val greyText: String
         get() = "Requires Android SDK"
 

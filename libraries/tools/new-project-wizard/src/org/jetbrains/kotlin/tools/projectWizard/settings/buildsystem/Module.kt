@@ -16,6 +16,7 @@ enum class ModuleKind : DisplayableSettingItem {
     multiplatform,
     target,
     singleplatformJvm,
+    singleplatformAndroid,
     singleplatformJs, ;
 
     override val text: String

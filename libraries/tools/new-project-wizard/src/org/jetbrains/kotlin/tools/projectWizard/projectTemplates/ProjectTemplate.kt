@@ -22,6 +22,7 @@ private fun Module.createTag(): TemplateTag? = when (configurator) {
         ModuleType.jvm -> TemplateTag.JVM
         ModuleType.js -> TemplateTag.JS
         ModuleType.native -> TemplateTag.NATIVE
+        ModuleType.android -> TemplateTag.ANDROID
         ModuleType.common -> null
         null -> null
     }

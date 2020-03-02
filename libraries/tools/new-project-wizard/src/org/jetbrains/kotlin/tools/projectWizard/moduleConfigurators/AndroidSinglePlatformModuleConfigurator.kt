@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurati
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
@@ -17,6 +18,7 @@ import java.nio.file.Path
 object AndroidSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator {
+    override val moduleKind: ModuleKind get() = ModuleKind.singleplatformAndroid
     override val id = "android"
     override val suggestedModuleName = "android"
     override val text = "Android"

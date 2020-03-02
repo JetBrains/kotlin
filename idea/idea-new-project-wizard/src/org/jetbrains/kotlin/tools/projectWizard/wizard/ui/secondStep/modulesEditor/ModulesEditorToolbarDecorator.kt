@@ -7,7 +7,6 @@ import com.intellij.ui.ToolbarDecorator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
-import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.createPanelWithPopupHandler
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.JComponent
@@ -52,40 +51,32 @@ class ModulesEditorToolbarDecorator(
                     null -> true
                     else -> false
                 }
-                text = when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
-                    ModuleKind.multiplatform -> KotlinNewProjectWizardBundle.message("editor.add.target")
-                    ModuleKind.singleplatformJvm -> KotlinNewProjectWizardBundle.message("editor.add.generic.module")
-                    ModuleKind.singleplatformJs -> KotlinNewProjectWizardBundle.message("editor.add.javascript.module")
-                    ModuleKind.target -> KotlinNewProjectWizardBundle.message("editor.add")
-                    null -> KotlinNewProjectWizardBundle.message("editor.add")
+                text = "Add" + when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
+                    ModuleKind.multiplatform -> " Target"
+                    ModuleKind.singleplatformJvm -> " Module"
+                    ModuleKind.singleplatformJs -> " JS Module"
+                    ModuleKind.singleplatformAndroid -> " Android Module"
+                    ModuleKind.target -> ""
+                    null -> ""
                 }
             }
             event.presentation.isEnabled
         }
         setRemoveAction {
-            val title = when (selectedModuleKind) {
-                ModuleKind.target -> KotlinNewProjectWizardBundle.message("editor.remove.target.title")
-                else -> KotlinNewProjectWizardBundle.message("editor.remove.module.title")
-            }
-
-            val description = when (selectedModuleKind) {
-                ModuleKind.target -> KotlinNewProjectWizardBundle.message("editor.remove.target.description")
-                else -> KotlinNewProjectWizardBundle.message("editor.remove.module.description")
-            }
-
+            val moduleKindText = selectedModuleKindText ?: "Module"
             if (Messages.showOkCancelDialog(
                     tree,
                     buildString {
-                        appendln(description)
+                        appendln("Do you want to remove selected $moduleKindText?")
                         if (tree.selectedSettingItem.safeAs<Module>()?.kind != ModuleKind.target) {
-                            appendln(KotlinNewProjectWizardBundle.message("editor.remove.all.submodules"))
+                            appendln("This will also remove all submodules.")
                         }
                         appendln()
-                        appendln(KotlinNewProjectWizardBundle.message("editor.cant.undone.action"))
+                        appendln("This action cannot be undone.")
                     },
-                    title,
-                    KotlinNewProjectWizardBundle.message("editor.remove.button.remove"),
-                    KotlinNewProjectWizardBundle.message("editor.remove.button.cancel"),
+                    "Remove selected $moduleKindText?",
+                    "Remove",
+                    "Cancel",
                     AllIcons.General.QuestionDialog
                 ) == Messages.OK
             ) {
@@ -95,10 +86,7 @@ class ModulesEditorToolbarDecorator(
         setRemoveActionUpdater { event ->
             event.presentation.apply {
                 isEnabled = tree.selectedSettingItem is Module
-                text = when (selectedModuleKind) {
-                    ModuleKind.target -> KotlinNewProjectWizardBundle.message("editor.remove.target.toolbutton")
-                    else -> KotlinNewProjectWizardBundle.message("editor.remove.module.toolbutton")
-                }
+                text = "Remove" + selectedModuleKindText?.let { " $it" }.orEmpty()
             }
             event.presentation.isEnabled
         }
@@ -107,8 +95,8 @@ class ModulesEditorToolbarDecorator(
         setMoveUpAction(null)
     }
 
-    private val selectedModuleKind
-        get() = tree.selectedSettingItem.safeAs<Module>()?.kind
+    private val selectedModuleKindText
+        get() = tree.selectedSettingItem.safeAs<Module>()?.kindText
 
     fun createToolPanel(): JComponent = toolbarDecorator
         .createPanelWithPopupHandler(tree)
@@ -116,3 +104,12 @@ class ModulesEditorToolbarDecorator(
             border = null
         }
 }
+
+private val Module.kindText
+    get() = when (kind) {
+        ModuleKind.multiplatform -> "Module"
+        ModuleKind.singleplatformJvm -> "Module"
+        ModuleKind.singleplatformJs -> "Module"
+        ModuleKind.singleplatformAndroid -> "Module"
+        ModuleKind.target -> "Target"
+    }

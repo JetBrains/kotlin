@@ -66,14 +66,13 @@ object MppModuleConfigurator : ModuleConfigurator {
 }
 
 
-interface SinglePlatformModuleConfigurator : ModuleConfigurator {
-    override val moduleKind get() = ModuleKind.singleplatformJvm
-}
+interface SinglePlatformModuleConfigurator : ModuleConfigurator
 
 object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithModuleType {
     override val moduleType get() = ModuleType.jvm
+    override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
     override val suggestedModuleName = "jvm"
     override val id = "JVM Module"
 
@@ -122,6 +121,7 @@ object IOSSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator {
     override val id = "IOS Module"
     override val suggestedModuleName = "ios"
+    override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
     override val greyText = "Requires Apple Xcode"
 }
 
@@ -132,4 +132,5 @@ val ModuleType.defaultTarget
         ModuleType.js -> JsBrowserTargetConfigurator
         ModuleType.native -> NativeForCurrentSystemTarget
         ModuleType.common -> CommonTargetConfigurator
+        ModuleType.android -> AndroidTargetConfigurator
     }

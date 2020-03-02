@@ -92,6 +92,7 @@ val ModuleType.icon: Icon
         ModuleType.js -> KotlinIcons.JS
         ModuleType.native -> KotlinIcons.NATIVE
         ModuleType.common -> KotlinIcons.SMALL_LOGO
+        ModuleType.android -> KotlinIcons.SMALL_LOGO
     }
 
 
@@ -101,6 +102,7 @@ val Module.icon: Icon
         ModuleKind.multiplatform -> AllIcons.Nodes.Module
         ModuleKind.singleplatformJs -> KotlinIcons.JS
         ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
+        ModuleKind.singleplatformAndroid -> AllIcons.Nodes.Module
     }
 
 val ProjectKind.icon: Icon
@@ -121,6 +123,7 @@ val ModuleKind.icon: Icon
         ModuleKind.singleplatformJs -> KotlinIcons.JS
         ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
         ModuleKind.target -> AllIcons.Nodes.Module
+        ModuleKind.singleplatformAndroid -> AllIcons.Nodes.Module
     }
 
 val ModuleConfigurator.icon: Icon
