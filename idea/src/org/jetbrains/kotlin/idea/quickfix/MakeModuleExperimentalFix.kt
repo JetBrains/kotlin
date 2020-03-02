@@ -13,10 +13,12 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.project.toDescriptor
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.quickfix.ExperimentalFixesFactory.fqNameIsExisting
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.name.FqName
@@ -28,11 +30,16 @@ class MakeModuleExperimentalFix(
     private val module: Module,
     private val annotationFqName: FqName
 ) : KotlinQuickFixAction<KtFile>(file) {
-    override fun getText(): String = "Add '-Xopt-in=$annotationFqName' to module ${module.name} compiler arguments"
+    private val experimentalPrefix = if (module.toDescriptor()?.fqNameIsExisting(ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME) == true)
+        "opt-in"
+    else
+        "use-experimental"
+
+    override fun getText(): String = "Add '$compilerArgument' to module ${module.name} compiler arguments"
 
     override fun getFamilyName(): String = "Add an opt-in requirement marker compiler argument"
 
-    private val compilerArgument = "-Xopt-in=$annotationFqName"
+    private val compilerArgument = "-X$experimentalPrefix=$annotationFqName"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -56,7 +63,7 @@ class MakeModuleExperimentalFix(
         val facet = KotlinFacet.get(module) ?: return true
         val facetSettings = facet.configuration.settings
         val compilerSettings = facetSettings.compilerSettings ?: return true
-        return if (annotationFqName != ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME) {
+        return if (annotationFqName != ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME && annotationFqName != ExperimentalUsageChecker.OLD_EXPERIMENTAL_FQ_NAME) {
             compilerArgument !in compilerSettings.additionalArgumentsAsList
         } else {
             compilerSettings.additionalArgumentsAsList.none {
@@ -69,7 +76,13 @@ class MakeModuleExperimentalFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val containingKtFile = diagnostic.psiElement.containingFile as? KtFile ?: return null
             val module = containingKtFile.module ?: return null
-            return MakeModuleExperimentalFix(containingKtFile, module, ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME)
+            return MakeModuleExperimentalFix(
+                containingKtFile,
+                module,
+                ExperimentalUsageChecker.REQUIRES_OPT_IN_FQ_NAME.takeIf {
+                    module.toDescriptor()?.fqNameIsExisting(it) == true
+                } ?: ExperimentalUsageChecker.OLD_EXPERIMENTAL_FQ_NAME
+            )
         }
     }
 }
