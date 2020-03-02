@@ -10,19 +10,13 @@ import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandLineProvi
 import com.intellij.ide.actions.runAnything.getPath
 import com.intellij.ide.util.gotoByName.GotoClassModel2
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.task.TaskData
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.findProjectData
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getChildren
-import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.text.StringUtil.isNotEmpty
 import com.intellij.openapi.util.text.StringUtil.substringBeforeLast
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -37,6 +31,8 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.jetbrains.plugins.gradle.util.GradleUtil
+import org.jetbrains.plugins.gradle.util.getGradleFqnTaskName
+import org.jetbrains.plugins.gradle.util.getGradleTasksMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.swing.Icon
 
@@ -156,10 +152,9 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
     val gradlePath = context.gradlePath?.removeSuffix(":") ?: return emptySequence()
     return sequence {
       for ((path, value) in context.tasks.entrySet()) {
-        val taskPath = path.removeSuffix(":")
         for (taskData in value) {
-          val taskName = taskData.name.removePrefix(path).removePrefix(":")
-          val taskFqn = "$taskPath:$taskName".removePrefix(gradlePath)
+          val taskFqn = getGradleFqnTaskName(path, taskData)
+            .removePrefix(gradlePath)
           yield(taskFqn to taskData)
         }
       }
@@ -168,51 +163,8 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
 
   private fun fetchTasks(project: Project): Map<String, MultiMap<String, TaskData>> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
-      CachedValueProvider.Result.create(getTasksMap(project), ProjectRootManager.getInstance(project))
+      CachedValueProvider.Result.create(getGradleTasksMap(project), ProjectRootManager.getInstance(project))
     }
-  }
-
-  private fun getTasksMap(project: Project): Map<String, MultiMap<String, TaskData>> {
-    val tasks = LinkedHashMap<String, MultiMap<String, TaskData>>()
-    val projectDataManager = ProjectDataManager.getInstance()
-    val projects = MultiMap.createOrderedSet<String, DataNode<ModuleData>>()
-    for (settings in GradleSettings.getInstance(project).linkedProjectsSettings) {
-      val projectInfo = projectDataManager.getExternalProjectData(project, SYSTEM_ID, settings.externalProjectPath)
-      val compositeParticipants = settings.compositeBuild?.compositeParticipants ?: emptyList()
-      val compositeProjects = compositeParticipants.flatMap { it.projects.map { module -> module to it.rootPath } }.toMap()
-      val projectNode = projectInfo?.externalProjectStructure ?: continue
-      val moduleNodes = getChildren(projectNode, ProjectKeys.MODULE)
-      for (moduleNode in moduleNodes) {
-        val externalModulePath = moduleNode.data.linkedExternalProjectPath
-        val projectPath = compositeProjects[externalModulePath] ?: settings.externalProjectPath
-        projects.putValue(projectPath, moduleNode)
-      }
-    }
-    for ((_, moduleNodes) in projects.entrySet()) {
-      val projectTasks = MultiMap.createOrderedSet<String, TaskData>()
-      val modulePaths = PathPrefixTreeMap<String>(":", removeTrailingSeparator = false)
-      for (moduleNode in moduleNodes) {
-        val moduleData = moduleNode.data
-        val gradlePath = getGradlePath(moduleData)
-        modulePaths[gradlePath] = moduleData.linkedExternalProjectPath
-        for (taskNode in getChildren(moduleNode, ProjectKeys.TASK)) {
-          val taskData = taskNode.data
-          val taskName = taskData.name
-          if (isNotEmpty(taskName)) {
-            projectTasks.putValue(gradlePath, taskData)
-          }
-        }
-      }
-      for ((gradlePath, modulePath) in modulePaths) {
-        val moduleTasks = MultiMap.createOrderedSet<String, TaskData>()
-        val descendantPaths = modulePaths.getAllDescendantKeys(gradlePath)
-        for (descendantPath in descendantPaths) {
-          moduleTasks.putValues(descendantPath, projectTasks.get(descendantPath))
-        }
-        tasks[modulePath] = moduleTasks
-      }
-    }
-    return tasks
   }
 
   private fun createContext(project: Project, context: RunAnythingContext, dataContext: DataContext): Context {
