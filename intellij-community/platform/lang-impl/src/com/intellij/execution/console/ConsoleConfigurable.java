@@ -11,11 +11,13 @@ import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.intellij.ui.*;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
@@ -28,6 +30,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +43,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
   private JCheckBox myCbUseSoftWrapsAtConsole;
   private JTextField myCommandsHistoryLimitField;
   private JCheckBox myCbOverrideConsoleCycleBufferSize;
+  private JComboBox<Charset> myEncodingComboBox;
   private JTextField myConsoleCycleBufferSizeField;
   private JLabel myConsoleBufferSizeWarningLabel;
 
@@ -67,6 +71,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
           updateWarningLabel();
         }
       });
+      myEncodingComboBox = new ComboBox<>();
 
       JPanel northPanel = new JPanel(new GridBagLayout());
       GridBag gridBag = new GridBag();
@@ -84,6 +89,8 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
         northPanel.add(Box.createHorizontalStrut(JBUIScale.scale(20)), gridBag.next());
         northPanel.add(myConsoleBufferSizeWarningLabel, gridBag.next());
       }
+      northPanel.add(new JLabel(ApplicationBundle.message("combobox.console.default.encoding.label")), gridBag.nextLine().next());
+      northPanel.add(myEncodingComboBox,gridBag.next().coverLine());
       if (!editFoldingsOnly()) {
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.add(northPanel, BorderLayout.WEST);
@@ -141,6 +148,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       isModified |= isModified(myCbOverrideConsoleCycleBufferSize, uiSettings.getOverrideConsoleCycleBufferSize());
       isModified |= isModified(myConsoleCycleBufferSizeField, uiSettings.getConsoleCycleBufferSizeKb());
     }
+    isModified |= isEncodingModified();
 
     return isModified;
   }
@@ -155,11 +163,19 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
     }
   }
 
+  private boolean isEncodingModified() {
+    Charset defaultEncoding = EncodingManager.getInstance().getDefaultConsoleEncoding();
+    Charset consoleEncoding = (Charset)myEncodingComboBox.getSelectedItem();
+    // null - use same encoding as before
+    return consoleEncoding != null && defaultEncoding.compareTo(consoleEncoding) != 0;
+  }
+
   @Override
   public void apply() throws ConfigurationException {
     EditorSettingsExternalizable editorSettings = EditorSettingsExternalizable.getInstance();
     UISettings settingsManager = UISettings.getInstance();
     UISettingsState uiSettings = settingsManager.getState();
+    EncodingManager encodingManager = EncodingManager.getInstance();
 
     editorSettings.setUseSoftWraps(myCbUseSoftWrapsAtConsole.isSelected(), SoftWrapAppliancePlaces.CONSOLE);
     boolean uiSettingsChanged = false;
@@ -180,6 +196,11 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
     if (uiSettingsChanged) {
       settingsManager.fireUISettingsChanged();
     }
+    if (isEncodingModified()) {
+      Charset consoleEncoding = (Charset)myEncodingComboBox.getSelectedItem();
+      assert consoleEncoding != null; // checked in isEncodingModified()
+        encodingManager.setDefaultConsoleEncodingName(consoleEncoding.name());
+    }
 
     myNegativePanel.applyTo(mySettings.getNegativePatterns());
     myPositivePanel.applyTo(mySettings.getPositivePatterns());
@@ -198,9 +219,21 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
     myConsoleCycleBufferSizeField.setEnabled(ConsoleBuffer.useCycleBuffer() && uiSettings.getOverrideConsoleCycleBufferSize());
     myConsoleCycleBufferSizeField.setText(Integer.toString(uiSettings.getConsoleCycleBufferSizeKb()));
 
+    resetEncoding();
 
     myNegativePanel.resetFrom(mySettings.getNegativePatterns());
     myPositivePanel.resetFrom(mySettings.getPositivePatterns());
+  }
+
+  private void resetEncoding() {
+    EncodingManager encodingManager = EncodingManager.getInstance();
+    List<Charset> available = new ArrayList<>(Charset.availableCharsets().values());
+    List<Charset> favorites = new ArrayList<>(encodingManager.getFavorites());
+    // put favorite charsets at the beginning
+    CollectionComboBoxModel<Charset> model = new CollectionComboBoxModel<>(available);
+    model.addAll(0, favorites);
+    model.setSelectedItem(encodingManager.getDefaultConsoleEncoding());
+    myEncodingComboBox.setModel(model);
   }
 
   @Override
