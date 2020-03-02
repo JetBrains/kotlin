@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.formatting.FormatterEx;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelBuilder;
@@ -123,14 +124,14 @@ public class JoinLinesHandler extends EditorActionHandler {
     private void doProcess(int lineCount) {
       List<RangeMarker> markers = new ArrayList<>();
       try {
-        myIndicator.setText2("Converting end-of-line comments");
+        myIndicator.setText2(CodeInsightBundle.message("progress.text.converting.end.of.line.comments"));
         convertEndComments(lineCount);
-        myIndicator.setText2("Removing line-breaks");
+        myIndicator.setText2(CodeInsightBundle.message("progress.text.removing.line.breaks"));
         int newCount = processRawJoiners(lineCount);
         DocumentUtil.executeInBulk(myDoc, newCount > 100, () -> removeLineBreaks(newCount, markers));
-        myIndicator.setText2("Postprocessing");
+        myIndicator.setText2(CodeInsightBundle.message("progress.text.postprocessing"));
         List<RangeMarker> unprocessed = processNonRawJoiners(markers);
-        myIndicator.setText2("Adjusting white-space");
+        myIndicator.setText2(CodeInsightBundle.message("progress.text.adjusting.white.space"));
         adjustWhiteSpace(unprocessed);
       }
       finally {

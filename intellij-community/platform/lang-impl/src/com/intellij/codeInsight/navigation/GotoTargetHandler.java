@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.navigation;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindUtil;
@@ -65,7 +66,8 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
       }
     }
     catch (IndexNotReadyException e) {
-      DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
+      DumbService.getInstance(project).showDumbModeNotification(
+        CodeInsightBundle.message("message.navigation.is.not.available.here.during.index.update"));
     }
   }
 
@@ -149,7 +151,8 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
               }
             }
             catch (IndexNotReadyException e) {
-              DumbService.getInstance(project).showDumbModeNotification("Navigation is not available while indexing");
+              DumbService.getInstance(project).showDumbModeNotification(
+                CodeInsightBundle.message("notification.navigation.is.not.available.while.indexing"));
             }
           }
         }

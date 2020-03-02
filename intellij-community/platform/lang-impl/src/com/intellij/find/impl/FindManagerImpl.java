@@ -756,10 +756,10 @@ public final class FindManagerImpl extends FindManager {
           ourReportedPatterns.put(stringToFind.hashCode(), Boolean.TRUE) == null) {
         String content = stringToFind + " produced stack overflow when matching content of the file";
         LOG.info(content);
-        GROUP.createNotification("Regular expression failed to match",
+        GROUP.createNotification(FindBundle.message("notification.title.regular.expression.failed.to.match"),
                                      content + " " + file.getPath(),
-                                     NotificationType.ERROR,
-                                     null
+                                 NotificationType.ERROR,
+                                 null
                                    ).notify(myProject);
       }
       return NOT_FOUND_RESULT;

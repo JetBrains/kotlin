@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.template.postfix.templates;
 
 import com.google.common.collect.Sets;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.completion.OffsetTranslator;
 import com.intellij.codeInsight.template.CustomLiveTemplateBase;
 import com.intellij.codeInsight.template.CustomTemplateCallback;
@@ -16,7 +17,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.undo.UndoConstants;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -241,7 +241,7 @@ public class PostfixLiveTemplate extends CustomLiveTemplateBase {
       ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance()
                                                                                .executeCommand(context.getProject(),
                                                                                                () -> template.expand(context, editor),
-                                                                                               "Expand postfix template",
+                                                                                               CodeInsightBundle.message("command.expand.postfix.template"),
                                                                                                POSTFIX_TEMPLATE_ID));
     }
     else {

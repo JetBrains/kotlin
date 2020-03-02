@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.templates.editable;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
@@ -83,7 +84,7 @@ public abstract class EditablePostfixTemplate extends PostfixTemplate {
         }
       },
       getElementRenderer(),
-      "Expressions", 0, ScopeHighlighter.NATURAL_RANGER
+      CodeInsightBundle.message("dialog.title.expressions"), 0, ScopeHighlighter.NATURAL_RANGER
     );
   }
 
@@ -132,7 +133,7 @@ public abstract class EditablePostfixTemplate extends PostfixTemplate {
   private void prepareAndExpandForChooseExpression(@NotNull PsiElement element, @NotNull Editor editor) {
     ApplicationManager.getApplication().runWriteAction(
       () -> CommandProcessor.getInstance().executeCommand(
-        element.getProject(), () -> expandForChooseExpression(element, editor), "Expand postfix template",
+        element.getProject(), () -> expandForChooseExpression(element, editor), CodeInsightBundle.message("command.expand.postfix.template"),
         PostfixLiveTemplate.POSTFIX_TEMPLATE_ID));
   }
 

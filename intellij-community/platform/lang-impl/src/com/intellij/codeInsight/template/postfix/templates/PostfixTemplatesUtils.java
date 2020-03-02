@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.templates;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.codeInsight.template.postfix.settings.PostfixTemplateStorage;
@@ -67,7 +68,8 @@ public abstract class PostfixTemplatesUtils {
   }
 
   public static void showErrorHint(@NotNull Project project, @NotNull Editor editor) {
-    CommonRefactoringUtil.showErrorHint(project, editor, "Can't expand postfix template", "Can't expand postfix template", "");
+    CommonRefactoringUtil.showErrorHint(project, editor, CodeInsightBundle.message("error.hint.can.t.expand.postfix.template"),
+                                        CodeInsightBundle.message("error.hint.can.t.expand.postfix.template"), "");
   }
 
   @NotNull

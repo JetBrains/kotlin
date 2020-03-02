@@ -195,7 +195,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
         close();
       }
     });
-    closeLabel.setToolTipText("Close search bar (Escape)");
+    closeLabel.setToolTipText(FindBundle.message("tooltip.close.search.bar.escape"));
     searchPair.add(new Wrapper.North(closeLabel), BorderLayout.EAST);
 
     myRightPanel = new NonOpaquePanel(new BorderLayout(0, 1)) {

@@ -141,17 +141,17 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
   @Override
   protected String getRestorePopupDescription() {
-    return "Restore popup view mode";
+    return CodeInsightBundle.message("action.description.restore.popup.view.mode");
   }
 
   @Override
   protected String getAutoUpdateDescription() {
-    return "Refresh documentation on selection change automatically";
+    return CodeInsightBundle.message("action.description.refresh.documentation.on.selection.change.automatically");
   }
 
   @Override
   protected String getAutoUpdateTitle() {
-    return "Auto-update from Source";
+    return CodeInsightBundle.message("popup.title.auto.update.from.source");
   }
 
   @Override

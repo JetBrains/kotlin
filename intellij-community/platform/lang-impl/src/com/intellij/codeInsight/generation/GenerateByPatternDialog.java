@@ -15,6 +15,7 @@
  */
 package com.intellij.codeInsight.generation;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
@@ -57,8 +58,8 @@ public class GenerateByPatternDialog extends DialogWrapper {
   public GenerateByPatternDialog(Project project, PatternDescriptor[] descriptors) {
     super(project);
     myProject = project;
-    setTitle("Generate by Pattern");
-    setOKButtonText("Generate");
+    setTitle(CodeInsightBundle.message("button.generate.by.pattern"));
+    setOKButtonText(CodeInsightBundle.message("button.generate"));
 
     myMap = new MultiMap<>();
     for (PatternDescriptor descriptor : descriptors) {

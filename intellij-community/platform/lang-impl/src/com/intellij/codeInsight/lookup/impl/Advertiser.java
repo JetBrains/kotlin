@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.lookup.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.scale.JBUIScale;
@@ -30,7 +31,7 @@ public class Advertiser {
   private final JLabel myNextLabel;
 
   public Advertiser() {
-    myNextLabel = new JLabel("Next Tip");
+    myNextLabel = new JLabel(CodeInsightBundle.message("label.next.tip"));
     myNextLabel.setFont(adFont());
     myNextLabel.setForeground(JBUI.CurrentTheme.Link.linkColor());
     new ClickListener() {

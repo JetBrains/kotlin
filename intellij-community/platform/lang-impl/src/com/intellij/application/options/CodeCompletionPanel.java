@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -176,7 +177,7 @@ public class CodeCompletionPanel {
     myCbSorting.setSelected(UISettings.getInstance().getSortLookupElementsLexicographically());
 
     myCbAutocompletion.setText(ApplicationBundle.message("editbox.auto.complete") +
-                               (PowerSaveMode.isEnabled() ? " (not available in Power Save mode)" : ""));
+                               (PowerSaveMode.isEnabled() ? LangBundle.message("label.not.available.in.power.save.mode") : ""));
   }
 
   public void apply() {

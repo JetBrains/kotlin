@@ -90,14 +90,14 @@ public abstract class PostfixTemplateEditorBase<Condition extends PostfixTemplat
         .setMinimumSize(JBUI.size(-1, 300))
         .createPanel();
       grid.add(UI.PanelFactory.panel(expressionTypesPanel)
-                 .withLabel("Applicable expression types:")
+                 .withLabel(CodeInsightBundle.message("label.applicable.expression.types"))
                  .resizeY(true)
                  .moveLabelOnTop());
     }
     grid.add(UI.PanelFactory.panel(myApplyToTheTopmostJBCheckBox));
     grid.add(UI.PanelFactory.panel(myTemplateEditor.getComponent())
                .anchorLabelOn(UI.Anchor.Top)
-               .withComment("Use $EXPR$ variable to refer target expression")
+               .withComment(CodeInsightBundle.message("comment.use.expr.variable.to.refer.target.expression"))
                .resizeY(true));
     myEditTemplateAndConditionsPanel = grid.createPanel();
   }

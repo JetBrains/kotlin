@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.intention.impl;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
@@ -105,7 +106,8 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   public static ShowIntentionsPass.IntentionsInfo calcIntentions(@NotNull Project project,
                                                                   @NotNull Editor editor,
                                                                   @NotNull PsiFile file) {
-    ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project, "Searching for Context Actions", () ->
+    ShowIntentionsPass.IntentionsInfo intentions = ActionUtil.underModalProgress(project,
+                                                                                 CodeInsightBundle.message("progress.title.searching.for.context.actions"), () ->
       ShowIntentionsPass.getActionsToShow(editor, file, false));
 
     ShowIntentionsPass.getActionsToShowSync(editor, file, intentions);

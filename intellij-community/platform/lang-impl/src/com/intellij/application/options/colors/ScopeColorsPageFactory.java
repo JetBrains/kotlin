@@ -5,6 +5,7 @@ package com.intellij.application.options.colors;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.scopeChooser.EditScopesDialog;
 import com.intellij.ide.util.scopeChooser.ScopeChooserConfigurable;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.options.ex.Settings;
@@ -47,7 +48,7 @@ class ScopeColorsPageFactory implements ColorAndFontPanelFactoryEx {
     GridBagConstraints gc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
                                                    JBUI.emptyInsets(), 0, 0);
 
-    JButton button = new JButton("Manage Scopes...");
+    JButton button = new JButton(LangBundle.message("manage.scopes"));
     button.setPreferredSize(new Dimension(230, button.getPreferredSize().height));
     panel.add(button, gc);
     gc.gridx = GridBagConstraints.REMAINDER;

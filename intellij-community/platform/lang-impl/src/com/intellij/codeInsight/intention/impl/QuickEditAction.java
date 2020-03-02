@@ -15,6 +15,7 @@
  */
 package com.intellij.codeInsight.intention.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.injected.editor.DocumentWindow;
@@ -149,13 +150,13 @@ public class QuickEditAction extends QuickEditActionKeys implements IntentionAct
   @Override
   @NotNull
   public String getText() {
-    return "Edit "+ StringUtil.notNullize(myLastLanguageName, "Injected")+" Fragment";
+    return CodeInsightBundle.message("intention.text.edit.0.fragment", StringUtil.notNullize(myLastLanguageName, "Injected"));
   }
 
   @Override
   @NotNull
   public String getFamilyName() {
-    return "Edit injected fragment";
+    return CodeInsightBundle.message("intention.family.edit.injected.fragment");
   }
 
   public static Balloon.Position getBalloonPosition(Editor editor) {

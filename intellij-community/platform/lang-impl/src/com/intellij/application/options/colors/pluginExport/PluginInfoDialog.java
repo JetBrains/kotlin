@@ -15,6 +15,7 @@
  */
 package com.intellij.application.options.colors.pluginExport;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +30,7 @@ public class PluginInfoDialog extends DialogWrapper {
   protected PluginInfoDialog(@NotNull Component parent, @NotNull PluginExportData exportData) {
     super(parent, false);
     myExportData = exportData;
-    setTitle("Create Color Scheme Plug-in");
+    setTitle(LangBundle.message("dialog.title.create.color.scheme.plug.in"));
     init();
   }
 

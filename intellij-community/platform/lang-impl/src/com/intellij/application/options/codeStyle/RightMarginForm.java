@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationBundle;
@@ -86,9 +87,9 @@ public class RightMarginForm {
         myVisualGuidesField.getEmptyText().setText(getDefaultVisualGuidesText(mySettings));
       }
     });
-    myResetLink = new ActionLink("Reset", new ResetRightMarginAction());
+    myResetLink = new ActionLink(LangBundle.message("action.link.reset"), new ResetRightMarginAction());
     myVisualGuidesLabel = new JLabel();
-    myResetGuidesLink = new ActionLink("Reset", new ResetGuidesAction());
+    myResetGuidesLink = new ActionLink(LangBundle.message("action.link.reset"), new ResetGuidesAction());
   }
 
   private class ResetRightMarginAction extends DumbAwareAction {

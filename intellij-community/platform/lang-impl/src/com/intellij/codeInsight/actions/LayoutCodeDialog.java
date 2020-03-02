@@ -45,7 +45,7 @@ public class LayoutCodeDialog extends DialogWrapper {
     myRunOptions = createOptionsBundledOnDialog();
 
     setOKButtonText(CodeInsightBundle.message("reformat.code.accept.button.text"));
-    setTitle("Reformat File: " + file.getName());
+    setTitle(CodeInsightBundle.message("dialog.title.reformat.file.0", file.getName()));
 
     init();
   }
@@ -62,7 +62,7 @@ public class LayoutCodeDialog extends DialogWrapper {
   private void setUpTextRangeMode() {
     mySelectedTextRadioButton.setEnabled(myTextSelected);
     if (!myTextSelected) {
-      mySelectedTextRadioButton.setToolTipText("No text selected in editor");
+      mySelectedTextRadioButton.setToolTipText(CodeInsightBundle.message("tooltip.no.text.selected.in.editor"));
     }
 
     final boolean fileHasChanges = FormatChangedTextUtil.hasChanges(myFile);

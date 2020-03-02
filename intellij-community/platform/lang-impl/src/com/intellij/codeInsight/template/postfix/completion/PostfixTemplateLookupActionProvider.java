@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.completion;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupActionProvider;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -23,7 +24,7 @@ public class PostfixTemplateLookupActionProvider implements LookupActionProvider
       final PostfixTemplateLookupElement templateLookupElement = (PostfixTemplateLookupElement)element;
       final PostfixTemplate template = templateLookupElement.getPostfixTemplate();
 
-      consumer.consume(new LookupElementAction(PlatformIcons.EDIT, "Edit postfix templates settings") {
+      consumer.consume(new LookupElementAction(PlatformIcons.EDIT, CodeInsightBundle.message("action.text.edit.postfix.templates.settings")) {
         @Override
         public Result performLookupAction() {
           final Project project = lookup.getProject();

@@ -19,6 +19,7 @@ import com.intellij.CommonBundle;
 import com.intellij.application.options.SchemesToImportPopup;
 import com.intellij.application.options.schemes.AbstractSchemeActions;
 import com.intellij.application.options.schemes.AbstractSchemesPanel;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.options.*;
 import com.intellij.openapi.project.Project;
@@ -40,7 +41,8 @@ abstract class CodeStyleSchemesActions extends AbstractSchemeActions<CodeStyleSc
   protected void resetScheme(@NotNull CodeStyleScheme scheme) {
     if (Messages
           .showOkCancelDialog(ApplicationBundle.message("settings.code.style.reset.to.defaults.message"),
-                              ApplicationBundle.message("settings.code.style.reset.to.defaults.title"), "Restore", CommonBundle.getCancelButtonText(), Messages.getQuestionIcon()) ==
+                              ApplicationBundle.message("settings.code.style.reset.to.defaults.title"),
+                              LangBundle.message("button.restore"), CommonBundle.getCancelButtonText(), Messages.getQuestionIcon()) ==
         Messages.OK) {
       getModel().restoreDefaults(scheme);
     }

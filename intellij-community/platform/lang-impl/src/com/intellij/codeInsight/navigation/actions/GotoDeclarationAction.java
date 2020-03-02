@@ -75,7 +75,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
       try {
         int offset = editor.getCaretModel().getOffset();
         Pair<PsiElement[], PsiElement> pair = ActionUtil
-          .underModalProgress(project, "Resolving Reference...", () -> doSelectCandidate(project, editor, offset));
+          .underModalProgress(project, CodeInsightBundle.message("progress.title.resolving.reference"), () -> doSelectCandidate(project, editor, offset));
         FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.declaration");
 
         PsiElement[] elements = pair.first;
@@ -106,7 +106,8 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
         }
       }
       catch (IndexNotReadyException e) {
-        DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
+        DumbService.getInstance(project).showDumbModeNotification(
+          CodeInsightBundle.message("message.navigation.is.not.available.here.during.index.update"));
       }
     });
   }
@@ -231,7 +232,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
 
     final PsiElement[] finalElements = elements;
     Pair<PsiElement[], PsiReference> pair =
-      ActionUtil.underModalProgress(project, "Resolving Reference...", () -> doChooseAmbiguousTarget(editor, offset, finalElements));
+      ActionUtil.underModalProgress(project, CodeInsightBundle.message("progress.title.resolving.reference"), () -> doChooseAmbiguousTarget(editor, offset, finalElements));
 
     elements = pair.first;
     PsiReference reference = pair.second;

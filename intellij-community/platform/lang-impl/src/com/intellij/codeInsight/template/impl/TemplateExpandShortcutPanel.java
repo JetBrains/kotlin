@@ -45,7 +45,7 @@ public class TemplateExpandShortcutPanel extends JPanel {
     myExpandByCombo = new ComboBox<>();
     add(myExpandByCombo, gbConstraints);
 
-    myOpenKeymapLabel = new HyperlinkLabel("Change");
+    myOpenKeymapLabel = new HyperlinkLabel(CodeInsightBundle.message("link.change.context"));
     gbConstraints.gridx = 2;
     add(myOpenKeymapLabel, gbConstraints);
 

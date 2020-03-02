@@ -118,7 +118,7 @@ class FindInProjectTask {
 
     try {
       myProgress.setIndeterminate(true);
-      myProgress.setText("Scanning indexed files...");
+      myProgress.setText(FindBundle.message("progress.text.scanning.indexed.files"));
       Set<VirtualFile> filesForFastWordSearch = ReadAction.nonBlocking(this::getFilesForFastWordSearch).executeSynchronously();
       myProgress.setIndeterminate(false);
       if (LOG.isDebugEnabled()) {
@@ -128,7 +128,7 @@ class FindInProjectTask {
       searchInFiles(filesForFastWordSearch, processPresentation, consumer);
 
       myProgress.setIndeterminate(true);
-      myProgress.setText("Scanning non-indexed files...");
+      myProgress.setText(FindBundle.message("progress.text.scanning.non.indexed.files"));
       boolean canRelyOnIndices = canRelyOnIndices();
       final Collection<VirtualFile> otherFiles = collectFilesInScope(filesForFastWordSearch, canRelyOnIndices);
       myProgress.setIndeterminate(false);

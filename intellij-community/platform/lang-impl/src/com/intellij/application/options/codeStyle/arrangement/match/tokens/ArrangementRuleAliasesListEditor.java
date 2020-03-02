@@ -16,6 +16,7 @@
 package com.intellij.application.options.codeStyle.arrangement.match.tokens;
 
 import com.intellij.application.options.codeStyle.arrangement.color.ArrangementColorsProvider;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.openapi.ui.InputValidator;
@@ -107,7 +108,7 @@ public class ArrangementRuleAliasesListEditor extends NamedItemsListEditor<StdAr
   @Override
   public String askForProfileName(String titlePattern) {
     String title = MessageFormat.format(titlePattern, subjDisplayName());
-    return Messages.showInputDialog("New " + subjDisplayName() + " name:", title, Messages.getQuestionIcon(), "", new InputValidator() {
+    return Messages.showInputDialog(LangBundle.message("message.new.0.name", subjDisplayName()), title, Messages.getQuestionIcon(), "", new InputValidator() {
       @Override
       public boolean checkInput(String s) {
         return s.length() > 0 && findByName(s) == null && Verifier.checkElementName(s) == null;

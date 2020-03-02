@@ -308,7 +308,7 @@ public final class FindUsagesManager {
                                         @NotNull Processor<? super Usage> processor,
                                         @NotNull Runnable onComplete) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    Task.Backgroundable task = new Task.Backgroundable(project, "Finding Usages") {
+    Task.Backgroundable task = new Task.Backgroundable(project, FindBundle.message("progress.title.finding.usages")) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         usageSearcher.generate(processor);
@@ -397,7 +397,8 @@ public final class FindUsagesManager {
               searcher.processElementUsages(element, processor, optionsClone);
             }
             catch (IndexNotReadyException e) {
-              DumbService.getInstance(element.getProject()).showDumbModeNotification("Find usages is not available during indexing");
+              DumbService.getInstance(element.getProject()).showDumbModeNotification(
+                FindBundle.message("notification.find.usages.is.not.available.during.indexing"));
             }
             catch (ProcessCanceledException e) {
               throw e;

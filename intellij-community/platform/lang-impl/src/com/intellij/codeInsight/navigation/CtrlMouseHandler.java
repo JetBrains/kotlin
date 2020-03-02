@@ -366,7 +366,8 @@ public final class CtrlMouseHandler {
   }
 
   private static void showDumbModeNotification(@NotNull Project project) {
-    DumbService.getInstance(project).showDumbModeNotification("Element information is not available during index update");
+    DumbService.getInstance(project).showDumbModeNotification(
+      CodeInsightBundle.message("notification.element.information.is.not.available.during.index.update"));
   }
 
   private static class InfoSingle extends Info {

@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
@@ -113,7 +114,7 @@ public final class RunIdeConsoleAction extends DumbAwareAction {
       .toList();
     DefaultActionGroup actionGroup = new DefaultActionGroup(actions);
     JBPopupFactory.getInstance().createActionGroupPopup(
-      "Script Engine", actionGroup, e.getDataContext(), JBPopupFactory.ActionSelectionAid.NUMBERING, false)
+      ExecutionBundle.message("popup.title.script.engine"), actionGroup, e.getDataContext(), JBPopupFactory.ActionSelectionAid.NUMBERING, false)
       .showInBestPositionFor(e.getDataContext());
   }
 

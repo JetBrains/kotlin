@@ -21,6 +21,7 @@ import com.intellij.application.options.schemes.AbstractSchemeActions;
 import com.intellij.application.options.schemes.SchemesModel;
 import com.intellij.application.options.schemes.SimpleSchemesPanel;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -142,7 +143,7 @@ public class CodeStyleSchemesPanel extends SimpleSchemesPanel<CodeStyleScheme> {
     myBottomPanel.add(Box.createRigidArea(new JBDimension(5,0)));
     myBottomLabel = new JLabel();
     myBottomPanel.add(myBottomLabel);
-    LinkLabel<Object> disableHyperLink = new LinkLabel<>("Disable", null, new LinkListener<Object>() {
+    LinkLabel<Object> disableHyperLink = new LinkLabel<>(LangBundle.message("action.link.disable"), null, new LinkListener<Object>() {
       @Override
       public void linkSelected(LinkLabel aSource, Object aLinkData) {
         disableOverriding();

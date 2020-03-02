@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupActionProvider;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -23,7 +24,7 @@ public class LiveTemplateLookupActionProvider implements LookupActionProvider {
       final TemplateImpl templateFromSettings = TemplateSettings.getInstance().getTemplate(template.getKey(), template.getGroupName());
 
       if (templateFromSettings != null) {
-        consumer.consume(new LookupElementAction(PlatformIcons.EDIT, "Edit live template settings") {
+        consumer.consume(new LookupElementAction(PlatformIcons.EDIT, CodeInsightBundle.message("action.text.edit.live.template.settings")) {
           @Override
           public Result performLookupAction() {
             final Project project = lookup.getProject();

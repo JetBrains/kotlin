@@ -4,11 +4,11 @@ package com.intellij.application.options.colors;
 import com.intellij.application.options.schemes.SchemeNameGenerator;
 import com.intellij.ide.actions.QuickChangeColorSchemeAction;
 import com.intellij.ide.dnd.FileCopyPasteUtil;
+import com.intellij.lang.LangBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationBundle;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CustomFileDropHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -19,7 +19,6 @@ import com.intellij.openapi.editor.colors.impl.EmptyColorScheme;
 import com.intellij.openapi.options.SchemeImportException;
 import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -58,11 +57,12 @@ public class EditorColorSchemeDropHandler extends CustomFileDropHandler {
     VirtualFile file = getColorSchemeFile(t);
     assert file != null;
 
-    if (Messages.YES == Messages.showYesNoDialog("Would you like to install and apply '" + file.getName() + "' editor color scheme?",
-                                                 "Install Color Scheme?",
-                                                 "Install",
-                                                 "Open in Editor",
-                                                 null)) {
+    if (Messages.YES == Messages.showYesNoDialog(
+      LangBundle.message("message.would.you.like.to.install.and.apply.0.editor.color.scheme", file.getName()),
+      LangBundle.message("dialog.title.install.color.scheme"),
+      LangBundle.message("button.install"),
+      LangBundle.message("button.open.in.editor"),
+      null)) {
       try {
         ColorSchemeImporter importer = new ColorSchemeImporter();
         EditorColorsManager colorsManager = EditorColorsManager.getInstance();

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -103,6 +104,6 @@ public class InvokeTemplateAction extends AnAction {
       if (myCallback != null) {
         myCallback.run();
       }
-    }, "Wrap with template", "Wrap with template " + myTemplate.getKey());
+    }, CodeInsightBundle.message("command.wrap.with.template"), "Wrap with template " + myTemplate.getKey());
   }
 }

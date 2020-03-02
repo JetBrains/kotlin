@@ -15,6 +15,7 @@
  */
 package com.intellij.codeInsight.daemon.impl;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.actions.CodeCleanupAction;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
@@ -40,7 +41,7 @@ public class EditCleanupProfileIntentionAction implements IntentionAction {
   @Override
   @NotNull
   public String getFamilyName() {
-    return "Edit cleanup profile settings";
+    return CodeInsightBundle.message("intention.family.edit.cleanup.profile.settings");
   }
 
   @Override

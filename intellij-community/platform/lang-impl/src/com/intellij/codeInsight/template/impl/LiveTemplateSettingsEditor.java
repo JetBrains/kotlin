@@ -311,13 +311,13 @@ public final class LiveTemplateSettingsEditor extends JPanel {
       }
 
       String contexts = "Applicable in " + sb.toString();
-      change.setText("Change");
+      change.setText(CodeInsightBundle.message("link.change.context"));
 
       final boolean noContexts = sb.length() == 0;
       if (noContexts) {
         contexts = "No applicable contexts";
         ctxLabel.setIcon(AllIcons.General.BalloonWarning);
-        change.setText("Define");
+        change.setText(CodeInsightBundle.message("link.define.context"));
       }
       else {
         ctxLabel.setForeground(UIUtil.getLabelForeground());
@@ -472,7 +472,7 @@ public final class LiveTemplateSettingsEditor extends JPanel {
   private void validateEditVariablesButton() {
     boolean hasVariables = !parseVariables().isEmpty();
     myEditVariablesButton.setEnabled(hasVariables);
-    myEditVariablesButton.setToolTipText(hasVariables ? null : "Disabled because the template has no variables (surrounded with $ signs)");
+    myEditVariablesButton.setToolTipText(hasVariables ? null : CodeInsightBundle.message("tooltip.disabled.because.the.template.has.no.variables.surrounded.with.signs"));
   }
 
   void resetUi() {

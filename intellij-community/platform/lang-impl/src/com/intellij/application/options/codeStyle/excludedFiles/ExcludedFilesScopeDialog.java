@@ -3,6 +3,7 @@ package com.intellij.application.options.codeStyle.excludedFiles;
 
 import com.intellij.formatting.fileSet.FileSetDescriptor;
 import com.intellij.formatting.fileSet.NamedScopeDescriptor;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +26,14 @@ public class ExcludedFilesScopeDialog extends ExcludedFilesDialogBase {
                                      @NotNull List<? extends NamedScope> availableScopes) {
     super(project);
     myAvailableScopes = availableScopes;
-    setTitle("Add Scope");
+    setTitle(LangBundle.message("dialog.title.add.scope"));
     myEditAction = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         close(EDIT_SCOPES);
       }
     };
-    myEditAction.putValue(Action.NAME, "Edit Scopes...");
+    myEditAction.putValue(Action.NAME, LangBundle.message("button.edit.scopes"));
     init();
     fillScopesList(availableScopes);
   }

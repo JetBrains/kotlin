@@ -2,6 +2,7 @@
 package com.intellij.execution.console;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -21,7 +22,7 @@ final class UseConsoleInputAction extends ToggleAction implements DumbAware {
   private boolean useProcessStdIn;
 
   UseConsoleInputAction(@NotNull String processInputStateKey) {
-    super("Use Console Input", null, AllIcons.Debugger.Console);
+    super(ExecutionBundle.message("action.text.use.console.input"), null, AllIcons.Debugger.Console);
 
     this.processInputStateKey = processInputStateKey;
     useProcessStdIn = PropertiesComponent.getInstance().getBoolean(processInputStateKey);

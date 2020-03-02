@@ -62,7 +62,7 @@ public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements 
     DumbService.getInstance(project).runWithAlternativeResolveEnabled(() -> {
       try {
         int offset = editor.getCaretModel().getOffset();
-        PsiElement[] symbolTypes = ActionUtil.underModalProgress(project, "Resolving Reference...",
+        PsiElement[] symbolTypes = ActionUtil.underModalProgress(project, CodeInsightBundle.message("progress.title.resolving.reference"),
                                                                  () -> findSymbolTypes(editor, offset));
         if (symbolTypes == null || symbolTypes.length == 0) return;
         if (symbolTypes.length == 1) {
@@ -74,7 +74,8 @@ public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements 
         }
       }
       catch (IndexNotReadyException e) {
-        DumbService.getInstance(project).showDumbModeNotification("Navigation is not available here during index update");
+        DumbService.getInstance(project).showDumbModeNotification(
+          CodeInsightBundle.message("message.navigation.is.not.available.here.during.index.update"));
       }
     });
   }

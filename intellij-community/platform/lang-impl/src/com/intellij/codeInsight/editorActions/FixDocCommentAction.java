@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.documentation.DocCommentFixer;
 import com.intellij.lang.*;
@@ -119,7 +120,7 @@ public class FixDocCommentAction extends EditorAction {
       }
     }
     final Runnable command = () -> ApplicationManager.getApplication().runWriteAction(task);
-    CommandProcessor.getInstance().executeCommand(project, command, "Fix documentation", null);
+    CommandProcessor.getInstance().executeCommand(project, command, CodeInsightBundle.message("command.fix.documentation"), null);
     
   }
 
