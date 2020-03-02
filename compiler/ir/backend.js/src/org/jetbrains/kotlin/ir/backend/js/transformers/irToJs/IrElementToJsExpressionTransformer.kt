@@ -26,11 +26,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 
-    override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
-        val irFunction = expression.symbol.owner
-        return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
-    }
-
     override fun visitFunctionExpression(expression: IrFunctionExpression, context: JsGenerationContext): JsExpression {
         val irFunction = expression.function
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
