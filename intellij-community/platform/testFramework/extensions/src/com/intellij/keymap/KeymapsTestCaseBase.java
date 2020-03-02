@@ -352,6 +352,9 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
 
   @NotNull
   private static Shortcut parseShortcut(@NotNull String s) {
+    if (s.equals("Force touch")) {
+      return KeymapUtil.parseMouseShortcut(s);
+    }
     if (s.contains("button")) {
       return KeymapUtil.parseMouseShortcut(s);
     }
