@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 inline fun <reified T> foo(default: T): T {
     val t: T
     run {
@@ -13,6 +11,6 @@ fun test() {
 }
 
 // two in foo and two in test
-
 // 4 ASTORE 2
-// 1 LOCALVARIABLE t\$iv Ljava/lang/Object; L3 L.* 2
+// 1 LOCALVARIABLE t Ljava/lang/Object;
+// 1 LOCALVARIABLE t\$iv Ljava/lang/Object;

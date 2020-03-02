@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36648 Captured variables not optimized in JVM_IR
-
 fun test(): Char {
     lateinit var c: Any
     run {
@@ -9,5 +6,11 @@ fun test(): Char {
     return c as Char
 }
 
+// 1 LOCALVARIABLE c Ljava/lang/Object;
+
+// JVM_TEMPLATES
 // 2 ASTORE 0
-// 1 LOCALVARIABLE c Ljava/lang/Object; L1 L.* 0
+
+// JVM_IR_TEMPLATES
+// 3 ASTORE 0
+// *two* of them are after the start of c's live range

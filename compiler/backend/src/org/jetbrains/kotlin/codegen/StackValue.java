@@ -636,11 +636,8 @@ public abstract class StackValue {
             if (toType.equals(UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
                 putUnitInstance(v);
             }
-            else if (toType.getSort() == Type.OBJECT || toType.getSort() == Type.ARRAY) {
-                v.aconst(null);
-            }
             else {
-                pushDefaultPrimitiveValueOnStack(toType, v);
+                pushDefaultValueOnStack(toType, v);
             }
         }
         else if (toType.equals(UNIT_TYPE)) {
