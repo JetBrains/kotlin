@@ -780,6 +780,9 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
           }
         }
 
+        panel.getAccessibleContext().setAccessibleName(presentation.getText());
+        panel.getAccessibleContext().setAccessibleDescription(presentation.getDescription());
+
         panel.setToolTipText(presentation.getDescription());
         Shortcut[] shortcuts = getActiveKeymapShortcuts(ActionManager.getInstance().getId(anAction)).getShortcuts();
         String shortcutText = KeymapUtil.getPreferredShortcutText(shortcuts);
