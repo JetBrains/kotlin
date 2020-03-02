@@ -128,7 +128,11 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
 
     // Inputs and outputs
     val libraries: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
+        @InputFiles get() =
+            // Avoid resolving these dependencies during task graph construction when we can't build the target:
+            if (compilation.konanTarget.enabledOnCurrentHost)
+                compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
+            else project.files()
 
     override fun getClasspath(): FileCollection = libraries
     override fun setClasspath(configuration: FileCollection?) {

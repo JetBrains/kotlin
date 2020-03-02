@@ -258,8 +258,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         val compilationName = sourceSet.name
 
-        val isNativeSourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(sourceSet)
-            .all { compilation -> compilation.target is KotlinNativeTarget }
+        val platformCompilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(sourceSet)
+
+        val isNativeSourceSet = platformCompilations.all { compilation -> compilation.target is KotlinNativeTarget }
 
         val compilationFactory: KotlinCompilationFactory<out AbstractKotlinCompilation<*>> = when {
             isNativeSourceSet -> KotlinSharedNativeCompilationFactory(target)
@@ -275,6 +276,14 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             if (!isHostSpecific) {
                 val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
                 allMetadataJar.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) }
+            } else {
+                if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
+                    // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
+                    compileKotlinTaskHolder.configure { it.enabled = false }
+                    // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
+                    // not resolved:
+                    compileDependencyFiles = project.files()
+                }
             }
         }
     }
@@ -476,11 +485,8 @@ internal fun getPublishedCommonSourceSets(project: Project): Set<KotlinSourceSet
 
     val sourceSetsUsedInMultipleTargets = compilationsBySourceSet.filterValues { compilations ->
         compilations.map { it.target.platformType }.distinct().run {
-            size > 1 && toSet() != setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) || (
-                    singleOrNull() == KotlinPlatformType.native &&
-                            compilations.map { it.target }.distinct().size > 1 &&
-                            compilations.any { (it as AbstractKotlinNativeCompilation).konanTarget.enabledOnCurrentHost }
-                    )
+            size > 1 && toSet() != setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) ||
+                    singleOrNull() == KotlinPlatformType.native && compilations.map { it.target }.distinct().size > 1
             // TODO: platform-shared source sets other than Kotlin/Native ones are not yet supported; support will be needed for JVM, JS
         }
     }
