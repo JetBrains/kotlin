@@ -188,13 +188,13 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
       @Override
       public Insets getBorderInsets(Component c) {
         if (SystemInfo.isMac && !StartupUiUtil.isUnderDarcula()) {
-          return new JBInsets(3, 0, 3, 0);
+          return new JBInsets(3, 0, 2, 0);
         }
         else {
-          int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : StartupUiUtil.isUnderDarcula() ? 2 : 1;
+          int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : StartupUiUtil.isUnderDarcula() ? 1 : 0;
           int top = myTextArea.getFontMetrics(myTextArea.getFont()).getHeight() <= 16 ? 2 : 1;
           if (JBUIScale.isUsrHiDPI()) {
-            bottom = 2;
+            bottom = 0;
             top = 2;
           }
           return new JBInsets(top, 0, bottom, 0);
@@ -242,7 +242,6 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
   }
 
   protected void updateLayout() {
-    setBorder(myPainter.getBorder());
     setLayout(new MigLayout(myPainter.getLayoutConstraints()));
     removeAll();
     add(myHistoryPopupButton, myPainter.getHistoryButtonConstraints());
