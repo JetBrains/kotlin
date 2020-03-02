@@ -69,13 +69,14 @@ class JvmBackendContext(
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper, state.languageVersionSettings)
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, irBuiltIns)
 
     override val mapping: Mapping = DefaultMapping()
 
     val psiErrorBuilder = PsiErrorBuilder(psiSourceManager, state.diagnostics)
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
+
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns)
 
     val irIntrinsics by lazy { IrIntrinsicMethods(irBuiltIns, ir.symbols) }
 

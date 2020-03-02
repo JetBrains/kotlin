@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.descriptors
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.name.Name
 
 class JvmSharedVariablesManager(
     module: ModuleDescriptor,
+    val symbols: JvmSymbols,
     val irBuiltIns: IrBuiltIns
 ) : SharedVariablesManager {
     private val jvmInternalPackage = IrExternalPackageFragmentImpl(
@@ -83,7 +86,7 @@ class JvmSharedVariablesManager(
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val valueType = originalDeclaration.type
-        val provider = getProvider(valueType)
+        val provider = getProvider(InlineClassAbi.unboxType(valueType) ?: valueType)
         val typeArguments = provider.refClass.typeParameters.map { valueType }
         val refType = provider.refClass.typeWith(typeArguments)
         val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(refType, provider.refConstructor.symbol).apply {
@@ -116,18 +119,29 @@ class JvmSharedVariablesManager(
         }
     }
 
+    private fun unsafeCoerce(value: IrExpression, from: IrType, to: IrType): IrExpression =
+        IrCallImpl(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
+            putTypeArgument(0, from)
+            putTypeArgument(1, to)
+            putValueArgument(0, value)
+        }
+
     override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression =
         with(originalGet) {
-            val provider = getProvider(symbol.owner.type)
+            val unboxedType = InlineClassAbi.unboxType(symbol.owner.type)
+            val provider = getProvider(unboxedType ?: symbol.owner.type)
             val receiver = IrGetValueImpl(startOffset, endOffset, sharedVariableSymbol)
-            IrGetFieldImpl(startOffset, endOffset, provider.elementField.symbol, type, receiver, origin)
+            val unboxedRead = IrGetFieldImpl(startOffset, endOffset, provider.elementField.symbol, unboxedType ?: type, receiver, origin)
+            unboxedType?.let { unsafeCoerce(unboxedRead, it, symbol.owner.type) } ?: unboxedRead
         }
 
     override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression =
         with(originalSet) {
-            val provider = getProvider(symbol.owner.type)
+            val unboxedType = InlineClassAbi.unboxType(symbol.owner.type)
+            val unboxedValue = unboxedType?.let { unsafeCoerce(value, symbol.owner.type, it) } ?: value
+            val provider = getProvider(unboxedType ?: symbol.owner.type)
             val receiver = IrGetValueImpl(startOffset, endOffset, sharedVariableSymbol)
-            IrSetFieldImpl(startOffset, endOffset, provider.elementField.symbol, receiver, value, type, origin)
+            IrSetFieldImpl(startOffset, endOffset, provider.elementField.symbol, receiver, unboxedValue, type, origin)
         }
 }
 
