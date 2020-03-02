@@ -36,7 +36,7 @@ abstract class JavaHomeFinderBase {
 
     try {
       Set<File> paths = new HashSet<>();
-      paths.add(new File(JdkInstaller.getInstance().defaultInstallDir()));
+      paths.add(JdkInstaller.getInstance().defaultInstallDir());
 
       for (Sdk jdk : ProjectJdkTable.getInstance().getAllJdks()) {
         if (!(jdk.getSdkType() instanceof JavaSdkType) || jdk.getSdkType() instanceof DependentSdkType) continue;

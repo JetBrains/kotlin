@@ -50,28 +50,28 @@ class JdkInstaller {
 
   private val LOG = logger<JdkInstaller>()
 
-  fun defaultInstallDir() : String {
-    val home = FileUtil.toCanonicalPath(System.getProperty("user.home") ?: ".")
-    val targetDir = when {
-      SystemInfo.isLinux ->  "$home/.jdks"
-      //see https://youtrack.jetbrains.com/issue/IDEA-206163#focus=streamItem-27-3270022.0-0
-      SystemInfo.isMac ->  "$home/Library/Java/JavaVirtualMachines"
-      SystemInfo.isWindows -> "$home\\.jdks"
-      else -> error("Unsupported OS")
-    }
+  private operator fun File.div(path: String) = File(this, path).absoluteFile
 
-    return FileUtil.toSystemDependentName(FileUtil.toCanonicalPath(targetDir))
+  fun defaultInstallDir() : File {
+    val home = File(FileUtil.toCanonicalPath(System.getProperty("user.home") ?: "."))
+    return when {
+      SystemInfo.isLinux ->  home/ ".jdks"
+      //see https://youtrack.jetbrains.com/issue/IDEA-206163#focus=streamItem-27-3270022.0-0
+      SystemInfo.isMac ->  home / "Library" / "Java" / "JavaVirtualMachines"
+      SystemInfo.isWindows -> home / ".jdks"
+      else -> error("Unsupported OS: ${SystemInfo.getOsNameAndVersion()}")
+    }
   }
 
-  fun defaultInstallDir(newVersion: JdkItem) : String {
-    val targetDir = defaultInstallDir() + File.separatorChar + newVersion.installFolderName
+  fun defaultInstallDir(newVersion: JdkItem) : File {
+    val targetDir = defaultInstallDir() / newVersion.installFolderName
 
     var count = 1
     var uniqueDir = targetDir
-    while(File(uniqueDir).exists()) {
-      uniqueDir = targetDir + "-" + count++
+    while(uniqueDir.exists()) {
+      uniqueDir = File(targetDir.path + "-" + count++)
     }
-    return FileUtil.toSystemDependentName(FileUtil.toCanonicalPath(uniqueDir))
+    return uniqueDir.absoluteFile
   }
 
 
@@ -154,8 +154,8 @@ class JdkInstaller {
   /**
    * executed synchronously to prepare Jdk installation process, that would run in the future
    */
-  fun prepareJdkInstallation(jdkItem: JdkItem, targetPath: String): JdkInstallRequest {
-    val (home, error) = validateInstallDir(targetPath)
+  fun prepareJdkInstallation(jdkItem: JdkItem, targetPath: File): JdkInstallRequest {
+    val (home, error) = validateInstallDir(targetPath.path)
     if (home == null || error != null) throw RuntimeException(error ?: "Invalid Target Directory")
 
     FileUtil.createDirectory(home)
@@ -169,7 +169,7 @@ class JdkInstaller {
   }
 
   private fun writeMarkerFile(request: JdkInstallRequest) {
-    val markerFile = File(request.targetDir, "intellij-downloader-info.txt")
+    val markerFile = request.targetDir / "intellij-downloader-info.txt"
     markerFile.writeText("Download started on ${Date()}\n${request.item}")
   }
 }

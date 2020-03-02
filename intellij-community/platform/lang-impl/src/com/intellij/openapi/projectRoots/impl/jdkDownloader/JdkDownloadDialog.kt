@@ -15,6 +15,7 @@ import com.intellij.ui.components.textFieldWithBrowseButton
 import com.intellij.ui.layout.*
 import java.awt.Component
 import java.awt.event.ItemEvent
+import java.io.File
 import javax.swing.Action
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
@@ -82,7 +83,7 @@ class JdkDownloadDialog(
     )
 
     fun selectInstallPath(newVersion: JdkItem) {
-      installDirTextField.text = JdkInstaller.getInstance().defaultInstallDir(newVersion)
+      installDirTextField.text = JdkInstaller.getInstance().defaultInstallDir(newVersion).path
       selectedItem = newVersion
     }
 
@@ -107,17 +108,18 @@ class JdkDownloadDialog(
   override fun doValidate(): ValidationInfo? {
     super.doValidate()?.let { return it }
 
-    val path = selectedPath
-    val (_, error) = JdkInstaller.getInstance().validateInstallDir(path)
+    val (_, error) = JdkInstaller.getInstance().validateInstallDir(selectedPath)
     return error?.let { ValidationInfo(error, installDirTextField) }
   }
 
   override fun createCenterPanel() = panel
 
-  // returns unpacked JDK location (if any) or null if cancelled
-  fun selectJdkAndPath() = when {
-    showAndGet() -> selectedItem to selectedPath //TODO: validate the path!
-    else -> null
+  fun selectJdkAndPath(): Pair<JdkItem, File>? {
+    if (!showAndGet()) return null
+
+    val (selectedFile) = JdkInstaller.getInstance().validateInstallDir(selectedPath)
+    if (selectedFile == null) return null
+    return selectedItem to selectedFile
   }
 
   private inline fun TextFieldWithBrowseButton.onTextChange(crossinline action: (String) -> Unit) {
