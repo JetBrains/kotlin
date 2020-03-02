@@ -201,7 +201,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
                 val codeSignSettings = teamIDOrNull?.let { mapOf("DEVELOPMENT_TEAM" to teamID) } ?: emptyMap()
 
                 val pbxTarget = addNativeTarget(name, typeId, settings, platform)
-                addConfiguration("Debug", settings + mapOf(BuildSettingNames.ONLY_ACTIVE_ARCH to "YES"), pbxTarget)
+                addConfiguration("Debug", settings + mapOf(BuildSettingNames.ONLY_ACTIVE_ARCH to "YES", "ENABLE_TESTABILITY" to "YES"), pbxTarget)
                 addConfiguration("Release", settings + codeSignSettings, pbxTarget)
 
                 for (phaseType in listOf(
@@ -231,8 +231,7 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
                 BuildSettingNames.TEST_HOST to "$(BUILT_PRODUCTS_DIR)/${project.name}.app/${project.name}",
                 BuildSettingNames.PRODUCT_NAME to "${project.name}Tests",
                 BuildSettingNames.PRODUCT_MODULE_NAME to "${project.name}Tests",
-                "BUNDLE_LOADER" to "$(TEST_HOST)",
-                "ENABLE_TESTABILITY" to "YES"
+                "BUNDLE_LOADER" to "$(TEST_HOST)"
             )
             val pbxTestTarget = addTarget(target.name + "Tests", AppleProductType.UNIT_TEST_TYPE_ID, testTargetSettings)
             addTargetDependency(pbxTestTarget, pbxTarget)
