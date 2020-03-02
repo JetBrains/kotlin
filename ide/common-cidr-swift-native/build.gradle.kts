@@ -10,13 +10,8 @@ plugins {
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 val addCidrSwiftNativeModuleDeps: (Project) -> Unit by ultimateTools
-val ijProductBranch: (String) -> Int by ultimateTools
-
-val isStandaloneBuild: Boolean by rootProject.extra
-val useAppCodeForCommon: Boolean by rootProject.extra
 
 val cidrVersion: String by rootProject.extra
-val cidrUnscrambledJarDir: File by rootProject.extra
 val kotlinNativeBackendVersion: String by rootProject.extra
 
 repositories {
@@ -30,12 +25,10 @@ dependencies {
     addIdeaNativeModuleDeps(project)
     addCidrSwiftNativeModuleDeps(project)
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
-    compileOnly(fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
-    if (!isStandaloneBuild || !useAppCodeForCommon) {
-        compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
-        compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
-        compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
-    }
+    compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
+    compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
     compileOnly(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:$kotlinNativeBackendVersion:backend.native.jar"))
 }
 

@@ -2,43 +2,30 @@ plugins {
     kotlin("jvm")
 }
 
-val clionUnscrambledJarDir: File by rootProject.extra
-val clionVersion: String by rootProject.extra
+val cidrVersion: String by rootProject.extra
 
-val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
-val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+val ultimateTools: Map<String, Any> by rootProject.extensions
+val proprietaryRepositories: Project.() -> Unit by ultimateTools
+val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
+
+proprietaryRepositories()
 
 repositories {
     maven("https://maven.google.com")
-    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
 }
 
 dependencies {
+    addIdeaNativeModuleDeps(project)
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compile(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
-    compile("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
-    compile("com.jetbrains.intellij.cidr:cidr-cocoa:$clionVersion") { isTransitive = false }
-    compile("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
-    compile("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
-    compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
     compile("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }
-    compile("org.xerial:sqlite-jdbc:3.21.0.1") { isTransitive = false }
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
-    compile("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
-
-    if (!isStandaloneBuild) {
-        val localDependencies = Class.forName("LocalDependenciesKt")
-        val intellijDep = localDependencies
-            .getMethod("intellijDep", Project::class.java, String::class.java)
-            .invoke(null, project, null) as String
-        compileOnly(intellijDep) {
-            localDependencies
-                .getMethod("includeJars", ModuleDependency::class.java, Array<String>::class.java, Project::class.java)
-                .invoke(null, this, arrayOf("external-system-rt"), null)
-        }
-    }
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {

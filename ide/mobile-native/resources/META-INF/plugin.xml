@@ -1,12 +1,9 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress XmlPathReference -->
-  <xi:include href="/META-INF/CocoaPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <!--suppress XmlPathReference -->
-  <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanDebugger.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-  <id>org.jetbrains.kotlin.mobile.plugin</id>
-  <name>Mobile for CLion</name>
+  <id>com.intellij.kotlin.mobile</id>
+  <name>Mobile</name>
   <!--version_placeholder-->
   <vendor>JetBrains</vendor>
 
@@ -14,10 +11,8 @@
 
   <change-notes/>
 
-  <depends>com.intellij.modules.clion</depends>
-  <depends>org.jetbrains.kotlin.native.clion</depends>
-  <!--suppress PluginXmlValidity -->
-  <depends optional="true" config-file="plugin-with-markdown.xml">org.intellij.plugins.markdown</depends>
+  <depends>com.intellij.modules.mobile.ide</depends>
+  <depends>org.jetbrains.kotlin</depends>
 
   <application-components>
     <!-- swift -->
@@ -38,8 +33,6 @@
 
     <programRunner implementation="com.jetbrains.mobile.execution.MobileRunner" order="first"/>
 
-    <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
-                        serviceImplementation="com.jetbrains.mobile.PathManagerCustomization" overrides="true"/>
     <executionTargetProvider implementation="com.jetbrains.mobile.execution.DeviceExecutionTargetProvider"/>
 
     <externalProjectDataService implementation="com.jetbrains.mobile.gradle.AndroidProjectDataService"/>

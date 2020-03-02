@@ -167,7 +167,7 @@ val clionCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("
 // - "mobilePluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
 // - "mobilePluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
 val mobilePluginNumber: String = findProperty("mobilePluginNumber")?.toString() ?: "SNAPSHOT"
-val mobilePluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("CLion", clionVersion, mobilePluginNumber))
+val mobilePluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("Mobile", clionVersion, mobilePluginNumber))
 val mobilePluginZipPath: File by rootProject.extra(
         propertyAsPath("mobilePluginZipPath")
                 ?: defaultCidrPluginZipPath(mobilePluginVersionFull, "mobile")

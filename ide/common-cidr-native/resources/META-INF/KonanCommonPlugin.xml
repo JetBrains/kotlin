@@ -6,6 +6,8 @@
     <xi:fallback/>
   </xi:include>
 
+  <xi:include href="KonanDebugger.xml"/>
+
   <extensionPoints>
     <extensionPoint qualifiedName="org.jetbrains.kotlin.native.gradleLauncherProvider"
                     interface="org.jetbrains.konan.gradle.execution.GradleKonanLauncherProvider"/>
@@ -28,16 +30,10 @@
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
-<!--    <applicationService-->
-<!--        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"-->
-<!--        serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>-->
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
+        serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>
     <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"
                                 id="KonanProjectDataService"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="cidr.debugger">
-    <languageSupport language="kotlin" implementationClass="org.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
-    <lineBreakpointFileTypesProvider implementation="com.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
-    <valueRendererFactory implementation="org.jetbrains.konan.debugger.KonanValueRendererFactory"/>
   </extensions>
 </idea-plugin>

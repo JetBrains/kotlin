@@ -45,6 +45,7 @@ fun Project.downloading(
         pathRemap: (String) -> String = { it },
         extractor: (Configuration) -> Any = { it }
 ) = tasks.creating {
+    onlyIf { findProperty("skipDownloading" + sourceConfiguration.name.capitalize())?.toString()?.toBoolean() != true }
     // don't re-check status of the artifact at the remote server if the artifact is already downloaded
     val isUpToDate = targetDir.isDirectory && targetDir.walkTopDown().firstOrNull { !it.isDirectory } != null
     outputs.upToDateWhen { isUpToDate }

@@ -1,4 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress XmlPathReference -->
-  <xi:include href="/META-INF/SwiftDocPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>
