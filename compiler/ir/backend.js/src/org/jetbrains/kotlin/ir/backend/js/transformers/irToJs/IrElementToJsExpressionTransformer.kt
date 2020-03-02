@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
@@ -85,7 +87,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
-        if (expression.symbol.owner === context.currentFunction?.dispatchReceiverParameter) return JsThisRef()
+        if (expression.symbol.owner.isThisReceiver()) return JsThisRef()
         return context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
     }
 
@@ -271,4 +273,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             expression.left.accept(this, data),
             expression.right.accept(this, data)
         )
+
+    private fun IrValueDeclaration.isThisReceiver(): Boolean = when (val p = parent) {
+        is IrSimpleFunction -> this === p.dispatchReceiverParameter
+        is IrClass -> this === p.thisReceiver
+        else -> false
+    }
 }

@@ -372,16 +372,6 @@ class NameTables(
             element.acceptChildrenVoid(this)
         }
 
-        override fun visitValueParameter(declaration: IrValueParameter) {
-            val parentFunction = declaration.parent as? IrFunction
-            if ((declaration.origin == IrDeclarationOrigin.INSTANCE_RECEIVER && declaration.name.isSpecial) ||
-                (parentFunction != null && declaration == parentFunction.dispatchReceiverParameter)
-            )
-                table.declareStableName(declaration, Namer.IMPLICIT_RECEIVER_NAME)
-            else
-                super.visitValueParameter(declaration)
-        }
-
         override fun visitDeclaration(declaration: IrDeclaration) {
             if (declaration is IrDeclarationWithName && declaration is IrSymbolOwner) {
                 table.declareFreshName(declaration, declaration.name.asString())
