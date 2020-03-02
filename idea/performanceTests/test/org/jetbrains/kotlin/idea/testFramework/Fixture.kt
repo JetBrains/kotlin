@@ -61,6 +61,10 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
         delegate.type(s)
     }
 
+    fun type(c: Char) {
+        delegate.type(c)
+    }
+
     fun performEditorAction(actionId: String): Boolean {
         selectEditor()
         return delegate.performEditorAction(actionId)

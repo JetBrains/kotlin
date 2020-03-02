@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.idea.testFramework
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
+import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback
+import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -16,10 +22,11 @@ import org.jetbrains.plugins.gradle.service.project.open.setupGradleSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleLog
+import java.io.File
 import kotlin.test.assertNotNull
 
 fun refreshGradleProject(projectPath: String, project: Project) {
-    _importProject(projectPath, project)
+    _importProject(File(projectPath).absolutePath, project)
 
     dispatchAllInvocationEvents()
 }
@@ -58,6 +65,34 @@ private fun _attachGradleProjectAndRefresh(
     if (settings.getLinkedProjectSettings(externalProjectPath) == null) {
         settings.linkProject(gradleProjectSettings)
     }
-    //ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, externalProjectPath, true, ProgressExecutionMode.MODAL_SYNC)
-    ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, externalProjectPath, false, ProgressExecutionMode.MODAL_SYNC)
+    //ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, externalProjectPath, false, ProgressExecutionMode.MODAL_SYNC)
+
+    val progressExecutionMode = ProgressExecutionMode.MODAL_SYNC
+    val externalSystemId = GradleConstants.SYSTEM_ID
+    val callback = object : ExternalProjectRefreshCallback {
+        override fun onFailure(errorMessage: String, errorDetails: String?) {
+            super.onFailure(errorMessage, errorDetails)
+            throw RuntimeException(errorMessage)
+        }
+
+        override fun onFailure(
+            externalTaskId: ExternalSystemTaskId,
+            errorMessage: String,
+            errorDetails: String?
+        ) {
+            super.onFailure(externalTaskId, errorMessage, errorDetails)
+            throw RuntimeException(errorMessage)
+        }
+
+        override fun onSuccess(externalProject: DataNode<ProjectData>?) {
+            if (externalProject == null) {
+                return
+            }
+            val synchronous = progressExecutionMode == ProgressExecutionMode.MODAL_SYNC
+            ServiceManager.getService(
+                ProjectDataManager::class.java
+            ).importData(externalProject, project, synchronous)
+        }
+    }
+    ExternalSystemUtil.refreshProject(project, externalSystemId, externalProjectPath, callback, false, progressExecutionMode, true)
 }

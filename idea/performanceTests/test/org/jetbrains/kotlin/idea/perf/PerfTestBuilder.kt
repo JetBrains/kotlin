@@ -16,7 +16,7 @@ class PerfTestBuilder<SV, TV> {
     private var profileEnabled: Boolean = false
     private var checkStability: Boolean = true
 
-    fun run() {
+    internal fun run() {
         stats.perfTest(
             testName = name,
             warmUpIterations = warmUpIterations,

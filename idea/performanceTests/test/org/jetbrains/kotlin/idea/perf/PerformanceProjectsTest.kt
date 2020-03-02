@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
 import org.jetbrains.kotlin.idea.testFramework.Fixture
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
-import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.EXISTING_IDEA_PROJECT
-import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.SIMPLE_JAVA_MODULE
+import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.GRADLE_PROJECT
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertNotEquals
 
@@ -217,19 +216,10 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             stats = stats,
             note = "",
             path = "../perfTestProject",
-            openAction = EXISTING_IDEA_PROJECT,
+            openAction = GRADLE_PROJECT,
             fast = fast
         )
     }
-
-    private fun perfOpenHelloWorld(stats: Stats, note: String = ""): Project =
-        perfOpenProject(
-            name = "helloKotlin",
-            stats = stats,
-            note = note,
-            path = "idea/testData/perfTest/helloKotlin",
-            openAction = SIMPLE_JAVA_MODULE
-        )
 
     private fun perfScriptDependenciesBuildGradleKts(it: Stats) {
         perfScriptDependencies("build.gradle.kts", stats = it)
