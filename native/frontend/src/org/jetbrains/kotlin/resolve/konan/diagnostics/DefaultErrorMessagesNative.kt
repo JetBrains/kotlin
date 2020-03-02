@@ -22,7 +22,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         )
         put(
             ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
-            "@SharedImmutable isn't applicable to the property without backing field or delegation"
+            "@SharedImmutable is applicable only to val with backing field or to property with delegation"
         )
         put(ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL, "@SharedImmutable is applicable only to top level declarations")
     }
