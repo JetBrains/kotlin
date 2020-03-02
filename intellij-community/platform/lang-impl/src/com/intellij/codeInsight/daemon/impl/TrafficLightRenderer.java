@@ -2,7 +2,6 @@
 
 package com.intellij.codeInsight.daemon.impl;
 
-import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
@@ -44,6 +43,7 @@ import com.intellij.ui.TextIcon;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBValue;
@@ -239,21 +239,13 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
 
     status.errorCount = errorCount.clone();
-    List<TextEditorHighlightingPass> passes = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument);
-    status.passStati = passes.isEmpty() ? Collections.emptyList() :
-                       new ArrayList<>(passes.size());
-    //noinspection ForLoopReplaceableByForEach
-    for (int i = 0; i < passes.size(); i++) {
-      TextEditorHighlightingPass tepass = passes.get(i);
-      if (!(tepass instanceof ProgressableTextEditorHighlightingPass) ||
-          StringUtil.isEmpty(((ProgressableTextEditorHighlightingPass)tepass).getPresentableName())) {
-        continue;
-      }
-      ProgressableTextEditorHighlightingPass pass = (ProgressableTextEditorHighlightingPass)tepass;
 
-      if (pass.getProgress() < 0) continue;
-      status.passStati.add(pass);
-    }
+    status.passStati = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument).stream().
+      filter(p -> p instanceof ProgressableTextEditorHighlightingPass).
+      map(p -> (ProgressableTextEditorHighlightingPass)p).
+      filter(p -> StringUtil.isNotEmpty(p.getPresentableName()) && p.getProgress() >= 0).
+      collect(Collectors.toList());
+
     status.errorAnalyzingFinished = myDaemonCodeAnalyzer.isAllAnalysisFinished(psiFile);
     status.reasonWhySuspended = myDaemonCodeAnalyzer.isUpdateByTimerEnabled() ? null : "Highlighting is paused temporarily";
     fillDaemonCodeAnalyzerErrorsStatus(status, severityRegistrar);
@@ -457,9 +449,14 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
         if (!status.errorAnalyzingFinished) detailsBuilder.append(" found so far");
 
-        return new AnalyzerStatus(mainIcon, title, detailsBuilder.toString(), this::getUIController).
+        AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, detailsBuilder.toString(), this::getUIController).
           withNavigation().
           withExpandedIcon(statusIcon);
+
+        //noinspection ConstantConditions
+        return status.errorAnalyzingFinished ? result :
+               result.withPathStat(ContainerUtil.map(status.passStati,
+                                                     p -> new StatInfo(p.getPresentableName(), p.getProgress(), p.isFinished())));
       }
       else {
         if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
@@ -486,8 +483,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         else {
           TextIcon icon = new TextIcon("Analyzing...", iconTextColor, null, 0);
           icon.setFont(font);
+
+          //noinspection ConstantConditions
           return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::getUIController).
-            withExpandedIcon(new LayeredIcon(icon));
+            withExpandedIcon(new LayeredIcon(icon)).
+            withPathStat(ContainerUtil.map(status.passStati, p -> new StatInfo(p.getPresentableName(), p.getProgress(), p.isFinished())));
         }
       }
     }
