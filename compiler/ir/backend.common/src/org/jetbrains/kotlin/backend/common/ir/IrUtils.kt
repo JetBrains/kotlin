@@ -407,9 +407,6 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
         thisReceiverDescriptor.bind(valueParameter)
         valueParameter.parent = this
     }
-
-    assert(typeParameters.isEmpty())
-    assert(descriptor.declaredTypeParameters.isEmpty())
 }
 
 @Suppress("UNCHECKED_CAST")
