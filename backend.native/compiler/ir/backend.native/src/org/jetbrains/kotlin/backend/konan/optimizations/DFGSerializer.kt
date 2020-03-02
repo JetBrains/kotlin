@@ -1023,7 +1023,7 @@ internal object DFGSerializer {
                                 val symbolTableIndex = public.intestines.index
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
-                                DataFlowIR.Type.Public(public.hash, public.intestines.base.isFinal,
+                                DataFlowIR.Type.Public(public.hash, -1 /*TODO*/, public.intestines.base.isFinal,
                                         public.intestines.base.isAbstract, public.intestines.base.primitiveBinaryType,
                                         module, symbolTableIndex, null, public.intestines.base.name).also {
                                     publicTypesMap.put(it.hash, it)

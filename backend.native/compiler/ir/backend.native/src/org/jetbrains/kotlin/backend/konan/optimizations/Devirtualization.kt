@@ -39,6 +39,15 @@ import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
 
+inline fun BitSet.forEachBit(block: (Int) -> Unit) {
+    var i = -1
+    while (true) {
+        i = nextSetBit(i + 1)
+        if (i < 0) break
+        block(i)
+    }
+}
+
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
 internal object Devirtualization {
@@ -106,7 +115,7 @@ internal object Devirtualization {
         return (exportedFunctions + globalInitializers + explicitlyExportedFunctions + associatedObjects).distinct()
     }
 
-    fun BitSet.format(allTypes: List<DataFlowIR.Type.Declared>): String {
+    fun BitSet.format(allTypes: Array<DataFlowIR.Type.Declared>): String {
         return allTypes.withIndex().filter { this[it.index] }.joinToString { it.value.toString() }
     }
 
@@ -169,7 +178,7 @@ internal object Devirtualization {
                 edge.node.reversedCastEdges!!.add(CastEdge(this, edge.suitableTypes))
             }
 
-            abstract fun toString(allTypes: List<DataFlowIR.Type.Declared>): String
+            abstract fun toString(allTypes: Array<DataFlowIR.Type.Declared>): String
 
             class Source(id: Int, typeId: Int, nameBuilder: () -> String): Node(id) {
                 val name = takeName(nameBuilder)
@@ -178,7 +187,7 @@ internal object Devirtualization {
                     types.set(typeId)
                 }
 
-                override fun toString(allTypes: List<DataFlowIR.Type.Declared>): String {
+                override fun toString(allTypes: Array<DataFlowIR.Type.Declared>): String {
                     return "Source(name='$name', types='${types.format(allTypes)}')"
                 }
             }
@@ -186,7 +195,7 @@ internal object Devirtualization {
             class Ordinary(id: Int, nameBuilder: () -> String) : Node(id) {
                 val name = takeName(nameBuilder)
 
-                override fun toString(allTypes: List<DataFlowIR.Type.Declared>): String {
+                override fun toString(allTypes: Array<DataFlowIR.Type.Declared>): String {
                     return "Ordinary(name='$name', types='${types.format(allTypes)}')"
                 }
             }
@@ -207,7 +216,6 @@ internal object Devirtualization {
             val arrayItemField = DataFlowIR.Field(null,
                     symbolTable.mapClassReferenceType(context.irBuiltIns.anyClass.owner), 1, "Array\$Item")
             val functions = mutableMapOf<DataFlowIR.FunctionSymbol, Function>()
-            val concreteClasses = mutableMapOf<DataFlowIR.Type.Declared, Node>()
             val externalFunctions = mutableMapOf<Pair<DataFlowIR.FunctionSymbol, DataFlowIR.Type>, Node>()
             val fields = mutableMapOf<DataFlowIR.Field, Node>() // Do not distinguish receivers.
             val virtualCallSiteReceivers = mutableMapOf<DataFlowIR.Node.VirtualCall, Node>()
@@ -231,36 +239,48 @@ internal object Devirtualization {
             return this
         }
 
-        inner class TypeHierarchy(types: List<DataFlowIR.Type.Declared>) {
-            private val typesSubTypes = mutableMapOf<DataFlowIR.Type.Declared, MutableList<DataFlowIR.Type.Declared>>()
+        private inline fun forEachBitInBoth(first: BitSet, second: BitSet, block: (Int) -> Unit) {
+            if (first.cardinality() < second.cardinality())
+                first.forEachBit {
+                    if (second[it])
+                        block(it)
+                }
+            else second.forEachBit {
+                if (first[it])
+                    block(it)
+            }
+        }
+
+        inner class TypeHierarchy(val allTypes: Array<DataFlowIR.Type.Declared>) {
+            private val typesSubTypes = Array(allTypes.size) { mutableListOf<DataFlowIR.Type.Declared>() }
+            private val allInheritors = Array(allTypes.size) { BitSet() }
 
             init {
-                val visited = mutableSetOf<DataFlowIR.Type.Declared>()
+                val visited = BitSet()
 
                 fun processType(type: DataFlowIR.Type.Declared) {
-                    if (type == DataFlowIR.Type.Virtual) return
-                    if (!visited.add(type)) return
+                    if (visited[type.index]) return
+                    visited.set(type.index)
                     type.superTypes
                             .map { it.resolved() }
                             .forEach { superType ->
-                                val subTypes = typesSubTypes.getOrPut(superType) { mutableListOf() }
+                                val subTypes = typesSubTypes[superType.index]
                                 subTypes += type
                                 processType(superType)
                             }
                 }
 
-                types.forEach { processType(it) }
+                allTypes.forEach { processType(it) }
             }
 
-            private fun findAllInheritors(type: DataFlowIR.Type.Declared, result: MutableSet<DataFlowIR.Type.Declared>) {
-                if (!result.add(type)) return
-                typesSubTypes[type]?.forEach { findAllInheritors(it, result) }
-            }
-
-            fun inheritorsOf(type: DataFlowIR.Type.Declared): List<DataFlowIR.Type.Declared> {
-                val result = mutableSetOf<DataFlowIR.Type.Declared>()
-                findAllInheritors(type, result)
-                return result.toList()
+            fun inheritorsOf(type: DataFlowIR.Type.Declared): BitSet {
+                val typeId = type.index
+                val inheritors = allInheritors[typeId]
+                if (!inheritors.isEmpty || type == DataFlowIR.Type.Virtual) return inheritors
+                inheritors.set(typeId)
+                for (subType in typesSubTypes[typeId])
+                    inheritors.or(inheritorsOf(subType))
+                return inheritors
             }
         }
 
@@ -277,10 +297,10 @@ internal object Devirtualization {
         private inner class InstantiationsSearcher(val rootSet: List<DataFlowIR.FunctionSymbol>,
                                                    val typeHierarchy: TypeHierarchy) {
             private val visited = mutableSetOf<DataFlowIR.FunctionSymbol>()
-            private val typesVirtualCallSites = mutableMapOf<DataFlowIR.Type.Declared, MutableList<DataFlowIR.Node.VirtualCall>>()
-            private val instantiatingClasses = mutableSetOf<DataFlowIR.Type.Declared>()
+            private val typesVirtualCallSites = Array(typeHierarchy.allTypes.size) { mutableListOf<DataFlowIR.Node.VirtualCall>() }
+            private val instantiatingClasses = BitSet()
 
-            fun search(): Set<DataFlowIR.Type.Declared> {
+            fun search(): BitSet {
                 // Rapid Type Analysis: find all instantiations and conservatively estimate call graph.
 
                 // Add all final parameters of the roots.
@@ -323,11 +343,12 @@ internal object Devirtualization {
 
             private fun addInstantiatingClass(type: DataFlowIR.Type) {
                 val resolvedType = type.resolved()
-                if (!instantiatingClasses.add(resolvedType)) return
+                if (instantiatingClasses[resolvedType.index]) return
+                instantiatingClasses.set(resolvedType.index)
 
                 DEBUG_OUTPUT(1) { println("Adding instantiating class: $resolvedType") }
 
-                checkSupertypes(resolvedType, resolvedType, mutableSetOf())
+                checkSupertypes(resolvedType, resolvedType, BitSet())
             }
 
             private fun processVirtualCall(virtualCall: DataFlowIR.Node.VirtualCall,
@@ -343,13 +364,13 @@ internal object Devirtualization {
 
             private fun checkSupertypes(type: DataFlowIR.Type.Declared,
                                         inheritor: DataFlowIR.Type.Declared,
-                                        seenTypes: MutableSet<DataFlowIR.Type.Declared>) {
-                seenTypes += type
+                                        seenTypes: BitSet) {
+                seenTypes.set(type.index)
 
                 DEBUG_OUTPUT(1) {
                     println("Checking supertype $type of $inheritor")
-                    typesVirtualCallSites[type].let {
-                        if (it == null)
+                    typesVirtualCallSites[type.index].let {
+                        if (it.isEmpty())
                             println("None virtual call sites encountered yet")
                         else {
                             println("Virtual call sites:")
@@ -360,17 +381,18 @@ internal object Devirtualization {
                     }
                 }
 
-                typesVirtualCallSites[type]?.let { virtualCallSites ->
+                typesVirtualCallSites[type.index].let { virtualCallSites ->
                     var index = 0
                     while (index < virtualCallSites.size) {
                         processVirtualCall(virtualCallSites[index], inheritor)
                         ++index
                     }
                 }
-                type.superTypes
-                        .map { it.resolved() }
-                        .filterNot { seenTypes.contains(it) }
-                        .forEach { checkSupertypes(it, inheritor, seenTypes) }
+                for (superType in type.superTypes) {
+                    val resolvedSuperType = superType.resolved()
+                    if (!seenTypes[resolvedSuperType.index])
+                        checkSupertypes(resolvedSuperType, inheritor, seenTypes)
+                }
             }
 
             private fun dfs(symbol: DataFlowIR.FunctionSymbol, returnType: DataFlowIR.Type) {
@@ -436,16 +458,17 @@ internal object Devirtualization {
                             val receiverType = node.receiverType.resolved()
                             val vCallReturnType = node.callee.returnParameter.type.resolved()
 
+                            val receiverTypeInheritors = typeHierarchy.inheritorsOf(receiverType)
                             DEBUG_OUTPUT(1) {
                                 println("Adding virtual callsite:")
                                 println("    Receiver: $receiverType")
                                 println("    Callee: ${node.callee}")
                                 println("    Inheritors:")
-                                typeHierarchy.inheritorsOf(receiverType).forEach { println("        $it") }
+                                receiverTypeInheritors.forEachBit { println("        ${typeHierarchy.allTypes[it]}") }
                                 println("    Encountered so far:")
-                                typeHierarchy.inheritorsOf(receiverType)
-                                        .filter { instantiatingClasses.contains(it) }
-                                        .forEach { println("        $it") }
+                                forEachBitInBoth(receiverTypeInheritors, instantiatingClasses) {
+                                    println("        ${typeHierarchy.allTypes[it]}")
+                                }
                             }
 
                             if (entryPoint == null && vCallReturnType.isFinal) {
@@ -454,10 +477,10 @@ internal object Devirtualization {
                                 addInstantiatingClass(vCallReturnType)
                             }
 
-                            typesVirtualCallSites.getOrPut(receiverType) { mutableListOf() }.add(node)
-                            typeHierarchy.inheritorsOf(receiverType)
-                                    .filter { instantiatingClasses.contains(it) }
-                                    .forEach { processVirtualCall(node, it) }
+                            typesVirtualCallSites[receiverType.index].add(node)
+                            forEachBitInBoth(receiverTypeInheritors, instantiatingClasses) {
+                                processVirtualCall(node, typeHierarchy.allTypes[it])
+                            }
                         }
                     }
                 }
@@ -604,20 +627,25 @@ internal object Devirtualization {
 
         fun analyze(): AnalysisResult {
             val functions = moduleDFG.functions + externalModulesDFG.functionDFGs
-            val typeHierarchy = TypeHierarchy(symbolTable.classMap.values.filterIsInstance<DataFlowIR.Type.Declared>() +
-                                              externalModulesDFG.allTypes)
+            assert(DataFlowIR.Type.Virtual !in symbolTable.classMap.values) {
+                "DataFlowIR.Type.Virtual cannot be in symbolTable.classMap"
+            }
+            val allDeclaredTypes = listOf(DataFlowIR.Type.Virtual) +
+                    symbolTable.classMap.values.filterIsInstance<DataFlowIR.Type.Declared>() +
+                    symbolTable.primitiveMap.values.filterIsInstance<DataFlowIR.Type.Declared>() +
+                    externalModulesDFG.allTypes
+            val allTypes = Array<DataFlowIR.Type.Declared>(allDeclaredTypes.size) { DataFlowIR.Type.Virtual }
+            for (type in allDeclaredTypes)
+                allTypes[type.index] = type
+            val typeHierarchy = TypeHierarchy(allTypes)
             val rootSet = computeRootSet(context, moduleDFG, externalModulesDFG)
 
             val instantiatingClasses =
                     InstantiationsSearcher(rootSet, typeHierarchy).search()
-                            .asSequence()
-                            .withIndex()
-                            .associate { it.value to (it.index + 1 /* 0 is reserved for [DataFlowIR.Type.Virtual] */) }
-            val allTypes = listOf(DataFlowIR.Type.Virtual) + instantiatingClasses.asSequence().sortedBy { it.value }.map { it.key }
 
             val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
             val constraintGraphBuilder =
-                    ConstraintGraphBuilder(nodesMap, functions, typeHierarchy, instantiatingClasses, allTypes, rootSet, true)
+                    ConstraintGraphBuilder(nodesMap, functions, typeHierarchy, instantiatingClasses, rootSet, true)
             constraintGraphBuilder.build()
 
             DEBUG_OUTPUT(0) {
@@ -811,23 +839,20 @@ internal object Devirtualization {
                     }
 
                     val receiverType = virtualCall.receiverType.resolved()
-                    val inheritorsOfReceiverType = typeHierarchy.inheritorsOf(receiverType).filter {
-                        instantiatingClasses.containsKey(it)
+                    val possibleReceivers = mutableListOf<DataFlowIR.Type.Declared>()
+                    forEachBitInBoth(receiverNode.types, typeHierarchy.inheritorsOf(receiverType)) {
+                        val type = allTypes[it]
+                        assert(instantiatingClasses[it]) { "Non-instantiating class $type" }
+                        if (type != nothing) {
+
+                            DEBUG_OUTPUT(0) {
+                                println("Path to type $type")
+                                printPathToType(receiverNode, it)
+                            }
+
+                            possibleReceivers.add(type)
+                        }
                     }
-                    val possibleReceivers = allTypes.asSequence()
-                            .withIndex()
-                            .filter { receiverNode.types[it.index] }
-                            .filter { inheritorsOfReceiverType.contains(it.value) }
-                            .filterNot { it.value == nothing }
-                            .map {
-
-                                DEBUG_OUTPUT(0) {
-                                    println("Path to type ${it.value}")
-                                    printPathToType(receiverNode, it.index)
-                                }
-
-                                it.value
-                            }.toList()
 
                     result[virtualCall] = DevirtualizedCallSite(virtualCall.callee.resolved(),
                             possibleReceivers.map { possibleReceiverType ->
@@ -870,25 +895,31 @@ internal object Devirtualization {
                 }
             }
 
-            return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }), typeHierarchy, instantiatingClasses.keys)
+            return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }), typeHierarchy)
         }
 
         private inner class ConstraintGraphBuilder(val functionNodesMap: MutableMap<DataFlowIR.Node, Node>,
                                                    val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
                                                    val typeHierarchy: TypeHierarchy,
-                                                   val instantiatingClasses: Map<DataFlowIR.Type.Declared, Int>,
-                                                   val allTypes: List<DataFlowIR.Type.Declared>,
+                                                   val instantiatingClasses: BitSet,
                                                    val rootSet: List<DataFlowIR.FunctionSymbol>,
                                                    val useTypes: Boolean) {
 
+            private val allTypes = typeHierarchy.allTypes
+
             private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
+            private val suitableTypes = arrayOfNulls<BitSet?>(allTypes.size)
+            private val concreteClasses = arrayOfNulls<Node?>(allTypes.size)
+            private val virtualTypeFilter = BitSet().apply { set(VIRTUAL_TYPE_ID) }
 
             private fun concreteType(type: DataFlowIR.Type.Declared): Int {
                 assert(!(type.isAbstract && type.isFinal)) { "Incorrect type: $type" }
                 return if (type.isAbstract)
                     VIRTUAL_TYPE_ID
                 else {
-                    instantiatingClasses[type] ?: error("Type $type is not instantiated")
+                    if (!instantiatingClasses[type.index])
+                        error("Type $type is not instantiated")
+                    type.index
                 }
             }
 
@@ -899,7 +930,8 @@ internal object Devirtualization {
                     constraintGraph.addNode { Node.Source(it, typeId, nameBuilder) }
 
             private fun concreteClass(type: DataFlowIR.Type.Declared) =
-                    constraintGraph.concreteClasses.getOrPut(type) { sourceNode(concreteType(type)) { "Class\$$type" } }
+                    concreteClasses[type.index]
+                            ?: sourceNode(concreteType(type)) { "Class\$$type" }.also { concreteClasses[type.index] = it}
 
             private fun fieldNode(field: DataFlowIR.Field) =
                     constraintGraph.fields.getOrPut(field) {
@@ -981,12 +1013,12 @@ internal object Devirtualization {
             }
 
             private fun createCastEdge(node: Node, type: DataFlowIR.Type.Declared): Node.CastEdge {
-                val suitableTypes = BitSet()
-                suitableTypes.set(VIRTUAL_TYPE_ID)
-                for (inheritor in typeHierarchy.inheritorsOf(type)) {
-                    instantiatingClasses[inheritor]?.let { suitableTypes.set(it) }
-                }
-                return Node.CastEdge(node, suitableTypes)
+                if (suitableTypes[type.index] == null)
+                    suitableTypes[type.index] = typeHierarchy.inheritorsOf(type).copy().also {
+                        it.and(instantiatingClasses)
+                        it.set(VIRTUAL_TYPE_ID)
+                    }
+                return Node.CastEdge(node, suitableTypes[type.index]!!)
             }
 
             private fun doCast(function: Function, node: Node, type: DataFlowIR.Type.Declared): Node {
@@ -1125,15 +1157,11 @@ internal object Devirtualization {
                                 println("Receiver type: $receiverType")
                             }
 
-                            val possibleReceiverTypes = typeHierarchy.inheritorsOf(receiverType).filter {
-                                instantiatingClasses.containsKey(it)
-                            }
-
-                            val callees = possibleReceiverTypes.map { it.calleeAt(node) }
-
                             DEBUG_OUTPUT(0) {
                                 println("Possible callees:")
-                                callees.forEach { println("$it") }
+                                forEachBitInBoth(typeHierarchy.inheritorsOf(receiverType), instantiatingClasses) {
+                                    println(allTypes[it].calleeAt(node))
+                                }
                                 println()
                             }
 
@@ -1144,19 +1172,21 @@ internal object Devirtualization {
                             val arguments = listOf(receiverNode) + node.arguments.drop(1)
 
                             val returnsNode = ordinaryNode { "VirtualCallReturns\$${function.symbol}" }
-                            callees.forEachIndexed { index, actualCallee ->
+                            var hasNoCallees = true
+                            forEachBitInBoth(typeHierarchy.inheritorsOf(receiverType), instantiatingClasses) {
+                                hasNoCallees = false
+                                val actualCallee = allTypes[it].calleeAt(node)
                                 doCall(actualCallee, arguments, returnType).addEdge(returnsNode)
                             }
                             // Add cast to [Virtual] edge from receiver to returns, if return type is not final.
                             // With this we're reflecting the fact that unknown function can return anything.
-                            val virtualTypeFilter = BitSet().apply { set(VIRTUAL_TYPE_ID) }
                             if (!returnType.isFinal && entryPoint == null) {
                                 receiverNode.addCastEdge(Node.CastEdge(returnsNode, virtualTypeFilter))
                             }
                             // And throw anything.
                             receiverNode.addCastEdge(Node.CastEdge(function.throws, virtualTypeFilter))
 
-                            if (callees.isEmpty() && returnType.isFinal && entryPoint == null) {
+                            if (hasNoCallees && returnType.isFinal && entryPoint == null) {
                                 // If we are in a library and facing final return type with no possible callees -
                                 // this type still can be returned by some user of this library, so propagate it explicitly.
                                 concreteClass(returnType).addEdge(returnsNode)
@@ -1217,8 +1247,7 @@ internal object Devirtualization {
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
     class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
-                         val typeHierarchy: DevirtualizationAnalysis.TypeHierarchy,
-                         val instantiatingClasses: Set<DataFlowIR.Type.Declared>)
+                         val typeHierarchy: DevirtualizationAnalysis.TypeHierarchy)
 
     fun run(irModule: IrModuleFragment, context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
             : AnalysisResult {

@@ -184,23 +184,23 @@ internal class CallGraphBuilder(val context: Context,
                     else -> {
                         // Callsite has not been devirtualized - conservatively assume the worst:
                         // any inheritor of the receiver type is possible here.
-                        val typeHierarcy = devirtualizationAnalysisResult.typeHierarchy
-                        typeHierarcy.inheritorsOf(call.receiverType as DataFlowIR.Type.Declared)
-                                .filterNot { it.isAbstract }
-                                // TODO: Unconservative way - when we can use it?
-                                //.filter { devirtualizationAnalysisResult.instantiatingClasses.contains(it) }
-                                .forEach { receiverType ->
-                                    val actualCallee = when (call) {
-                                        is DataFlowIR.Node.VtableCall ->
-                                            receiverType.vtable[call.calleeVtableIndex]
+                        val typeHierarchy = devirtualizationAnalysisResult.typeHierarchy
+                        typeHierarchy.inheritorsOf(call.receiverType as DataFlowIR.Type.Declared).forEachBit {
+                            val receiverType = typeHierarchy.allTypes[it]
+                            if (receiverType.isAbstract) return@forEachBit
+                            // TODO: Unconservative way - when we can use it?
+                            //.filter { devirtualizationAnalysisResult.instantiatingClasses.contains(it) }
+                            val actualCallee = when (call) {
+                                is DataFlowIR.Node.VtableCall ->
+                                    receiverType.vtable[call.calleeVtableIndex]
 
-                                        is DataFlowIR.Node.ItableCall ->
-                                            receiverType.itable[call.calleeHash]!!
+                                is DataFlowIR.Node.ItableCall ->
+                                    receiverType.itable[call.calleeHash]!!
 
-                                        else -> error("Unreachable")
-                                    }
-                                    staticCall(symbol, call, actualCallee.resolved())
-                                }
+                                else -> error("Unreachable")
+                            }
+                            staticCall(symbol, call, actualCallee.resolved())
+                        }
                     }
                 }
             }
