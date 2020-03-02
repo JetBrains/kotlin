@@ -38,38 +38,6 @@ public class FavoritesTreeUtil {
     return getLogicalPathTo(result, selectionPath);
   }
 
-  public static List<Integer> getLogicalIndexPathTo(TreePath selectionPath) {
-    final List<Integer> result = new ArrayList<>();
-    final Object component = selectionPath.getLastPathComponent();
-    if (component instanceof DefaultMutableTreeNode) {
-      final Object uo = ((DefaultMutableTreeNode)component).getUserObject();
-      if (uo instanceof FavoriteTreeNodeDescriptor) {
-        AbstractTreeNode treeNode = ((FavoriteTreeNodeDescriptor)uo).getElement();
-        while ((!(treeNode instanceof FavoritesListNode)) && treeNode != null) {
-//          final int idx = getIndex(treeNode.getParent().getChildren(), treeNode);
-//          if (idx == -1) return null;
-          result.add(treeNode.getIndex());
-          treeNode = treeNode.getParent();
-        }
-        Collections.reverse(result);
-        return result;
-      }
-    }
-    return Collections.emptyList();
-  }
-
-  /*private static int getIndex(Collection<AbstractTreeNode<?>> children, AbstractTreeNode node) {
-    int idx = 0;
-    for (AbstractTreeNode child : children) {
-      if (child == node) {
-        return idx;
-      }
-      ++ idx;
-    }
-    assert false;
-    return -1;
-  }*/
-
   public static List<AbstractTreeNode<?>> getLogicalPathTo(List<AbstractTreeNode<?>> result, TreePath selectionPath) {
     final Object component = selectionPath.getLastPathComponent();
     if (component instanceof DefaultMutableTreeNode) {
