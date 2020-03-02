@@ -28,11 +28,12 @@ class KonanLibraryWriterImpl(
         moduleName: String,
         versions: KotlinLibraryVersioning,
         target: KonanTarget,
+        builtInsPlatform: BuiltInsPlatform,
         nopack: Boolean = false,
 
         val layout: KonanLibraryLayoutForWriter = KonanLibraryLayoutForWriter(libDir, target),
 
-        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, nopack),
+        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack),
         bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
         metadata: MetadataWriter = MetadataWriterImpl(layout),
         ir: IrWriter = IrMonoliticWriterImpl(layout)
@@ -54,7 +55,7 @@ fun buildLibrary(
     dataFlowGraph: ByteArray?
 ): KonanLibraryLayout {
 
-    val library = KonanLibraryWriterImpl(File(output), moduleName, versions, target, nopack)
+    val library = KonanLibraryWriterImpl(File(output), moduleName, versions, target, BuiltInsPlatform.NATIVE, nopack)
 
     library.addMetadata(metadata)
     if (ir != null) {
