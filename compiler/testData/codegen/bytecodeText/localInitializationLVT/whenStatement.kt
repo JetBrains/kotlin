@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36812 Generate proper lifetime intervals for local variables in JVM_IR
-
 fun test(i: Int): Char {
     val c: Char
     when (i) {
@@ -20,4 +17,4 @@ fun test(i: Int): Char {
 }
 
 // 12 ISTORE 1
-// 1 LOCALVARIABLE c C L1 L16 1
+// 1 LOCALVARIABLE c C

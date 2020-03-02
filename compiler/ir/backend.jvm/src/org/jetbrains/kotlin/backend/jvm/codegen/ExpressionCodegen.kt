@@ -327,18 +327,14 @@ class ExpressionCodegen(
         }
     }
 
+    private val IrVariable.isVisibleInLVT: Boolean
+        get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
+                origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR
+
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {
-            when (it.declaration.origin) {
-                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                IrDeclarationOrigin.FOR_LOOP_ITERATOR -> {
-                    // Ignore implicitly created variables
-                }
-                else -> {
-                    mv.visitLocalVariable(
-                        it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index
-                    )
-                }
+            if (it.declaration.isVisibleInLVT) {
+                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
             }
         }
 
@@ -490,9 +486,13 @@ class ExpressionCodegen(
 
         declaration.markLineNumber(startOffset = true)
 
-        declaration.initializer?.let {
-            it.accept(this, data).coerce(varType, declaration.type).materialize()
-            it.markLineNumber(startOffset = true)
+        val initializer = declaration.initializer
+        if (initializer != null) {
+            initializer.accept(this, data).coerce(varType, declaration.type).materialize()
+            initializer.markLineNumber(startOffset = true)
+            mv.store(index, varType)
+        } else if (declaration.isVisibleInLVT) {
+            pushDefaultValueOnStack(varType, mv)
             mv.store(index, varType)
         }
 
