@@ -2,6 +2,7 @@ package
 
 @kotlin.native.concurrent.SharedImmutable public var age: kotlin.Int
 @kotlin.native.concurrent.SharedImmutable public var age1: kotlin.Int
+@kotlin.native.concurrent.SharedImmutable public val age2: kotlin.Int = 20
 public var globalAge: kotlin.Int
 public var globalValue: kotlin.Int
 @kotlin.native.concurrent.ThreadLocal public var point0: Point

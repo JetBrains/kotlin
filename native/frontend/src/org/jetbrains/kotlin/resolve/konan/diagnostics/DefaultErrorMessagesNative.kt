@@ -20,7 +20,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             ErrorsNative.INCOMPATIBLE_THROWS_INHERITED, "Member inherits different @Throws filters from {0}",
             Renderers.commaSeparated(Renderers.NAME)
         )
-        put(ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, "@SharedImmutable isn't applicable to current property")
+        put(
+            ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
+            "@SharedImmutable isn't applicable to the property without backing field or delegation"
+        )
         put(ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL, "@SharedImmutable is applicable only to top level declarations")
     }
 }

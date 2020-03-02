@@ -41,13 +41,13 @@ class Figure {
 
 <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@SharedImmutable<!>
 var age = 20
-get() {
-    println("Age is: $field")
-    return field
-}
-set(value) {
-    println(value)
-}
+    get() {
+        println("Age is: $field")
+        return field
+    }
+    set(value) {
+        println(value)
+    }
 
 var globalAge = 30
 <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@SharedImmutable<!>
@@ -60,7 +60,13 @@ var age1 = 20
         globalAge = value
     }
 
-// Can't
+@SharedImmutable
+val age2 = 20
+    get() {
+        println("Age is: $field")
+        return field
+    }
+
 <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@SharedImmutable<!>
 var point3: Point
     get() = point2
