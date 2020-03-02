@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -58,7 +57,7 @@ class Fir2IrVisitor(
     private val symbolTable: SymbolTable,
     private val sourceManager: PsiSourceManager,
     override val irBuiltIns: IrBuiltIns,
-    private val fakeOverrideMode: FakeOverrideMode
+    fakeOverrideMode: FakeOverrideMode
 ) : FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
     companion object {
         private val NEGATED_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY)
@@ -82,6 +81,8 @@ class Fir2IrVisitor(
     private val conversionScope = Fir2IrConversionScope()
 
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
+
+    private val fakeOverrideGenerator = Fir2IrFakeOverrideGenerator(session, declarationStorage, conversionScope, fakeOverrideMode)
 
     override fun visitElement(element: FirElement, data: Any?): IrElement {
         TODO("Should not be here: ${element.render()}")
@@ -125,75 +126,6 @@ class Fir2IrVisitor(
     private fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
         declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
 
-    private fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableList<Name>) {
-        if (fakeOverrideMode == FakeOverrideMode.NONE) return
-        val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
-        val useSiteMemberScope = (klass as? FirRegularClass)?.buildUseSiteMemberScope(session, ScopeSession()) ?: return
-        for (name in superTypesCallableNames) {
-            if (name in processedCallableNames) continue
-            processedCallableNames += name
-            useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
-                if (functionSymbol is FirNamedFunctionSymbol) {
-                    val originalFunction = functionSymbol.fir
-                    val origin = IrDeclarationOrigin.FAKE_OVERRIDE
-                    if (functionSymbol.isFakeOverride) {
-                        // Substitution case
-                        val irFunction = declarationStorage.getIrFunction(
-                            originalFunction, declarationStorage.findIrParent(originalFunction), origin = origin
-                        )
-                        val baseSymbol = functionSymbol.overriddenSymbol
-                        // In fake overrides, parent logic is a bit specific, because
-                        // parent of *original* function (base class) is used for dispatch receiver,
-                        // but fake override itself uses parent from its containing (derived) class
-                        declarations += conversionScope.withFunction(applyParentFromStackTo(irFunction)) {
-                            setFunctionContent(irFunction.descriptor, originalFunction, firOverriddenSymbol = baseSymbol)
-                        }
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.visibility != Visibilities.PRIVATE) {
-                        // Trivial fake override case
-                        val fakeOverrideSymbol =
-                            FirClassSubstitutionScope.createFakeOverrideFunction(session, originalFunction, functionSymbol)
-                        val fakeOverrideFunction = fakeOverrideSymbol.fir
-
-                        val irFunction = declarationStorage.getIrFunction(
-                            fakeOverrideFunction, declarationStorage.findIrParent(originalFunction), origin = origin
-                        )
-                        declarations += conversionScope.withFunction(applyParentFromStackTo(irFunction)) {
-                            setFunctionContent(irFunction.descriptor, fakeOverrideFunction, firOverriddenSymbol = functionSymbol)
-                        }
-                    }
-                }
-            }
-            useSiteMemberScope.processPropertiesByName(name) { propertySymbol ->
-                if (propertySymbol is FirPropertySymbol) {
-                    val originalProperty = propertySymbol.fir
-                    val origin = IrDeclarationOrigin.FAKE_OVERRIDE
-                    if (propertySymbol.isFakeOverride) {
-                        // Substitution case
-                        val irProperty = declarationStorage.getIrProperty(
-                            originalProperty, declarationStorage.findIrParent(originalProperty), origin = origin
-                        )
-                        val baseSymbol = propertySymbol.overriddenSymbol
-                        declarations += conversionScope.withProperty(applyParentFromStackTo(irProperty)) {
-                            setPropertyContent(irProperty.descriptor, originalProperty, firOverriddenSymbol = baseSymbol)
-                        }
-                    } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.visibility != Visibilities.PRIVATE) {
-                        // Trivial fake override case
-                        val fakeOverrideSymbol =
-                            FirClassSubstitutionScope.createFakeOverrideProperty(session, originalProperty, propertySymbol)
-                        val fakeOverrideProperty = fakeOverrideSymbol.fir
-
-                        val irProperty = declarationStorage.getIrProperty(
-                            fakeOverrideProperty, declarationStorage.findIrParent(originalProperty), origin = origin
-                        )
-                        declarations += conversionScope.withProperty(applyParentFromStackTo(irProperty)) {
-                            setPropertyContent(irProperty.descriptor, fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun IrClass.setClassContent(klass: FirClass<*>) {
         declarationStorage.enterScope(descriptor)
         conversionScope.withClass(this) {
@@ -213,7 +145,7 @@ class Fir2IrVisitor(
                     }
                 }
             }
-            addFakeOverrides(klass, processedCallableNames)
+            with(fakeOverrideGenerator) { addFakeOverrides(klass, processedCallableNames) }
             annotations = klass.annotations.mapNotNull {
                 it.accept(this@Fir2IrVisitor, null) as? IrConstructorCall
             }
@@ -250,43 +182,15 @@ class Fir2IrVisitor(
         }.also { descriptor.bind(it) }
     }
 
-    private fun <T : IrFunction> T.setFunctionContent(
-        descriptor: FunctionDescriptor,
-        firFunction: FirFunction<*>?,
-        firOverriddenSymbol: FirNamedFunctionSymbol? = null
-    ): T {
+    private fun <T : IrFunction> T.setFunctionContent(descriptor: FunctionDescriptor, firFunction: FirFunction<*>?): T {
         conversionScope.withParent(this) {
-            val firFunctionSymbol = (firFunction as? FirSimpleFunction)?.symbol
-            val lastClass = conversionScope.lastClass()
-            val containingClass = if (firOverriddenSymbol == null || firFunctionSymbol == null) {
-                lastClass
-            } else {
-                val callableId = firFunctionSymbol.deepestOverriddenSymbol().callableId
-                val ownerClassId = callableId.classId
-                if (ownerClassId == null) {
-                    lastClass
-                } else {
-                    val classLikeSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(ownerClassId)
-                    if (classLikeSymbol !is FirClassSymbol) {
-                        lastClass
-                    } else {
-                        val firClass = classLikeSymbol.fir as FirClass<*>
-                        declarationStorage.getIrClass(firClass, setParentAndContent = false)
-                    }
-                }
-            }
+            val containingClass = conversionScope.lastClass()
             if (firFunction !is FirConstructor && firFunction !is FirAnonymousFunction && containingClass != null) {
                 addDispatchReceiverParameter(containingClass)
             }
             if (firFunction != null) {
                 for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter)
-                }
-            }
-            if (firOverriddenSymbol != null && this is IrSimpleFunction && firFunctionSymbol != null) {
-                val overriddenSymbol = declarationStorage.getIrFunctionSymbol(firOverriddenSymbol)
-                if (overriddenSymbol is IrSimpleFunctionSymbol) {
-                    overriddenSymbols = listOf(overriddenSymbol)
                 }
             }
             var body = firFunction?.body?.convertToIrBlockBody()
@@ -456,11 +360,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun IrProperty.setPropertyContent(
-        descriptor: PropertyDescriptor,
-        property: FirProperty,
-        firOverriddenSymbol: FirPropertySymbol? = null
-    ): IrProperty {
+    private fun IrProperty.setPropertyContent(descriptor: PropertyDescriptor, property: FirProperty): IrProperty {
         declarationStorage.enterScope(descriptor)
         val initializer = property.initializer
         val delegate = property.delegate
@@ -482,28 +382,14 @@ class Fir2IrVisitor(
                     Visibilities.PRIVATE, Name.identifier("${property.name}\$delegate"), true, delegate
                 )
             }
-            val backingField = backingField
-            if (firOverriddenSymbol != null && backingField != null) {
-                val overriddenSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol.fir.backingFieldSymbol)
-                if (overriddenSymbol is IrFieldSymbol) {
-                    backingField.overriddenSymbols += overriddenSymbol
-                }
-            }
         }
-        val overriddenProperty = firOverriddenSymbol?.let { declarationStorage.getIrPropertyOrFieldSymbol(it) } as? IrPropertySymbol
         getter?.setPropertyAccessorContent(
-            property.getter, this, propertyType, property.getter is FirDefaultPropertyGetter, property.getter == null
+            property.getter, this, propertyType, property.getter is FirDefaultPropertyGetter
         )
-        getter?.apply {
-            overriddenProperty?.owner?.getter?.symbol?.let { overriddenSymbols = listOf(it) }
-        }
         if (property.isVar) {
             setter?.setPropertyAccessorContent(
-                property.setter, this, propertyType, property.setter is FirDefaultPropertySetter, property.setter == null
+                property.setter, this, propertyType, property.setter is FirDefaultPropertySetter
             )
-            setter?.apply {
-                overriddenProperty?.owner?.setter?.symbol?.let { overriddenSymbols = listOf(it) }
-            }
         }
         annotations = property.annotations.mapNotNull {
             it.accept(this@Fir2IrVisitor, null) as? IrConstructorCall
@@ -532,8 +418,7 @@ class Fir2IrVisitor(
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
         propertyType: IrType,
-        isDefault: Boolean,
-        isFakeOverride: Boolean
+        isDefault: Boolean
     ) {
         conversionScope.withFunction(this) {
             if (propertyAccessor != null) {
@@ -543,13 +428,13 @@ class Fir2IrVisitor(
             }
             applyParentFromStackTo(this)
             setFunctionContent(descriptor, propertyAccessor)
-            if (isDefault || isFakeOverride) {
+            if (isDefault) {
                 conversionScope.withParent(this) {
                     declarationStorage.enterScope(descriptor)
                     val backingField = correspondingProperty.backingField
                     val fieldSymbol = symbolTable.referenceField(correspondingProperty.descriptor)
                     val declaration = this
-                    if (!isFakeOverride && backingField != null) {
+                    if (backingField != null) {
                         body = IrBlockBodyImpl(
                             startOffset, endOffset,
                             listOf(

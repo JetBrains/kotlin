@@ -394,6 +394,7 @@ class Fir2IrDeclarationStorage(
         val callableId = firBasedSymbol.callableId
         val parentClassId = callableId.classId
         return if (parentClassId != null) {
+            // TODO: this will never work for local classes
             val parentFirSymbol = firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
             if (parentFirSymbol is FirClassSymbol) {
                 val parentIrSymbol = getIrClassSymbol(parentFirSymbol)
