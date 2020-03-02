@@ -89,7 +89,7 @@ open class ApplicationInspectionProfileManager @TestOnly @NonInjectable construc
   @Throws(IOException::class, JDOMException::class)
   override fun loadProfile(path: String): InspectionProfileImpl? {
     try {
-     super.loadProfile(path)
+     return super.loadProfile(path)
     }
     catch (e: IOException) {
       throw e
