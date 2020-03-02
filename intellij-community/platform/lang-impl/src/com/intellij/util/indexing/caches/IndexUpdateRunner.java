@@ -19,11 +19,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.indexing.UnindexedFilesUpdater;
+import com.intellij.util.progress.SubTaskProgressIndicator;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -32,6 +37,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@ApiStatus.Internal
 public final class IndexUpdateRunner {
   private static final Logger LOG = Logger.getInstance(IndexUpdateRunner.class);
   private static final Key<Boolean> FAILED_TO_INDEX = Key.create("FAILED_TO_INDEX");
@@ -63,6 +69,13 @@ public final class IndexUpdateRunner {
         }
         if (added) {
           indicator.setFraction(myNumberOfFilesProcessed.incrementAndGet() / total);
+
+          String presentableLocation = getPresentableLocationBeingIndexed(project, virtualFile);
+          if (indicator instanceof SubTaskProgressIndicator) {
+            indicator.setText(presentableLocation);
+          } else {
+            indicator.setText2(presentableLocation);
+          }
         }
       }
 
@@ -91,6 +104,32 @@ public final class IndexUpdateRunner {
   private interface ProgressUpdater {
     void processingStarted(@NotNull VirtualFile file);
     void processingSuccessfullyFinished(@NotNull VirtualFile file);
+  }
+
+  @NotNull
+  private static String getPresentableLocationBeingIndexed(@NotNull Project project, @NotNull VirtualFile file) {
+    VirtualFile actualFile;
+    if (file.getFileSystem() instanceof ArchiveFileSystem) {
+      actualFile = VfsUtil.getLocalFile(file);
+    } else {
+      actualFile = file.getParent() != null ? file.getParent() : file;
+    }
+    return FileUtil.toSystemDependentName(getProjectRelativeOrAbsolutePath(project, actualFile));
+  }
+
+  @NotNull
+  private static String getProjectRelativeOrAbsolutePath(@NotNull Project project, @NotNull VirtualFile file) {
+    String projectBase = project.getBasePath();
+    if (projectBase != null) {
+      String filePath = file.getPath();
+      if (FileUtil.isAncestor(projectBase, filePath, true)) {
+        String relativePath = FileUtil.getRelativePath(projectBase, filePath, '/');
+        if (relativePath != null) {
+          return relativePath;
+        }
+      }
+    }
+    return file.getPath();
   }
 
   private static boolean processSomeFilesWhileUserIsInactive(@NotNull CachedFileContentQueue queue,

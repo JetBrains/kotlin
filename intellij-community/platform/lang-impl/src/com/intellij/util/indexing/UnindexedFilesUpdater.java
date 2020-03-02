@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -121,9 +122,11 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       if (providerFiles == null || providerFiles.isEmpty()) {
         continue;
       }
+      concurrentTasksProgressManager.setText(IdeBundle.message(
+        "progress.indexing.updating.name", StringUtil.toLowerCase(provider.getPresentableName())
+      ));
       SubTaskProgressIndicator subTaskIndicator = concurrentTasksProgressManager.createSubTaskIndicator(providerFiles.size());
       try {
-        subTaskIndicator.setText(provider.getPresentableName());
         myIndex.indexFiles(myProject, providerFiles, subTaskIndicator);
       } finally {
         subTaskIndicator.finished();

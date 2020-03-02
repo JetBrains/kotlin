@@ -50,6 +50,10 @@ public final class ConcurrentTasksProgressManager {
     myParent.setFraction(newFraction);
   }
 
+  public void setText(@NotNull String text) {
+    myParent.setText(text);
+  }
+
   void setText2(@NotNull SubTaskProgressIndicator subTask, @Nullable String text) {
     if (text != null) {
       synchronized (myLock) {
