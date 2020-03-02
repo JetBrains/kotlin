@@ -140,14 +140,14 @@ class FirCallCompleter(
 
     private inner class LambdaAnalyzerImpl : LambdaAnalyzer {
         override fun analyzeAndGetLambdaReturnArguments(
-            lambdaArgument: FirAnonymousFunction,
-            isSuspend: Boolean,
+            lambdaAtom: ResolvedLambdaAtom,
             receiverType: ConeKotlinType?,
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
             rawReturnType: ConeKotlinType,
             stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
         ): ReturnArgumentsAnalysisResult {
+            val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
             val itParam = when {
@@ -185,7 +185,9 @@ class FirCallCompleter(
             lambdaArgument.replaceValueParameters(lambdaArgument.valueParameters + listOfNotNull(itParam))
             lambdaArgument.replaceReturnTypeRef(expectedReturnTypeRef ?: noExpectedType)
 
-            lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+            transformer.components.withImplicitReceiverStack(lambdaAtom.implicitReceiverStack) {
+                lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+            }
 
             val returnArguments = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
 

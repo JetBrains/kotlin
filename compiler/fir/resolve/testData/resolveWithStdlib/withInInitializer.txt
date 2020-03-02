@@ -21,7 +21,7 @@ FILE: withInInitializer.kt
 
         public final val test: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/with|<R|First|, R|kotlin/collections/List<kotlin/Int>|>(this@R|/Second|.R|/Second.data|, <L> = with@fun R|First|.<anonymous>(): R|kotlin/collections/List<kotlin/Int>| <kind=EXACTLY_ONCE>  {
             ^ this@R|/Second|.R|/Second.list|.R|kotlin/collections/filterIsInstance|<R|kotlin/Int|>().R|kotlin/collections/filter|<R|kotlin/Int|>(<L> = filter@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=UNKNOWN>  {
-                ^ ==(R|<local>/it|, <Unresolved name: member>#)
+                ^ ==(R|<local>/it|, this@R|special/anonymous|.R|/First.member|)
             }
             )
         }

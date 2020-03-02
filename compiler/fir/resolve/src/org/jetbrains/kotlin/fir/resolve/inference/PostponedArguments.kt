@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.resolve.calls.isExtensionFunctionType
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -36,8 +34,8 @@ fun Candidate.preprocessLambdaArgument(
     }
 
     val resolvedArgument =
-        extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument, bodyResolveComponents.session)
-            ?: extraLambdaInfo(expectedType, argument, csBuilder, bodyResolveComponents.session)
+        extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument, bodyResolveComponents.session, bodyResolveComponents)
+            ?: extraLambdaInfo(expectedType, argument, csBuilder, bodyResolveComponents.session, bodyResolveComponents)
 
     if (expectedType != null) {
         // TODO: add SAM conversion processing
@@ -106,7 +104,8 @@ private fun extraLambdaInfo(
     expectedType: ConeKotlinType?,
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder,
-    session: FirSession
+    session: FirSession,
+    components: BodyResolveComponents
 ): ResolvedLambdaAtom {
     val isSuspend = expectedType?.isSuspendFunctionType(session) ?: false
 
@@ -130,18 +129,27 @@ private fun extraLambdaInfo(
     val newTypeVariableUsed = returnType == typeVariable.defaultType
     if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
 
-    return ResolvedLambdaAtom(argument, isSuspend, receiverType, parameters, returnType, typeVariable.takeIf { newTypeVariableUsed })
+    return ResolvedLambdaAtom(
+        argument,
+        isSuspend,
+        receiverType,
+        parameters,
+        returnType,
+        typeVariable.takeIf { newTypeVariableUsed },
+        components.implicitReceiverStack.snapshot()
+    )
 }
 
 internal fun extractLambdaInfoFromFunctionalType(
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction,
-    session: FirSession
+    session: FirSession,
+    components: BodyResolveComponents
 ): ResolvedLambdaAtom? {
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) {
-        return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument, session)
+        return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument, session, components)
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
@@ -155,7 +163,8 @@ internal fun extractLambdaInfoFromFunctionalType(
         receiverType,
         parameters,
         returnType,
-        typeVariableForLambdaReturnType = null
+        typeVariableForLambdaReturnType = null,
+        components.implicitReceiverStack.snapshot()
     )
 }
 
@@ -199,7 +208,8 @@ class ResolvedLambdaAtom(
     val receiver: ConeKotlinType?,
     val parameters: List<ConeKotlinType>,
     val returnType: ConeKotlinType,
-    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
+    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?,
+    val implicitReceiverStack: ImplicitReceiverStack
 ) : PostponedResolvedAtomMarker {
 
     override var analyzed: Boolean = false

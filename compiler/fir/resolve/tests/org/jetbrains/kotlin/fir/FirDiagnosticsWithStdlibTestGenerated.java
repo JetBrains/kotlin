@@ -288,6 +288,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/whenAsLambdaReturnStatement.kt");
     }
 
+    @TestMetadata("withInInitializer.kt")
+    public void testWithInInitializer() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/withInInitializer.kt");
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -713,11 +718,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("weakHashMap.kt")
         public void testWeakHashMap() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/weakHashMap.kt");
-        }
-
-        @TestMetadata("withInInitializer.kt")
-        public void testWithInInitializer() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/withInInitializer.kt");
         }
     }
 

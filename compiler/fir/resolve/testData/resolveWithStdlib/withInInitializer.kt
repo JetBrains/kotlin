@@ -7,7 +7,7 @@ class Second {
 
     val test = with(data) {
         list.filterIsInstance<Int>().filter {
-            it == <!UNRESOLVED_REFERENCE!>member<!>
+            it == member
         }
     }
 }

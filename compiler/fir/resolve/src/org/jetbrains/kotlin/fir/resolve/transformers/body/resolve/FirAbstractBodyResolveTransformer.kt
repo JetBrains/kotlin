@@ -106,7 +106,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
 
         override val returnTypeCalculator: ReturnTypeCalculator = transformer.returnTypeCalculator
-        override val implicitReceiverStack: ImplicitReceiverStack = ImplicitReceiverStackImpl()
+
+        @set:PrivateForInline
+        override var implicitReceiverStack: ImplicitReceiverStack = ImplicitReceiverStackImpl()
+
         override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
@@ -116,7 +119,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             this,
             topLevelScopes,
             localScopes,
-            implicitReceiverStack,
             qualifiedResolver
         )
         val typeResolverTransformer = FirSpecificTypeResolverTransformer(
@@ -146,6 +148,17 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             val result = f()
             containerIfAny = prevContainer
             return result
+        }
+
+        @UseExperimental(PrivateForInline::class)
+        inline fun <T> withImplicitReceiverStack(implicitReceiverStack: ImplicitReceiverStack, f: () -> T): T {
+            val existedStack = this.implicitReceiverStack
+            this.implicitReceiverStack = implicitReceiverStack
+            return try {
+                f()
+            } finally {
+                this.implicitReceiverStack = existedStack
+            }
         }
     }
 }

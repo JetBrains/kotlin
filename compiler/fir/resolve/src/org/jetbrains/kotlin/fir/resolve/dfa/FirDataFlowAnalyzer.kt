@@ -39,7 +39,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
         ): FirDataFlowAnalyzer<*> = object : FirDataFlowAnalyzer<PersistentFlow>(components) {
-            private val receiverStack: ImplicitReceiverStackImpl = components.implicitReceiverStack as ImplicitReceiverStackImpl
+            private val receiverStack: ImplicitReceiverStackImpl
+                get() = components.implicitReceiverStack as ImplicitReceiverStackImpl
 
             override val logicSystem: PersistentLogicSystem = object : PersistentLogicSystem(components.inferenceComponents.ctx) {
                 override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {

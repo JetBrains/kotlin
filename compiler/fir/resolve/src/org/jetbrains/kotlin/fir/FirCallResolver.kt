@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -46,7 +45,6 @@ class FirCallResolver(
     components: BodyResolveComponents,
     topLevelScopes: List<FirScope>,
     localScopes: List<FirLocalScope>,
-    override val implicitReceiverStack: ImplicitReceiverStack,
     private val qualifiedResolver: FirQualifiedNameResolver,
 ) : BodyResolveComponents by components {
 

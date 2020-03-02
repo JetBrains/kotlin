@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirCallResolver
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -32,8 +31,7 @@ data class ReturnArgumentsAnalysisResult(
 
 interface LambdaAnalyzer {
     fun analyzeAndGetLambdaReturnArguments(
-        lambdaArgument: FirAnonymousFunction,
-        isSuspend: Boolean,
+        lambdaAtom: ResolvedLambdaAtom,
         receiverType: ConeKotlinType?,
         parameters: List<ConeKotlinType>,
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
@@ -128,8 +126,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         val (returnArguments, inferenceSession) = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
-            lambda.atom,
-            lambda.isSuspend,
+            lambda,
             receiver,
             parameters,
             expectedTypeForReturnArguments,
