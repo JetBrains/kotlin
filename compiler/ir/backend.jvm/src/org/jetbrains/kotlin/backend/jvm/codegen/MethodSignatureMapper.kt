@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
-import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -199,7 +199,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     fun mapSignatureWithGeneric(function: IrFunction): JvmMethodGenericSignature =
         mapSignature(function, false)
 
-    private fun mapSignature(function: IrFunction, skipGenericSignature: Boolean): JvmMethodGenericSignature {
+    fun mapSignature(function: IrFunction, skipGenericSignature: Boolean): JvmMethodGenericSignature {
         if (function is IrLazyFunctionBase && function.initialSignatureFunction != null) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if (function.descriptor.getOverriddenBuiltinReflectingJvmDescriptor() == null ||
@@ -236,11 +236,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         val signature = sw.makeJvmMethodSignature(mapFunctionName(function))
 
-        val specialSignatureInfo = with(BuiltinMethodsWithSpecialGenericSignature) { function.descriptor.getSpecialSignatureInfo() }
-
-        if (specialSignatureInfo != null) {
-            val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
-            return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
+        if (signature.genericsSignature != null) {
+            return fixSpecialGenericSignature(function, signature)
         }
 
         return signature
@@ -362,5 +359,35 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
         }
         return current
+    }
+
+    // Adapt generic signatures for generic functions which override non-generic functions coming from Java.
+    //
+    // For example, in Kotlin we have a method `kotlin.Collection.contains` with a value parameter of type
+    // `Collection<E>`. This method maps to the java method `java.util.Collection.contains` with a value
+    // parameter of type `Collection<Object>`. In this case, the Kotlin and Java methods have the same descriptors,
+    // but different generic signatures.
+    //
+    // In most cases, we provide a special bridge method to implement the Java method and delegate to its
+    // Kotlin implementation, but in the case of signature clashes between the Java and Kotlin methods we
+    // need to be careful to provide the correct generic signatures here.
+    private fun fixSpecialGenericSignature(function: IrFunction, signature: JvmMethodGenericSignature): JvmMethodGenericSignature {
+        val specialSignatureInfo = with(BuiltinMethodsWithSpecialGenericSignature) {
+            function.descriptor.getSpecialSignatureInfo()
+        } ?: return signature
+
+        // We do not adapt the generics signature if there is an existing bridge method.
+        val replaceSignature =
+            if (specialSignatureInfo == BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo.ONE_COLLECTION_PARAMETER) {
+                signature.asmMethod.argumentTypes.single().internalName == "java/util/Collection"
+            } else {
+                signature.asmMethod.argumentTypes.all { it.internalName == "java/lang/Object" }
+            }
+
+        if (replaceSignature) {
+            val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
+            return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
+        }
+        return signature
     }
 }

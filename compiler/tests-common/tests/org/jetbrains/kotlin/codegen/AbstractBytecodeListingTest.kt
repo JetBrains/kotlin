@@ -161,7 +161,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             }
             arrayListOf<String>().apply { handleModifiers(ModifierTarget.CLASS, classAccess, this) }.forEach { append(it) }
             append(classOrInterface(classAccess))
-            if (withSignatures) {
+            if (withSignatures && classSignature != null) {
                 append("<$classSignature> ")
             }
             append(" ")
@@ -211,7 +211,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                     val annotations = parameterAnnotations.getOrElse(index, { emptyList<String>() }).joinToString("")
                     "${annotations}p$index: $parameter"
                 }.joinToString()
-                val signatureIfRequired = if (withSignatures) "<$signature> " else ""
+                val signatureIfRequired = if (withSignatures && signature != null) "<$signature> " else ""
                 declarationsInsideClass.add(
                     Declaration(
                         name + desc,
@@ -239,7 +239,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         }
 
         val type = Type.getType(desc).className
-        val fieldSignature = if (withSignatures) "<$signature> " else ""
+        val fieldSignature = if (withSignatures && signature != null) "<$signature> " else ""
         val fieldDeclaration = Declaration("$desc $name", "field $fieldSignature$name: $type")
         declarationsInsideClass.add(fieldDeclaration)
         handleModifiers(ModifierTarget.FIELD, access)
