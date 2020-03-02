@@ -130,8 +130,6 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             IrBlockBodyImpl(stateMachineFunction.startOffset, stateMachineFunction.endOffset, listOf(suspendResult, rootLoop))
 
         stateMachineFunction.body = functionBody
-        // TODO: Investigate parent problems
-        stateMachineFunction.patchDeclarationParents(stateMachineFunction.parent)
 
         // Move return targets to new function
         functionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
