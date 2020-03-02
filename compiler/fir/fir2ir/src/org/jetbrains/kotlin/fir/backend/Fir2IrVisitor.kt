@@ -87,14 +87,16 @@ class Fir2IrVisitor(
         TODO("Should not be here: ${element.render()}")
     }
 
+    fun registerFile(file: FirFile) {
+        val irFile = IrFileImpl(
+            sourceManager.getOrCreateFileEntry(file.psi as KtFile),
+            moduleDescriptor.getPackage(file.packageFqName).fragments.first()
+        )
+        declarationStorage.registerFile(file, irFile)
+    }
+
     override fun visitFile(file: FirFile, data: Any?): IrFile {
-        return conversionScope.withParent(
-            IrFileImpl(
-                sourceManager.getOrCreateFileEntry(file.psi as KtFile),
-                moduleDescriptor.getPackage(file.packageFqName).fragments.first()
-            )
-        ) {
-            declarationStorage.registerFile(file, this)
+        return conversionScope.withParent(declarationStorage.getIrFile(file)) {
             file.declarations.forEach {
                 val irDeclaration = it.toIrDeclaration() ?: return@forEach
                 declarations += irDeclaration

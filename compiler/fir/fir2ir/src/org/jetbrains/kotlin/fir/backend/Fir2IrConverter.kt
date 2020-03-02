@@ -35,10 +35,13 @@ object Fir2IrConverter {
         typeTranslator.constantValueGenerator = constantValueGenerator
         val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
         val sourceManager = PsiSourceManager()
-        val fir2irTransformer = Fir2IrVisitor(session, moduleDescriptor, symbolTable, sourceManager, builtIns, fakeOverrideMode)
+        val fir2irVisitor = Fir2IrVisitor(session, moduleDescriptor, symbolTable, sourceManager, builtIns, fakeOverrideMode)
         val irFiles = mutableListOf<IrFile>()
         for (firFile in firFiles) {
-            val irFile = firFile.accept(fir2irTransformer, null) as IrFile
+            fir2irVisitor.registerFile(firFile)
+        }
+        for (firFile in firFiles) {
+            val irFile = firFile.accept(fir2irVisitor, null) as IrFile
             val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)
             sourceManager.putFileEntry(irFile, fileEntry)
             irFiles += irFile

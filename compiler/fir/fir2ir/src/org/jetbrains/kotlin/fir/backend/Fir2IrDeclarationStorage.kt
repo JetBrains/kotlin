@@ -80,6 +80,10 @@ class Fir2IrDeclarationStorage(
         fileCache[firFile] = irFile
     }
 
+    fun getIrFile(firFile: FirFile): IrFile {
+        return fileCache[firFile]!!
+    }
+
     fun enterScope(descriptor: DeclarationDescriptor) {
         irSymbolTable.enterScope(descriptor)
         if (descriptor is WrappedSimpleFunctionDescriptor ||
@@ -525,7 +529,7 @@ class Fir2IrDeclarationStorage(
 
     fun getIrFunction(
         function: FirSimpleFunction,
-        irParent: IrDeclarationParent? = null,
+        irParent: IrDeclarationParent?,
         shouldLeaveScope: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrSimpleFunction {
