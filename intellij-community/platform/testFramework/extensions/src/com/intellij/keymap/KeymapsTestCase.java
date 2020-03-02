@@ -116,6 +116,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ctrl alt RIGHT",     "MoveElementRight", "Terminal.MoveToolWindowTabRight"},
     });
     put("Mac OS X 10.5+", new String[][] {
+    { "Force touch",              "GotoDeclaration", "RunToCursor"},
     { "BACK_SPACE",               "$Delete", "EditorBackSpace", "Images.Thumbnails.UpFolder"},
     { "shift BACK_SPACE",         "EditorBackSpace", "UsageView.Include"},
     { "meta BACK_SPACE",          "EditorDeleteLine", "$Delete"},
@@ -154,6 +155,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "meta DOWN",                "EditSource", "SearchEverywhere.NavigateToNextGroup"},
     });
     put("Mac OS X", new String[][] {
+    { "Force touch",              "GotoDeclaration", "RunToCursor"},
     { "BACK_SPACE",               "$Delete", "EditorBackSpace", "Images.Thumbnails.UpFolder"},
     { "control LEFT",             "Diff.PrevChange", "PreviousTab"},
     { "control RIGHT",            "Diff.NextChange", "NextTab"},
