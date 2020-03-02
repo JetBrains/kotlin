@@ -9,9 +9,9 @@ FILE: typesInLocalFunctions.kt
         lval s: R|Some| = R|/Some.Some|()
         when () {
             Boolean(true) ->  {
-                ^foo fun <implicit>.<anonymous>(): <implicit> {
-                    when () {
-                        (s# is Some) ->  {
+                ^foo fun <anonymous>(): R|kotlin/Boolean| {
+                    ^ when () {
+                        (R|<local>/s| is R|Some|) ->  {
                             Boolean(true)
                         }
                         else ->  {
@@ -23,8 +23,8 @@ FILE: typesInLocalFunctions.kt
 
             }
             else ->  {
-                ^foo fun <implicit>.<anonymous>(): <implicit> {
-                    Boolean(true)
+                ^foo fun <anonymous>(): R|kotlin/Boolean| {
+                    ^ Boolean(true)
                 }
 
             }

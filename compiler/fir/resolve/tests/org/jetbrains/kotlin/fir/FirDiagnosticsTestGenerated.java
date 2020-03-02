@@ -338,6 +338,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
     }
 
+    @TestMetadata("typesInLocalFunctions.kt")
+    public void testTypesInLocalFunctions() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/typesInLocalFunctions.kt");
+    }
+
     @TestMetadata("varargInPrimaryConstructor.kt")
     public void testVarargInPrimaryConstructor() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/varargInPrimaryConstructor.kt");
@@ -458,6 +463,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("tryInLambda.kt")
         public void testTryInLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/tryInLambda.kt");
+        }
+
+        @TestMetadata("untouchedReturnInIf.kt")
+        public void testUntouchedReturnInIf() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/untouchedReturnInIf.kt");
         }
 
         @TestMetadata("vararg.kt")
@@ -1360,11 +1370,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
-        }
-
-        @TestMetadata("typesInLocalFunctions.kt")
-        public void testTypesInLocalFunctions() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/typesInLocalFunctions.kt");
         }
     }
 
