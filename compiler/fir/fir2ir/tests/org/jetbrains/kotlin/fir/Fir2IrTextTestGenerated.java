@@ -1847,6 +1847,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");
         }
 
+        @TestMetadata("inStarProjectionInReceiverType.kt")
+        public void testInStarProjectionInReceiverType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/inStarProjectionInReceiverType.kt");
+        }
+
         @TestMetadata("intersectionType1_NI.kt")
         public void testIntersectionType1_NI() throws Exception {
             runTest("compiler/testData/ir/irText/types/intersectionType1_NI.kt");
