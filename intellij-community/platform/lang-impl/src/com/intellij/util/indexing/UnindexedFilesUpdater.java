@@ -122,7 +122,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
         continue;
       }
       concurrentTasksProgressManager.setText(IdeBundle.message(
-        "progress.indexing.updating.name", "'" + provider.getPresentableName() + "'"
+        "progress.indexing.updating.name", provider.getPresentableName()
       ));
       SubTaskProgressIndicator subTaskIndicator = concurrentTasksProgressManager.createSubTaskIndicator(providerFiles.size());
       try {

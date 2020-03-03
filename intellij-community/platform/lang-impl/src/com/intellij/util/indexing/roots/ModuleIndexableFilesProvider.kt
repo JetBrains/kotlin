@@ -8,9 +8,10 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.util.containers.ConcurrentBitSet
+import com.intellij.util.indexing.IndexingBundle
 
 internal class ModuleIndexableFilesProvider(val module: Module) : IndexableFilesProvider {
-  override fun getPresentableName() = module.name
+  override fun getPresentableName() = IndexingBundle.message("indexable.files.provider.module.name", module.name)
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
     val filter = VirtualFileFilter { file -> file is VirtualFileWithId && file.id > 0 && !visitedFileSet.set(file.id) }
