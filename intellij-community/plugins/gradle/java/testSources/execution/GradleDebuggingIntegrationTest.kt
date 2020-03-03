@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution
 
-import com.intellij.execution.RunManagerEx
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
@@ -11,7 +10,6 @@ import com.intellij.openapi.externalSystem.service.execution.ExternalSystemTaskD
 import org.jetbrains.plugins.gradle.importing.GradleBuildScriptBuilderEx
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.importing.withMavenCentral
-import org.jetbrains.plugins.gradle.service.execution.GradleExternalTaskConfigurationType
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.junit.Test
 import java.io.File
@@ -42,16 +40,13 @@ class GradleDebuggingIntegrationTest : GradleImportingTestCase() {
         .generate()
     )
 
-    val runManager = RunManagerEx.getInstanceEx(myProject)
-    val factory = GradleExternalTaskConfigurationType.getInstance().factory
-    val runnerAndConfigurationSettings = runManager.createConfiguration("myRc", factory)
-
-    val gradleRC: GradleRunConfiguration = runnerAndConfigurationSettings.configuration as? GradleRunConfiguration ?: throw RuntimeException("Wrong type")
-    val rcSettings = gradleRC.settings
-    rcSettings.externalProjectPath = projectPath
-    rcSettings.taskNames = listOf("myTask")
-
+    val gradleRC = createEmptyGradleRunConfiguration("myRC")
+    gradleRC.settings.apply {
+      externalProjectPath = projectPath
+      taskNames = listOf("myTask")
+    }
     gradleRC.isScriptDebugEnabled = true
+
     executeRunConfiguration(gradleRC)
 
     val reportFile = File(projectPath, "args.txt")

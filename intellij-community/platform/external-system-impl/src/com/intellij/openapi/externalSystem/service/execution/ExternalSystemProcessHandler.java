@@ -63,6 +63,11 @@ public class ExternalSystemProcessHandler extends BuildProcessHandler implements
     return myExecutionName;
   }
 
+  @Nullable
+  public ExternalSystemTask getTask() {
+    return myTask;
+  }
+
   @Override
   public void notifyTextAvailable(@NotNull final String text, @NotNull final Key outputType) {
     myAnsiEscapeDecoder.escapeText(text, outputType, this);
