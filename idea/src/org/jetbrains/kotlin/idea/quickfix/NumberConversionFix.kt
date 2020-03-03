@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -46,8 +47,8 @@ class NumberConversionFix(
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) =
         disableIfAvailable?.isAvailable(project, editor, file) != true && isConversionAvailable
 
-    override fun getFamilyName() = "Insert number conversion"
-    override fun getText() = "Convert expression to '$typePresentation'"
+    override fun getFamilyName() = KotlinBundle.message("insert.number.conversion")
+    override fun getText() = KotlinBundle.message("convert.expression.to.0", typePresentation)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

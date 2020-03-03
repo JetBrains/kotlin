@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
@@ -59,14 +60,17 @@ class LetImplementInterfaceFix(
         expectedTypeName = expectedTypeNotNullable.renderShort()
         expectedTypeNameSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedTypeNotNullable)
 
-        val verb = if (expressionType.isInterface()) "extend" else "implement"
-        val typeDescription = if (element.isObjectLiteral()) "the anonymous object" else "'${expressionType.renderShort()}'"
-        prefix = "Let $typeDescription $verb"
+        val verb = if (expressionType.isInterface()) KotlinBundle.message("text.extend") else KotlinBundle.message("text.implement")
+        val typeDescription = if (element.isObjectLiteral())
+            KotlinBundle.message("the.anonymous.object")
+        else
+            "'${expressionType.renderShort()}'"
+        prefix = KotlinBundle.message("let.0.1", typeDescription, verb)
 
     }
 
-    override fun getFamilyName() = "Let type implement interface"
-    override fun getText() = "$prefix interface '$expectedTypeName'"
+    override fun getFamilyName() = KotlinBundle.message("let.type.implement.interface")
+    override fun getText() = KotlinBundle.message("0.interface.1", prefix, expectedTypeName)
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = validExpectedType
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
@@ -30,22 +31,22 @@ sealed class CreateLabelFix(
     expression: KtLabelReferenceExpression
 ) : KotlinQuickFixAction<KtLabelReferenceExpression>(expression) {
     class ForLoop(expression: KtLabelReferenceExpression) : CreateLabelFix(expression) {
-        override val chooserTitle = "Select loop statement to label"
+        override val chooserTitle = KotlinBundle.message("select.loop.statement.to.label")
 
         override fun getCandidateExpressions(labelReferenceExpression: KtLabelReferenceExpression) =
             labelReferenceExpression.getContainingLoops().toList()
     }
 
     class ForLambda(expression: KtLabelReferenceExpression) : CreateLabelFix(expression) {
-        override val chooserTitle = "Select lambda to label"
+        override val chooserTitle = KotlinBundle.message("select.lambda.to.label")
 
         override fun getCandidateExpressions(labelReferenceExpression: KtLabelReferenceExpression) =
             labelReferenceExpression.getContainingLambdas().toList()
     }
 
-    override fun getFamilyName() = "Create label"
+    override fun getFamilyName() = KotlinBundle.message("create.label")
 
-    override fun getText() = "Create label ${element?.getReferencedName() ?: ""}@"
+    override fun getText() = KotlinBundle.message("create.label.0", element?.getReferencedName() ?: "")
 
     abstract val chooserTitle: String
 

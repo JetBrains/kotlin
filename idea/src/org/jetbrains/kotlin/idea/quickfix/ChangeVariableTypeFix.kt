@@ -61,9 +61,9 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
 
         val variablePresentation = variablePresentation()
         return if (variablePresentation != null) {
-            "Change type of $variablePresentation to '$typePresentation'"
+            KotlinBundle.message("change.type.of.0.to.1", variablePresentation, typePresentation)
         } else {
-            "Change type to '$typePresentation'"
+            KotlinBundle.message("change.type.to.0", typePresentation)
         }
     }
 
@@ -74,7 +74,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
     class ForOverridden(element: KtVariableDeclaration, type: KotlinType) : ChangeVariableTypeFix(element, type) {
         override fun variablePresentation(): String? {
             val presentation = super.variablePresentation() ?: return null
-            return "base property $presentation"
+            return KotlinBundle.message("base.property.0", presentation)
         }
     }
 

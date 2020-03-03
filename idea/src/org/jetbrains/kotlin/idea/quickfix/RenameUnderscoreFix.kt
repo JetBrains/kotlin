@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.refactoring.rename.RenameHandlerRegistry
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -41,7 +42,7 @@ class RenameUnderscoreFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtD
         return editor != null
     }
 
-    override fun getText(): String = "Rename"
+    override fun getText(): String = KotlinBundle.message("rename.identifier.fix.text")
     override fun getFamilyName(): String = text
 
     companion object : KotlinSingleIntentionActionFactory() {

@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtProperty
 
 class RemoveRedundantInitializerFix(element: KtProperty) : RemovePartsFromPropertyFix(element, true, false, false) {
 
-    override fun getText(): String = "Remove redundant initializer"
+    override fun getText(): String = KotlinBundle.message("remove.redundant.initializer")
 
-    override fun getFamilyName(): String = "Remove redundant initializer"
+    override fun getFamilyName(): String = text
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtProperty>? {

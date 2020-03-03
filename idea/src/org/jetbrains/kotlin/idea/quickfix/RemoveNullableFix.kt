@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtProperty
@@ -31,13 +32,13 @@ class RemoveNullableFix(
     private val typeOfError: NullableKind
 ) : KotlinQuickFixAction<KtNullableType>(element) {
     enum class NullableKind(val message: String) {
-        REDUNDANT("Remove redundant '?'"),
-        SUPERTYPE("Remove '?'"),
-        USELESS("Remove useless '?'"),
-        PROPERTY("Make not-nullable")
+        REDUNDANT(KotlinBundle.message("remove.redundant")),
+        SUPERTYPE(KotlinBundle.message("text.remove.question")),
+        USELESS(KotlinBundle.message("remove.useless")),
+        PROPERTY(KotlinBundle.message("make.not.nullable"))
     }
 
-    override fun getFamilyName() = "Remove '?'"
+    override fun getFamilyName() = KotlinBundle.message("text.remove.question")
 
     override fun getText() = typeOfError.message
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -14,9 +15,9 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 class WrapWithArrayLiteralFix(expression: KtExpression) : KotlinQuickFixAction<KtExpression>(expression) {
 
-    override fun getFamilyName() = "Wrap with array literal"
+    override fun getFamilyName() = KotlinBundle.message("wrap.with.array.literal")
 
-    override fun getText() = "Wrap with []"
+    override fun getText() = KotlinBundle.message("wrap.with")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

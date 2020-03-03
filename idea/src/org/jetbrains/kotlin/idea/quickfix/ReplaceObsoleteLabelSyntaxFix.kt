@@ -10,12 +10,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
-    override fun getFamilyName(): String = "Update obsolete label syntax"
-    override fun getText(): String = element?.let { "Replace with label ${it.calleeExpression?.text ?: ""}@" } ?: ""
+    override fun getFamilyName(): String = KotlinBundle.message("update.obsolete.label.syntax")
+    override fun getText(): String = element?.let { KotlinBundle.message("replace.with.label.0.at", it.calleeExpression?.text ?: "") } ?: ""
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         replaceWithLabel(element ?: return)
