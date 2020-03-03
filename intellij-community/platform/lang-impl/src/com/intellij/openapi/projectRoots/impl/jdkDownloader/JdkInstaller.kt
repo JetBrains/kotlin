@@ -55,9 +55,9 @@ class JdkInstaller {
   fun defaultInstallDir() : File {
     val home = File(FileUtil.toCanonicalPath(System.getProperty("user.home") ?: "."))
     return when {
-      SystemInfo.isLinux ->  home/ ".jdks"
+      SystemInfo.isLinux   -> home / ".jdks"
       //see https://youtrack.jetbrains.com/issue/IDEA-206163#focus=streamItem-27-3270022.0-0
-      SystemInfo.isMac ->  home / "Library" / "Java" / "JavaVirtualMachines"
+      SystemInfo.isMac     -> home / "Library" / "Java" / "JavaVirtualMachines"
       SystemInfo.isWindows -> home / ".jdks"
       else -> error("Unsupported OS: ${SystemInfo.getOsNameAndVersion()}")
     }
