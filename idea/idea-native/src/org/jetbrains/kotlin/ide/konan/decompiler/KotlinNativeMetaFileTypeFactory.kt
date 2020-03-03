@@ -9,6 +9,5 @@ import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
 
 class KotlinNativeMetaFileTypeFactory : FileTypeFactory() {
-
-    override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(KotlinNativeMetaFileType, KotlinNativeMetaFileType.defaultExtension)
+    override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(KlibMetaFileType, KlibMetaFileType.defaultExtension)
 }
