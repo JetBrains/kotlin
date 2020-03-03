@@ -277,7 +277,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             } else {
                 val dialog = object : DialogWithEditor(project, KotlinBundle.message("fix.create.from.usage.dialog.title"), "") {
                     override fun doOKAction() {
-                        project.executeWriteCommand("Premature end of template") {
+                        project.executeWriteCommand(KotlinBundle.message("premature.end.of.template")) {
                             TemplateManagerImpl.getTemplateState(editor)?.gotoEnd(false)
                         }
                         super.doOKAction()

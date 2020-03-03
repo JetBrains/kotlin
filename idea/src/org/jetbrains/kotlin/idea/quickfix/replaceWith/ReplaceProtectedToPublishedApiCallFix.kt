@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -49,10 +50,13 @@ class ReplaceProtectedToPublishedApiCallFix(
     val isPublishedMemberAlreadyExists: Boolean
 ) : KotlinQuickFixAction<KtExpression>(element) {
 
-    override fun getFamilyName() = "Replace with @PublishedApi bridge call"
+    override fun getFamilyName() = KotlinBundle.message("replace.with.publishedapi.bridge.call")
 
     override fun getText() =
-        "Replace with generated @PublishedApi bridge call '${originalName.newNameQuoted}${if (!isProperty) "(...)" else ""}'"
+        KotlinBundle.message(
+            "replace.with.generated.publishedapi.bridge.call.0",
+            originalName.newNameQuoted + if (!isProperty) "(...)" else ""
+        )
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

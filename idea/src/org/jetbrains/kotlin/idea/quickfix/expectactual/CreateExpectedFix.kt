@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.overrideImplement.makeActual
@@ -46,7 +47,7 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
 
     private val targetExpectedClassPointer = targetExpectedClass?.createSmartPointer()
 
-    override fun getText() = "Create expected $elementType in common module ${module.name}"
+    override fun getText() = KotlinBundle.message("create.expected.0.in.common.module.1", elementType, module.name)
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val targetExpectedClass = targetExpectedClassPointer?.element
@@ -148,7 +149,7 @@ class CreateExpectedClassFix(
     } else
         selectedElements
 
-    project.executeWriteCommand("Repair actual members") {
+    project.executeWriteCommand(KotlinBundle.message("repair.actual.members")) {
         repairActualModifiers(originalElements + klass, resultDeclarations.toSet())
     }
 
@@ -162,7 +163,7 @@ private fun showUnknownTypeInDeclarationDialog(
     if (declarationsWithNonExistentClasses.isEmpty()) return true
     val message = escapeXml(
         declarationsWithNonExistentClasses.joinToString(
-            prefix = "These declarations cannot be transformed:\n",
+            prefix = "${KotlinBundle.message("these.declarations.cannot.be.transformed")}\n",
             separator = "\n",
             transform = ::getExpressionShortText
         )
@@ -170,7 +171,7 @@ private fun showUnknownTypeInDeclarationDialog(
 
     TypeAccessibilityChecker.testLog?.append("$message\n")
     return ApplicationManager.getApplication().isUnitTestMode || showOkNoDialog(
-        "Unknown types",
+        KotlinBundle.message("unknown.types"),
         message,
         project
     )
@@ -200,7 +201,7 @@ private fun chooseMembers(project: Project, collection: Collection<KtNamedDeclar
         true,
         project
     ).run {
-        title = "Choose actual members"
+        title = KotlinBundle.message("choose.actual.members")
         setCopyJavadocVisible(false)
         selectElements(classMembers.filter { filter((it.element as KtNamedDeclaration)) }.toTypedArray())
         show()
