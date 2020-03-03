@@ -1650,7 +1650,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             Label afterReturnLabel = new Label();
             generateFinallyBlocksIfNeeded(returnType, returnKotlinType, afterReturnLabel);
-
+            markLineNumber(expression, false);
             if (isNonLocalReturn) {
                 generateGlobalReturnFlag(v, nonLocalReturn.labelName);
                 v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
