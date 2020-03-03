@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExcludeFromValidationAction extends AnAction {
 
   public ExcludeFromValidationAction() {
-    super(JavaCompilerBundle.lazyMessage("action.name.exclude.from.validation"));
+    super(JavaCompilerBundle.messagePointer("action.name.exclude.from.validation"));
   }
 
   @Override

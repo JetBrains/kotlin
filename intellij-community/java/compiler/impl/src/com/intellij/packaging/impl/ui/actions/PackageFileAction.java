@@ -48,7 +48,7 @@ public class PackageFileAction extends AnAction {
   }
 
   public PackageFileAction() {
-    super(JavaCompilerBundle.lazyMessage("action.name.package.file"), JavaCompilerBundle.lazyMessage("action.description.package.file"), null);
+    super(JavaCompilerBundle.messagePointer("action.name.package.file"), JavaCompilerBundle.messagePointer("action.description.package.file"), null);
   }
 
   @Override

@@ -59,8 +59,8 @@ public class SetTodoFilterAction extends AnAction implements CustomComponentActi
     }
     group.addSeparator();
     group.add(
-      new AnAction(IdeBundle.lazyMessage("action.todo.edit.filters"),
-                   IdeBundle.lazyMessage("action.todo.edit.filters"), AllIcons.General.Settings) {
+      new AnAction(IdeBundle.messagePointer("action.todo.edit.filters"),
+                   IdeBundle.messagePointer("action.todo.edit.filters"), AllIcons.General.Settings) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           final ShowSettingsUtil util = ShowSettingsUtil.getInstance();

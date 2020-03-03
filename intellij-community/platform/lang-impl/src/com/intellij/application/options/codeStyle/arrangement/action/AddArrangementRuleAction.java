@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 public class AddArrangementRuleAction extends AbstractArrangementRuleAction implements DumbAware {
   
   public AddArrangementRuleAction() {
-    getTemplatePresentation().setText(ApplicationBundle.lazyMessage("arrangement.action.rule.add.text"));
-    getTemplatePresentation().setDescription(ApplicationBundle.lazyMessage("arrangement.action.rule.add.description"));
+    getTemplatePresentation().setText(ApplicationBundle.messagePointer("arrangement.action.rule.add.text"));
+    getTemplatePresentation().setDescription(ApplicationBundle.messagePointer("arrangement.action.rule.add.description"));
     getTemplatePresentation().setIcon(IconUtil.getAddIcon());
     setEnabledInModalContext(true);
   }

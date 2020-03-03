@@ -514,7 +514,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     DefaultActionGroup tabOptionsGroup = new DefaultActionGroup() {{
       Presentation presentation = getTemplatePresentation();
-      presentation.setText(FindBundle.lazyMessage("find.popup.show.tab.options"));
+      presentation.setText(FindBundle.messagePointer("find.popup.show.tab.options"));
       presentation.setIcon(AllIcons.General.GearPlain);
       setPopup(true);
       setShortcutSet(CustomShortcutSet.fromString("alt ctrl DOWN"));
@@ -1578,7 +1578,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
   private static class MyOpenResultsInNewTabAction extends ToggleAction {
     private MyOpenResultsInNewTabAction() {
-      super(FindBundle.lazyMessage("find.open.in.new.tab.action"));
+      super(FindBundle.messagePointer("find.open.in.new.tab.action"));
     }
 
     @Override
@@ -1651,7 +1651,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     private final DefaultActionGroup mySwitchContextGroup;
 
     MyShowFilterPopupAction() {
-      super(FindBundle.lazyMessage("find.popup.show.filter.popup"), Presentation.NULL_STRING, AllIcons.General.Filter);
+      super(FindBundle.messagePointer("find.popup.show.filter.popup"), Presentation.NULL_STRING, AllIcons.General.Filter);
       LayeredIcon icon = JBUI.scale(new LayeredIcon(2));
       icon.setIcon(AllIcons.General.Filter, 0);
       icon.setIcon(AllIcons.General.Dropdown, 1, 3, 0);
@@ -1773,8 +1773,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private class MyPinAction extends ToggleAction {
-    private MyPinAction() {super(IdeBundle.lazyMessage("action.ToggleAction.text.pin.window"),
-                                 IdeBundle.lazyMessage("action.ToggleAction.description.pin.window"), AllIcons.General.Pin_tab);}
+    private MyPinAction() {super(IdeBundle.messagePointer("action.ToggleAction.text.pin.window"),
+                                 IdeBundle.messagePointer("action.ToggleAction.description.pin.window"), AllIcons.General.Pin_tab);}
 
     @Override
     public boolean isDumbAware() {
@@ -1799,7 +1799,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
   private class MySkipTabWithOneUsageAction extends ToggleAction {
     private MySkipTabWithOneUsageAction() {
-      super(FindBundle.lazyMessage("find.options.skip.results.tab.with.one.usage.action"));
+      super(FindBundle.messagePointer("find.options.skip.results.tab.with.one.usage.action"));
     }
 
     @Override

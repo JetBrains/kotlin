@@ -24,8 +24,8 @@ import com.intellij.ide.IdeBundle;
  */
 public final class ViewSupertypesHierarchyAction extends ChangeViewTypeActionBase {
   public ViewSupertypesHierarchyAction() {
-    super(IdeBundle.lazyMessage("action.view.supertypes.hierarchy"),
-          IdeBundle.lazyMessage("action.description.view.supertypes.hierarchy"), AllIcons.Hierarchy.Supertypes);
+    super(IdeBundle.messagePointer("action.view.supertypes.hierarchy"),
+          IdeBundle.messagePointer("action.description.view.supertypes.hierarchy"), AllIcons.Hierarchy.Supertypes);
   }
 
   @Override

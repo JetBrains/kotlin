@@ -152,7 +152,7 @@ public class FindPopupDirectoryChooser extends JPanel {
 
   private class MyRecursiveDirectoryAction extends DumbAwareToggleAction {
     MyRecursiveDirectoryAction() {
-      super(FindBundle.lazyMessage("find.recursively.hint"), Presentation.NULL_STRING, AllIcons.Actions.ShowAsTree);
+      super(FindBundle.messagePointer("find.recursively.hint"), Presentation.NULL_STRING, AllIcons.Actions.ShowAsTree);
     }
 
     @Override

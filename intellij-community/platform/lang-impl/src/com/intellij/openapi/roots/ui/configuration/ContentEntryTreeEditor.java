@@ -275,8 +275,8 @@ public class ContentEntryTreeEditor {
 
   private static class MyNewFolderAction extends NewFolderAction implements CustomComponentAction {
     private MyNewFolderAction() {
-      super(ActionsBundle.lazyMessage("action.FileChooser.NewFolder.text"),
-            ActionsBundle.lazyMessage("action.FileChooser.NewFolder.description"),
+      super(ActionsBundle.messagePointer("action.FileChooser.NewFolder.text"),
+            ActionsBundle.messagePointer("action.FileChooser.NewFolder.description"),
             AllIcons.Actions.NewFolder);
     }
 

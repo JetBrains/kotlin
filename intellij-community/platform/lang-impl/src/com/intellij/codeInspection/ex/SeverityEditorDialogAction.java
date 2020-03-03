@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SeverityEditorDialogAction extends AnAction implements DumbAware {
   public SeverityEditorDialogAction() {
-    super(ActionsBundle.lazyMessage("action.SeverityEditorDialogAction.text"));
+    super(ActionsBundle.messagePointer("action.SeverityEditorDialogAction.text"));
   }
 
   @Override

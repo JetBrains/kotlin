@@ -98,8 +98,8 @@ public class FocusDebugger implements UiDebuggerExtension, PropertyChangeListene
 
   class ClearAction extends AnAction {
   ClearAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.clear"),
-          IdeBundle.lazyMessage("action.AnAction.description.clear"), AllIcons.Actions.Close);
+    super(IdeBundle.messagePointer("action.AnAction.text.clear"),
+          IdeBundle.messagePointer("action.AnAction.description.clear"), AllIcons.Actions.Close);
   }
 
     @Override

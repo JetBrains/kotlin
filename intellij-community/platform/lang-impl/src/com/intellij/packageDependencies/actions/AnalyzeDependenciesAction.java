@@ -32,7 +32,7 @@ public class AnalyzeDependenciesAction extends BaseAnalysisAction {
   private AnalyzeDependenciesSettingPanel myPanel;
 
   public AnalyzeDependenciesAction() {
-    super(CodeInsightBundle.lazyMessage("action.forward.dependency.analysis"), CodeInsightBundle.lazyMessage("action.analysis.noun"));
+    super(CodeInsightBundle.messagePointer("action.forward.dependency.analysis"), CodeInsightBundle.messagePointer("action.analysis.noun"));
   }
 
   @Override

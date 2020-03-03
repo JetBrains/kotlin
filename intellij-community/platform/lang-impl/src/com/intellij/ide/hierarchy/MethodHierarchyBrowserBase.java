@@ -109,7 +109,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
 
   private final class ShowImplementationsOnlyAction extends ToggleAction {
     private ShowImplementationsOnlyAction() {
-      super(IdeBundle.lazyMessage("action.hide.non.implementations"), AllIcons.General.Filter);
+      super(IdeBundle.messagePointer("action.hide.non.implementations"), AllIcons.General.Filter);
     }
 
     @Override
@@ -134,7 +134,7 @@ public abstract class MethodHierarchyBrowserBase extends HierarchyBrowserBaseEx 
 
   public static class BaseOnThisMethodAction extends BaseOnThisElementAction {
     public BaseOnThisMethodAction() {
-      super(IdeBundle.lazyMessage("action.base.on.this.method"), DATA_KEY.getName(), LanguageMethodHierarchy.INSTANCE);
+      super(IdeBundle.messagePointer("action.base.on.this.method"), DATA_KEY.getName(), LanguageMethodHierarchy.INSTANCE);
     }
   }
 

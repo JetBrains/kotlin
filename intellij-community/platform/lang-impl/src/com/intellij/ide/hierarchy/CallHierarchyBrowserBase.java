@@ -119,7 +119,7 @@ public abstract class CallHierarchyBrowserBase extends HierarchyBrowserBaseEx {
 
   protected static class BaseOnThisMethodAction extends BaseOnThisElementAction {
     public BaseOnThisMethodAction() {
-      super(IdeBundle.lazyMessage("action.base.on.this.method"), CALL_HIERARCHY_BROWSER_DATA_KEY, LanguageCallHierarchy.INSTANCE);
+      super(IdeBundle.messagePointer("action.base.on.this.method"), CALL_HIERARCHY_BROWSER_DATA_KEY, LanguageCallHierarchy.INSTANCE);
     }
   }
 

@@ -159,7 +159,7 @@ public abstract class TypeHierarchyBrowserBase extends HierarchyBrowserBaseEx {
   protected static class BaseOnThisTypeAction extends BaseOnThisElementAction {
 
     public BaseOnThisTypeAction() {
-      super(IdeBundle.lazyMessage("action.base.on.this.class"), DATA_KEY.getName(), LanguageTypeHierarchy.INSTANCE);
+      super(IdeBundle.messagePointer("action.base.on.this.class"), DATA_KEY.getName(), LanguageTypeHierarchy.INSTANCE);
     }
 
     @Override

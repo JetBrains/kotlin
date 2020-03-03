@@ -157,8 +157,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
 
   private class SaveAction extends AnAction {
   SaveAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.save"),
-          IdeBundle.lazyMessage("action.AnAction.description.save"), AllIcons.Actions.Menu_saveall);
+    super(IdeBundle.messagePointer("action.AnAction.text.save"),
+          IdeBundle.messagePointer("action.AnAction.description.save"), AllIcons.Actions.Menu_saveall);
   }
 
     @Override
@@ -200,8 +200,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
 
   private class SetScriptFileAction extends AnAction {
   SetScriptFileAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.set.script.file"),
-          IdeBundle.lazyMessage("action.AnAction.description.set.script.file"), AllIcons.Actions.Menu_open);
+    super(IdeBundle.messagePointer("action.AnAction.text.set.script.file"),
+          IdeBundle.messagePointer("action.AnAction.description.set.script.file"), AllIcons.Actions.Menu_open);
   }
 
     @Override
@@ -217,8 +217,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
 
   private class NewScriptAction extends AnAction {
   NewScriptAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.new.script"),
-          IdeBundle.lazyMessage("action.AnAction.description.new.script"), AllIcons.Actions.New);
+    super(IdeBundle.messagePointer("action.AnAction.text.new.script"),
+          IdeBundle.messagePointer("action.AnAction.description.new.script"), AllIcons.Actions.New);
   }
 
     @Override
@@ -270,8 +270,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
 
   private class StopAction extends AnAction {
   StopAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.stop"),
-          IdeBundle.lazyMessage("action.AnAction.description.stop"), AllIcons.Actions.Suspend);
+    super(IdeBundle.messagePointer("action.AnAction.text.stop"),
+          IdeBundle.messagePointer("action.AnAction.description.stop"), AllIcons.Actions.Suspend);
   }
 
     @Override
@@ -290,8 +290,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
 
   private class ActivateFrameAndRun extends AnAction {
   ActivateFrameAndRun() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.activate.frame.and.run"),
-          IdeBundle.lazyMessage("action.AnAction.description.activate.frame.and.run"), AllIcons.Nodes.Deploy);
+    super(IdeBundle.messagePointer("action.AnAction.text.activate.frame.and.run"),
+          IdeBundle.messagePointer("action.AnAction.description.activate.frame.and.run"), AllIcons.Nodes.Deploy);
   }
 
     @Override
@@ -307,8 +307,8 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
 
   private class RunOnFameActivationAction extends AnAction {
   RunOnFameActivationAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.run.on.frame.activation"),
-          IdeBundle.lazyMessage("action.AnAction.description.run.on.frame.activation"), AllIcons.RunConfigurations.TestState.Run);
+    super(IdeBundle.messagePointer("action.AnAction.text.run.on.frame.activation"),
+          IdeBundle.messagePointer("action.AnAction.description.run.on.frame.activation"), AllIcons.RunConfigurations.TestState.Run);
   }
 
     @Override

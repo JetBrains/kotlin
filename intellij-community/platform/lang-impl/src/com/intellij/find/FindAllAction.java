@@ -19,7 +19,7 @@ import javax.swing.*;
 
 public class FindAllAction extends AnAction implements ShortcutProvider, DumbAware {
   public FindAllAction() {
-    super(IdeBundle.lazyMessage("show.in.find.window.button.name"), IdeBundle.lazyMessage("show.in.find.window.button.description"),
+    super(IdeBundle.messagePointer("show.in.find.window.button.name"), IdeBundle.messagePointer("show.in.find.window.button.description"),
           null);
   }
 

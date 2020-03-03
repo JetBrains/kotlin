@@ -60,7 +60,7 @@ public class ScopesOrderDialog extends DialogWrapper {
       public void run(AnActionButton anActionButton) {
         ListUtil.moveSelectedItemsUp(myOptionsList);
       }
-    }).addExtraAction(new AnActionButton(CodeInsightBundle.lazyMessage("action.AnActionButton.text.edit.scopes"), AllIcons.Actions.Edit) {
+    }).addExtraAction(new AnActionButton(CodeInsightBundle.messagePointer("action.AnActionButton.text.edit.scopes"), AllIcons.Actions.Edit) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         ShowSettingsUtil.getInstance().editConfigurable(project, new ScopeChooserConfigurable(project));

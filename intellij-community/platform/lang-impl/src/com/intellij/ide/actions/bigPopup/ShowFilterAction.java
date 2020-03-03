@@ -28,8 +28,8 @@ public abstract class ShowFilterAction extends ToggleAction implements DumbAware
   private JBPopup myFilterPopup;
 
   public ShowFilterAction() {
-    super(IdeBundle.lazyMessage("action.ToggleAction.show.filter.text.filter"),
-          IdeBundle.lazyMessage("action.ToggleAction.show.filter.description.show.filters.popup"), AllIcons.General.Filter);
+    super(IdeBundle.messagePointer("action.ToggleAction.show.filter.text.filter"),
+          IdeBundle.messagePointer("action.ToggleAction.show.filter.description.show.filters.popup"), AllIcons.General.Filter);
   }
 
   @Override

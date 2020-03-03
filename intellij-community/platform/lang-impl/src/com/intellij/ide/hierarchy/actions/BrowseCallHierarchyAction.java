@@ -32,7 +32,7 @@ public final class BrowseCallHierarchyAction extends BrowseHierarchyActionBase {
   public final void update(@NotNull final AnActionEvent event){
     final Presentation presentation = event.getPresentation();
     if (!ActionPlaces.isMainMenuOrActionSearch(event.getPlace())) {
-      presentation.setText(IdeBundle.lazyMessage("action.browse.call.hierarchy"));
+      presentation.setText(IdeBundle.messagePointer("action.browse.call.hierarchy"));
     }
 
     super.update(event);

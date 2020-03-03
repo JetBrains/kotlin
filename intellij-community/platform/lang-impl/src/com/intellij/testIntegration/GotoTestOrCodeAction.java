@@ -45,11 +45,11 @@ public class GotoTestOrCodeAction extends BaseCodeInsightAction {
     presentation.setEnabledAndVisible(true);
     boolean useShortName = ActionPlaces.MAIN_MENU.equals(e.getPlace()) || ActionPlaces.isPopupPlace(e.getPlace());
     if (TestFinderHelper.isTest(element)) {
-      presentation.setText(useShortName ? ActionsBundle.lazyMessage("action.GotoTestSubject.MainMenu.text") : ActionsBundle.lazyMessage("action.GotoTestSubject.text"));
-      presentation.setDescription(ActionsBundle.lazyMessage("action.GotoTestSubject.description"));
+      presentation.setText(useShortName ? ActionsBundle.messagePointer("action.GotoTestSubject.MainMenu.text") : ActionsBundle.messagePointer("action.GotoTestSubject.text"));
+      presentation.setDescription(ActionsBundle.messagePointer("action.GotoTestSubject.description"));
     } else {
-      presentation.setText(useShortName ? ActionsBundle.lazyMessage("action.GotoTest.MainMenu.text") : ActionsBundle.lazyMessage("action.GotoTest.text"));
-      presentation.setDescription(ActionsBundle.lazyMessage("action.GotoTest.description"));
+      presentation.setText(useShortName ? ActionsBundle.messagePointer("action.GotoTest.MainMenu.text") : ActionsBundle.messagePointer("action.GotoTest.text"));
+      presentation.setDescription(ActionsBundle.messagePointer("action.GotoTest.description"));
     }
   }
 }

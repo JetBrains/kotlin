@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToggleShowDocsOnHoverAction extends ToggleAction implements HintManagerImpl.ActionToIgnore {
   public ToggleShowDocsOnHoverAction() {
-    super(CodeInsightBundle.lazyMessage("javadoc.show.on.mouse.move"));
+    super(CodeInsightBundle.messagePointer("javadoc.show.on.mouse.move"));
   }
 
   @Override

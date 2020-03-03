@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ShowSearchHistoryAction extends AnAction {
   ShowSearchHistoryAction() {
-    super(IdeBundle.lazyMessage("action.AnAction.text.search.history"),
-          IdeBundle.lazyMessage("action.AnAction.description.search.history"), AllIcons.Actions.SearchWithHistory);
+    super(IdeBundle.messagePointer("action.AnAction.text.search.history"),
+          IdeBundle.messagePointer("action.AnAction.description.search.history"), AllIcons.Actions.SearchWithHistory);
   }
 
   @Override

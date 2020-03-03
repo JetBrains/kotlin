@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 public class CreateFileAction extends CreateElementActionBase implements DumbAware {
 
   public CreateFileAction() {
-    super(ActionsBundle.lazyMessage("action.NewFile.text"), IdeBundle.lazyMessage("action.create.new.file.description"), AllIcons.FileTypes.Text);
+    super(ActionsBundle.messagePointer("action.NewFile.text"), IdeBundle.messagePointer("action.create.new.file.description"), AllIcons.FileTypes.Text);
   }
 
   public CreateFileAction(@Nls(capitalization = Nls.Capitalization.Title) String text,

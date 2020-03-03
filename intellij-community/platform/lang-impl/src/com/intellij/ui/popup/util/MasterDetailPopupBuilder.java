@@ -277,7 +277,7 @@ public class MasterDetailPopupBuilder implements MasterController {
     });
 
     if (myDoneRunnable != null) {
-      new AnAction(IdeBundle.lazyMessage("action.Anonymous.text.done")) {
+      new AnAction(IdeBundle.messagePointer("action.Anonymous.text.done")) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           myDoneRunnable.run();

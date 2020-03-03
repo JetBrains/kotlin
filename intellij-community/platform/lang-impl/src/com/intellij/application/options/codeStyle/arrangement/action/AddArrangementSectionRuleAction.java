@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
 public class AddArrangementSectionRuleAction extends AddArrangementRuleAction {
 
   public AddArrangementSectionRuleAction() {
-    getTemplatePresentation().setText(ApplicationBundle.lazyMessage("arrangement.action.section.rule.add.text"));
-    getTemplatePresentation().setDescription(ApplicationBundle.lazyMessage("arrangement.action.section.rule.add.description"));
+    getTemplatePresentation().setText(ApplicationBundle.messagePointer("arrangement.action.section.rule.add.text"));
+    getTemplatePresentation().setDescription(ApplicationBundle.messagePointer("arrangement.action.section.rule.add.description"));
     getTemplatePresentation().setIcon(AllIcons.CodeStyle.AddNewSectionRule);
   }
 

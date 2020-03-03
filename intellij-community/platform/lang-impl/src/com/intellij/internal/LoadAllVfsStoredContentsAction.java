@@ -29,8 +29,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class LoadAllVfsStoredContentsAction extends AnAction implements DumbAware {
   LoadAllVfsStoredContentsAction() {
-    super(InternalActionsBundle.lazyMessage("action.AnAction.text.load.all.virtual.files.content"),
-          InternalActionsBundle.lazyMessage("action.AnAction.description.load.all.virtual.files.content"), null);
+    super(InternalActionsBundle.messagePointer("action.AnAction.text.load.all.virtual.files.content"),
+          InternalActionsBundle.messagePointer("action.AnAction.description.load.all.virtual.files.content"), null);
   }
   private static final Logger LOG = Logger.getInstance(LoadAllVfsStoredContentsAction.class);
 

@@ -38,7 +38,7 @@ public class SuppressActionWrapper extends ActionGroup implements CompactActionG
   private final static Logger LOG = Logger.getInstance(SuppressActionWrapper.class);
 
   public SuppressActionWrapper() {
-    super(InspectionsBundle.lazyMessage("suppress.inspection.problem"), false);
+    super(InspectionsBundle.messagePointer("suppress.inspection.problem"), false);
   }
 
   @Override

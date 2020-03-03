@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 public class RenameProjectAction extends DumbAwareAction {
 
   public RenameProjectAction() {
-    super(RefactoringBundle.lazyMessage("rename.project.action.title"),
-          RefactoringBundle.lazyMessage("renames.project"), null);
+    super(RefactoringBundle.messagePointer("rename.project.action.title"),
+          RefactoringBundle.messagePointer("renames.project"), null);
   }
 
   private static final Logger LOG = Logger.getInstance(RenameProjectAction.class);

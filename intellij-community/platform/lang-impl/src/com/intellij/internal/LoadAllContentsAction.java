@@ -38,8 +38,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class LoadAllContentsAction extends AnAction implements DumbAware {
   LoadAllContentsAction() {
-    super(InternalActionsBundle.lazyMessage("action.AnAction.text.load.all.files.content"),
-          InternalActionsBundle.lazyMessage("action.AnAction.description.load.all.files.content"), null);
+    super(InternalActionsBundle.messagePointer("action.AnAction.text.load.all.files.content"),
+          InternalActionsBundle.messagePointer("action.AnAction.description.load.all.files.content"), null);
   }
   private static final Logger LOG = Logger.getInstance(LoadAllContentsAction.class);
 

@@ -27,8 +27,8 @@ public class RemoveRunConfigurationTypeAction extends DumbAwareAction {
 
     Presentation presentation = e.getPresentation();
     presentation.setEnabledAndVisible(true);
-    presentation.setText(ExecutionBundle.lazyMessage("run.dashboard.remove.run.configuration.type.action.name",
-                                                     ExecutionBundle.lazyMessage("run.dashboard.configuration.types", types.size())));
+    presentation.setText(ExecutionBundle.messagePointer("run.dashboard.remove.run.configuration.type.action.name",
+                                                     ExecutionBundle.messagePointer("run.dashboard.configuration.types", types.size())));
   }
 
   @Override

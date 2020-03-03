@@ -26,7 +26,7 @@ public class MarkSourceRootAction extends MarkRootActionBase {
     LOG.assertTrue(editHandler != null);
     presentation.setIcon(editHandler.getRootIcon());
     presentation.setText(editHandler.getFullRootTypeName());
-    presentation.setDescription(ProjectBundle.lazyMessage("module.toggle.sources.action.description",
+    presentation.setDescription(ProjectBundle.messagePointer("module.toggle.sources.action.description",
                                                       editHandler.getFullRootTypeName().toLowerCase(Locale.getDefault())));
   }
 

@@ -102,7 +102,7 @@ public abstract class KeyAwareInspectionViewAction extends InspectionViewActionB
 
   public static class RunInspectionOn extends KeyAwareInspectionViewAction {
     public RunInspectionOn() {
-      super(InspectionsBundle.lazyMessage("run.inspection.on.file.intention.text"));
+      super(InspectionsBundle.messagePointer("run.inspection.on.file.intention.text"));
     }
 
     @Override

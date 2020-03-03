@@ -67,8 +67,8 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
   public static final DataKey<String> TEST_DIRECTORY_NAME_KEY = DataKey.create("CreateDirectoryOrPackageAction.testName");
 
   public CreateDirectoryOrPackageAction() {
-    super(IdeBundle.lazyMessage("action.create.new.directory.or.package"),
-          IdeBundle.lazyMessage("action.create.new.directory.or.package"), null);
+    super(IdeBundle.messagePointer("action.create.new.directory.or.package"),
+          IdeBundle.messagePointer("action.create.new.directory.or.package"), null);
   }
 
   @Override
@@ -155,11 +155,11 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
     }
 
     if (isPackage) {
-      presentation.setText(IdeBundle.lazyMessage("action.package"));
+      presentation.setText(IdeBundle.messagePointer("action.package"));
       presentation.setIcon(PlatformIcons.PACKAGE_ICON);
     }
     else {
-      presentation.setText(IdeBundle.lazyMessage("action.directory"));
+      presentation.setText(IdeBundle.messagePointer("action.directory"));
       presentation.setIcon(PlatformIcons.FOLDER_ICON);
     }
   }

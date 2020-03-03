@@ -16,8 +16,8 @@ import java.util.Collection;
 
 class AddToNewFavoritesListAction extends AnAction implements DumbAware {
   AddToNewFavoritesListAction() {
-    super(IdeBundle.lazyMessage("action.add.to.new.favorites.list"),
-          IdeBundle.lazyMessage("action.add.to.new.favorites.list.description"), AllIcons.General.Add);
+    super(IdeBundle.messagePointer("action.add.to.new.favorites.list"),
+          IdeBundle.messagePointer("action.add.to.new.favorites.list.description"), AllIcons.General.Add);
   }
 
   @Override

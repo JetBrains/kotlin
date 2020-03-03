@@ -37,7 +37,7 @@ import java.util.List;
 
 public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAware {
   public ComputeVirtualFileNameStatAction() {
-    super(ActionsBundle.lazyMessage("action.ComputeVirtualFileNameStatAction.text"));
+    super(ActionsBundle.messagePointer("action.ComputeVirtualFileNameStatAction.text"));
   }
 
   @Override

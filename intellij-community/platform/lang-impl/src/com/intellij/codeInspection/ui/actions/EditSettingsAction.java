@@ -26,7 +26,7 @@ public class EditSettingsAction extends InspectionViewActionBase {
   private static final Logger LOG = Logger.getInstance(EditSettingsAction.class);
 
   public EditSettingsAction() {
-    super(InspectionsBundle.lazyMessage("inspection.action.edit.settings"), Presentation.NULL_STRING, AllIcons.General.Settings);
+    super(InspectionsBundle.messagePointer("inspection.action.edit.settings"), Presentation.NULL_STRING, AllIcons.General.Settings);
   }
 
   @Override

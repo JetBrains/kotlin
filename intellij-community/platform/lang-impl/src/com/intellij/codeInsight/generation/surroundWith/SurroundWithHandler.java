@@ -225,7 +225,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
 
     List<AnAction> templateGroup = SurroundWithTemplateHandler.createActionGroup(editor, file, usedMnemonicsSet);
     if (!templateGroup.isEmpty()) {
-      applicable.add(new Separator(IdeBundle.lazyMessage("action.Anonymous.text.live.templates")));
+      applicable.add(new Separator(IdeBundle.messagePointer("action.Anonymous.text.live.templates")));
       applicable.addAll(templateGroup);
       applicable.add(Separator.getInstance());
       applicable.add(new ConfigureTemplatesAction());
@@ -264,7 +264,7 @@ public class SurroundWithHandler implements CodeInsightActionHandler {
 
   private static class ConfigureTemplatesAction extends AnAction {
     private ConfigureTemplatesAction() {
-      super(ActionsBundle.lazyMessage("action.ConfigureTemplatesAction.text"));
+      super(ActionsBundle.messagePointer("action.ConfigureTemplatesAction.text"));
     }
 
     @Override

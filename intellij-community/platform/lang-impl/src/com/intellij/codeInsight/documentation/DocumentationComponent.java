@@ -1243,7 +1243,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class BackAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     BackAction() {
-      super(CodeInsightBundle.lazyMessage("javadoc.action.back"), AllIcons.Actions.Back);
+      super(CodeInsightBundle.messagePointer("javadoc.action.back"), AllIcons.Actions.Back);
     }
 
     @Override
@@ -1263,7 +1263,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class ForwardAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     ForwardAction() {
-      super(CodeInsightBundle.lazyMessage("javadoc.action.forward"), AllIcons.Actions.Forward);
+      super(CodeInsightBundle.messagePointer("javadoc.action.forward"), AllIcons.Actions.Forward);
     }
 
     @Override
@@ -1286,7 +1286,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     private EditDocumentationSourceAction() {
       super(true);
       getTemplatePresentation().setIcon(AllIcons.Actions.EditSource);
-      getTemplatePresentation().setText(CodeInsightBundle.lazyMessage("action.presentation.DocumentationComponent.text"));
+      getTemplatePresentation().setText(CodeInsightBundle.messagePointer("action.presentation.DocumentationComponent.text"));
     }
 
     @Override
@@ -1663,7 +1663,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class ShowToolbarAction extends ToggleAction implements HintManagerImpl.ActionToIgnore {
     ShowToolbarAction() {
-      super(CodeInsightBundle.lazyMessage("javadoc.show.toolbar"));
+      super(CodeInsightBundle.messagePointer("javadoc.show.toolbar"));
     }
 
     @Override
@@ -1752,7 +1752,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class ShowAsToolwindowAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     ShowAsToolwindowAction() {
-      super(CodeInsightBundle.lazyMessage("javadoc.open.as.tool.window"));
+      super(CodeInsightBundle.messagePointer("javadoc.open.as.tool.window"));
     }
 
     @Override
@@ -1775,7 +1775,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private class RestoreDefaultSizeAction extends AnAction implements HintManagerImpl.ActionToIgnore {
     RestoreDefaultSizeAction() {
-      super(CodeInsightBundle.lazyMessage("javadoc.restore.size"));
+      super(CodeInsightBundle.messagePointer("javadoc.restore.size"));
     }
 
     @Override

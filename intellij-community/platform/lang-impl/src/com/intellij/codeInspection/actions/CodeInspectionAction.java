@@ -56,7 +56,7 @@ public class CodeInspectionAction extends BaseAnalysisAction {
   protected InspectionProfileImpl myExternalProfile;
 
   public CodeInspectionAction() {
-    super(InspectionsBundle.lazyMessage("inspection.action.title"), InspectionsBundle.lazyMessage("inspection.action.noun"));
+    super(InspectionsBundle.messagePointer("inspection.action.title"), InspectionsBundle.messagePointer("inspection.action.noun"));
   }
 
   public CodeInspectionAction(String title, String analysisNoon) {

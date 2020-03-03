@@ -486,7 +486,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class CloseAction extends AnAction implements DumbAware {
     CloseAction() {
-      super(CommonBundle.lazyMessage("action.close"), CodeInsightBundle.lazyMessage("action.close.dependency.description"),
+      super(CommonBundle.messagePointer("action.close"), CodeInsightBundle.messagePointer("action.close.dependency.description"),
             AllIcons.Actions.Cancel);
     }
 
@@ -500,7 +500,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class FlattenPackagesAction extends ToggleAction {
     FlattenPackagesAction() {
-      super(CodeInsightBundle.lazyMessage("action.flatten.packages"), CodeInsightBundle.lazyMessage("action.flatten.packages"),
+      super(CodeInsightBundle.messagePointer("action.flatten.packages"), CodeInsightBundle.messagePointer("action.flatten.packages"),
             PlatformIcons.FLATTEN_PACKAGES_ICON);
     }
 
@@ -519,7 +519,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class ShowFilesAction extends ToggleAction {
     ShowFilesAction() {
-      super(CodeInsightBundle.lazyMessage("action.show.files"), CodeInsightBundle.lazyMessage("action.show.files.description"),
+      super(CodeInsightBundle.messagePointer("action.show.files"), CodeInsightBundle.messagePointer("action.show.files.description"),
             AllIcons.FileTypes.Unknown);
     }
 
@@ -541,7 +541,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class ShowModulesAction extends ToggleAction {
     ShowModulesAction() {
-      super(CodeInsightBundle.lazyMessage("action.show.modules"), CodeInsightBundle.lazyMessage("action.show.modules.description"),
+      super(CodeInsightBundle.messagePointer("action.show.modules"), CodeInsightBundle.messagePointer("action.show.modules.description"),
             AllIcons.Actions.GroupByModule);
     }
 
@@ -586,8 +586,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class GroupByScopeTypeAction extends ToggleAction {
     GroupByScopeTypeAction() {
-      super(CodeInsightBundle.lazyMessage("action.group.by.scope.type"),
-            CodeInsightBundle.lazyMessage("action.group.by.scope.type.description"), AllIcons.Actions.GroupByTestProduction);
+      super(CodeInsightBundle.messagePointer("action.group.by.scope.type"),
+            CodeInsightBundle.messagePointer("action.group.by.scope.type.description"), AllIcons.Actions.GroupByTestProduction);
     }
 
     @Override
@@ -606,8 +606,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class FilterLegalsAction extends ToggleAction {
     FilterLegalsAction() {
-      super(CodeInsightBundle.lazyMessage("action.show.illegals.only"),
-            CodeInsightBundle.lazyMessage("action.show.illegals.only.description"), AllIcons.General.Filter);
+      super(CodeInsightBundle.messagePointer("action.show.illegals.only"),
+            CodeInsightBundle.messagePointer("action.show.illegals.only.description"), AllIcons.General.Filter);
     }
 
     @Override
@@ -632,7 +632,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private final class EditDependencyRulesAction extends AnAction {
     EditDependencyRulesAction() {
-      super(CodeInsightBundle.lazyMessage("action.edit.rules"), CodeInsightBundle.lazyMessage("action.edit.rules.description"),
+      super(CodeInsightBundle.messagePointer("action.edit.rules"), CodeInsightBundle.messagePointer("action.edit.rules.description"),
             AllIcons.General.Settings);
     }
 
@@ -753,7 +753,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class ShowDetailedInformationAction extends AnAction {
     private ShowDetailedInformationAction() {
-      super(ActionsBundle.lazyMessage("action.ShowDetailedInformationAction.text"));
+      super(ActionsBundle.messagePointer("action.ShowDetailedInformationAction.text"));
     }
 
     @Override
@@ -790,7 +790,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class RemoveFromScopeAction extends AnAction {
     private RemoveFromScopeAction() {
-      super(ActionsBundle.lazyMessage("action.RemoveFromScopeAction.text"));
+      super(ActionsBundle.messagePointer("action.RemoveFromScopeAction.text"));
     }
 
     @Override
@@ -813,7 +813,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class AddToScopeAction extends AnAction {
     private AddToScopeAction() {
-      super(ActionsBundle.lazyMessage("action.AddToScopeAction.text"));
+      super(ActionsBundle.messagePointer("action.AddToScopeAction.text"));
     }
 
     @Override
@@ -866,8 +866,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class SelectInLeftTreeAction extends AnAction {
     SelectInLeftTreeAction() {
-      super(CodeInsightBundle.lazyMessage("action.select.in.left.tree"),
-            CodeInsightBundle.lazyMessage("action.select.in.left.tree.description"), null);
+      super(CodeInsightBundle.messagePointer("action.select.in.left.tree"),
+            CodeInsightBundle.messagePointer("action.select.in.left.tree.description"), null);
     }
 
     @Override
@@ -907,8 +907,8 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
 
   private class MarkAsIllegalAction extends AnAction {
     MarkAsIllegalAction() {
-      super(CodeInsightBundle.lazyMessage("mark.dependency.illegal.text"),
-            CodeInsightBundle.lazyMessage("mark.dependency.illegal.text"), AllIcons.Actions.Lightning);
+      super(CodeInsightBundle.messagePointer("mark.dependency.illegal.text"),
+            CodeInsightBundle.messagePointer("mark.dependency.illegal.text"), AllIcons.Actions.Lightning);
     }
 
     @Override

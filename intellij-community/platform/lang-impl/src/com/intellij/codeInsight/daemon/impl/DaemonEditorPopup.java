@@ -74,7 +74,7 @@ public class DaemonEditorPopup extends PopupHandler {
     );
     actionGroup.add(gotoGroup);
     actionGroup.addSeparator();
-    actionGroup.add(new AnAction(EditorBundle.lazyMessage("customize.highlighting.level.menu.item")) {
+    actionGroup.add(new AnAction(EditorBundle.messagePointer("customize.highlighting.level.menu.item")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         final HectorComponent component = ServiceManager.getService(myProject, HectorComponentFactory.class).create(file);

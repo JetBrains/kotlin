@@ -37,13 +37,13 @@ public class DebugAction extends ExecutorAction {
   protected void update(@NotNull AnActionEvent e, boolean running) {
     Presentation presentation = e.getPresentation();
     if (running) {
-      presentation.setText(ExecutionBundle.lazyMessage("run.dashboard.restart.debugger.action.name"));
-      presentation.setDescription(ExecutionBundle.lazyMessage("run.dashboard.restart.debugger.action.description"));
+      presentation.setText(ExecutionBundle.messagePointer("run.dashboard.restart.debugger.action.name"));
+      presentation.setDescription(ExecutionBundle.messagePointer("run.dashboard.restart.debugger.action.description"));
       presentation.setIcon(AllIcons.Actions.RestartDebugger);
     }
     else {
-      presentation.setText(ExecutionBundle.lazyMessage("run.dashboard.debug.action.name"));
-      presentation.setDescription(ExecutionBundle.lazyMessage("run.dashboard.debug.action.description"));
+      presentation.setText(ExecutionBundle.messagePointer("run.dashboard.debug.action.name"));
+      presentation.setDescription(ExecutionBundle.messagePointer("run.dashboard.debug.action.description"));
       presentation.setIcon(AllIcons.Actions.StartDebugger);
     }
   }

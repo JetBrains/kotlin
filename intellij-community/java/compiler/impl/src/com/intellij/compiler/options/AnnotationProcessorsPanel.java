@@ -329,7 +329,7 @@ public class AnnotationProcessorsPanel extends JPanel {
   private class MoveProfileAction extends AnActionButton {
 
     MoveProfileAction() {
-      super(JavaCompilerBundle.lazyMessage("action.text.move.to"), AllIcons.Actions.Forward);
+      super(JavaCompilerBundle.messagePointer("action.text.move.to"), AllIcons.Actions.Forward);
     }
 
     @Override

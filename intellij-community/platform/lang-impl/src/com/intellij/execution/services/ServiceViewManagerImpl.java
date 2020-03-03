@@ -967,10 +967,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     ActivateToolWindowByContributorAction(ServiceViewContributor<?> contributor, ItemPresentation contributorPresentation) {
       myContributor = contributor;
       Presentation templatePresentation = getTemplatePresentation();
-      templatePresentation.setText(ExecutionBundle.lazyMessage("service.view.activate.tool.window.action.name",
+      templatePresentation.setText(ExecutionBundle.messagePointer("service.view.activate.tool.window.action.name",
                                                                ServiceViewDragHelper.getDisplayName(contributorPresentation)));
       templatePresentation.setIcon(contributorPresentation.getIcon(false));
-      templatePresentation.setDescription(ExecutionBundle.lazyMessage("service.view.activate.tool.window.action.description"));
+      templatePresentation.setDescription(ExecutionBundle.messagePointer("service.view.activate.tool.window.action.description"));
     }
 
     @Override

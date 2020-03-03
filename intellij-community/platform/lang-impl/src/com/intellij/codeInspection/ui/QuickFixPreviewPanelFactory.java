@@ -125,7 +125,7 @@ public class QuickFixPreviewPanelFactory {
 
       return new ComboBoxAction() {
         {
-          getTemplatePresentation().setText(CodeInsightBundle.lazyMessage("action.presentation.QuickFixPreviewPanelFactory.text"));
+          getTemplatePresentation().setText(CodeInsightBundle.messagePointer("action.presentation.QuickFixPreviewPanelFactory.text"));
           setSmallVariant(false);
         }
 
@@ -152,7 +152,7 @@ public class QuickFixPreviewPanelFactory {
       }
       final ComboBoxAction action = new ComboBoxAction() {
         {
-          getTemplatePresentation().setText(CodeInsightBundle.lazyMessage("action.presentation.QuickFixPreviewPanelFactory.text.suppress"));
+          getTemplatePresentation().setText(CodeInsightBundle.messagePointer("action.presentation.QuickFixPreviewPanelFactory.text.suppress"));
         }
 
         @NotNull

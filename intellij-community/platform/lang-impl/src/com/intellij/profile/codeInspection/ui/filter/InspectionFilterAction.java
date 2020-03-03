@@ -112,7 +112,7 @@ public class InspectionFilterAction extends DefaultActionGroup implements Toggle
 
   private class ResetFilterAction extends DumbAwareAction {
     ResetFilterAction() {
-      super(ActionsBundle.lazyMessage("action.ResetFilterAction.text"));
+      super(ActionsBundle.messagePointer("action.ResetFilterAction.text"));
     }
 
     @Override

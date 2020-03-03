@@ -43,7 +43,7 @@ public class ToggleSourcesStateAction<P extends JpsElement> extends ContentEntry
     myEditHandler = editHandler;
     final Presentation templatePresentation = getTemplatePresentation();
     templatePresentation.setText(editHandler.getMarkRootButtonText());
-    templatePresentation.setDescription(ProjectBundle.lazyMessage("module.toggle.sources.action.description",
+    templatePresentation.setDescription(ProjectBundle.messagePointer("module.toggle.sources.action.description",
                                                               editHandler.getFullRootTypeName().toLowerCase(Locale.getDefault())));
     templatePresentation.setIcon(editHandler.getRootIcon());
   }

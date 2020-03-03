@@ -317,8 +317,8 @@ public abstract class AnalysisProblemsViewPanel extends SimpleToolWindowPanel im
     if (url == null) return;
 
     group.addSeparator();
-    group.add(new DumbAwareAction(IdeBundle.lazyMessage("action.DumbAware.DartProblemsViewPanel.text.open.documentation"),
-                                  IdeBundle.lazyMessage(
+    group.add(new DumbAwareAction(IdeBundle.messagePointer("action.DumbAware.DartProblemsViewPanel.text.open.documentation"),
+                                  IdeBundle.messagePointer(
                                     "action.DumbAware.DartProblemsViewPanel.description.open.detailed.problem.description.in.browser"),
                                   AllIcons.Ide.External_link_arrow) {
       @Override
