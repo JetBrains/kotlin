@@ -301,8 +301,8 @@ val tryRunFullCli by eagerTask<NoDebugJavaExec> {
     buildJs(
         sources = listOf(jsTestDir),
         dependencies = listOf(
-            "${generateFullRuntimeKLib.outputs.files.singleFile.path}/klib",
-            "${generateKotlinTestKLib.outputs.files.singleFile.path}/klib"
+            generateFullRuntimeKLib.outputs.files.singleFile.path,
+            generateKotlinTestKLib.outputs.files.singleFile.path
         ),
         outPath = testOutputFile,
         commonSources = emptyList()
