@@ -32,6 +32,7 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
     KotlinBundle.lazyMessage("remove.redundant.calls.of.the.conversion.method")
 ) {
 
+    @ExperimentalUnsignedTypes
     private val targetClassMap: Map<String, String?> by lazy {
         mapOf(
             "toString()" to String::class.qualifiedName,
@@ -41,7 +42,11 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
             "toInt()" to Int::class.qualifiedName,
             "toChar()" to Char::class.qualifiedName,
             "toShort()" to Short::class.qualifiedName,
-            "toByte()" to Byte::class.qualifiedName
+            "toByte()" to Byte::class.qualifiedName,
+            "toULong()" to ULong::class.qualifiedName,
+            "toUInt()" to UInt::class.qualifiedName,
+            "toUShort()" to UShort::class.qualifiedName,
+            "toUByte()" to UByte::class.qualifiedName
         )
     }
 
