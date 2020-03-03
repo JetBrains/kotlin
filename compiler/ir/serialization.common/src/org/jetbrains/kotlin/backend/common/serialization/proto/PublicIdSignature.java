@@ -76,21 +76,21 @@ public final class PublicIdSignature extends
           }
           case 16: {
             if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-              declarationFqName_ = new java.util.ArrayList<java.lang.Integer>();
+              classFqName_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000002;
             }
-            declarationFqName_.add(input.readInt32());
+            classFqName_.add(input.readInt32());
             break;
           }
           case 18: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
             if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
-              declarationFqName_ = new java.util.ArrayList<java.lang.Integer>();
+              classFqName_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000002;
             }
             while (input.getBytesUntilLimit() > 0) {
-              declarationFqName_.add(input.readInt32());
+              classFqName_.add(input.readInt32());
             }
             input.popLimit(limit);
             break;
@@ -117,7 +117,7 @@ public final class PublicIdSignature extends
         packageFqName_ = java.util.Collections.unmodifiableList(packageFqName_);
       }
       if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-        declarationFqName_ = java.util.Collections.unmodifiableList(declarationFqName_);
+        classFqName_ = java.util.Collections.unmodifiableList(classFqName_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -168,28 +168,28 @@ public final class PublicIdSignature extends
   }
   private int packageFqNameMemoizedSerializedSize = -1;
 
-  public static final int DECLARATION_FQ_NAME_FIELD_NUMBER = 2;
-  private java.util.List<java.lang.Integer> declarationFqName_;
+  public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
+  private java.util.List<java.lang.Integer> classFqName_;
   /**
-   * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
-      getDeclarationFqNameList() {
-    return declarationFqName_;
+      getClassFqNameList() {
+    return classFqName_;
   }
   /**
-   * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
-  public int getDeclarationFqNameCount() {
-    return declarationFqName_.size();
+  public int getClassFqNameCount() {
+    return classFqName_.size();
   }
   /**
-   * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
-  public int getDeclarationFqName(int index) {
-    return declarationFqName_.get(index);
+  public int getClassFqName(int index) {
+    return classFqName_.get(index);
   }
-  private int declarationFqNameMemoizedSerializedSize = -1;
+  private int classFqNameMemoizedSerializedSize = -1;
 
   public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 3;
   private long memberUniqId_;
@@ -223,7 +223,7 @@ public final class PublicIdSignature extends
 
   private void initFields() {
     packageFqName_ = java.util.Collections.emptyList();
-    declarationFqName_ = java.util.Collections.emptyList();
+    classFqName_ = java.util.Collections.emptyList();
     memberUniqId_ = 0L;
     flags_ = 0L;
   }
@@ -247,12 +247,12 @@ public final class PublicIdSignature extends
     for (int i = 0; i < packageFqName_.size(); i++) {
       output.writeInt32NoTag(packageFqName_.get(i));
     }
-    if (getDeclarationFqNameList().size() > 0) {
+    if (getClassFqNameList().size() > 0) {
       output.writeRawVarint32(18);
-      output.writeRawVarint32(declarationFqNameMemoizedSerializedSize);
+      output.writeRawVarint32(classFqNameMemoizedSerializedSize);
     }
-    for (int i = 0; i < declarationFqName_.size(); i++) {
-      output.writeInt32NoTag(declarationFqName_.get(i));
+    for (int i = 0; i < classFqName_.size(); i++) {
+      output.writeInt32NoTag(classFqName_.get(i));
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeInt64(3, memberUniqId_);
@@ -285,17 +285,17 @@ public final class PublicIdSignature extends
     }
     {
       int dataSize = 0;
-      for (int i = 0; i < declarationFqName_.size(); i++) {
+      for (int i = 0; i < classFqName_.size(); i++) {
         dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32SizeNoTag(declarationFqName_.get(i));
+          .computeInt32SizeNoTag(classFqName_.get(i));
       }
       size += dataSize;
-      if (!getDeclarationFqNameList().isEmpty()) {
+      if (!getClassFqNameList().isEmpty()) {
         size += 1;
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(dataSize);
       }
-      declarationFqNameMemoizedSerializedSize = dataSize;
+      classFqNameMemoizedSerializedSize = dataSize;
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -401,7 +401,7 @@ public final class PublicIdSignature extends
       super.clear();
       packageFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
-      declarationFqName_ = java.util.Collections.emptyList();
+      classFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
       memberUniqId_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -436,10 +436,10 @@ public final class PublicIdSignature extends
       }
       result.packageFqName_ = packageFqName_;
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        declarationFqName_ = java.util.Collections.unmodifiableList(declarationFqName_);
+        classFqName_ = java.util.Collections.unmodifiableList(classFqName_);
         bitField0_ = (bitField0_ & ~0x00000002);
       }
-      result.declarationFqName_ = declarationFqName_;
+      result.classFqName_ = classFqName_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000001;
       }
@@ -464,13 +464,13 @@ public final class PublicIdSignature extends
         }
         
       }
-      if (!other.declarationFqName_.isEmpty()) {
-        if (declarationFqName_.isEmpty()) {
-          declarationFqName_ = other.declarationFqName_;
+      if (!other.classFqName_.isEmpty()) {
+        if (classFqName_.isEmpty()) {
+          classFqName_ = other.classFqName_;
           bitField0_ = (bitField0_ & ~0x00000002);
         } else {
-          ensureDeclarationFqNameIsMutable();
-          declarationFqName_.addAll(other.declarationFqName_);
+          ensureClassFqNameIsMutable();
+          classFqName_.addAll(other.classFqName_);
         }
         
       }
@@ -574,67 +574,67 @@ public final class PublicIdSignature extends
       return this;
     }
 
-    private java.util.List<java.lang.Integer> declarationFqName_ = java.util.Collections.emptyList();
-    private void ensureDeclarationFqNameIsMutable() {
+    private java.util.List<java.lang.Integer> classFqName_ = java.util.Collections.emptyList();
+    private void ensureClassFqNameIsMutable() {
       if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-        declarationFqName_ = new java.util.ArrayList<java.lang.Integer>(declarationFqName_);
+        classFqName_ = new java.util.ArrayList<java.lang.Integer>(classFqName_);
         bitField0_ |= 0x00000002;
        }
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
-        getDeclarationFqNameList() {
-      return java.util.Collections.unmodifiableList(declarationFqName_);
+        getClassFqNameList() {
+      return java.util.Collections.unmodifiableList(classFqName_);
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
-    public int getDeclarationFqNameCount() {
-      return declarationFqName_.size();
+    public int getClassFqNameCount() {
+      return classFqName_.size();
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
-    public int getDeclarationFqName(int index) {
-      return declarationFqName_.get(index);
+    public int getClassFqName(int index) {
+      return classFqName_.get(index);
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
-    public Builder setDeclarationFqName(
+    public Builder setClassFqName(
         int index, int value) {
-      ensureDeclarationFqNameIsMutable();
-      declarationFqName_.set(index, value);
+      ensureClassFqNameIsMutable();
+      classFqName_.set(index, value);
       
       return this;
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
-    public Builder addDeclarationFqName(int value) {
-      ensureDeclarationFqNameIsMutable();
-      declarationFqName_.add(value);
+    public Builder addClassFqName(int value) {
+      ensureClassFqNameIsMutable();
+      classFqName_.add(value);
       
       return this;
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
-    public Builder addAllDeclarationFqName(
+    public Builder addAllClassFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureDeclarationFqNameIsMutable();
+      ensureClassFqNameIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, declarationFqName_);
+          values, classFqName_);
       
       return this;
     }
     /**
-     * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+     * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
      */
-    public Builder clearDeclarationFqName() {
-      declarationFqName_ = java.util.Collections.emptyList();
+    public Builder clearClassFqName() {
+      classFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
       
       return this;

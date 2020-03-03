@@ -568,11 +568,11 @@ abstract class KotlinIrLinker(
 
         if (publicSig.packageFqn !in functionalPackages) return false
 
-        val declarationFqn = publicSig.declarationFqn
+        val classFqn = publicSig.classFqn
 
-        if (declarationFqn.isRoot) return false
+        if (classFqn.isRoot) return false
 
-        val fqnParts = declarationFqn.pathSegments()
+        val fqnParts = classFqn.pathSegments()
 
         val className = fqnParts.first()
 
@@ -583,7 +583,7 @@ abstract class KotlinIrLinker(
         if (isSpecialFunctionDescriptor(idSig)) {
             val publicSig = idSig.asPublic() ?: error("$idSig has to be public")
 
-            val fqnParts = publicSig.declarationFqn.pathSegments()
+            val fqnParts = publicSig.classFqn.pathSegments()
             val className = fqnParts.first()
             val classDescriptor = builtIns.builtIns.getBuiltInClassByFqName(publicSig.packageFqn.child(className))
 

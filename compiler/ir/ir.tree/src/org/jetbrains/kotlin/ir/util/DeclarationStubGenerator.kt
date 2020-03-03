@@ -364,13 +364,13 @@ class DeclarationStubGenerator(
     private fun findDescriptorForAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
         val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor ?: return null
         return propertyDescriptor.accessors.singleOrNull {
-            it.name == signature.accessorSignature.declarationFqn.shortName()
+            it.name == signature.accessorSignature.classFqn.shortName()
         }
     }
 
     private fun findDescriptorForPublicSignature(signature: IdSignature.PublicSignature): DeclarationDescriptor? {
         val packageDescriptor = moduleDescriptor.getPackage(signature.packageFqName())
-        val pathSegments = signature.declarationFqn.pathSegments()
+        val pathSegments = signature.classFqn.pathSegments()
         val toplevelDescriptors = packageDescriptor.memberScope.getContributedDescriptors { name -> name == pathSegments.first() }
             .filter { it.name == pathSegments.first() }
         val candidates = pathSegments.drop(1).fold(toplevelDescriptors) { acc, current ->
