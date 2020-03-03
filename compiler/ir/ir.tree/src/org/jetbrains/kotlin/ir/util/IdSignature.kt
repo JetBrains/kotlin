@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.name.FqName
 
 sealed class IdSignature {
@@ -46,7 +47,7 @@ sealed class IdSignature {
         return "${if (isPublic) "public" else "private"} ${render()}"
     }
 
-    data class PublicSignature(val packageFqn: FqName, val declarationFqn: FqName, val id: Long?, val mask: Long) : IdSignature() {
+    data class PublicSignature(val packageFqn: FqName, val classFqn: FqName, val id: Long?, val mask: Long) : IdSignature() {
         override val isPublic = true
 
         override fun packageFqName() = packageFqn
@@ -59,26 +60,26 @@ sealed class IdSignature {
         }
 
         override fun topLevelSignature(): IdSignature {
-            if (declarationFqn.isRoot) {
+            if (classFqn.isRoot) {
                 assert(id == null)
                 // package signature
                 return this
             }
 
-            val pathSegments = declarationFqn.pathSegments()
+            val pathSegments = classFqn.pathSegments()
 
             if (pathSegments.size == 1) return this
 
             return PublicSignature(packageFqn, FqName(pathSegments.first().asString()), null, adaptMask(mask))
         }
 
-        override fun isPackageSignature(): Boolean = id == null && declarationFqn.isRoot
+        override fun isPackageSignature(): Boolean = id == null && classFqn.isRoot
 
         override fun nearestPublicSig(): PublicSignature = this
 
         override fun flags(): Long = mask
 
-        override fun render(): String = "${packageFqn.asString()}/${declarationFqn.asString()}|$id[${mask.toString(2)}]"
+        override fun render(): String = "${packageFqn.asString()}/${classFqn.asString()}|$id[${mask.toString(2)}]"
 
         override fun toString() = super.toString()
 
@@ -116,7 +117,7 @@ sealed class IdSignature {
         override fun topLevelSignature(): IdSignature {
             val topLevelContainer = container.topLevelSignature()
             if (topLevelContainer === container) {
-                if (topLevelContainer is PublicSignature && topLevelContainer.declarationFqn.isRoot) {
+                if (topLevelContainer is PublicSignature && topLevelContainer.classFqn.isRoot) {
                     // private top level
                     return this
                 }

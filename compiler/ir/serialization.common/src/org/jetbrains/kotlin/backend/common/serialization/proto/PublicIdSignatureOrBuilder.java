@@ -21,17 +21,17 @@ public interface PublicIdSignatureOrBuilder extends
   int getPackageFqName(int index);
 
   /**
-   * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
-  java.util.List<java.lang.Integer> getDeclarationFqNameList();
+  java.util.List<java.lang.Integer> getClassFqNameList();
   /**
-   * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
-  int getDeclarationFqNameCount();
+  int getClassFqNameCount();
   /**
-   * <code>repeated int32 declaration_fq_name = 2 [packed = true];</code>
+   * <code>repeated int32 class_fq_name = 2 [packed = true];</code>
    */
-  int getDeclarationFqName(int index);
+  int getClassFqName(int index);
 
   /**
    * <code>optional int64 member_uniq_id = 3;</code>
