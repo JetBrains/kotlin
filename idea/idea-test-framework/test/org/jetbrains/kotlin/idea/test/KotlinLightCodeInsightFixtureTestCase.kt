@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -26,6 +27,7 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
@@ -280,7 +282,7 @@ private fun configureCompilerOptions(fileText: String, project: Project, module:
     return false
 }
 
-fun <T> configureRegistryAndRun(fileText: String, body: () -> T) {
+fun configureRegistryAndRun(fileText: String, body: () -> Unit) {
     val registers = InTextDirectivesUtils.findListWithPrefixes(fileText, "// REGISTRY:")
         .map { it.split(' ') }
         .map { Registry.get(it.first()) to it.last() }
@@ -293,6 +295,20 @@ fun <T> configureRegistryAndRun(fileText: String, body: () -> T) {
         for ((register, _) in registers) {
             register.resetToDefault()
         }
+    }
+}
+
+fun configureCodeStyleAndRun(
+    project: Project,
+    configurator: (CodeStyleSettings) -> Unit,
+    body: () -> Unit
+) {
+    val codeStyleSettings = CodeStyle.getSettings(project)
+    try {
+        configurator(codeStyleSettings)
+        body()
+    } finally {
+        codeStyleSettings.clearCodeStyleSettings()
     }
 }
 

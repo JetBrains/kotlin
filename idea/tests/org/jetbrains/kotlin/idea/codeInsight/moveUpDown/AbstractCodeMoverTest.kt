@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -96,15 +97,14 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
 
         isApplicableChecker(isApplicableExpected, direction)
 
-        val codeStyleSettings = CodeStyle.getSettings(project)
-        try {
-            val configurator = FormatSettingsUtil.createConfigurator(fileText, codeStyleSettings)
-            configurator.configureSettings()
-
-            if (trailingComma) codeStyleSettings.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
+        configureCodeStyleAndRun(
+            project,
+            {
+                FormatSettingsUtil.createConfigurator(fileText, it).configureSettings()
+                if (trailingComma) it.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
+            }
+        ) {
             invokeAndCheck(path, action, isApplicableExpected)
-        } finally {
-            codeStyleSettings.clearCodeStyleSettings()
         }
     }
 
