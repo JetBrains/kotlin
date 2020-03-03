@@ -464,14 +464,13 @@ public final class FindUsagesManager {
   private static UsageViewPresentation createPresentation(@NotNull PsiElement psiElement,
                                                           @NotNull FindUsagesOptions options,
                                                           boolean toOpenInNewTab) {
+    String usagesString = generateUsagesString(options);
+    String longName = UsageViewUtil.getLongName(psiElement);
     UsageViewPresentation presentation = new UsageViewPresentation();
     String scopeString = options.searchScope.getDisplayName();
     presentation.setScopeText(scopeString);
-    String usagesString = generateUsagesString(options);
-    presentation.setUsagesString(usagesString);
-    String title = FindBundle.message("find.usages.of.element.in.scope.panel.title", usagesString, UsageViewUtil.getLongName(psiElement),
-                         scopeString);
-    presentation.setTabText(title);
+    presentation.setSearchString(FindBundle.message("find.usages.of.element.tab.name", usagesString, longName));
+    presentation.setTabText(FindBundle.message("find.usages.of.element.in.scope.panel.title", usagesString, longName, scopeString));
     presentation.setTabName(FindBundle.message("find.usages.of.element.tab.name", usagesString, UsageViewUtil.getShortName(psiElement)));
     presentation.setTargetsNodeText(StringUtil.capitalize(UsageViewUtil.getType(psiElement)));
     presentation.setOpenInNewTab(toOpenInNewTab);

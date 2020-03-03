@@ -365,12 +365,12 @@ public class FindInProjectUtil {
 
   public static void setupViewPresentation(UsageViewPresentation presentation, boolean toOpenInNewTab, @NotNull FindModel findModel) {
     String scope = getTitleForScope(findModel);
-    if (!scope.isEmpty()) {
-      scope = Character.toLowerCase(scope.charAt(0)) + scope.substring(1);
-    }
     final String stringToFind = findModel.getStringToFind();
     presentation.setScopeText(scope);
     if (stringToFind.isEmpty()) {
+      if (!scope.isEmpty()) {
+        scope = Character.toLowerCase(scope.charAt(0)) + scope.substring(1);
+      }
       presentation.setTabText("Files");
       presentation.setToolwindowTitle("Files in " + scope);
       presentation.setUsagesString("files");
@@ -383,7 +383,7 @@ public class FindInProjectUtil {
       }
       presentation.setTabText(FindBundle.message("find.usage.view.tab.text", stringToFind, contextText));
       presentation.setToolwindowTitle(FindBundle.message("find.usage.view.toolwindow.title", stringToFind, scope, contextText));
-      presentation.setUsagesString(FindBundle.message("find.usage.view.usages.text", stringToFind));
+      presentation.setSearchString(FindBundle.message("find.occurrences.search.string", stringToFind, searchContext.ordinal()));
       presentation.setUsagesWord(FindBundle.message("occurrence"));
       presentation.setCodeUsagesString(FindBundle.message("found.occurrences"));
       presentation.setContextText(contextText);
