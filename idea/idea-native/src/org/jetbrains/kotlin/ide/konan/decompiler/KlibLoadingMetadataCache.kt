@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import java.io.IOException
 import java.util.*
 
-class KotlinNativeLoadingMetadataCache : BaseComponent {
+class KlibLoadingMetadataCache : BaseComponent {
 
     companion object {
         @JvmStatic
-        fun getInstance(): KotlinNativeLoadingMetadataCache =
-            ApplicationManager.getApplication().getComponent(KotlinNativeLoadingMetadataCache::class.java)
+        fun getInstance(): KlibLoadingMetadataCache =
+            ApplicationManager.getApplication().getComponent(KlibLoadingMetadataCache::class.java)
     }
 
     // Use special CacheKey class instead of VirtualFile for cache keys. Certain types of VirtualFiles (for example, obtained from JarFileSystem)

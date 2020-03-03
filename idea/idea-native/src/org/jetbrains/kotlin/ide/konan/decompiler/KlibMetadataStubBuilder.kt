@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 
-open class KotlinNativeMetadataStubBuilder(
+open class KlibMetadataStubBuilder(
     private val version: Int,
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,

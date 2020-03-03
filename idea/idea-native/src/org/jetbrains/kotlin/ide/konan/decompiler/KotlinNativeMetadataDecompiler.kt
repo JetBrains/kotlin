@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVe
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 
-class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<KlibMetadataVersion>(
-    KotlinNativeMetaFileType,
+class KotlinNativeMetadataDecompiler : KlibMetadataDecompiler<KlibMetadataVersion>(
+    KlibMetaFileType,
     { KlibMetadataSerializerProtocol },
     DynamicTypeDeserializer,
     { KlibMetadataVersion.INSTANCE },
     { KlibMetadataVersion.INVALID_VERSION },
-    KotlinNativeMetaFileType.STUB_VERSION
+    KlibMetaFileType.STUB_VERSION
 ) {
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        val fragment = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(file) ?: return null
+        val fragment = KlibLoadingMetadataCache.getInstance().getCachedPackageFragment(file) ?: return null
         return FileWithMetadata.Compatible(fragment, KlibMetadataSerializerProtocol) //todo: check version compatibility
     }
 }

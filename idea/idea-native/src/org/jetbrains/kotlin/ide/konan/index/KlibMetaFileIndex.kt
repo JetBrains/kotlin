@@ -6,28 +6,28 @@
 package org.jetbrains.kotlin.ide.konan.index
 
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
-import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileType
+import org.jetbrains.kotlin.ide.konan.decompiler.KlibLoadingMetadataCache
+import org.jetbrains.kotlin.ide.konan.decompiler.KlibMetaFileType
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinFileIndexBase
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.FqName
 
-object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex>(KotlinNativeMetaFileIndex::class.java) {
+object KlibMetaFileIndex : KotlinFileIndexBase<KlibMetaFileIndex>(KlibMetaFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KotlinNativeMetaFileType }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KlibMetaFileType }
 
     override fun getVersion() = VERSION
 
     // This is to express intention to index all Kotlin/Native metadata files irrespectively to file size:
-    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KotlinNativeMetaFileType)
+    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KlibMetaFileType)
 
     private const val VERSION = 4
 
     /*todo: check version?!*/
     private val INDEXER = indexer { fileContent ->
-        val fragment = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(fileContent.file)
+        val fragment = KlibLoadingMetadataCache.getInstance().getCachedPackageFragment(fileContent.file)
         if (fragment != null)
             FqName(fragment.getExtension(KlibMetadataProtoBuf.fqName))
         else

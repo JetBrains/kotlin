@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 
-class KotlinNativeMetadataDeserializerForDecompiler(
+class KlibMetadataDeserializerForDecompiler(
     packageFqName: FqName,
     private val proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
@@ -67,7 +67,7 @@ class KotlinNativeMetadataDeserializerForDecompiler(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(KotlinNativeMetadataDeserializerForDecompiler::class.java)
+        private val LOG = Logger.getInstance(KlibMetadataDeserializerForDecompiler::class.java)
     }
 }
 

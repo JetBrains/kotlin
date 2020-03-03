@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.ide.konan.KotlinNativeBundle
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
 
-object KotlinNativeMetaFileType : FileType {
+object KlibMetaFileType : FileType {
     override fun getName() = "KNM"
     override fun getDescription() = KotlinNativeBundle.message("kotlin.native.metadata.short")
     override fun getDefaultExtension() = KLIB_METADATA_FILE_EXTENSION

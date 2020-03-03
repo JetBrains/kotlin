@@ -15,19 +15,16 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
+import org.jetbrains.kotlin.ide.konan.decompiler.KlibLoadingMetadataCache
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import java.io.IOException
-import java.util.*
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 fun createFileStub(project: Project, text: String): PsiFileStub<*> {
@@ -67,7 +64,7 @@ internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
     }
 
     private val cache
-        get() = KotlinNativeLoadingMetadataCache.getInstance()
+        get() = KlibLoadingMetadataCache.getInstance()
 
     private val KotlinLibrary.moduleHeaderFile
         get() = (this as KotlinLibraryImpl).metadata.access.layout.moduleHeaderFile

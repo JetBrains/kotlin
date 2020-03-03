@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.IOException
 
-abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
+abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
@@ -37,8 +37,8 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
     stubVersion: Int
 ) : ClassFileDecompilers.Full() {
 
-    private val metadataStubBuilder: KotlinNativeMetadataStubBuilder =
-        KotlinNativeMetadataStubBuilder(
+    private val metadataStubBuilder: KlibMetadataStubBuilder =
+        KlibMetadataStubBuilder(
             stubVersion,
             fileType,
             serializerProtocol,
@@ -57,7 +57,7 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
         KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            KotlinNativeDecompiledFile(
+            KlibDecompiledFile(
                 provider,
                 ::buildDecompiledText
             )
@@ -121,7 +121,7 @@ fun decompiledText(
     renderer: DescriptorRenderer
 ): DecompiledText {
     val packageFqName = file.packageFqName
-    val resolver = KotlinNativeMetadataDeserializerForDecompiler(
+    val resolver = KlibMetadataDeserializerForDecompiler(
         packageFqName, file.proto, file.nameResolver,
         serializerProtocol, flexibleTypeDeserializer
     )
