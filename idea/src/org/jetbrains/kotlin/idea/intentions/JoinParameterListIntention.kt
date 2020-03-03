@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -23,14 +26,20 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
     }
 
     override fun applyTo(element: TList, editor: Editor?) {
-        val document = editor!!.document
+        val document = editor?.document ?: return
         val elements = element.elements()
-
+        val pointer = element.createSmartPointer()
         nextBreak(elements.last())?.let { document.deleteString(it.startOffset, it.endOffset) }
-        elements.dropLast(1).asReversed().forEach {
-            nextBreak(it)?.let { document.replaceString(it.startOffset, it.endOffset, " ") }
+        elements.dropLast(1).asReversed().forEach { tElement ->
+            nextBreak(tElement)?.let { document.replaceString(it.startOffset, it.endOffset, " ") }
         }
+
         prevBreak(elements.first())?.let { document.deleteString(it.startOffset, it.endOffset) }
+
+        val project = element.project
+        val documentManager = PsiDocumentManager.getInstance(project)
+        documentManager.commitDocument(document)
+        pointer.element?.let { CodeStyleManager.getInstance(project).reformat(it) }
     }
 
 }

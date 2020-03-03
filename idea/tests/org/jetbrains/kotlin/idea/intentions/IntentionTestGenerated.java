@@ -3609,6 +3609,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             public void testThreeArgs() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/threeArgs.kt");
             }
+
+            @TestMetadata("threeArgsWithTrailingComma.kt")
+            public void testThreeArgsWithTrailingComma() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/threeArgsWithTrailingComma.kt");
+            }
         }
 
         @TestMetadata("idea/testData/intentions/chop/parameterList")
@@ -3631,6 +3636,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("hasSomeLineBreaks1.kt")
             public void testHasSomeLineBreaks1() throws Exception {
                 runTest("idea/testData/intentions/chop/parameterList/hasSomeLineBreaks1.kt");
+            }
+
+            @TestMetadata("hasSomeLineBreaks1WithTrailingComma.kt")
+            public void testHasSomeLineBreaks1WithTrailingComma() throws Exception {
+                runTest("idea/testData/intentions/chop/parameterList/hasSomeLineBreaks1WithTrailingComma.kt");
             }
 
             @TestMetadata("hasSomeLineBreaks2.kt")
@@ -10001,6 +10011,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinArgumentList/hasLineBreaks.kt");
         }
 
+        @TestMetadata("hasLineBreaksWithTrailingComma.kt")
+        public void testHasLineBreaksWithTrailingComma() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/hasLineBreaksWithTrailingComma.kt");
+        }
+
         @TestMetadata("noArg.kt")
         public void testNoArg() throws Exception {
             runTest("idea/testData/intentions/joinArgumentList/noArg.kt");
@@ -10195,6 +10210,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("hasLineBreaks.kt")
         public void testHasLineBreaks() throws Exception {
             runTest("idea/testData/intentions/joinParameterList/hasLineBreaks.kt");
+        }
+
+        @TestMetadata("hasLineBreaksWithTrailingComma.kt")
+        public void testHasLineBreaksWithTrailingComma() throws Exception {
+            runTest("idea/testData/intentions/joinParameterList/hasLineBreaksWithTrailingComma.kt");
         }
 
         @TestMetadata("noLineBreak.kt")
