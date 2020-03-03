@@ -20,12 +20,13 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.DefFileTask
 import org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.PodspecTask
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import com.intellij.openapi.diagnostic.Logger
+
 
 internal val Project.cocoapodsBuildDirs: CocoapodsBuildDirs
     get() = CocoapodsBuildDirs(this)
@@ -56,6 +57,7 @@ internal val KotlinNativeTarget.toPodImportTaskName: String
     get() = lowerCamelCaseName(KotlinCocoapodsPlugin.POD_IMPORT_TASK_NAME, disambiguationClassifier)
 
 open class KotlinCocoapodsPlugin : Plugin<Project> {
+    private val LOG = Logger.getInstance(KotlinCocoapodsPlugin::class.java);
 
     private fun KotlinMultiplatformExtension.supportedTargets() = targets
         .withType(KotlinNativeTarget::class.java)
@@ -415,6 +417,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 target.compilations.all { compilation ->
                     compilation.compileKotlinTask.dependsOn(it)
                 }
+            }
+            it.doFirst {
+                LOG.warn("!!!!!!")
             }
 
         }
