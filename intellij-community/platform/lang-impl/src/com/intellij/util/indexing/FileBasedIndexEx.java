@@ -390,7 +390,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
 
       for (AdditionalLibraryRootsProvider provider : AdditionalLibraryRootsProvider.EP_NAME.getExtensionList()) {
         for (SyntheticLibrary library : provider.getAdditionalProjectLibraries(project)) {
-          providers.add(new SyntheticLibraryIndexableFilesProvider(library, project));
+          providers.add(new SyntheticLibraryIndexableFilesProvider(library));
         }
       }
 

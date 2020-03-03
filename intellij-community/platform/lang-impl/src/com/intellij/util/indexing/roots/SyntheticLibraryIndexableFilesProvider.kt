@@ -6,19 +6,17 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentIterator
 import com.intellij.openapi.roots.SyntheticLibrary
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
 internal class SyntheticLibraryIndexableFilesProvider(
-  val syntheticLibrary: SyntheticLibrary,
-  val project: Project
+  private val syntheticLibrary: SyntheticLibrary
 ) : IndexableFilesProvider {
 
   override fun getPresentableName() = if (syntheticLibrary is ItemPresentation) {
-    IndexingBundle.message("indexable.files.provider.presentable.synthetic.library", StringUtil.toLowerCase(syntheticLibrary.presentableText))
+    syntheticLibrary.presentableText
   } else {
-    IndexingBundle.message("indexable.files.provider.unnamed.synthetic.library")
+    IndexingBundle.message("indexable.files.provider.additional.dependencies")
   }
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {

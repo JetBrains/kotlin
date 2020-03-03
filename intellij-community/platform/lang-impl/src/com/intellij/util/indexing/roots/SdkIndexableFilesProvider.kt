@@ -7,10 +7,9 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ContentIterator
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.containers.ConcurrentBitSet
-import com.intellij.util.indexing.IndexingBundle
 
 internal class SdkIndexableFilesProvider(val sdk: Sdk) : IndexableFilesProvider {
-  override fun getPresentableName() = IndexingBundle.message("indexable.files.provider.sdk.roots", sdk.name)
+  override fun getPresentableName() = sdk.name
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
     val roots = runReadAction {
