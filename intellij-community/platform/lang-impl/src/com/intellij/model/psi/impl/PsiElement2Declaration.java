@@ -66,16 +66,22 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
    * @param declaredElement  target element (symbol); used for target-based actions, e.g. Find Usages
    * @param declaringElement element at caret from which {@code declaredElement} was obtained; used to determine the declaration range
    */
-  @Nullable
-  static PsiSymbolDeclaration createFromDeclaredPsiElement(@NotNull PsiElement declaredElement, @NotNull PsiElement declaringElement) {
-    PsiElement identifyingElement = getIdentifyingElement(declaredElement);
-    TextRange declarationRange = identifyingElement == null
-                                 ? rangeOf(declaringElement)
-                                 : relateRange(declaredElement, identifyingElement, rangeOf(identifyingElement), declaringElement);
-    if (declarationRange == null) {
-      return null;
-    }
+  static @NotNull PsiSymbolDeclaration createFromDeclaredPsiElement(@NotNull PsiElement declaredElement,
+                                                                    @NotNull PsiElement declaringElement) {
+    TextRange declarationRange = getDeclarationRangeFromPsi(declaredElement, declaringElement);
     return new PsiElement2Declaration(declaredElement, declaringElement, declarationRange);
+  }
+
+  private static @NotNull TextRange getDeclarationRangeFromPsi(@NotNull PsiElement declaredElement, @NotNull PsiElement declaringElement) {
+    PsiElement identifyingElement = getIdentifyingElement(declaredElement);
+    if (identifyingElement == null) {
+      return rangeOf(declaringElement);
+    }
+    TextRange identifyingRange = relateRange(declaredElement, identifyingElement, rangeOf(identifyingElement), declaringElement);
+    if (identifyingRange == null) {
+      return rangeOf(declaringElement);
+    }
+    return identifyingRange;
   }
 
   @Nullable

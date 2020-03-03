@@ -31,9 +31,7 @@ fun PsiFile.allDeclarationsAround(offsetInFile: Int): Collection<PsiSymbolDeclar
     val namedElement: PsiElement? = TargetElementUtil.getNamedElement(leaf)
     if (namedElement != null) {
       val declaration = PsiElement2Declaration.createFromDeclaredPsiElement(namedElement, leaf)
-      if (declaration != null) {
-        return listOf(declaration)
-      }
+      return listOf(declaration)
     }
   }
   return emptyList()
