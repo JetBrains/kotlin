@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -248,8 +245,22 @@ class Fir2IrDeclarationStorage(
 
         val descriptor = WrappedClassDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
-        val modality = regularClass.modality ?: Modality.FINAL
         val visibility = regularClass.visibility
+        val modality = if (regularClass.classKind == ClassKind.ENUM_CLASS) {
+            when {
+                regularClass.declarations.any { it is FirCallableMemberDeclaration<*> && it.modality == Modality.ABSTRACT } -> {
+                    Modality.ABSTRACT
+                }
+                regularClass.declarations.any { it is FirEnumEntry && it.initializer != null } -> {
+                    Modality.OPEN
+                }
+                else -> {
+                    Modality.FINAL
+                }
+            }
+        } else {
+            regularClass.modality ?: Modality.FINAL
+        }
         val irClass = klass.convertWithOffsets { startOffset, endOffset ->
             irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
@@ -259,7 +270,7 @@ class Fir2IrDeclarationStorage(
                     symbol,
                     regularClass.name,
                     klass.classKind,
-                    regularClass.visibility,
+                    visibility,
                     modality,
                     isCompanion = regularClass.isCompanion,
                     isInner = regularClass.isInner,

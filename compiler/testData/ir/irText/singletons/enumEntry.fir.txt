@@ -1,11 +1,11 @@
 FILE fqName:<root> fileName:/enumEntry.kt
-  CLASS ENUM_CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Z>]
+  CLASS ENUM_CLASS name:Z modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Z>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
     CONSTRUCTOR visibility:private <> () returnType:<root>.Z [primary]
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Z
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Z>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Z modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Z>]'
     ENUM_ENTRY name:ENTRY
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z.ENTRY'

@@ -53,14 +53,14 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum1
-  CLASS ENUM_CLASS name:TestEnum2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]
+  CLASS ENUM_CLASS name:TestEnum2 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum2
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum2 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.TestEnum2
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum2 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -143,13 +143,13 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum2
-  CLASS ENUM_CLASS name:TestEnum3 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]
+  CLASS ENUM_CLASS name:TestEnum3 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum3
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum3 [primary]
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.TestEnum3
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum3 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum3 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]'
     ENUM_ENTRY name:TEST
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum3.TEST'
@@ -207,14 +207,14 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum3
-  CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]
+  CLASS ENUM_CLASS name:TestEnum4 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum4 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.TestEnum4
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum4 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -313,7 +313,7 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4
-  CLASS ENUM_CLASS name:TestEnum5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]
+  CLASS ENUM_CLASS name:TestEnum5 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum5
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum5 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
@@ -322,7 +322,7 @@ FILE fqName:<root> fileName:/enum.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.TestEnum5
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum5 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -407,7 +407,7 @@ FILE fqName:<root> fileName:/enum.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  CLASS ENUM_CLASS name:TestEnum6 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum6>]
+  CLASS ENUM_CLASS name:TestEnum6 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum6>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum6
     CONSTRUCTOR visibility:private <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.TestEnum6 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
@@ -415,7 +415,7 @@ FILE fqName:<root> fileName:/enum.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.TestEnum6
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum6 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum6>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum6 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.TestEnum6>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY

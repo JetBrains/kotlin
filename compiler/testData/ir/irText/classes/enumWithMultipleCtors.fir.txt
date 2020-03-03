@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
-  CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.A>]
+  CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     ENUM_ENTRY name:X
       init: EXPRESSION_BODY
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           value: GET_VAR 'arg: kotlin.String declared in <root>.A.<init>' type=kotlin.String origin=null
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.A
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]'
     CONSTRUCTOR visibility:private <> () returnType:<root>.A
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           value: CONST String type=kotlin.String value="empty"
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.A
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]'
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY

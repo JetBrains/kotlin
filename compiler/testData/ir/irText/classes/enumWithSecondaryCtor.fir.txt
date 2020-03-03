@@ -1,12 +1,12 @@
 FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
-  CLASS ENUM_CLASS name:Test0 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test0>]
+  CLASS ENUM_CLASS name:Test0 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Test0>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test0
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.Test0 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Test0
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test0 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test0>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test0 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Test0>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -72,14 +72,14 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:<root>.Test0
-  CLASS ENUM_CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test1>]
+  CLASS ENUM_CLASS name:Test1 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Test1>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Test1
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test1>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test1 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Test1>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -155,14 +155,14 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
-  CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test2>]
+  CLASS ENUM_CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.Test2>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.Test2 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Test2
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test2>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.Test2>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
