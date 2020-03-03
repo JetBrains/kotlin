@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.getArrayElementType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -35,9 +36,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 
 internal val toArrayPhase = makeIrFilePhase(
@@ -220,15 +219,16 @@ internal fun IrSimpleFunction.isGenericToArray(context: JvmBackendContext): Bool
 
     val paramType = valueParameters[0].type
 
-    if (!returnType.isArray() || !paramType.isArray()) return false
+    if (!returnType.isArray() && !returnType.isNullableArray()) return false
+    if (!paramType.isArray() && !paramType.isNullableArray()) return false
 
-    val elementType = typeParameters[0].defaultType
-    val expectedType = context.ir.symbols.array.typeWith(elementType)
-    return expectedType == paramType && expectedType == returnType
+    val elementClass = typeParameters[0].erasedUpperBound
+    return paramType.getArrayElementType(context.irBuiltIns).erasedUpperBound == elementClass &&
+            returnType.getArrayElementType(context.irBuiltIns).erasedUpperBound == elementClass
 }
 
 internal fun IrSimpleFunction.isNonGenericToArray(): Boolean {
     if (name.asString() != "toArray") return false
     if (typeParameters.isNotEmpty() || valueParameters.isNotEmpty() || extensionReceiverParameter != null) return false
-    return returnType.isArray()
+    return returnType.isArray() || returnType.isNullableArray()
 }

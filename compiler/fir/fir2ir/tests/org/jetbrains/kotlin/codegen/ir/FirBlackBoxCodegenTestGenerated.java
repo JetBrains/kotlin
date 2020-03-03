@@ -26643,6 +26643,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/toArray/toArrayAlreadyPresent.kt");
         }
 
+        @TestMetadata("toArrayJava.kt")
+        public void testToArrayJava() throws Exception {
+            runTest("compiler/testData/codegen/box/toArray/toArrayJava.kt");
+        }
+
         @TestMetadata("toArrayShouldBePublic.kt")
         public void testToArrayShouldBePublic() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/toArrayShouldBePublic.kt");
