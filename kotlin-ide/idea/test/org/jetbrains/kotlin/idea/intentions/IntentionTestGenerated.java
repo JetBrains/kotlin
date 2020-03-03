@@ -13183,6 +13183,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/removeRedundantCallsOfConversionMethods/toOtherType.kt");
         }
 
+        @TestMetadata("uByte.kt")
+        public void testUByte() throws Exception {
+            runTest("testData/intentions/removeRedundantCallsOfConversionMethods/uByte.kt");
+        }
+
+        @TestMetadata("uInt.kt")
+        public void testUInt() throws Exception {
+            runTest("testData/intentions/removeRedundantCallsOfConversionMethods/uInt.kt");
+        }
+
+        @TestMetadata("uLong.kt")
+        public void testULong() throws Exception {
+            runTest("testData/intentions/removeRedundantCallsOfConversionMethods/uLong.kt");
+        }
+
+        @TestMetadata("uShort.kt")
+        public void testUShort() throws Exception {
+            runTest("testData/intentions/removeRedundantCallsOfConversionMethods/uShort.kt");
+        }
+
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             runTest("testData/intentions/removeRedundantCallsOfConversionMethods/variable.kt");
