@@ -19,7 +19,6 @@ import com.intellij.psi.SyntaxTraverser
 import com.intellij.util.Processor
 import gnu.trove.TIntHashSet
 import gnu.trove.TIntObjectHashMap
-import org.jetbrains.annotations.NotNull
 import java.awt.Dimension
 import java.awt.Rectangle
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -129,7 +128,7 @@ class InlayHintsPass(
 
 
     private fun addInlineHints(hints: HintsBuffer,
-                               inlayModel: @NotNull InlayModel) {
+                               inlayModel: InlayModel) {
       hints.inlineHints.forEachEntry { offset, presentations ->
         val renderer = InlineInlayRenderer(presentations)
         val inlay = inlayModel.addInlineElement(offset, renderer) ?: return@forEachEntry false
@@ -138,7 +137,7 @@ class InlayHintsPass(
       }
     }
 
-    private fun addBlockHints(inlayModel: @NotNull InlayModel,
+    private fun addBlockHints(inlayModel: InlayModel,
                               map: TIntObjectHashMap<MutableList<ConstrainedPresentation<*, BlockConstraints>>>,
                               showAbove: Boolean
     ) {
