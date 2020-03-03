@@ -11,6 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.util.SystemInfoRt.isLinux
+import com.intellij.openapi.util.SystemInfoRt.isMac
+import com.intellij.openapi.util.SystemInfoRt.isWindows
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.ide.konan.NativeLibraryKind
@@ -30,7 +33,6 @@ import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.library.KOTLIN_STDLIB_NAME
 import org.jetbrains.kotlin.platform.konan.isNative
-import org.junit.Assume.assumeTrue
 import org.junit.Ignore
 import java.io.File
 
@@ -44,11 +46,17 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     private enum class TestTarget(val alias: String) {
-        IOS("ios"),
-        LINUX("linux"),
-        ANDROID_NATIVE("androidNative");
+        IOS("ios") {
+            override val enabled get() = isMac
+        },
+        LINUX("linux") {
+            override val enabled get() = isMac || isLinux || isWindows
+        },
+        ANDROID_NATIVE("androidNative") {
+            override val enabled get() = isMac || isLinux || isWindows
+        };
 
-        val enabled get() = true
+        abstract val enabled: Boolean
     }
 
     private enum class TestProject(
@@ -108,6 +116,16 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
         }
     }
 
+    override fun shouldRunTest(): Boolean {
+        val nameWithoutPrefix = name.substringAfter("test")
+
+        @Suppress("CAST_NEVER_SUCCEEDS")
+        val testTarget = TestTarget.values().firstOrNull { nameWithoutPrefix.startsWith(it.alias, ignoreCase = true) }
+            ?: fail("Unable to deduct test target from test name: $name") as Nothing
+
+        return testTarget.enabled && super.shouldRunTest()
+    }
+
     fun testIosHelloWorldProjectWithCommonizer() = doTestHighlighting(IOS, HELLO_WORLD, enableCommonizer = true)
     fun testIosHelloWorldProjectWithoutCommonizer() = doTestHighlighting(IOS, HELLO_WORLD, enableCommonizer = false)
     fun testAndroidNativeLinuxHelloWorldProjectWithCommonizer() = doTestHighlighting(ANDROID_NATIVE, HELLO_WORLD, enableCommonizer = true)
@@ -135,7 +153,7 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
         testProject: TestProject,
         enableCommonizer: Boolean
     ) {
-        assumeTrue(testTarget.enabled)
+        assertTrue("Target $testTarget is not allowed on your host OS", testTarget.enabled)
 
         val projectName = projectName(testTarget, testProject, enableCommonizer)
         tcSuite(projectName) {
