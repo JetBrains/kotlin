@@ -5,49 +5,72 @@
 
 package org.jetbrains.kotlinx.stm.compiler.extensions
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlinx.stm.compiler.backend.ir.StmIrGenerator
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlinx.stm.compiler.ATOMIC_FUNCTION_ANNOTATION
 import org.jetbrains.kotlinx.stm.compiler.SHARED_MUTABLE_ANNOTATION
-
-/**
- * Copy of [runOnFilePostfix], but this implementation first lowers declaration, then its children.
- */
-fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            lower(declaration)
-            declaration.acceptChildrenVoid(this)
-        }
-    })
-}
+import org.jetbrains.kotlinx.stm.compiler.backend.ir.StmIrGenerator
 
 private class StmClassLowering(
     val pluginContext: IrPluginContext
 ) :
-    IrElementTransformerVoid(), ClassLoweringPass {
-    override fun lower(irClass: IrClass) {
-        if (!irClass.descriptor.annotations.hasAnnotation(SHARED_MUTABLE_ANNOTATION)) return
+    IrElementTransformerVoid() {
 
-        StmIrGenerator.generate(
-            irClass,
-            pluginContext,
-            pluginContext.symbolTable
-        )
+    private fun ClassDescriptor.isSharedClass() = this.annotations.hasAnnotation(SHARED_MUTABLE_ANNOTATION)
+
+    override fun visitClass(declaration: IrClass): IrStatement {
+        if (declaration.descriptor.isSharedClass())
+            StmIrGenerator.patchSharedClass(
+                declaration,
+                pluginContext,
+                pluginContext.symbolTable
+            )
+
+        declaration.transformChildrenVoid()
+
+        return declaration
+    }
+
+    private val functionStack = mutableListOf<IrFunction>()
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        functionStack += declaration
+
+        val result = if (declaration.hasAnnotation(ATOMIC_FUNCTION_ANNOTATION))
+            StmIrGenerator.patchFunction(declaration, pluginContext, pluginContext.symbolTable)
+        else
+            declaration
+
+        declaration.transformChildrenVoid(this)
+        functionStack.pop()
+
+        return result
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        expression.transformChildrenVoid(this)
+
+        val callee = expression.symbol.descriptor
+        val containingDecl = callee.containingDeclaration
+
+        val res = if (containingDecl is ClassDescriptor && containingDecl.isSharedClass() && callee is PropertyAccessorDescriptor)
+            StmIrGenerator.patchPropertyAccess(expression, callee, functionStack, pluginContext.symbolTable)
+        else
+            expression
+
+        return res
     }
 }
 
@@ -58,6 +81,6 @@ open class StmLoweringExtension : IrGenerationExtension {
     ) {
         val stmClassLowering = StmClassLowering(pluginContext)
         for (file in moduleFragment.files)
-            stmClassLowering.runOnFileInOrder(file)
+            file.accept(stmClassLowering, null)
     }
 }
