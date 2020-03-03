@@ -6,7 +6,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.stats.completion.CompletionUtil
 import org.assertj.core.api.Assertions.assertThat
 
-class NgramPrefixExtractionTest : LightFixtureCompletionTestCase() {
+class NgramExtractionTest : LightFixtureCompletionTestCase() {
 
   override fun setUp() {
     super.setUp()
