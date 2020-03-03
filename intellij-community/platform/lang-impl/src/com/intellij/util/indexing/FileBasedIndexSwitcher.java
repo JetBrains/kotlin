@@ -65,5 +65,9 @@ public class FileBasedIndexSwitcher {
         if (!unitTestMode) {
             myDumbModeSemaphore.up();
         }
+
+        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+            DumbService.getInstance(project).queueTask(new UnindexedFilesUpdater(project));
+        }
     }
 }
