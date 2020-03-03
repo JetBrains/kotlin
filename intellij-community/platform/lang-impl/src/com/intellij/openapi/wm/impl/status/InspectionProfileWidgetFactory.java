@@ -11,6 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class InspectionProfileWidgetFactory extends StatusBarEditorBasedWidgetFactory {
   @Override
+  public boolean isAvailable(@NotNull Project project) {
+    return false; // Possibly add a Registry key
+  }
+
+  @Override
   public @NotNull String getId() {
     return TogglePopupHintsPanel.ID;
   }
