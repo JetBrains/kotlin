@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import kotlinx.collections.immutable.*
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -89,34 +92,5 @@ class ImplicitReceiverStackImpl private constructor(
 
     override fun snapshot(): ImplicitReceiverStack {
         return ImplicitReceiverStackImpl(stack, originalTypes, indexesPerLabel, indexesPerSymbol)
-    }
-}
-
-class PersistentSetMultimap<K, V> private constructor(private val map: PersistentMap<K, PersistentSet<V>>) {
-
-    constructor() : this(persistentMapOf())
-
-    fun put(key: K, value: V): PersistentSetMultimap<K, V> {
-        val set = map[key] ?: persistentSetOf()
-        val newSet = set.add(value)
-        if (newSet === set) return this
-        val newMap = map.put(key, newSet)
-        return PersistentSetMultimap(newMap)
-    }
-
-    fun remove(key: K, value: V): PersistentSetMultimap<K, V> {
-        val set = map.get(key) ?: return this
-        val newSet = set.remove(value)
-        if (set === newSet) return this
-        val newMap = if (newSet.isEmpty()) {
-            map.remove(key)
-        } else {
-            map.put(key, newSet)
-        }
-        return PersistentSetMultimap(newMap)
-    }
-
-    operator fun get(key: K): Set<V> {
-        return map[key] ?: emptySet()
     }
 }

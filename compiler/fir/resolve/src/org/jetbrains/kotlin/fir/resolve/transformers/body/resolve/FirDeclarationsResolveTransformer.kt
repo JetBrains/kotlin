@@ -100,24 +100,22 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             }
             dataFlowAnalyzer.enterProperty(property)
             withFullBodyResolve {
-                withScopeCleanup(localScopes) {
+                withLocalScopeCleanup {
                     components.withContainer(property) {
                         if (property.delegate != null) {
-                            localScopes.addIfNotNull(primaryConstructorParametersScope)
+                            addLocalScope(primaryConstructorParametersScope)
                             transformPropertyWithDelegate(property)
                         } else {
-                            withScopeCleanup(localScopes) {
-                                localScopes.addIfNotNull(primaryConstructorParametersScope)
+                            withLocalScopeCleanup {
+                                addLocalScope(primaryConstructorParametersScope)
                                 property.transformChildrenWithoutAccessors(returnTypeRef)
                                 property.transformInitializer(integerLiteralTypeApproximator, null)
                             }
                             if (property.initializer != null) {
                                 storeVariableReturnType(property)
                             }
-                            withScopeCleanup(localScopes) {
-                                localScopes.add(FirLocalScope().apply {
-                                    storeBackingField(property)
-                                })
+                            withLocalScopeCleanup {
+                                addLocalScope(FirLocalScope().storeBackingField(property))
                                 property.transformAccessors()
                             }
                         }
@@ -193,7 +191,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             }
             variable.transformAccessors()
         }
-        localScopes.lastOrNull()?.storeVariable(variable)
+        components.storeVariable(variable)
         variable.replaceResolvePhase(transformerPhase)
         dataFlowAnalyzer.exitLocalVariableDeclaration(variable)
         return variable.compose()
@@ -292,7 +290,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        localScopes.lastOrNull()?.storeClass(regularClass)
+        components.storeClass(regularClass)
         return withScopeCleanup(topLevelScopes) {
             prepareTypeParameterOwnerForBodyResolve(regularClass)
             if (regularClass.symbol.classId.isLocal) {
@@ -307,8 +305,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             val result = withLabelAndReceiverType(regularClass.name, regularClass, type) {
                 val constructor = regularClass.declarations.firstOrNull() as? FirConstructor
                 if (constructor?.isPrimary == true) {
-                    primaryConstructorParametersScope = FirLocalScope().apply {
-                        constructor.valueParameters.forEach { this.storeVariable(it) }
+                    primaryConstructorParametersScope = FirLocalScope().let {
+                        var scope = it
+                        constructor.valueParameters.forEach { scope = scope.storeVariable(it) }
+                        scope
                     }
                 }
                 transformDeclaration(regularClass, data)
@@ -402,7 +402,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         returnTypeRef: FirTypeRef,
     ): CompositeTransformResult<F> {
         if (function is FirSimpleFunction) {
-            localScopes.lastOrNull()?.storeFunction(function)
+            components.storeFunction(function)
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -424,8 +424,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return withScopeCleanup(localScopes) {
-            localScopes += FirLocalScope()
+        return withLocalScopeCleanup {
+            addLocalScope(FirLocalScope())
             dataFlowAnalyzer.enterFunction(function)
             @Suppress("UNCHECKED_CAST")
             transformDeclaration(function, data).also {
@@ -448,9 +448,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         data: ResolutionMode
     ): CompositeTransformResult<FirDeclaration> {
         if (implicitTypeOnly) return anonymousInitializer.compose()
-        return withScopeCleanup(localScopes) {
+        return withLocalScopeCleanup {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
-            localScopes.addIfNotNull(primaryConstructorParametersScope)
+            addLocalScope(primaryConstructorParametersScope)
             transformDeclaration(anonymousInitializer, ResolutionMode.ContextIndependent).also {
                 dataFlowAnalyzer.exitInitBlock(it.single as FirAnonymousInitializer)
             }
@@ -458,7 +458,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        localScopes.lastOrNull()?.storeVariable(valueParameter)
+        components.storeVariable(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
             valueParameter.replaceResolvePhase(transformerPhase)
             return valueParameter.compose() // TODO

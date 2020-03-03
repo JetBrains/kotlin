@@ -56,9 +56,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         }
         whenExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
-        return withScopeCleanup(localScopes) with@{
+        return withLocalScopeCleanup with@{
             if (whenExpression.subjectVariable != null) {
-                localScopes += FirLocalScope()
+                addLocalScope(FirLocalScope())
             }
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
@@ -164,8 +164,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     override fun transformCatch(catch: FirCatch, data: ResolutionMode): CompositeTransformResult<FirCatch> {
         dataFlowAnalyzer.enterCatchClause(catch)
         catch.parameter.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        return withScopeCleanup(localScopes) {
-            localScopes += FirLocalScope()
+        return withLocalScopeCleanup {
+            addLocalScope(FirLocalScope())
             catch.transformParameter(transformer, ResolutionMode.ContextIndependent)
             catch.transformBlock(transformer, ResolutionMode.ContextDependent)
         }.also { dataFlowAnalyzer.exitCatchClause(it) }.compose()

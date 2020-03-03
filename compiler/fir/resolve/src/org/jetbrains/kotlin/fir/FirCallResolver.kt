@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -42,9 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class FirCallResolver(
-    components: BodyResolveComponents,
-    topLevelScopes: List<FirScope>,
-    localScopes: List<FirLocalScope>,
+    private val components: BodyResolveComponents,
     private val qualifiedResolver: FirQualifiedNameResolver,
 ) : BodyResolveComponents by components {
 
@@ -55,9 +51,7 @@ class FirCallResolver(
     }
 
     private val towerResolver = FirTowerResolver(
-        returnTypeCalculator, this, resolutionStageRunner,
-        topLevelScopes = topLevelScopes.asReversed(),
-        localScopes = localScopes.asReversed(),
+        returnTypeCalculator, components, resolutionStageRunner,
     )
 
     private val conflictResolver =

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
@@ -16,8 +17,12 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+
+typealias FirLocalScopes = PersistentList<FirLocalScope>
 
 interface SessionHolder {
     val session: FirSession
@@ -26,6 +31,8 @@ interface SessionHolder {
 interface BodyResolveComponents : SessionHolder {
     val returnTypeCalculator: ReturnTypeCalculator
     val implicitReceiverStack: ImplicitReceiverStack
+    val topLevelScopes: List<FirScope>
+    val localScopes: FirLocalScopes
     val noExpectedType: FirTypeRef
     val symbolProvider: FirSymbolProvider
     val file: FirFile
