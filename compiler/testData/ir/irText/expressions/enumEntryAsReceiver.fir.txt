@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     ENUM_ENTRY name:B
       class: CLASS ENUM_ENTRY name:B modality:FINAL visibility:private superTypes:[<root>.X]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X.B
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.X.B [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.X'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B modality:FINAL visibility:private superTypes:[<root>.X]'
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value'
                       CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
+                        $this: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
             correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
             $this: VALUE_PARAMETER name:<this> type:<root>.X.B

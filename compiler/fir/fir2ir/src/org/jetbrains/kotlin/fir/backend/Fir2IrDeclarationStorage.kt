@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -286,44 +287,20 @@ class Fir2IrDeclarationStorage(
         return getCachedIrClass(klass) ?: createIrClass(klass)
     }
 
-    private fun createIrAnonymousObject(anonymousObject: FirAnonymousObject): IrClass {
+    private fun createIrAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        visibility: Visibility = Visibilities.LOCAL,
+        name: Name = Name.special("<no name provided>"),
+        irParent: IrClass? = null
+    ): IrClass {
         val descriptor = WrappedClassDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
-        val visibility = Visibilities.LOCAL
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
             irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol,
-                    Name.special("<no name provided>"), anonymousObject.classKind,
-                    visibility, modality,
-                    isCompanion = false, isInner = false, isData = false,
-                    isExternal = false, isInline = false, isExpect = false, isFun = false
-                ).apply {
-                    descriptor.bind(this)
-                    setThisReceiver()
-                }
-            }
-        }.declareSupertypesAndTypeParameters(anonymousObject)
-        localStorage.putLocalClass(anonymousObject, result)
-        return result
-    }
-
-    fun getIrAnonymousObject(anonymousObject: FirAnonymousObject): IrClass {
-        localStorage.getLocalClass(anonymousObject)?.let { return it }
-        return createIrAnonymousObject(anonymousObject)
-    }
-
-    private fun getIrEnumEntryClass(enumEntry: FirEnumEntry, anonymousObject: FirAnonymousObject, irParent: IrClass?): IrClass {
-        val descriptor = WrappedClassDescriptor()
-        val origin = IrDeclarationOrigin.DEFINED
-        val modality = Modality.FINAL
-        val visibility = Visibilities.PRIVATE
-        return anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
-                IrClassImpl(
-                    startOffset, endOffset, origin, symbol,
-                    enumEntry.name, anonymousObject.classKind,
+                    name, anonymousObject.classKind,
                     visibility, modality,
                     isCompanion = false, isInner = false, isData = false,
                     isExternal = false, isInline = false, isExpect = false, isFun = false
@@ -336,6 +313,22 @@ class Fir2IrDeclarationStorage(
                 }
             }
         }.declareSupertypesAndTypeParameters(anonymousObject)
+        localStorage.putLocalClass(anonymousObject, result)
+        return result
+    }
+
+    fun getIrAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        visibility: Visibility = Visibilities.LOCAL,
+        name: Name = Name.special("<no name provided>"),
+        irParent: IrClass? = null
+    ): IrClass {
+        localStorage.getLocalClass(anonymousObject)?.let { return it }
+        return createIrAnonymousObject(anonymousObject, visibility, name, irParent)
+    }
+
+    private fun getIrEnumEntryClass(enumEntry: FirEnumEntry, anonymousObject: FirAnonymousObject, irParent: IrClass?): IrClass {
+        return getIrAnonymousObject(anonymousObject, Visibilities.PRIVATE, enumEntry.name, irParent)
     }
 
     private fun getIrTypeParameter(

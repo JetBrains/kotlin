@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
     ENUM_ENTRY name:X
       class: CLASS ENUM_ENTRY name:X modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.X
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.A.X [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
               arg: CONST String type=kotlin.String value="asd"
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
     ENUM_ENTRY name:Y
       class: CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Y
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.A.Y [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]'
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
     ENUM_ENTRY name:Z
       class: CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Z
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.A.Z [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.A'
               x: CONST Int type=kotlin.Int value=5

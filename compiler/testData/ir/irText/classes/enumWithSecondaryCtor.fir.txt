@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     ENUM_ENTRY name:ZERO
       class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test0]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test0.ZERO
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.Test0.ZERO [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test0'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test0]'
@@ -92,14 +92,14 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     ENUM_ENTRY name:ZERO
       class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1.ZERO
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.Test1.ZERO [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test1'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test1]'
     ENUM_ENTRY name:ONE
       class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1.ONE
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.Test1.ONE [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
               x: CONST Int type=kotlin.Int value=1
@@ -171,7 +171,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     ENUM_ENTRY name:ZERO
       class: CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ZERO
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.Test2.ZERO [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test2]'
@@ -183,7 +183,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     ENUM_ENTRY name:ONE
       class: CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ONE
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.Test2.ONE [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
               x: CONST Int type=kotlin.Int value=1

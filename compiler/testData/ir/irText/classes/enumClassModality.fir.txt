@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
     ENUM_ENTRY name:X1
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestFinalEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestFinalEnum2.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.TestFinalEnum2.X1 [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestFinalEnum2'
               x: CONST Int type=kotlin.Int value=1
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
     ENUM_ENTRY name:X1
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestOpenEnum1.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.TestOpenEnum1.X1 [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum1'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum1]'
@@ -242,7 +242,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
     ENUM_ENTRY name:X1
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestOpenEnum2.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.TestOpenEnum2.X1 [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestOpenEnum2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestOpenEnum2]'
@@ -303,7 +303,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
     ENUM_ENTRY name:X1
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum1]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum1.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.TestAbstractEnum1.X1 [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum1'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum1]'
@@ -380,7 +380,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
     ENUM_ENTRY name:X1
       class: CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum2.X1
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<root>.TestAbstractEnum2.X1 [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X1 modality:FINAL visibility:private superTypes:[<root>.TestAbstractEnum2]'
