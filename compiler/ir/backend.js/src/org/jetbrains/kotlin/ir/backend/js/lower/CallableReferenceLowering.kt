@@ -105,14 +105,13 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val isLambda: Boolean
     ) {
 
-        private val isKReference: Boolean get() = superFunctionInterface.name.identifier[0] == 'K'
-
         private val isSuspendLambda = isLambda && function.isSuspend
-        private val superClass = if (isSuspendLambda) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
 
+        private val superClass = if (isSuspendLambda) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
         private var boundReceiverField: IrField? = null
 
         private val superFunctionInterface = reference.type.classOrNull?.owner ?: error("Expected functional type")
+        private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
 
         private fun buildReferenceClass(): IrClass {
             return buildClass {
@@ -302,8 +301,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
         private fun createNameProperty(clazz: IrClass) {
             if (!isKReference) return
-
-//            if (superFunctionInterface.name.identifier[0] != 'K') return
 
             val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
             val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
