@@ -6,9 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.GradleModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -52,8 +50,8 @@ class ModulesToIRsConverter(
     // which is redundant for a single module projects
     private val needFlattening: Boolean
         get() {
-            if ( // We want to have root build file for android projects
-                data.allModules.any { it.configurator == AndroidSinglePlatformModuleConfigurator }
+            if ( // We want to have root build file for android or ios projects
+                data.allModules.any { it.configurator.requiresRootBuildFile }
             ) return false
             return isSingleRootModuleMode
         }
@@ -91,68 +89,74 @@ class ModulesToIRsConverter(
     private fun ReadingContext.createBuildFileForModule(
         module: Module,
         state: ModulesToIrsState
-    ): TaskResult<List<BuildFileIR>> = when (module.kind) {
-        ModuleKind.multiplatform -> createMultiplatformModule(module, state)
-        ModuleKind.singleplatformJvm, ModuleKind.singleplatformJs -> createSinglePlatformModule(module, state)
+    ): TaskResult<List<BuildFileIR>> = when (val configurator = module.configurator) {
+        is MppModuleConfigurator -> createMultiplatformModule(module, state)
+        is SinglePlatformModuleConfigurator -> createSinglePlatformModule(module, configurator, state)
         else -> Success(emptyList())
     }
 
     private fun ReadingContext.createSinglePlatformModule(
         module: Module,
+        configurator: SinglePlatformModuleConfigurator,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = with(data) {
         val modulePath = calculatePathForModule(module, state.parentPath)
         writingContext.mutateProjectStructureByModuleConfigurator(module, modulePath)
-        val configurator = module.configurator
-        val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
-            +module.sourcesets.flatMap { sourceset ->
-                sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
+        val buildFileIR = run {
+            if (!configurator.needCreateBuildFile) return@run null
+            val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
+                +module.sourcesets.flatMap { sourceset ->
+                    sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
+                }
+                with(configurator) { +createModuleIRs(this@createSinglePlatformModule, data, module) }
+                addIfNotNull(
+                    configurator.createStdlibType(data, module)?.let { stdlibType ->
+                        KotlinStdlibDependencyIR(
+                            type = stdlibType,
+                            isInMppModule = false,
+                            version = kotlinVersion,
+                            dependencyType = DependencyType.MAIN
+                        )
+                    }
+                )
             }
-            with(configurator) { +createModuleIRs(this@createSinglePlatformModule, data, module) }
-            addIfNotNull(
-                configurator.createStdlibType(data, module)?.let { stdlibType ->
-                    KotlinStdlibDependencyIR(
-                        type = stdlibType,
-                        isInMppModule = false,
-                        version = kotlinVersion,
-                        dependencyType = DependencyType.MAIN
+
+            val moduleIr = SingleplatformModuleIR(
+                if (modulePath == projectPath) projectName else module.name,
+                modulePath,
+                dependenciesIRs,
+                module.template,
+                module,
+                module.sourcesets.map { sourceset ->
+                    SingleplatformSourcesetIR(
+                        sourceset.sourcesetType,
+                        modulePath / Defaults.SRC_DIR / sourceset.sourcesetType.name,
+                        sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }.toPersistentList(),
+                        sourceset
                     )
                 }
             )
+            BuildFileIR(
+                module.name,
+                modulePath,
+                SingleplatformModulesStructureWithSingleModuleIR(
+                    moduleIr,
+                    persistentListOf()
+                ),
+                pomIr.copy(artifactId = module.name),
+                createBuildFileIRs(module, state)
+            )
         }
-
-        val moduleIr = SingleplatformModuleIR(
-            if (modulePath == projectPath) projectName else module.name,
-            modulePath,
-            dependenciesIRs,
-            module.template,
-            module,
-            module.sourcesets.map { sourceset ->
-                SingleplatformSourcesetIR(
-                    sourceset.sourcesetType,
-                    modulePath / Defaults.SRC_DIR / sourceset.sourcesetType.name,
-                    sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }.toPersistentList(),
-                    sourceset
-                )
-            }
-        )
-        val buildFileIr = BuildFileIR(
-            module.name,
-            modulePath,
-            SingleplatformModulesStructureWithSingleModuleIR(
-                moduleIr,
-                persistentListOf()
-            ),
-            pomIr.copy(artifactId = module.name),
-            createBuildFileIRs(module, state)
-        )
 
         return module.subModules.mapSequence { subModule ->
             createBuildFileForModule(
                 subModule,
                 state.stateForSubModule(modulePath)
             )
-        }.map { it.flatten() + buildFileIr }
+        }.map { it.flatten() }
+            .map { children ->
+                buildFileIR?.let { children + it } ?: children
+            }
     }
 
     private fun ReadingContext.createMultiplatformModule(

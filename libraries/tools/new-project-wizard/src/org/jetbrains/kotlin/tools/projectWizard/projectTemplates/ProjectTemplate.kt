@@ -80,6 +80,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             JvmServerJsClient,
             MultiplatformLibrary,
             AndroidApplication,
+            IOSApplication,
             NativeConsoleApplication,
             JsBrowserApplication
         )
@@ -284,6 +285,32 @@ object JsBrowserApplication : ProjectTemplate() {
                     ModuleKind.singleplatformJs,
                     JsSingleplatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
+                )
+            )
+        )
+}
+
+object IOSApplication : ProjectTemplate() {
+    override val title = "IOS Application"
+    @Language("HTML")
+    override val htmlDescription = """
+       Simple <b>IOS</b> application with single screen 
+        """.trimIndent()
+    override val suggestedProjectName = "myIOSApplication"
+    override val projectKind = ProjectKind.Multiplatform
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                Module(
+                    "iosApp",
+                    ModuleKind.singleplatformJvm,
+                    IOSSinglePlatformModuleConfigurator,
+                    template = null,
                     sourcesets = SourcesetType.ALL.map { type ->
                         Sourceset(type, dependencies = emptyList())
                     },

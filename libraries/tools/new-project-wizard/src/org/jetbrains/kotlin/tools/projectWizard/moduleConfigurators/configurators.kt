@@ -66,7 +66,9 @@ object MppModuleConfigurator : ModuleConfigurator {
 }
 
 
-interface SinglePlatformModuleConfigurator : ModuleConfigurator
+interface SinglePlatformModuleConfigurator : ModuleConfigurator {
+    val needCreateBuildFile: Boolean get() = true
+}
 
 object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     SinglePlatformModuleConfigurator,
@@ -117,13 +119,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
 }
 
 
-object IOSSinglePlatformModuleConfigurator :
-    SinglePlatformModuleConfigurator {
-    override val id = "IOS Module"
-    override val suggestedModuleName = "ios"
-    override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
-    override val greyText = "Requires Apple Xcode"
-}
+
 
 
 val ModuleType.defaultTarget

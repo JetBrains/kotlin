@@ -205,6 +205,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
 
     val suggestedModuleName: String? get() = null
     val canContainSubModules: Boolean get() = false
+    val requiresRootBuildFile: Boolean get() = false
 
     fun createBuildFileIRs(
         readingContext: ReadingContext,

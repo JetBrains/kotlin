@@ -23,6 +23,8 @@ object AndroidSinglePlatformModuleConfigurator :
     override val suggestedModuleName = "android"
     override val text = "Android"
 
+    override val requiresRootBuildFile: Boolean = true
+
     override fun createBuildFileIRs(
         readingContext: ReadingContext,
         configurationData: ModuleConfigurationData,

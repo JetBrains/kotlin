@@ -31,7 +31,7 @@ operator fun Path.div(other: String): Path =
     resolve(other)
 
 operator fun Path.div(other: Path): Path =
-    resolve(other)
+    resolve(other.toString())
 
 operator fun String.div(other: Path): Path =
     Paths.get(this).resolve(other)

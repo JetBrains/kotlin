@@ -9,7 +9,8 @@ enum class ModuleType(val projectTypeName: String) {
     js("Kotlin/JS"),
     native("Kotlin/Native"),
     common("Common"),
-    android("Android")
+    android("Android"),
+//    ios("iOS")
 
     ;
 
