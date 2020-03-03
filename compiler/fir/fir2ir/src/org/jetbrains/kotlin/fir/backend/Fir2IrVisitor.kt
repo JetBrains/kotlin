@@ -157,7 +157,7 @@ class Fir2IrVisitor(
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement {
         return conversionScope.withParent(
-            applyParentFromStackTo(declarationStorage.getIrClass(regularClass, setParentAndContent = false))
+            applyParentFromStackTo(declarationStorage.getIrClass(regularClass))
         ) {
             setClassContent(regularClass)
         }
@@ -228,7 +228,7 @@ class Fir2IrVisitor(
 
     override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
         val irConstructor = declarationStorage.getIrConstructor(
-            constructor, irParent = conversionScope.lastClass()
+            constructor, irParent = conversionScope.lastClass(), shouldLeaveScope = false
         )
         return conversionScope.withFunction(irConstructor) {
             setFunctionContent(irConstructor.descriptor, constructor)
@@ -285,7 +285,7 @@ class Fir2IrVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
         val irFunction = declarationStorage.getIrFunction(
-            simpleFunction, irParent = conversionScope.parent()
+            simpleFunction, irParent = conversionScope.parent(), shouldLeaveScope = false
         )
         return conversionScope.withFunction(irFunction) {
             setFunctionContent(irFunction.descriptor, simpleFunction)
@@ -294,7 +294,7 @@ class Fir2IrVisitor(
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
-            val irFunction = declarationStorage.getIrLocalFunction(anonymousFunction, conversionScope.parent())
+            val irFunction = declarationStorage.getIrLocalFunction(anonymousFunction, conversionScope.parent(), shouldLeaveScope = false)
             conversionScope.withFunction(irFunction) {
                 setFunctionContent(irFunction.descriptor, anonymousFunction)
             }
@@ -360,7 +360,6 @@ class Fir2IrVisitor(
     }
 
     private fun IrProperty.setPropertyContent(descriptor: PropertyDescriptor, property: FirProperty): IrProperty {
-        declarationStorage.enterScope(descriptor)
         val initializer = property.initializer
         val delegate = property.delegate
         val irParent = this.parent
@@ -399,7 +398,7 @@ class Fir2IrVisitor(
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement {
         if (property.isLocal) return visitLocalVariable(property)
-        val irProperty = declarationStorage.getIrProperty(property, irParent = conversionScope.parent())
+        val irProperty = declarationStorage.getIrProperty(property, irParent = conversionScope.parent(), shouldLeaveScope = false)
         return conversionScope.withProperty(irProperty) { setPropertyContent(irProperty.descriptor, property) }
     }
 
@@ -556,7 +555,7 @@ class Fir2IrVisitor(
                     val irClass = symbol.owner
                     val fir = firSymbol?.fir as? FirClass<*>
                     val irConstructor = fir?.getPrimaryConstructorIfAny()?.let { firConstructor ->
-                        declarationStorage.getIrConstructor(firConstructor, irParent = irClass, shouldLeaveScope = true)
+                        declarationStorage.getIrConstructor(firConstructor, irParent = irClass)
                     }?.apply {
                         this.parent = irClass
                     }
@@ -646,7 +645,7 @@ class Fir2IrVisitor(
                     it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
                 }
                 firClass?.convertWithOffsets { startOffset, endOffset ->
-                    val irClass = declarationStorage.getIrClass(firClass, setParentAndContent = false)
+                    val irClass = declarationStorage.getIrClass(firClass)
                     IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
             }
@@ -714,7 +713,7 @@ class Fir2IrVisitor(
                 it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
             }
             if (firObject != null) {
-                val irObject = declarationStorage.getIrClass(firObject, setParentAndContent = false)
+                val irObject = declarationStorage.getIrClass(firObject)
                 if (irObject != conversionScope.lastClass()) {
                     return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                         IrGetObjectValueImpl(startOffset, endOffset, irObject.defaultType, irObject.symbol)

@@ -73,8 +73,7 @@ class Fir2IrFakeOverrideGenerator(
                         val baseSymbol = functionSymbol.deepestOverriddenSymbol() as FirNamedFunctionSymbol
                         val irFunction = declarationStorage.getIrFunction(
                             // TODO: parents for functions and properties should be consistent
-                            originalFunction, declarationStorage.findIrParent(baseSymbol.fir),
-                            origin = origin, shouldLeaveScope = true
+                            originalFunction, declarationStorage.findIrParent(baseSymbol.fir), origin = origin
                         )
                         // In fake overrides, parent logic is a bit specific, because
                         // parent of *original* function (base class) is used for dispatch receiver,
@@ -91,8 +90,7 @@ class Fir2IrFakeOverrideGenerator(
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
                         val irFunction = declarationStorage.getIrFunction(
-                            fakeOverrideFunction, declarationStorage.findIrParent(originalFunction),
-                            origin = origin, shouldLeaveScope = true
+                            fakeOverrideFunction, declarationStorage.findIrParent(originalFunction), origin = origin
                         )
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
                         declarations += irFunction.withFunction {

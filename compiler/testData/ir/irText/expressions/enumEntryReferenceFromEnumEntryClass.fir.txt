@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
     ENUM_ENTRY name:Z
       class: CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.MyEnum]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.Z
-        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<anonymous> [primary]
+        CONSTRUCTOR visibility:private <> () returnType:<uninitialized parent>.<no name provided> [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.MyEnum]'
@@ -39,10 +39,10 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+              receiver: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
               value: CONST Int type=kotlin.Int value=1
             CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-              $this: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+              $this: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
         PROPERTY name:aLambda visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:private [final]
             EXPRESSION_BODY
@@ -50,10 +50,10 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                   BLOCK_BODY
                     SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-                      receiver: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                      receiver: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
                       value: CONST Int type=kotlin.Int value=1
                     CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                      $this: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                      $this: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Function0<kotlin.Unit>
             correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val]
             $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:private [final]' type=kotlin.Function0<kotlin.Unit> origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-aLambda>' type=<root>.MyEnum.Z origin=null
         PROPERTY name:anObject visibility:public modality:FINAL [val]
-          FIELD PROPERTY_BACKING_FIELD name:anObject type:<uninitialized parent>.<anonymous> visibility:private [final]
+          FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.MyEnum.Z.anObject.<no name provided> visibility:private [final]
             EXPRESSION_BODY
               BLOCK type=<root>.MyEnum.Z.anObject.<no name provided> origin=OBJECT_LITERAL
                 CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
@@ -74,25 +74,25 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                   ANONYMOUS_INITIALIZER isStatic=false
                     BLOCK_BODY
                       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-                        receiver: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                        receiver: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
                         value: CONST Int type=kotlin.Int value=1
                       CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                        $this: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                        $this: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
                   FUN name:test visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z.anObject.<no name provided>) returnType:kotlin.Unit
                     $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z.anObject.<no name provided>
                     BLOCK_BODY
                       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-                        receiver: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                        receiver: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
                         value: CONST Int type=kotlin.Int value=1
                       CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                        $this: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                        $this: GET_VAR '<this>: <uninitialized parent>.<no name provided> declared in <no parent>.<no name provided>' type=<uninitialized parent>.<no name provided> origin=null
                 CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum.Z.anObject.<no name provided>' type=<root>.MyEnum.Z.anObject.<no name provided> origin=null
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:<uninitialized parent>.<anonymous>
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:<root>.MyEnum.Z.anObject.<no name provided>
             correspondingProperty: PROPERTY name:anObject visibility:public modality:FINAL [val]
             $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <uninitialized parent>.<anonymous> declared in <root>.MyEnum.Z'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<uninitialized parent>.<anonymous> visibility:private [final]' type=<uninitialized parent>.<anonymous> origin=null
+              RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <root>.MyEnum.Z.anObject.<no name provided> declared in <root>.MyEnum.Z'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.MyEnum.Z.anObject.<no name provided> visibility:private [final]' type=<root>.MyEnum.Z.anObject.<no name provided> origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-anObject>' type=<root>.MyEnum.Z origin=null
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
       $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum

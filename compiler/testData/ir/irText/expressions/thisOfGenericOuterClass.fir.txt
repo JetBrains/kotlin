@@ -62,10 +62,10 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.Outer<kotlin.Int>) returnType:<uninitialized parent>.<anonymous>
+  FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.Outer<kotlin.Int>) returnType:<root>.test.<no name provided>
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer<kotlin.Int>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (): <uninitialized parent>.<anonymous> declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test (): <root>.test.<no name provided> declared in <root>'
         BLOCK type=<root>.test.<no name provided> origin=OBJECT_LITERAL
           CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test.<no name provided>
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                     $this: CALL 'public final fun <get-x> (): T of <root>.Outer declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.Outer<kotlin.Int> declared in <root>.test' type=<root>.Outer<kotlin.Int> origin=null
                     other: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.Outer.Inner' type=kotlin.Int origin=GET_PROPERTY
-                      $this: GET_VAR '<this>: <uninitialized parent>.<anonymous> declared in <no parent>.<anonymous>' type=<uninitialized parent>.<anonymous> origin=null
+                      $this: GET_VAR '<this>: <root>.test.<no name provided> declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:<root>.test.<no name provided>) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:xx visibility:public modality:FINAL [val]
                 $this: VALUE_PARAMETER name:<this> type:<root>.test.<no name provided>
