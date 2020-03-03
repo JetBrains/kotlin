@@ -68,8 +68,8 @@ public abstract class AbstractExternalSystemTaskConfigurationType implements Con
   @NonNls
   @NotNull
   protected String getConfigurationFactoryId() {
-    DeprecatedMethodException.reportDefaultImplementation("AbstractExternalSystemTaskConfigurationType::getConfigurationFactoryId",
-                                                          "The default implementation delegates to 'ProjectSystemId::getReadableName' which is supposed to be localized but return value of this method must not be localized.", getClass());
+    DeprecatedMethodException.reportDefaultImplementation(
+      "The default implementation delegates to 'ProjectSystemId::getReadableName' which is supposed to be localized but return value of this method must not be localized.");
     return myExternalSystemId.getReadableName();
   }
 
