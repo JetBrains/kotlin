@@ -903,7 +903,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           eventHandled(e);
         }
         if (getToolWindowId().equals(toolWindowId)) {
-          registerActivateByContributorActions(myProject, contributors);
+          AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> registerActivateByContributorActions(myProject, contributors));
         }
       });
     }
