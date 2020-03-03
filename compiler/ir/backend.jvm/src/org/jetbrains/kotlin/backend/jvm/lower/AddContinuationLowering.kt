@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.continuationParameter
-import org.jetbrains.kotlin.backend.jvm.codegen.hasContinuation
-import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
-import org.jetbrains.kotlin.backend.jvm.codegen.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
@@ -570,6 +567,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         modality = view.modality
                         isSuspend = view.isSuspend
                         isInline = view.isInline
+                        visibility = if (view.isInline) Visibilities.PRIVATE else view.visibility
                         origin =
                             if (view.isInline) JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE

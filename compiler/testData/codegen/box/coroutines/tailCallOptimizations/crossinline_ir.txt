@@ -371,10 +371,10 @@ public final class CrossinlineKt {
     inner class CrossinlineKt$source$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
-    public final static @org.jetbrains.annotations.Nullable method consumeEach$$forInline(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method consumeEach$$forInline(p0: SourceCrossinline, p1: kotlin.jvm.functions.Function2, p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method consumeEach(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method filter(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): SourceCrossinline
-    public final static @org.jetbrains.annotations.Nullable method fold$$forInline(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function3, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method fold$$forInline(p0: SourceCrossinline, p1: java.lang.Object, p2: kotlin.jvm.functions.Function3, p3: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method fold(@org.jetbrains.annotations.NotNull p0: SourceCrossinline, p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function3, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
     public final static method isGood(p0: int): boolean
     public final static @org.jetbrains.annotations.NotNull method range(@org.jetbrains.annotations.NotNull p0: SourceCrossinline$Factory, p1: int, p2: int): SourceCrossinline

@@ -110,6 +110,8 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         !isBridgeToSuspendImplMethod()
 
 internal fun IrFunction.hasContinuation(): Boolean = isSuspend && shouldContainSuspendMarkers() &&
+        // This is inline-only function
+        !isEffectivelyInlineOnly() &&
         // These are templates for the inliner; the continuation will be generated after it runs.
         origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
