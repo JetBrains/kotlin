@@ -5,6 +5,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.MergedValueContainer;
@@ -19,6 +20,8 @@ import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 
 public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Value, FileContent> {
+  private static final boolean USE_ONLY_SHARED_INDEX = SystemProperties.getBooleanProperty("idea.use.only.shared.index", false);
+
   private final @NotNull SharedIndexChunkConfiguration mySharedIndexChunkConfiguration;
 
   @NotNull
@@ -52,17 +55,17 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
       if (hashId != FileContentHashIndexExtension.NULL_HASH_ID &&
           mySharedIndexChunkConfiguration.getChunk(myId, FileContentHashIndexExtension.getIndexId(hashId)) != null) {
         sharedIndexUpdate = () -> Boolean.TRUE;
-        baseIndexUpdate = myBaseIndex.update(inputId, null);
+        baseIndexUpdate = updateBaseIndex(inputId, null);
       } else {
         sharedIndexUpdate = myHashIndex.update(inputId, content);
         baseIndexUpdate = ((FileContentHashIndex.HashIndexUpdateComputable)sharedIndexUpdate).isEmptyInput()
-                          ? myBaseIndex.update(inputId, content)
-                          : myBaseIndex.update(inputId, null);
+                          ? updateBaseIndex(inputId, content)
+                          : updateBaseIndex(inputId, null);
       }
     }
     else {
       sharedIndexUpdate = myHashIndex.update(inputId, null);
-      baseIndexUpdate = myBaseIndex.update(inputId, null);
+      baseIndexUpdate = updateBaseIndex(inputId, null);
     }
 
     return combine(sharedIndexUpdate, baseIndexUpdate);
@@ -195,6 +198,11 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
   @Override
   public void flush() throws StorageException {
     myBaseIndex.flush();
+  }
+
+  @NotNull
+  private Computable<Boolean> updateBaseIndex(int inputId, @Nullable FileContent content) {
+    return USE_ONLY_SHARED_INDEX ? () -> Boolean.TRUE : myBaseIndex.update(inputId, content);
   }
 
   private static Computable<Boolean> combine(Computable<Boolean> c1, Computable<Boolean> c2) {
