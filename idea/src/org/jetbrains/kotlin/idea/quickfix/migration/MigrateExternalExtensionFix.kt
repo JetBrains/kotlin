@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtensionIntention
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MigrateExternalExtensionFix(declaration: KtNamedDeclaration) : KotlinQuickFixAction<KtNamedDeclaration>(declaration), CleanupFix {
 
-    override fun getText() = "Fix with 'asDynamic'"
+    override fun getText() = KotlinBundle.message("fix.with.asdynamic")
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
