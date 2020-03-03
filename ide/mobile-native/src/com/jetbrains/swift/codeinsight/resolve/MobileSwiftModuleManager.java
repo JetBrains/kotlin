@@ -15,6 +15,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.lang.CLanguageKind;
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.lang.workspace.OCWorkspace;
+import com.jetbrains.cidr.lang.workspace.OCWorkspaceListener;
 import com.jetbrains.cidr.lang.workspace.headerRoots.AppleFramework;
 import com.jetbrains.cidr.lang.workspace.headerRoots.FrameworksRoot;
 import com.jetbrains.cidr.lang.workspace.headerRoots.HeadersSearchRootProcessor;
@@ -40,6 +41,14 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
 
     public MobileSwiftModuleManager(Project project) {
         super(project);
+
+        project.getMessageBus().connect().subscribe(OCWorkspaceListener.TOPIC, new OCWorkspaceListener() {
+            @Override
+            public void workspaceChanged(@NotNull OCWorkspaceEvent event) {
+                clearSourceModuleCache();
+                clearModuleCache();
+            }
+        });
     }
 
     @Override
