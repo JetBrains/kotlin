@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.DFS
 
@@ -128,9 +127,16 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
 }
 
 fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression =
-    getReferenceToJsClass(type.constructor.declarationDescriptor, context).also {
+    getReferenceToJsClassOrArray(type, context).also {
         it.kType = KTypeConstructor(context).createKType(type)
     }
+
+fun getReferenceToJsClassOrArray(type: KotlinType, context: TranslationContext): JsExpression {
+    val classifierDescriptor = type.constructor.declarationDescriptor
+        ?: return JsArrayLiteral(type.constructor.supertypes.map { getReferenceToJsClass(it.constructor.declarationDescriptor, context) })
+
+    return getReferenceToJsClass(classifierDescriptor, context)
+}
 
 fun getReferenceToJsClass(classifierDescriptor: ClassifierDescriptor?, context: TranslationContext): JsExpression {
     return when (classifierDescriptor) {

@@ -25186,6 +25186,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/reified/reifiedIntersectionType.kt");
         }
 
+        @TestMetadata("reifiedIntersectionTypeArgument.kt")
+        public void testReifiedIntersectionTypeArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgument.kt");
+        }
+
+        @TestMetadata("reifiedIntersectionTypeArgumentCrossModule.kt")
+        public void testReifiedIntersectionTypeArgumentCrossModule() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgumentCrossModule.kt");
+        }
+
+        @TestMetadata("reifiedTypeArgumentWithIntersectionTypeAsTypeArgument.kt")
+        public void testReifiedTypeArgumentWithIntersectionTypeAsTypeArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/reifiedTypeArgumentWithIntersectionTypeAsTypeArgument.kt");
+        }
+
         @TestMetadata("safecast.kt")
         public void testSafecast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/safecast.kt");

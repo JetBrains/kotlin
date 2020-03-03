@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -50,7 +50,8 @@ class KTypeConstructor(val context: TranslationContext) {
     }
 
     private fun createSimpleKType(type: SimpleType): JsExpression {
-        val classifier: ClassifierDescriptor = type.constructor.declarationDescriptor!!
+        val typeConstructor = type.constructor
+        val classifier = typeConstructor.declarationDescriptor
 
         if (classifier is TypeParameterDescriptor && classifier.isReified) {
             val kClassName = context.getNameForIntrinsic(SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE.suggestedName)
@@ -64,7 +65,23 @@ class KTypeConstructor(val context: TranslationContext) {
             return reifiedTypeParameterType
         }
 
-        val kClassifier = createKClassifier(classifier)
+        val kClassifier =
+            when {
+                classifier != null -> {
+                    createKClassifier(classifier)
+                }
+                typeConstructor is IntersectionTypeConstructor -> {
+                    val getKClassM = context.getNameForIntrinsic("getKClassM")
+                    val args = JsArrayLiteral(
+                        typeConstructor.supertypes.map { getReferenceToJsClass(it.constructor.declarationDescriptor, context) }
+                    )
+
+                    JsInvocation(getKClassM.makeRef(), args)
+                }
+                else -> {
+                    error("Can't get KClass for $type")
+                }
+            }
         val arguments = JsArrayLiteral(type.arguments.map { createKTypeProjection(it) })
         val isMarkedNullable = JsBooleanLiteral(type.isMarkedNullable)
         return callHelperFunction(
