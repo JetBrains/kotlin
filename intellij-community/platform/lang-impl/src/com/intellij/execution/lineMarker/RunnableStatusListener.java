@@ -24,7 +24,7 @@ class RunnableStatusListener implements DaemonCodeAnalyzer.DaemonListener {
     if (!LineMarkerSettings.getSettings().isEnabled(new RunLineMarkerProvider())) return;
 
     for (FileEditor fileEditor : fileEditors) {
-      if (fileEditor instanceof TextEditor) {
+      if (fileEditor instanceof TextEditor && fileEditor.isValid()) {
         Editor editor = ((TextEditor)fileEditor).getEditor();
         Project project = editor.getProject();
         VirtualFile file = fileEditor.getFile();
