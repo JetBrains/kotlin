@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 open class RemovePsiElementSimpleFix(element: PsiElement, private val text: String) : KotlinQuickFixAction<PsiElement>(element) {
-    override fun getFamilyName() = "Remove element"
+    override fun getFamilyName() = KotlinBundle.message("remove.element")
 
     override fun getText() = text
 
@@ -38,8 +39,8 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
     object RemoveImportFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val directive = diagnostic.psiElement.getNonStrictParentOfType<KtImportDirective>() ?: return null
-            val refText = directive.importedReference?.let { "for '${it.text}'" } ?: ""
-            return RemovePsiElementSimpleFix(directive, "Remove conflicting import $refText")
+            val refText = directive.importedReference?.let { KotlinBundle.message("for.0", it.text) } ?: ""
+            return RemovePsiElementSimpleFix(directive, KotlinBundle.message("remove.conflicting.import.0", refText))
         }
     }
 
@@ -47,21 +48,21 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val element = diagnostic.psiElement
             if (element.node.elementType != KtTokens.MUL) return null
-            return RemovePsiElementSimpleFix(element, "Remove '*'")
+            return RemovePsiElementSimpleFix(element, KotlinBundle.message("remove.star"))
         }
     }
 
     object RemoveTypeArgumentsFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val element = diagnostic.psiElement.getNonStrictParentOfType<KtTypeArgumentList>() ?: return null
-            return RemovePsiElementSimpleFix(element, "Remove type arguments")
+            return RemovePsiElementSimpleFix(element, KotlinBundle.message("remove.type.arguments"))
         }
     }
 
     object RemoveTypeParametersFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val element = diagnostic.psiElement.getNonStrictParentOfType<KtTypeParameterList>() ?: return null
-            return RemovePsiElementSimpleFix(element, "Remove type parameters")
+            return RemovePsiElementSimpleFix(element, KotlinBundle.message("remove.type.parameters"))
         }
     }
 
@@ -69,7 +70,7 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val expression = diagnostic.psiElement.getNonStrictParentOfType<KtProperty>() ?: return null
             if (!RemoveExplicitTypeIntention.redundantTypeSpecification(expression.typeReference, expression.initializer)) return null
-            return object : RemovePsiElementSimpleFix(expression, "Remove variable '${expression.name}'") {
+            return object : RemovePsiElementSimpleFix(expression, KotlinBundle.message("remove.variable.0", expression.name.toString())) {
                 override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                     val initializer = expression.initializer
                     if (initializer != null && initializer !is KtConstantExpression) {

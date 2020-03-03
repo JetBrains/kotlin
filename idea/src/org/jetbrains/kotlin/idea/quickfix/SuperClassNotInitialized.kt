@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
@@ -99,7 +100,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                             types.asSequence().take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
                                 .toList()
                         val parameterString = typesRendered.joinToString(", ", "(", if (types.size <= maxParamsToDisplay) ")" else ",...)")
-                        val text = "Add constructor parameters from " + superClass.name.asString() + parameterString
+                        val text = KotlinBundle.message("add.constructor.parameters.from.0.1", superClass.name.asString(), parameterString)
                         fixes.addIfNotNull(AddParametersFix.create(delegator, classOrObjectDeclaration, constructor, text))
                     }
                 }
@@ -114,7 +115,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         val putCaretIntoParenthesis: Boolean
     ) : KotlinQuickFixAction<KtSuperTypeEntry>(element), HighPriorityAction {
 
-        override fun getFamilyName() = "Change to constructor invocation" //TODO?
+        override fun getFamilyName() = KotlinBundle.message("change.to.constructor.invocation") //TODO?
 
         override fun getText() = familyName
 
@@ -200,7 +201,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
             }
         }
 
-        override fun getFamilyName() = "Add constructor parameters from superclass"
+        override fun getFamilyName() = KotlinBundle.message("add.constructor.parameters.from.superclass")
 
         override fun getText() = text
 

@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -20,7 +21,7 @@ class SurroundWithArrayOfWithSpreadOperatorInFunctionFix(
     val wrapper: Name,
     argument: KtExpression
 ) : KotlinQuickFixAction<KtExpression>(argument) {
-    override fun getText() = "Surround with *$wrapper(...)"
+    override fun getText() = KotlinBundle.message("surround.with.star.0", wrapper)
 
     override fun getFamilyName() = text
 

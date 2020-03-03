@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
@@ -38,9 +39,19 @@ class MakePrivateAndOverrideMemberFix(
         val implement = (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE
         val name = descriptor.name.asString()
         return if (makePrivate) {
-            "Make private and ${if (implement) "implements" else "overrides"} '$name'"
+            KotlinBundle.message(
+                "make.private.and.0.1",
+                if (implement)
+                    KotlinBundle.message("text.implements")
+                else
+                    KotlinBundle.message("text.overrides"),
+                name
+            )
         } else {
-            "${if (implement) "Implements" else "Overrides"} '$name'"
+            (if (implement)
+                KotlinBundle.message("highlighter.text.implements")
+            else
+                KotlinBundle.message("highlighter.text.overrides")) + " '$name'"
         }
     }
 

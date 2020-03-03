@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.toDescriptor
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
@@ -35,9 +36,9 @@ class MakeModuleExperimentalFix(
     else
         "use-experimental"
 
-    override fun getText(): String = "Add '$compilerArgument' to module ${module.name} compiler arguments"
+    override fun getText(): String = KotlinBundle.message("add.0.to.module.1.compiler.arguments", compilerArgument, module.name)
 
-    override fun getFamilyName(): String = "Add an opt-in requirement marker compiler argument"
+    override fun getFamilyName(): String = KotlinBundle.message("add.an.opt.in.requirement.marker.compiler.argument")
 
     private val compilerArgument = "-X$experimentalPrefix=$annotationFqName"
 

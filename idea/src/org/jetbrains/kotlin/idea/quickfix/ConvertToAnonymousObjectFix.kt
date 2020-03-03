@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SamConversionToAnonymousObjectIntention
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
-    override fun getFamilyName() = "Convert to anonymous object"
+    override fun getFamilyName() = KotlinBundle.message("convert.to.anonymous.object")
 
     override fun getText() = familyName
 

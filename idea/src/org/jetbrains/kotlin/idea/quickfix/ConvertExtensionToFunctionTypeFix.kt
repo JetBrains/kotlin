@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -40,8 +41,8 @@ class ConvertExtensionToFunctionTypeFix(element: KtTypeReference, type: KotlinTy
     private val targetTypeStringShort = type.renderType(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS)
     private val targetTypeStringLong = type.renderType(IdeDescriptorRenderers.SOURCE_CODE)
 
-    override fun getText() = "Convert supertype to '$targetTypeStringShort'"
-    override fun getFamilyName() = "Convert extension function type to regular function type"
+    override fun getText() = KotlinBundle.message("convert.supertype.to.0", targetTypeStringShort)
+    override fun getFamilyName() = KotlinBundle.message("convert.extension.function.type.to.regular.function.type")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
@@ -40,7 +41,7 @@ class WrapWithSafeLetCallFix(
 
     override fun getFamilyName() = text
 
-    override fun getText() = "Wrap with '?.let { ... }' call"
+    override fun getText() = KotlinBundle.message("wrap.with.let.call")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
