@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -193,4 +194,14 @@ fun IrFunction.getArgsForMethodInvocation(data: Frame): List<Any?> {
     }
 
     return argsValues
+}
+
+fun IrFunction.getLastOverridden(): IrFunction {
+    if (this !is IrFunctionImpl) return this
+
+    var function = this as IrFunctionImpl
+    while (function.overriddenSymbols.isNotEmpty()) {
+        function = function.overriddenSymbols.first().owner as IrFunctionImpl
+    }
+    return function
 }

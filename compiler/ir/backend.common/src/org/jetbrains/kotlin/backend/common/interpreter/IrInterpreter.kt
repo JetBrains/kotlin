@@ -55,6 +55,21 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
     }
 
+    private inline fun Code.check(toCheck: Code = Code.NEXT, returnBlock: (Code) -> Unit): Code {
+        if (this != toCheck) returnBlock(this)
+        return this
+    }
+
+    private inline fun Code.checkForReturn(newFrame: Frame, oldFrame: Frame, returnBlock: (Code) -> Unit): Code {
+        if (this != Code.NEXT) {
+            if ((this == Code.RETURN || this == Code.EXCEPTION) && newFrame.hasReturnValue()) {
+                oldFrame.pushReturnValue(newFrame)
+            }
+            returnBlock(this)
+        }
+        return this
+    }
+
     fun interpret(expression: IrExpression): IrExpression {
         val data = InterpreterFrame()
         return runBlocking {
@@ -109,9 +124,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
 
             return when (code) {
-                Code.RETURN -> when (this) { // TODO check label
-                    is IrCall, is IrReturnableBlock, is IrFunctionImpl -> Code.NEXT
-                    else -> Code.RETURN
+                Code.RETURN -> when (this) {
+                    is IrCall -> if (code.info == this.symbol.descriptor.toString()) Code.NEXT else code
+                    is IrReturnableBlock -> if (code.info == this.symbol.descriptor.toString()) Code.NEXT else code
+                    is IrFunctionImpl -> if (code.info == this.descriptor.toString()) Code.NEXT else code
+                    else -> code
                 }
                 Code.BREAK_WHEN -> when (this) {
                     is IrWhen -> Code.NEXT
@@ -225,7 +242,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 val enumEntries = enumClass.declarations
                     .filterIsInstance<IrEnumEntry>()
                     .map { entry ->
-                        entry.interpret(data).also { if (it != Code.NEXT) return it }
+                        entry.interpret(data).check { return it }
                         data.popReturnValue() as Common
                     }
                 data.pushReturnValue(enumEntries.toTypedArray().toState(irBuiltIns.arrayClass.defaultType))
@@ -242,7 +259,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     data.pushReturnValue(ExceptionState(IllegalArgumentException(message), illegalArgumentException, stackTrace))
                     return Code.EXCEPTION
                 } else {
-                    enumEntry.interpret(data).also { if (it != Code.NEXT) return it }
+                    enumEntry.interpret(data).check { return it }
                 }
             }
             "replace" -> {
@@ -261,11 +278,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
             "hashCode" -> {
                 if (irFunction.parentAsClass.isEnumClass) {
-                    var anyHashCode = irFunction as IrFunctionImpl
-                    while (anyHashCode.overriddenSymbols.isNotEmpty()) {
-                        anyHashCode = anyHashCode.overriddenSymbols.first().owner as IrFunctionImpl
-                    }
-                    calculateBuiltIns(anyHashCode as IrFunctionImpl, data)
+                    calculateBuiltIns(irFunction.getLastOverridden() as IrFunctionImpl, data)
                 } else {
                     throw AssertionError("Hash code function intrinsic is supported only for enum class")
                 }
@@ -293,17 +306,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
-        fun IrFunctionImpl.getLastPossibleOverridden(): IrFunctionImpl {
-            // main usage: get throwable properties getter signature from exception classes
-            // then use that signatures to get right method from ir builtins map
-            var overridden = this
-            while (overridden.overriddenSymbols.isNotEmpty()) overridden = overridden.overriddenSymbols.first().owner as IrFunctionImpl
-            return overridden
-        }
-
         val variableDescriptor = owner.symbol.getReceiver()!!
         val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superType
-            ?: return calculateBuiltIns(owner.getLastPossibleOverridden(), data)
+        if (superQualifier == null) {
+            // superQualifier is null for exception state => find method in builtins
+            return calculateBuiltIns(owner.getLastOverridden() as IrFunctionImpl, data)
+        }
         val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
 
         val newStates = InterpreterFrame(mutableListOf(Variable(overridden.getReceiver()!!, superQualifier)))
@@ -378,8 +386,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): Code {
         val defaultValues = (parametersContainer.symbol.owner as IrFunction).valueParameters.map { it.defaultValue }
         for (i in (parametersContainer.valueArgumentsCount - 1) downTo 0) {
-            val code = parametersContainer.getValueArgument(i)?.interpret(data) ?: defaultValues[i]!!.expression.interpret(data)
-            if (code != Code.NEXT) return code
+            (parametersContainer.getValueArgument(i)?.interpret(data) ?: defaultValues[i]!!.expression.interpret(data)).check { return it }
         }
         return Code.NEXT
     }
@@ -389,7 +396,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
-        rawDispatchReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        rawDispatchReceiver?.interpret(data)?.check { return it }
         val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
         val irFunctionReceiver = if (expression.superQualifierSymbol == null) dispatchReceiver else (dispatchReceiver as Complex).superType
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
@@ -401,7 +408,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
-        rawExtensionReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        rawExtensionReceiver?.interpret(data)?.check { return it }
         val extensionReceiver = rawExtensionReceiver?.let { data.popReturnValue() }
         extensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, it)) }
 
@@ -409,7 +416,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val receiverAsFirstArgument = if (dispatchReceiver is Lambda) listOfNotNull(irFunction.symbol.getExtensionReceiver()) else listOf()
         val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
         val frameWithReceiverAndData = data.copy().apply { addAll(newFrame.getAll()) } // primary use case: copy method in data class
-        interpretValueParameters(expression, frameWithReceiverAndData).also { if (it != Code.NEXT) return it }
+        interpretValueParameters(expression, frameWithReceiverAndData).checkForReturn(frameWithReceiverAndData, data) { return it }
         newFrame.addAll(valueParametersDescriptors.map { Variable(it, frameWithReceiverAndData.popReturnValue()) })
 
         irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
@@ -438,21 +445,21 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
         classProperties.forEach { property ->
-            property.backingField?.initializer?.expression?.interpret(data)?.also { if (it != Code.NEXT) return it }
+            property.backingField?.initializer?.expression?.interpret(data)?.check { return it }
             val receiver = irClass.thisReceiver!!.descriptor
             if (property.backingField?.initializer != null)
                 property.backingField?.let { data.getVariableState(receiver).setState(Variable(it.descriptor, data.popReturnValue())) }
         }
 
         val anonymousInitializer = irClass.declarations.filterIsInstance<IrAnonymousInitializer>().filter { !it.isStatic }
-        anonymousInitializer.forEach { init -> init.body.interpret(data).also { if (it != Code.NEXT) return it } }
+        anonymousInitializer.forEach { init -> init.body.interpret(data).check { return it } }
 
         return Code.NEXT
     }
 
     private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression, data: Frame): Code {
         val isPrimary = (constructorCall.symbol.owner as IrConstructor).isPrimary
-        interpretValueParameters(constructorCall, data).also { if (it != Code.NEXT) return it }
+        interpretValueParameters(constructorCall, data).check { return it }
         val valueParameters = constructorCall.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }.toMutableList()
         val newFrame = InterpreterFrame(valueParameters)
 
@@ -488,7 +495,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 val indexDescriptor = initLambda.irFunction.valueParameters.single().descriptor
                 for (i in 0 until size) {
                     val lambdaFrame = InterpreterFrame(mutableListOf(Variable(indexDescriptor, i.toState(irBuiltIns.intType))))
-                    initLambda.irFunction.body!!.interpret(lambdaFrame).also { if (it != Code.RETURN) return it }
+                    initLambda.irFunction.body!!.interpret(lambdaFrame).check(Code.RETURN) { return it }
                     arrayValue[i] = lambdaFrame.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
                 }
             }
@@ -511,7 +518,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val state = Common(parent, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
-        constructorCall.getBody()?.interpret(newFrame)?.also { if (it != Code.NEXT) return it.apply { data.pushReturnValue(newFrame) } }
+        constructorCall.getBody()?.interpret(newFrame)?.checkForReturn(newFrame, data) { return it }
         val returnedState = newFrame.popReturnValue() as Complex
         data.pushReturnValue(if (isPrimary) state.apply { superType = returnedState } else returnedState.apply { setStatesFrom(state) })
         return Code.NEXT
@@ -585,7 +592,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun interpretReturn(expression: IrReturn, data: Frame): Code {
         val code = expression.value.interpret(data)
-        return if (code == Code.NEXT) Code.RETURN else code
+        return if (code == Code.NEXT) Code.RETURN.apply { this.info = expression.returnTargetSymbol.descriptor.toString() } else code
     }
 
     private suspend fun interpretWhile(expression: IrWhileLoop, data: Frame): Code {
@@ -715,14 +722,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
             enumSuperCall.mapValueParameters { valueArguments[it.index] }
         }
 
-        val code = enumEntry.initializerExpression?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        val code = enumEntry.initializerExpression?.interpret(data)?.check { return it }
         enumSuperCall?.mapValueParameters { null }
         data.pushReturnValue((data.popReturnValue() as Complex))
         return code ?: throw AssertionError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
-        val code = expression.argument.interpret(data).also { if (it != Code.NEXT) return it }
+        val code = expression.argument.interpret(data).check { return it }
 
         return when (expression.operator) {
             // coercion to unit means that return value isn't used
@@ -804,7 +811,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretThrow(expression: IrThrow, data: Frame): Code {
-        expression.value.interpret(data).also { if (it != Code.NEXT) return it }
+        expression.value.interpret(data).check { return it }
         when (val exception = data.popReturnValue()) {
             is Common -> data.pushReturnValue(ExceptionState(exception, stackTrace))
             is Wrapper -> data.pushReturnValue(ExceptionState(exception, stackTrace))
@@ -817,7 +824,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun interpretStringConcatenation(expression: IrStringConcatenation, data: Frame): Code {
         val result = StringBuilder()
         expression.arguments.forEach {
-            it.interpret(data).also { code -> if (code != Code.NEXT) return code }
+            it.interpret(data).check { code -> return code }
             result.append(
                 when (val returnValue = data.popReturnValue()) {
                     is Primitive<*> -> returnValue.value.toString()
