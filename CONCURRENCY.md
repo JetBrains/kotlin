@@ -177,7 +177,7 @@ the following mechanisms to prevent the unintended sharing of state via global o
    unless cyclic frozen structures were attempted to be created
    * enums are always frozen
 
- Combined, these mechanisms allow natural race-freeze programming with code reuse across platforms in MPP projects.
+ Combined, these mechanisms allow natural race-free programming with code reuse across platforms in MPP projects.
 
 <a name="atomic_references"></a>
 ### Atomic primitives and references
