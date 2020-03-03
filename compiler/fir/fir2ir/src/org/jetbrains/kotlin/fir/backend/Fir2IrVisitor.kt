@@ -115,10 +115,16 @@ class Fir2IrVisitor(
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
         val irEnumEntry = declarationStorage.getIrEnumEntry(enumEntry, irParent = conversionScope.lastClass())
-        conversionScope.withParent(irEnumEntry.correspondingClass) {
-            this?.setClassContent(enumEntry.initializer as FirAnonymousObject)
+        val correspondingClass = irEnumEntry.correspondingClass ?: return irEnumEntry
+        conversionScope.withParent(correspondingClass) {
+            setClassContent(enumEntry.initializer as FirAnonymousObject)
+            irEnumEntry.initializerExpression = IrExpressionBodyImpl(
+                IrEnumConstructorCallImpl(
+                    startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
+                    correspondingClass.constructors.first().symbol
+                )
+            )
         }
-        //irEnumEntry.initializerExpression = IrEnumConstructorCallImpl()
         return irEnumEntry
     }
 

@@ -73,6 +73,8 @@ FILE fqName:<root> fileName:/enum.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum2 declared in <root>.TestEnum2.<get-x>' type=<root>.TestEnum2 origin=null
     ENUM_ENTRY name:TEST1
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum2.TEST1'
       class: CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum2.TEST1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum2.TEST1 [primary]
@@ -81,6 +83,8 @@ FILE fqName:<root> fileName:/enum.kt
               x: CONST Int type=kotlin.Int value=1
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum2]'
     ENUM_ENTRY name:TEST2
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum2.TEST2'
       class: CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum2.TEST2
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum2.TEST2 [primary]
@@ -89,6 +93,8 @@ FILE fqName:<root> fileName:/enum.kt
               x: CONST Int type=kotlin.Int value=2
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum2]'
     ENUM_ENTRY name:TEST3
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum2.TEST3'
       class: CLASS ENUM_ENTRY name:TEST3 modality:FINAL visibility:private superTypes:[<root>.TestEnum2]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum2.TEST3
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum2.TEST3 [primary]
@@ -145,6 +151,8 @@ FILE fqName:<root> fileName:/enum.kt
           <E>: <root>.TestEnum3
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum3 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]'
     ENUM_ENTRY name:TEST
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum3.TEST'
       class: CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:private superTypes:[<root>.TestEnum3]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum3.TEST
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum3.TEST [primary]
@@ -219,6 +227,8 @@ FILE fqName:<root> fileName:/enum.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum4 declared in <root>.TestEnum4.<get-x>' type=<root>.TestEnum4 origin=null
     ENUM_ENTRY name:TEST1
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum4.TEST1'
       class: CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum4]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4.TEST1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum4.TEST1 [primary]
@@ -232,6 +242,8 @@ FILE fqName:<root> fileName:/enum.kt
             CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: GET_ENUM 'ENUM_ENTRY name:TEST1' type=<root>.TestEnum4
     ENUM_ENTRY name:TEST2
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum4.TEST2'
       class: CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum4]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4.TEST2
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum4.TEST2 [primary]
@@ -323,6 +335,8 @@ FILE fqName:<root> fileName:/enum.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum5 declared in <root>.TestEnum5.<get-x>' type=<root>.TestEnum5 origin=null
     ENUM_ENTRY name:TEST1
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum5.TEST1'
       class: CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum5]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum5.TEST1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum5.TEST1 [primary]
@@ -330,6 +344,8 @@ FILE fqName:<root> fileName:/enum.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum5'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum5]'
     ENUM_ENTRY name:TEST2
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum5.TEST2'
       class: CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum5]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum5.TEST2
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum5.TEST2 [primary]
@@ -337,6 +353,8 @@ FILE fqName:<root> fileName:/enum.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum5'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum5]'
     ENUM_ENTRY name:TEST3
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum5.TEST3'
       class: CLASS ENUM_ENTRY name:TEST3 modality:FINAL visibility:private superTypes:[<root>.TestEnum5]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum5.TEST3
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum5.TEST3 [primary]
@@ -421,6 +439,8 @@ FILE fqName:<root> fileName:/enum.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum6 declared in <root>.TestEnum6.<get-y>' type=<root>.TestEnum6 origin=null
     ENUM_ENTRY name:TEST
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum6.TEST'
       class: CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:private superTypes:[<root>.TestEnum6]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum6.TEST
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum6.TEST [primary]

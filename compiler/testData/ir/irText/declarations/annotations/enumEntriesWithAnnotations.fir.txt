@@ -35,6 +35,8 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
           <E>: <root>.TestEnum
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum>]'
     ENUM_ENTRY name:ENTRY1
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY1'
       class: CLASS ENUM_ENTRY name:ENTRY1 modality:FINAL visibility:private superTypes:[<root>.TestEnum]
         annotations:
           TestAnn(x = 'ENTRY1')
@@ -44,6 +46,8 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY1 modality:FINAL visibility:private superTypes:[<root>.TestEnum]'
     ENUM_ENTRY name:ENTRY2
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum.ENTRY2'
       class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:private superTypes:[<root>.TestEnum]
         annotations:
           TestAnn(x = 'ENTRY2')

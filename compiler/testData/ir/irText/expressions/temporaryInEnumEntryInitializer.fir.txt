@@ -28,6 +28,8 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String? visibility:private [final]' type=kotlin.String? origin=null
               receiver: GET_VAR '<this>: <root>.En declared in <root>.En.<get-x>' type=<root>.En origin=null
     ENUM_ENTRY name:ENTRY
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.En.ENTRY'
       class: CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.En]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.En.ENTRY
         CONSTRUCTOR visibility:private <> () returnType:<root>.En.ENTRY [primary]

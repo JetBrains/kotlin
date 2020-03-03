@@ -2,6 +2,8 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
   CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.A>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     ENUM_ENTRY name:X
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.X'
       class: CLASS ENUM_ENTRY name:X modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.X
         CONSTRUCTOR visibility:private <> () returnType:<root>.A.X [primary]
@@ -10,6 +12,8 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
               arg: CONST String type=kotlin.String value="asd"
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:X modality:FINAL visibility:private superTypes:[<root>.A]'
     ENUM_ENTRY name:Y
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.Y'
       class: CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Y
         CONSTRUCTOR visibility:private <> () returnType:<root>.A.Y [primary]
@@ -25,6 +29,8 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
                   $this: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=null
                 other: CONST String type=kotlin.String value="#Y"
     ENUM_ENTRY name:Z
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.Z'
       class: CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.A]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Z
         CONSTRUCTOR visibility:private <> () returnType:<root>.A.Z [primary]
