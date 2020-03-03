@@ -611,16 +611,17 @@ class Fir2IrDeclarationStorage(
         } ?: createIrFunction(function, irParent, shouldLeaveScope, origin)
     }
 
-    fun getIrConstructor(
+    private fun getCachedIrConstructor(
+        constructor: FirConstructor
+    ): IrConstructor? {
+        return constructorCache[constructor]
+    }
+
+    private fun createIrConstructor(
         constructor: FirConstructor,
-        irParent: IrDeclarationParent? = null,
+        irParent: IrDeclarationParent,
         shouldLeaveScope: Boolean = true
     ): IrConstructor {
-        val cached = constructorCache[constructor]
-        if (cached != null) {
-            return if (shouldLeaveScope) cached else cached.enterLocalScope(constructor)
-        }
-
         val descriptor = WrappedClassConstructorDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val isPrimary = constructor.isPrimary
@@ -646,6 +647,18 @@ class Fir2IrDeclarationStorage(
         }
         constructorCache[constructor] = created
         return created
+    }
+
+    fun getIrConstructor(
+        constructor: FirConstructor,
+        irParent: IrDeclarationParent,
+        shouldLeaveScope: Boolean = true
+    ): IrConstructor {
+        val cached = getCachedIrConstructor(constructor)
+        if (cached != null) {
+            return if (shouldLeaveScope) cached else cached.enterLocalScope(constructor)
+        }
+        return createIrConstructor(constructor, irParent, shouldLeaveScope)
     }
 
     private fun createIrPropertyAccessor(
@@ -969,8 +982,9 @@ class Fir2IrDeclarationStorage(
                 irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
             }
             is FirConstructor -> {
-                val irParent = findIrParent(firDeclaration)
-                val irDeclaration = getIrConstructor(firDeclaration, irParent).apply {
+                getCachedIrConstructor(firDeclaration)?.let { return irSymbolTable.referenceConstructor(it.descriptor) }
+                val irParent = findIrParent(firDeclaration)!!
+                val irDeclaration = createIrConstructor(firDeclaration, irParent).apply {
                     setAndModifyParent(irParent)
                 }
                 irSymbolTable.referenceConstructor(irDeclaration.descriptor)

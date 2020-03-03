@@ -234,7 +234,7 @@ class Fir2IrVisitor(
 
     override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
         val irConstructor = declarationStorage.getIrConstructor(
-            constructor, irParent = conversionScope.lastClass(), shouldLeaveScope = false
+            constructor, irParent = conversionScope.lastClass()!!, shouldLeaveScope = false
         )
         return conversionScope.withFunction(irConstructor) {
             setFunctionContent(irConstructor.descriptor, constructor)
