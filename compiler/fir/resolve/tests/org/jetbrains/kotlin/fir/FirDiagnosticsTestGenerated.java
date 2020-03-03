@@ -1200,6 +1200,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
         }
 
+        @TestMetadata("lambdaAsReturnStatementOfLambda.kt")
+        public void testLambdaAsReturnStatementOfLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/lambdaAsReturnStatementOfLambda.kt");
+        }
+
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/nestedLambdas.kt");

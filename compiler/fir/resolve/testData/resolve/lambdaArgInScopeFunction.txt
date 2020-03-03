@@ -21,14 +21,14 @@ FILE: lambdaArgInScopeFunction.kt
             this@R|special/anonymous|.R|tests/_checkType/_|<R|KotlinClass?|>()
         }
         )
-        lval lambda: R|kotlin/Nothing?| = R|<local>/kotlinClass|?.R|kotlin/let|<R|KotlinClass|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
-            ^ let@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: it> {
-                ^ <Unresolved name: it>#
+        lval lambda: R|() -> KotlinClass| = R|<local>/kotlinClass|?.R|kotlin/let|<R|KotlinClass|, R|() -> KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|() -> KotlinClass| <kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|KotlinClass| {
+                ^ R|<local>/it|
             }
 
         }
         )
-        R|<local>/lambda|.R|tests/_checkType/checkType|<R|kotlin/Nothing?|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Nothing?>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/lambda|.R|tests/_checkType/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function0<KotlinClass>?>|.<anonymous>(): R|kotlin/Unit| {
             ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Unit) -> KotlinClass?|>()
         }
         )
@@ -42,14 +42,14 @@ FILE: lambdaArgInScopeFunction.kt
             this@R|special/anonymous|.R|tests/_checkType/_|<R|KotlinClass|>()
         }
         )
-        lval lambda: R|kotlin/Nothing| = R|<local>/kotlinClass|.R|kotlin/let|<R|KotlinClass|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
-            ^ let@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: it> {
-                ^ <Unresolved name: it>#
+        lval lambda: R|() -> KotlinClass| = R|<local>/kotlinClass|.R|kotlin/let|<R|KotlinClass|, R|() -> KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|() -> KotlinClass| <kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|KotlinClass| {
+                ^ R|<local>/it|
             }
 
         }
         )
-        R|<local>/lambda|.R|tests/_checkType/checkType|<R|kotlin/Nothing|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Nothing>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/lambda|.R|tests/_checkType/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function0<KotlinClass>>|.<anonymous>(): R|kotlin/Unit| {
             ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Unit) -> KotlinClass?|>()
         }
         )

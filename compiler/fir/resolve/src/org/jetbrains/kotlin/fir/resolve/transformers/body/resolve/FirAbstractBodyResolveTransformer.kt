@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeResolveScopeForBodyResolve
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
@@ -110,6 +111,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
 
+        override val localContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirLocalContext> = mutableMapOf()
+
         @set:PrivateForInline
         override lateinit var file: FirFile
             internal set
@@ -160,24 +163,18 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
 
         @UseExperimental(PrivateForInline::class)
-        inline fun <T> withImplicitReceiverStack(implicitReceiverStack: ImplicitReceiverStack, f: () -> T): T {
+        inline fun <T> withLocalContext(localContext: FirLocalContext, f: () -> T): T {
             val existedStack = this.implicitReceiverStack
-            this.implicitReceiverStack = implicitReceiverStack
+            val existedLocalScopes = this.localScopes
+
+            implicitReceiverStack = localContext.implicitReceiverStack
+            localScopes = localContext.localScopes
+
             return try {
                 f()
             } finally {
-                this.implicitReceiverStack = existedStack
-            }
-        }
-
-        @UseExperimental(PrivateForInline::class)
-        inline fun <R> withLocalScopes(localScopes: FirLocalScopes, l: () -> R): R {
-            val initialLocalScopes = this.localScopes
-            this.localScopes = localScopes
-            return try {
-                l()
-            } finally {
-                this.localScopes = initialLocalScopes
+                implicitReceiverStack = existedStack
+                localScopes = existedLocalScopes
             }
         }
 
@@ -210,6 +207,18 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         fun storeBackingField(property: FirProperty) {
             updateLastScope { storeBackingField(property) }
+        }
+
+        override fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+            localContextForAnonymousFunctions[anonymousFunction.symbol] = FirLocalContext(localScopes, implicitReceiverStack.snapshot())
+        }
+
+        override fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+            localContextForAnonymousFunctions.remove(anonymousFunction.symbol)
+        }
+
+        fun cleanContextForAnonymousFunction() {
+            localContextForAnonymousFunctions.clear()
         }
 
         @UseExperimental(PrivateForInline::class)

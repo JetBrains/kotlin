@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -20,9 +21,17 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 typealias FirLocalScopes = PersistentList<FirLocalScope>
+
+class FirLocalContext(
+    val localScopes: FirLocalScopes,
+    val implicitReceiverStack: ImplicitReceiverStack
+)
+
+typealias LocalContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol, FirLocalContext>
 
 interface SessionHolder {
     val session: FirSession
@@ -33,6 +42,7 @@ interface BodyResolveComponents : SessionHolder {
     val implicitReceiverStack: ImplicitReceiverStack
     val topLevelScopes: List<FirScope>
     val localScopes: FirLocalScopes
+    val localContextForAnonymousFunctions: LocalContextForAnonymousFunctions
     val noExpectedType: FirTypeRef
     val symbolProvider: FirSymbolProvider
     val file: FirFile
@@ -51,4 +61,7 @@ interface BodyResolveComponents : SessionHolder {
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(FirResolvePhase.DECLARATIONS)
+
+    fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction)
+    fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction)
 }

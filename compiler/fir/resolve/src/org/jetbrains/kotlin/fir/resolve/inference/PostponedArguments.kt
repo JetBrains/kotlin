@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.resolve.calls.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -135,8 +138,7 @@ private fun extraLambdaInfo(
         receiverType,
         parameters,
         returnType,
-        typeVariable.takeIf { newTypeVariableUsed },
-        components.implicitReceiverStack.snapshot()
+        typeVariable.takeIf { newTypeVariableUsed }
     )
 }
 
@@ -163,8 +165,7 @@ internal fun extractLambdaInfoFromFunctionalType(
         receiverType,
         parameters,
         returnType,
-        typeVariableForLambdaReturnType = null,
-        components.implicitReceiverStack.snapshot()
+        typeVariableForLambdaReturnType = null
     )
 }
 
@@ -208,10 +209,8 @@ class ResolvedLambdaAtom(
     val receiver: ConeKotlinType?,
     val parameters: List<ConeKotlinType>,
     val returnType: ConeKotlinType,
-    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?,
-    val implicitReceiverStack: ImplicitReceiverStack
+    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
 ) : PostponedResolvedAtomMarker {
-
     override var analyzed: Boolean = false
     lateinit var returnStatements: List<FirStatement>
 

@@ -18,7 +18,7 @@ fun case1(kotlinClass: KotlinClass?) {
     value.checkType { _<KotlinClass?>() }
 
     val lambda = kotlinClass?.let {
-        {<!UNRESOLVED_REFERENCE!>it<!>}
+        {it}
     }
 
     lambda.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Unit, KotlinClass?>>() }
@@ -33,7 +33,7 @@ fun case2(kotlinClass: KotlinClass) {
     value.checkType { _<KotlinClass>() }
 
     val lambda = kotlinClass.let {
-        {<!UNRESOLVED_REFERENCE!>it<!>}
+        {it}
     }
 
     lambda.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Unit, KotlinClass?>>() }
