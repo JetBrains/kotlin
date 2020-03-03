@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.gradle.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_
 import org.jetbrains.kotlin.ide.konan.NativeLibraryKind
 import org.jetbrains.kotlin.idea.caches.project.isMPPModule
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
+import org.jetbrains.kotlin.idea.configuration.readGradleProperty
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestProject.*
-import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestTarget.IOS
+import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestTarget.*
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.GRADLE_PROJECT
@@ -42,10 +43,11 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
         private var warmedUp: Boolean = false
     }
 
-    private enum class TestTarget {
-        IOS;
+    private enum class TestTarget(val alias: String) {
+        IOS("ios"),
+        LINUX("linux"),
+        ANDROID_NATIVE("androidNative");
 
-        val alias get() = name.toLowerCase()
         val enabled get() = true
     }
 
@@ -67,6 +69,10 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
         UI_KIT_APP(
             templateName = "UIKitApp",
             filesToHighlight = listOf("src/main/UIKitApp.kt", "src/main/UIKitApp2.kt", "src/main/UIKitApp3.kt")
+        ),
+        OPEN_GLES(
+            templateName = "OpenGLES",
+            filesToHighlight = listOf("src/main/App.kt", "src/main/App2.kt", "src/main/App3.kt")
         );
 
         init {
@@ -104,12 +110,25 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
 
     fun testIosHelloWorldProjectWithCommonizer() = doTestHighlighting(IOS, HELLO_WORLD, enableCommonizer = true)
     fun testIosHelloWorldProjectWithoutCommonizer() = doTestHighlighting(IOS, HELLO_WORLD, enableCommonizer = false)
+    fun testAndroidNativeLinuxHelloWorldProjectWithCommonizer() = doTestHighlighting(ANDROID_NATIVE, HELLO_WORLD, enableCommonizer = true)
+    fun testAndroidNativeHelloWorldProjectWithoutCommonizer() = doTestHighlighting(ANDROID_NATIVE, HELLO_WORLD, enableCommonizer = false)
+    fun testLinuxHelloWorldProjectWithCommonizer() = doTestHighlighting(LINUX, HELLO_WORLD, enableCommonizer = true)
+    fun testLinuxHelloWorldProjectWithoutCommonizer() = doTestHighlighting(LINUX, HELLO_WORLD, enableCommonizer = false)
 
     fun testIosCvsParserProjectWithCommonizer() = doTestHighlighting(IOS, CSV_PARSER, enableCommonizer = true)
     fun testIosCvsParserProjectWithoutCommonizer() = doTestHighlighting(IOS, CSV_PARSER, enableCommonizer = false)
+    fun testAndroidNativeCvsParserProjectWithCommonizer() = doTestHighlighting(ANDROID_NATIVE, CSV_PARSER, enableCommonizer = true)
+    fun testAndroidNativeCvsParserProjectWithoutCommonizer() = doTestHighlighting(ANDROID_NATIVE, CSV_PARSER, enableCommonizer = false)
+    fun testLinuxCvsParserProjectWithCommonizer() = doTestHighlighting(LINUX, CSV_PARSER, enableCommonizer = true)
+    fun testLinuxCvsParserProjectWithoutCommonizer() = doTestHighlighting(LINUX, CSV_PARSER, enableCommonizer = false)
 
     fun testIosUIKitAppProjectWithCommonizer() = doTestHighlighting(IOS, UI_KIT_APP, enableCommonizer = true)
     fun testIosUIKitAppProjectWithoutCommonizer() = doTestHighlighting(IOS, UI_KIT_APP, enableCommonizer = false)
+
+    fun testIosOpenGLESWithCommonizer() = doTestHighlighting(IOS, OPEN_GLES, enableCommonizer = true)
+    fun testIosOpenGLESWithoutCommonizer() = doTestHighlighting(IOS, OPEN_GLES, enableCommonizer = false)
+    fun testAndroidNativeOpenGLESWithCommonizer() = doTestHighlighting(ANDROID_NATIVE, OPEN_GLES, enableCommonizer = true)
+    fun testAndroidNativeOpenGLESWithoutCommonizer() = doTestHighlighting(ANDROID_NATIVE, OPEN_GLES, enableCommonizer = false)
 
     private fun doTestHighlighting(
         testTarget: TestTarget,
@@ -218,14 +237,21 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
     // goal: make sure that the project imported from Gradle is valid
     private fun runProjectSanityChecks(project: Project) {
 
+        val isNativeDependencyPropagationEnabled by lazy {
+            readGradleProperty(project, "kotlin.native.enableDependencyPropagation")?.toBoolean() == true
+        }
+
         val nativeModules: Map<Module, Set<String>> = runReadAction {
             project.allModules().mapNotNull { module ->
                 val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return@mapNotNull null
                 if (!facetSettings.isMPPModule || !facetSettings.targetPlatform.isNative()) return@mapNotNull null
 
+                // ex: "myProject.commonTest" -> "commonTest"
+                val moduleName = module.name.removePrefix(project.name).removePrefix(".")
+
                 // workaround to skip top-level common test module, which in fact does not get any Kotlin/Native KLIB libraries
                 // but accidentally gets Kotlin facet with Native platform
-                if (module.name == "${project.name}.$COMMON_TEST_SOURCE_SET_NAME") return@mapNotNull null
+                if (moduleName == COMMON_TEST_SOURCE_SET_NAME) return@mapNotNull null
 
                 val nativeLibraries = module.rootManager.orderEntries
                     .asSequence()
@@ -245,6 +271,11 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
                         pureLibraryName + if (platformPart != null) " [$platformPart]" else ""
                     }
                     .toSet()
+
+                // workaround to skip common Linux modules in "enabled dependency propagation" mode that do not
+                // get any Kotlin/Native KLIB libraries
+                if (nativeLibraries.isEmpty() && moduleName.startsWith("linux") && isNativeDependencyPropagationEnabled)
+                    return@mapNotNull null
 
                 module to nativeLibraries
             }.toMap()
