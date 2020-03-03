@@ -224,14 +224,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     PsiElement[] primaryElements = handler.getPrimaryElements();
     PsiElement[] secondaryElements = handler.getSecondaryElements();
     UsageSearcher usageSearcher = FindUsagesManager.createUsageSearcher(handler, primaryElements, secondaryElements, options);
-    String searchTitle = FindBundle.message(
-      "find.usages.of.element.in.scope.panel.title",
-      options.generateUsagesString(), UsageViewUtil.getLongName(handler.getPsiElement()), options.searchScope.getDisplayName()
+    String searchString = FindBundle.message(
+      "find.usages.of.element.tab.name",
+      options.generateUsagesString(), UsageViewUtil.getLongName(handler.getPsiElement())
     );
 
     showElementUsages(
       project, editor, popupPosition, getUsagesPageSize(), minWidth,
-      () -> searchTitle,
+      () -> searchString,
       usageSearcher,
       new ShowUsagesActionHandler() {
 
@@ -542,7 +542,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     PopupChooserBuilder<?> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(table);
-    String title = presentation.getSearchTitle();
+    String title = UsageViewBundle.message(
+      "search.title.0.in.1",
+      presentation.getSearchString(),
+      actionHandler.getSelectedScope().getDisplayName()
+    );
     builder.setTitle(XmlStringUtil.wrapInHtml("<body><nobr>" + StringUtil.escapeXmlEntities(title) + "</nobr></body>"));
     builder.setAdText(getSecondInvocationTitle(actionHandler));
 
