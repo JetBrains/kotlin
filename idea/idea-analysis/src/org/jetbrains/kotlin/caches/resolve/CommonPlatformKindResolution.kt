@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
 import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -110,20 +111,25 @@ val VirtualFile.isMetadataKlib: Boolean
         fun checkComponent(componentFile: VirtualFile): Boolean {
             val manifestFile = componentFile.findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
 
-            // native libraries
-            val irFile = componentFile.findChild(KLIB_IR_FOLDER_NAME)
-            if (irFile != null && irFile.children.isNotEmpty()) return false
-
             val manifestProperties = try {
                 manifestFile.inputStream.use { Properties().apply { load(it) } }
             } catch (_: IOException) {
                 return false
             }
 
-            return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
+            if (!manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)) return false
+
+            // No builtins_platform property => either a new common klib (we don't write builtins_platform for common) or old Native klib
+            return manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM) == null && !componentFile.isLegacyNativeKlibComponent
         }
 
         // run check for library root too
         // this is necessary to recognize old style KLIBs that do not have components, and report them to user appropriately
         return checkComponent(this) || children?.any(::checkComponent) == true
+    }
+
+private val VirtualFile.isLegacyNativeKlibComponent: Boolean
+    get() {
+        val irFolder = findChild(KLIB_IR_FOLDER_NAME)
+        return irFolder != null && irFolder.children.isNotEmpty()
     }
