@@ -371,30 +371,32 @@ private class JarArtifactMppDependencyMetadataExtractor(
 
         artifactBySourceSet.forEach { (sourceSetName, artifact) ->
             ZipFile(artifact).use { zip ->
-                val entries = zip.entries().asSequence().filter { it.name.startsWith("$sourceSetName/") }
+                val entries = zip.entries().asSequence().filter { it.name.startsWith("$sourceSetName/") }.toList()
 
                 // TODO: once IJ supports non-JAR metadata dependencies, extract to a directory, not a JAR
                 // Also, if both IJ and the CLI compiler can read metadata from a path inside a JAR, then no operations will be needed
-                val extension =
-                    projectStructureMetadata.sourceSetBinaryLayout[sourceSetName]?.archiveExtension
+
+                if (entries.any()) {
+                    val extension = projectStructureMetadata.sourceSetBinaryLayout[sourceSetName]?.archiveExtension
                         ?: SourceSetMetadataLayout.METADATA.archiveExtension
-                val extractToJarFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.$extension")
 
-                resultFiles[sourceSetName] = project.files(extractToJarFile)
+                    val extractToJarFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.$extension")
+                    resultFiles[sourceSetName] = project.files(extractToJarFile)
 
-                if (doProcessFiles) {
-                    ZipOutputStream(extractToJarFile.outputStream()).use { resultZipOutput ->
-                        for (entry in entries) {
-                            if (entry.isDirectory)
-                                continue
+                    if (doProcessFiles) {
+                        ZipOutputStream(extractToJarFile.outputStream()).use { resultZipOutput ->
+                            for (entry in entries) {
+                                if (entry.isDirectory)
+                                    continue
 
-                            // Drop the source set name from the entry path
-                            val resultEntry = ZipEntry(entry.name.substringAfter("/"))
+                                // Drop the source set name from the entry path
+                                val resultEntry = ZipEntry(entry.name.substringAfter("/"))
 
-                            zip.getInputStream(entry).use { inputStream ->
-                                resultZipOutput.putNextEntry(resultEntry)
-                                inputStream.copyTo(resultZipOutput)
-                                resultZipOutput.closeEntry()
+                                zip.getInputStream(entry).use { inputStream ->
+                                    resultZipOutput.putNextEntry(resultEntry)
+                                    inputStream.copyTo(resultZipOutput)
+                                    resultZipOutput.closeEntry()
+                                }
                             }
                         }
                     }

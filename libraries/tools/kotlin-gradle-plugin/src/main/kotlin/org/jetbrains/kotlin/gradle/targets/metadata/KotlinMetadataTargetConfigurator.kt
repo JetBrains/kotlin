@@ -532,9 +532,9 @@ internal fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsage
 
 internal fun Project.filesWithUnpackedArchives(from: FileCollection, extensions: Set<String>): FileCollection =
     project.files(project.provider {
-        from.map {
-            if (it.extension in extensions)
-                project.zipTree(it)
-            else it
+        from.mapNotNull {
+            if (it.extension in extensions) {
+                if (it.exists()) project.zipTree(it) else null
+            } else it
         }
     }).builtBy(from)
