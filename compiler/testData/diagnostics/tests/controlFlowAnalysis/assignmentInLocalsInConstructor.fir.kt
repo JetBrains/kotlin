@@ -57,8 +57,8 @@ class Test5 {
 
     init {
         val x: String
-        <!UNRESOLVED_REFERENCE!>x<!> = ""
-        z = <!UNRESOLVED_REFERENCE!>x<!>
+        x = ""
+        z = x
     }
 
     constructor(y: Int) {

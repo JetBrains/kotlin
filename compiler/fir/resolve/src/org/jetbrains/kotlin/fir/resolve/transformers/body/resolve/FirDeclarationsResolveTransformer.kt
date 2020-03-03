@@ -451,6 +451,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return withLocalScopeCleanup {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
             addLocalScope(primaryConstructorParametersScope)
+            addLocalScope(FirLocalScope())
             transformDeclaration(anonymousInitializer, ResolutionMode.ContextIndependent).also {
                 dataFlowAnalyzer.exitInitBlock(it.single as FirAnonymousInitializer)
             }
