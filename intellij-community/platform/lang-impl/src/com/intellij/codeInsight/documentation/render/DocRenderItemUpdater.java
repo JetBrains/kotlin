@@ -35,6 +35,9 @@ public final class DocRenderItemUpdater implements Runnable {
   private boolean processChunk() {
     long deadline = System.currentTimeMillis() + MAX_UPDATE_DURATION_MS;
     Map<Editor, EditorScrollingPositionKeeper> keepers = new HashMap<>();
+    // This is a heuristic to lessen visual 'jumping' on editor opening. We'd like inlays visible at target opening location to be updated
+    // first, and all the rest - later. We're not specifically optimizing for the case when multiple editors are opened simultaneously now,
+    // opening several editors in succession should work fine with this logic though.
     myQueue.sort(Comparator.comparingInt(i -> -Math.abs(i.getOffset() - i.getEditor().getCaretModel().getOffset())));
     do {
       Inlay<DocRenderer> inlay = myQueue.remove(myQueue.size() - 1);
