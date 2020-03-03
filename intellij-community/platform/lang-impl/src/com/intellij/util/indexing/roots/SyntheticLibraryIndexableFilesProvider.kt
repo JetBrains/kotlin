@@ -13,11 +13,9 @@ internal class SyntheticLibraryIndexableFilesProvider(
   private val syntheticLibrary: SyntheticLibrary
 ) : IndexableFilesProvider {
 
-  override fun getPresentableName() = if (syntheticLibrary is ItemPresentation) {
-    syntheticLibrary.presentableText
-  } else {
-    IndexingBundle.message("indexable.files.provider.additional.dependencies")
-  }
+  override fun getPresentableName() =
+    (syntheticLibrary as? ItemPresentation)?.presentableText
+    ?: IndexingBundle.message("indexable.files.provider.additional.dependencies")
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
     val roots = runReadAction { syntheticLibrary.allRoots }
