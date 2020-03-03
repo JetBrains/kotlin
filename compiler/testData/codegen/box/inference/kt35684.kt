@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // !USE_EXPERIMENTAL: kotlin.Experimental
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 // ISSUE: KT-35684

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun test(cl: Int.() -> Int):Int = 11.cl()
 
 class Foo {

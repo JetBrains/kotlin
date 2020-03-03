@@ -300,7 +300,7 @@ class Fir2IrVisitor(
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
-            val irFunction = declarationStorage.getIrLocalFunction(anonymousFunction, conversionScope.parent(), shouldLeaveScope = false)
+            val irFunction = declarationStorage.getIrFunction(anonymousFunction, conversionScope.parent(), shouldLeaveScope = false)
             conversionScope.withFunction(irFunction) {
                 setFunctionContent(irFunction.descriptor, anonymousFunction)
             }

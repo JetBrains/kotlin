@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                                 BLOCK_BODY
                                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test.<anonymous>.<anonymous>'
                                     CALL 'public open fun invoke (): kotlin.Int [operator] declared in <root>.IInvoke' type=kotlin.Int origin=null
-                                      $this: GET_VAR '<this>: <root>.IInvoke declared in special.<anonymous>' type=<root>.IInvoke origin=null
+                                      $this: GET_VAR '<this>: <root>.IInvoke declared in <root>.test.<anonymous>.<anonymous>.<anonymous>' type=<root>.IInvoke origin=null
                                       $receiver: CALL 'public open fun <get-foo> (): <root>.B declared in <root>.IFoo' type=<root>.B origin=GET_PROPERTY
-                                        $this: GET_VAR '<this>: <root>.IFoo declared in special.<anonymous>' type=<root>.IFoo origin=null
-                                        $receiver: GET_VAR '<this>: <root>.A declared in special.<anonymous>' type=<root>.A origin=null
+                                        $this: GET_VAR '<this>: <root>.IFoo declared in <root>.test.<anonymous>.<anonymous>' type=<root>.IFoo origin=null
+                                        $receiver: GET_VAR '<this>: <root>.A declared in <root>.test.<anonymous>' type=<root>.A origin=null

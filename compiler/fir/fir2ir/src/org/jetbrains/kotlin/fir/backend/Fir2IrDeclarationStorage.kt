@@ -62,7 +62,7 @@ class Fir2IrDeclarationStorage(
 
     private val typeParameterCacheForSetter = mutableMapOf<FirTypeParameter, IrTypeParameter>()
 
-    private val functionCache = mutableMapOf<FirSimpleFunction, IrSimpleFunction>()
+    private val functionCache = mutableMapOf<FirFunction<*>, IrSimpleFunction>()
 
     private val constructorCache = mutableMapOf<FirConstructor, IrConstructor>()
 
@@ -537,56 +537,59 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    fun getIrFunction(
-        function: FirSimpleFunction,
+    private fun getCachedIrFunction(function: FirFunction<*>): IrSimpleFunction? {
+        return if (function !is FirSimpleFunction || function.visibility == Visibilities.LOCAL) {
+            localStorage.getLocalFunction(function)
+        } else {
+            functionCache[function]
+        }
+    }
+
+    private fun createIrFunction(
+        function: FirFunction<*>,
         irParent: IrDeclarationParent?,
         shouldLeaveScope: Boolean = true,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrSimpleFunction {
-        fun create(): IrSimpleFunction {
-            val containerSource = function.containerSource
-            val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
-            val updatedOrigin = if (function.symbol.callableId.isKFunctionInvoke()) IrDeclarationOrigin.FAKE_OVERRIDE else origin
-            preCacheTypeParameters(function)
-            return function.convertWithOffsets { startOffset, endOffset ->
-                enterScope(descriptor)
-                val result = irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
-                    IrFunctionImpl(
-                        startOffset, endOffset, updatedOrigin, symbol,
-                        function.name, function.visibility, function.modality!!,
-                        function.returnTypeRef.toIrType(),
-                        isInline = function.isInline,
-                        isExternal = function.isExternal,
-                        isTailrec = function.isTailRec,
-                        isSuspend = function.isSuspend,
-                        isExpect = function.isExpect,
-                        isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                        isOperator = function.isOperator
-                    )
-                }
-                result
-            }.bindAndDeclareParameters(function, descriptor, irParent, isStatic = function.isStatic)
+        val simpleFunction = function as? FirSimpleFunction
+        val containerSource = simpleFunction?.containerSource
+        val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
+        val isLambda = function.psi is KtFunctionLiteral
+        val updatedOrigin = when {
+            isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+            function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
+            else -> origin
         }
+        preCacheTypeParameters(function)
+        val name = simpleFunction?.name
+            ?: if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>")
+        val visibility = simpleFunction?.visibility ?: Visibilities.LOCAL
+        val created = function.convertWithOffsets { startOffset, endOffset ->
+            enterScope(descriptor)
+            val result = irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
+                IrFunctionImpl(
+                    startOffset, endOffset, updatedOrigin, symbol,
+                    name, visibility,
+                    simpleFunction?.modality ?: Modality.FINAL,
+                    function.returnTypeRef.toIrType(),
+                    isInline = simpleFunction?.isInline == true,
+                    isExternal = simpleFunction?.isExternal == true,
+                    isTailrec = simpleFunction?.isTailRec == true,
+                    isSuspend = simpleFunction?.isSuspend == true,
+                    isExpect = simpleFunction?.isExpect == true,
+                    isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                    isOperator = simpleFunction?.isOperator == true
+                )
+            }
+            result
+        }.bindAndDeclareParameters(function, descriptor, irParent, isStatic = simpleFunction?.isStatic == true)
 
-        if (function.visibility == Visibilities.LOCAL) {
-            val cached = localStorage.getLocalFunction(function)
-            if (cached != null) {
-                return if (shouldLeaveScope) cached else cached.enterLocalScope(function)
-            }
-            val created = create()
-            if (shouldLeaveScope) {
-                leaveScope(created.descriptor)
-            }
-            localStorage.putLocalFunction(function, created)
-            return created
-        }
-        val cached = functionCache[function]
-        if (cached != null) {
-            return if (shouldLeaveScope) cached else cached.enterLocalScope(function)
-        }
-        val created = create()
         if (shouldLeaveScope) {
             leaveScope(created.descriptor)
+        }
+        if (visibility == Visibilities.LOCAL) {
+            localStorage.putLocalFunction(function, created)
+            return created
         }
         if (function.symbol.callableId.isKFunctionInvoke()) {
             (function.symbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
@@ -597,38 +600,15 @@ class Fir2IrDeclarationStorage(
         return created
     }
 
-    fun getIrLocalFunction(
-        function: FirAnonymousFunction,
-        irParent: IrDeclarationParent? = null,
-        shouldLeaveScope: Boolean = true
+    fun getIrFunction(
+        function: FirFunction<*>,
+        irParent: IrDeclarationParent?,
+        shouldLeaveScope: Boolean = true,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrSimpleFunction {
-        val descriptor = WrappedSimpleFunctionDescriptor()
-        val isLambda = function.psi is KtFunctionLiteral
-        val origin = if (isLambda) IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA else IrDeclarationOrigin.DEFINED
-        return function.convertWithOffsets { startOffset, endOffset ->
-            irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
-                IrFunctionImpl(
-                    startOffset, endOffset, origin, symbol,
-                    if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>"),
-                    Visibilities.LOCAL, Modality.FINAL,
-                    function.returnTypeRef.toIrType(),
-                    isInline = false, isExternal = false, isTailrec = false,
-                    // TODO: suspend lambda
-                    isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false
-                ).apply {
-                    enterScope(descriptor)
-                }
-            }.bindAndDeclareParameters(
-                function, descriptor, irParent = irParent, isStatic = false
-            ).apply {
-                if (shouldLeaveScope) {
-                    leaveScope(descriptor)
-                }
-            }
-        }
+        return getCachedIrFunction(function)?.apply {
+            if (!shouldLeaveScope) enterLocalScope(function)
+        } ?: createIrFunction(function, irParent, shouldLeaveScope, origin)
     }
 
     fun getIrConstructor(
@@ -979,22 +959,17 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getIrFunctionSymbol(firFunctionSymbol: FirFunctionSymbol<*>): IrFunctionSymbol {
-        val firDeclaration = firFunctionSymbol.fir
-        val irParent = (firDeclaration as? FirCallableDeclaration<*>)?.let { findIrParent(it) }
-        return when (firDeclaration) {
-            is FirSimpleFunction -> {
-                val irDeclaration = getIrFunction(firDeclaration, irParent).apply {
-                    setAndModifyParent(irParent)
-                }
-                irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
-            }
-            is FirAnonymousFunction -> {
-                val irDeclaration = getIrLocalFunction(firDeclaration, irParent).apply {
+        return when (val firDeclaration = firFunctionSymbol.fir) {
+            is FirSimpleFunction, is FirAnonymousFunction -> {
+                getCachedIrFunction(firDeclaration)?.let { return irSymbolTable.referenceSimpleFunction(it.descriptor) }
+                val irParent = findIrParent(firDeclaration)
+                val irDeclaration = createIrFunction(firDeclaration, irParent).apply {
                     setAndModifyParent(irParent)
                 }
                 irSymbolTable.referenceSimpleFunction(irDeclaration.descriptor)
             }
             is FirConstructor -> {
+                val irParent = findIrParent(firDeclaration)
                 val irDeclaration = getIrConstructor(firDeclaration, irParent).apply {
                     setAndModifyParent(irParent)
                 }
