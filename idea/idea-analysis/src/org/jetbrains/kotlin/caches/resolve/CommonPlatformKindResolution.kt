@@ -23,22 +23,18 @@ import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
-import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
-import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
-import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
+import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
-import java.io.IOException
-import java.util.*
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 class CommonPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
-        return virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION || virtualFile.isMetadataKlib
+        return virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION ||
+                virtualFile.isKlibLibraryRootForPlatform(CommonPlatforms.defaultCommonPlatform)
     }
 
     override val libraryKind: PersistentLibraryKind<*>?
@@ -53,7 +49,9 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     }
 
     override fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
-        val klibFiles = library.getFiles(OrderRootType.CLASSES).filter { it.isMetadataKlib }
+        val klibFiles = library.getFiles(OrderRootType.CLASSES).filter {
+            it.isKlibLibraryRootForPlatform(CommonPlatforms.defaultCommonPlatform)
+        }
 
         return if (klibFiles.isNotEmpty()) {
             klibFiles.mapNotNull {
@@ -80,56 +78,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     }
 }
 
-// TODO(dsavvinov): unify with NativeLibraryInfo
-class CommonKlibLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
-
-    val commonLibrary = resolveSingleFileKlib(
-        libraryFile = KFile(libraryRoot),
-        logger = LOG,
-        strategy = ToolingSingleFileKlibResolveStrategy
-    )
-
-    val compatibilityInfo by lazy { commonLibrary.getCompatibilityInfo() }
-
-    override fun getLibraryRoots() = listOf(libraryRoot)
-
+class CommonKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
     override val platform: TargetPlatform
         get() = CommonPlatforms.defaultCommonPlatform
-
-    override fun toString() = "CommonKlib" + super.toString()
-
-    companion object {
-        private val LOG = IJLoggerAdapter.getInstance(CommonKlibLibraryInfo::class.java)
-    }
 }
-
-val VirtualFile.isMetadataKlib: Boolean
-    get() {
-        val extension = extension
-        if (!extension.isNullOrEmpty() && extension != KLIB_FILE_EXTENSION) return false
-
-        fun checkComponent(componentFile: VirtualFile): Boolean {
-            val manifestFile = componentFile.findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
-
-            val manifestProperties = try {
-                manifestFile.inputStream.use { Properties().apply { load(it) } }
-            } catch (_: IOException) {
-                return false
-            }
-
-            if (!manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)) return false
-
-            // No builtins_platform property => either a new common klib (we don't write builtins_platform for common) or old Native klib
-            return manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM) == null && !componentFile.isLegacyNativeKlibComponent
-        }
-
-        // run check for library root too
-        // this is necessary to recognize old style KLIBs that do not have components, and report them to user appropriately
-        return checkComponent(this) || children?.any(::checkComponent) == true
-    }
-
-private val VirtualFile.isLegacyNativeKlibComponent: Boolean
-    get() {
-        val irFolder = findChild(KLIB_IR_FOLDER_NAME)
-        return irFolder != null && irFolder.children.isNotEmpty()
-    }

@@ -33,14 +33,10 @@ import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
-import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
-import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.isInterop
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -52,6 +48,8 @@ import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescripto
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
 import org.jetbrains.kotlin.idea.klib.readSafe
+import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
+import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
 
 private val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
@@ -101,7 +99,8 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         )
     }
 
-    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean = virtualFile.isKonanLibraryRoot
+    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean =
+        virtualFile.isKlibLibraryRootForPlatform(KonanPlatforms.defaultKonanPlatform)
 
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
@@ -175,26 +174,16 @@ private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
         .filterIsInstance<NativeLibraryInfo>()
         .firstOrNull { it.isStdlib && it.compatibilityInfo.isCompatible }
 
-class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
-
-    private val nativeLibrary = resolveSingleFileKlib(
-        libraryFile = KFile(libraryRoot),
-        logger = LOG,
-        strategy = ToolingSingleFileKlibResolveStrategy
-    )
+class NativeLibraryInfo(project: Project, library: Library, libraryRoot: String) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
-
-    val compatibilityInfo by lazy { nativeLibrary.getCompatibilityInfo() }
-
-    override fun getLibraryRoots() = listOf(libraryRoot)
 
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() {
             val capabilities = super.capabilities.toMutableMap()
-            capabilities += KlibModuleOrigin.CAPABILITY to DeserializedKlibModuleOrigin(nativeLibrary)
-            capabilities += NATIVE_LIBRARY_CAPABILITY to nativeLibrary
-            capabilities += ImplicitIntegerCoercion.MODULE_CAPABILITY to nativeLibrary.readSafe(false) { isInterop }
+            capabilities += KlibModuleOrigin.CAPABILITY to DeserializedKlibModuleOrigin(resolvedKotlinLibrary)
+            capabilities += NATIVE_LIBRARY_CAPABILITY to resolvedKotlinLibrary
+            capabilities += ImplicitIntegerCoercion.MODULE_CAPABILITY to resolvedKotlinLibrary.readSafe(false) { isInterop }
             return capabilities
         }
 
@@ -204,8 +193,6 @@ class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: Str
     override fun toString() = "Native" + super.toString()
 
     companion object {
-        private val LOG = IJLoggerAdapter.getInstance(NativeLibraryInfo::class.java)
-
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
     }
 }
