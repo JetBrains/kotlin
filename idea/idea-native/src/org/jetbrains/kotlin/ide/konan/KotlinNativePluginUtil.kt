@@ -5,39 +5,16 @@
 
 package org.jetbrains.kotlin.ide.konan
 
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.SingleRootFileViewProvider
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.stubs.PsiFileStub
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.ide.konan.decompiler.KlibLoadingMetadataCache
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.konan.file.File as KFile
-
-fun createFileStub(project: Project, text: String): PsiFileStub<*> {
-    val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, text)
-    virtualFile.language = KotlinLanguage.INSTANCE
-    SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile)
-
-    val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-    val file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false)!!
-    return KtStubElementTypes.FILE.builder.buildStubTree(file) as PsiFileStub<*>
-}
-
-fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 
 internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
     override fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header {

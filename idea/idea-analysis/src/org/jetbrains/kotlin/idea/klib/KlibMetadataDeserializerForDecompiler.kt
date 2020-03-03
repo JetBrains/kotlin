@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ide.konan.decompiler
+package org.jetbrains.kotlin.idea.klib
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.ide.konan.createLoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassifierResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
@@ -42,7 +42,9 @@ class KlibMetadataDeserializerForDecompiler(
             storageManager, moduleDescriptor, DeserializationConfiguration.Default,
             KlibMetadataClassDataFinder(proto, nameResolver),
             AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), createLoggingErrorReporter(LOG),
+            ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), createLoggingErrorReporter(
+                LOG
+            ),
             LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses, ContractDeserializer.DEFAULT,
             extensionRegistryLite = serializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
@@ -71,3 +73,4 @@ class KlibMetadataDeserializerForDecompiler(
     }
 }
 
+fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)

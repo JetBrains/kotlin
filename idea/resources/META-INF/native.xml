@@ -6,7 +6,7 @@
     </project-components>
     <application-components>
         <component>
-            <implementation-class>org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache</implementation-class>
         </component>
     </application-components>
 
@@ -17,9 +17,8 @@
                                           implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
         <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
         <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
-        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileTypeFactory"/>
         <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeFileTypeFactory"/>
-        <fileBasedIndex implementation="org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex"/>
+        <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KlibMetaFileIndex"/>
         <library.type implementation="org.jetbrains.kotlin.ide.konan.NativeLibraryType"/>
         <lang.parserDefinition language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsParserDefinition"/>
         <lang.syntaxHighlighterFactory language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsSyntaxHighlighterFactory"/>

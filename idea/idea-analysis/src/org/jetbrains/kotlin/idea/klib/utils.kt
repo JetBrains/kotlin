@@ -5,7 +5,15 @@
 
 package org.jetbrains.kotlin.idea.klib
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -13,6 +21,7 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import java.io.IOException
 import java.util.*
 
@@ -70,4 +79,14 @@ fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) =
     action()
 } catch (_: IOException) {
     defaultValue
+}
+
+fun createFileStub(project: Project, text: String): PsiFileStub<*> {
+    val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, text)
+    virtualFile.language = KotlinLanguage.INSTANCE
+    SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile)
+
+    val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
+    val file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false)!!
+    return KtStubElementTypes.FILE.builder.buildStubTree(file) as PsiFileStub<*>
 }

@@ -22,6 +22,7 @@ import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.idea.klib.KlibMetaFileType;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,6 +39,8 @@ public class KotlinFileTypeFactory extends FileTypeFactory {
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
         consumer.consume(KotlinFileType.INSTANCE, "kt;kts");
+
         consumer.consume(ArchiveFileType.INSTANCE, KLIB_FILE_EXTENSION);
+        consumer.consume(KlibMetaFileType.INSTANCE, KlibMetaFileType.INSTANCE.getDefaultExtension());
     }
 }

@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.ide.konan.decompiler
 
+import org.jetbrains.kotlin.idea.klib.KlibMetaFileType
 import org.jetbrains.kotlin.idea.util.KotlinBinaryExtension
 
 class KlibMetaBinary : KotlinBinaryExtension(KlibMetaFileType)
