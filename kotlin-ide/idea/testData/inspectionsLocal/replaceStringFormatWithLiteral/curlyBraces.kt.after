@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun main() {
+    val id = "abc"
+    val date = "123"
+    val s = "${id}_${date}_$id"
+}

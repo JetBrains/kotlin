@@ -10190,6 +10190,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("curlyBraces.kt")
+        public void testCurlyBraces() throws Exception {
+            runTest("testData/inspectionsLocal/replaceStringFormatWithLiteral/curlyBraces.kt");
+        }
+
         @TestMetadata("formattableArgs.kt")
         public void testFormattableArgs() throws Exception {
             runTest("testData/inspectionsLocal/replaceStringFormatWithLiteral/formattableArgs.kt");
