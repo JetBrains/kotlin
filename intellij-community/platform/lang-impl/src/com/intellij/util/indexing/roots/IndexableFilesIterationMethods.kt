@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.*
 import com.intellij.util.containers.ConcurrentBitSet
+import com.intellij.util.indexing.IndexableFilesFilter
 
 internal object IndexableFilesIterationMethods {
 
@@ -39,7 +40,9 @@ internal object IndexableFilesIterationMethods {
     contentIterator: ContentIterator,
     visitedFileSet: ConcurrentBitSet
   ): Boolean {
-    val finalFilter = fileFilter.and { it is VirtualFileWithId && it.id > 0 && !visitedFileSet.set(it.id) }
+    val finalFilter = fileFilter
+      .and { it is VirtualFileWithId && it.id > 0 && !visitedFileSet.set(it.id) }
+      .and { IndexableFilesFilter.EP_NAME.extensionList.let { fs -> fs.isEmpty() || fs.any { e -> e.shouldIndex(it) } } }
     return roots.all { root ->
       val options = if (followSymlinks) emptyArray<VirtualFileVisitor.Option>() else arrayOf(VirtualFileVisitor.NO_FOLLOW_SYMLINKS)
       VfsUtilCore.iterateChildrenRecursively(root, finalFilter, contentIterator, *options)

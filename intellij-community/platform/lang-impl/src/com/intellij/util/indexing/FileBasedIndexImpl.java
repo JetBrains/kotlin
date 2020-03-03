@@ -1429,6 +1429,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   void scheduleFileForIndexing(int fileId, @NotNull VirtualFile file, boolean contentChange) {
+    final List<IndexableFilesFilter> filters = IndexableFilesFilter.EP_NAME.getExtensionList();
+    if (!filters.isEmpty() && !ContainerUtil.exists(filters, e -> e.shouldIndex(file))) return;
+
     // handle 'content-less' indices separately
     boolean fileIsDirectory = file.isDirectory();
 
