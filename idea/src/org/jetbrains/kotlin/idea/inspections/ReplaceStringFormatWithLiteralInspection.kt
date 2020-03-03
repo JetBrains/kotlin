@@ -13,6 +13,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.canDropBraces
+import org.jetbrains.kotlin.idea.core.dropBraces
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -76,10 +79,15 @@ class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
 
             val args = callExpression.valueArguments.mapNotNull { it.getArgumentExpression() }
             val format = args[0].text.removePrefix("\"").removeSuffix("\"")
-            val replaceArgs = args.asSequence().drop(1).mapTo(LinkedList()) { ConvertToStringTemplateIntention.buildText(it, false) }
+            val replaceArgs = args.asSequence().drop(1).mapTo(LinkedList()) { ConvertToStringTemplateIntention.buildText(it, true) }
             val stringLiteral = stringPlaceHolder.replace(format) { replaceArgs.pop() }
-
-            (qualifiedExpression ?: callExpression).also { it.replace(KtPsiFactory(it).createStringTemplate(stringLiteral)) }
+            (qualifiedExpression ?: callExpression)
+                .let { it.replaced(KtPsiFactory(it).createStringTemplate(stringLiteral)) }
+                .entries
+                .forEach {
+                    val blockEntry = (it as? KtBlockStringTemplateEntry)
+                    if (blockEntry?.canDropBraces() == true) blockEntry.dropBraces()
+                }
         }
     }
 }
