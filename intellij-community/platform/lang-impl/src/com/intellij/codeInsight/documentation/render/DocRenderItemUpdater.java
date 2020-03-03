@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.documentation.render;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
@@ -10,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.*;
 
-public class DocRenderItemUpdater implements Runnable {
+@Service
+public final class DocRenderItemUpdater implements Runnable {
   private static final long MAX_UPDATE_DURATION_MS = 50;
   private final List<Inlay<DocRenderer>> myQueue = new ArrayList<>();
 
