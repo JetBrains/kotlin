@@ -1,4 +1,4 @@
-// "Add 'JvmDefault' annotation" "true"
+// "Add '@JvmDefault' annotation" "true"
 // COMPILER_ARGUMENTS: -Xjvm-default=enable
 // WITH_RUNTIME
 interface Bar : Foo {
