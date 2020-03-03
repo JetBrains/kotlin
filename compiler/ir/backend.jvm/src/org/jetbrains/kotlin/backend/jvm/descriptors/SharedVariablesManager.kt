@@ -107,6 +107,11 @@ class JvmSharedVariablesManager(
 
     override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable): IrStatement {
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
+        val default = IrConstImpl.defaultValueForType(initializer.startOffset, initializer.endOffset, originalDeclaration.type)
+        if (initializer is IrConst<*> && initializer.value == default.value) {
+            // The field is preinitialized to the default value, so an explicit set is not required.
+            return sharedVariableDeclaration
+        }
         val initializationStatement = with(initializer) {
             IrSetVariableImpl(startOffset, endOffset, irBuiltIns.unitType, originalDeclaration.symbol, this, null)
         }
