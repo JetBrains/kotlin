@@ -127,7 +127,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 it.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $it of ${it.javaClass}")
             } catch (e: Exception) {
                 if (e is ControlFlowException) throw e
-                throw KotlinExceptionWithAttachments("Couldn't get containingKtFile for ktElement")
+                throw KotlinExceptionWithAttachments("Couldn't get containingKtFile for ktElement", e)
                     .withAttachment("element.kt", it.text)
             }
         }
