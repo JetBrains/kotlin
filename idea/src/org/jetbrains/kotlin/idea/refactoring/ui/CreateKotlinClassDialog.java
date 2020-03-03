@@ -38,6 +38,8 @@ import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinBundle;
+
 import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getSuitableDestinationSourceRoots;
 
 import javax.swing.*;
@@ -238,7 +240,7 @@ public class CreateKotlinClassDialog extends DialogWrapper {
         myTargetDirectory = WriteAction.compute(() -> {
           PsiDirectory baseDir = getBaseDir(packageName);
           if (baseDir == null && destination instanceof MultipleRootsMoveDestination) {
-            errorString[0] = "Destination not found for package '" + packageName + "'";
+            errorString[0] = KotlinBundle.message("destination.not.found.for.package.0", packageName);
             return null;
           }
           return destination.getTargetDirectory(baseDir);
