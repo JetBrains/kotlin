@@ -20,13 +20,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -142,13 +140,21 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 val (startOffset, endOffset) = expression.extents()
                 val source = sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
 
-                irLetS(expression.argument.transformVoid()) { valueSymbol ->
+                fun checkExpressionValue(valueSymbol: IrValueSymbol): IrExpression =
                     irComposite(resultType = expression.type) {
                         +irCall(checkExpressionValueIsNotNull).apply {
                             putValueArgument(0, irGet(valueSymbol.owner))
                             putValueArgument(1, irString(source))
                         }
                         +irGet(valueSymbol.owner)
+                    }
+
+                val argument = expression.argument.transformVoid()
+                if (argument is IrGetValue) {
+                    checkExpressionValue(argument.symbol)
+                } else {
+                    irLetS(argument) { valueSymbol ->
+                        checkExpressionValue(valueSymbol)
                     }
                 }
             }
