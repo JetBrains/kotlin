@@ -50,6 +50,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -718,14 +719,21 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     public Component getListCellRendererComponent(@NotNull JList list,
                                                   Object matchedValue,
                                                   int index, boolean isSelected, boolean cellHasFocus) {
+      SimpleColoredComponent nameComponent = new SimpleColoredComponent();
+
       boolean showIcon = UISettings.getInstance().getShowIconsInMenus();
-      JPanel panel = new JPanel(new BorderLayout());
+      JPanel panel = new JPanel(new BorderLayout()){
+        @Override
+        public AccessibleContext getAccessibleContext() {
+          return nameComponent.getAccessibleContext();
+        }
+      };
+
       panel.setBorder(JBUI.Borders.empty(2));
       panel.setOpaque(true);
       Color bg = UIUtil.getListBackground(isSelected, cellHasFocus);
       panel.setBackground(bg);
 
-      SimpleColoredComponent nameComponent = new SimpleColoredComponent();
       if (myUseListFont) {
         nameComponent.setFont(list.getFont());
       }
@@ -779,9 +787,6 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
             panel.add(groupLabel, BorderLayout.EAST);
           }
         }
-
-        panel.getAccessibleContext().setAccessibleName(presentation.getText());
-        panel.getAccessibleContext().setAccessibleDescription(presentation.getDescription());
 
         panel.setToolTipText(presentation.getDescription());
         Shortcut[] shortcuts = getActiveKeymapShortcuts(ActionManager.getInstance().getId(anAction)).getShortcuts();

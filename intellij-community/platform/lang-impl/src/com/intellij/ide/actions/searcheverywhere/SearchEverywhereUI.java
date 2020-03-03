@@ -1061,6 +1061,8 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         remove(prevContent);
       }
       add(itemContent, BorderLayout.CENTER);
+      accessibleContext = itemContent.getAccessibleContext();
+
       return this;
     }
   }
