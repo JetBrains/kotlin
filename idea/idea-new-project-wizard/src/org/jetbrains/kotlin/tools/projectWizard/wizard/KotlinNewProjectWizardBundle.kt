@@ -5,20 +5,14 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
-import com.intellij.CommonBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
-import org.jetbrains.kotlin.idea.core.util.KotlinBundleBase
-import java.util.*
+import org.jetbrains.kotlin.util.AbstractKotlinBundle
 
-object KotlinNewProjectWizardBundle : KotlinBundleBase() {
-    @NonNls
-    private const val BUNDLE = "org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle"
+@NonNls
+private const val BUNDLE = "messages.KotlinNewProjectWizardBundle"
 
-    override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
-
+object KotlinNewProjectWizardBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
-    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any?): String {
-        return CommonBundle.message(bundle, key, *params)
-    }
+    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 }
