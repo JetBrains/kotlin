@@ -532,8 +532,8 @@ public fun CPointer<IntVar>.toKStringFromUtf32(): String {
     var toIndex = 0
     while (true) {
         val value = nativeBytes[fromIndex++]
-        toIndex++
         if (value == 0) break
+        toIndex++
         if (value >= 0x10000 && value <= 0x10ffff) {
             toIndex++
         }
