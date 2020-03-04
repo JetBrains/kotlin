@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -58,7 +59,7 @@ class FindImplicitNothingAction : AnAction() {
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
             { find(selectedFiles, project) },
-            "Finding Implicit Nothing's",
+            KotlinBundle.message("finding.implicit.nothing.s"),
             true,
             project
         )
@@ -68,7 +69,7 @@ class FindImplicitNothingAction : AnAction() {
         val progressIndicator = ProgressManager.getInstance().progressIndicator
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurrences found"
+            progressIndicator?.text = KotlinBundle.message("scanning.files.0.fo.1.file.2.occurrences.found", i, files.size, found.size)
             progressIndicator?.text2 = file.virtualFile.path
 
             val resolutionFacade = file.getResolutionFacade()
@@ -102,10 +103,14 @@ class FindImplicitNothingAction : AnAction() {
             if (found.isNotEmpty()) {
                 val usages = found.map { UsageInfo2UsageAdapter(UsageInfo(it)) }.toTypedArray()
                 val presentation = UsageViewPresentation()
-                presentation.tabName = "Implicit Nothing's"
+                presentation.tabName = KotlinBundle.message("implicit.nothing.s")
                 UsageViewManager.getInstance(project).showUsages(arrayOf<UsageTarget>(), usages, presentation)
             } else {
-                Messages.showInfoMessage(project, "Not found in ${files.size} file(s)", "Not Found")
+                Messages.showInfoMessage(
+                    project,
+                    KotlinBundle.message("not.found.in.0.files", files.size),
+                    KotlinBundle.message("titile.not.found")
+                )
             }
         }
     }

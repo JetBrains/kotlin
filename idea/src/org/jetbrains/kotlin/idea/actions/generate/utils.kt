@@ -60,7 +60,7 @@ private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_
 fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescriptor): Boolean {
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
-    val functionsText = descriptors.joinToString(separator = " and ") { "'${MEMBER_RENDERER.render(it)}'" }
+    val functionsText = descriptors.joinToString(separator = " ${KotlinBundle.message("configuration.text.and")} ") { "'${MEMBER_RENDERER.render(it)}'" }
     val message = KotlinBundle.message("action.generate.functions.already.defined", functionsText, targetClass.name.toString())
     return Messages.showYesNoDialog(
         targetClass.project, message,

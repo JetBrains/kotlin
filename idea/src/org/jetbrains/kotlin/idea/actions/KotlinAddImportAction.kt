@@ -338,7 +338,7 @@ private class GroupedImportVariant(
 ) : AutoImportVariant {
     override val excludeFqNameCheck: FqName = descriptors.first().importableFqName!!.parent()
     override val descriptorsToImport: Collection<DeclarationDescriptor> get() = descriptors
-    override val hint: String get() = "$autoImportDescription from $excludeFqNameCheck"
+    override val hint: String get() = KotlinBundle.message("0.from.1", autoImportDescription, excludeFqNameCheck)
 }
 
 private class SingleImportVariant(
