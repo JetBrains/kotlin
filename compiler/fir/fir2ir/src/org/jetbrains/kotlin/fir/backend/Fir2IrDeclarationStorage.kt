@@ -236,6 +236,20 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    private fun FirRegularClass.enumClassModality(): Modality {
+        return when {
+            declarations.any { it is FirCallableMemberDeclaration<*> && it.modality == Modality.ABSTRACT } -> {
+                Modality.ABSTRACT
+            }
+            declarations.any { it is FirEnumEntry && it.initializer != null } -> {
+                Modality.OPEN
+            }
+            else -> {
+                Modality.FINAL
+            }
+        }
+    }
+
     private fun createIrClass(klass: FirClass<*>): IrClass {
         // NB: klass can be either FirRegularClass or FirAnonymousObject
         if (klass is FirAnonymousObject) {
@@ -247,17 +261,7 @@ class Fir2IrDeclarationStorage(
         val origin = IrDeclarationOrigin.DEFINED
         val visibility = regularClass.visibility
         val modality = if (regularClass.classKind == ClassKind.ENUM_CLASS) {
-            when {
-                regularClass.declarations.any { it is FirCallableMemberDeclaration<*> && it.modality == Modality.ABSTRACT } -> {
-                    Modality.ABSTRACT
-                }
-                regularClass.declarations.any { it is FirEnumEntry && it.initializer != null } -> {
-                    Modality.OPEN
-                }
-                else -> {
-                    Modality.FINAL
-                }
-            }
+            regularClass.enumClassModality()
         } else {
             regularClass.modality ?: Modality.FINAL
         }
