@@ -28,7 +28,7 @@ class InspectionProblemsPresentationHelper extends AnalysisProblemsPresentationH
   public void resetAllFilters() {
     mySettings.showErrors = InspectionProblemsViewSettings.SHOW_ERRORS_DEFAULT;
     mySettings.showWarnings = InspectionProblemsViewSettings.SHOW_WARNINGS_DEFAULT;
-    mySettings.showHints = InspectionProblemsViewSettings.SHOW_ERRORS_DEFAULT;
+    mySettings.showHints = InspectionProblemsViewSettings.SHOW_HINTS_DEFAULT;
 
     assert !areFiltersApplied();
   }
