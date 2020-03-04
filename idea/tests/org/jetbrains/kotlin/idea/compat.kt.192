@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.util.Computable
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
-import org.jetbrains.kotlin.idea.hierarchy.calls.HierarchyTreeStructure
 
 // BUNCH: 193
 @Suppress("UNUSED_PARAMETER")

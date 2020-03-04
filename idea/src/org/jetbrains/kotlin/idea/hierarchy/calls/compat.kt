@@ -13,21 +13,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiMethod
 
 // BUNCH: 193
-typealias HierarchyNodeDescriptor = com.intellij.ide.hierarchy.HierarchyNodeDescriptor
-typealias HierarchyTreeStructure = com.intellij.ide.hierarchy.HierarchyTreeStructure
-typealias CallHierarchyBrowserBase = com.intellij.ide.hierarchy.CallHierarchyBrowserBase
-typealias HierarchyScopeType = String
-typealias HierarchyBrowserBaseEx = com.intellij.ide.hierarchy.HierarchyBrowserBaseEx
-typealias MethodHierarchyBrowserBase = com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
-
-fun getCallerTypeCompat(): String = CallHierarchyBrowserBase.CALLER_TYPE
-fun getCalleeTypeCompat(): String = CallHierarchyBrowserBase.CALLEE_TYPE
-fun getMethodTypeCompat(): String = MethodHierarchyBrowserBase.METHOD_TYPE
-
 fun createCallerMethodsTreeStructure(project: Project, method: PsiMethod, scopeType: String): CallerMethodsTreeStructure {
     return CallerMethodsTreeStructure(project, method, scopeType)
 }
 
+// BUNCH: 193
 fun createCalleeMethodsTreeStructure(project: Project, method: PsiMethod, scopeType: String): CalleeMethodsTreeStructure {
     return CalleeMethodsTreeStructure(project, method, scopeType)
 }

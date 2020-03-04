@@ -17,6 +17,7 @@ package org.jetbrains.kotlin.idea.hierarchy.calls
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.roots.ui.util.CompositeAppearance
