@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.*
@@ -111,21 +116,23 @@ class SerializableCompanionIrGenerator(
                     && it.returnType != null && isKSerializer(it.returnType)
         } ?: return
         irClass.contributeFunction(serialFactoryDescriptor) { factory ->
+            val kSerializerStarType = factory.returnType
             val array = factory.valueParameters.first()
             val argsSize = serializableDescriptor.declaredTypeParameters.size
             val arrayGet =
                 compilerContext.builtIns.array.getFuncDesc("get").single()
             val arrayGetSymbol = compilerContext.symbolTable.referenceFunction(arrayGet)
 
-            val outAnyNullable = makeTypeProjection(compilerContext.irBuiltIns.anyNType, Variance.OUT_VARIANCE).type
-
-            val serializers: List<IrExpression> = (0 until argsSize).map { irInvoke(irGet(array), arrayGetSymbol, irInt(it)) }
+            val serializers: List<IrExpression> = (0 until argsSize).map {
+                irInvoke(irGet(array), arrayGetSymbol, irInt(it), typeHint = kSerializerStarType)
+            }
             val serializerCall = compilerContext.symbolTable.referenceSimpleFunction(getterDescriptor)
             val call = irInvoke(
                 IrGetValueImpl(startOffset, endOffset, factory.dispatchReceiverParameter!!.symbol),
                 serializerCall,
-                List(argsSize) { outAnyNullable },
-                serializers
+                List(argsSize) { compilerContext.irBuiltIns.anyNType },
+                serializers,
+                returnTypeHint = kSerializerStarType
             )
             +irReturn(call)
             patchSerializableClassWithMarkerAnnotation(companionDescriptor)
