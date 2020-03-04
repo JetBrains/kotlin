@@ -66,7 +66,11 @@ data class NpmDependency(
                     .npmProject
                     .nodeJs
                     .packageManager
-                    .resolveDependency(it, this)
+                    .resolveDependency(
+                        it,
+                        this,
+                        transitive
+                    )
             }
             ?: mutableSetOf()
 

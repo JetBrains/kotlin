@@ -23,8 +23,14 @@ object Yarn : NpmApi {
 
     override fun resolveDependency(
         resolvedNpmProject: KotlinCompilationNpmResolution,
-        dependency: NpmDependency
-    ) = getDelegate(resolvedNpmProject.project).resolveDependency(resolvedNpmProject, dependency)
+        dependency: NpmDependency,
+        transitive: Boolean
+    ) = getDelegate(resolvedNpmProject.project)
+        .resolveDependency(
+            resolvedNpmProject,
+            dependency,
+            transitive
+        )
 
     override fun resolveRootProject(
         rootProject: Project,
