@@ -3,6 +3,7 @@ package com.intellij.analysis.problemsView.inspection;
 
 import com.intellij.analysis.problemsView.AnalysisErrorSeverity;
 import com.intellij.analysis.problemsView.AnalysisProblem;
+import com.intellij.analysis.problemsView.AnalysisProblemBundle;
 import com.intellij.analysis.problemsView.AnalysisProblemsPresentationHelper;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -114,15 +115,8 @@ class InspectionProblemsPresentationHelper extends AnalysisProblemsPresentationH
   @Override
   @NotNull
   public String getFilterTypeText() {
-    final StringBuilder builder = new StringBuilder();
-
-    builder.append("filtering by current file");
-
-    if (!isShowErrors() || !isShowWarnings() || !isShowHints()) {
-      builder.append(builder.length() == 0 ? "filtering by severity" : " and severity");
-    }
-
-    return builder.toString();
+    String filters = !isShowErrors() || !isShowWarnings() || !isShowHints() ? AnalysisProblemBundle.message("tab.caption.filter.severity") : "";
+    return AnalysisProblemBundle.message("tab.caption.filter", filters);
   }
 
   void updateFromFilterSettingsUI(@NotNull InspectionProblemsFilterForm form) {
