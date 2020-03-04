@@ -8,14 +8,16 @@ import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile;
-import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.Language;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
@@ -507,7 +509,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   private class UIController implements AnalyzerController {
     private final PsiFile myPsiFile;
     private final boolean notInLibrary;
-    private final AnAction myMenuAction;
+    private final List<AnAction> myMenuActions;
     private final List<LanguageHighlightLevel> myLevelsList;
     private final List<HectorComponentPanel> myAdditionalPanels;
 
@@ -527,12 +529,12 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         myAdditionalPanels = Collections.emptyList();
       }
 
-      myMenuAction = initActions();
+      myMenuActions = initActions();
       myLevelsList = initLevels();
     }
 
-    private AnAction initActions() {
-      MenuAction result = new MenuAction();
+    private List<AnAction> initActions() {
+      List<AnAction> result = new ArrayList<>();
       if (myProject != null) { // Configure inspections
         result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
           @Override
@@ -555,7 +557,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       result.add(DaemonEditorPopup.createGotoGroup());
 
       if (myProject != null) { // Import popup
-        result.addAll(Separator.create(), new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
+        result.add(Separator.create());
+        result.add(new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
           @Override
           public boolean isSelected(@NotNull AnActionEvent e) {
             return myDaemonCodeAnalyzer.isImportHintsEnabled(myPsiFile);
@@ -570,6 +573,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           public void update(@NotNull AnActionEvent e) {
             super.update(e);
             e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isAutohintsAvailable(myPsiFile));
+          }
+
+          @Override
+          public boolean isDumbAware() {
+            return true;
           }
         });
       }
@@ -591,8 +599,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @NotNull
     @Override
-    public AnAction getActionMenu() {
-      return myMenuAction;
+    public List<AnAction> getActionMenu() {
+      return myMenuActions;
     }
 
     @Override
@@ -656,12 +664,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       panel.apply();
     }
     catch (ConfigurationException ignored) {}
-  }
-
-  private static class MenuAction extends DefaultActionGroup implements HintManagerImpl.ActionToIgnore {
-    private MenuAction() {
-      setPopup(true);
-    }
   }
 
   private static AHLevel getAHLevel(boolean highlight, boolean inspect) {
