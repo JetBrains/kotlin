@@ -6,9 +6,7 @@
 
 #### New Features
 
-- [`KT-7745`](https://youtrack.jetbrains.com/issue/KT-7745) Support named arguments in their own position even if the result appears as mixed
 - [`KT-34648`](https://youtrack.jetbrains.com/issue/KT-34648) Support custom messages for @RequiresOptIn-marked annotations
-- [`KT-34847`](https://youtrack.jetbrains.com/issue/KT-34847) Lift restrictions from `kotlin.Result`
 
 #### Performance Improvements
 
