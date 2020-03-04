@@ -10,7 +10,9 @@ import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
 internal class SdkIndexableFilesProvider(val sdk: Sdk) : IndexableFilesProvider {
-  override fun getPresentableName() = IndexingBundle.message("indexable.files.provider.sdk.name", sdk.name)
+  override fun getIndexingProgressText() = IndexingBundle.message("indexable.files.provider.indexing.sdk.name", sdk.name)
+
+  override fun getRootsScanningProgressText() = IndexingBundle.message("indexable.files.provider.scanning.sdk.name", sdk.name)
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
     val roots = runReadAction {

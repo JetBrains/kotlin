@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.util.containers.ConcurrentBitSet;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nls;
 
 /**
  * Provides files to be indexed for a project structure entity (module, library, SDK, etc.)
@@ -18,10 +17,14 @@ import org.jetbrains.annotations.Nls;
 public interface IndexableFilesProvider {
 
   /**
-   * Presentable name of this provider that can be displayed in progress dialogs.
+   * Presentable text shown in progress indicator during indexing of files of this provider.
    */
-  @Nls(capitalization = Nls.Capitalization.Title)
-  String getPresentableName();
+  String getIndexingProgressText();
+
+  /**
+   * Presentable text shown in progress indicator during traversing of files of this provider.
+   */
+  String getRootsScanningProgressText();
 
   /**
    * Iterates through all files and directories corresponding to this provider.

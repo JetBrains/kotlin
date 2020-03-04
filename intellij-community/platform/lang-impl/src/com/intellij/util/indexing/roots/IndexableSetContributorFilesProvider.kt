@@ -11,9 +11,23 @@ import com.intellij.util.indexing.IndexingBundle
 
 internal class IndexableSetContributorFilesProvider(private val indexableSetContributor: IndexableSetContributor) : IndexableFilesProvider {
 
-  override fun getPresentableName() =
-    (indexableSetContributor as? ItemPresentation)?.presentableText
-      ?: IndexingBundle.message("indexable.files.provider.additional.dependencies")
+  override fun getIndexingProgressText(): String {
+    val name = getName()
+    if (!name.isNullOrEmpty()) {
+      return IndexingBundle.message("indexable.files.provider.indexing.named.provider", name)
+    }
+    return IndexingBundle.message("indexable.files.provider.indexing.additional.dependencies")
+  }
+
+  override fun getRootsScanningProgressText(): String {
+    val name = getName()
+    if (!name.isNullOrEmpty()) {
+      return name
+    }
+    return IndexingBundle.message("indexable.files.provider.scanning.additional.dependencies")
+  }
+
+  private fun getName() = (indexableSetContributor as? ItemPresentation)?.presentableText
 
   override fun iterateFiles(
     project: Project,

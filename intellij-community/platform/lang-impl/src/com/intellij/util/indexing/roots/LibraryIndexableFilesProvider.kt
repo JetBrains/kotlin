@@ -10,12 +10,20 @@ import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
 internal class LibraryIndexableFilesProvider(val library: Library) : IndexableFilesProvider {
-  override fun getPresentableName(): String? {
+  override fun getIndexingProgressText(): String? {
     val libraryName = library.name
-    if (libraryName != null) {
-      return IndexingBundle.message("indexable.files.provider.library.name", libraryName)
+    if (!libraryName.isNullOrEmpty()) {
+      return IndexingBundle.message("indexable.files.provider.indexing.library.name", libraryName)
     }
-    return IndexingBundle.message("indexable.files.provider.additional.dependencies")
+    return IndexingBundle.message("indexable.files.provider.indexing.additional.dependencies")
+  }
+
+  override fun getRootsScanningProgressText(): String {
+    val libraryName = library.name
+    if (!libraryName.isNullOrEmpty()) {
+      return IndexingBundle.message("indexable.files.provider.scanning.library.name", libraryName)
+    }
+    return IndexingBundle.message("indexable.files.provider.scanning.additional.dependencies")
   }
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {

@@ -8,14 +8,29 @@ import com.intellij.openapi.roots.ContentIterator
 import com.intellij.openapi.roots.SyntheticLibrary
 import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
+import org.jetbrains.annotations.Nullable
 
 internal class SyntheticLibraryIndexableFilesProvider(
   private val syntheticLibrary: SyntheticLibrary
 ) : IndexableFilesProvider {
 
-  override fun getPresentableName() =
-    (syntheticLibrary as? ItemPresentation)?.presentableText
-    ?: IndexingBundle.message("indexable.files.provider.additional.dependencies")
+  private fun getName() = (syntheticLibrary as? ItemPresentation)?.presentableText
+
+  override fun getIndexingProgressText(): @Nullable String {
+    val name = getName()
+    if (!name.isNullOrEmpty()) {
+      return IndexingBundle.message("indexable.files.provider.indexing.named.provider", name)
+    }
+    return IndexingBundle.message("indexable.files.provider.indexing.additional.dependencies")
+  }
+
+  override fun getRootsScanningProgressText(): String {
+    val name = getName()
+    if (!name.isNullOrEmpty()) {
+      return name
+    }
+    return IndexingBundle.message("indexable.files.provider.scanning.additional.dependencies")
+  }
 
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
     val roots = runReadAction { syntheticLibrary.allRoots }

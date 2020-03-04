@@ -121,9 +121,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       if (providerFiles == null || providerFiles.isEmpty()) {
         continue;
       }
-      concurrentTasksProgressManager.setText(IdeBundle.message(
-        "progress.indexing.updating.name", provider.getPresentableName()
-      ));
+      concurrentTasksProgressManager.setText(provider.getIndexingProgressText());
       SubTaskProgressIndicator subTaskIndicator = concurrentTasksProgressManager.createSubTaskIndicator(providerFiles.size());
       try {
         myIndex.indexFiles(myProject, providerFiles, subTaskIndicator);
@@ -167,7 +165,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
         return true;
       };
       return () -> {
-        indicator.setText2(provider.getPresentableName());
+        indicator.setText2(provider.getRootsScanningProgressText());
         provider.iterateFiles(project, collectingIterator, visitedFileSet);
       };
     });
