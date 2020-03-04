@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -44,7 +45,7 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
             private fun KtExpression.reportRecursiveEquals(invert: Boolean = false) {
                 holder.registerProblem(
                     this,
-                    "Recursive equals call",
+                    KotlinBundle.message("recursive.equals.call"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceWithReferentialEqualityFix(invert)
                 )
@@ -73,7 +74,7 @@ class RecursiveEqualsCallInspection : AbstractKotlinInspection() {
 private class ReplaceWithReferentialEqualityFix(invert: Boolean) : LocalQuickFix {
     private val operator = if (invert) "!==" else "==="
 
-    override fun getName() = "Replace with '$operator'"
+    override fun getName() = KotlinBundle.message("replace.with.0", operator)
 
     override fun getFamilyName() = name
 

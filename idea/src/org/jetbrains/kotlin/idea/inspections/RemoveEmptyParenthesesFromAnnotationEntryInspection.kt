@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtValueArgumentList
@@ -37,7 +38,7 @@ class RemoveEmptyParenthesesFromAnnotationEntryInspection : AbstractKotlinInspec
 
             holder.registerProblem(
                 list,
-                "Parentheses should be removed",
+                KotlinBundle.message("parentheses.should.be.removed"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 RemoveEmptyParenthesesFromAnnotationEntryFix()
             )
@@ -54,7 +55,7 @@ class RemoveEmptyParenthesesFromAnnotationEntryInspection : AbstractKotlinInspec
 
 private class RemoveEmptyParenthesesFromAnnotationEntryFix : LocalQuickFix {
 
-    override fun getName() = "Remove unnecessary parentheses"
+    override fun getName() = KotlinBundle.message("remove.empty.parentheses.from.annotation.entry.fix.text")
 
     override fun getFamilyName() = name
 

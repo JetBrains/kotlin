@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -30,7 +31,7 @@ class ReplaceNegatedIsEmptyWithIsNotEmptyInspection : AbstractKotlinInspection()
             val to = expression.invertSelectorFunction()?.callExpression?.calleeExpression?.text ?: return
             holder.registerProblem(
                 calleeExpression,
-                "Replace negated '$from' with '$to'",
+                KotlinBundle.message("replace.negated.0.with.1", from, to),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix(from, to)
             )
@@ -58,7 +59,7 @@ class ReplaceNegatedIsEmptyWithIsNotEmptyInspection : AbstractKotlinInspection()
 }
 
 class ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix(private val from: String, private val to: String) : LocalQuickFix {
-    override fun getName() = "Replace negated '$from' with '$to'"
+    override fun getName() = KotlinBundle.message("replace.negated.0.with.1", from, to)
 
     override fun getFamilyName() = name
 

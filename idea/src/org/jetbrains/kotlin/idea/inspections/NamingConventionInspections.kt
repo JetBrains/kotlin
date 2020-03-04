@@ -25,6 +25,7 @@ import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpFileType
 import org.jdom.Element
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
 import org.jetbrains.kotlin.idea.refactoring.isInjectedFragment
@@ -48,35 +49,35 @@ private fun findRuleMessage(checkString: String, rules: Array<out NamingRule>): 
     return null
 }
 
-private val START_UPPER = NamingRule("should start with an uppercase letter") {
+private val START_UPPER = NamingRule(KotlinBundle.message("should.start.with.an.uppercase.letter")) {
     it.getOrNull(0)?.isUpperCase() == false
 }
 
-private val START_LOWER = NamingRule("should start with a lowercase letter") {
+private val START_LOWER = NamingRule(KotlinBundle.message("should.start.with.a.lowercase.letter")) {
     it.getOrNull(0)?.isLowerCase() == false
 }
 
-private val NO_UNDERSCORES = NamingRule("should not contain underscores") {
+private val NO_UNDERSCORES = NamingRule(KotlinBundle.message("should.not.contain.underscores")) {
     '_' in it
 }
 
-private val NO_START_UPPER = NamingRule("should not start with an uppercase letter") {
+private val NO_START_UPPER = NamingRule(KotlinBundle.message("should.not.start.with.an.uppercase.letter")) {
     it.getOrNull(0)?.isUpperCase() == true
 }
 
-private val NO_START_UNDERSCORE = NamingRule("should not start with an underscore") {
+private val NO_START_UNDERSCORE = NamingRule(KotlinBundle.message("should.not.start.with.an.underscore")) {
     it.startsWith('_')
 }
 
-private val NO_MIDDLE_UNDERSCORES = NamingRule("should not contain underscores in the middle or the end") {
+private val NO_MIDDLE_UNDERSCORES = NamingRule(KotlinBundle.message("should.not.contain.underscores.in.the.middle.or.the.end")) {
     '_' in it.substring(1)
 }
 
-private val NO_BAD_CHARACTERS = NamingRule("may contain only letters and digits") {
+private val NO_BAD_CHARACTERS = NamingRule(KotlinBundle.message("may.contain.only.letters.and.digits")) {
     it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' }
 }
 
-private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only letters, digits or underscores") {
+private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule(KotlinBundle.message("may.contain.only.letters.digits.or.underscores")) {
     it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
 }
 
@@ -106,7 +107,7 @@ class NamingConventionInspectionSettings(
             val message = getNameMismatchMessage(name)
             holder.registerProblem(
                 element.nameIdentifier!!,
-                "$entityName name <code>#ref</code> $message #loc",
+                "$entityName ${KotlinBundle.message("text.name")}<code>#ref</code> $message #loc",
                 RenameIdentifierFix()
             )
         }
@@ -120,7 +121,7 @@ class NamingConventionInspectionSettings(
         return findRuleMessage(name, rules) ?: getDefaultErrorMessage()
     }
 
-    fun getDefaultErrorMessage() = "doesn't match regex '$namePattern'"
+    fun getDefaultErrorMessage() = KotlinBundle.message("doesn.t.match.regex.0", namePattern)
 
     fun createOptionsPanel(): JPanel = NamingConventionOptionsPanel(this)
 
@@ -136,7 +137,7 @@ class NamingConventionInspectionSettings(
                     settings.namePattern = regexField.text
                 }
             })
-            val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
+            val labeledComponent = LabeledComponent.create(regexField, KotlinBundle.message("text.pattern"), BorderLayout.WEST)
             add(labeledComponent, BorderLayout.NORTH)
         }
     }
@@ -329,10 +330,10 @@ private class PackageNameInspectionLocal(
         data class CheckResult(val errorMessage: String, val isForPart: Boolean)
 
         fun CheckResult.toProblemTemplateString(): String {
-            return if (isForPart) {
-                "Package name <code>#ref</code> part $errorMessage #loc"
+            return KotlinBundle.message("package.name") + if (isForPart) {
+                " <code>#ref</code> ${KotlinBundle.message("text.part")} $errorMessage #loc"
             } else {
-                "Package name <code>#ref</code> $errorMessage #loc"
+                " <code>#ref</code> $errorMessage #loc"
             }
         }
 
@@ -378,10 +379,10 @@ class PackageNameInspection : BaseGlobalInspection() {
         val PART_RULES = arrayOf(NO_BAD_CHARACTERS_OR_UNDERSCORE, NO_START_UPPER)
 
         private fun PackageNameInspectionLocal.Companion.CheckResult.toErrorMessage(qualifiedName: String): String {
-            return if (isForPart) {
-                "Package name <code>$qualifiedName</code> part $errorMessage"
+            return KotlinBundle.message("package.name") + if (isForPart) {
+                " <code>$qualifiedName</code> ${KotlinBundle.message("text.part")} $errorMessage"
             } else {
-                "Package name <code>$qualifiedName</code> $errorMessage"
+                " <code>$qualifiedName</code> $errorMessage"
             }
         }
     }
@@ -391,7 +392,7 @@ class PackageNameInspection : BaseGlobalInspection() {
     var namePattern: String = DEFAULT_PACKAGE_NAME_PATTERN
 
     private val namingSettings = NamingConventionInspectionSettings(
-        "Package",
+        KotlinBundle.message("text.Package"),
         DEFAULT_PACKAGE_NAME_PATTERN,
         setNamePatternCallback = { value ->
             namePattern = value

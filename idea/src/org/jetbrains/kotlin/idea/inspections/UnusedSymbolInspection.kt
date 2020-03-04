@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -554,12 +555,12 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
 class SafeDeleteFix(declaration: KtDeclaration) : LocalQuickFix {
     private val name: String =
-        if (declaration is KtConstructor<*>) "Safe delete constructor"
+        if (declaration is KtConstructor<*>) KotlinBundle.message("safe.delete.constructor")
         else QuickFixBundle.message("safe.delete.text", declaration.name)
 
     override fun getName() = name
 
-    override fun getFamilyName() = "Safe delete"
+    override fun getFamilyName() = QuickFixBundle.message("safe.delete.family")
 
     override fun startInWriteAction(): Boolean = false
 

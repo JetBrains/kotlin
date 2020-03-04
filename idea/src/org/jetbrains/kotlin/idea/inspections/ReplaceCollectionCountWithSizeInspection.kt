@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -22,7 +23,7 @@ class ReplaceCollectionCountWithSizeInspection : AbstractKotlinInspection() {
             if (callExpression.isCount()) {
                 holder.registerProblem(
                     callExpression,
-                    "Could be replaced with `size`",
+                    KotlinBundle.message("could.be.replaced.with.size"),
                     ReplaceCollectionCountWithSizeQuickFix()
                 )
             }
@@ -31,7 +32,7 @@ class ReplaceCollectionCountWithSizeInspection : AbstractKotlinInspection() {
 }
 
 class ReplaceCollectionCountWithSizeQuickFix : LocalQuickFix {
-    override fun getName() = "Replace 'count' with 'size'"
+    override fun getName() = KotlinBundle.message("replace.collection.count.with.size.quick.fix.text")
 
     override fun getFamilyName() = name
 

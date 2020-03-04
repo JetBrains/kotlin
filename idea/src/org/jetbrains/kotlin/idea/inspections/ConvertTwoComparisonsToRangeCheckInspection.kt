@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -23,9 +24,9 @@ import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ConvertTwoComparisonsToRangeCheckInspection :
     AbstractApplicabilityBasedInspection<KtBinaryExpression>(KtBinaryExpression::class.java) {
-    override fun inspectionText(element: KtBinaryExpression) = "Two comparisons should be converted to a range check"
+    override fun inspectionText(element: KtBinaryExpression) = KotlinBundle.message("two.comparisons.should.be.converted.to.a.range.check")
 
-    override val defaultFixText = "Convert to a range check"
+    override val defaultFixText = KotlinBundle.message("convert.to.a.range.check")
 
     override fun isApplicable(element: KtBinaryExpression) = generateRangeExpressionData(element) != null
 

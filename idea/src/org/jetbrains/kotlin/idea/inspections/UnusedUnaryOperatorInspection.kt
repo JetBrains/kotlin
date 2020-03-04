@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -34,7 +35,7 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
 
         holder.registerProblem(
             prefix,
-            "Unused unary operator",
+            KotlinBundle.message("unused.unary.operator"),
             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
             prefix.operationReference.textRangeIn(prefix),
             RemoveUnaryOperatorFix()
@@ -42,7 +43,7 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
     })
 
     private class RemoveUnaryOperatorFix : LocalQuickFix {
-        override fun getName() = "Remove unused unary operator"
+        override fun getName() = KotlinBundle.message("remove.unary.operator.fix.text")
 
         override fun getFamilyName() = name
 

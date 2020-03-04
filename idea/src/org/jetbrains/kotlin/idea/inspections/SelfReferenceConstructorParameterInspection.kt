@@ -9,6 +9,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.psi.KtParameter
@@ -28,7 +29,7 @@ class SelfReferenceConstructorParameterInspection : AbstractKotlinInspection() {
         holder.registerProblem(
             parameter,
             rangeInElement,
-            "Constructor has non-null self reference parameter",
+            KotlinBundle.message("constructor.has.non.null.self.reference.parameter"),
             ConvertToNullableTypeFix()
         )
     })
@@ -49,7 +50,7 @@ class SelfReferenceConstructorParameterInspection : AbstractKotlinInspection() {
     }
 
     private class ConvertToNullableTypeFix : LocalQuickFix {
-        override fun getName() = "Convert to nullable type"
+        override fun getName() = KotlinBundle.message("convert.to.nullable.type.fix.text")
 
         override fun getFamilyName() = name
 

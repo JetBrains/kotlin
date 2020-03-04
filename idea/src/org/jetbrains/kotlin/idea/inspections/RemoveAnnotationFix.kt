@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -27,7 +28,7 @@ class RemoveAnnotationFix(private val text: String, annotationEntry: KtAnnotatio
     object JvmOverloads : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): RemoveAnnotationFix? {
             val annotationEntry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
-            return RemoveAnnotationFix("Remove @JvmOverloads annotation", annotationEntry)
+            return RemoveAnnotationFix(KotlinBundle.message("remove.jvmoverloads.annotation"), annotationEntry)
         }
     }
 

@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
@@ -47,7 +48,7 @@ class RedundantRequireNotNullCallInspection : AbstractKotlinInspection() {
         val functionName = callee.text
         holder.registerProblem(
             callee,
-            "Redundant '$functionName' call",
+            KotlinBundle.message("redundant.0.call", functionName),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             RemoveRequireNotNullCallFix(functionName)
         )
@@ -63,7 +64,7 @@ class RedundantRequireNotNullCallInspection : AbstractKotlinInspection() {
 }
 
 private class RemoveRequireNotNullCallFix(private val functionName: String) : LocalQuickFix {
-    override fun getName() = "Remove '$functionName' call"
+    override fun getName() = KotlinBundle.message("remove.require.not.null.call.fix.text", functionName)
 
     override fun getFamilyName() = name
 

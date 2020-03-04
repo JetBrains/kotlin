@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.formatter.FormattingChange
 import org.jetbrains.kotlin.idea.formatter.FormattingChange.ReplaceWhiteSpace
 import org.jetbrains.kotlin.idea.formatter.FormattingChange.ShiftIndentInsideRange
@@ -71,7 +72,7 @@ class ReformatInspection : LocalInspectionTool() {
         return elements.map {
             ProblemDescriptorImpl(
                 it, it,
-                "File is not properly formatted",
+                KotlinBundle.message("file.is.not.properly.formatted"),
                 arrayOf(ReformatQuickFix),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false, null,
                 isOnTheFly
@@ -81,7 +82,7 @@ class ReformatInspection : LocalInspectionTool() {
 
     override fun createOptionsPanel(): JComponent? {
         return SingleCheckboxOptionsPanel(
-            "Apply only to modified files (for projects under a version control)",
+            KotlinBundle.message("apply.only.to.modified.files.for.projects.under.a.version.control"),
             this,
             "processChangedFilesOnly"
         )
@@ -98,7 +99,7 @@ class ReformatInspection : LocalInspectionTool() {
     }
 
     private object ReformatQuickFix : LocalQuickFix {
-        override fun getFamilyName(): String = "Reformat File"
+        override fun getFamilyName(): String = KotlinBundle.message("reformat.quick.fix.family.name")
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             CodeStyleManager.getInstance(project).reformat(descriptor.psiElement.containingFile)
         }

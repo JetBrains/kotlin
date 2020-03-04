@@ -10,6 +10,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -57,7 +58,11 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                 val actualModule = (actualModuleDescriptor.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module ?: continue
                 holder.registerProblem(
                     classOrObject.nameIdentifier ?: classOrObject,
-                    "Optionally expected annotation has no actual annotation in module $displayedName for platform ${platform.oldFashionedDescription}",
+                    KotlinBundle.message(
+                        "optionally.expected.annotation.has.no.actual.annotation.in.module.0.for.platform.1",
+                        displayedName,
+                        platform.oldFashionedDescription
+                    ),
                     // NB: some highlighting is not suggested for this inspection
                     ProblemHighlightType.INFORMATION,
                     IntentionWrapper(CreateActualClassFix(classOrObject, actualModule, platform), classOrObject.containingFile)

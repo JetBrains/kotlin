@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -26,7 +27,7 @@ class SuspiciousAsDynamicInspection : AbstractKotlinInspection() {
             if (call.getQualifiedExpressionForSelector()?.receiverExpression?.getCallableDescriptor()?.returnType !is DynamicType) return
             holder.registerProblem(
                 call,
-                "Suspicious 'asDynamic' member invocation",
+                KotlinBundle.message("suspicious.asdynamic.member.invocation"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 RemoveAsDynamicCallFix()
             )
@@ -34,7 +35,7 @@ class SuspiciousAsDynamicInspection : AbstractKotlinInspection() {
 }
 
 private class RemoveAsDynamicCallFix : LocalQuickFix {
-    override fun getName() = "Remove 'asDynamic' invocation"
+    override fun getName() = KotlinBundle.message("remove.as.dynamic.call.fix.text")
 
     override fun getFamilyName() = name
 
