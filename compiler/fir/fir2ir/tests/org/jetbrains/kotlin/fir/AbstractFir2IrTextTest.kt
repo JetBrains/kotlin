@@ -41,7 +41,7 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         val oldFrontendTextFile = File(oldFrontendTextPath)
         val firTextFile = File(firTextPath)
         if (oldFrontendTextFile.exists() && firTextFile.exists()) {
-            compareAndMergeFirFileAndOldFrontendFile(oldFrontendTextFile, firTextFile)
+            compareAndMergeFirFileAndOldFrontendFile(oldFrontendTextFile, firTextFile, compareWithTrimming = true)
         }
         super.doTest(filePath)
     }

@@ -12,16 +12,24 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
 
-fun compareAndMergeFirFileAndOldFrontendFile(oldFrontendTestDataFile: File, frontendIRTestDataFile: File) {
+fun compareAndMergeFirFileAndOldFrontendFile(
+    oldFrontendTestDataFile: File,
+    frontendIRTestDataFile: File,
+    compareWithTrimming: Boolean = false
+) {
     if (oldFrontendTestDataFile.exists() && frontendIRTestDataFile.exists()) {
         val originalLines = oldFrontendTestDataFile.readLines()
         val firLines = frontendIRTestDataFile.readLines()
-        val sameDumps = firLines.withIndex().all { (index, line) ->
-            val trimmed = line.trim()
-            val originalTrimmed = originalLines.getOrNull(index)?.trim()
-            trimmed.isEmpty() && originalTrimmed?.isEmpty() != false || trimmed == originalTrimmed
-        } && originalLines.withIndex().all { (index, line) ->
-            index < firLines.size || line.trim().isEmpty()
+        val sameDumps = if (compareWithTrimming) {
+            firLines.withIndex().all { (index, line) ->
+                val trimmed = line.trim()
+                val originalTrimmed = originalLines.getOrNull(index)?.trim()
+                trimmed.isEmpty() && originalTrimmed?.isEmpty() != false || trimmed == originalTrimmed
+            } && originalLines.withIndex().all { (index, line) ->
+                index < firLines.size || line.trim().isEmpty()
+            }
+        } else {
+            firLines == originalLines
         }
         if (sameDumps) {
             frontendIRTestDataFile.delete()
