@@ -43,7 +43,7 @@ class KonanExternalSystemState(
             session,
             consoleBuilder,
             executableFile,
-            configuration.debugPort!!
+            configuration.attachmentStrategy!!
         )
         result.start()
         return result

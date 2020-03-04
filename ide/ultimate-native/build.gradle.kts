@@ -31,6 +31,7 @@ dependencies {
         compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui") }
         if (intellijBranch >= 193) {
             compileOnly(intellijUltimateDep()) { includeJars(
+                "extensions",
                 "external-system-rt",
                 "platform-ide-util-io"
             ) }

@@ -8,26 +8,67 @@ package com.jetbrains.konan.debugger
 import com.intellij.execution.filters.DefaultConsoleFiltersProvider
 import com.intellij.execution.filters.TextConsoleBuilder
 import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.frame.XExecutionStack
 import com.jetbrains.cidr.execution.RunParameters
-import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.debugger.CidrSuspensionCause
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver
-import com.jetbrains.cidr.execution.debugger.backend.LLFrame
-import com.jetbrains.cidr.execution.debugger.backend.LLThread
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
+import com.jetbrains.konan.AttachmentByName
+import com.jetbrains.konan.AttachmentByPort
+import com.jetbrains.konan.AttachmentStrategy
+import com.jetbrains.konan.KonanLog
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 
 class KonanRemoteDebugProcess(
     parameters: RunParameters,
     session: XDebugSession,
     consoleBuilder: TextConsoleBuilder,
     private val executableFile: File,
-    private val port: Int
+    private val attachmentStrategy: AttachmentStrategy
 ) : KonanLocalDebugProcess(parameters, session, consoleBuilder, DefaultConsoleFiltersProvider()) {
 
-    override fun doLoadTarget(driver: DebuggerDriver): DebuggerDriver.Inferior {
+    private fun executeCommand(command: String): List<String> {
+        val result = mutableListOf<String>()
+        try {
+            val p = Runtime.getRuntime().exec(command)
+            val input = BufferedReader(InputStreamReader(p.inputStream))
+            input.lines().forEach { line ->
+                if (line.isNotEmpty()) {
+                    result.add(line)
+                }
+            }
+
+            input.close()
+        } catch (e: Exception) {
+            KonanLog.LOG.warn("'$command' failed")
+        }
+
+        return result
+    }
+
+    private fun ensureProcessReady(isReady: () -> Boolean) {
+        for (timing in listOf(1_000L, 2_000L, 4_000L)) {
+            if (isReady()) {
+                break
+            }
+            Thread.sleep(timing)
+        }
+    }
+
+    private fun loadTargetByName(driver: LLDBDriver, name: String): DebuggerDriver.Inferior {
+        val shortName = name.substring(name.lastIndexOf('/') + 1)
+        ensureProcessReady { executeCommand("pgrep $shortName").isNotEmpty() }
+        return driver.loadForAttach(name, false)
+    }
+
+    private fun loadTargetByPort(driver: LLDBDriver, port: Int): DebuggerDriver.Inferior {
         val url = "connect://127.0.0.1:$port"
-        return (driver as LLDBDriver).loadForAttachDebugServer(url, executableFile, null, emptyList(), null)
+        ensureProcessReady { executeCommand("netstat -an").find { it.contains("LISTEN") && it.contains("$port") } != null }
+        return driver.loadForAttachDebugServer(url, executableFile, null, emptyList(), null)
+    }
+
+    override fun doLoadTarget(driver: DebuggerDriver) = when (attachmentStrategy) {
+        is AttachmentByName -> loadTargetByName(driver as LLDBDriver, executableFile.absolutePath)
+        is AttachmentByPort -> loadTargetByPort(driver as LLDBDriver, attachmentStrategy.port)
     }
 }

@@ -19,16 +19,18 @@ import java.io.Serializable
 data class KonanExecutableBase(
     val targetType: KonanTarget,
     val targetName: String,
-    val executableName: String
+    val executableName: String,
+    val projectPrefix: String
 ) {
     val name = "$targetName" + if (executableName.isEmpty()) "" else ".$executableName"
 
-    val fullName = "$targetType.$targetName.$executableName"
+    val fullName = "$targetType.$targetName.$executableName.$projectPrefix"
 
     fun writeToXml(element: Element) {
         element.setAttribute(XmlExecutable.attributeTargetType, targetType.name)
         element.setAttribute(XmlExecutable.attributeTargetName, targetName)
         element.setAttribute(XmlExecutable.attributeBinaryName, executableName)
+        element.setAttribute(XmlExecutable.attributeProjectPrefix, projectPrefix)
     }
 
     companion object {
@@ -36,19 +38,21 @@ data class KonanExecutableBase(
             val targetName = element.getAttributeValue(XmlExecutable.attributeTargetName) ?: return null
             val executableName = element.getAttributeValue(XmlExecutable.attributeBinaryName) ?: return null
             val target = konanTarget(element.getAttributeValue(XmlExecutable.attributeTargetType)) ?: return null
+            val prefix = element.getAttributeValue(XmlExecutable.attributeProjectPrefix) ?: ""
 
-            return KonanExecutableBase(target, targetName, executableName)
+            return KonanExecutableBase(target, targetName, executableName, prefix)
         }
 
-        fun constructFrom(artifact: KonanArtifactModel, targetName: String): KonanExecutableBase? {
+        fun constructFrom(artifact: KonanArtifactModel, targetName: String, projectPrefix: String): KonanExecutableBase? {
             val targetType = konanTarget(artifact.targetPlatform) ?: return null
-            return KonanExecutableBase(targetType, targetName, artifact.executableName)
+            return KonanExecutableBase(targetType, targetName, artifact.executableName, projectPrefix)
         }
 
         private fun konanTarget(dslName: String?): KonanTarget? = listOf(
             KonanTarget.LINUX_X64,
             KonanTarget.MACOS_X64,
-            KonanTarget.MINGW_X64
+            KonanTarget.MINGW_X64,
+            KonanTarget.IOS_X64
         ).firstOrNull { it.name == dslName }
     }
 }

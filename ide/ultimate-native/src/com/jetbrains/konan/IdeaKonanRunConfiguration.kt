@@ -19,10 +19,15 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.debugger.CidrDebugProfile
 import org.jdom.Element
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import javax.swing.Icon
 
 const val DEFAULT_PASS_PARENT_ENVS = true
+
+sealed class AttachmentStrategy
+data class AttachmentByPort(val port: Int) : AttachmentStrategy()
+object AttachmentByName : AttachmentStrategy()
 
 open class IdeaKonanRunConfiguration(
     project: Project,
@@ -33,7 +38,7 @@ open class IdeaKonanRunConfiguration(
     CidrDebugProfile {
 
     var selectedTarget: IdeaKonanExecutionTarget? = null
-    var debugPort: Int? = null // affects getState
+    var attachmentStrategy: AttachmentStrategy? = null // affects getState
 
     protected var directory: String? = null
     protected var parameters: String? = null
@@ -80,7 +85,7 @@ open class IdeaKonanRunConfiguration(
     }
 
     override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {
-        if (debugPort != null) {
+        if (attachmentStrategy != null) {
             val dummyConfiguration = GradleRunConfiguration(project, IdeaKonanRunConfigurationType.instance.factory, "")
             dummyConfiguration.settings.externalProjectPath = ""
             return KonanExternalSystemState(this, project, env, dummyConfiguration)
@@ -90,13 +95,22 @@ open class IdeaKonanRunConfiguration(
         return KonanCommandLineState(env, this, execFile)
     }
 
+    private fun hostSupportsExecutable(host: KonanTarget, executable: KonanTarget?): Boolean {
+        if (executable == null) return false
+
+        return when (host) {
+            KonanTarget.MACOS_X64 -> executable == KonanTarget.IOS_X64 || executable == KonanTarget.MACOS_X64
+            else -> host == executable
+        }
+    }
+
     override fun canRunOn(target: ExecutionTarget): Boolean {
-        if (executable == null || HostManager.host != executable?.base?.targetType) {
+        if (executable == null || !hostSupportsExecutable(HostManager.host, executable?.base?.targetType)) {
             return false
         }
 
         return when {
-            debugPort != null -> executable!!.executionTargets.any { it.isDebug }
+            attachmentStrategy != null -> executable!!.executionTargets.any { it.isDebug }
             target is IdeaKonanExecutionTarget -> executable!!.executionTargets.contains(target)
             else -> false
         }

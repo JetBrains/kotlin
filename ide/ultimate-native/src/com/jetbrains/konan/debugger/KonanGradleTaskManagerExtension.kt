@@ -8,6 +8,7 @@ package com.jetbrains.konan.debugger
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.konan.IdeaKonanWorkspace
 import com.jetbrains.konan.debugger.GradleLLDBDebuggerBackend.Companion.DEBUG_SERVER_ARGS_KEY
@@ -21,6 +22,12 @@ import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 class KonanGradleTaskManagerExtension : GradleTaskManagerExtension {
     override fun cancelTask(id: ExternalSystemTaskId, listener: ExternalSystemTaskNotificationListener) = true
 
+    private fun findProject(ideProjectPath: String): Project {
+        return ProjectManager.getInstance().openProjects.maxBy {
+            ideProjectPath.commonPrefixWith(it.basePath ?: "")
+        }!!
+    }
+
     override fun executeTasks(
         id: ExternalSystemTaskId,
         taskNames: MutableList<String>,
@@ -29,7 +36,8 @@ class KonanGradleTaskManagerExtension : GradleTaskManagerExtension {
         jvmParametersSetup: String?,
         listener: ExternalSystemTaskNotificationListener
     ): Boolean {
-        val project = ProjectManager.getInstance().openProjects.firstOrNull { it.basePath == projectPath } ?: return false
+        if (settings == null || settings.ideProjectPath == null) return false
+        val project = findProject(settings.ideProjectPath!!)
         val workspace = IdeaKonanWorkspace.getInstance(project)
 
         if (HostManager.host == KonanTarget.MINGW_X64 || workspace.lldbHome == null) {
@@ -52,7 +60,7 @@ class KonanGradleTaskManagerExtension : GradleTaskManagerExtension {
 
         val serializedParams = params.map { (key, value) -> "$key=$value" }.joinToString(separator = ForkedDebuggerHelper.PARAMETERS_SEPARATOR)
 
-        settings?.putUserData(GradleRunConfiguration.DEBUGGER_PARAMETERS_KEY, serializedParams)
+        settings.putUserData(GradleRunConfiguration.DEBUGGER_PARAMETERS_KEY, serializedParams)
         return super.executeTasks(id, taskNames, projectPath, settings, jvmParametersSetup, listener)
     }
 }

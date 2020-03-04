@@ -11,10 +11,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.IdeaKonanRunConfiguration
-import com.jetbrains.konan.IdeaKonanRunConfigurationType
-import com.jetbrains.konan.IdeaKonanWorkspace
-import com.jetbrains.konan.KonanExecutable
+import com.jetbrains.konan.*
 
 class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
     override fun id() = "Gradle LLDB"
@@ -28,39 +25,44 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
         }
     }
 
-    private fun codeFor(stageName: String, vararg codeLines: String): List<String> {
-        // pick tasks suitable for debugging with lldb
-        return listOf(
-            """
-            |gradle.taskGraph.$stageName { Task task ->
-            |  def whiteList = [
-            |    'org.gradle.api.tasks.Exec',
-            |    'org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest'
-            |  ]
-            |  for (def klass = task.class; klass != Object.class; klass = klass.superclass) {
-            |    if (whiteList.contains(klass.canonicalName)) {""".trimMargin()
-        ) + codeLines.map { "      " + it.trim() }.toList() + listOf(
-            """
-            |      break
-            |    }
-            |  }
-            |}""".trimMargin()
-        )
-    }
-
     override fun initializationCode(dispatchPort: String, sertializedParams: String): List<String> {
         val params = splitParameters(sertializedParams)
         val debugServerPath = params[DEBUG_SERVER_PATH_KEY] ?: return emptyList()
         val debugServerArgs = params[DEBUG_SERVER_ARGS_KEY]?.split(":") ?: emptyList()
 
-        return codeFor(
-            "beforeTask",
-            "def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
-            "task.args = [" + debuggerSetupArgs(debugServerArgs) + "] + task.args",
-            "task.executable = new File('$debugServerPath')"
-        ) + codeFor(
-            "afterTask",
-            "ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)"
+        return listOf(
+            """
+            ({
+                def isInstance = { Task task, String fqn ->
+                    for (def klass = task.class; klass != Object.class; klass = klass.superclass) {
+                        if (klass.canonicalName == fqn) {
+                            return true            
+                        }
+                    }        
+                    return false
+                }
+            
+                gradle.taskGraph.beforeTask { Task task ->
+                    if (task.hasProperty('debugMode') 
+                        && isInstance(task, 'org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest')) {
+                        ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '$ATTACH_BY_NAME_KEY=true', $dispatchPort)
+                        task.debugMode = true
+                    } else if (isInstance(task, 'org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest') 
+                               || isInstance(task, 'org.gradle.api.tasks.Exec')) {
+                        def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '$ATTACH_BY_NAME_KEY=false', $dispatchPort)
+                        task.args = [${debuggerSetupArgs(debugServerArgs)}] + task.args
+                        task.executable = new File('$debugServerPath')
+                    }
+                }
+            
+                gradle.taskGraph.afterTask { Task task ->        
+                    if (isInstance(task, 'org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest') 
+                        || isInstance(task, 'org.gradle.api.tasks.Exec')) {
+                        ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)
+                    }        
+                }
+            })()
+            """.trimIndent()
         )
     }
 
@@ -73,19 +75,24 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
     }
 
     private fun findExecutable(project: Project, processName: String): KonanExecutable? {
+        val taskName = processName.substring(processName.lastIndexOf(':') + 1)
+        val projectPrefix = processName.substring(0, processName.lastIndexOf(':') + 1)
+
         val workspace = IdeaKonanWorkspace.getInstance(project)
 
-        if (processName.startsWith("run")) {
-            val executableId = processName.removePrefix("run")
+        if (taskName.startsWith("run")) {
+            val executableId = taskName.removePrefix("run")
             return workspace.executables.find {
-                it.executionTargets.any { t -> t.gradleTask.contains(executableId) }
+                it.base.projectPrefix == projectPrefix &&
+                        it.executionTargets.any { t -> t.gradleTask.contains(executableId) }
             }
         }
 
-        if (processName.endsWith("Test")) {
-            val targetId = processName.removeSuffix("Test")
+        if (taskName.endsWith("Test")) {
+            val targetId = taskName.removeSuffix("Test")
             return workspace.executables.find {
-                it.base.name.contains(targetId) && it.base.name.contains("test")
+                it.base.projectPrefix.endsWith(projectPrefix) &&
+                        it.base.name.contains(targetId) && it.base.name.contains("test")
             }
         }
 
@@ -97,12 +104,9 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
         processName: String,
         processParameters: String
     ): RunnerAndConfigurationSettings {
-        val workspace = IdeaKonanWorkspace.getInstance(project)
         val runManager = RunManager.getInstance(project)
-
         val isTest = processName.endsWith("Test")
-
-        val executable = findExecutable(project, processName.substring(processName.lastIndexOf(':') + 1))
+        val executable = findExecutable(project, processName)
             ?: throw ExecutionException("No executable for processName=$processName")
 
         val params = splitParameters(processParameters)
@@ -113,7 +117,12 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
                 programParameters = "$processParameters --ktest_no_exit_code"
             }
             copyFrom(findKonanConfiguration(runManager, executable))
-            debugPort = params[ForkedDebuggerHelper.DEBUG_SERVER_PORT_KEY]?.toInt()
+            attachmentStrategy = AttachmentByName
+            if (params[ATTACH_BY_NAME_KEY]?.toBoolean() == false) {
+                params[ForkedDebuggerHelper.DEBUG_SERVER_PORT_KEY]?.toInt()?.let {
+                    attachmentStrategy = AttachmentByPort(it)
+                }
+            }
         }
 
         settings.isActivateToolWindowBeforeRun = false
@@ -123,5 +132,6 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
     companion object {
         const val DEBUG_SERVER_PATH_KEY = "DEBUG_SERVER_PATH"
         const val DEBUG_SERVER_ARGS_KEY = "DEBUG_SERVER_ARGS"
+        const val ATTACH_BY_NAME_KEY = "ATTACH_BY_NAME"
     }
 }

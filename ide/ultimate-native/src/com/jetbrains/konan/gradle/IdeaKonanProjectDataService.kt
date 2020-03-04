@@ -43,6 +43,11 @@ class IdeaKonanProjectDataService : AbstractProjectDataService<KotlinTargetData,
         return moduleData.kotlinNativeHome
     }
 
+    private fun getProjectPrefix(moduleIds: Set<String>): String {
+        val id = moduleIds.firstOrNull() ?: return ""
+        return id.substring(0, id.lastIndexOf(':') + 1)
+    }
+
     private fun collectConfigurations(
         project: Project,
         targetNodes: Collection<DataNode<KotlinTargetData>>
@@ -54,9 +59,10 @@ class IdeaKonanProjectDataService : AbstractProjectDataService<KotlinTargetData,
 
         targetNodes.forEach { node ->
             val targetName = node.data.externalName
+            val projectPrefix = getProjectPrefix(node.data.moduleIds)
 
             node.data.konanArtifacts?.forEach { artifact ->
-                val executable = KonanExecutableBase.constructFrom(artifact, targetName) ?: return@forEach
+                val executable = KonanExecutableBase.constructFrom(artifact, targetName, projectPrefix) ?: return@forEach
                 val runProfile = IdeaKonanExecutionTarget.constructFrom(artifact, executable.name) ?: return@forEach
                 executionTargets.getOrPut(executable) { ArrayList() } += runProfile
                 artifact.runConfiguration.let { runConfigurations.put(executable, it) }

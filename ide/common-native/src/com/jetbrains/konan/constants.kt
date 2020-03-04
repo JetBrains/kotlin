@@ -36,6 +36,7 @@ object XmlExecutable {
     const val attributeTargetType = "TARGET_TYPE"
     const val attributeTargetName = "TARGET"
     const val attributeBinaryName = "BINARY"
+    const val attributeProjectPrefix = "PREFIX"
 }
 
 
