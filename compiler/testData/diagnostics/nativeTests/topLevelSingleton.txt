@@ -19,6 +19,66 @@ public final class AtomicInt {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class Bar2 {
+    public constructor Bar2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @kotlin.native.concurrent.ThreadLocal public companion object Companion {
+        private constructor Companion()
+        public final var field1: kotlin.Int
+        public final var field2: kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+@kotlin.native.concurrent.ThreadLocal public final enum class Color : kotlin.Enum<Color> {
+    enum entry RED
+
+    enum entry GREEN
+
+    enum entry BLUE
+
+    private constructor Color(/*0*/ rgb: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final var rgb: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Color): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Color
+    public final /*synthesized*/ fun values(): kotlin.Array<Color>
+}
+
+public final enum class Color1 : kotlin.Enum<Color1> {
+    enum entry RED
+
+    enum entry GREEN
+
+    enum entry BLUE
+
+    private constructor Color1(/*0*/ rgb: kotlin.Int)
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final var rgb: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Color1): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Color1
+    public final /*synthesized*/ fun values(): kotlin.Array<Color1>
+}
+
 public final class Delegate {
     public constructor Delegate()
     public final val value: kotlin.Int = 10
@@ -46,6 +106,23 @@ public object Foo1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo2 {
+    public constructor Foo2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val backer2: AtomicInt
+        public final var field1: kotlin.Int
+        public final var field2: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }
 
 public object WithDelegate {

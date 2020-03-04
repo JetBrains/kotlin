@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.hasBackingField
@@ -17,21 +19,30 @@ import org.jetbrains.kotlin.resolve.hasBackingField
 object NativeTopLevelSingletonChecker : DeclarationChecker {
     private val threadLocalFqName = FqName("kotlin.native.concurrent.ThreadLocal")
 
-    private val DeclarationDescriptor.isInsideTopLevelSingletonWithoutThreadLocal: Boolean
-        get() {
-            val parent = containingDeclaration as? ClassDescriptor
-            return parent != null && parent.kind.isSingleton &&
-                    parent.annotations.findAnnotation(threadLocalFqName) == null
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        // @ThreadLocal on enum has no effect.
+        if (descriptor is ClassDescriptor && DescriptorUtils.isEnumClass(descriptor)) {
+            descriptor.annotations.findAnnotation(threadLocalFqName)?.let {
+                val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration
+                context.trace.report(ErrorsNative.ENUM_THREAD_LOCAL_INAPPLICABLE.on(reportLocation))
+            }
         }
 
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (declaration !is KtProperty || descriptor !is PropertyDescriptor ||
-            !descriptor.isInsideTopLevelSingletonWithoutThreadLocal
-        ) return
-        if (descriptor.isVar && declaration.delegate == null && descriptor.hasBackingField(context.trace.bindingContext) &&
-            descriptor.setter?.isDefault == true
-        ) {
-            context.trace.report(ErrorsNative.VARIABLE_IN_TOP_LEVEL_SINGLETON_WITHOUT_THERAD_LOCAL.on(declaration))
+        // Check variables inside singletons.
+        if (descriptor !is PropertyDescriptor) return
+        (descriptor.containingDeclaration as? ClassDescriptor)?.let { parent ->
+            if (descriptor.isVar && DescriptorUtils.isEnumClass(parent)) {
+                context.trace.report(ErrorsNative.VARIABLE_IN_ENUM.on(declaration))
+            } else if (parent.kind.isSingleton) {
+                parent.annotations.findAnnotation(threadLocalFqName) ?: run {
+                    if (descriptor.isVar && declaration is KtProperty && declaration.delegate == null &&
+                        descriptor.hasBackingField(context.trace.bindingContext) &&
+                        descriptor.setter?.isDefault == true
+                    ) {
+                        context.trace.report(ErrorsNative.VARIABLE_IN_TOP_LEVEL_SINGLETON_WITHOUT_THREAD_LOCAL.on(declaration))
+                    }
+                }
+            }
         }
     }
 }
