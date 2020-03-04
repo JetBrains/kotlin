@@ -21,7 +21,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(
             ConfigurationKind.ALL,
             files,
-            getJdkKind(files),
+            getTestJdkKind(files),
             *listOfNotNull(writeJavaFiles(files)).toTypedArray()
         )
         loadMultiFiles(files)
