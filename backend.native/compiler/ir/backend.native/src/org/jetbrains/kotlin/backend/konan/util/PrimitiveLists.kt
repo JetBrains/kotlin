@@ -57,3 +57,50 @@ class IntArrayList : Iterable<Int> {
         override fun next() = get(index++)
     }
 }
+
+class LongArrayList : Iterable<Long> {
+    private var array = LongArray(3)
+    private var length = 0
+
+    val size get() = length
+
+    fun isEmpty() = size == 0
+
+    fun add(x: Long) {
+        length++
+        ensureCapacity(length)
+        set(length - 1, x)
+    }
+
+    fun get(index: Int): Long = when {
+        index < 0 || index >= length -> throw IndexOutOfBoundsException("Index out of range: $index")
+
+        else -> array[index]
+    }
+
+    fun set(index: Int, x: Long) = when {
+        index < 0 || index >= length -> throw IndexOutOfBoundsException("Index out of range: $index")
+
+        else -> array[index] = x
+    }
+
+    override operator fun iterator(): Iterator<Long> = Itr()
+
+    private fun ensureCapacity(minCapacity: Int) {
+        val oldArray = array
+        if (minCapacity > oldArray.size) {
+            var newSize = oldArray.size * 3 / 2
+            if (minCapacity > newSize)
+                newSize = minCapacity
+            array = oldArray.copyOf(newSize)
+        }
+    }
+
+    private inner class Itr : Iterator<Long> {
+        private var index = 0
+
+        override fun hasNext() = index < size
+
+        override fun next() = get(index++)
+    }
+}
