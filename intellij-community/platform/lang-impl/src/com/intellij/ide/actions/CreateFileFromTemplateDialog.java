@@ -5,8 +5,6 @@ package com.intellij.ide.actions;
 import com.intellij.ide.actions.newclass.CreateWithTemplatesDialogPanel;
 import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
 import com.intellij.lang.LangBundle;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -24,11 +22,15 @@ import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author peter
@@ -311,13 +313,20 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
   }
 
   public interface Builder {
-    Builder setTitle(@Nls String title);
+    Builder setTitle(@Nls(capitalization = Nls.Capitalization.Title) String title);
     Builder setValidator(InputValidator validator);
-    Builder addKind(@NotNull @Nls String kind, @Nullable Icon icon, @NotNull String templateName);
+    Builder addKind(@Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String kind,
+                    @Nullable Icon icon,
+                    @NonNls @NotNull String templateName);
     @Nullable
-    <T extends PsiElement> T show(@NotNull String errorTitle, @Nullable String selectedItem, @NotNull FileCreator<T> creator);
+    <T extends PsiElement> T show(@Nls(capitalization = Nls.Capitalization.Title) @NotNull String errorTitle,
+                                  @NonNls @Nullable String selectedItem,
+                                  @NotNull FileCreator<T> creator);
 
-    <T extends PsiElement> void show(@NotNull String errorTitle, @Nullable String selectedItem, @NotNull FileCreator<T> creator, Consumer<? super T> elementConsumer);
+    <T extends PsiElement> void show(@Nls(capitalization = Nls.Capitalization.Title) @NotNull String errorTitle,
+                                     @NonNls @Nullable String selectedItem,
+                                     @NotNull FileCreator<T> creator,
+                                     Consumer<? super T> elementConsumer);
 
     @Nullable
     Map<String,String> getCustomProperties();
@@ -326,10 +335,11 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
   public interface FileCreator<T> {
 
     @Nullable
-    T createFile(@NotNull String name, @NotNull String templateName);
+    T createFile(@NonNls @NotNull String name, @NonNls @NotNull String templateName);
 
+    @Nls
     @NotNull
-    String getActionName(@NotNull String name, @NotNull String templateName);
+    String getActionName(@NonNls @NotNull String name, @NonNls @NotNull String templateName);
 
     boolean startInWriteAction();
   }

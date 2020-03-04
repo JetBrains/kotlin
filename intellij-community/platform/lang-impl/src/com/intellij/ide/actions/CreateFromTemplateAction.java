@@ -18,6 +18,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,12 +111,14 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
 
   protected abstract void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder);
 
+  @NonNls
   @Nullable
   protected String getDefaultTemplateName(@NotNull PsiDirectory dir) {
     String property = getDefaultTemplateProperty();
     return property == null ? null : PropertiesComponent.getInstance(dir.getProject()).getValue(property);
   }
 
+  @NonNls
   @Nullable
   protected String getDefaultTemplateProperty() {
     return null;
@@ -137,8 +140,10 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
     return project != null && view != null && view.getDirectories().length != 0;
   }
 
-  protected abstract String getActionName(PsiDirectory directory, @NotNull String newName, String templateName);
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  protected abstract String getActionName(PsiDirectory directory, @NonNls @NotNull String newName, @NonNls String templateName);
 
+  @Nls(capitalization = Nls.Capitalization.Title)
   @NotNull
   protected String getErrorTitle() {
     return CommonBundle.getErrorTitle();
