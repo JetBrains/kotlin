@@ -504,20 +504,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.llvm.objects.clear()
         context.llvm.sharedObjects.clear()
 
-        val compilationUnit = if (context.shouldContainLocationDebugInfo()) {
-            val path = declaration.fileEntry.name.toFileAndFolder()
-            DICreateCompilationUnit(
-                    builder = context.debugInfo.builder,
-                    lang = DWARF.language(context.config),
-                    File = path.file,
-                    dir = path.folder,
-                    producer = DWARF.producer,
-                    isOptimized = 0,
-                    flags = "",
-                    rv = DWARF.runtimeVersion(context.config))
-        } else null
         @Suppress("UNCHECKED_CAST")
-        using(FileScope(declaration, compilationUnit as DIScopeOpaqueRef?)) {
+        using(FileScope(declaration)) {
             declaration.acceptChildrenVoid(this)
 
             if (context.llvm.fileInitializers.isEmpty() && context.llvm.objects.isEmpty() && context.llvm.sharedObjects.isEmpty())
@@ -1768,7 +1756,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private open inner class FileScope(val file: IrFile, private val compilationUnit: DIScopeOpaqueRef? = null) : InnerScopeImpl() {
+    private open inner class FileScope(val file: IrFile) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
 
         override fun location(line: Int, column: Int) = scope()?.let { LocationInfo(it, line, column) }
@@ -1781,10 +1769,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
         override fun scope() = scope
-        fun diCompilationUnit(): DIScopeOpaqueRef? = compilationUnit ?:
-          (this.outerContext.fileScope() as? FileScope)?.diCompilationUnit() ?:
-            error("no compilation unit found")
-
     }
 
     //-------------------------------------------------------------------------//
@@ -1988,7 +1972,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     @Suppress("UNCHECKED_CAST")
     private fun diFunctionScope(name: String, linkageName: String, startLine: Int, subroutineType: DISubroutineTypeRef) = DICreateFunction(
                 builder = context.debugInfo.builder,
-                scope = (currentCodeContext.fileScope() as FileScope).diCompilationUnit(),
+                scope = context.debugInfo.compilationUnit,
                 name = name,
                 linkageName = linkageName,
                 file = file().file(),

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
@@ -33,6 +34,19 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
             val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
             context.llvmModule = llvmModule
             context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
+
+            // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
+            // clashing, which happens on linking with libraries produced from intercepting sources.
+            context.debugInfo.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
+                    builder = context.debugInfo.builder,
+                    lang = DWARF.language(context.config),
+                    File = File(context.config.outputFile).absolutePath,
+                    dir = "-",
+                    producer = DWARF.producer,
+                    isOptimized = 0,
+                    flags = "",
+                    rv = DWARF.runtimeVersion(context.config)) as DIScopeOpaqueRef?
+            else null
         }
 )
 

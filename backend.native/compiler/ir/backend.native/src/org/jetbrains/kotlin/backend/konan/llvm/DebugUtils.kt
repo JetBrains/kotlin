@@ -66,6 +66,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     val inlinedSubprograms = mutableMapOf<IrFunction, DISubprogramRef>()
     var builder: DIBuilderRef? = null
     var module: DIModuleRef? = null
+    var compilationUnit: DIScopeOpaqueRef? = null
     var objHeaderPointerType: DITypeOpaqueRef? = null
     var types = mutableMapOf<IrType, DITypeOpaqueRef>()
 
