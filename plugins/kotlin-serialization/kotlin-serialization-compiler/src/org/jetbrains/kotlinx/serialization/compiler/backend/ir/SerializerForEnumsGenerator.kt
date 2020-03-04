@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -61,7 +61,12 @@ class SerializerForEnumsGenerator(
             compilerContext.builtIns.array.getFuncDesc("get").single()
         val arrayGetSymbol = compilerContext.symbolTable.referenceFunction(arrayGet)
         val getValueByOrdinal =
-            irInvoke(getValues, arrayGetSymbol, irInvoke(irGet(loadFunc.valueParameters[0]), decode, serialDescGetter))
+            irInvoke(
+                getValues,
+                arrayGetSymbol,
+                irInvoke(irGet(loadFunc.valueParameters[0]), decode, serialDescGetter),
+                typeHint = serializableIrClass.defaultType
+            )
         +irReturn(getValueByOrdinal)
     }
 
