@@ -5,7 +5,6 @@
  */
 package com.intellij.codeInsight.daemon.impl;
 
-import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.daemon.*;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
@@ -238,8 +237,7 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
           Icon icon = gutterRenderer == null ? null : gutterRenderer.getIcon();
           GutterIconNavigationHandler<PsiElement> navigationHandler = (GutterIconNavigationHandler<PsiElement>)injectedMarker.getNavigationHandler();
           LineMarkerInfo<?> converted =
-            new LineMarkerInfo<>(injectedElement, hostRange, icon, injectedMarker.updatePass,
-                                 e -> injectedMarker.getLineMarkerTooltip(), navigationHandler,
+            new LineMarkerInfo<>(injectedElement, hostRange, icon, e -> injectedMarker.getLineMarkerTooltip(), navigationHandler,
                                  GutterIconRenderer.Alignment.RIGHT);
           consumer.consume(injectedElement, converted);
         }
@@ -260,15 +258,9 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
 
   @NotNull
   public static LineMarkerInfo<PsiElement> createMethodSeparatorLineMarker(@NotNull PsiElement startFrom, @NotNull EditorColorsManager colorsManager) {
-    LineMarkerInfo<PsiElement> info = new LineMarkerInfo<>(
-      startFrom,
-      startFrom.getTextRange(),
-      null,
-      Pass.LINE_MARKERS,
-      FunctionUtil.<Object, String>nullConstant(),
-      null,
-      GutterIconRenderer.Alignment.RIGHT
-    );
+    LineMarkerInfo<PsiElement> info = new LineMarkerInfo<>(startFrom, startFrom.getTextRange(), null,
+                                                           FunctionUtil.<Object, String>nullConstant(), null,
+                                                           GutterIconRenderer.Alignment.RIGHT);
     EditorColorsScheme scheme = colorsManager.getGlobalScheme();
     info.separatorColor = scheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR);
     info.separatorPlacement = SeparatorPlacement.TOP;
