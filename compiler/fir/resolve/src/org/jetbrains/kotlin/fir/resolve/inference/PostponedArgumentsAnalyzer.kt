@@ -138,8 +138,10 @@ class PostponedArgumentsAnalyzer(
 
         val checkerSink: CheckerSink = CheckerSinkImpl(components)
 
-        val subResolvedKtPrimitives = returnArguments.map {
-            if (it !is FirExpression) return@map
+        var hasExpressionInReturnArguments = false
+        returnArguments.forEach {
+            if (it !is FirExpression) return@forEach
+            hasExpressionInReturnArguments = true
             candidate.resolveArgumentExpression(
                 c.getBuilder(),
                 it,
@@ -150,12 +152,9 @@ class PostponedArgumentsAnalyzer(
                 isDispatch = false,
                 isSafeCall = false
             )
-//            resolveKtPrimitive(
-//                c.getBuilder(), it, lambda.returnType.let(::substitute), diagnosticHolder, isReceiver = false
-//            )
         }
 
-        if (returnArguments.isEmpty()) {
+        if (!hasExpressionInReturnArguments) {
             val lambdaReturnType = lambda.returnType.let(::substitute)
             c.getBuilder().addSubtypeConstraint(
                 lambdaReturnType,
