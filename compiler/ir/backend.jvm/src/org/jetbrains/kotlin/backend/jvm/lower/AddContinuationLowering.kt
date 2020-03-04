@@ -389,11 +389,15 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun generateContinuationClassForNamedFunction(
         irFunction: IrFunction,
         dispatchReceiverParameter: IrValueParameter?,
-        attributeContainer: IrAttributeContainer
+        attributeContainer: IrAttributeContainer,
+        capturesCrossinline: Boolean
     ): IrClass {
         return context.ir.symbols.continuationImplClass.owner
-            .createContinuationClassFor(irFunction, JvmLoweredDeclarationOrigin.CONTINUATION_CLASS, JavaVisibilities.PACKAGE_VISIBILITY)
-            .apply {
+            .createContinuationClassFor(
+                irFunction,
+                JvmLoweredDeclarationOrigin.CONTINUATION_CLASS,
+                if (capturesCrossinline) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+            ).apply {
                 copyTypeParametersFrom(irFunction)
                 val resultField = addField {
                     origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
@@ -411,7 +415,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     }
                 }
                 val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PACKAGE_VISIBILITY)
-                addConstructorForNamedFunction(capturedThisField)
+                addConstructorForNamedFunction(capturedThisField, capturesCrossinline)
                 addInvokeSuspendForNamedFunction(
                     irFunction,
                     resultField,
@@ -423,10 +427,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
     }
 
-    private fun IrClass.addConstructorForNamedFunction(capturedThisField: IrField?): IrConstructor = addConstructor {
+    private fun IrClass.addConstructorForNamedFunction(capturedThisField: IrField?, capturesCrossinline: Boolean): IrConstructor = addConstructor {
         isPrimary = true
         returnType = defaultType
-        visibility = JavaVisibilities.PACKAGE_VISIBILITY
+        visibility = if (capturesCrossinline) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
     }.also { constructor ->
         val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
         val completionParameterSymbol = constructor.addCompletionValueParameter()
@@ -586,7 +590,12 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 } else view
 
                 newFunction.body = context.createIrBuilder(newFunction.symbol).irBlockBody {
-                    +generateContinuationClassForNamedFunction(newFunction, view.dispatchReceiverParameter, function)
+                    +generateContinuationClassForNamedFunction(
+                        newFunction,
+                        view.dispatchReceiverParameter,
+                        function as IrAttributeContainer,
+                        flag.capturesCrossinline
+                    )
                     for (statement in newFunction.body!!.statements) {
                         +statement
                     }

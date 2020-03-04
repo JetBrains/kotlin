@@ -174,7 +174,7 @@ open class FunctionCodegen(
         val nativeFlag = if (irFunction.isExternal) Opcodes.ACC_NATIVE else 0
         val syntheticFlag =
             if (irFunction.origin.isSynthetic || irFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                    (irFunction.isSuspend && irFunction.visibility == Visibilities.PRIVATE && !irFunction.isInline) ||
+                    (irFunction.isSuspend && Visibilities.isPrivate(irFunction.visibility) && !irFunction.isInline) ||
                     irFunction.isReifiable()
             ) Opcodes.ACC_SYNTHETIC
             else 0
