@@ -54,9 +54,10 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
             if (TypeUtils.isNullableType(receiverTypeArgument)) return
             if (calleeExpression.text != "filterNotNull") {
                 // Also check last argument functional type to have not-null result
-                if (!resolvedCall.hasLastFunctionalParameterWithResult(context) {
-                        !TypeUtils.isNullableType(it) && it.constructor !is TypeVariableTypeConstructor
-                    }) return
+                val lastParameterMatches = resolvedCall.hasLastFunctionalParameterWithResult(context) {
+                    !TypeUtils.isNullableType(it) && it.constructor !is TypeVariableTypeConstructor
+                }
+                if (!lastParameterMatches) return
             }
         }
 
