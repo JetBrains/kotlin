@@ -49,7 +49,7 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(project(":plugins:lint"))
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("IntelliLang"))
+    testRuntime(intellijPluginDep(if (Platform[201].orHigher()) "platform-langInjection" else "IntelliLang"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("gradle"))

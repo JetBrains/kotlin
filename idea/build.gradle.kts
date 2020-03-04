@@ -110,7 +110,7 @@ dependencies {
 
     compileOnly(commonDep("org.jetbrains", "markdown"))
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    compileOnly(intellijPluginDep("IntelliLang"))
+    compileOnly(intellijPluginDep(if (Platform[201].orHigher()) "platform-langInjection" else "IntelliLang"))
     compileOnly(intellijPluginDep("copyright"))
     compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java-i18n"))
@@ -160,7 +160,7 @@ dependencies {
         testRuntime(project(it))
     }
 
-    testCompile(intellijPluginDep("IntelliLang"))
+    testCompile(intellijPluginDep(if (Platform[201].orHigher()) "platform-langInjection" else "IntelliLang"))
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
