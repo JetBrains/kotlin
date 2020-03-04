@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
@@ -94,18 +94,21 @@ class Fir2IrTypeConverter(
     }
 
     private fun getArrayType(classId: ClassId?): IrClassifierSymbol? {
-        val irType = when (classId) {
-            ClassId(FqName("kotlin"), FqName("Array"), false) -> return irBuiltIns.arrayClass
-            ClassId(FqName("kotlin"), FqName("BooleanArray"), false) -> irBuiltIns.booleanType
-            ClassId(FqName("kotlin"), FqName("ByteArray"), false) -> irBuiltIns.byteType
-            ClassId(FqName("kotlin"), FqName("CharArray"), false) -> irBuiltIns.charType
-            ClassId(FqName("kotlin"), FqName("DoubleArray"), false) -> irBuiltIns.doubleType
-            ClassId(FqName("kotlin"), FqName("FloatArray"), false) -> irBuiltIns.floatType
-            ClassId(FqName("kotlin"), FqName("IntArray"), false) -> irBuiltIns.intType
-            ClassId(FqName("kotlin"), FqName("LongArray"), false) -> irBuiltIns.longType
-            ClassId(FqName("kotlin"), FqName("ShortArray"), false) -> irBuiltIns.shortType
-            else -> null
+        if (classId == StandardClassIds.Array) {
+            return irBuiltIns.arrayClass
         }
-        return irType?.let { irBuiltIns.primitiveArrayForType.getValue(it) }
+        val primitiveId = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: return null
+        val irType = when (primitiveId) {
+            StandardClassIds.Boolean -> irBuiltIns.booleanType
+            StandardClassIds.Byte -> irBuiltIns.byteType
+            StandardClassIds.Char -> irBuiltIns.charType
+            StandardClassIds.Double -> irBuiltIns.doubleType
+            StandardClassIds.Float -> irBuiltIns.floatType
+            StandardClassIds.Int -> irBuiltIns.intType
+            StandardClassIds.Long -> irBuiltIns.longType
+            StandardClassIds.Short -> irBuiltIns.shortType
+            else -> throw AssertionError("Strange primitiveId $primitiveId from array: $classId")
+        }
+        return irBuiltIns.primitiveArrayForType.getValue(irType)
     }
 }
