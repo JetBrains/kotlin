@@ -576,6 +576,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 ((thisObjReference == null || contextDeclarationContainer.symbol.isSubtypeOfClass(thisObjReference)) &&
                         (contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer)))
         return when {
+            // private suspend functions are generated as synthetic package private
+            declaration is IrFunction && declaration.isSuspend && declaration.visibility.isPrivate && samePackage -> true
             declaration.visibility.isPrivate && symbolDeclarationContainer != contextDeclarationContainer -> false
             declaration.visibility.isProtected && !samePackage && !fromSubclassOfReceiversClass -> false
             withSuper && !fromSubclassOfReceiversClass -> false

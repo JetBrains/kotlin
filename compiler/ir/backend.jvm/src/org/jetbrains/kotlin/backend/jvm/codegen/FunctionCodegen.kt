@@ -173,7 +173,9 @@ open class FunctionCodegen(
         }
         val nativeFlag = if (irFunction.isExternal) Opcodes.ACC_NATIVE else 0
         val syntheticFlag =
-            if (irFunction.origin.isSynthetic || irFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNTHETIC
+            if (irFunction.origin.isSynthetic || irFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+                    (irFunction.isSuspend && irFunction.visibility == Visibilities.PRIVATE && !irFunction.isInline)
+            ) Opcodes.ACC_SYNTHETIC
             else 0
         val strictFpFlag = if (irFunction.hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)) Opcodes.ACC_STRICT else 0
         val synchronizedFlag = if (irFunction.hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNCHRONIZED else 0
