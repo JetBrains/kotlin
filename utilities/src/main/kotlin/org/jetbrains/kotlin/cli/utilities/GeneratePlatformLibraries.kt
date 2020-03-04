@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.DEFAULT_MODE
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_METADATA
@@ -163,6 +164,9 @@ private data class CacheInfo(val cacheDirectory: File,  val cacheKind: String,  
 
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
     override fun toString(): String = "$name: [${depends.joinToString(separator = ", ") { it.name }}]"
+
+    val libraryName: String
+        get() = "${PlatformLibsInfo.namePrefix}$name"
 }
 
 private fun createTempDir(prefix: String, parent: File): File =
@@ -214,14 +218,14 @@ private fun generateLibrary(
         logger: Logger
 ) = with(directories) {
     val defFile = inputDirectory.child("${def.name}.def")
-    val outKlib = outputDirectory.child(def.name)
+    val outKlib = outputDirectory.child(def.libraryName)
 
     if (outKlib.exists && !rebuild) {
         logger.verbose("Skip generating ${def.name} as it's already generated")
         return
     }
 
-    val tmpKlib = tmpDirectory.child(def.name)
+    val tmpKlib = tmpDirectory.child(def.libraryName)
 
     try {
         val cinteropArgs = arrayOf(
@@ -232,7 +236,7 @@ private fun generateLibrary(
                 "-repo", outputDirectory.absolutePath,
                 "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
                 "-mode", mode,
-                *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.name}") }.toTypedArray()
+                *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.libraryName}") }.toTypedArray()
         )
         logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")
         invokeInterop("native", cinteropArgs)?.let { K2Native.mainNoExit(it) }
@@ -283,7 +287,7 @@ private fun buildCache(
             "-p", cacheKind,
             "-target", target.visibleName,
             "-repo", outputDirectory.absolutePath,
-            "-Xadd-cache=${outputDirectory.absolutePath}/${def.name}",
+            "-Xadd-cache=${outputDirectory.absolutePath}/${def.libraryName}",
             "-Xcache-directory=${cacheDirectory.absolutePath}",
             *cacheArgs.toTypedArray()
     )

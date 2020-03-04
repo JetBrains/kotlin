@@ -73,15 +73,18 @@ project.rootProject.ext.platformManager.enabled.each { target ->
 
     targetDefFiles(target).each { df ->
         def libName = defFileToLibName(targetName, df.name)
+        def fileNamePrefix = PlatformLibsInfo.namePrefix
 
         konanArtifacts {
             interop (libName, targets: [targetName]) {
                 defFile df.file
-                artifactName df.name
+                artifactName "${fileNamePrefix}${df.name}"
                 noDefaultLibs true
                 noEndorsedLibs true
                 libraries {
-                    klibs df.config.depends
+                    klibs df.config.depends.collect {
+                        "${fileNamePrefix}${it}".toString()
+                    }
                 }
                 extraOpts '-Xpurge-user-libs'
                 compilerOpts "-fmodules-cache-path=${project.buildDir}/clangModulesCache"
