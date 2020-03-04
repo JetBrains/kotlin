@@ -354,7 +354,22 @@ open class ClassCodegen protected constructor(
         }
 
         val node = FunctionCodegen(method, this).generate()
-        node.accept(with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) })
+        val mv = with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
+        if (method.hasContinuation() || method.isInvokeSuspendOfLambda()) {
+            // Generate a state machine within this method. The continuation class for it should be generated
+            // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
+            val continuationClassCodegen = lazy {
+                createLocalClassCodegen(method.continuationClass()!!, method).also { it.generate() }
+            }
+            node.acceptWithStateMachine(method, this, mv) {
+                if (method.isSuspend) continuationClassCodegen.value.visitor else visitor
+            }
+            if (continuationClassCodegen.isInitialized() || method.alwaysNeedsContinuation()) {
+                continuationClassCodegen.value.done()
+            }
+        } else {
+            node.accept(mv)
+        }
         jvmSignatureClashDetector.trackMethod(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
 
         val signature = Method(node.name, node.desc)
