@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.Splitter;
@@ -43,7 +42,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
   private JCheckBox myCbUseSoftWrapsAtConsole;
   private JTextField myCommandsHistoryLimitField;
   private JCheckBox myCbOverrideConsoleCycleBufferSize;
-  private JComboBox<Charset> myEncodingComboBox;
+  private ConsoleEncodingComboBox myEncodingComboBox;
   private JTextField myConsoleCycleBufferSizeField;
   private JLabel myConsoleBufferSizeWarningLabel;
 
@@ -71,7 +70,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
           updateWarningLabel();
         }
       });
-      myEncodingComboBox = new ComboBox<>();
+      myEncodingComboBox = new ConsoleEncodingComboBox();
 
       JPanel northPanel = new JPanel(new GridBagLayout());
       GridBag gridBag = new GridBag();
@@ -165,9 +164,8 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
 
   private boolean isEncodingModified() {
     Charset defaultEncoding = EncodingManager.getInstance().getDefaultConsoleEncoding();
-    Charset consoleEncoding = (Charset)myEncodingComboBox.getSelectedItem();
-    // null - use same encoding as before
-    return consoleEncoding != null && defaultEncoding.compareTo(consoleEncoding) != 0;
+    Charset consoleEncoding = myEncodingComboBox.getSelectedCharset();
+    return defaultEncoding.compareTo(consoleEncoding) != 0;
   }
 
   @Override
@@ -197,9 +195,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       settingsManager.fireUISettingsChanged();
     }
     if (isEncodingModified()) {
-      Charset consoleEncoding = (Charset)myEncodingComboBox.getSelectedItem();
-      assert consoleEncoding != null; // checked in isEncodingModified()
-        encodingManager.setDefaultConsoleEncodingName(consoleEncoding.name());
+      encodingManager.setDefaultConsoleEncodingName(myEncodingComboBox.getSelectedCharsetName());
     }
 
     myNegativePanel.applyTo(mySettings.getNegativePatterns());
@@ -210,6 +206,7 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
   public void reset() {
     EditorSettingsExternalizable editorSettings = EditorSettingsExternalizable.getInstance();
     UISettingsState uiSettings = UISettings.getInstance().getState();
+    EncodingManager encodingManager = EncodingManager.getInstance();
 
     myCbUseSoftWrapsAtConsole.setSelected(editorSettings.isUseSoftWraps(SoftWrapAppliancePlaces.CONSOLE));
     myCommandsHistoryLimitField.setText(Integer.toString(uiSettings.getConsoleCommandHistoryLimit()));
@@ -218,22 +215,10 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
     myCbOverrideConsoleCycleBufferSize.setSelected(uiSettings.getOverrideConsoleCycleBufferSize());
     myConsoleCycleBufferSizeField.setEnabled(ConsoleBuffer.useCycleBuffer() && uiSettings.getOverrideConsoleCycleBufferSize());
     myConsoleCycleBufferSizeField.setText(Integer.toString(uiSettings.getConsoleCycleBufferSizeKb()));
-
-    resetEncoding();
+    myEncodingComboBox.reset(encodingManager.getDefaultConsoleEncodingName());
 
     myNegativePanel.resetFrom(mySettings.getNegativePatterns());
     myPositivePanel.resetFrom(mySettings.getPositivePatterns());
-  }
-
-  private void resetEncoding() {
-    EncodingManager encodingManager = EncodingManager.getInstance();
-    List<Charset> available = new ArrayList<>(Charset.availableCharsets().values());
-    List<Charset> favorites = new ArrayList<>(encodingManager.getFavorites());
-    // put favorite charsets at the beginning
-    CollectionComboBoxModel<Charset> model = new CollectionComboBoxModel<>(available);
-    model.addAll(0, favorites);
-    model.setSelectedItem(encodingManager.getDefaultConsoleEncoding());
-    myEncodingComboBox.setModel(model);
   }
 
   @Override
