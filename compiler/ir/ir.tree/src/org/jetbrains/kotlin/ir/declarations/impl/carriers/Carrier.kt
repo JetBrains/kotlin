@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl.carriers
 
-// TODO degenerify
-// TODO degenerify
-interface Carrier<in T : Carrier<T>> {
+interface Carrier {
     val lastModified: Int
 
-    fun clone(): Carrier<T>
+    fun clone(): Carrier
 }
