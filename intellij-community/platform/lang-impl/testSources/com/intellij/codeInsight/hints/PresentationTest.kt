@@ -251,7 +251,7 @@ class HeavyPresentationTest : BasePlatformTestCase() {
 
     afterUpdateInner.fireContentChanged()
 
-    assertEquals(1, listener.contentChangesCount)
+    assertEquals(2, listener.contentChangesCount) // one for update and one for fireContentChanged
   }
 
   private fun getFactory() = PresentationFactory(myFixture.editor as EditorImpl)
