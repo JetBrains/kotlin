@@ -767,8 +767,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       try {
         reference = project.getUserData(ourProjectFilesSetKey);
         data = com.intellij.reference.SoftReference.dereference(reference);
-        if (data != null && data.getModificationCount() == currentFileModCount) {
-          return data;
+        if (data != null) {
+          if (data.getModificationCount() == currentFileModCount) {
+            return data;
+          }
+        } else if (!isUpToDateCheckEnabled()) {
+          return null;
         }
 
         long start = System.currentTimeMillis();

@@ -1,12 +1,15 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.fileEditor.impl;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.UniqueNameBuilder;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,11 +19,11 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.DumbModeAccessType;
 import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.FileBasedIndexImpl;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,10 +96,9 @@ public class UniqueVFilePathBuilderImpl extends UniqueVFilePathBuilder {
       project.putUserData(key, data = CachedValuesManager.getManager(project).createCachedValue(
         () -> new CachedValueProvider.Result<>(
           new ConcurrentHashMap<>(2),
-          PsiModificationTracker.MODIFICATION_COUNT,
           DumbService.getInstance(project),
+          getFilenameIndexModificationTracker(project),
           //ProjectRootModificationTracker.getInstance(project),
-          //VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
           FileEditorManagerImpl.OPEN_FILE_SET_MODIFICATION_COUNT
         ), false));
     }
@@ -125,6 +127,11 @@ public class UniqueVFilePathBuilderImpl extends UniqueVFilePathBuilder {
     }
 
     return null;
+  }
+
+  @NotNull
+  private static ModificationTracker getFilenameIndexModificationTracker(@NotNull Project project) {
+    return () -> disableIndexUpToDateCheckInEdt(() -> FileBasedIndex.getInstance().getIndexModificationStamp(FilenameIndex.NAME, project));
   }
 
   @Nullable
@@ -167,10 +174,24 @@ public class UniqueVFilePathBuilderImpl extends UniqueVFilePathBuilder {
 
   @NotNull
   private static Collection<VirtualFile> getFilesByNameFromIndex(@NotNull String fileName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-    Ref<Collection<VirtualFile>> filesFromIndex = Ref.create();
-    FileBasedIndex.getInstance().ignoreDumbMode(() -> {
-      filesFromIndex.set(FilenameIndex.getVirtualFilesByName(project, fileName, scope));
-    }, project, DumbModeAccessType.RELIABLE_DATA_ONLY);
-    return filesFromIndex.get();
+    if (!DumbService.isDumb(project)) {
+      // get data as is
+      Collection<VirtualFile> rawDataFromIndex = disableIndexUpToDateCheckInEdt(() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
+      // filter only suitable files, we can miss some files but it's ok for presentation reasons
+      return ContainerUtil.filter(rawDataFromIndex, f -> fileName.equals(f.getName()));
+    } else {
+      Ref<Collection<VirtualFile>> filesFromIndex = Ref.create();
+      FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+        filesFromIndex.set(FilenameIndex.getVirtualFilesByName(project, fileName, scope));
+      }, project, DumbModeAccessType.RELIABLE_DATA_ONLY);
+      return filesFromIndex.get();
+    }
+  }
+
+  private static <T,E extends Throwable> T disableIndexUpToDateCheckInEdt(@NotNull ThrowableComputable<T, E> computable) throws E {
+    ApplicationManager.getApplication().assertReadAccessAllowed();
+    return ApplicationManager.getApplication().isDispatchThread()
+           ? FileBasedIndexImpl.disableUpToDateCheckIn(computable)
+           : computable.compute();
   }
 }
