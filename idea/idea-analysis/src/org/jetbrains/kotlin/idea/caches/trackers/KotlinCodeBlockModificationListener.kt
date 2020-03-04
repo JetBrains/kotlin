@@ -223,6 +223,7 @@ class KotlinCodeBlockModificationListener(
 
             val blockDeclaration =
                 KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) as? KtDeclaration ?: return null
+//                KtPsiUtil.getTopmostParentOfType<KtClassOrObject>(element) as? KtDeclaration ?: return null
 
             // should not be local declaration
             if (KtPsiUtil.isLocal(blockDeclaration))
@@ -230,6 +231,11 @@ class KotlinCodeBlockModificationListener(
 
             when (blockDeclaration) {
                 is KtNamedFunction -> {
+//                    if (blockDeclaration.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) {
+//                        topClassLikeDeclaration(blockDeclaration)?.let {
+//                            return BlockModificationScopeElement(it, it)
+//                        }
+//                    }
                     if (blockDeclaration.hasBlockBody()) {
                         // case like `fun foo(): String {...<caret>...}`
                         return blockDeclaration.bodyExpression
@@ -244,18 +250,23 @@ class KotlinCodeBlockModificationListener(
                 }
 
                 is KtProperty -> {
+//                    if (blockDeclaration.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) {
+//                        topClassLikeDeclaration(blockDeclaration)?.let {
+//                            return BlockModificationScopeElement(it, it)
+//                        }
+//                    }
                     if (blockDeclaration.typeReference != null) {
                         val accessors =
                             blockDeclaration.accessors.map { it.initializer ?: it.bodyExpression } + blockDeclaration.initializer
                         for (accessor in accessors) {
                             accessor?.takeIf {
-                                it.isAncestor(element) &&
-                                        // adding annotations to accessor is the same as change contract of property
-                                        (element !is KtAnnotated || element.annotationEntries.isEmpty())
-                            }
+                                    it.isAncestor(element) &&
+                                            // adding annotations to accessor is the same as change contract of property
+                                            (element !is KtAnnotated || element.annotationEntries.isEmpty())
+                                }
                                 ?.let { expression ->
                                     val declaration =
-                                        KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClass::class.java) as? KtElement ?:
+                                        KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClassOrObject::class.java) as? KtElement ?:
                                         // ktFile to check top level property declarations
                                         return null
                                     return BlockModificationScopeElement(declaration, expression)
@@ -277,7 +288,7 @@ class KotlinCodeBlockModificationListener(
                     blockDeclaration
                         .takeIf { it.isAncestor(element) }
                         ?.let { ktClassInitializer ->
-                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
+                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClassOrObject::class.java))?.let {
                                 return BlockModificationScopeElement(it, ktClassInitializer)
                             }
                         }
@@ -287,20 +298,18 @@ class KotlinCodeBlockModificationListener(
                     blockDeclaration
                         ?.takeIf {
                             it.bodyExpression?.isAncestor(element) ?: false || it.getDelegationCallOrNull()?.isAncestor(element) ?: false
-                        }
-                        ?.let { ktConstructor ->
-                            (PsiTreeUtil.getParentOfType(blockDeclaration, KtClass::class.java) as? KtElement)?.let {
+                        }?.let { ktConstructor ->
+                            PsiTreeUtil.getParentOfType(blockDeclaration, KtClassOrObject::class.java)?.let {
                                 return BlockModificationScopeElement(it, ktConstructor)
                             }
                         }
                 }
-
-                // TODO: still under consideration - is it worth to track changes of private properties / methods
-                // problem could be in diagnostics - it is worth to manage it with modTracker
-//                is KtClass -> {
+//                is KtClassOrObject -> {
 //                    return when (element) {
-//                        is KtProperty -> if (element.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) blockDeclaration else null
-//                        is KtNamedFunction -> if (element.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE) blockDeclaration else null
+//                        is KtProperty, is KtNamedFunction -> {
+//                            if ((element as? KtModifierListOwner)?.visibilityModifierType()?.toVisibility() == Visibilities.PRIVATE)
+//                                BlockModificationScopeElement(blockDeclaration, blockDeclaration) else null
+//                        }
 //                        else -> null
 //                    }
 //                }
