@@ -46,7 +46,7 @@ class LineMarkersUtil {
   static void setLineMarkersToEditor(@NotNull Project project,
                                      @NotNull Document document,
                                      @NotNull Segment bounds,
-                                     @NotNull Collection<? extends LineMarkerInfo<PsiElement>> markers,
+                                     @NotNull Collection<? extends LineMarkerInfo<?>> markers,
                                      int group) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
