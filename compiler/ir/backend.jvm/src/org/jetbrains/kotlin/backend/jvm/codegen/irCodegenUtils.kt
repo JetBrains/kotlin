@@ -181,6 +181,10 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
     }
 
 //    if (memberDescriptor.isEffectivelyInlineOnly()) {
+    if (this is IrFunction && isReifiable()) {
+        return Opcodes.ACC_PUBLIC
+    }
+
     if (isEffectivelyInlineOnly()) {
         return Opcodes.ACC_PRIVATE
     }
@@ -290,7 +294,7 @@ private fun IrDeclarationWithVisibility.isPrivateInlineSuspend(): Boolean =
 fun IrFunction.isInlineOnly() =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
 
-private fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
+fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
 
 // Borrowed with modifications from ImplementationBodyCodegen.java
 
