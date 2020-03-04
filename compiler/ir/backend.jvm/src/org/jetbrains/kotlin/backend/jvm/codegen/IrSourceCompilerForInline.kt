@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -24,14 +23,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -110,17 +106,8 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        // Do not inline the generated state-machine, which was generated to support java interop of inline suspend functions.
-        // Instead, find its $$forInline companion (they share the same attributeOwnerId), which is generated for the inliner to use.
-        val forInlineFunction = if (callee.isSuspend)
-            callee.parentAsClass.functions.find {
-                it.name.asString() == callee.name.asString() + FOR_INLINE_SUFFIX &&
-                        it.attributeOwnerId == (callee as IrAttributeContainer).attributeOwnerId
-            } ?: callee
-        else
-            callee
-        val classCodegen = FakeClassCodegen(forInlineFunction, codegen.classCodegen)
-        val node = FunctionCodegen(forInlineFunction, classCodegen).generate()
+        val classCodegen = FakeClassCodegen(callee, codegen.classCodegen)
+        val node = FunctionCodegen(callee, classCodegen).generate()
         node.preprocessSuspendMarkers()
         return SMAPAndMethodNode(node, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
     }
