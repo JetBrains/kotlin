@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
 
 fun compareAndMergeFirFileAndOldFrontendFile(oldFrontendTestDataFile: File, frontendIRTestDataFile: File) {
@@ -28,4 +32,9 @@ fun compareAndMergeFirFileAndOldFrontendFile(oldFrontendTestDataFile: File, fron
             sameDumps
         )
     }
+}
+
+fun loadTestDataWithoutDiagnostics(file: File): String {
+    val textWithoutDiagnostics = KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
+    return StringUtil.convertLineSeparators(textWithoutDiagnostics.trim()).trimTrailingWhitespacesAndAddNewlineAtEOF()
 }

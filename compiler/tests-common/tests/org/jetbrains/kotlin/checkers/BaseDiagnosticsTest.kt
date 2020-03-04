@@ -481,11 +481,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             )
         }
 
-        fun loadTestDataWithoutDiagnostics(file: File): String {
-            val textWithoutDiagnostics = KotlinTestUtils.doLoadFile(file).replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "")
-            return StringUtil.convertLineSeparators(textWithoutDiagnostics.trim()).trimTrailingWhitespacesAndAddNewlineAtEOF()
-        }
-
         fun isJavacSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
             val testDataFileText = wholeFile.readText()
             if (isDirectiveDefined(testDataFileText, "// JAVAC_SKIP")) {
