@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.calls
 
+import com.intellij.ide.hierarchy.CallHierarchyBrowserBase
 import com.intellij.ide.hierarchy.HierarchyBrowser
 import com.intellij.ide.hierarchy.HierarchyProvider
 import com.intellij.openapi.actionSystem.DataContext
@@ -34,6 +35,6 @@ class KotlinCallHierarchyProvider : HierarchyProvider {
     override fun createHierarchyBrowser(target: PsiElement) = KotlinCallHierarchyBrowser(target)
 
     override fun browserActivated(hierarchyBrowser: HierarchyBrowser) {
-        (hierarchyBrowser as KotlinCallHierarchyBrowser).changeView(getCallerTypeCompat())
+        (hierarchyBrowser as KotlinCallHierarchyBrowser).changeView(CallHierarchyBrowserBase.CALLER_TYPE)
     }
 }

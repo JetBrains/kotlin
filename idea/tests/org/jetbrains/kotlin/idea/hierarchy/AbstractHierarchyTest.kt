@@ -4,10 +4,7 @@
  */
 package org.jetbrains.kotlin.idea.hierarchy
 
-import com.intellij.ide.hierarchy.HierarchyProvider
-import com.intellij.ide.hierarchy.LanguageCallHierarchy
-import com.intellij.ide.hierarchy.LanguageMethodHierarchy
-import com.intellij.ide.hierarchy.LanguageTypeHierarchy
+import com.intellij.ide.hierarchy.*
 import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase
 import com.intellij.ide.hierarchy.type.SubtypesHierarchyTreeStructure
 import com.intellij.ide.hierarchy.type.SupertypesHierarchyTreeStructure
@@ -30,7 +27,9 @@ import com.intellij.util.ArrayUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinHierarchyViewTestBase
-import org.jetbrains.kotlin.idea.hierarchy.calls.*
+import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCalleeTreeStructure
+import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerTreeStructure
+import org.jetbrains.kotlin.idea.hierarchy.calls.createCallerMethodsTreeStructure
 import org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideTreeStructure
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
