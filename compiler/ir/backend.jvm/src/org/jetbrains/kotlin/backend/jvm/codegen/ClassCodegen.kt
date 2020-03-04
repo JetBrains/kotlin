@@ -355,6 +355,7 @@ open class ClassCodegen protected constructor(
         }
 
         val node = FunctionCodegen(method, this).generate()
+        node.preprocessSuspendMarkers(method)
         val mv = with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
         if (method.hasContinuation() || method.isInvokeSuspendOfLambda()) {
             // Generate a state machine within this method. The continuation class for it should be generated

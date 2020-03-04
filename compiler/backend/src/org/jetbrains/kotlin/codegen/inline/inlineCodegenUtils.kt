@@ -71,12 +71,14 @@ private const val INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall"
 private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
-private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
-private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
+const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
+const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
 private const val INLINE_MARKER_RETURNS_UNIT = 2
 private const val INLINE_MARKER_FAKE_CONTINUATION = 3
 private const val INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 4
 private const val INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 5
+private const val INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID = 6
+private const val INLINE_MARKER_AFTER_INLINE_SUSPEND_ID = 7
 
 internal fun getMethodNode(
     classData: ByteArray,
@@ -431,6 +433,14 @@ fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
 }
 
+fun addInlineSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
+    v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID else INLINE_MARKER_AFTER_INLINE_SUSPEND_ID)
+}
+
+fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean, isInline: Boolean) {
+    if (isInline) addInlineSuspendMarker(v, isStartNotEnd) else addSuspendMarker(v, isStartNotEnd)
+}
+
 fun addFakeContinuationConstructorCallMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL else INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 }
@@ -456,14 +466,16 @@ private fun InstructionAdapter.emitInlineMarker(id: Int) {
 
 internal fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)
 internal fun isAfterSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_SUSPEND_ID)
+fun isBeforeInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID)
+fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_INLINE_SUSPEND_ID)
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
 
-internal fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
+fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
-internal fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
+fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
 private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
