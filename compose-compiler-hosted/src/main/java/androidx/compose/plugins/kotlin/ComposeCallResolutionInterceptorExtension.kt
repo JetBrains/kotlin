@@ -298,7 +298,13 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
                 .scope
                 .ownerDescriptor
                 .module
-                .findClassAcrossModuleDependencies(ClassId.topLevel(ComposeFqNames.ViewComposer))
+                .findClassAcrossModuleDependencies(ClassId.topLevel(ComposeFqNames.UiComposer))
+                ?.defaultType
+            ?: context
+                .scope
+                .ownerDescriptor
+                .module
+                .findClassAcrossModuleDependencies(ClassId.topLevel(ComposeFqNames.Composer))
                 ?.defaultType
     }
 

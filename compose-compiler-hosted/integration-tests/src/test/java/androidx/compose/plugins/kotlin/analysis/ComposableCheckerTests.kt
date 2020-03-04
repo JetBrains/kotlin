@@ -339,11 +339,12 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting024() {
         check("""
             import androidx.compose.*;
+            import androidx.ui.core.setViewContent
             import android.widget.TextView;
             import android.widget.LinearLayout;
 
             fun foo(ll: LinearLayout) {
-                ll.setViewContent({ TextView(text="Hello World!") })
+                ll.setViewContent { TextView(text="Hello World!") }
             }
         """)
     }

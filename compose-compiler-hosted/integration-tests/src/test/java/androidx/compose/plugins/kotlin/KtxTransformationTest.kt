@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin
 
 import org.junit.Before
+import org.junit.Ignore
 
 class KtxTransformationTest : AbstractCodegenTest() {
 
@@ -703,9 +704,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testKtxEmittable() = ensureSetup { testCompile(
+    fun testKtxEmittable() = ensureSetup { testCompileEmittable(
         """
-        import androidx.compose.*
 
         open class MockEmittable: Emittable {
           override fun emitInsertAt(index: Int, instance: Emittable) {}
@@ -718,18 +718,17 @@ class KtxTransformationTest : AbstractCodegenTest() {
         }
 
         class Comp {
-          @Composable
-            operator fun invoke() {
-            MyEmittable(a=2)
-          }
+            @Composable
+            fun Example() {
+                MyEmittable(a=2)
+            }
         }
         """
     ) }
 
-    fun testKtxCompoundEmittable() = ensureSetup { testCompile(
+    @Ignore("b/150394471")
+    fun xtestKtxCompoundEmittable() = ensureSetup { testCompileEmittable(
         """
-        import androidx.compose.*
-
         open class MockEmittable: Emittable {
           override fun emitInsertAt(index: Int, instance: Emittable) {}
           override fun emitRemoveAt(index: Int, count: Int) {}
@@ -740,16 +739,13 @@ class KtxTransformationTest : AbstractCodegenTest() {
           var a: Int = 1
         }
 
-        class Comp {
-          @Composable
-            operator fun invoke() {
+        @Composable fun Test() {
             MyEmittable(a=1) {
-              MyEmittable(a=2)
-              MyEmittable(a=3)
-              MyEmittable(a=4)
-              MyEmittable(a=5)
+                MyEmittable(a=2)
+                MyEmittable(a=3)
+                MyEmittable(a=4)
+                MyEmittable(a=5)
             }
-          }
         }
         """
     ) }
