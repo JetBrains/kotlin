@@ -7,18 +7,33 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 
-object Yarn : NpmApi {
+class Yarn : NpmApi {
+    private val yarnWorkspaces = YarnWorkspaces()
+    private val yarnSimple = YarnSimple()
+
     private fun getDelegate(project: Project): NpmApi =
-        if (project.yarn.useWorkspaces) YarnWorkspaces
-        else YarnSimple
+        if (project.yarn.useWorkspaces) yarnWorkspaces
+        else yarnSimple
 
     override fun setup(project: Project) =
         getDelegate(project.rootProject).setup(project)
 
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) =
         getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
+
+    override fun resolveDependency(
+        npmResolution: KotlinCompilationNpmResolution,
+        dependency: NpmDependency,
+        transitive: Boolean
+    ) = getDelegate(npmResolution.project)
+        .resolveDependency(
+            npmResolution,
+            dependency,
+            transitive
+        )
 
     override fun resolveRootProject(
         rootProject: Project,

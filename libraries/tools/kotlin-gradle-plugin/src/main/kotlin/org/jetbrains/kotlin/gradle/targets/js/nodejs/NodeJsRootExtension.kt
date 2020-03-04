@@ -27,7 +27,7 @@ open class NodeJsRootExtension(val rootProject: Project) {
 
     var nodeCommand = "node"
 
-    var packageManager: NpmApi = Yarn
+    var packageManager: NpmApi = Yarn()
 
     private val projectProperties = PropertiesProvider(rootProject)
 
