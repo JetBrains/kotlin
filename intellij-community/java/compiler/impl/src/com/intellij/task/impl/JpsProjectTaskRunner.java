@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -373,6 +374,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
   private static class MyCompileStatusNotification implements CompileStatusNotification {
 
     private final MyNotificationCollector myCollector;
+    private final AtomicBoolean finished = new AtomicBoolean();
 
     private MyCompileStatusNotification(@NotNull MyNotificationCollector collector) {
       myCollector = collector;
@@ -381,7 +383,12 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
 
     @Override
     public void finished(boolean aborted, int errors, int warnings, @NotNull CompileContext compileContext) {
-      myCollector.appendJpsBuildResult(aborted, errors, warnings, compileContext, this);
+      if (!finished.compareAndSet(false, true)) {
+        myCollector.appendJpsBuildResult(aborted, errors, warnings, compileContext, this);
+      } else {
+        // can be invoked by CompileDriver for rerun action
+        LOG.debug("Multiple invocation of the same CompileStatusNotification.");
+      }
     }
   }
 
