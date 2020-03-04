@@ -9,11 +9,9 @@ FILE fqName:<root> fileName:/values.kt
     ENUM_ENTRY name:A
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Enum'
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Enum) returnType:kotlin.Array<<root>.Enum>
-      $this: VALUE_PARAMETER name:<this> type:<root>.Enum
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Enum>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.Enum, value:kotlin.String) returnType:<root>.Enum
-      $this: VALUE_PARAMETER name:<this> type:<root>.Enum
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Enum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

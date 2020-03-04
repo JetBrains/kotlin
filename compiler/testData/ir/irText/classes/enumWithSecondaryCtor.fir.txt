@@ -31,11 +31,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
           x: CONST Int type=kotlin.Int value=0
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Test0) returnType:kotlin.Array<<root>.Test0>
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test0
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test0>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.Test0, value:kotlin.String) returnType:<root>.Test0
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test0
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test0
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -114,11 +112,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
           x: CONST Int type=kotlin.Int value=0
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Array<<root>.Test1>
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test1>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.Test1, value:kotlin.String) returnType:<root>.Test1
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test1
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -209,11 +205,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           x: CONST Int type=kotlin.Int value=0
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<<root>.Test2>
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test2>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.Test2, value:kotlin.String) returnType:<root>.Test2
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test2
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

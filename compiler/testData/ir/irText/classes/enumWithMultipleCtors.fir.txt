@@ -122,11 +122,9 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
               $this: CALL 'public final fun <get-prop3> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Array<<root>.A>
-      $this: VALUE_PARAMETER name:<this> type:<root>.A
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.A>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.String) returnType:<root>.A
-      $this: VALUE_PARAMETER name:<this> type:<root>.A
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.A
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

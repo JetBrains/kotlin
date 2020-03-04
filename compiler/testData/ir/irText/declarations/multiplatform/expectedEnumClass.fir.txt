@@ -12,11 +12,9 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
     ENUM_ENTRY name:BAR
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.MyEnum>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.MyEnum, value:kotlin.String) returnType:<root>.MyEnum
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.MyEnum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -69,11 +67,9 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
     ENUM_ENTRY name:BAZ
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.MyEnum>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.MyEnum, value:kotlin.String) returnType:<root>.MyEnum
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.MyEnum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

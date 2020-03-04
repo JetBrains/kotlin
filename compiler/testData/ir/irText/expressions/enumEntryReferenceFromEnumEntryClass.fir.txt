@@ -96,11 +96,9 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
               RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <root>.MyEnum.Z.anObject.<no name provided> declared in <root>.MyEnum.Z'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.MyEnum.Z.anObject.<no name provided> visibility:private [final]' type=<root>.MyEnum.Z.anObject.<no name provided> origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-anObject>' type=<root>.MyEnum.Z origin=null
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.MyEnum) returnType:kotlin.Array<<root>.MyEnum>
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.MyEnum>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.MyEnum, value:kotlin.String) returnType:<root>.MyEnum
-      $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.MyEnum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

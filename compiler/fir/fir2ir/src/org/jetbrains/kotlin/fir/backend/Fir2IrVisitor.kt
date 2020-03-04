@@ -36,9 +36,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -169,30 +167,8 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun IrFunction.addDispatchReceiverParameter(containingClass: IrClass) {
-        val thisOrigin = IrDeclarationOrigin.DEFINED
-        val thisType = containingClass.thisReceiver!!.type
-        val descriptor = WrappedValueParameterDescriptor()
-        dispatchReceiverParameter = symbolTable.declareValueParameter(
-            startOffset, endOffset, thisOrigin, descriptor,
-            thisType
-        ) { symbol ->
-            conversionScope.applyParentFromStackTo(
-                IrValueParameterImpl(
-                    startOffset, endOffset, thisOrigin, symbol,
-                    Name.special("<this>"), -1, thisType,
-                    varargElementType = null, isCrossinline = false, isNoinline = false
-                )
-            )
-        }.also { descriptor.bind(it) }
-    }
-
     private fun <T : IrFunction> T.setFunctionContent(descriptor: FunctionDescriptor, firFunction: FirFunction<*>?): T {
         conversionScope.withParent(this) {
-            val containingClass = conversionScope.lastClass()
-            if (firFunction !is FirConstructor && firFunction !is FirAnonymousFunction && containingClass != null) {
-                addDispatchReceiverParameter(containingClass)
-            }
             if (firFunction != null) {
                 for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter)

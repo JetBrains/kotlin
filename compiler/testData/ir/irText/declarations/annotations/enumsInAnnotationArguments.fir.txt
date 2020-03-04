@@ -18,11 +18,9 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
     ENUM_ENTRY name:D
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.En'
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.En) returnType:kotlin.Array<<root>.En>
-      $this: VALUE_PARAMETER name:<this> type:<root>.En
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.En>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.En, value:kotlin.String) returnType:<root>.En
-      $this: VALUE_PARAMETER name:<this> type:<root>.En
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.En
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

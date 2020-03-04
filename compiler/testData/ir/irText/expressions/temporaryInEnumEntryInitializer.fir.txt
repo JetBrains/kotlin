@@ -38,11 +38,9 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
               x: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String? origin=null
                 $this: CALL 'public final fun <get-n> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=GET_PROPERTY
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.En]'
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.En) returnType:kotlin.Array<<root>.En>
-      $this: VALUE_PARAMETER name:<this> type:<root>.En
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.En>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.En, value:kotlin.String) returnType:<root>.En
-      $this: VALUE_PARAMETER name:<this> type:<root>.En
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.En
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]

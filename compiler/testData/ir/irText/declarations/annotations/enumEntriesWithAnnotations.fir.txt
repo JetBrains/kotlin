@@ -67,11 +67,9 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
               RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum.ENTRY2'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.TestEnum.ENTRY2 declared in <root>.TestEnum.ENTRY2.<get-x>' type=<root>.TestEnum.ENTRY2 origin=null
-    FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestEnum) returnType:kotlin.Array<<root>.TestEnum>
-      $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum
+    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum>
       BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.TestEnum, value:kotlin.String) returnType:<root>.TestEnum
-      $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum
+    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
