@@ -280,8 +280,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 environment = this@AbstractDiagnosticsTest.environment
             }
         }
-        FileUtil.copy(testDataFile, firTestDataFile)
-        testRunner.analyzeAndCheckUnhandled(firTestDataFile, files)
+        if (testDataFile.readText().contains("// FIR_IDENTICAL")) {
+            testRunner.analyzeAndCheckUnhandled(testDataFile, files)
+        } else {
+            FileUtil.copy(testDataFile, firTestDataFile)
+            testRunner.analyzeAndCheckUnhandled(firTestDataFile, files)
+        }
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
