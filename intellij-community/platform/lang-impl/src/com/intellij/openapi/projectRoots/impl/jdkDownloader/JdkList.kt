@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -37,24 +37,7 @@ data class JdkProduct(
   val vendor: String,
   val product: String?,
   val flavour: String?
-) : Comparable<JdkProduct> {
-
-  private fun String?.compareToIgnoreCase(other: String?): Int {
-    if (this == other) return 0
-    if (this == null && other != null) return -1
-    if (this != null && other == null) return 1
-    if (this != null && other != null) return this.compareTo(other, ignoreCase = true)
-    return 0
-  }
-
-  override fun compareTo(other: JdkProduct): Int {
-    var cmp = this.vendor.compareToIgnoreCase(other.vendor)
-    if (cmp != 0) return cmp
-    cmp = this.product.compareToIgnoreCase(other.product)
-    if (cmp != 0) return cmp
-    return this.flavour.compareToIgnoreCase(other.flavour)
-  }
-
+) {
   val packagePresentationText: String
     get() = buildString {
       append(vendor)
@@ -100,7 +83,7 @@ data class JdkItem(
   val installFolderName: String,
 
   val sharedIndexAliases: List<String>
-) : Comparable<JdkItem> {
+) {
 
   val vendorPrefix
     get() = suggestedSdkName.split("-").dropLast(1).joinToString("-")
@@ -129,14 +112,6 @@ data class JdkItem(
    */
   val versionString
     get() = JavaVersion.tryParse(jdkVersion)?.let(JdkVersionDetector::formatVersionString) ?: jdkVersion
-
-  override fun compareTo(other: JdkItem): Int {
-    var cmp = this.jdkMajorVersion.compareTo(other.jdkMajorVersion)
-    if (cmp != 0) return -cmp
-    cmp = VersionComparatorUtil.compare(this.jdkVersion, other.jdkVersion)
-    if (cmp != 0) return -cmp
-    return VersionComparatorUtil.compare(this.jdkVendorVersion, other.jdkVendorVersion)
-  }
 
   val versionPresentationText: String
     get() = jdkVersion
