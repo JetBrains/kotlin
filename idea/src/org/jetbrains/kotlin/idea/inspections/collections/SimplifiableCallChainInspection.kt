@@ -40,10 +40,12 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                         }
                     ) return@check false
                 }
-                if (!conversion.enableSuspendFunctionCall && firstResolvedCall.call.callElement.anyDescendantOfType<KtCallExpression> {
+                if (!conversion.enableSuspendFunctionCall) {
+                    val isCallingSuspendFunction = firstResolvedCall.call.callElement.anyDescendantOfType<KtCallExpression> {
                         it.getResolvedCall(context)?.resultingDescriptor?.isSuspend == true
                     }
-                ) return@check false
+                    if (isCallingSuspendFunction) return@check false
+                }
                 true
             } ?: return
 
