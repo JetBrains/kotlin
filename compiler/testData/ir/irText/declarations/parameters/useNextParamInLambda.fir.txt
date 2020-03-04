@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
     BLOCK_BODY
       VAR name:result type:kotlin.String [var]
         CONST String type=kotlin.String value="fail"
-      TRY type=kotlin.String
+      TRY type=kotlin.Any
         try: CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
         CATCH parameter=val e: java.lang.Exception [val] declared in <root>.box
           VAR name:e type:java.lang.Exception [val]

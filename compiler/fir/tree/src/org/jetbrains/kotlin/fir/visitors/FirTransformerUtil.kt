@@ -34,3 +34,13 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
     }
 }
 
+inline fun <T : FirElement, D : Any> MutableList<T>.transformInplace(transformer: FirTransformer<D>, dataProducer: (Int) -> D?) {
+    val iterator = this.listIterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        val next = iterator.next() as FirPureAbstractElement
+        val data = dataProducer(index++) ?: continue
+        val result = next.transform<T, D>(transformer, data).single
+        iterator.set(result)
+    }
+}

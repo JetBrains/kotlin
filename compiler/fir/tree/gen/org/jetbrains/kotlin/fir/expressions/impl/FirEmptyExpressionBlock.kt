@@ -30,6 +30,15 @@ class FirEmptyExpressionBlock : FirBlock() {
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
+        transformOtherChildren(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
         typeRef = typeRef.transformSingle(transformer, data)
         return this
     }

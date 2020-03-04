@@ -24,7 +24,7 @@ FILE: loops.kt
     }
     public final fun testWhileTrue(): R|kotlin/Unit| {
         while(Boolean(true)) {
-            Int(1)
+            IntegerLiteral(1)
         }
 
         Int(1)
@@ -43,14 +43,14 @@ FILE: loops.kt
     }
     public final fun testWhileFalse(): R|kotlin/Unit| {
         while(Boolean(false)) {
-            Int(1)
+            IntegerLiteral(1)
         }
 
         Int(1)
     }
     public final fun testDoWhileTrue(): R|kotlin/Unit| {
         do {
-            Int(1)
+            IntegerLiteral(1)
         }
         while(Boolean(true))
         Int(1)
@@ -69,7 +69,7 @@ FILE: loops.kt
     }
     public final fun testDoWhileFalse(): R|kotlin/Unit| {
         do {
-            Int(1)
+            IntegerLiteral(1)
         }
         while(Boolean(false))
         Int(1)

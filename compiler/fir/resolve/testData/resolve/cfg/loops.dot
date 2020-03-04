@@ -183,7 +183,7 @@ digraph loops_kt {
                 subgraph cluster_19 {
                     color=blue
                     63 [label="Enter block"];
-                    64 [label="Const: Int(1)"];
+                    64 [label="Const: IntegerLiteral(1)"];
                     65 [label="Exit block"];
                 }
                 66 [label="Exit loop block"];
@@ -301,7 +301,7 @@ digraph loops_kt {
                 subgraph cluster_32 {
                     color=blue
                     100 [label="Enter block" style="filled" fillcolor=gray];
-                    101 [label="Const: Int(1)" style="filled" fillcolor=gray];
+                    101 [label="Const: IntegerLiteral(1)" style="filled" fillcolor=gray];
                     102 [label="Exit block" style="filled" fillcolor=gray];
                 }
                 103 [label="Exit loop block" style="filled" fillcolor=gray];
@@ -338,7 +338,7 @@ digraph loops_kt {
                 subgraph cluster_36 {
                     color=blue
                     110 [label="Enter block"];
-                    111 [label="Const: Int(1)"];
+                    111 [label="Const: IntegerLiteral(1)"];
                     112 [label="Exit block"];
                 }
                 113 [label="Exit loop block"];
@@ -456,7 +456,7 @@ digraph loops_kt {
                 subgraph cluster_49 {
                     color=blue
                     147 [label="Enter block"];
-                    148 [label="Const: Int(1)"];
+                    148 [label="Const: IntegerLiteral(1)"];
                     149 [label="Exit block"];
                 }
                 150 [label="Exit loop block"];

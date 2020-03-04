@@ -23,4 +23,8 @@ abstract class FirBlock : FirExpression() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlock
+
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlock
 }

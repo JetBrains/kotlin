@@ -183,11 +183,15 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         dataFlowAnalyzer.enterBlock(block)
-        @Suppress("NAME_SHADOWING")
-        val block = block.transformChildren(transformer, data) as FirBlock
-        val statement = block.statements.lastOrNull()
+        val numberOfStatements = block.statements.size
 
-        val resultExpression = when (statement) {
+        block.transformStatementsIndexed(transformer) { index ->
+            if (index == numberOfStatements - 1) data else ResolutionMode.ContextIndependent
+        }
+        block.transformAllStatementsExceptLast(integerLiteralTypeApproximator, builtinTypes.intType.type)
+        block.transformOtherChildren(transformer, data)
+
+        val resultExpression = when (val statement = block.statements.lastOrNull()) {
             is FirReturnExpression -> statement.result
             is FirExpression -> statement
             else -> null

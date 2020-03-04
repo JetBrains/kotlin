@@ -110,8 +110,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         block.configure {
-            +fieldList(statement)
+            +fieldList(statement).withTransform()
             +typeRefField
+            needTransformOtherChildren()
         }
 
         binaryLogicExpression.configure {
