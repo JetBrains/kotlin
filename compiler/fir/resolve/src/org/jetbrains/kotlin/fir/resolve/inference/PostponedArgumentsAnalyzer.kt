@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
-    val returnArguments: List<FirStatement>,
+    val returnArguments: Collection<FirStatement>,
     val inferenceSession: FirInferenceSession?
 )
 

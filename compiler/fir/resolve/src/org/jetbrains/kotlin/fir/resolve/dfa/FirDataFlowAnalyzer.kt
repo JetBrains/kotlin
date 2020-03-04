@@ -103,7 +103,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return result.takeIf { it.isNotEmpty() }
     }
 
-    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): List<FirStatement> {
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
         return graphBuilder.returnExpressionsOfAnonymousFunction(function)
     }
 

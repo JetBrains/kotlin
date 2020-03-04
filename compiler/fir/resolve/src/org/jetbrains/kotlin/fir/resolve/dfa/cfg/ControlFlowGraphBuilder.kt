@@ -161,7 +161,7 @@ class ControlFlowGraphBuilder {
         return exitNode to graph
     }
 
-    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): List<FirStatement> {
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
         fun FirElement.extractArgument(): FirElement = when {
             this is FirReturnExpression && target.labeledElement.symbol == function.symbol -> result.extractArgument()
             else -> this
@@ -175,7 +175,7 @@ class ControlFlowGraphBuilder {
         }
 
         val exitNode = function.controlFlowGraphReference.controlFlowGraph?.exitNode ?: exitsOfAnonymousFunctions.getValue(function)
-        return exitNode.previousNodes.mapNotNull {
+        return exitNode.previousNodes.mapNotNullTo(mutableSetOf()) {
             it.extractArgument() as FirStatement?
         }
     }

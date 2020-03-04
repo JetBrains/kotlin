@@ -212,7 +212,7 @@ class ResolvedLambdaAtom(
     val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
 ) : PostponedResolvedAtomMarker {
     override var analyzed: Boolean = false
-    lateinit var returnStatements: List<FirStatement>
+    lateinit var returnStatements: Collection<FirStatement>
 
 //    lateinit var resultArguments: List<KotlinCallArgument>
 //        private set
