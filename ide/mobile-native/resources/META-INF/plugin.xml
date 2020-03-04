@@ -31,7 +31,7 @@
     <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mobile.execution.MobileBeforeRunTaskProvider"/>
-    <projectTaskRunner implementation="com.jetbrains.mobile.execution.MobileProjectTaskRunner" order="first"/>
+    <projectTaskRunner implementation="com.jetbrains.mobile.execution.MobileProjectTaskRunner" order="first, before gradle.mpp"/>
 
     <applicationService serviceImplementation="com.jetbrains.mobile.execution.testing.AppleXCTestLocator"
                         serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
