@@ -15,7 +15,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
@@ -25,7 +24,6 @@ import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PairFunction;
 import com.intellij.util.containers.JBIterable;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -152,29 +150,5 @@ public abstract class TemplateLanguageStructureViewBuilder extends TreeBasedStru
   }
 
   @Nullable
-  protected TreeBasedStructureViewBuilder createMainBuilder(@NotNull PsiFile psi) {
-    StructureViewComposite.StructureViewDescriptor descriptor = createMainView(null, psi);
-    if (descriptor == null) return null;
-    return new TreeBasedStructureViewBuilder() {
-      @NotNull
-      @Override
-      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-        Disposer.register(descriptor.structureModel, descriptor.structureView);
-        return descriptor.structureModel;
-      }
-
-      @NotNull
-      @Override
-      public StructureView createStructureView(FileEditor fileEditor, @NotNull Project project) {
-        return descriptor.structureView;
-      }
-    };
-  }
-
-  /** @deprecated override {@link #createMainBuilder(PsiFile)} instead */
-  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
-  @Deprecated
-  protected StructureViewComposite.StructureViewDescriptor createMainView(FileEditor fileEditor, PsiFile mainFile) {
-    throw new AssertionError();
-  }
+  protected abstract TreeBasedStructureViewBuilder createMainBuilder(@NotNull PsiFile psi);
 }
