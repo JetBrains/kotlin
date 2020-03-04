@@ -885,7 +885,7 @@ internal object Devirtualization {
                 val callee = receiverType.calleeAt(virtualCall.virtualCall)
 
                 doCall(virtualCall.caller, callee, virtualCall.arguments,
-                       virtualCall.virtualCall.returnType.resolved()).addEdge(virtualCall.returnsNode)
+                       callee.returnParameter.type.resolved()).addEdge(virtualCall.returnsNode)
             }
 
             private fun checkSupertypes(type: DataFlowIR.Type.Declared,
@@ -934,6 +934,12 @@ internal object Devirtualization {
                 return castNode
             }
 
+            private fun castIfNeeded(function: Function, node: Node,
+                                     nodeType: DataFlowIR.Type.Declared, type: DataFlowIR.Type.Declared) =
+                    if (!useTypes || type == nodeType)
+                        node
+                    else doCast(function, node, type)
+
             private fun edgeToConstraintNode(function: Function,
                                              edge: DataFlowIR.Edge): Node {
                 val result = dfgNodeToConstraintNode(function, edge.node)
@@ -949,10 +955,7 @@ internal object Devirtualization {
                 callee.parameters.forEachIndexed { index, parameter ->
                     arguments[index].addEdge(parameter)
                 }
-                return if (!useTypes || returnType == callee.symbol.returnParameter.type.resolved())
-                    callee.returns
-                else
-                    doCast(caller, callee.returns, returnType)
+                return castIfNeeded(caller, callee.returns, callee.symbol.returnParameter.type.resolved(), returnType)
             }
 
             fun doCall(caller: Function, callee: DataFlowIR.FunctionSymbol,
@@ -1092,7 +1095,7 @@ internal object Devirtualization {
                                         ConstraintGraphVirtualCall(function, node, arguments, returnsNode))
                             forEachBitInBoth(typeHierarchy.inheritorsOf(receiverType), instantiatingClasses) {
                                 val actualCallee = allTypes[it].calleeAt(node)
-                                doCall(actualCallee, arguments, returnType).addEdge(returnsNode)
+                                doCall(actualCallee, arguments, actualCallee.returnParameter.type.resolved()).addEdge(returnsNode)
                             }
                             // Add cast to [Virtual] edge from receiver to returns, if return type is not final.
                             // With this we're reflecting the fact that unknown function can return anything.
@@ -1103,7 +1106,7 @@ internal object Devirtualization {
                             receiverNode.addCastEdge(Node.CastEdge(function.throws, virtualTypeFilter))
 
                             constraintGraph.virtualCallSiteReceivers[node] = receiverNode
-                            returnsNode
+                            castIfNeeded(function, returnsNode, node.callee.returnParameter.type.resolved(), returnType)
                         }
 
                         is DataFlowIR.Node.Singleton -> {
