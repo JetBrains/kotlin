@@ -52,7 +52,7 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
     })
 
     private class ReplaceWithKotlinAnalogFunction(private val replacement: Replacement) : LocalQuickFix {
-        override fun getName() = "${KotlinBundle.message("replace.with.kotlin.analog.function.text")}${replacement.kotlinFunctionShortName}"
+        override fun getName() = KotlinBundle.message("replace.with.kotlin.analog.function.text", replacement.kotlinFunctionShortName)
 
         override fun getFamilyName() = KotlinBundle.message("replace.with.kotlin.analog.function.family.name")
 
