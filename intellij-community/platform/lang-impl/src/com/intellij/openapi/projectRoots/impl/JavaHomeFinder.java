@@ -6,7 +6,6 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.lang.JavaVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +31,7 @@ public abstract class JavaHomeFinder {
    */
   @NotNull
   public static List<String> suggestHomePaths(boolean forceEmbeddedJava) {
-    JavaHomeFinderBase javaFinder = getFinder(forceEmbeddedJava);
+    JavaHomeFinderBasic javaFinder = getFinder(forceEmbeddedJava);
     if (javaFinder == null) return Collections.emptyList();
 
     Collection<String> foundPaths = javaFinder.findExistingJdks();
@@ -41,26 +40,25 @@ public abstract class JavaHomeFinder {
     return paths;
   }
 
-  @Nullable
-  private static JavaHomeFinderBase getFinder(boolean forceEmbeddedJava) {
+  private static JavaHomeFinderBasic getFinder(boolean forceEmbeddedJava) {
     boolean detectorIsEnabled = forceEmbeddedJava || Registry.is("java.detector.enabled", true);
     if (!detectorIsEnabled) {
       return null;
     }
 
     if (SystemInfo.isWindows) {
-      return new JavaHomeFinderWindows();
+      return new JavaHomeFinderWindows(forceEmbeddedJava);
     }
     if (SystemInfo.isMac) {
       return new JavaHomeFinderMac(forceEmbeddedJava);
     }
     if (SystemInfo.isLinux) {
-      return new JavaHomeFinderSimple(forceEmbeddedJava, "/usr/java", "/opt/java", "/usr/lib/jvm");
+      return new JavaHomeFinderBasic(forceEmbeddedJava, "/usr/java", "/opt/java", "/usr/lib/jvm");
     }
     if (SystemInfo.isSolaris) {
-      return new JavaHomeFinderSimple(forceEmbeddedJava, "/usr/jdk");
+      return new JavaHomeFinderBasic(forceEmbeddedJava, "/usr/jdk");
     }
 
-    return new JavaHomeFinderSimple(forceEmbeddedJava);
+    return new JavaHomeFinderBasic(forceEmbeddedJava);
   }
 }

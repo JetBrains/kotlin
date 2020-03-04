@@ -4,56 +4,45 @@ package com.intellij.openapi.projectRoots.impl;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-class JavaHomeFinderMac extends JavaHomeFinderSimple {
+class JavaHomeFinderMac extends JavaHomeFinderBasic {
   public static final String JAVA_HOME_FIND_UTIL = "/usr/libexec/java_home";
 
   JavaHomeFinderMac(boolean forceEmbeddedJava) {
-    super(forceEmbeddedJava, "/Library/Java/JavaVirtualMachines", "/System/Library/Java/JavaVirtualMachines");
-  }
+    super(forceEmbeddedJava,
+          "/Library/Java/JavaVirtualMachines",
+          "/System/Library/Java/JavaVirtualMachines",
+          FileUtil.expandUserHome("~/Library/Java/JavaVirtualMachines")
+    );
 
-  @Override
-  public @NotNull Set<String> findExistingJdksImpl() {
-    Set<String> set = super.findExistingJdksImpl();
-    String defaultJavaHome = getSystemDefaultJavaHome();
-    if (defaultJavaHome == null) return set;
-    set.add(defaultJavaHome);
-    return set;
+    registerFinder(() -> scanAll(getSystemDefaultJavaHome(), false));
   }
 
   @Nullable
-  private static String getSystemDefaultJavaHome() {
+  private static File getSystemDefaultJavaHome() {
     String homePath = null;
     if (SystemInfo.isMacOSLeopard) {
       // since version 10.5
-      if (canExecute(JAVA_HOME_FIND_UTIL)) homePath = ExecUtil.execAndReadLine(new GeneralCommandLine(JAVA_HOME_FIND_UTIL));
+      if (new File(JAVA_HOME_FIND_UTIL).canExecute()) {
+        homePath = ExecUtil.execAndReadLine(new GeneralCommandLine(JAVA_HOME_FIND_UTIL));
+      }
     }
     else {
       // before version 10.5
       homePath = "/Library/Java/Home";
     }
 
-    return isDirectory(homePath) ? homePath : null;
-  }
+    if (homePath != null) {
+      return new File(homePath);
+    }
 
-  private static boolean canExecute(@Nullable String filePath) {
-    if (filePath == null) return false;
-    File file = new File(filePath);
-    return file.canExecute();
-  }
-
-  private static boolean isDirectory(@Nullable String path) {
-    if (path == null) return false;
-    File dir = new File(path);
-    return dir.isDirectory();
+    return null;
   }
 
   @NotNull
