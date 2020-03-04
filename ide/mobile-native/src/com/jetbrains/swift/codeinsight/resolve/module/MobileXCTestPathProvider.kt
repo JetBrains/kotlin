@@ -12,7 +12,7 @@ class MobileXCTestPathProvider : SwiftCustomIncludePathProvider {
     override fun getCustomLibrarySearchPaths(configuration: OCResolveConfiguration): List<String> =
         if (Xcode.isInstalled())
             listOf(
-                Xcode.getSubFilePath("Platforms/MacOSX.platform/Developer/Library/Frameworks")
+                Xcode.getSubFilePath("Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks")
             )
         else emptyList()
 }
