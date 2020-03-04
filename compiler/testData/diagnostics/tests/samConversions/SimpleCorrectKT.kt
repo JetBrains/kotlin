@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
 // FILE: Runnable.java
 public interface Runnable {

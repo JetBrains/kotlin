@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class BaseMulti<out A, B>
 class SomeMultiDerived<out D>: BaseMulti<D, Any>()
 

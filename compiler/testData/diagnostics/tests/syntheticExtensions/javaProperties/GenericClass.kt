@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<String>) {
     javaClass.something += "x"

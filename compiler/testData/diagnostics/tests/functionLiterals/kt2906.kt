@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-2906 If function parameter/variable is invoked in closure using parenthesis syntax, in IDEA it is not highlighted as captured in closure
 
 package bug

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Bar.java
 
 public class Bar {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 interface Aaa<T> {
   fun zzz(value: T): Unit

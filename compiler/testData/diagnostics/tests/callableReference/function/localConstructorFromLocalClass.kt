@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KFunction0
 
 fun main() {

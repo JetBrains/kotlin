@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 @missing.Ann(x = "")
 public class A {

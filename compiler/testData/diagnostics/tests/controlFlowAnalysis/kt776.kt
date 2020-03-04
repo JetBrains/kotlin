@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-776 Wrong detection of unreachable code
 
 package kt776

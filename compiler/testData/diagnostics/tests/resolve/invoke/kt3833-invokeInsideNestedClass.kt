@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-3833 Invoke method not working inside companion object?
 package m
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-575 Cannot ++ a companion object member
 
 package kt575

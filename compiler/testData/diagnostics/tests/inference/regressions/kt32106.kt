@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Query<out T : Any> private constructor(
     private val result: T?,
     private val error: Throwable?,

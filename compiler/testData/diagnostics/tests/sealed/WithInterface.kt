@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Parent
 interface Child : Parent
 

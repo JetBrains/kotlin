@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public interface Collector<T, R>
 
 class A<out T> {

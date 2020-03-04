@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-7753 false positive: enum constructor can be called from secondary constructor
 enum class A(val c: Int) {
     ONE(1),

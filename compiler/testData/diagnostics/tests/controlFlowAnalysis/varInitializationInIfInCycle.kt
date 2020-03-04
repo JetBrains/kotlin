@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo(numbers: Collection<Int>) {
     for (i in numbers) {
         val b: Boolean

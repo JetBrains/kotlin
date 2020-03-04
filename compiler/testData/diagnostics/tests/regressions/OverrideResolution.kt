@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun box(c : C) {
     val a : C = c
     a.foo()

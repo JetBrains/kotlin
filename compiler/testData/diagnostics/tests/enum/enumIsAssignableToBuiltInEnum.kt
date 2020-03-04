@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.lang.annotation.RetentionPolicy
 
 enum class E {

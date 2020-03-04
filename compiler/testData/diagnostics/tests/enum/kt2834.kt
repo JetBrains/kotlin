@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 private enum class MethodKind {
     INSTANCE,
     STATIC

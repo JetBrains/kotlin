@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface My
 
 internal class Your: My

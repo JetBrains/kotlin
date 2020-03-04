@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Hello.kt
 private class Hello()
 {

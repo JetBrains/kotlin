@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun String?.foo(): String {
     return this ?: ""
 }

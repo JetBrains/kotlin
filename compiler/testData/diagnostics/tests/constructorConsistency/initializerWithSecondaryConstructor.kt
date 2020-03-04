@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 private const val A = 0L
 private val B = 0L

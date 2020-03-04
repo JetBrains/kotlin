@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
         throw Exception("$initialValue $nextFunction")
 

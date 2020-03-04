@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import Kind.EXT_RETURN
 import Kind.GLOBAL_RETURN
 

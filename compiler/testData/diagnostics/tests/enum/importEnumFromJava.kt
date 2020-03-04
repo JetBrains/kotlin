@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: test.kt
 
 package test

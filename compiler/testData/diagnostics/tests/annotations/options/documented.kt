@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @MustBeDocumented
 annotation class DocAnn
 

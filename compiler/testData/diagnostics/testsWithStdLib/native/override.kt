@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.jvm.*
 
 interface Base {

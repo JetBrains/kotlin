@@ -1,1 +1,0 @@
-val stringReversed = String::reversed

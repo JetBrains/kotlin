@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun getArray(): Array<Int> = throw Exception()
 fun getList(): MutableList<Int> = throw Exception()
 fun fn() {

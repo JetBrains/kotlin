@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See also: KT-3743
 fun foo(arg: Boolean): String {
     // Must be exhaustive

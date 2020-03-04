@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 // ANDROID_ANNOTATIONS
 import kotlin.annotations.jvm.internal.*;

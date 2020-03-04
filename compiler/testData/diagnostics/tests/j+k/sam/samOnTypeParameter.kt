@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: FormFieldValidatorPresenterTest.java
 public class FormFieldValidatorPresenterTest<V extends String> {
 

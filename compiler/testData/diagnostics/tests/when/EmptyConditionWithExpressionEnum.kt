@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // EA-68871: empty when condition
 enum class My { FIRST, SECOND }
 fun foo(arg: My): Int {

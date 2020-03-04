@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Super<T> {
     inner open class Inner {
     }

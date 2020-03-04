@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias S = String
 
 fun test1(x: Any) = x is S

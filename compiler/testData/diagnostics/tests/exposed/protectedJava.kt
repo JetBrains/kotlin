@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Outer.java
 
 public abstract class Outer {

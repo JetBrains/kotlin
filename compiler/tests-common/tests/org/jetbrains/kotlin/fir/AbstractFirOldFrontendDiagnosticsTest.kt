@@ -12,7 +12,7 @@ import java.io.File
 
 abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTest() {
     override fun createTestFileFromPath(filePath: String): File {
-        val newPath = filePath.replace(".kt", ".fir.kt")
+        val newPath = if (File(filePath).readText().contains("// FIR_IDENTICAL")) filePath else filePath.replace(".kt", ".fir.kt")
         return File(newPath).also {
             prepareTestDataFile(filePath, it)
         }
@@ -40,6 +40,11 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
             checkResultingFirFiles(allFirFiles, testDataFile)
             assertFalse("Test is good but there is expected exception", failureFile.exists())
             checkDiagnostics(testDataFile, testFiles, allFirFiles)
+            if (testDataFile.absolutePath.endsWith(".fir.kt")) {
+                val oldFrontendTestDataFile = File(testDataFile.absolutePath.replace(".fir.kt", ".kt"))
+                compareAndMergeFirFileAndOldFrontendFile(oldFrontendTestDataFile, testDataFile)
+            }
+
             val needDump = testFiles.any { it.directives.containsKey("FIR_DUMP") }
             if (needDump) {
                 checkFir(testDataFile, allFirFiles)

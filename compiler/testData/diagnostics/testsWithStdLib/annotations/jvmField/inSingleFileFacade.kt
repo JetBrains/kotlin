@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @file:JvmName("SomeName")
 
 @JvmField

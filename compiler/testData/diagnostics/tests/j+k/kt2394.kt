@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 //KT-2394 java.lang.Iterable<T> should be visible as kotlin.Iterable<out T>

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Outer {
     fun foo(): Int {
         if (outerState > 0) return outerState

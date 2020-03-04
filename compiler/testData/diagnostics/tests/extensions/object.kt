@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object O
 
 fun Any.foo() = 42

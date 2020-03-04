@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: b.kt
 // KT-355 Resolve imports after all symbols are built
 

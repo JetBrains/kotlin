@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !EXPERIMENTAL: api.ExperimentalAPI
 // MODULE: api
