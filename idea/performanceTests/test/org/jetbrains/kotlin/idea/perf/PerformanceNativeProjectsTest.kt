@@ -61,6 +61,7 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
 
     private enum class TestProject(
         val templateName: String,
+        val duplicatesAmount: Int = 2,
         val filesToHighlight: List<String>
     ) {
         HELLO_WORLD(
@@ -85,6 +86,7 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
 
         init {
             assertTrue(filesToHighlight.isNotEmpty())
+            assertTrue(duplicatesAmount in 0..100)
         }
     }
 
@@ -229,6 +231,44 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
             ?.let { unmergedFiles ->
                 fail("Some files have not been merged in project root directory: $projectRoot: ${unmergedFiles.joinToString()}")
             }
+
+        // produce N duplicates of *.kt files inside the project root
+        if (testProject.duplicatesAmount > 0) {
+            val originalKtFiles = projectRoot.walkTopDown()
+                .filter { it.isFile && it.name.endsWith(".kt") }
+                .toList()
+
+            for (originalKtFile in originalKtFiles) {
+                val originalKtFileContents = originalKtFile.readLines()
+
+                assertTrue(
+                    "$originalKtFile must have @file:Suppress(\"PackageDirectoryMismatch\") annotation",
+                    originalKtFileContents.any { it.startsWith("@file:Suppress") && it.contains("\"PackageDirectoryMismatch\"") }
+                )
+
+                val packageLineIndex = originalKtFileContents.indexOfFirst { it.startsWith("package perfTestPackage1") }
+                assertTrue(
+                    "$originalKtFile must have package declaration: package perfTestPackage1",
+                    packageLineIndex != -1
+                )
+
+                for (i in 1..testProject.duplicatesAmount) {
+                    val n = i + 1
+                    val duplicateKtFile = originalKtFile.resolveSibling("${originalKtFile.nameWithoutExtension}$n.kt")
+                    duplicateKtFile.writeText(
+                        buildString {
+                            originalKtFileContents.forEachIndexed { index, line ->
+                                if (index == packageLineIndex) {
+                                    appendln(line.replace("perfTestPackage1", "perfTestPackage$n"))
+                                } else {
+                                    appendln(line)
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }
 
         // check all necessary files are there
         listOf("build.gradle.kts", "settings.gradle.kts", "gradle.properties")

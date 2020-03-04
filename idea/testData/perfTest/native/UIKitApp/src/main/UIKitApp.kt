@@ -3,6 +3,9 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("PackageDirectoryMismatch")
+package perfTestPackage1 // this package is mandatory
+
 import kotlinx.cinterop.ExportObjCClass
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.ObjCOutlet

@@ -1,3 +1,6 @@
+@file:Suppress("PackageDirectoryMismatch")
+package perfTestPackage1 // this package is mandatory
+
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

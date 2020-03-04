@@ -3,7 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("RemoveRedundantCallsOfConversionMethods", "unused", "CanBeParameter")
+@file:Suppress("PackageDirectoryMismatch", "RemoveRedundantCallsOfConversionMethods", "unused", "CanBeParameter")
+package perfTestPackage1 // this package is mandatory
 
 import kotlinx.cinterop.FloatVar
 import kotlinx.cinterop.allocArray
