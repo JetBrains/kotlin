@@ -101,7 +101,7 @@ FILE: booleanOperators.kt
     public final fun test_11(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
             Boolean(false) && (R|<local>/x| is R|A|) ->  {
-                R|<local>/x|.R|/A.foo|()
+                R|<local>/x|.<Unresolved name: foo>#()
             }
         }
 

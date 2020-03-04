@@ -634,7 +634,7 @@ digraph booleanOperators_kt {
                 color=blue
                 229 [label="Enter block"];
                 230 [label="Access variable R|<local>/x|"];
-                231 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                231 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
                 232 [label="Exit block"];
             }
             233 [label="Exit when branch result"];

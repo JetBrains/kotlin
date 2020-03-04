@@ -778,33 +778,50 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val rightVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression.rightOperand)
         val operatorVariable = variableStorage.getOrCreateVariable(flow, binaryLogicExpression)
 
-        val (conditionalFromLeft, conditionalFromRight, approvedFromRight) = logicSystem.collectInfoForBooleanOperator(
-            flowFromLeft,
-            leftVariable,
-            flowFromRight,
-            rightVariable
-        )
+        if (!node.leftOperandNode.isDead && node.rightOperandNode.isDead) {
+            /*
+             * If there was a jump from right argument then we know that we well exit from
+             *   boolean operator only if right operand was not executed
+             *
+             *   a && return => a == false
+             *   a || return => a == true
+             */
+            logicSystem.approveStatementsInsideFlow(
+                flow,
+                leftVariable eq !isAnd,
+                shouldForkFlow = false,
+                shouldRemoveSynthetics = true
+            )
+        } else {
+            val (conditionalFromLeft, conditionalFromRight, approvedFromRight) = logicSystem.collectInfoForBooleanOperator(
+                flowFromLeft,
+                leftVariable,
+                flowFromRight,
+                rightVariable
+            )
 
-        // left && right == True
-        // left || right == False
-        val approvedIfTrue: MutableTypeStatements = mutableMapOf()
-        logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft)
-        logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight)
-        approvedFromRight.forEach { (variable, info) ->
-            approvedIfTrue.addStatement(variable, info)
-        }
-        approvedIfTrue.values.forEach { info ->
-            flow.addImplication((operatorVariable eq bothEvaluated) implies info)
-        }
+            // left && right == True
+            // left || right == False
+            val approvedIfTrue: MutableTypeStatements = mutableMapOf()
+            logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft)
+            logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight)
+            approvedFromRight.forEach { (variable, info) ->
+                approvedIfTrue.addStatement(variable, info)
+            }
+            approvedIfTrue.values.forEach { info ->
+                flow.addImplication((operatorVariable eq bothEvaluated) implies info)
+            }
 
-        // left && right == False
-        // left || right == True
-        val approvedIfFalse: MutableTypeStatements = mutableMapOf()
-        val leftIsFalse = logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft)
-        val rightIsFalse = logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight)
-        approvedIfFalse.mergeTypeStatements(logicSystem.orForTypeStatements(leftIsFalse, rightIsFalse))
-        approvedIfFalse.values.forEach { info ->
-            flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies info)
+            // left && right == False
+            // left || right == True
+            val approvedIfFalse: MutableTypeStatements = mutableMapOf()
+            val leftIsFalse = logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft)
+            val rightIsFalse =
+                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight)
+            approvedIfFalse.mergeTypeStatements(logicSystem.orForTypeStatements(leftIsFalse, rightIsFalse))
+            approvedIfFalse.values.forEach { info ->
+                flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies info)
+            }
         }
 
         logicSystem.updateAllReceivers(flow)

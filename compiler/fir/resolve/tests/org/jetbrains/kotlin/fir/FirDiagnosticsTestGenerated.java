@@ -1610,6 +1610,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             public void testEqualsToBoolean() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleans/equalsToBoolean.kt");
             }
+
+            @TestMetadata("jumpFromRhsOfOperator.kt")
+            public void testJumpFromRhsOfOperator() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleans/jumpFromRhsOfOperator.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts")

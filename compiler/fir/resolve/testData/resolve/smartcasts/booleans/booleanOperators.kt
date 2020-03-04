@@ -86,7 +86,7 @@ fun test_10(x: Any) {
 
 fun test_11(x: Any, b: Boolean) {
     if (false && x is A) {
-        x.foo()
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 
