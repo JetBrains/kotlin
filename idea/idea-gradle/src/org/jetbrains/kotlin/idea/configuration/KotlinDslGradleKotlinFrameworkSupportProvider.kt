@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Comp
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinModuleDependencySnippet
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
@@ -107,7 +106,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
 
-        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.javaClass.simpleName)
     }
 
     protected abstract fun getOldSyntaxPluginDefinition(): String

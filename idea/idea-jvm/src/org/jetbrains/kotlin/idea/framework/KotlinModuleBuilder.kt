@@ -13,8 +13,7 @@ import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import javax.swing.Icon
@@ -46,7 +45,7 @@ class KotlinModuleBuilder(
     }
 
     override fun setupRootModel(rootModel: ModifiableRootModel) {
-        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName + ": ${this.targetPlatform}")
+        NewProjectWizardsFUSCollector.log(this.javaClass.simpleName + ": ${this.targetPlatform}")
         super.setupRootModel(rootModel)
         if (!targetPlatform.isJvm()) {
             migrateNonJvmSourceFolders(rootModel)

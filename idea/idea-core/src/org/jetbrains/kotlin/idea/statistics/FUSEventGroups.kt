@@ -17,7 +17,7 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
     GradleTarget("gradle.target", gradleTargetEvents),
     Refactoring("ide.action.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
-    NPWizards("ide.npwizards", NPWizardsEvents),
+    NPWizards("ide.npwizards"),
     Debug("ide.debugger"),
     J2K("ide.j2k"),
     Editor("ide.editor"),
@@ -94,28 +94,4 @@ val newFileTemplateEvents = setOf(
     "Kotlin Enum",
     "Kotlin Scratch",
     "Kotlin Script"
-)
-val NPWizardsEvents = setOf(
-    "KotlinModuleBuilder: JVM (JVM_1_6)",
-    "KotlinModuleBuilder: JVM (JVM_1_8)",
-    "KotlinModuleBuilder: JVM (JVM_9)",
-    "KotlinModuleBuilder: JVM (JVM_10)",
-    "KotlinModuleBuilder: JVM (JVM_11)",
-    "KotlinModuleBuilder: JVM (JVM_12)",
-    "KotlinModuleBuilder: JS",
-    "KotlinGradleNativeMultiplatformModuleBuilder",
-    "KotlinGradleSharedMultiplatformModuleBuilder",
-    "KotlinGradleWebMultiplatformModuleBuilder",
-    "KotlinGradleMobileMultiplatformModuleBuilder",
-    "KotlinGradleMobileSharedMultiplatformModuleBuilder",
-    "KotlinJavaFrameworkSupportProvider",
-    "GradleKotlinJavaFrameworkSupportProvider",
-    "GradleKotlinJSFrameworkSupportProvider",
-    "GradleKotlinJSBrowserFrameworkSupportProvider",
-    "GradleKotlinJSNodeFrameworkSupportProvider",
-    "GradleKotlinMPPFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJavaFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
 )
