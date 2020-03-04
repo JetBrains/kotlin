@@ -658,7 +658,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
       hideLookup(false);
       return false;
     }
-    if (isVisible()) {
+    if (isVisible() && myEditor.getContentComponent().isShowing()) {
       HintManagerImpl.updateLocation(this, myEditor, myUi.calculatePosition().getLocation());
     }
     checkValid();
