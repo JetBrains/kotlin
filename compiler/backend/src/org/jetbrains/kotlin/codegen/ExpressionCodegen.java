@@ -4587,10 +4587,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // We can use the $$delegatedProperties array as in non-inline functions and upon inlining, detect elements at what indices
         // of that array are used in the inline function body, load the corresponding initializing bytecode from <clinit> of the
         // container class (where the PropertyReferenceNImpl instance is created), copy and adapt it at the call site
-        //noinspection ConstantConditions
-        StackValue value = context.getFunctionDescriptor().isInline()
-                           ? generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null)
-                           : PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
+        StackValue value;
+        if (PropertyCodegen.isDelegatedPropertyWithOptimizedMetadata(variableDescriptor, bindingContext)) {
+            value = PropertyCodegen.getOptimizedDelegatedPropertyMetadataValue();
+        } else if (context.getFunctionDescriptor().isInline()) {
+            //noinspection ConstantConditions
+            value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null);
+        }
+        else {
+            value = PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
+        }
         value.put(K_PROPERTY_TYPE, null, v);
         metadataVar.storeSelector(K_PROPERTY_TYPE, null, v);
     }

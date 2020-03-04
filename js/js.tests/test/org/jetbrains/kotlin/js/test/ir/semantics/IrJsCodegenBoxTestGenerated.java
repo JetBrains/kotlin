@@ -5729,8 +5729,8 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @TestMetadata("suspendFunctionIsAs.kt")
-            public void testSuspendFunctionIsAs_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionIsAs.kt", "kotlin.coroutines");
+            public void testSuspendFunctionIsAs() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionIsAs.kt");
             }
 
             @TestMetadata("suspendInlineSuspendFinally.kt")
@@ -7468,6 +7468,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("kt35707.kt")
         public void testKt35707() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/kt35707.kt");
+        }
+
+        @TestMetadata("kt37204.kt")
+        public void testKt37204() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/kt37204.kt");
         }
 
         @TestMetadata("kt4138.kt")
