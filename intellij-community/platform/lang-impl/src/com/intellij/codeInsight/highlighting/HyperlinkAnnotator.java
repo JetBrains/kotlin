@@ -25,16 +25,18 @@ public class HyperlinkAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
-    for (PsiReference reference : element.getReferences()) {
-      if (reference instanceof WebReference) {
-        String message = holder.getCurrentAnnotationSession().getUserData(messageKey);
-        if (message == null) {
-          message = getMessage();
-          holder.getCurrentAnnotationSession().putUserData(messageKey, message);
+    if (WebReference.isWebReferenceWorthy(element)) {
+      for (PsiReference reference : element.getReferences()) {
+        if (reference instanceof WebReference) {
+          String message = holder.getCurrentAnnotationSession().getUserData(messageKey);
+          if (message == null) {
+            message = getMessage();
+            holder.getCurrentAnnotationSession().putUserData(messageKey, message);
+          }
+          TextRange range = reference.getRangeInElement().shiftRight(element.getTextRange().getStartOffset());
+          holder.newAnnotation(HighlightSeverity.INFORMATION, message).range(range)
+          .textAttributes(CodeInsightColors.INACTIVE_HYPERLINK_ATTRIBUTES).create();
         }
-        TextRange range = reference.getRangeInElement().shiftRight(element.getTextRange().getStartOffset());
-        holder.newAnnotation(HighlightSeverity.INFORMATION, message).range(range)
-        .textAttributes(CodeInsightColors.INACTIVE_HYPERLINK_ATTRIBUTES).create();
       }
     }
   }
