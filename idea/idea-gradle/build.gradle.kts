@@ -10,7 +10,9 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
     compileOnly(project(":idea:idea-native")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
-    compile(project(":idea:idea-gradle-tooling-api"))
+    Platform[193].orLower {
+        compile(project(":idea:idea-gradle-tooling-api"))
+    }
 
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
