@@ -30,18 +30,16 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-internal fun generateStateMachine(
+internal fun MethodNode.acceptWithStateMachine(
     irFunction: IrFunction,
     classCodegen: ClassCodegen,
     methodVisitor: MethodVisitor,
-    access: Int,
-    signature: JvmMethodGenericSignature,
     obtainContinuationClassBuilder: () -> ClassBuilder
-): MethodVisitor {
+) {
     val state = classCodegen.context.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
@@ -49,8 +47,8 @@ internal fun generateStateMachine(
         irFunction.symbol.descriptor.psiElement ?: classCodegen.irClass.descriptor.psiElement
     else
         classCodegen.context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.symbol.descriptor.psiElement
-    return CoroutineTransformerMethodVisitor(
-        methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
+    val visitor = CoroutineTransformerMethodVisitor(
+        methodVisitor, access, name, desc, signature, exceptions.toTypedArray(),
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element as KtElement, state, it) },
         lineNumber = element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0,
@@ -67,9 +65,10 @@ internal fun generateStateMachine(
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
         }
     )
+    accept(visitor)
 }
 
-internal fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean {
+private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean {
     return (this as? IrSimpleFunction)?.allOverridden()?.toList()?.let { functions ->
         functions.isNotEmpty() && functions.any { !it.returnType.isUnit() }
     } == true

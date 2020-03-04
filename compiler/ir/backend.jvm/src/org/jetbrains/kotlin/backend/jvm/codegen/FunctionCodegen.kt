@@ -61,7 +61,7 @@ class FunctionCodegen(
             signature.genericsSignature.takeIf { flags.and(Opcodes.ACC_SYNTHETIC) == 0 },
             getThrownExceptions(irFunction)?.toTypedArray()
         )
-        var methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
+        val methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
 
         if (context.state.generateParametersMetadata && flags.and(Opcodes.ACC_SYNTHETIC) == 0) {
             generateParameterNames(irFunction, methodVisitor, signature, context.state)
@@ -86,19 +86,10 @@ class FunctionCodegen(
             }
         }
 
-        val continuationClassCodegen = lazy {
-            classCodegen.createLocalClassCodegen(irFunction.continuationClass()!!, irFunction).also { it.generate() }
-        }
         if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
             val frameMap = irFunction.createFrameMapWithReceivers()
-            if (irFunction.hasContinuation() || irFunction.isInvokeSuspendOfLambda()) {
-                methodVisitor = generateStateMachine(irFunction, classCodegen, methodVisitor, flags, signature) {
-                    // This has to be done lazily to avoid generating the class if tail call optimization makes it redundant.
-                    if (irFunction.isSuspend) continuationClassCodegen.value.visitor else classCodegen.visitor
-                }
-            }
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
             try {
                 val adapter = InstructionAdapter(methodVisitor)
@@ -109,9 +100,6 @@ class FunctionCodegen(
             methodVisitor.visitMaxs(-1, -1)
         }
         methodVisitor.visitEnd()
-        if (continuationClassCodegen.isInitialized() || irFunction.alwaysNeedsContinuation()) {
-            continuationClassCodegen.value.done()
-        }
         return methodNode
     }
 
