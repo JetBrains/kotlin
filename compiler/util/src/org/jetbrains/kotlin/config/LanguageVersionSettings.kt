@@ -110,7 +110,6 @@ enum class LanguageFeature(
     MixedNamedArgumentsInTheirOwnPosition(KOTLIN_1_4),
     ProhibitTailrecOnVirtualMember(KOTLIN_1_4, kind = BUG_FIX),
     ProperComputationOrderOfTailrecDefaultParameters(KOTLIN_1_4),
-    AllowNullableArrayArgsInMain(KOTLIN_1_4),
     TrailingCommas(KOTLIN_1_4),
     ProhibitProtectedCallFromInline(KOTLIN_1_4, kind = BUG_FIX),
     ProperFinally(KOTLIN_1_4, kind = BUG_FIX),
