@@ -66,7 +66,8 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     }
   }
 
-  override fun getDependencies(): Collection<BaseExtensionPointName<*>> = listOf(InlaySettingsProvider.EP.EXTENSION_POINT_NAME)
+  override fun getDependencies(): Collection<BaseExtensionPointName<*>> =
+    listOf(InlaySettingsProvider.EP.EXTENSION_POINT_NAME) + InlaySettingsProvider.EP.getExtensions().flatMap { it.getDependencies() }
 
   companion object {
     /**
