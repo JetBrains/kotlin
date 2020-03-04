@@ -5,20 +5,14 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.CommonBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
-import org.jetbrains.kotlin.idea.core.util.KotlinBundleBase
-import java.util.*
+import org.jetbrains.kotlin.util.AbstractKotlinBundle
 
-object KotlinNJ2KBundle : KotlinBundleBase() {
-    @NonNls
-    private const val BUNDLE = "messages.KotlinNJ2KBundle"
+@NonNls
+private const val BUNDLE = "messages.KotlinNJ2KBundle"
 
-    override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
-
+object KotlinNJ2KBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
-    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any?): String {
-        return CommonBundle.message(bundle, key, *params)
-    }
+    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 }

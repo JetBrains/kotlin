@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.CommonBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
-import org.jetbrains.kotlin.idea.core.util.KotlinBundleBase
-import java.util.*
+import org.jetbrains.kotlin.util.AbstractKotlinBundle
 
-object KotlinDebuggerEvaluationBundle : KotlinBundleBase() {
-    @NonNls
-    private const val BUNDLE = "messages.KotlinDebuggerEvaluationBundle"
+@NonNls
+private const val BUNDLE = "messages.KotlinDebuggerEvaluationBundle"
 
-    override fun createBundle(): ResourceBundle = ResourceBundle.getBundle(BUNDLE)
-
+object KotlinDebuggerEvaluationBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
-    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any?): String {
-        return CommonBundle.message(bundle, key, *params)
-    }
+    fun message(
+        @NonNls @PropertyKey(resourceBundle = BUNDLE) key: String,
+        vararg params: Any
+    ): String = getMessage(key, *params)
 }
