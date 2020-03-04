@@ -116,6 +116,87 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         if (dumpClasses) dumpClasses(loader)
     }
 
+    protected fun testCompileEmittable(source: String, dumpClasses: Boolean = false) = testCompile(
+        """
+        import androidx.compose.Applier
+        import androidx.compose.ApplyAdapter
+        import androidx.compose.Composer
+        import androidx.compose.ComposerUpdater
+        import androidx.compose.FrameManager
+        import androidx.compose.Recomposer
+        import androidx.compose.SlotTable
+        import androidx.compose.Composable
+
+        interface Emittable {
+            fun emitInsertAt(index: Int, instance: Emittable)
+            fun emitRemoveAt(index: Int, count: Int)
+            fun emitMove(from: Int, to: Int, count: Int)
+        }
+
+        internal class EmittableApplyAdapter : ApplyAdapter<Emittable> {
+            override fun Emittable.start(instance: Emittable) {}
+            override fun Emittable.insertAt(index: Int, instance: Emittable) = emitInsertAt(index, instance)
+            override fun Emittable.removeAt(index: Int, count: Int) = emitRemoveAt(index, count)
+            override fun Emittable.move(from: Int, to: Int, count: Int) = emitMove(from, to, count)
+            override fun Emittable.end(instance: Emittable, parent: Emittable) {}
+        }
+
+        class EmittableComposer(
+            val root: Emittable,
+            slotTable: SlotTable,
+            recomposer: Recomposer
+        ) : Composer<Emittable>(
+            slotTable,
+            Applier(
+                root,
+                EmittableApplyAdapter()
+            ),
+            recomposer
+        ) {
+            init {
+                FrameManager.ensureStarted()
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            fun <T : Emittable> emit(
+                key: Any,
+                /*crossinline*/
+                ctor: () -> T,
+                update: ViewUpdater<T>.() -> Unit
+            ) {
+                startNode(key)
+                val node = if (inserting) ctor().also { emitNode(it) }
+                else useNode() as T
+                ViewUpdater(this, node).update()
+                endNode()
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            fun <T : Emittable> emit(
+                key: Any,
+                /*crossinline*/
+                ctor: () -> T,
+                update: ViewUpdater<T>.() -> Unit,
+                children: () -> Unit
+            ) {
+                startNode(key)
+                val node = if (inserting) ctor().also { emitNode(it) }
+                else useNode() as T
+                ViewUpdater(this, node).update()
+                children()
+                endNode()
+            }
+        }
+
+        typealias ViewUpdater<T> = ComposerUpdater<Emittable, T>
+
+        val composer: EmittableComposer get() = error("should not be called")
+
+        $source
+        """,
+        dumpClasses
+    )
+
     protected fun sourceFile(name: String, source: String): KtFile {
         val result =
             createFile(name, source, myEnvironment!!.project)

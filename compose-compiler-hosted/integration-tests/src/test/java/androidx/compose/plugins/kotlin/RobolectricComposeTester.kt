@@ -17,19 +17,14 @@
 package androidx.compose.plugins.kotlin
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.compose.Compose
 import androidx.compose.Composer
-import androidx.compose.Composition
-import androidx.compose.Recomposer
+import androidx.ui.core.makeCompositionForTesting
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
-import kotlin.reflect.full.findParameterByName
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.starProjectedType
 
 const val ROOT_ID = 18284847
 
@@ -72,19 +67,15 @@ class RobolectricComposeTester internal constructor(
         val activity = controller.create().get()
         val root = activity.root
         scheduler.advanceToLastPostedRunnable()
-        val composeInto = Compose::class.java.methods.first {
-            if (it.name != "composeInto") false
+        val composition = makeCompositionForTesting(root, activity, null)
+        val composeMethod = composition.javaClass.methods.first {
+            if (it.name != "compose") false
             else {
-                val param = it.parameters.getOrNull(2)
+                val param = it.parameters.getOrNull(0)
                 param?.type == Function1::class.java
             }
         }
-        val composition = composeInto.invoke(
-            Compose,
-            root,
-            null,
-            composable
-        ) as Composition
+        composeMethod.invoke(composition, composable)
         scheduler.advanceToLastPostedRunnable()
         block(activity)
         val advanceFn = advance ?: { composition.compose() }

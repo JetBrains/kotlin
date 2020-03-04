@@ -992,7 +992,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                     val root = ref.value ?: error("Expected a linear")
 
-                    Compose.composeInto(root, portal) {
+                    composeInto(root, portal) {
                         DisplayTest(id=$innerId)
                     }
                 }
@@ -1120,8 +1120,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         compose(
             """
-                import android.view.View
-
                 var composedSet = mutableSetOf<String>()
                 var inc = 1
 
@@ -1195,8 +1193,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         compose(
             """
-                import android.view.View
-
                 inline class InlineInt(val value: Int)
                 inline class InlineInlineInt(val value: InlineInt)
                 inline class InlineMutableSet(val value: MutableSet<String>)
@@ -1272,8 +1268,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         compose(
             """
-                import android.view.View
-
                 fun View.setComposed(composed: Set<String>) = setTag($tagId, composed)
 
                 val composedSet = mutableSetOf<String>()
@@ -1864,57 +1858,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
             val textView = activity.findViewById(42) as TextView
             assertEquals("Hello, world!", textView.text)
         }
-    }
-
-    @Test
-    fun testPropertiesAndCtorParamsOnEmittables(): Unit = ensureSetup {
-        codegen(
-            """
-            class SimpleEmittable(label: String? = null) : Emittable {
-                var label: String? = null
-                override fun emitInsertAt(index: Int, instance: Emittable) {}
-                override fun emitMove(from: Int, to: Int, count: Int) {}
-                override fun emitRemoveAt(index: Int, count: Int) {}
-            }
-
-            @Composable
-            fun foo() {
-                SimpleEmittable(label="Foo")
-            }
-            """
-        )
-    }
-
-    @Test
-    fun testSimpleClassConstructor(): Unit = ensureSetup {
-        codegen(
-            """
-            import androidx.compose.Emittable
-
-            class Path2() : Emittable {
-
-                private val path99 = Path3()
-
-                fun draw(canvas: Canvas2) {
-                    canvas.drawPath(path99)
-                }
-
-                override fun emitInsertAt(index: Int, instance: Emittable) { }
-                override fun emitMove(from: Int, to: Int, count: Int) { }
-                override fun emitRemoveAt(index: Int, count: Int) { }
-                override fun toString(): String = ""
-            }
-
-            class Canvas2() {
-                fun drawPath(path: Path3) {
-                    System.out.println(""+path)
-                }
-            }
-
-            class Path3(private val internalPath: android.graphics.Path = android.graphics.Path()) {
-            }
-            """
-        )
     }
 
     @Test
@@ -2549,6 +2492,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
            import android.content.Context
            import android.widget.*
+           import android.view.View
            import androidx.compose.*
            import androidx.ui.androidview.adapters.*
 

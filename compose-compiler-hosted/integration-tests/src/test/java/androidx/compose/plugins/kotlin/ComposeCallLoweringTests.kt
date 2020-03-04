@@ -205,8 +205,9 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
         codegen(
             """
                 import androidx.compose.*
+                import androidx.ui.node.UiComposer
 
-                class TextSpanScope internal constructor(val composer: ViewComposer)
+                class TextSpanScope internal constructor(val composer: UiComposer)
 
                 @Composable fun TextSpanScope.Foo(children: @Composable TextSpanScope.() -> Unit) {
                     children()
@@ -324,36 +325,6 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
-    fun testGenericEmittables(): Unit = ensureSetup {
-        codegen(
-            """
-        class FooKey<T>(val name: String)
-        class Foo<T>(val key: FooKey<T>, var value: T): Emittable {
-            override fun emitInsertAt(index: Int, instance: Emittable) {
-
-            }
-
-            override fun emitRemoveAt(index: Int, count: Int) {
-
-            }
-
-            override fun emitMove(from: Int, to: Int, count: Int) {
-
-            }
-        }
-
-        val AnyKey = FooKey<Any>("any")
-
-        @Composable fun test(value: Any, children: @Composable() () -> Unit) {
-            Foo(key=AnyKey, value=value) {
-                children()
-            }
-        }
-            """
-        )
-    }
-
-    @Test
     fun testSetViewContentIssue(): Unit = ensureSetup {
         codegen(
             """
@@ -363,6 +334,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
                 import android.view.ViewGroup
                 import android.widget.*
                 import androidx.compose.*
+                import androidx.ui.core.setViewContent
                 import androidx.ui.androidview.adapters.*
 
                 class RippleActivity : Activity() {

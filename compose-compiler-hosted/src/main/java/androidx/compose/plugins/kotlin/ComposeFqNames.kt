@@ -40,7 +40,7 @@ object ComposeFqNames {
     val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
     val Composer = ComposeUtils.composeFqName("Composer")
     val Untracked = ComposeUtils.composeFqName("Untracked")
-    val ViewComposer = ComposeUtils.composeFqName("ViewComposer")
+    val UiComposer = FqName.fromSegments(listOf("androidx", "ui", "node", "UiComposer"))
     val Package = FqName.fromSegments(listOf("androidx", "compose"))
     val Function0 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function0"))
     val Function1 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function1"))

@@ -63,10 +63,10 @@ class ComposeCallResolutionDiagnosticsTests : AbstractComposeDiagnosticsTest() {
         """
             import android.widget.FrameLayout
             import androidx.compose.Composable
-            import androidx.compose.ViewComposer
+            import androidx.ui.node.UiComposer
 
             class SomeScope {
-             val composer: ViewComposer get() = error("should not be called")
+             val composer: UiComposer get() = error("should not be called")
             }
 
             @Composable fun SomeScope.foo() {
