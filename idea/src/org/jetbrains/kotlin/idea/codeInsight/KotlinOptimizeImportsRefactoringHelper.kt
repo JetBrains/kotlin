@@ -81,7 +81,7 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
                     val presentableUrl = runReadAction { directive.containingFile }.virtualFile.presentableUrl
                     indicator.text2 = presentableUrl
                     ApplicationManager.getApplication().invokeAndWait {
-                        project.executeWriteCommand("delete $presentableUrl") {
+                        project.executeWriteCommand(KotlinBundle.message("delete.0", presentableUrl)) {
                             try {
                                 directive.delete()
                             } catch (e: IncorrectOperationException) {
