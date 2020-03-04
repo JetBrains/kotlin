@@ -195,11 +195,13 @@ open class KotlinNativeHostTest : KotlinNativeTest() {
 /**
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
-// TODO: Support debugging.
 open class KotlinNativeSimulatorTest : KotlinNativeTest() {
     @Input
     @Option(option = "device", description = "Sets a simulated device used to execute tests.")
     lateinit var deviceId: String
+
+    @Internal
+    var debugMode = false
 
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
@@ -213,7 +215,15 @@ open class KotlinNativeSimulatorTest : KotlinNativeTest() {
             testNegativeGradleFilter: Set<String>,
             userArgs: List<String>
         ): List<String> =
-            listOf("simctl", "spawn", "--standalone", deviceId, this@KotlinNativeSimulatorTest.executable.absolutePath, "--") +
+            listOfNotNull(
+                "simctl",
+                "spawn",
+                "--wait-for-debugger".takeIf { debugMode },
+                "--standalone",
+                deviceId,
+                this@KotlinNativeSimulatorTest.executable.absolutePath,
+                "--"
+            ) +
                     testArgs(testLogger, checkExitCode, testGradleFilter, testNegativeGradleFilter, userArgs)
     }
 }
