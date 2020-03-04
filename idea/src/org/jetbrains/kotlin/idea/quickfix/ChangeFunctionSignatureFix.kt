@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatu
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -60,15 +57,16 @@ abstract class ChangeFunctionSignatureFix(
     }
 
     protected fun getNewArgumentName(argument: ValueArgument, validator: Function1<String, Boolean>): String {
+        val expression = KtPsiUtil.deparenthesize(argument.getArgumentExpression())
         val argumentName = argument.getArgumentName()?.asName?.asString()
-            ?: (argument.getArgumentExpression() as? KtNameReferenceExpression)?.getReferencedName()?.takeIf { it != "it" }
-        val expression = argument.getArgumentExpression()
+            ?: (expression as? KtNameReferenceExpression)?.getReferencedName()?.takeIf { it != "it" && it != "field" }
 
         return when {
             argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName, validator)
             expression != null -> {
                 val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-                if (expression.text == "it") {
+                val expressionText = expression.text
+                if (expressionText == "it" || expressionText == "field") {
                     val type = expression.getType(bindingContext)
                     if (type != null) {
                         return KotlinNameSuggester.suggestNamesByType(type, validator, "param").first()

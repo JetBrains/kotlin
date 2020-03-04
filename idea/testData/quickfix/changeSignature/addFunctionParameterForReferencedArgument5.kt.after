@@ -1,0 +1,11 @@
+// "Add parameter to function 'foo'" "true"
+// DISABLE-ERRORS
+fun foo(s: String) {}
+
+class Test {
+    val x: String = ""
+        get() {
+            foo(field)
+            return field
+        }
+}
