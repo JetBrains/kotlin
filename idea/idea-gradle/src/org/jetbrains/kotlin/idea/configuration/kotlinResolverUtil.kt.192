@@ -26,7 +26,7 @@ fun suggestNativeDebug(projectPath: String) {
     val project = ProjectManager.getInstance().openProjects.firstOrNull { it.basePath == projectPath } ?: return
 
     PluginsAdvertiser.NOTIFICATION_GROUP.createNotification(
-        PluginsAdvertiser.DISPLAY_ID,
+        "Plugins Suggestion",
         "Native Debug provides debugger for Kotlin/Native",
         NotificationType.INFORMATION, null
     ).addAction(object : NotificationAction("Install") {

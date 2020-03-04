@@ -58,7 +58,7 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
-    testRuntime(intellijPluginDep("IntelliLang"))
+    testRuntime(intellijPluginDep(if (Platform[201].orHigher()) "platform-langInjection" else "IntelliLang"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("properties"))

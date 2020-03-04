@@ -14,16 +14,16 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 
 // BUNCH: 193
-typealias HierarchyNodeDescriptor = com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor
-typealias HierarchyTreeStructure = com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure
-typealias CallHierarchyBrowserBase = com.intellij.ide.hierarchy.newAPI.CallHierarchyBrowserBase
-typealias HierarchyScopeType = com.intellij.ide.hierarchy.newAPI.HierarchyScopeType
-typealias HierarchyBrowserBaseEx = com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx
-typealias MethodHierarchyBrowserBase = com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase
+typealias HierarchyNodeDescriptor = com.intellij.ide.hierarchy.HierarchyNodeDescriptor
+typealias HierarchyTreeStructure = com.intellij.ide.hierarchy.HierarchyTreeStructure
+typealias CallHierarchyBrowserBase = com.intellij.ide.hierarchy.CallHierarchyBrowserBase
+typealias HierarchyScopeType = String
+typealias HierarchyBrowserBaseEx = com.intellij.ide.hierarchy.HierarchyBrowserBaseEx
+typealias MethodHierarchyBrowserBase = com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
 
-fun getCallerTypeCompat() = CallHierarchyBrowserBase.getCallerType()
-fun getCalleeTypeCompat() = CallHierarchyBrowserBase.getCalleeType()
-fun getMethodTypeCompat() = MethodHierarchyBrowserBase.getMethodType()
+fun getCallerTypeCompat(): String = CallHierarchyBrowserBase.CALLER_TYPE
+fun getCalleeTypeCompat(): String = CallHierarchyBrowserBase.CALLEE_TYPE
+fun getMethodTypeCompat(): String = MethodHierarchyBrowserBase.METHOD_TYPE
 
 fun createCallerMethodsTreeStructure(project: Project, method: PsiMethod, scopeType: String): CallerMethodsTreeStructure {
     return CallerMethodsTreeStructure(project, method as PsiMember, scopeType)
