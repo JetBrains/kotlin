@@ -1329,7 +1329,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
         //noinspection SSBasedInspection
         SwingUtilities.invokeLater(() -> {
           // this line must be called on EDT to avoid context switch at clear().append("text") Don't touch. Ask [kb]
-          myList.getEmptyText().setText("Searching...");
+          myList.getEmptyText().setText(IdeBundle.message("label.choosebyname.searching"));
 
           if (myList.getModel() instanceof SearchListModel) {
             myAlarm.cancelAllRequests();
