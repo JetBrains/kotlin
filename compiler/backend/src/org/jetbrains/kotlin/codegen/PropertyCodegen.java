@@ -564,13 +564,24 @@ public class PropertyCodegen {
         return codegen.invokeFunction(resolvedCall, receiver);
     }
 
+    public static boolean isDelegatedPropertyWithOptimizedMetadata(
+            @NotNull VariableDescriptorWithAccessors descriptor,
+            @NotNull BindingContext bindingContext
+    ) {
+        return Boolean.TRUE == bindingContext.get(DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA, descriptor);
+    }
+
+    public static @NotNull StackValue getOptimizedDelegatedPropertyMetadataValue() {
+        return StackValue.constant(null, K_PROPERTY_TYPE);
+    }
+
     @NotNull
     public static StackValue getDelegatedPropertyMetadata(
             @NotNull VariableDescriptorWithAccessors descriptor,
             @NotNull BindingContext bindingContext
     ) {
-        if (Boolean.TRUE == bindingContext.get(DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA, descriptor)) {
-            return StackValue.constant(null, K_PROPERTY_TYPE);
+        if (isDelegatedPropertyWithOptimizedMetadata(descriptor, bindingContext)) {
+            return getOptimizedDelegatedPropertyMetadataValue();
         }
 
         Type owner = bindingContext.get(DELEGATED_PROPERTY_METADATA_OWNER, descriptor);
