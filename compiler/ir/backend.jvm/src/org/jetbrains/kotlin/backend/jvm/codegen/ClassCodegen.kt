@@ -360,15 +360,17 @@ open class ClassCodegen protected constructor(
 
         jvmSignatureClashDetector.trackField(field, RawSignature(fieldName, fieldType.descriptor, MemberKind.FIELD))
 
-        object : AnnotationCodegen(this@ClassCodegen, context) {
-            override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
-                return fv.visitAnnotation(descr, visible)
-            }
+        if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
+            object : AnnotationCodegen(this@ClassCodegen, context) {
+                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                    return fv.visitAnnotation(descr, visible)
+                }
 
-            override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                return fv.visitTypeAnnotation(TypeReference.newTypeReference(TypeReference.FIELD).value,path, descr, visible)
-            }
-        }.genAnnotations(field, fieldType, field.type)
+                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                    return fv.visitTypeAnnotation(TypeReference.newTypeReference(TypeReference.FIELD).value,path, descr, visible)
+                }
+            }.genAnnotations(field, fieldType, field.type)
+        }
 
         val descriptor = field.metadata?.descriptor
         if (descriptor != null) {

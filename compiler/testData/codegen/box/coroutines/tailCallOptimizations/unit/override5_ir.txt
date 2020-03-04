@@ -36,7 +36,7 @@ final class Override5Kt$box$1 {
 final class Override5Kt$inlineMe$1$generic$1 {
     field L$0: java.lang.Object
     field label: int
-    synthetic @org.jetbrains.annotations.Nullable field result: java.lang.Object
+    synthetic field result: java.lang.Object
     synthetic final @org.jetbrains.annotations.NotNull field this$0: Override5Kt$inlineMe$1
     inner class Override5Kt$inlineMe$1
     inner class Override5Kt$inlineMe$1$generic$1

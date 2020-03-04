@@ -46,7 +46,7 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 
 final class flow/InnerObjectRetransformationKt$check$1 {
     field L$0: java.lang.Object
     field label: int
-    synthetic @org.jetbrains.annotations.Nullable field result: java.lang.Object
+    synthetic field result: java.lang.Object
     inner class flow/InnerObjectRetransformationKt$check$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
@@ -55,7 +55,7 @@ final class flow/InnerObjectRetransformationKt$check$1 {
 @kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$collect$2$emit$1 {
     field label: int
-    synthetic @org.jetbrains.annotations.Nullable field result: java.lang.Object
+    synthetic field result: java.lang.Object
     synthetic final @org.jetbrains.annotations.NotNull field this$0: flow.InnerObjectRetransformationKt$collect$2
     inner class flow/InnerObjectRetransformationKt$collect$2
     inner class flow/InnerObjectRetransformationKt$collect$2$emit$1
@@ -76,7 +76,7 @@ public final class flow/InnerObjectRetransformationKt$collect$2 {
 @kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$flow$1$collect$1 {
     field label: int
-    synthetic @org.jetbrains.annotations.Nullable field result: java.lang.Object
+    synthetic field result: java.lang.Object
     synthetic final @org.jetbrains.annotations.NotNull field this$0: flow.InnerObjectRetransformationKt$flow$1
     inner class flow/InnerObjectRetransformationKt$flow$1
     inner class flow/InnerObjectRetransformationKt$flow$1$collect$1
@@ -97,7 +97,7 @@ public final class flow/InnerObjectRetransformationKt$flow$1 {
 @kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1 {
     field label: int
-    synthetic @org.jetbrains.annotations.Nullable field result: java.lang.Object
+    synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$1
     inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1
     inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1
@@ -119,7 +119,7 @@ public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1 {
 @kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1 {
     field label: int
-    synthetic @org.jetbrains.annotations.Nullable field result: java.lang.Object
+    synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$2
     inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2
     inner class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1
