@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.ByDescriptorIndexer
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
@@ -62,7 +63,7 @@ fun buildDecompiledText(
                 builder.append(descriptorRenderer.renderAnnotation(annotation))
                 builder.append(" ")
             }
-            builder.append(descriptor.name.asString())
+            builder.append(descriptor.name.asString().quoteIfNeeded())
             builder.append(if (lastEnumEntry!!) ";" else ",")
         } else {
             builder.append(descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER))

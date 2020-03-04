@@ -28,6 +28,11 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
+    @TestMetadata("EnumWithQuotes")
+    public void testEnumWithQuotes() throws Exception {
+        runTest("idea/testData/decompiler/decompiledTextJvm/EnumWithQuotes/");
+    }
+
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
         runTest("idea/testData/decompiler/decompiledTextJvm/Modifiers/");
