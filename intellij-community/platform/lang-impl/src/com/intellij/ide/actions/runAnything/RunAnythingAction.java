@@ -11,12 +11,14 @@ import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandExecution
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentCommandProvider;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentProjectProvider;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.keymap.impl.ModifierKeyDoubleClickHandler;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -70,10 +72,11 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
       }
     }
 
-    if (e.getProject() != null) {
+    final Project project = e.getProject();
+    if (project != null && !LightEdit.owns(project)) {
       FeatureUsageTracker.getInstance().triggerFeatureUsed(IdeActions.ACTION_RUN_ANYTHING);
 
-      RunAnythingManager runAnythingManager = RunAnythingManager.getInstance(e.getProject());
+      RunAnythingManager runAnythingManager = RunAnythingManager.getInstance(project);
       String text = GotoActionBase.getInitialTextForNavigation(e);
       runAnythingManager.show(text, e);
     }
