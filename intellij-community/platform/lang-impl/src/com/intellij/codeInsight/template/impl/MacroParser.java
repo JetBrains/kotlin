@@ -103,6 +103,9 @@ public class MacroParser {
   }
 
   private static String parseStringLiteral(String token) {
+    if (token.length() < 2) {
+      return "";
+    }
     StringBuilder sb = new StringBuilder(token.length() - 2);
     int i = 1;
     while (i < token.length() - 1) {
