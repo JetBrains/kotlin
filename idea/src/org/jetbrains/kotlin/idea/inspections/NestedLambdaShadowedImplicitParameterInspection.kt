@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
@@ -52,7 +53,7 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
                 if (it.isImplicitParameterReference(lambda, implicitParameter, context)) {
                     holder.registerProblem(
                         it,
-                        "Implicit parameter 'it' of enclosing lambda is shadowed",
+                        KotlinBundle.message("implicit.parameter.it.of.enclosing.lambda.is.shadowed"),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         AddExplicitParameterToOuterLambdaFix(),
                         IntentionWrapper(ReplaceItWithExplicitFunctionLiteralParamIntention(), containingFile)
@@ -63,7 +64,7 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
     }
 
     private class AddExplicitParameterToOuterLambdaFix : LocalQuickFix {
-        override fun getName() = "Add explicit parameter name to outer lambda"
+        override fun getName() = KotlinBundle.message("add.explicit.parameter.to.outer.lambda.fix.text")
 
         override fun getFamilyName() = name
 

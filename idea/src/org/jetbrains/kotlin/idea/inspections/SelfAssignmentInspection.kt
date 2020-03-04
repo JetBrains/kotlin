@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -52,7 +53,7 @@ class SelfAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspect
 
             holder.registerProblem(
                 right,
-                "Variable '${rightCallee.name}' is assigned to itself",
+                KotlinBundle.message("variable.0.is.assigned.to.itself", rightCallee.name),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 RemoveSelfAssignmentFix()
             )
@@ -82,7 +83,7 @@ class SelfAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspect
 }
 
 private class RemoveSelfAssignmentFix : LocalQuickFix {
-    override fun getName() = "Remove self assignment"
+    override fun getName() = KotlinBundle.message("remove.self.assignment.fix.text")
 
     override fun getFamilyName() = name
 

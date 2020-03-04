@@ -40,6 +40,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -124,7 +125,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             }
             manager.createProblemDescriptor(
                 it,
-                "Unused import directive",
+                KotlinBundle.message("unused.import.directive"),
                 isOnTheFly,
                 fixes.toTypedArray(),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
@@ -220,7 +221,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private class OptimizeImportsQuickFix(file: KtFile) : LocalQuickFixOnPsiElement(file) {
-        override fun getText() = "Optimize imports"
+        override fun getText() = KotlinBundle.message("optimize.imports")
 
         override fun getFamilyName() = name
 

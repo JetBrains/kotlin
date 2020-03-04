@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -21,7 +22,7 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection() {
             val eqeqeq = operands.eqEqEqOperands.map { it.text }
             if (eqeq.intersect(eqeqeq).isNotEmpty()) {
                 holder.registerProblem(
-                    expression, "Suspicious combination of == and ===",
+                    expression, KotlinBundle.message("suspicious.combination.of.and"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 )
             }

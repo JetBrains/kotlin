@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.psi.*
@@ -22,7 +23,7 @@ class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
             if (hasRedundantType(property)) {
                 holder.registerProblem(
                     typeReference,
-                    "Explicitly given type is redundant here",
+                    KotlinBundle.message("explicitly.given.type.is.redundant.here"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     IntentionWrapper(RemoveExplicitTypeIntention(), property.containingKtFile)
                 )

@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
@@ -38,7 +39,7 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
             val fixes = collectFixes(expression, constantValue)
             holder.registerProblem(
                 expression.condition!!,
-                "Condition is always '$constantValue'",
+                KotlinBundle.message("condition.is.always.0", constantValue),
                 *fixes.toTypedArray()
             )
         }
@@ -89,7 +90,7 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
     ) : ConstantConditionIfFix {
         override fun getFamilyName() = name
 
-        override fun getName() = "Simplify expression"
+        override fun getName() = KotlinBundle.message("simplify.fix.text")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return
@@ -107,7 +108,7 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
     private class RemoveFix : ConstantConditionIfFix {
         override fun getFamilyName() = name
 
-        override fun getName() = "Delete expression"
+        override fun getName() = KotlinBundle.message("remove.fix.text")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return

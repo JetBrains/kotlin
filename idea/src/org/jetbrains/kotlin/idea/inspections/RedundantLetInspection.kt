@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
@@ -27,11 +28,11 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
     KtCallExpression::class.java
 ) {
-    override fun inspectionText(element: KtCallExpression) = "Redundant `let` call could be removed"
+    override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("redundant.let.call.could.be.removed")
 
     final override fun inspectionHighlightRangeInElement(element: KtCallExpression) = element.calleeExpression?.textRangeIn(element)
 
-    final override val defaultFixText = "Remove `let` call"
+    final override val defaultFixText = KotlinBundle.message("remove.let.call")
 
     final override fun isApplicable(element: KtCallExpression): Boolean {
         if (!element.isLetMethodCall()) return false

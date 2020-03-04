@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -25,7 +26,7 @@ class RedundantReturnLabelInspection : AbstractKotlinInspection() {
             val labelName = label.getReferencedName()
             holder.registerProblem(
                 label,
-                "Redundant '@$labelName'",
+                KotlinBundle.message("redundant.0", labelName),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 RemoveReturnLabelFix(labelName)
             )
@@ -33,7 +34,7 @@ class RedundantReturnLabelInspection : AbstractKotlinInspection() {
 }
 
 private class RemoveReturnLabelFix(private val labelName: String) : LocalQuickFix {
-    override fun getName() = "Remove redundant '@$labelName'"
+    override fun getName() = KotlinBundle.message("remove.return.label.fix.text", labelName)
 
     override fun getFamilyName() = name
 

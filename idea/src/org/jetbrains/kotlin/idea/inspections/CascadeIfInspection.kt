@@ -9,6 +9,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfToWhenIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
@@ -52,7 +53,7 @@ class CascadeIfInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 expression.ifKeyword,
-                "Cascade if should be replaced with when",
+                KotlinBundle.message("cascade.if.should.be.replaced.with.when"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 IntentionWrapper(IfToWhenIntention(), expression.containingKtFile)
             )

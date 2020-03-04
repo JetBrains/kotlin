@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -55,7 +56,7 @@ class ScopeFunctionConversionInspection : AbstractKotlinInspection() {
             if (counterpartName != null) {
                 holder.registerProblem(
                     expression.calleeExpression!!,
-                    "Call is replaceable with another scope function",
+                    KotlinBundle.message("call.is.replaceable.with.another.scope.function"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     if (counterpartName == "also" || counterpartName == "let")
                         ConvertScopeFunctionToParameter(counterpartName)
@@ -139,7 +140,7 @@ class ReplacementCollection(private val project: Project) {
 }
 
 abstract class ConvertScopeFunctionFix(private val counterpartName: String) : LocalQuickFix {
-    override fun getFamilyName() = "Convert to '$counterpartName'"
+    override fun getFamilyName() = KotlinBundle.message("convert.scope.function.fix.family.name", counterpartName)
 
     override fun applyFix(project: Project, problemDescriptor: ProblemDescriptor) {
         val callee = problemDescriptor.psiElement as KtNameReferenceExpression

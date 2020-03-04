@@ -76,7 +76,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
             }
         }
 
-        table.columnModel.getColumn(PARAMETER_NAME_COLUMN).headerValue = KotlinBundle.message("text.name")
+        table.columnModel.getColumn(PARAMETER_NAME_COLUMN).headerValue = KotlinBundle.message("text.Name")
 
         createAdditionalColumns()
 

@@ -9,6 +9,7 @@ import com.intellij.codeInsight.CodeInsightUtil
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.negate
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -23,7 +24,7 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
 
             holder.registerProblem(
                 expression,
-                "Redundant 'if' statement",
+                KotlinBundle.message("redundant.if.statement"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 RemoveRedundantIf(redundancyType, branchType)
             )
@@ -81,7 +82,7 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
     }
 
     private class RemoveRedundantIf(private val redundancyType: RedundancyType, private val branchType: BranchType) : LocalQuickFix {
-        override fun getName() = "Remove redundant 'if' statement"
+        override fun getName() = KotlinBundle.message("remove.redundant.if.text")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

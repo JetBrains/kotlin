@@ -21,6 +21,7 @@ import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
@@ -58,11 +59,11 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
                 highlightElement: PsiElement = keyword,
                 highlightType: ProblemHighlightType = if (isSerious) GENERIC_ERROR_OR_WARNING else INFORMATION
             ) {
-                val subject = if (fix is LiftReturnOutFix) "Return" else "Assignment"
-                val verb = if (isSerious) "should" else "can"
+                val subject = if (fix is LiftReturnOutFix) KotlinBundle.message("text.Return") else KotlinBundle.message("text.Assignment")
+                val verb = if (isSerious) KotlinBundle.message("text.should") else KotlinBundle.message("text.can")
                 holder.registerProblemWithoutOfflineInformation(
                     expression,
-                    "$subject $verb be lifted out of '${keyword.text}'",
+                    KotlinBundle.message("0.1.be.lifted.out.of.2", subject, verb, keyword.text),
                     isOnTheFly,
                     highlightType,
                     highlightElement.textRange?.shiftRight(-expression.startOffset),
@@ -73,7 +74,7 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
         }
 
     private class LiftReturnOutFix(private val keyword: String) : LocalQuickFix {
-        override fun getName() = "Lift return out of '$keyword'"
+        override fun getName() = KotlinBundle.message("lift.return.out.fix.text.0", keyword)
 
         override fun getFamilyName() = name
 
@@ -84,7 +85,7 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
     }
 
     private class LiftAssignmentOutFix(private val keyword: String) : LocalQuickFix {
-        override fun getName() = "Lift assignment out of '$keyword'"
+        override fun getName() = KotlinBundle.message("lift.assignment.out.fix.text.0", keyword)
 
         override fun getFamilyName() = name
 

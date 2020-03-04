@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.effectiveVisibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.isInheritable
@@ -150,13 +151,13 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
     private fun registerProblem(holder: ProblemsHolder, declaration: KtDeclaration) {
         val modifierListOwner = declaration.getParentOfType<KtModifierListOwner>(false) ?: return
         val member = when (declaration) {
-            is KtNamedFunction -> "Function"
-            else -> "Property"
+            is KtNamedFunction -> KotlinBundle.message("text.Function")
+            else -> KotlinBundle.message("text.Property")
         }
         val nameElement = (declaration as? PsiNameIdentifierOwner)?.nameIdentifier ?: return
         holder.registerProblem(
             declaration.visibilityModifier() ?: nameElement,
-            "$member '${declaration.getName()}' could be private",
+            KotlinBundle.message("0.1.could.be.private", member, declaration.getName().toString()),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             IntentionWrapper(AddModifierFix(modifierListOwner, KtTokens.PRIVATE_KEYWORD), declaration.containingKtFile)
         )

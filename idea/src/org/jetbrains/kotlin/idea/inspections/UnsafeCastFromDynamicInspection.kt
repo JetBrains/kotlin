@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -30,7 +31,7 @@ class UnsafeCastFromDynamicInspection : AbstractKotlinInspection() {
             if (actualType.isDynamic() && !expectedType.isDynamic() && !TypeUtils.noExpectedType(expectedType)) {
                 holder.registerProblem(
                     expression,
-                    "Implicit (unsafe) cast from dynamic to $expectedType",
+                    KotlinBundle.message("implicit.unsafe.cast.from.dynamic.to.0", expectedType),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     CastExplicitlyFix(expectedType)
                 )
@@ -39,7 +40,7 @@ class UnsafeCastFromDynamicInspection : AbstractKotlinInspection() {
 }
 
 private class CastExplicitlyFix(private val type: KotlinType) : LocalQuickFix {
-    override fun getName() = "Cast explicitly"
+    override fun getName() = KotlinBundle.message("cast.explicitly.fix.text")
 
     override fun getFamilyName() = name
 

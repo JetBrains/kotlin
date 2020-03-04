@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -54,7 +55,7 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
 
             holder.registerProblem(
                 accessor,
-                "Existing backing field is not assigned by the setter",
+                KotlinBundle.message("existing.backing.field.is.not.assigned.by.the.setter"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 AssignBackingFieldFix()
             )
@@ -71,7 +72,7 @@ private val assignmentOperators = listOf(KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.
 private val incrementAndDecrementOperators = listOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS)
 
 private class AssignBackingFieldFix : LocalQuickFix {
-    override fun getName() = "Assign backing field"
+    override fun getName() = KotlinBundle.message("assign.backing.field.fix.text")
 
     override fun getFamilyName() = name
 

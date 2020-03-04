@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.refactoring.replaceWithCopyWithResolveCheck
@@ -68,7 +69,7 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
                 holder.manager.createProblemDescriptor(
                     functionLiteral,
                     TextRange((singleParameter?.startOffset ?: arrow.startOffset) - startOffset, arrow.endOffset - startOffset),
-                    "Redundant lambda arrow",
+                    KotlinBundle.message("redundant.lambda.arrow"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     isOnTheFly,
                     DeleteFix()
@@ -78,7 +79,7 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
     }
 
     class DeleteFix : LocalQuickFix {
-        override fun getFamilyName() = "Remove arrow"
+        override fun getFamilyName() = KotlinBundle.message("delete.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement as? KtFunctionLiteral ?: return

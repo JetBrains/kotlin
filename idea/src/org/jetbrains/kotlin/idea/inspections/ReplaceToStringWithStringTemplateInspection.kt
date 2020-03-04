@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.isToString
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -27,7 +28,8 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
         element.replace(KtPsiFactory(element).createExpression("\"$$variable\""))
     }
 
-    override fun inspectionText(element: KtDotQualifiedExpression) = "Call of 'toString' could be replaced with string template"
+    override fun inspectionText(element: KtDotQualifiedExpression) =
+        KotlinBundle.message("call.of.tostring.could.be.replaced.with.string.template")
 
-    override val defaultFixText = "Replace 'toString' with string template"
+    override val defaultFixText = KotlinBundle.message("replace.tostring.with.string.template")
 }
