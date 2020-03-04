@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SchemeState;
 import com.intellij.openapi.options.ex.Settings;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -72,6 +73,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.*;
 
@@ -979,21 +982,31 @@ public class SingleInspectionProfilePanel extends JPanel {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent e) {
-        String description = e.getDescription();
-        if (description.startsWith(SETTINGS)) {
-          DataContext context = DataManager.getInstance().getDataContextFromFocus().getResult();
-          if (context != null) {
-            Settings settings = Settings.KEY.getData(context);
-            String configId = description.substring(SETTINGS.length());
-            if (settings != null) {
-              settings.select(settings.find(configId));
-            } else {
-              ShowSettingsUtilImpl.showSettingsDialog(project, configId, "");
+        try {
+          URI url = new URI(e.getDescription());
+          if (url.getScheme().equals("settings")) {
+            DataContext context = DataManager.getInstance().getDataContextFromFocus().getResult();
+            if (context != null) {
+              Settings settings = Settings.KEY.getData(context);
+              SearchTextField searchTextField = SearchTextField.KEY.getData(context);
+              String configId = url.getHost();
+              String search = url.getQuery();
+              if (settings != null) {
+                Configurable configurable = settings.find(configId);
+                settings.select(configurable).doWhenDone(() -> {
+                  if (searchTextField != null && search != null) searchTextField.setText(search);
+                });
+              } else {
+                ShowSettingsUtilImpl.showSettingsDialog(project, configId, search);
+              }
             }
           }
+          else {
+            BrowserUtil.browse(url);
+          }
         }
-        else {
-          BrowserUtil.browse(description);
+        catch (URISyntaxException ex) {
+          LOG.error(ex);
         }
       }
     };
