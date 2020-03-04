@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeInsight.daemon.DaemonBundle;
@@ -18,6 +17,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
@@ -30,6 +30,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.options.ex.ConfigurableExtensionPointUtil;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -640,8 +641,24 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public void fillHectorPanels(@NotNull Container container, @NotNull GridBag gc) {
-      myAdditionalPanels.stream().peek(p -> p.reset()).map(p -> p.createComponent()).filter(c -> c != null).
-        forEach(c -> container.add(c, gc.nextLine().next().fillCellHorizontally().coverLine().weightx(1.0)));
+      for (HectorComponentPanel p : myAdditionalPanels) {
+        JComponent c;
+        try {
+          p.reset();
+          c = p.createComponent();
+        }
+        catch (ProcessCanceledException e) {
+          throw e;
+        }
+        catch (Throwable e) {
+          Logger.getInstance(TrafficLightRenderer.class).error(e);
+          continue;
+        }
+
+        if (c != null) {
+          container.add(c, gc.nextLine().next().fillCellHorizontally().coverLine().weightx(1.0));
+        }
+      }
     }
 
     @Override
