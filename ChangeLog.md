@@ -63,7 +63,6 @@
 - [`KT-34500`](https://youtrack.jetbrains.com/issue/KT-34500) CompilationException when loop range is DoubleArray and loop parameter is casted to super-type (e.g. Any, Number, etc.)
 - [`KT-34647`](https://youtrack.jetbrains.com/issue/KT-34647) Gradually rename experimentality annotations
 - [`KT-34649`](https://youtrack.jetbrains.com/issue/KT-34649) Deprecate `-Xexperimental` flag
-- [`KT-34743`](https://youtrack.jetbrains.com/issue/KT-34743) Support trailing comma in the compiler
 - [`KT-34779`](https://youtrack.jetbrains.com/issue/KT-34779) JVM: "get()" is not invoked in optimized "for" loop over CharSequence.withIndex() with unused variable ("_") for the element in destructuring declaration
 - [`KT-34786`](https://youtrack.jetbrains.com/issue/KT-34786) Flaky type inference for lambda expressions
 - [`KT-34820`](https://youtrack.jetbrains.com/issue/KT-34820) New type inference: Red code when expanding type-aliased extension function in LHS position of elvis
