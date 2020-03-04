@@ -94,7 +94,7 @@ object ReviewAddedImports {
     ) {
         if (importsToRemove.isEmpty()) return
 
-        WriteCommandAction.runWriteCommandAction(project, "revert applied imports", null, Runnable {
+        WriteCommandAction.runWriteCommandAction(project, KotlinBundle.message("revert.applied.imports"), null, Runnable {
             val newImports = file.importDirectives.mapNotNull {
                 val importedFqName = it.importedFqName ?: return@mapNotNull null
                 if (importsToRemove.contains(importedFqName.asString())) return@mapNotNull null
