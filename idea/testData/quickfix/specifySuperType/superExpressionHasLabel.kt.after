@@ -1,6 +1,4 @@
 // "Specify supertype" "true"
-package a.b.c
-
 interface X
 
 open class Y {
@@ -12,7 +10,11 @@ interface Z {
 }
 
 class Test : X, Y(), Z {
-    override fun foo() {
-        super<Y>.foo()
+    override fun foo() {}
+
+    inner class Boo : Y(), Z {
+        override fun foo() {
+            super<Y>@Test.foo()
+        }
     }
 }

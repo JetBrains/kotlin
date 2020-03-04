@@ -15,12 +15,15 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SpecifySuperTypeFix(
     superExpression: KtSuperExpression,
@@ -48,7 +51,8 @@ class SpecifySuperTypeFix(
 
     private fun KtSuperExpression.specifySuperType(superType: String) {
         project.executeWriteCommand("Specify supertype") {
-            replace(KtPsiFactory(this).createExpression("super<$superType>"))
+            val label = this.labelQualifier?.text ?: ""
+            replace(KtPsiFactory(this).createExpression("super<$superType>$label"))
         }
     }
 
@@ -72,15 +76,29 @@ class SpecifySuperTypeFix(
             val selectorExpression = qualifiedExpression.selectorExpression ?: return null
 
             val containingClassOrObject = superExpression.getStrictParentOfType<KtClassOrObject>() ?: return null
-            val allSuperTypes = containingClassOrObject.superTypeListEntries.mapNotNull { it.typeReference?.text }
-            if (allSuperTypes.isEmpty()) return null
+            val superTypeListEntries = containingClassOrObject.superTypeListEntries
+            if (superTypeListEntries.isEmpty()) return null
 
             val context = superExpression.analyze(BodyResolveMode.PARTIAL)
+            val superTypes = superTypeListEntries.mapNotNull {
+                val typeReference = it.typeReference ?: return@mapNotNull null
+                val typeElement = it.typeReference?.typeElement ?: return@mapNotNull null
+                val kotlinType = context[BindingContext.TYPE, typeReference] ?: return@mapNotNull null
+                typeElement to kotlinType
+            }
+            if (superTypes.size != superTypeListEntries.size) return null
+
             val psiFactory = KtPsiFactory(superExpression)
-            val superTypesForSuperExpression = allSuperTypes.filter {
-                val newQualifiedExpression = psiFactory.createExpressionByPattern("super<$it>.$0", selectorExpression)
+            val superTypesForSuperExpression = superTypes.mapNotNull { (typeElement, kotlinType) ->
+                if (superTypes.any { it.second != kotlinType && it.second.isSubtypeOf(kotlinType) }) return@mapNotNull null
+                val fqName = kotlinType.fqName ?: return@mapNotNull null
+                val fqNameAsString = fqName.asString()
+                val name = if (typeElement.text.startsWith(fqNameAsString)) fqNameAsString else fqName.shortName().asString()
+                val newQualifiedExpression = psiFactory.createExpressionByPattern("super<$name>.$0", selectorExpression)
                 val newContext = newQualifiedExpression.analyzeAsReplacement(qualifiedExpression, context)
-                newQualifiedExpression.getResolvedCall(newContext)?.resultingDescriptor != null
+                if (newQualifiedExpression.getResolvedCall(newContext)?.resultingDescriptor == null) return@mapNotNull null
+                if (newContext.diagnostics.noSuppression().forElement(newQualifiedExpression).isNotEmpty()) return@mapNotNull null
+                name
             }
             if (superTypesForSuperExpression.isEmpty()) return null
 

@@ -11,8 +11,8 @@ interface Z {
     fun foo() {}
 }
 
-class Test : X, Y(), Z {
+class Test : X, a.b.c.Y(), Z {
     override fun foo() {
-        super<Y>.foo()
+        <caret>super.foo()
     }
 }

@@ -1,10 +1,10 @@
 // "Specify supertype" "true"
-package a.b.c
+interface X {
+    fun foo() {}
+}
 
-interface X
-
-open class Y {
-    open fun foo() {}
+open class Y: X {
+    override fun foo() {}
 }
 
 interface Z {
@@ -13,6 +13,6 @@ interface Z {
 
 class Test : X, Y(), Z {
     override fun foo() {
-        super<Y>.foo()
+        <caret>super.foo()
     }
 }
