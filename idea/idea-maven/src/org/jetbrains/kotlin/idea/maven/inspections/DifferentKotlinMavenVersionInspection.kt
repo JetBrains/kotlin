@@ -50,7 +50,7 @@ class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProj
         holder.createProblem(
             plugin.version,
             HighlightSeverity.WARNING,
-            KotlinMavenBundle.message("version.different.maven.ide", versionFromMaven, versionFromIde)
+            KotlinMavenBundle.message("version.different.maven.ide", versionFromMaven.toString(), versionFromIde)
         )
     }
 }
