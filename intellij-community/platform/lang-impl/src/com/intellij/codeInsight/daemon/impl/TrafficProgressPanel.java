@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -61,9 +61,9 @@ class TrafficProgressPanel extends JPanel {
     fakeStatusLargeEnough.errorCount = new int[]{1, 1, 1, 1};
     Project project = trafficLightRenderer.getProject();
     PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    fakeStatusLargeEnough.passStati = new ArrayList<>();
+    fakeStatusLargeEnough.passStatuses = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      fakeStatusLargeEnough.passStati
+      fakeStatusLargeEnough.passStatuses
         .add(new ProgressableTextEditorHighlightingPass(project, null, DaemonBundle.message("pass.wolf"), psiFile, editor, TextRange.EMPTY_RANGE, false,
                                                         HighlightInfoProcessor.getEmpty()) {
           @Override
@@ -161,7 +161,7 @@ class TrafficProgressPanel extends JPanel {
         rebuildPassesProgress(status);
       }
 
-      for (ProgressableTextEditorHighlightingPass pass : status.passStati) {
+      for (ProgressableTextEditorHighlightingPass pass : status.passStatuses) {
         double progress = pass.getProgress();
         Pair<JProgressBar, JLabel> pair = myTrafficLightRenderer.passes.get(pass);
         JProgressBar progressBar = pair.first;
@@ -207,7 +207,7 @@ class TrafficProgressPanel extends JPanel {
     GridBagConstraints c = new GridBagConstraints();
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    for (ProgressableTextEditorHighlightingPass pass : status.passStati) {
+    for (ProgressableTextEditorHighlightingPass pass : status.passStatuses) {
       JLabel label = new JLabel(pass.getPresentableName() + ": ");
       label.setHorizontalTextPosition(SwingConstants.RIGHT);
 

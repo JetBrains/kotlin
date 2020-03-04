@@ -90,7 +90,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
    */
   @Deprecated
-  public TrafficLightRenderer(@Nullable Project project, Document document, PsiFile psiFile) {
+  public TrafficLightRenderer(@Nullable Project project, Document document, @SuppressWarnings("unused") PsiFile psiFile) {
     this(project, document);
   }
 
@@ -158,9 +158,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     return myProject == null || myDocument == null || getPsiFile() != null;
   }
 
-  protected static class DaemonCodeAnalyzerStatus {
+  protected static final class DaemonCodeAnalyzerStatus {
     public boolean errorAnalyzingFinished; // all passes done
-    List<ProgressableTextEditorHighlightingPass> passStati = Collections.emptyList();
+    List<ProgressableTextEditorHighlightingPass> passStatuses = Collections.emptyList();
     public int[] errorCount = ArrayUtilRt.EMPTY_INT_ARRAY;
     // Used in Rider
     public String reasonWhyDisabled;
@@ -173,8 +173,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @Override
     public String toString() {
       StringBuilder s = new StringBuilder("DS: finished=" + errorAnalyzingFinished);
-      s.append("; pass statuses: ").append(passStati.size()).append("; ");
-      for (ProgressableTextEditorHighlightingPass passStatus : passStati) {
+      s.append("; pass statuses: ").append(passStatuses.size()).append("; ");
+      for (ProgressableTextEditorHighlightingPass passStatus : passStatuses) {
         s.append(
           String.format("(%s %2.0f%% %b)", passStatus.getPresentableName(), passStatus.getProgress() * 100, passStatus.isFinished()));
       }
@@ -242,7 +242,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     status.errorCount = errorCount.clone();
 
-    status.passStati = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument).stream().
+    status.passStatuses = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument).stream().
       filter(p -> p instanceof ProgressableTextEditorHighlightingPass).
       map(p -> (ProgressableTextEditorHighlightingPass)p).
       filter(p -> StringUtil.isNotEmpty(p.getPresentableName()) && p.getProgress() >= 0).
@@ -290,7 +290,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     statusExtraLine = null;
 
     boolean result = false;
-    if (!status.passStati.equals(new ArrayList<>(passes.keySet()))) {
+    if (!status.passStatuses.equals(new ArrayList<>(passes.keySet()))) {
       // passes set has changed
       rebuildPassesMap(status);
       result = true;
@@ -366,7 +366,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
   private void rebuildPassesMap(@NotNull DaemonCodeAnalyzerStatus status) {
     passes.clear();
-    for (ProgressableTextEditorHighlightingPass pass : status.passStati) {
+    for (ProgressableTextEditorHighlightingPass pass : status.passStatuses) {
       JProgressBar progressBar = new JProgressBar(0, MAX);
       progressBar.setMaximum(MAX);
       UIUtil.applyStyle(UIUtil.ComponentStyle.MINI, progressBar);
@@ -457,7 +457,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
         //noinspection ConstantConditions
         return status.errorAnalyzingFinished ? result :
-               result.withPathStat(ContainerUtil.map(status.passStati,
+               result.withPathStat(ContainerUtil.map(status.passStatuses,
                                                      p -> new StatInfo(p.getPresentableName(), p.getProgress(), p.isFinished())));
       }
       else {
@@ -489,7 +489,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           //noinspection ConstantConditions
           return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::getUIController).
             withExpandedIcon(new LayeredIcon(icon)).
-            withPathStat(ContainerUtil.map(status.passStati, p -> new StatInfo(p.getPresentableName(), p.getProgress(), p.isFinished())));
+            withPathStat(ContainerUtil.map(status.passStatuses, p -> new StatInfo(p.getPresentableName(), p.getProgress(), p.isFinished())));
         }
       }
     }
