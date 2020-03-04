@@ -15,6 +15,7 @@ import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
+import com.jetbrains.cidr.lang.workspace.OCWorkspace
 import com.jetbrains.mobile.bridging.MobileKonanSwiftModule
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftSourceModuleFile
 import com.jetbrains.swift.psi.SwiftFile
@@ -29,6 +30,9 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
         get() = config.project
 
     private val target: AppleTargetModel = GradleAppleWorkspace.getInstance(project).getTarget(config)!!
+
+    /** Contains the source module ID for test modules, and nothing for source modules */
+    private val dependencyModuleIDs: List<String> = listOfNotNull(GradleAppleWorkspace.sourceConfigurationID(configuration.uniqueId))
 
     private val cachedBridgedSymbols: CachedValue<SwiftGlobalSymbols> = CachedValuesManager.getManager(project).createCachedValue(
         {
@@ -80,7 +84,12 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
     }
 
     override fun getDependencies(): List<SwiftModule> =
-        GradleAppleWorkspace.getInstance(project).availableKonanFrameworkTargets.values.map { MobileKonanSwiftModule(it, config) }
+        GradleAppleWorkspace.getInstance(project).availableKonanFrameworkTargets.values.map { MobileKonanSwiftModule(it, config) } +
+                dependencyModuleIDs.mapNotNull { id ->
+                    OCWorkspace.getInstance(project).getConfigurationById(id)?.let { configuration ->
+                        SwiftModuleManager.getInstance(project).getSourceModule(configuration)
+                    }
+                }
 
     override fun getFiles(): List<VirtualFile> = config.sources.let { sources: Collection<VirtualFile> ->
         sources as? List<VirtualFile> ?: sources.toList()

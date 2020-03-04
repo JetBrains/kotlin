@@ -98,7 +98,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
                     val buildVariant = OCVariant(buildConfig)
                     // TODO Enable different variants (= build configurations, architectures, …)
                     val id = "${moduleData.id}:$name:$buildConfig"
-                    val testId = "$id:test"
+                    val testId = testConfigurationID(id)
                     assert(alreadyAddedConfigurations.add(id)) { "Duplicate configuration id" }
 
                     val config = workspace.addConfiguration(id, name, buildVariant)
@@ -275,5 +275,11 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
         private const val LOADING_GRADLE_APPLE_PROJECT = "Loading Gradle Apple Project..."
         private val LOG = Logger.getInstance(GradleAppleWorkspace::class.java)
         fun getInstance(project: Project): GradleAppleWorkspace = ServiceManager.getService(project, GradleAppleWorkspace::class.java)
+
+        fun testConfigurationID(sourceConfigurationID: String): String = "$sourceConfigurationID:test"
+        fun sourceConfigurationID(testConfigurationID: String): String? =
+            if (testConfigurationID.endsWith(":test"))
+                testConfigurationID.removeSuffix(":test")
+            else null
     }
 }
