@@ -31,67 +31,46 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 abstract class AbstractAnnotationDeserializer(
-    protected val session: FirSession
+    private val session: FirSession
 ) {
     protected val protocol = BuiltInSerializerProtocol
 
-    open fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotationCall> {
+    fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
         val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    open fun loadFunctionAnnotations(
-        containingDeclaration: ProtoContainer,
-        functionProto: ProtoBuf.Function,
-        nameResolver: NameResolver,
-        typeTable: TypeTable
-    ): List<FirAnnotationCall> {
+    fun loadFunctionAnnotations(functionProto: ProtoBuf.Function, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return emptyList()
         val annotations = functionProto.getExtension(protocol.functionAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    open fun loadPropertyAnnotations(
-        containingDeclaration: ProtoContainer,
-        propertyProto: ProtoBuf.Property,
-        nameResolver: NameResolver,
-        typeTable: TypeTable
-    ): List<FirAnnotationCall> {
+    fun loadPropertyAnnotations(propertyProto: ProtoBuf.Property, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(propertyProto.flags)) return emptyList()
         val annotations = propertyProto.getExtension(protocol.propertyAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    open fun loadConstructorAnnotations(
-        containingDeclaration: ProtoContainer,
-        constructorProto: ProtoBuf.Constructor,
-        nameResolver: NameResolver,
-        typeTable: TypeTable
-    ): List<FirAnnotationCall> {
+    fun loadConstructorAnnotations(constructorProto: ProtoBuf.Constructor, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return emptyList()
         val annotations = constructorProto.getExtension(protocol.constructorAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    open fun loadValueParameterAnnotations(
-        containingDeclaration: ProtoContainer,
-        valueParameterProto: ProtoBuf.ValueParameter,
-        nameResolver: NameResolver,
-        typeTable: TypeTable
-    ): List<FirAnnotationCall> {
+    fun loadValueParameterAnnotations(valueParameterProto: ProtoBuf.ValueParameter, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) return emptyList()
         val annotations = valueParameterProto.getExtension(protocol.parameterAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    abstract fun loadTypeAnnotations(containingDeclaration: ProtoContainer, typeProto: ProtoBuf.Type, nameResolver: NameResolver, typeTable: TypeTable): List<FirAnnotationCall>
+    abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall>
 
     fun deserializeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): FirAnnotationCall {
         val classId = nameResolver.getClassId(proto.id)

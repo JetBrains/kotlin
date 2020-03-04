@@ -93,11 +93,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegateWithAnonymousObject.kt");
     }
 
-    @TestMetadata("delegationByMap.kt")
-    public void testDelegationByMap() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegationByMap.kt");
-    }
-
     @TestMetadata("emptyArray.kt")
     public void testEmptyArray() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/emptyArray.kt");

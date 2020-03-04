@@ -77,7 +77,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
         private val memberDeserializer by lazy {
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, session,
-                FirBuiltinAnnotationDeserializer(session), null
+                FirBuiltinAnnotationDeserializer(session),
             ).memberDeserializer
         }
 
