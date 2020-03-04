@@ -383,7 +383,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
 
     @Override
     public void finished(boolean aborted, int errors, int warnings, @NotNull CompileContext compileContext) {
-      if (!finished.compareAndSet(false, true)) {
+      if (finished.compareAndSet(false, true)) {
         myCollector.appendJpsBuildResult(aborted, errors, warnings, compileContext, this);
       } else {
         // can be invoked by CompileDriver for rerun action
