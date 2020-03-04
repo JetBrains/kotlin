@@ -32,21 +32,24 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import java.util.*
 
-fun KtPsiFactory.createExpressionByPattern(@NonNls pattern: String, vararg args: Any, reformat: Boolean = true): KtExpression =
+fun KtPsiFactory.createExpressionByPattern(@NonNls pattern: String, @NonNls vararg args: Any, reformat: Boolean = true): KtExpression =
     createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
 
-fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtValueArgumentList =
-    createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) }
+fun KtPsiFactory.createValueArgumentListByPattern(
+    @NonNls pattern: String,
+    @NonNls vararg args: Any,
+    reformat: Boolean = true
+): KtValueArgumentList = createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) }
 
 fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(
-    pattern: String,
-    vararg args: Any,
+    @NonNls pattern: String,
+    @NonNls vararg args: Any,
     reformat: Boolean = true
 ): TDeclaration = createByPattern(pattern, *args, reformat = reformat) { createDeclaration(it) }
 
 fun KtPsiFactory.createDestructuringDeclarationByPattern(
-    pattern: String,
-    vararg args: Any,
+    @NonNls pattern: String,
+    @NonNls vararg args: Any,
     reformat: Boolean = true
 ): KtDestructuringDeclaration = createByPattern(pattern, *args, reformat = reformat) { createDestructuringDeclaration(it) }
 
