@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
+import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.withHasQuestionMark
@@ -72,6 +73,7 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
@@ -328,29 +330,32 @@ class ComposerTypeRemapper(
     private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 
     override fun remapType(type: IrType): IrType {
-        // TODO(lmr):
-        // This is basically creating the KotlinType and then converting to an IrType. Consider
-        // rewriting to just create the IrType directly, which would probably be more efficient.
         if (type !is IrSimpleType) return type
         if (!type.isFunction()) return underlyingRemapType(type)
         if (!type.isComposable()) return underlyingRemapType(type)
         if (!shouldTransform) return underlyingRemapType(type)
-        val oldArguments = type.toKotlinType().arguments
-        val newArguments =
-            oldArguments.subList(0, oldArguments.size - 1) +
-                    TypeProjectionImpl(composerTypeDescriptor.defaultType) +
-                    oldArguments.last()
+        val oldIrArguments = type.arguments
+        val newIrArguments =
+            oldIrArguments.subList(0, oldIrArguments.size - 1) +
+                    makeTypeProjection(composerTypeDescriptor.defaultType.toIrType(),
+                        Variance.INVARIANT) +
+                    oldIrArguments.last()
 
-        val transformedComposableType = context
-            .irBuiltIns
-            .builtIns
-            .getFunction(oldArguments.size) // return type is an argument, so this is n + 1
-            .defaultType
-            .replace(newArguments)
-            .toIrType()
-            .withHasQuestionMark(type.hasQuestionMark) as IrSimpleType
-
-        return underlyingRemapType(transformedComposableType)
+        return IrSimpleTypeImpl(
+            null,
+            symbolRemapper.getReferencedClassifier(
+                context.ir.symbols.externalSymbolTable.referenceClass(
+                    context
+                    .irBuiltIns
+                    .builtIns
+                    .getFunction(oldIrArguments.size) // return type is an argument, so this is n + 1
+                )
+            ),
+            type.hasQuestionMark,
+            newIrArguments.map { remapTypeArgument(it) },
+            emptyList(),
+            null
+        )
     }
 
     private fun underlyingRemapType(type: IrSimpleType): IrType {
