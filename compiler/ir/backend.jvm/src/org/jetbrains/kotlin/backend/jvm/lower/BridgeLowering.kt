@@ -154,11 +154,8 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             if (Visibilities.isPrivate(irFunction.visibility) || irFunction.isStatic || irFunction.overriddenSymbols.isEmpty())
                 return false
 
-            // We ignore (fake overrides of) default argument stubs and methods of Any.
-            // Default argument stubs only appear in the base class and are synthetic, so there is no reason to produce
-            // bridges for them. Similarly, none of the methods of Any have type parameters and so we will not need bridges
-            // for them.
-            if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || irFunction.isMethodOfAny())
+            // None of the methods of Any have type parameters and so we will not need bridges for them.
+            if (irFunction.isMethodOfAny())
                 return false
 
             // We don't produce bridges for abstract functions in interfaces.
