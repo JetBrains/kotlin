@@ -25,7 +25,8 @@ interface NpmApi {
 
     fun resolveDependency(
         resolvedNpmProject: KotlinCompilationNpmResolution,
-        dependency: NpmDependency
+        dependency: NpmDependency,
+        transitive: Boolean
     ): Set<File>
 
     companion object {
