@@ -38,7 +38,7 @@ fun case3() {
         A.A1 -> B()
         A.A2 -> B()
     }
-    val x1 = <!INAPPLICABLE_CANDIDATE!>C<!>(l1) //INAPPLICABLE_CANDIDATE (l1 is Unit)
+    val x1 = C(l1)
 }
 
 // TESTCASE NUMBER: 4
