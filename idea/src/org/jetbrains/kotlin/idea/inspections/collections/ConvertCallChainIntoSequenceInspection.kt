@@ -15,7 +15,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.ui.EditorTextField
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -55,7 +57,7 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
 
             holder.registerProblemWithoutOfflineInformation(
                 qualified,
-                "Call chain on collection could be converted into 'Sequence' to improve performance",
+                KotlinBundle.message("call.chain.on.collection.could.be.converted.into.sequence.to.improve.performance"),
                 isOnTheFly,
                 highlightType,
                 rangeInElement,
@@ -74,14 +76,14 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
                     owner.callChainLengthText = regexField.text
                 }
             })
-            val labeledComponent = LabeledComponent.create(regexField, "Call chain length to transform:", BorderLayout.WEST)
+            val labeledComponent = LabeledComponent.create(regexField, KotlinBundle.message("call.chain.length.to.transform"), BorderLayout.WEST)
             add(labeledComponent, BorderLayout.NORTH)
         }
     }
 }
 
 private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
-    override fun getName() = "Convert call chain into 'Sequence'"
+    override fun getName() = KotlinBundle.message("convert.call.chain.into.sequence.fix.text")
 
     override fun getFamilyName() = name
 
@@ -207,6 +209,7 @@ private fun KtCallExpression.isLazyTermination(context: BindingContext): Boolean
     return isCalling(fqName, context)
 }
 
+@NonNls
 private val transformations = listOf(
     "chunked",
     "distinct",
@@ -241,6 +244,7 @@ private val transformations = listOf(
     "zipWithNext"
 ).associate { it to FqName("kotlin.collections.$it") }
 
+@NonNls
 private val terminations = listOf(
     "all",
     "any",

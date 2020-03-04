@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -42,7 +43,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
-                "Call chain on collection type may be simplified",
+                KotlinBundle.message("call.chain.on.collection.type.may.be.simplified"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
                 SimplifyCallChainFix(conversion) { callExpression ->
