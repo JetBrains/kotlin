@@ -30,7 +30,8 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner" order="first, before gradle"/>
+        <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner"
+                           id="gradle.mpp" order="first, before gradle"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
 
