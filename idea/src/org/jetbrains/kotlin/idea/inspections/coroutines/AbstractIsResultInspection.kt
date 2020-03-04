@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
@@ -55,7 +56,7 @@ abstract class AbstractIsResultInspection(
         } else {
             holder.registerProblem(
                 toReport,
-                "Function returning $typeShortName with a name that does not end with $allowedSuffix",
+                KotlinBundle.message("function.returning.0.with.a.name.that.does.not.end.with.1", typeShortName, allowedSuffix),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 *listOf(
                     RenameToFix("$name$allowedSuffix"),
