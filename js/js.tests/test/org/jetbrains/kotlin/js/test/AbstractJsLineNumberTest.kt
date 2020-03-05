@@ -147,7 +147,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            return TestFile(temporaryFile.absolutePath, text, currentModule)
+            return TestFile(temporaryFile.absolutePath, text, currentModule, directives)
         }
 
         override fun createModule(name: String, dependencies: List<String>, friends: List<String>) = TestModule(name, dependencies, friends)
@@ -165,7 +165,8 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         val files = mutableListOf<TestFile>()
     }
 
-    private class TestFile(val fileName: String, content: String, val module: TestModule) : KotlinBaseTest.TestFile(fileName, content) {
+    private class TestFile(val fileName: String, content: String, val module: TestModule, directives: Map<String, String?>) :
+        KotlinBaseTest.TestFile(fileName, content, directives) {
         init {
             module.files += this
         }

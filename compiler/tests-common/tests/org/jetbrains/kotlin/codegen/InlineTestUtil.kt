@@ -27,12 +27,13 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
 object InlineTestUtil {
-    fun checkNoCallsToInline(outputFiles: Iterable<OutputFile>, sourceFiles: List<KtFile>) {
+    fun checkNoCallsToInline(outputFiles: Iterable<OutputFile>, files: List<KotlinBaseTest.TestFile>) {
         val inlineInfo = obtainInlineInfo(outputFiles)
         val inlineMethods = inlineInfo.inlineMethods
         assert(inlineMethods.isNotEmpty()) { "There are no inline methods" }
@@ -40,12 +41,12 @@ object InlineTestUtil {
         val notInlinedCalls = checkInlineMethodNotInvoked(outputFiles, inlineMethods)
         assert(notInlinedCalls.isEmpty()) { "All inline methods should be inlined but:\n" + notInlinedCalls.joinToString("\n") }
 
-        val skipParameterChecking = sourceFiles.any {
-            InTextDirectivesUtils.isDirectiveDefined(it.text, "NO_CHECK_LAMBDA_INLINING")
+        val skipParameterChecking = files.any {
+            it.directives.containsKey("NO_CHECK_LAMBDA_INLINING")
         } || !doLambdaInliningCheck(outputFiles, inlineInfo)
 
         if (!skipParameterChecking) {
-            val notInlinedParameters = checkParametersInlined(outputFiles, inlineInfo, sourceFiles)
+            val notInlinedParameters = checkParametersInlined(outputFiles, inlineInfo, files)
             assert(notInlinedParameters.isEmpty()) {
                 "All inline parameters should be inlined but:\n${notInlinedParameters.joinToString("\n")}\n" +
                         "but if you have not inlined lambdas or anonymous objects enable NO_CHECK_LAMBDA_INLINING directive"
@@ -167,11 +168,11 @@ object InlineTestUtil {
     }
 
     private fun checkParametersInlined(
-        outputFiles: Iterable<OutputFile>, inlineInfo: InlineInfo, sourceFiles: List<KtFile>
+        outputFiles: Iterable<OutputFile>, inlineInfo: InlineInfo, files: List<KotlinBaseTest.TestFile>
     ): ArrayList<NotInlinedParameter> {
         val skipMethods =
-            sourceFiles.flatMap {
-                InTextDirectivesUtils.findLinesWithPrefixesRemoved(it.text, "// SKIP_INLINE_CHECK_IN: ")
+            files.flatMap {
+                it.getListDirectiveIfPresent("SKIP_INLINE_CHECK_IN") ?: emptyList()
             }.toSet()
 
         val inlinedMethods = inlineInfo.inlineMethods

@@ -119,7 +119,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     protected abstract fun createTestModule(name: String, dependencies: List<String>, friends: List<String>): M?
 
-    protected abstract fun createTestFile(module: M?, fileName: String, text: String, directives: Map<String, String>): F
+    protected abstract fun createTestFile(module: M?, fileName: String, text: String, directives: Map<String, String?>): F
 
     protected open fun createTestFiles(
         file: File,

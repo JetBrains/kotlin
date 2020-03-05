@@ -57,8 +57,8 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
         module: TestModule?,
         fileName: String,
         text: String,
-        directives: Map<String, String>
-    ): TestFile = TestFile(fileName, text)
+        directives: Map<String, String?>
+    ): TestFile = TestFile(fileName, text, directives)
 
     companion object {
         fun findLightClass(allowFrontendExceptions: Boolean, environment: KotlinCoreEnvironment, fqname: String): PsiClass? {

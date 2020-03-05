@@ -70,7 +70,11 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
 
-    open class TestFile(@JvmField val name: String, @JvmField val content: String) : Comparable<TestFile> {
+    open class TestFile @JvmOverloads constructor(
+        @JvmField val name: String,
+        @JvmField val content: String,
+        @JvmField val directives: Map<String, String?> = emptyMap()
+    ) : Comparable<TestFile> {
         override operator fun compareTo(other: TestFile): Int {
             return name.compareTo(other.name)
         }
@@ -85,6 +89,12 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
 
         override fun toString(): String {
             return name
+        }
+
+        fun getListDirectiveIfPresent(name: String): List<String>? {
+            return directives[name]?.let {
+                InTextDirectivesUtils.splitValues(arrayListOf(), it)
+            } ?: emptyList()
         }
     }
 

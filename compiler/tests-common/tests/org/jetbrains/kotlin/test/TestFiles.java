@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectives;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectivesAndFlags;
 
 public class TestFiles {
     /**
@@ -51,19 +53,30 @@ public class TestFiles {
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
             boolean preserveLocations, String coroutinesPackage) {
-        Map<String, String> directives = KotlinTestUtils.parseDirectives(expectedText);
+        return createTestFiles(testFileName, expectedText, factory, preserveLocations, coroutinesPackage, false);
+    }
+
+    @NotNull
+    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
+            boolean preserveLocations, String coroutinesPackage, boolean parseDirectivesPerFile) {
         Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
         Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
         boolean hasModules = false;
+        String commonPrefixOrWholeFile;
         if (!matcher.find()) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
-            testFiles.add(factory.createFile(null, testFileName, expectedText, directives));
+            testFiles.add(factory.createFile(null, testFileName, expectedText, parseDirectivesAndFlags(expectedText)));
+            commonPrefixOrWholeFile = expectedText;
         }
         else {
+            Map<String, String> allFilesOrCommonPrefixDirectives = parseDirectivesPerFile ? null : parseDirectivesAndFlags(expectedText);
             int processedChars = 0;
             M module = null;
+            boolean firstFileProcessed = false;
+            commonPrefixOrWholeFile = expectedText.substring(0, matcher.start());
+
             // Many files
             while (true) {
                 String moduleName = matcher.group(1);
@@ -91,10 +104,14 @@ public class TestFiles {
                 String fileText = preserveLocations ?
                                   substringKeepingLocations(expectedText, start, end) :
                                   expectedText.substring(start,end);
+
+
+                testFiles.add(factory.createFile(module, fileName, fileText,
+                                                 parseDirectivesPerFile ?
+                                                 parseDirectivesAndFlags(firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText)
+                                                                        : allFilesOrCommonPrefixDirectives));
                 processedChars = end;
-
-                testFiles.add(factory.createFile(module, fileName, fileText, directives));
-
+                firstFileProcessed = true;
                 if (!nextFileExists) break;
             }
             assert processedChars == expectedText.length() : "Characters skipped from " +
@@ -123,7 +140,7 @@ public class TestFiles {
                             "CoroutineUtil.kt",
                             TestHelperGeneratorKt.createTextForCoroutineHelpers(
                                     isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
-                            directives
+                            parseDirectives(commonPrefixOrWholeFile)
                     ));
         }
 

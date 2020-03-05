@@ -129,8 +129,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
             wholeFile.name,
             wholeFileContents,
             object : org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
-                    return TestFile(fileName, text)
+                override fun create(fileName: String, text: String, directives: Map<String, String?>): TestFile {
+                    return TestFile(fileName, text, directives)
                 }
             }
         )

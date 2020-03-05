@@ -83,7 +83,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     ): TestModule =
         TestModule(name, dependencies, friends)
 
-    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile =
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String?>): TestFile =
         TestFile(module, fileName, text, directives)
 
 
@@ -138,8 +138,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val module: TestModule?,
         val fileName: String,
         textWithMarkers: String,
-        val directives: Map<String, String>
-    ) : KotlinBaseTest.TestFile(fileName, textWithMarkers) {
+        directives: Map<String, String?>
+    ) : KotlinBaseTest.TestFile(fileName, textWithMarkers, directives) {
         val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
         private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
         val actualDiagnostics: MutableList<ActualDiagnostic> = mutableListOf()
@@ -411,7 +411,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("<!>|<!(.*?(\\(\".*?\"\\)|\\(\\))??)+(?<!<)!>")
 
         fun parseDiagnosticFilterDirective(
-            directiveMap: Map<String, String>,
+            directiveMap: Map<String, String?>,
             allowUnderscoreUsage: Boolean
         ): Condition<Diagnostic> {
             val directives = directiveMap[DIAGNOSTICS_DIRECTIVE]
@@ -499,7 +499,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         }
     }
 
-    private fun parseJvmTarget(directiveMap: Map<String, String>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
+    private fun parseJvmTarget(directiveMap: Map<String, String?>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
 
     protected fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
         val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
