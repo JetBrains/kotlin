@@ -19,7 +19,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.ui.paint.LinePainter2D;
@@ -282,7 +281,7 @@ class TextPainter extends BasePainter {
     myCurrentMethodSeparator = 0;
     if (myProject != null) {
       PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
-      List<LineMarkerInfo<PsiElement>> separators = psiFile == null ? Collections.emptyList()
+      List<LineMarkerInfo<?>> separators = psiFile == null ? Collections.emptyList()
                                                                     : FileSeparatorProvider.getFileSeparators(psiFile, myDocument);
       myMethodSeparators = separators.toArray(new LineMarkerInfo[0]);
     }
