@@ -4318,6 +4318,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.kt");
         }
 
+        @TestMetadata("superCallFromMultipleSubclasses.kt")
+        public void testSuperCallFromMultipleSubclasses() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCallFromMultipleSubclasses.kt");
+        }
+
         @TestMetadata("superProperty.kt")
         public void testSuperProperty() throws Exception {
             runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.kt");

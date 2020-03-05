@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
@@ -71,7 +70,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
     }
 
-    private val functionMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    private val functionMap = mutableMapOf<Pair<IrFunctionSymbol, IrDeclarationParent>, IrFunctionSymbol>()
     private val getterMap = mutableMapOf<IrFieldSymbol, IrSimpleFunctionSymbol>()
     private val setterMap = mutableMapOf<IrFieldSymbol, IrSimpleFunctionSymbol>()
 
@@ -88,14 +87,64 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             callee is IrConstructor && callee.isOrShouldBeHidden ->
                 handleHiddenConstructor(callee).symbol
 
-            !expression.symbol.isAccessible(withSuper, thisSymbol) ->
-                functionMap.getOrPut(expression.symbol) {
-                    when (val symbol = expression.symbol) {
+            !expression.symbol.isAccessible(withSuper, thisSymbol) -> {
+                // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
+                // we also need to put its accessor into A. However, due to the way that calls are implemented in the
+                // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
+                // correct class. Consider the following code:
+                //
+                //     fun run(f : () -> Int): Int = f()
+                //
+                //     open class A {
+                //         private fun f() = 0
+                //         fun g() = run { this.f() }
+                //     }
+                //
+                //     class B : A {
+                //         override fun g() = 1
+                //         fun h() = run { super.g() }
+                //     }
+                //
+                // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
+                // in class A and a super call to A.g from a generated Lambda subclass in class B.
+                //
+                // In the first case, we need to produce an accessor in class A to access the private member of A.
+                // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
+                // In the second case we need to call A.g from within class B, since this is the only way to invoke
+                // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
+                // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
+                // The only way to compute the actual enclosing class for the call is by looking at the type of the
+                // dispatch receiver argument, which points to B.
+                //
+                // Beyond this, there can be accessors that are needed because other lowerings produce code calling
+                // private methods (e.g., local functions for lambdas are private and called from generated
+                // SAM wrapper classes). In this case we rely on the parent field of the called function.
+                //
+                // Finally, we need to produce accessors for calls to protected static methods coming from Java,
+                // which we put in the closest enclosing class which has access to the method in question.
+                val symbol = expression.symbol
+                val dispatchReceiverType = expression.dispatchReceiver?.type
+                val parent = symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent)
+
+                // The key in the cache/map needs to be BOTH the symbol of the function being accessed AND the parent
+                // of the accessor. Going from the above example, if we have another class C similar to B:
+                //
+                //     class C : A {
+                //         override fun g() = 2
+                //         fun i() = run { super.g() }
+                //     }
+                //
+                // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
+                // cannot use the function symbol (A.g in the example) by itself as the key since there should be
+                // one accessor per dispatch receiver (i.e., parent of the accessor).
+                functionMap.getOrPut(symbol to parent) {
+                    when (symbol) {
                         is IrConstructorSymbol -> symbol.owner.makeConstructorAccessor().also(pendingAccessorsToAdd::add).symbol
-                        is IrSimpleFunctionSymbol -> symbol.owner.makeSimpleFunctionAccessor(expression as IrCall).symbol
+                        is IrSimpleFunctionSymbol -> symbol.owner.makeSimpleFunctionAccessor(expression as IrCall, parent).symbol
                         else -> error("Unknown subclass of IrFunctionSymbol")
                     }
                 }
+            }
 
             else -> return super.visitFunctionAccess(expression)
         }
@@ -216,45 +265,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             copyAllParamsToArgs(it, accessor)
         }
 
-    private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall): IrSimpleFunction {
+    private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall, parent: IrDeclarationParent): IrSimpleFunction {
         val source = this
-
-        // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
-        // we also need to put its accessor into A. However, due to the way that calls are implemented in the
-        // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
-        // correct class. Consider the following code:
-        //
-        //     fun run(f : () -> Int): Int = f()
-        //
-        //     open class A {
-        //         private fun f() = 0
-        //         fun g() = run { this.f() }
-        //     }
-        //
-        //     class B : A {
-        //         override fun g() = 1
-        //         fun h() = run { super.g() }
-        //     }
-        //
-        // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
-        // in class A and a super call to A.g from a generated Lambda subclass in class B.
-        //
-        // In the first case, we need to produce an accessor in class A to access the private member of A.
-        // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
-        // In the second case we need to call A.g from within class B, since this is the only way to invoke
-        // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
-        // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
-        // The only way to compute the actual enclosing class for the call is by looking at the type of the
-        // dispatch receiver argument, which points to B.
-        //
-        // Beyond this, there can be accessors that are needed because other lowerings produce code calling
-        // private methods (e.g., local functions for lambdas are private and called from generated
-        // SAM wrapper classes). In this case we rely on the parent field of the called function.
-        //
-        // Finally, we need to produce accessors for calls to protected static methods coming from Java,
-        // which we put in the closest enclosing class which has access to the method in question.
-        val dispatchReceiverType = expression.dispatchReceiver?.type
-        val parent = source.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: source.parent)
 
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
@@ -267,7 +279,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             pendingAccessorsToAdd.add(accessor)
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
+            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, expression.dispatchReceiver?.type)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = IrExpressionBodyImpl(
