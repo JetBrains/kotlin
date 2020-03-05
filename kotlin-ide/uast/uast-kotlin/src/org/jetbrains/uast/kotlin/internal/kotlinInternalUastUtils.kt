@@ -494,6 +494,10 @@ private fun getMethodSignatureFromDescriptor(context: KtElement, descriptor: Cal
     val parameterTypes = listOfNotNull(receiverType) + originalDescriptor.valueParameters.map { it.type.toPsiType() }
     val returnType = originalDescriptor.returnType?.toPsiType() ?: PsiType.VOID
 
+    if (parameterTypes.any { !it.isValid } || !returnType.isValid) {
+        return null
+    }
+
     val desc = parameterTypes.joinToString("", prefix = "(", postfix = ")") { MapPsiToAsmDesc.typeDesc(it) } +
             MapPsiToAsmDesc.typeDesc(returnType)
 
