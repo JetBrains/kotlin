@@ -20,13 +20,14 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
@@ -42,7 +43,11 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.components.fields.ExtendableTextField;
 import com.intellij.ui.components.panels.NonOpaquePanel;
-import com.intellij.util.*;
+import com.intellij.util.Alarm;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.BooleanFunction;
+import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
@@ -58,8 +63,9 @@ import javax.swing.border.Border;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static com.intellij.ide.actions.runAnything.RunAnythingAction.ALT_IS_PRESSED;
@@ -92,8 +98,9 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private RunAnythingContext mySelectedExecutingContext;
   private final List<RunAnythingContext> myAvailableExecutingContexts = new ArrayList<>();
   private RunAnythingChooseContextAction myChooseContextAction;
-  private ProgressIndicator myProgressIndicator = new EmptyProgressIndicator();
   private final Alarm myListRenderingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
+  private final ExecutorService myExecutorService =
+    SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Run Anything list building");
 
   @Nullable
   public String getUserInputText() {
@@ -348,7 +355,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private void rebuildList() {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    myProgressIndicator.cancel();
     myListRenderingAlarm.cancelAllRequests();
     myResultsList.getEmptyText().setText("Searching...");
 
@@ -357,30 +363,18 @@ public class RunAnythingPopupUI extends BigPopupUI {
       return;
     }
 
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      if (myProgressIndicator.isRunning() || !myProgressIndicator.isCanceled()) {
-        return;
-      }
-      myProgressIndicator = new EmptyProgressIndicator();
-      try {
-        myListModel = ProgressManager.getInstance()
-          .runProcess(new RunAnythingCalcThread(myProject, getDataContext(), getSearchPattern()), myProgressIndicator);
-
-        ProgressManager.checkCanceled();
-      }
-      catch (ProcessCanceledException e) {
-        return;
-      }
-
-      myListRenderingAlarm.addRequest(() -> {
-        if (myProgressIndicator.isRunning() || myProgressIndicator.isCanceled()) {
-          return;
-        }
-        addListDataListener(myListModel);
-        myResultsList.setModel(myListModel);
-        myListModel.update();
-      }, 150);
-    });
+    ReadAction.nonBlocking(() -> {
+      myListModel = ProgressManager.getInstance()
+        .runProcess(new RunAnythingCalcThread(myProject, getDataContext(), getSearchPattern()), new EmptyProgressIndicator());
+    })
+      .coalesceBy(this)
+      .finishOnUiThread(ModalityState.defaultModalityState(), aVoid ->
+        myListRenderingAlarm.addRequest(() -> {
+          addListDataListener(myListModel);
+          myResultsList.setModel(myListModel);
+          myListModel.update();
+        }, 150))
+      .submit(myExecutorService);
   }
 
   @Override
