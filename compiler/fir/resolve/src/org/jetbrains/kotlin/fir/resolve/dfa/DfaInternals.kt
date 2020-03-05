@@ -5,5 +5,5 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-@Experimental
+@RequiresOptIn
 annotation class DfaInternals

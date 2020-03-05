@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // WITH_RUNTIME
 
 // ISSUE: KT-35684
