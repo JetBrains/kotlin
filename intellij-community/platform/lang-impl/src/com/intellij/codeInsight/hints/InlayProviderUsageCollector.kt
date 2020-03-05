@@ -6,7 +6,6 @@ import com.intellij.codeInsight.hints.settings.InlaySettingsProvider
 import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
-import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 
@@ -18,6 +17,9 @@ class InlayProviderUsageCollector : ProjectUsagesCollector() {
   override fun getMetrics(project: Project): MutableSet<MetricEvent> {
     val settingsProviders = InlaySettingsProvider.EP.getExtensions()
     val metricEvents = mutableSetOf<MetricEvent>()
+    val settings = InlayHintsSettings.instance()
+    metricEvents.add(MetricEvent("global.inlays.settings",
+                                 FeatureUsageData().addData("enabled_globally", settings.hintsEnabledGlobally())))
     for (settingsProvider in settingsProviders) {
       val languages = settingsProvider.getSupportedLanguages(project)
       for (language in languages) {
@@ -25,6 +27,10 @@ class InlayProviderUsageCollector : ProjectUsagesCollector() {
         for (model in models) {
           addModelEvents(model, language, metricEvents)
         }
+        metricEvents.add(MetricEvent("language.inlays.settings", FeatureUsageData()
+          .addData("enabled", settings.hintsEnabled(language))
+          .addLanguage(language)
+        ))
       }
     }
     return metricEvents
@@ -40,7 +46,6 @@ class InlayProviderUsageCollector : ProjectUsagesCollector() {
         .addData("option_value", case.value)
         .addLanguage(language)
         .addData("enabled", model.isEnabled)
-        .addPluginInfo(getPluginInfo(model.javaClass))
       metrics.add(MetricEvent("model.options", usageData))
     }
   }
