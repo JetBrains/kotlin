@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package test.platformNull
+package test.collections
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,13 +12,13 @@ import kotlin.test.assertTrue
 import java.util.Collections
 
 
-class PlatformNullTest {
+class ArraysJVMTest {
 
     @Suppress("HasPlatformType", "UNCHECKED_CAST")
     fun <T> platformNull() = Collections.singletonList(null as T).first()
 
     @Test
-    fun arrayContentEquals() {
+    fun contentEquals() {
         assertTrue(platformNull<IntArray>() contentEquals null)
         assertTrue(null contentEquals platformNull<LongArray>())
 
@@ -30,7 +30,7 @@ class PlatformNullTest {
     }
 
     @Test
-    fun arrayContentHashCode() {
+    fun contentHashCode() {
         assertEquals(0, platformNull<Array<Int>>().contentHashCode())
         assertEquals(0, platformNull<CharArray>().contentHashCode())
         assertEquals(0, platformNull<ShortArray>().contentHashCode())
@@ -49,13 +49,13 @@ class PlatformNullTest {
     }
 
     @Test
-    fun arrayContentDeepEquals() {
+    fun contentDeepEquals() {
         assertFalse(platformNull<Array<String>>() contentDeepEquals emptyArray<String>())
         assertFalse(arrayOf("a", "b") contentDeepEquals platformNull<Array<String>>())
     }
 
     @Test
-    fun arrayContentDeepHashCode() {
+    fun contentDeepHashCode() {
         assertEquals(0, platformNull<Array<Int>>().contentDeepHashCode())
     }
 
