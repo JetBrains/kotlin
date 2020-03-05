@@ -71,6 +71,10 @@ public class NamedElementDuplicateHandler extends EditorWriteActionHandler {
     myOriginal.execute(editor, caret, dataContext);
   }
 
+  public EditorActionHandler getOriginal() {
+    return myOriginal;
+  }
+
   @Nullable
   private static PsiElement findNameIdentifier(Editor editor, PsiFile file, TextRange toDuplicate) {
     int nonWs = CharArrayUtil.shiftForward(editor.getDocument().getCharsSequence(), toDuplicate.getStartOffset(), "\n\t ");
