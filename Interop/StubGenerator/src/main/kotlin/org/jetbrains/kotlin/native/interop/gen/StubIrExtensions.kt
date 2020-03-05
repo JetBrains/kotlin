@@ -70,7 +70,7 @@ val ClassStub.explicitPrimaryConstructor: ConstructorStub?
     get() = functions.filterIsInstance<ConstructorStub>().firstOrNull(ConstructorStub::isPrimary)
 
 fun ClassStub.nestedName(): String =
-        classifier.relativeFqName.substringAfterLast('.')
+        classifier.getRelativeFqName().substringAfterLast('.')
 
 fun ConstantStub.determineConstantAnnotationClassifier(): Classifier = when (this) {
     is StringConstantStub -> "String"

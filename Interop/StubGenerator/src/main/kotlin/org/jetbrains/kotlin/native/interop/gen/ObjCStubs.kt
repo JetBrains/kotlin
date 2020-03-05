@@ -172,7 +172,7 @@ private class ObjCMethodStubBuilder(
                     val clazz = context.getKotlinClassFor(container.clazz, isMeta = false).type
 
                     annotations.add(0, deprecatedInit(
-                            clazz.classifier.relativeFqName,
+                            clazz.classifier.getRelativeFqName(),
                             kotlinMethodParameters.map { it.name },
                             factory = true
                     ))

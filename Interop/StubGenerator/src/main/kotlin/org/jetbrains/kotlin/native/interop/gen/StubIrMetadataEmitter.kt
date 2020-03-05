@@ -254,7 +254,7 @@ private class MappingExtensions(
                 append('/')
             }
             // Nested classes should dot-separated.
-            append(relativeFqName)
+            append(getRelativeFqName(asSimpleName = false))
         }
 
     val PropertyStub.flags: Flags
