@@ -383,7 +383,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     if (PowerSaveMode.isEnabled()) {
       return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
-                                  "Code analysis is disabled in power save mode", null, this::getUIController);
+                                  "Code analysis is disabled in power save mode", "", this::getUIController);
     }
     else {
       DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
@@ -592,7 +592,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         HighlightingLevelManager hlManager = HighlightingLevelManager.getInstance(myProject);
         for (Language language : viewProvider.getLanguages()) {
           PsiFile psiRoot = viewProvider.getPsi(language);
-          result.add(new LanguageHighlightLevel(language, getAHLevel(hlManager.shouldHighlight(psiRoot), hlManager.shouldInspect(psiRoot))));
+          result.add(new LanguageHighlightLevel(language, getHighlightLevel(hlManager.shouldHighlight(psiRoot), hlManager.shouldInspect(psiRoot))));
         }
       }
       return result;
@@ -606,8 +606,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     @NotNull
-    public List<AHLevel> getAvailableLevels() {
-      return notInLibrary ? Arrays.asList(AHLevel.values()) : Arrays.asList(AHLevel.NONE, AHLevel.ERRORS);
+    public List<InspectionsLevel> getAvailableLevels() {
+      return notInLibrary ? Arrays.asList(InspectionsLevel.values()) : Arrays.asList(InspectionsLevel.NONE, InspectionsLevel.ERRORS);
     }
 
     @NotNull
@@ -622,10 +622,10 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         FileViewProvider viewProvider = myPsiFile.getViewProvider();
 
         PsiElement root = viewProvider.getPsi(level.getLanguage());
-        if (level.getLevel() == AHLevel.NONE) {
+        if (level.getLevel() == InspectionsLevel.NONE) {
           HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_HIGHLIGHTING);
         }
-        else if (level.getLevel() == AHLevel.ERRORS) {
+        else if (level.getLevel() == InspectionsLevel.ERRORS) {
           HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_INSPECTION);
         }
         else {
@@ -662,17 +662,23 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
 
     @Override
-    public boolean onClose() {
-      if (myAdditionalPanels.stream().allMatch(p -> p.canClose())) {
+    public boolean canClosePopup() {
+      if (myAdditionalPanels.size() == 0) {
+        return true;
+      }
+      else if (myAdditionalPanels.stream().allMatch(p -> p.canClose())) {
         if(myAdditionalPanels.stream().filter(p -> p.isModified()).peek(TrafficLightRenderer::applyPanel).count() > 0) {
           InjectedLanguageManager.getInstance(myProject).dropFileCaches(myPsiFile);
           myDaemonCodeAnalyzer.restart();
         }
-
-        myAdditionalPanels.forEach(p -> p.disposeUIResources());
         return true;
       }
       else return false;
+    }
+
+    @Override
+    public void onClosePopup() {
+      myAdditionalPanels.forEach(p -> p.disposeUIResources());
     }
   }
 
@@ -683,9 +689,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     catch (ConfigurationException ignored) {}
   }
 
-  private static AHLevel getAHLevel(boolean highlight, boolean inspect) {
-    if (!highlight && !inspect) return AHLevel.NONE;
-    else if (highlight && !inspect) return AHLevel.ERRORS;
-    else return AHLevel.ALL;
+  private static InspectionsLevel getHighlightLevel(boolean highlight, boolean inspect) {
+    if (!highlight && !inspect) return InspectionsLevel.NONE;
+    else if (highlight && !inspect) return InspectionsLevel.ERRORS;
+    else return InspectionsLevel.ALL;
   }
 }
