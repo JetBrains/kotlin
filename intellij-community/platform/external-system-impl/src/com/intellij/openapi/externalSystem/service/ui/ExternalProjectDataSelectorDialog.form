@@ -32,7 +32,7 @@
       <component id="5dd5f" class="com.intellij.ui.components.JBLabel" binding="myDescriptionLbl">
         <constraints border-constraint="North"/>
         <properties>
-          <text value="Please select the modules/data to include in the project."/>
+          <text resource-bundle="messages/ExternalSystemBundle" key="label.please.select.the.modules.data.to.include.in.the.project"/>
         </properties>
       </component>
     </children>
