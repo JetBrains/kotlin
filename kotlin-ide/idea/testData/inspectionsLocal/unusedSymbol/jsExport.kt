@@ -5,7 +5,7 @@ class Person(val name: String) {
         println("Hello $name!")
     }
 
-    @JsName("helloWithGreeting")
+    @JsExport
     fun <caret>hello(greeting: String) {
         println("$greeting $name!")
     }
