@@ -9,14 +9,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
@@ -26,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
@@ -55,13 +49,6 @@ fun compile(
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
-
-    // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
-    if (mainModule is MainModule.SourceFiles) {
-        val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
-        moduleFragment.acceptVoid(mangleChecker)
-        irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
-    }
 
     val moduleDescriptor = moduleFragment.descriptor
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
+import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
@@ -200,6 +201,12 @@ fun loadIr(
             deserializer.initializeExpectActualLinker()
 
             val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, mainModule.files, deserializer)
+
+            // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
+            val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
+            moduleFragment.acceptVoid(mangleChecker)
+            irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
+
             return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
         }
         is MainModule.Klib -> {
