@@ -74,7 +74,7 @@ private val LANGUAGE_FEATURE_SETTINGS =
 private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
-    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../idea/resources")
+    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-common/resources")
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
