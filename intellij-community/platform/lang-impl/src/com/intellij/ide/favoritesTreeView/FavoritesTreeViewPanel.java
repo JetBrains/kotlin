@@ -458,7 +458,7 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
       group.addAction(new FavoritesAbbreviatePackageNamesAction(myProject, myBuilder));
     }
     //todo move this logic to ProjectViewDirectoryHelper.supportsShowMembers
-    if (!PlatformUtils.isCidr() || !PlatformUtils.isRider()) {
+    if (!PlatformUtils.isCidr() && !PlatformUtils.isRider()) {
       group.add(new FavoritesShowMembersAction(myProject, myBuilder));
     }
 
