@@ -31,7 +31,7 @@ import java.nio.file.Paths
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 
-// for Rider purpose
+// the class is open for Rider purpose
 open class ImportSettingsAction : AnAction(), DumbAware {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = isImportExportActionApplicable()
