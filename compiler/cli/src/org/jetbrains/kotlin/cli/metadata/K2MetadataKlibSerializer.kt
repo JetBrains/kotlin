@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
-import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -112,6 +113,9 @@ private class KlibMetadataDependencyContainer(
         klibFiles.map { resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.absolutePath)) }
     }
 
+    private val friendPaths = configuration.get(K2MetadataConfigurationKeys.FRIEND_PATHS).orEmpty().toSet()
+    private val refinesPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS).orEmpty().toSet()
+
     private val builtIns
         get() = DefaultBuiltIns.Instance
 
@@ -147,12 +151,34 @@ private class KlibMetadataDependencyContainer(
             }
         }
 
-    override val moduleInfos: List<ModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
+    private val moduleInfosImpl: List<KlibModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
         addAll(
             moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
                 KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, this@apply)
             }
         )
+    }
+
+    override val moduleInfos: List<ModuleInfo> get() = moduleInfosImpl
+
+    override val friendModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
+        it.kotlinLibrary.libraryFile.absolutePath in friendPaths
+    }
+
+    override val refinesModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
+        it.kotlinLibrary.libraryFile.absolutePath in refinesPaths
+    }
+
+    override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
+        if (moduleInfo !in moduleInfos)
+            error("Unknown module info $moduleInfo")
+        moduleInfo as KlibModuleInfo
+
+        // Ensure that the package fragment provider has been created and the module descriptor has been
+        // initialized with the package fragment provider:
+        packageFragmentProviderForModuleInfo(moduleInfo)
+
+        return moduleDescriptorsForKotlinLibraries.getValue(moduleInfo.kotlinLibrary)
     }
 
     override fun packageFragmentProviderForModuleInfo(
