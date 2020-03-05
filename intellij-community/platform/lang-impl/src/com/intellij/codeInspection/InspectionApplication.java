@@ -35,7 +35,6 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.VcsListener;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vcs.ex.RangesBuilder;
 import com.intellij.openapi.vfs.*;
@@ -69,16 +68,16 @@ import java.util.concurrent.locks.LockSupport;
 public final class InspectionApplication implements CommandLineInspectionProgressReporter {
   static final Logger LOG = Logger.getInstance(InspectionApplication.class);
 
-  public InspectionToolCmdlineOptionHelpProvider myHelpProvider;
+  InspectionToolCmdlineOptionHelpProvider myHelpProvider;
   public String myProjectPath;
   public String myOutPath;
-  public String mySourceDirectory;
+  String mySourceDirectory;
   public String myStubProfile;
-  public String myProfileName;
-  public String myProfilePath;
+  String myProfileName;
+  String myProfilePath;
   public boolean myRunWithEditorSettings;
-  public boolean myRunGlobalToolsOnly;
-  public boolean myAnalyzeChanges;
+  boolean myRunGlobalToolsOnly;
+  boolean myAnalyzeChanges;
   private int myVerboseLevel;
   private final Map<String, List<Range>> diffMap = new ConcurrentHashMap<>();
   private final MultiMap<Pair<String, Integer>, String> originalWarnings = new ConcurrentMultiMap<>();
@@ -165,12 +164,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
       return;
     }
     MessageBusConnection connection = project.getMessageBus().connect();
-    connection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, new VcsListener() {
-      @Override
-      public void directoryMappingChanged() {
-        isMappingLoaded.setResult(null);
-      }
-    });
+    connection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> isMappingLoaded.setResult(null));
 
     Disposer.register(parentDisposable, () -> closeProject(project));
 
@@ -438,7 +432,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
 
   private boolean secondAnalysisFilter(ChangeListManager changeListManager, String text, VirtualFile file, int line) {
     List<Range> ranges = getOrComputeUnchangedRanges(file, changeListManager);
-    Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
+    Optional<Range> first = StreamEx.of(ranges).findFirst(it -> it.start1 <= line && line < it.end1);
     if (!first.isPresent()) {
       logNotFiltered(text, file, line, -1);
       return true;
@@ -547,7 +541,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
     };
   }
 
-  private static void runAnalysisAfterShelvingSync(Project project, List<VirtualFile> files,
+  private static void runAnalysisAfterShelvingSync(Project project, List<? extends VirtualFile> files,
                                                    ProgressIndicator progressIndicator, Runnable afterShelve) {
     Set<VirtualFile> versionedRoots = StreamEx.of(files).map(it -> ProjectLevelVcsManager.getInstance(project).getVcsRootFor(it)).nonNull().toSet();
     String message = VcsBundle.message("searching.for.code.smells.freezing.process");
@@ -706,7 +700,7 @@ public final class InspectionApplication implements CommandLineInspectionProgres
 
   private List<Range> getOrComputeUnchangedRanges(@NotNull VirtualFile virtualFile,
                                                   @NotNull ChangeListManager changeListManager) {
-    return diffMap.computeIfAbsent(virtualFile.getPath(), (key) -> computeDiff(virtualFile, changeListManager));
+    return diffMap.computeIfAbsent(virtualFile.getPath(), key -> computeDiff(virtualFile, changeListManager));
   }
 
   private static List<Range> computeDiff(@NotNull VirtualFile virtualFile,

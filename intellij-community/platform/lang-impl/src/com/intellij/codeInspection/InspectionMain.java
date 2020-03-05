@@ -15,7 +15,6 @@ public class InspectionMain implements ApplicationStarter {
   }
 
   @Override
-  @SuppressWarnings({"HardCodedStringLiteral"})
   public void premain(@NotNull List<String> args) {
     if (args.size() < 4) {
       System.err.println("invalid args:" + args);
@@ -25,12 +24,7 @@ public class InspectionMain implements ApplicationStarter {
     //System.setProperty("idea.load.plugins.category", "inspection");
     myApplication = new InspectionApplication();
 
-    myApplication.myHelpProvider = new InspectionToolCmdlineOptionHelpProvider() {
-      @Override
-      public void printHelpAndExit() {
-        printHelp();
-      }
-    };
+    myApplication.myHelpProvider = () -> printHelp();
     myApplication.myProjectPath = args.get(1);
     myApplication.myStubProfile = args.get(2);
     myApplication.myOutPath = args.get(3);
@@ -97,7 +91,7 @@ public class InspectionMain implements ApplicationStarter {
     myApplication.startup();
   }
 
-  public static void printHelp() {
+  private static void printHelp() {
     System.out.println(InspectionsBundle.message("inspection.command.line.explanation"));
     System.exit(1);
   }
