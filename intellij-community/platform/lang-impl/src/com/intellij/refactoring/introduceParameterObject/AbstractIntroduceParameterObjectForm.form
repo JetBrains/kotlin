@@ -19,7 +19,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="none" title="Parameter Class"/>
+        <border type="none" title-resource-bundle="messages/RefactoringBundle" title-key="border.title.introduce.parameter.class"/>
         <children/>
       </grid>
       <grid id="ab9f8" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -46,7 +46,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Keep method as &amp;delegate"/>
+              <text resource-bundle="messages/RefactoringBundle" key="checkbox.introduce.parameter.object.keep.method.as.delegate"/>
             </properties>
           </component>
         </children>
@@ -59,7 +59,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="none" title="Parameters to Extract"/>
+        <border type="none" title-resource-bundle="messages/RefactoringBundle" title-key="border.title.introduce.parameters.to.extract"/>
         <children/>
       </grid>
     </children>

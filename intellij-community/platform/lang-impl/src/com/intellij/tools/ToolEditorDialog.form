@@ -22,7 +22,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
         </clientProperties>
-        <border type="none" title="Tool Settings"/>
+        <border type="none" title-resource-bundle="messages/ToolsBundle" title-key="border.title.tool.settings"/>
         <children>
           <component id="9153" class="com.intellij.ui.components.JBLabel">
             <constraints>
@@ -30,7 +30,7 @@
             </constraints>
             <properties>
               <labelFor value="91e97"/>
-              <text value="Program:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.tool.program"/>
             </properties>
           </component>
           <component id="91e97" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myProgramField">
@@ -45,7 +45,7 @@
             </constraints>
             <properties>
               <labelFor value="f625e"/>
-              <text value="Arguments:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.tool.arguments"/>
             </properties>
           </component>
           <component id="bb972" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myWorkingDirField">
@@ -60,7 +60,7 @@
             </constraints>
             <properties>
               <labelFor value="bb972"/>
-              <text value="Working directory:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.tool.working.directory"/>
             </properties>
           </component>
           <component id="f625e" class="com.intellij.ui.RawCommandLineEditor" binding="myArgumentsField">
@@ -99,7 +99,7 @@
             </constraints>
             <properties>
               <labelFor value="a9ce9"/>
-              <text value="Name:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.tool.name"/>
             </properties>
           </component>
           <component id="a9ce9" class="javax.swing.JTextField" binding="myNameField">
@@ -116,7 +116,7 @@
             </constraints>
             <properties>
               <labelFor value="b79f2"/>
-              <text value="Group:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.tool.group"/>
             </properties>
           </component>
           <component id="b79f2" class="com.intellij.openapi.ui.ComboBox" binding="myGroupCombo">
@@ -133,7 +133,7 @@
             </constraints>
             <properties>
               <labelFor value="d4255"/>
-              <text value="Description:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.tool.description"/>
             </properties>
           </component>
           <component id="d4255" class="javax.swing.JTextField" binding="myDescriptionField">
@@ -159,7 +159,7 @@
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Synchronize files after execution"/>
+              <text resource-bundle="messages/ToolsBundle" key="checkbox.synchronize.files.after.execution"/>
             </properties>
           </component>
           <component id="9d886" class="com.intellij.ui.components.JBCheckBox" binding="myUseConsoleCheckbox" default-binding="true">
@@ -167,7 +167,7 @@
               <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Open console for tool output"/>
+              <text resource-bundle="messages/ToolsBundle" key="checkbox.open.console.for.tool.output"/>
             </properties>
           </component>
           <component id="e084d" class="com.intellij.ui.components.JBCheckBox" binding="myShowConsoleOnStdOutCheckbox" default-binding="true">
@@ -175,7 +175,7 @@
               <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Make console active on message in stdout"/>
+              <text resource-bundle="messages/ToolsBundle" key="checkbox.make.console.active.on.message.in.stdout"/>
             </properties>
           </component>
           <component id="c30d0" class="com.intellij.ui.components.JBCheckBox" binding="myShowConsoleOnStdErrCheckbox">
@@ -183,7 +183,7 @@
               <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Make console active on message in stderr"/>
+              <text resource-bundle="messages/ToolsBundle" key="checkbox.make.console.active.on.message.in.stderr"/>
             </properties>
           </component>
           <component id="de2bc" class="com.intellij.ui.components.JBLabel">
@@ -192,7 +192,7 @@
             </constraints>
             <properties>
               <labelFor value="4c56c"/>
-              <text value="Output filters:"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.output.filters"/>
             </properties>
           </component>
           <component id="4c56c" class="com.intellij.ui.RawCommandLineEditor" binding="myOutputFilterField" custom-create="true">
@@ -210,7 +210,7 @@
             <properties>
               <componentStyle value="SMALL"/>
               <foreground color="-8882056"/>
-              <text value="Each line is a regex, available macros: $FILE_PATH$, $LINE$ and $COLUMN$"/>
+              <text resource-bundle="messages/ToolsBundle" key="label.each.line.is.a.regex.available.macros.file.path.line.and.column"/>
             </properties>
           </component>
         </children>

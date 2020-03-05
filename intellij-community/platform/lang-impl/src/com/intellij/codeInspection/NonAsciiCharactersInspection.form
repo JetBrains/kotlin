@@ -13,7 +13,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Warn of:"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="separator.title.warn.of"/>
         </properties>
       </component>
       <hspacer id="9623b">
@@ -31,7 +31,7 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Non-ASCII characters in Identifiers"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="checkbox.non.ascii.option.characters.in.identifiers"/>
         </properties>
       </component>
       <component id="e481e" class="com.intellij.ui.components.JBCheckBox" binding="myASCIIComments">
@@ -39,7 +39,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Non-ASCII characters in comments"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="checkbox.non.ascii.option.characters.in.comments"/>
         </properties>
       </component>
       <component id="3c6a" class="com.intellij.ui.components.JBCheckBox" binding="myASCIIStringLiterals">
@@ -47,7 +47,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Non-ASCII characters in strings"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="checkbox.non.ascii.option.characters.in.strings"/>
         </properties>
       </component>
       <component id="21230" class="com.intellij.ui.components.JBCheckBox" binding="myAlienIdentifiers">
@@ -55,7 +55,7 @@
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Different languages in identifiers"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="checkbox.non.ascii.option.different.languages.in.identifiers"/>
         </properties>
       </component>
       <component id="92c40" class="com.intellij.ui.components.JBCheckBox" binding="myFilesContainingBOM">
@@ -63,7 +63,7 @@
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Files containing BOM"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="checkbox.non.ascii.option.files.containing.bom"/>
         </properties>
       </component>
       <component id="539c6" class="com.intellij.ui.components.JBLabel">
@@ -71,7 +71,7 @@
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&lt;html&gt;E.g.: &lt;code&gt;int Поле = 0;&lt;/code&gt;"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.non.ascii.chars.example.characters.in.identifiers"/>
         </properties>
       </component>
       <component id="9077a" class="com.intellij.ui.components.JBLabel">
@@ -79,7 +79,7 @@
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&lt;html&gt;E.g.: &lt;code&gt;// hello გენაცვალი&lt;/code&gt;"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.non.ascii.chars.example.characters.in.comments"/>
         </properties>
       </component>
       <component id="8797f" class="com.intellij.ui.components.JBLabel">
@@ -87,7 +87,7 @@
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&lt;html&gt;E.g.: &lt;code&gt;println(&quot;ษ ฤๅษี&quot;)&lt;/code&gt;"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.non.ascii.chars.example.characters.in.strings"/>
         </properties>
       </component>
       <component id="394d1" class="com.intellij.ui.components.JBLabel">
@@ -95,7 +95,7 @@
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&lt;html&gt;E.g.: &lt;code&gt;void printЕрунда()&lt;/code&gt;"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.non.ascii.chars.example.different.languages.in.identifiers"/>
         </properties>
       </component>
       <component id="39165" class="com.intellij.ui.components.JBLabel">
@@ -103,7 +103,7 @@
           <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&lt;html&gt;E.g. files starting with &lt;code&gt;FEFF&lt;/code&gt;"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.non.ascii.chars.example.files.containing.bom"/>
         </properties>
       </component>
     </children>

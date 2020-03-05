@@ -33,7 +33,7 @@
             </constraints>
             <properties>
               <margin top="0" left="0" bottom="0" right="0"/>
-              <text value="&amp;Optimize imports"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="checkbox.optimize.imports"/>
             </properties>
           </component>
           <component id="a291" class="javax.swing.JCheckBox" binding="myRearrangeCodeCb" default-binding="true">
@@ -42,7 +42,7 @@
             </constraints>
             <properties>
               <margin top="0" left="0" bottom="0" right="0"/>
-              <text value="Rearra&amp;nge code"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="checkbox.rearrange.code"/>
             </properties>
           </component>
           <component id="d8723" class="javax.swing.JCheckBox" binding="myApplyCodeCleanup">
@@ -51,7 +51,7 @@
             </constraints>
             <properties>
               <margin top="0" left="0" bottom="0" right="0"/>
-              <text value="Code cleanup"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="checkbox.code.cleanup"/>
             </properties>
           </component>
         </children>
@@ -70,7 +70,7 @@
             </constraints>
             <properties>
               <margin top="0" left="0" bottom="0" right="0"/>
-              <text value="Only &amp;VCS changed text"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="radio.button.reformat.only.vcs.changed.text"/>
             </properties>
           </component>
           <hspacer id="6a094">
@@ -89,7 +89,7 @@
             </constraints>
             <properties>
               <margin top="0" left="0" bottom="0" right="0"/>
-              <text value="&amp;Selected text"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="radio.button.reformat.selected.text"/>
             </properties>
           </component>
           <component id="2eea6" class="javax.swing.JRadioButton" binding="myWholeFileRadioButton" default-binding="true">
@@ -98,7 +98,7 @@
             </constraints>
             <properties>
               <margin top="0" left="0" bottom="0" right="0"/>
-              <text value="&amp;Whole file"/>
+              <text resource-bundle="messages/CodeInsightBundle" key="radio.button.reformat.whole.file"/>
             </properties>
           </component>
         </children>
@@ -108,7 +108,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Scope:"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.reformat.scope"/>
         </properties>
       </component>
       <component id="1fda7" class="javax.swing.JLabel" binding="myOptionalLabel">
@@ -116,7 +116,7 @@
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Optional:"/>
+          <text resource-bundle="messages/CodeInsightBundle" key="label.reformat.optional"/>
         </properties>
       </component>
       <hspacer id="b6b1d">

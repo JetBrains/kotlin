@@ -21,7 +21,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Version:"/>
+              <text resource-bundle="messages/LangBundle" key="label.export.plugin.version"/>
             </properties>
           </component>
           <component id="72fc4" class="com.intellij.ui.components.JBTextField" binding="myVersionField">
@@ -43,7 +43,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Description:"/>
+              <text resource-bundle="messages/LangBundle" key="label.export.plugin.description"/>
             </properties>
           </component>
           <component id="e20d2" class="com.intellij.ui.EditorTextField" binding="myChangeNotesArea" custom-create="true">
@@ -57,7 +57,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Change Notes:"/>
+              <text resource-bundle="messages/LangBundle" key="label.export.plugin.change.notes"/>
             </properties>
           </component>
           <component id="6db68" class="javax.swing.JTextField" binding="myVendorNameField">
@@ -73,7 +73,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Name:"/>
+              <text resource-bundle="messages/LangBundle" key="label.export.plugin.name"/>
             </properties>
           </component>
           <component id="4e75" class="com.intellij.ui.components.JBLabel">
@@ -82,7 +82,7 @@
             </constraints>
             <properties>
               <labelFor value="3cff3"/>
-              <text value="e-mail:"/>
+              <text resource-bundle="messages/LangBundle" key="label.export.plugin.e.mail"/>
             </properties>
           </component>
           <component id="3cff3" class="javax.swing.JTextField" binding="myVendorMailField">
@@ -106,7 +106,7 @@
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="URL:"/>
+              <text resource-bundle="messages/LangBundle" key="label.export.plugin.url"/>
             </properties>
           </component>
           <hspacer id="af013">
@@ -119,7 +119,7 @@
               <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Vendor"/>
+              <text resource-bundle="messages/LangBundle" key="separator.title.export.plugin.vendor"/>
             </properties>
           </component>
         </children>
@@ -129,7 +129,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Plugin"/>
+          <text resource-bundle="messages/LangBundle" key="separator.title.plugin"/>
         </properties>
       </component>
     </children>

@@ -30,7 +30,7 @@
             </constraints>
             <properties>
               <labelFor value="2843a"/>
-              <text value="&amp;Group by:"/>
+              <text resource-bundle="messages/LangBundle" key="label.frameworks.group.by"/>
             </properties>
           </component>
         </children>
@@ -51,7 +51,7 @@
               <card name="description"/>
             </constraints>
             <properties>
-              <text value="Label"/>
+              <text value="Label" noi18n="true"/>
             </properties>
           </component>
           <grid id="2dd23" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

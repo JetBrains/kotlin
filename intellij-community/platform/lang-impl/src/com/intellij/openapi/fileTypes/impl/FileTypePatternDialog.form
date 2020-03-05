@@ -31,7 +31,7 @@
         </constraints>
         <properties>
           <labelFor value="1d348"/>
-          <text value="&amp;Template data language:"/>
+          <text resource-bundle="messages/LangBundle" key="label.template.data.language"/>
         </properties>
       </component>
       <component id="1d348" class="javax.swing.JComboBox" binding="myLanguageCombo">

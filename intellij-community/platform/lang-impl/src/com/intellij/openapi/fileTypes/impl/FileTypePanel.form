@@ -40,7 +40,7 @@
             <properties>
               <focusCycleRoot value="false"/>
               <opaque value="true"/>
-              <text value=".dependency-info;CVS;"/>
+              <text value=".dependency-info;CVS;" noi18n="true"/>
             </properties>
           </component>
         </children>

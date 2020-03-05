@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <labelFor value="6b257"/>
-          <text value="&amp;Name:"/>
+          <text resource-bundle="messages/LangBundle" key="label.project.as.template.name"/>
         </properties>
       </component>
       <vspacer id="bd33">
@@ -35,7 +35,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Description:"/>
+          <text resource-bundle="messages/LangBundle" key="label.project.as.template.description"/>
         </properties>
       </component>
       <component id="94559" class="com.intellij.ui.EditorTextField" binding="myDescription">
@@ -57,7 +57,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Save:"/>
+          <text resource-bundle="messages/LangBundle" key="label.project.as.template.save"/>
         </properties>
       </component>
       <component id="c6f1f" class="com.intellij.ui.components.JBCheckBox" binding="myReplaceParameters">
@@ -66,7 +66,7 @@
         </constraints>
         <properties>
           <selected value="true"/>
-          <text value="&amp;Replace parameters with placeholders"/>
+          <text resource-bundle="messages/LangBundle" key="checkbox.replace.parameters.with.placeholders"/>
         </properties>
       </component>
     </children>

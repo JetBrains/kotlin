@@ -27,7 +27,7 @@
             </constraints>
             <properties>
               <labelFor value="6fb53"/>
-              <text value="Command output:"/>
+              <text resource-bundle="messages/LangBundle" key="label.packaging.command.output"/>
             </properties>
           </component>
           <scrollpane id="6fb53" class="com.intellij.ui.components.JBScrollPane">
@@ -45,7 +45,7 @@
                 <properties>
                   <editable value="false"/>
                   <lineWrap value="true"/>
-                  <text value="No output"/>
+                  <text resource-bundle="messages/LangBundle" key="text.area.packaging.error.no.output"/>
                   <wrapStyleWord value="true"/>
                 </properties>
               </component>
@@ -66,7 +66,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Executed command:"/>
+              <text resource-bundle="messages/LangBundle" key="label.packaging.executed.command"/>
             </properties>
           </component>
           <scrollpane id="d6535" class="com.intellij.ui.components.JBScrollPane">
@@ -84,7 +84,7 @@
                 <properties>
                   <editable value="false"/>
                   <font swing-font="TextArea.font"/>
-                  <text value="None"/>
+                  <text resource-bundle="messages/LangBundle" key="text.area.packaging.error.solution.none"/>
                 </properties>
               </component>
             </children>
@@ -104,7 +104,7 @@
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Error occurred:"/>
+              <text resource-bundle="messages/LangBundle" key="label.packaging.error.occurred"/>
             </properties>
           </component>
           <component id="76bf4" class="javax.swing.JTextPane" binding="myMessage" default-binding="true">
@@ -117,7 +117,7 @@
               <editable value="false"/>
               <font swing-font="Label.font"/>
               <foreground color="-65536"/>
-              <text value="Unknown reason"/>
+              <text resource-bundle="messages/LangBundle" key="text.area.packaging.error.unknown.reason"/>
             </properties>
           </component>
           <component id="204c8" class="com.intellij.ui.components.JBLabel" binding="myMessageIcon">
@@ -141,7 +141,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Proposed solution:"/>
+              <text resource-bundle="messages/LangBundle" key="label.packaging.proposed.solution"/>
             </properties>
           </component>
           <component id="e8f2a" class="javax.swing.JTextPane" binding="mySolution">
@@ -153,7 +153,7 @@
             <properties>
               <editable value="false"/>
               <font swing-font="Label.font"/>
-              <text value="None"/>
+              <text resource-bundle="messages/LangBundle" key="text.area.packaging.error.solution.none"/>
             </properties>
           </component>
         </children>
@@ -171,7 +171,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Details:"/>
+              <text resource-bundle="messages/LangBundle" key="label.packaging.error.details"/>
             </properties>
           </component>
           <scrollpane id="2525c" class="com.intellij.ui.components.JBScrollPane">
@@ -189,7 +189,7 @@
                 <properties>
                   <editable value="false"/>
                   <lineWrap value="true"/>
-                  <text value="No information"/>
+                  <text resource-bundle="messages/LangBundle" key="text.area.packaging.error.no.information"/>
                   <wrapStyleWord value="true"/>
                 </properties>
               </component>
