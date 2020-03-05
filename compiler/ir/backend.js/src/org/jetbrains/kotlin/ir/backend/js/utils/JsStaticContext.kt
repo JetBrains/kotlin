@@ -21,8 +21,6 @@ class JsStaticContext(
     val intrinsics = JsIntrinsicTransformers(backendContext)
     val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
     val coroutineImplDeclaration = backendContext.ir.symbols.coroutineImpl.owner
-    val doResumeFunctionSymbol = coroutineImplDeclaration.declarations
-        .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }.symbol
 
     val initializerBlock = JsGlobalBlock()
 }

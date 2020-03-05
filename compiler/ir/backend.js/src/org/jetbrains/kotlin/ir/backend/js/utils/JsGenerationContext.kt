@@ -45,7 +45,9 @@ class JsGenerationContext(
 
     private fun isCoroutineDoResume(): Boolean {
         val overriddenSymbols = (currentFunction as? IrSimpleFunction)?.overriddenSymbols ?: return false
-        return staticContext.doResumeFunctionSymbol in overriddenSymbols
+        return overriddenSymbols.any {
+            it.owner.name.asString() == "doResume" && it.owner.parent == staticContext.coroutineImplDeclaration
+        }
     }
 
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode

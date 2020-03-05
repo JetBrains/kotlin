@@ -398,16 +398,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                     declaration.setter?.enqueue("(setter) overrides useful declaration")
                 }
             }
-
-            // TODO find out how `doResume` gets removed
-            if (klass.symbol == context.ir.symbols.coroutineImpl) {
-                ArrayList(klass.declarations).forEach {
-                    // TODO: fix the heck
-//                    if (it is IrSimpleFunction && it.name.asString() == "doResume") {
-                        it.enqueue(klass, "hack for CoroutineImpl::doResume")
-//                    }
-                }
-            }
         }
     }
 
