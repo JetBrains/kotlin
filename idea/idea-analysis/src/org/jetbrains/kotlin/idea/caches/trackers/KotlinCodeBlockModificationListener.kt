@@ -216,7 +216,7 @@ class KotlinCodeBlockModificationListener(
         fun getInsideCodeBlockModificationScope(element: PsiElement): BlockModificationScopeElement? {
             val lambda = element.getTopmostParentOfType<KtLambdaExpression>()
             if (lambda is KtLambdaExpression) {
-                lambda.getTopmostParentOfType<KtSuperTypeCallEntry>()?.let {
+                lambda.getTopmostParentOfType<KtSuperTypeCallEntry>()?.getTopmostParentOfType<KtClassOrObject>()?.let {
                     return BlockModificationScopeElement(it, it)
                 }
             }

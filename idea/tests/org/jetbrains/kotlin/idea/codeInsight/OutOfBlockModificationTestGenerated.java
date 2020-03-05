@@ -253,6 +253,11 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         runTest("idea/testData/codeInsight/outOfBlock/InSecondaryConstructorParameter.kt");
     }
 
+    @TestMetadata("InSuperCtorLambda.kt")
+    public void testInSuperCtorLambda() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/InSuperCtorLambda.kt");
+    }
+
     @TestMetadata("InSuperTypeCallCallInLambdaInCall.kt")
     public void testInSuperTypeCallCallInLambdaInCall() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/InSuperTypeCallCallInLambdaInCall.kt");
