@@ -10,7 +10,6 @@ import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.konan.resolve.symbols.KtSymbol
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.KtFile
@@ -57,7 +56,7 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
         val resolveSession = resolutionFacade.getFrontendService(ResolveSession::class.java)
         return createObjCExportLazy(
             configuration,
-            SilentWarningCollector,
+            ObjCExportWarningCollector.SILENT,
             resolveSession,
             resolveSession.typeResolver,
             resolveSession.descriptorResolver,
@@ -65,11 +64,6 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
             resolveSession.moduleDescriptor.builtIns,
             resolutionFacade.frontendService()
         )
-    }
-
-    private object SilentWarningCollector : ObjCExportWarningCollector {
-        override fun reportWarning(text: String) {}
-        override fun reportWarning(method: FunctionDescriptor, text: String) {}
     }
 
     companion object {
