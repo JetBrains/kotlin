@@ -301,6 +301,7 @@ private val jvmFilePhases =
         returnableBlocksPhase then
         localDeclarationsPhase then
         jvmLocalClassExtractionPhase then
+        staticLambdaPhase then
 
         jvmDefaultConstructorPhase then
 

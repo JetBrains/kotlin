@@ -2396,6 +2396,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/callableReference/function/specialCalls.kt");
             }
 
+            @TestMetadata("staticFunctionReference.kt")
+            public void testStaticFunctionReference() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/staticFunctionReference.kt");
+            }
+
             @TestMetadata("topLevelFromClass.kt")
             public void testTopLevelFromClass() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromClass.kt");
@@ -4180,6 +4185,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("simplestClosureAndBoxing.kt")
         public void testSimplestClosureAndBoxing() throws Exception {
             runTest("compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
+        }
+
+        @TestMetadata("staticLambda.kt")
+        public void testStaticLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/staticLambda.kt");
         }
 
         @TestMetadata("subclosuresWithinInitializers.kt")
