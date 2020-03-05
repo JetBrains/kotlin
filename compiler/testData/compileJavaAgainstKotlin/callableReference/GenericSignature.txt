@@ -7,7 +7,7 @@ public/*package*/ open class Bar : test.Foo {
 
 public open class Foo {
     public constructor Foo()
-    public open fun request(): kotlin.reflect.KFunction1<@kotlin.ParameterName(name = "id") kotlin.Long, test.Request>
+    public open fun request(): kotlin.reflect.KFunction1<kotlin.Long, test.Request>
 }
 
 public final class Request {

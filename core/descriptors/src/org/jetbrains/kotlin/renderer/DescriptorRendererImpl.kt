@@ -41,10 +41,6 @@ internal class DescriptorRendererImpl(
         } as DescriptorRendererImpl
     }
 
-    private val functionTypeParameterTypesRenderer: DescriptorRenderer by lazy {
-        withOptions { excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.parameterName) }
-    }
-
     /* FORMATTING */
     private fun renderKeyword(keyword: String): String = when (textFormat) {
         RenderingFormat.PLAIN -> keyword
@@ -365,7 +361,7 @@ internal class DescriptorRendererImpl(
                 append(": ")
             }
 
-            append(functionTypeParameterTypesRenderer.renderTypeProjection(typeProjection))
+            append(renderTypeProjection(typeProjection))
         }
 
         append(") ").append(arrow()).append(" ")
@@ -413,7 +409,10 @@ internal class DescriptorRendererImpl(
 
         val annotationFilter = annotationFilter
         for (annotation in annotated.annotations) {
-            if (annotation.fqName !in excluded && (annotationFilter == null || annotationFilter(annotation))) {
+            if (annotation.fqName !in excluded
+                && !annotation.isParameterName()
+                && (annotationFilter == null || annotationFilter(annotation))
+            ) {
                 append(renderAnnotation(annotation, target))
                 if (eachAnnotationOnNewLine) {
                     appendln()
@@ -422,6 +421,10 @@ internal class DescriptorRendererImpl(
                 }
             }
         }
+    }
+
+    private fun AnnotationDescriptor.isParameterName(): Boolean {
+        return fqName == KotlinBuiltIns.FQ_NAMES.parameterName
     }
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {

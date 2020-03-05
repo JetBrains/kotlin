@@ -48,6 +48,11 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         runTest("idea/testData/decompiler/decompiledTextJvm/PackageWithQuotes/");
     }
 
+    @TestMetadata("ParameterName")
+    public void testParameterName() throws Exception {
+        runTest("idea/testData/decompiler/decompiledTextJvm/ParameterName/");
+    }
+
     @TestMetadata("TestKt")
     public void testTestKt() throws Exception {
         runTest("idea/testData/decompiler/decompiledTextJvm/TestKt/");
@@ -107,6 +112,19 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
 
         public void testAllFilesPresentInPackageWithQuotes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/PackageWithQuotes"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJvm/ParameterName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ParameterName extends AbstractJvmDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInParameterName() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/ParameterName"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
