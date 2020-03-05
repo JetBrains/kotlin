@@ -22,7 +22,7 @@ class Delegate {
 
 class AtomicInt(var value: Int)
 object Foo {
-    <!VARIABLE_IN_TOP_LEVEL_SINGLETON_WITHOUT_THREAD_LOCAL!>var field1: Int = 10<!>
+    <!VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL!>var field1: Int = 10<!>
     val backer2 = AtomicInt(0)
     var field2: Int
         get() = backer2.value
@@ -47,7 +47,7 @@ object Bar {
 
 class Foo2 {
     companion object {
-        <!VARIABLE_IN_TOP_LEVEL_SINGLETON_WITHOUT_THREAD_LOCAL!>var field1: Int = 10<!>
+        <!VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL!>var field1: Int = 10<!>
         val backer2 = AtomicInt(0)
         var field2: Int
             get() = backer2.value
@@ -78,6 +78,27 @@ enum class Color1(<!VARIABLE_IN_ENUM!>var rgb: Int<!>) {
     BLUE(0x0000FF);
 
     init { this.rgb += 1 }
+}
+
+@ThreadLocal
+var a = 3
+enum class Color2() {
+    RED(),
+    GREEN(),
+    BLUE();
+
+    var rgb: Int = 2
+        set(value: Int) {
+            a = value
+        }
+}
+
+enum class Color3() {
+    RED(),
+    GREEN(),
+    BLUE();
+
+    var field1: Int by Delegate()
 }
 
 var topLevelProperty = "Global var"

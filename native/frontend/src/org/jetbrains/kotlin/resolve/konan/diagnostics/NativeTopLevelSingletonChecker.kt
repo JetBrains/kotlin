@@ -31,15 +31,17 @@ object NativeTopLevelSingletonChecker : DeclarationChecker {
         // Check variables inside singletons.
         if (descriptor !is PropertyDescriptor) return
         (descriptor.containingDeclaration as? ClassDescriptor)?.let { parent ->
-            if (descriptor.isVar && DescriptorUtils.isEnumClass(parent)) {
+            val hasBackingFieldWithDefaultSetter = descriptor.hasBackingField(context.trace.bindingContext) &&
+                    descriptor.setter?.isDefault == true
+            val hasDelegate = if (declaration is KtProperty) declaration.delegate != null else false
+
+            if (descriptor.isVar && (DescriptorUtils.isEnumClass(parent) || DescriptorUtils.isEnumEntry(parent)) &&
+                hasBackingFieldWithDefaultSetter && !hasDelegate) {
                 context.trace.report(ErrorsNative.VARIABLE_IN_ENUM.on(declaration))
             } else if (parent.kind.isSingleton) {
                 parent.annotations.findAnnotation(threadLocalFqName) ?: run {
-                    if (descriptor.isVar && declaration is KtProperty && declaration.delegate == null &&
-                        descriptor.hasBackingField(context.trace.bindingContext) &&
-                        descriptor.setter?.isDefault == true
-                    ) {
-                        context.trace.report(ErrorsNative.VARIABLE_IN_TOP_LEVEL_SINGLETON_WITHOUT_THREAD_LOCAL.on(declaration))
+                    if (descriptor.isVar && !hasDelegate && hasBackingFieldWithDefaultSetter) {
+                        context.trace.report(ErrorsNative.VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL.on(declaration))
                     }
                 }
             }

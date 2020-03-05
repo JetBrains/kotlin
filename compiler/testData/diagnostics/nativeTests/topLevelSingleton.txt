@@ -1,5 +1,6 @@
 package
 
+@kotlin.native.concurrent.ThreadLocal public var a: kotlin.Int
 public var topLevelProperty: kotlin.String
 
 public final class AtomicInt {
@@ -77,6 +78,50 @@ public final enum class Color1 : kotlin.Enum<Color1> {
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Color1
     public final /*synthesized*/ fun values(): kotlin.Array<Color1>
+}
+
+public final enum class Color2 : kotlin.Enum<Color2> {
+    enum entry RED
+
+    enum entry GREEN
+
+    enum entry BLUE
+
+    private constructor Color2()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final var rgb: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Color2): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Color2
+    public final /*synthesized*/ fun values(): kotlin.Array<Color2>
+}
+
+public final enum class Color3 : kotlin.Enum<Color3> {
+    enum entry RED
+
+    enum entry GREEN
+
+    enum entry BLUE
+
+    private constructor Color3()
+    public final var field1: kotlin.Int
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Color3): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Color3
+    public final /*synthesized*/ fun values(): kotlin.Array<Color3>
 }
 
 public final class Delegate {
