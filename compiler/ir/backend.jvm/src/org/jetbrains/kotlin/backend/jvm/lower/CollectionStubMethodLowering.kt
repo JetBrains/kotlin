@@ -172,17 +172,10 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
 
     // Compute stubs that should be generated, compare based on signature
     private fun generateRelevantStubMethods(irClass: IrClass): Set<IrSimpleFunction> {
-        val ourStubsForCollectionClasses = preComputedStubs.filter { (readOnlyClass, mutableClass) ->
-            irClass.superTypes.any { supertypeSymbol ->
-                val supertype = supertypeSymbol.classOrNull?.owner
-                // We need to generate stub methods for following 2 cases:
-                // current class's direct super type is a java class or kotlin interface, and is an subtype of an immutable collection
-                supertype != null
-                        && (supertype.comesFromJava() || supertype.isInterface)
-                        && supertypeSymbol.isSubtypeOfClass(readOnlyClass)
-                        && !irClass.symbol.isSubtypeOfClass(mutableClass)
-            }
-        }
+        val ourStubsForCollectionClasses = stubsForCollectionClasses(irClass)
+        val superStubClasses = irClass.superClass?.superClassChain?.map { superClass ->
+            stubsForCollectionClasses(superClass).map { it.readOnlyClass }
+        }?.fold(emptySet<IrClassSymbol>(), { a, b -> a union b }) ?: emptySet()
 
         // do a second filtering to ensure only most relevant classes are included.
         val redundantClasses = ourStubsForCollectionClasses.filter { (readOnlyClass) ->
@@ -191,7 +184,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
 
         // perform type substitution and type erasure here
         return ourStubsForCollectionClasses.filter { (readOnlyClass) ->
-            readOnlyClass !in redundantClasses
+            readOnlyClass !in redundantClasses && readOnlyClass !in superStubClasses
         }.flatMap { (readOnlyClass, mutableClass, mutableOnlyMethods) ->
             val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
             mutableOnlyMethods.map { function ->
@@ -211,4 +204,28 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
             types.all { other -> type.isSubtypeOfClass(other.classOrNull!!) }
         }
     }
+
+    private val stubsCache = mutableMapOf<IrClass, Collection<StubsForCollectionClass>>()
+
+    private fun stubsForCollectionClasses(irClass: IrClass): Collection<StubsForCollectionClass> =
+        stubsCache.getOrPut(irClass) {
+            if (irClass.comesFromJava()) emptySet()
+            else preComputedStubs.filter { (readOnlyClass, mutableClass) ->
+                irClass.superTypes.any { supertypeSymbol ->
+                    val supertype = supertypeSymbol.classOrNull?.owner
+                    // We need to generate stub methods for following 2 cases:
+                    // current class's direct super type is a java class or kotlin interface, and is an subtype of an immutable collection
+                    supertype != null
+                            && (supertype.comesFromJava() || supertype.isInterface)
+                            && supertypeSymbol.isSubtypeOfClass(readOnlyClass)
+                            && !irClass.symbol.isSubtypeOfClass(mutableClass)
+                }
+            }
+        }
+
+    private val IrClass.superClass: IrClass?
+        get() = superTypes.mapNotNull { (it as? IrSimpleType)?.classifier?.owner as? IrClass }.singleOrNull { !it.isInterface }
+
+    private val IrClass.superClassChain: Sequence<IrClass>
+        get() = generateSequence(this) { it.superClass }
 }

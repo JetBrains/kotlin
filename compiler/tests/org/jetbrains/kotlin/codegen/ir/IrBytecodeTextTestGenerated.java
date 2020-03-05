@@ -84,6 +84,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/charConstant.kt");
     }
 
+    @TestMetadata("collectionStubs.kt")
+    public void testCollectionStubs() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/collectionStubs.kt");
+    }
+
     @TestMetadata("componentEvaluatesOnlyOnce.kt")
     public void testComponentEvaluatesOnlyOnce() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/componentEvaluatesOnlyOnce.kt");
