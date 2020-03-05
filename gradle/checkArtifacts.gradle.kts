@@ -10,19 +10,20 @@ val kotlinVersion: String by rootProject.extra
 
 val checkMavenArtifacts = tasks.register("checkMavenArtifacts") {
     doLast {
-        fileTree(repoDir).checkArtifacts { zip, artifactName ->
-            if (!artifactName.endsWith("-sources.jar"))
-                zip.checkCompilerVersion(kotlinVersion)?.let { reportProblem(artifactName, it) }
+        fileTree(repoDir).checkArtifacts { zip ->
+            if (!zip.name.endsWith("-sources.jar"))
+                zip.checkCompilerVersion(kotlinVersion)
 
-            zip.checkManifest(kotlinVersion)?.let { reportProblem(artifactName, it) }
+            zip.checkManifest(kotlinVersion)
         }
     }
 }
 
 val checkDist = tasks.register("checkDistArtifacts") {
     doLast {
-        fileTree(distDir).checkArtifacts { zip, artifactName ->
-            zip.checkCompilerVersion(kotlinVersion)?.let { reportProblem(artifactName, it) }
+        fileTree(distDir).checkArtifacts { zip ->
+            zip.checkCompilerVersion(kotlinVersion)
+            zip.checkPluginXmlVersion(kotlinVersion)
         }
     }
 }
@@ -32,18 +33,17 @@ tasks.register("checkArtifacts") {
     dependsOn(checkMavenArtifacts)
 }
 
-fun FileTree.checkArtifacts(action: (zip: ZipFile, artifactName: String) -> Unit) {
+fun FileTree.checkArtifacts(action: (zip: ZipFile) -> Unit) {
     filter { it.extension == "jar" }.forEach { jar ->
         val zip = ZipFile(jar)
-        val artifactName = jar.relativeTo(file(rootDir)).invariantSeparatorsPath
 
         if (isTeamcityBuild)
-            testStarted(artifactName)
+            testStarted(zip.testName())
 
-        action(zip, artifactName)
+        action(zip)
 
         if (isTeamcityBuild)
-            testFinished(artifactName)
+            testFinished(zip.testName())
     }
 }
 
@@ -60,8 +60,25 @@ fun ZipFile.checkCompilerVersion(version: String) = checkZipEntry("META-INF/comp
         .takeIf { artifactVersion != version }
 }
 
-fun ZipFile.checkZipEntry(entryName: String, action: (entryStream: InputStream) -> String?): String? =
-    getEntry(entryName)?.let { entry -> getInputStream(entry).use(action) }
+fun ZipFile.checkPluginXmlVersion(version: String) = checkZipEntry("META-INF/plugin.xml") { inputStream ->
+    val pluginVersion = inputStream.bufferedReader()
+        .lineSequence()
+        .mapNotNull { Regex("""<version>([^<]+)</version>""").find(it) }
+        .firstOrNull()
+        ?.groupValues
+        ?.get(1) ?: return@checkZipEntry "Plugin version not found in plugin.xml"
+
+    "Invalid plugin version, expected version starting with '$version', actual: '$pluginVersion'"
+        .takeIf { !pluginVersion.startsWith(version) }
+}
+
+fun ZipFile.checkZipEntry(entryName: String, action: (entryStream: InputStream) -> String?) {
+    getEntry(entryName)
+        ?.let { entry -> getInputStream(entry).use(action) }
+        ?.let { reportProblem(testName(), it) }
+}
+
+fun ZipFile.testName() = file(name).relativeTo(file(rootDir)).invariantSeparatorsPath
 
 fun reportProblem(artifact: String, message: String) {
     if (isTeamcityBuild)
