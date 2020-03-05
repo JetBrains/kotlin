@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.KTypeConstructor
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.createKType
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.psi.*
@@ -128,7 +128,7 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
 
 fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression =
     getReferenceToJsClassOrArray(type, context).also {
-        it.kType = KTypeConstructor(context).createKType(type)
+        it.kType = context.createKType(type)
     }
 
 fun getReferenceToJsClassOrArray(type: KotlinType, context: TranslationContext): JsExpression {

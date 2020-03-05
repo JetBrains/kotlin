@@ -27,12 +27,16 @@ object TypeOfFIF : FunctionIntrinsicFactory {
     object Intrinsic : FunctionIntrinsic() {
         override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
             val type = callInfo.resolvedCall.typeArguments.values.single()
-            return KTypeConstructor(context).createKType(type)
+            return context.createKType(type)
         }
     }
 }
 
-class KTypeConstructor(val context: TranslationContext) {
+fun TranslationContext.createKType(type: KotlinType): JsExpression = KTypeConstructor(this).createKType(type)
+
+private class KTypeConstructor(private val context: TranslationContext) {
+    private val visitedTypeParams = hashSetOf<TypeParameterDescriptor>()
+
     fun callHelperFunction(name: String, vararg arguments: JsExpression) =
         JsInvocation(context.getReferenceToIntrinsic(name), *arguments)
 
@@ -92,7 +96,7 @@ class KTypeConstructor(val context: TranslationContext) {
         )
     }
 
-    fun createKTypeProjection(tp: TypeProjection): JsExpression {
+    private fun createKTypeProjection(tp: TypeProjection): JsExpression {
         if (tp.isStarProjection) {
             return callHelperFunction(Namer.GET_START_KTYPE_PROJECTION)
         }
@@ -108,32 +112,46 @@ class KTypeConstructor(val context: TranslationContext) {
 
     }
 
-    fun createKClassifier(classifier: ClassifierDescriptor): JsExpression =
+    private fun createKClassifier(classifier: ClassifierDescriptor): JsExpression =
         when (classifier) {
-            is TypeParameterDescriptor -> createKTypeParameter(classifier)
+            is TypeParameterDescriptor -> createKTypeParameter(classifier, visitedTypeParams)
             else -> ExpressionVisitor.getObjectKClass(context, classifier)
         }
 
-    fun createKTypeParameter(typeParameter: TypeParameterDescriptor): JsExpression {
-        val name = JsStringLiteral(typeParameter.name.asString())
-        val upperBounds = JsArrayLiteral(typeParameter.upperBounds.map { createKType(it) })
-        val variance = when (typeParameter.variance) {
-            Variance.INVARIANT -> JsStringLiteral("invariant")
-            Variance.IN_VARIANCE -> JsStringLiteral("in")
-            Variance.OUT_VARIANCE -> JsStringLiteral("out")
-        }
-        if (typeParameter.isReified) {
-            val kClassName = context.getNameForIntrinsic(SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE.suggestedName)
-            kClassName.specialFunction = SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE
+    private fun createKTypeParameter(
+        typeParameter: TypeParameterDescriptor,
+        visitedTypeParams: MutableSet<TypeParameterDescriptor>
+    ): JsExpression {
+        fun createKTypeParameterImpl(): JsExpression {
+            val name = JsStringLiteral(typeParameter.name.asString())
+            val upperBounds = JsArrayLiteral(typeParameter.upperBounds.map { createKType(it) })
+            val variance = when (typeParameter.variance) {
+                //// TODO use consts, enums, numbers???
+                Variance.INVARIANT -> JsStringLiteral("invariant")
+                Variance.IN_VARIANCE -> JsStringLiteral("in")
+                Variance.OUT_VARIANCE -> JsStringLiteral("out")
+            }
+            if (typeParameter.isReified) {
+                val kClassName = context.getNameForIntrinsic(SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE.suggestedName)
+                kClassName.specialFunction = SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE
 
-            return JsInvocation(kClassName.makeRef(), getReferenceToJsClass(typeParameter, context))
+                return JsInvocation(kClassName.makeRef(), getReferenceToJsClass(typeParameter, context))
+            }
+
+            return callHelperFunction(
+                Namer.CREATE_KTYPE_PARAMETER,
+                name,
+                upperBounds,
+                variance
+            )
         }
 
-        return callHelperFunction(
-            Namer.CREATE_KTYPE_PARAMETER,
-            name,
-            upperBounds,
-            variance
-        )
+        if (typeParameter in visitedTypeParams) return callHelperFunction(Namer.GET_START_KTYPE_PROJECTION)
+
+        visitedTypeParams.add(typeParameter)
+
+        return createKTypeParameterImpl().also {
+            visitedTypeParams.remove(typeParameter)
+        }
     }
 }
