@@ -279,11 +279,11 @@ fun JavaExec.buildJs(sources: List<String>, dependencies: List<String>, outPath:
      sources.toList() + listOf("-output", outPath) + libraryArgs + listOf(
          "-Xir-produce-js",
          "-Xmulti-platform",
-         "-Xuse-experimental=kotlin.Experimental",
-         "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-         "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-         "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
-         "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+         "-Xopt-in=kotlin.RequiresOptIn",
+         "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+         "-Xopt-in=kotlin.ExperimentalMultiplatform",
+         "-Xopt-in=kotlin.ExperimentalStdlibApi",
+         "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
      )
     args = allArgs
 

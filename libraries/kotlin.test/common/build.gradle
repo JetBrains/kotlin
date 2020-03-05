@@ -32,7 +32,7 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
                 "-module-name", project.name,
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
         ]
     }
 }
