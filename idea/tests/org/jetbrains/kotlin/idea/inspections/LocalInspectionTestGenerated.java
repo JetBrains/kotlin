@@ -7153,7 +7153,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
 
         public void testAllFilesPresentInRedundantElvisReturnNull() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantElvisReturnNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantElvisReturnNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("basic.kt")
@@ -12895,14 +12895,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfVal.kt");
         }
 
-        @TestMetadata("copyOfValInAnonymousObject.kt")
-        public void testCopyOfValInAnonymousObject() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInAnonymousObject.kt");
+        @TestMetadata("copyOfValInLambda.kt")
+        public void testCopyOfValInLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInLambda.kt");
         }
 
-        @TestMetadata("copyOfValInAnonymousObject2.kt")
-        public void testCopyOfValInAnonymousObject2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInAnonymousObject2.kt");
+        @TestMetadata("copyOfValInLambda2.kt")
+        public void testCopyOfValInLambda2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInLambda2.kt");
+        }
+
+        @TestMetadata("copyOfValInLambda3.kt")
+        public void testCopyOfValInLambda3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/copyOfValInLambda3.kt");
         }
 
         @TestMetadata("copyOfValUnused.kt")
