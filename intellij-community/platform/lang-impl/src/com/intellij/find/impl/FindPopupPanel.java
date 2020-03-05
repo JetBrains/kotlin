@@ -841,11 +841,11 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     List<Component> focusOrder = new ArrayList<>();
     focusOrder.add(mySearchComponent);
-    focusOrder.addAll(searchExtraButtons);
     focusOrder.add(myReplaceComponent);
+    focusOrder.addAll(searchExtraButtons);
     focusOrder.addAll(replaceExtraButtons);
-    ContainerUtil.addAll(focusOrder, focusableComponents(myScopeDetailsPanel));
     focusOrder.add(myCbFileFilter);
+    ContainerUtil.addAll(focusOrder, focusableComponents(myScopeDetailsPanel));
     focusOrder.add(editorComponent);
     ContainerUtil.addAll(focusOrder, focusableComponents(bottomPanel));
     setFocusCycleRoot(true);

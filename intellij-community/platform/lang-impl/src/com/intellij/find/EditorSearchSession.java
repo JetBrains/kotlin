@@ -98,7 +98,6 @@ public class EditorSearchSession implements SearchSession,
       .addExtraSearchActions(new ToggleMatchCase(),
                              new ToggleWholeWordsOnlyAction(),
                              new ToggleRegex(),
-                             new StatusTextAction(),
                              new DefaultCustomComponentAction(() -> myClickToHighlightLabel))
       .addSearchFieldActions(new RestorePreviousSettingsAction())
       .addPrimaryReplaceActions(new ReplaceAction(),
@@ -194,6 +193,7 @@ public class EditorSearchSession implements SearchSession,
   @NotNull
   protected AnAction[] createPrimarySearchActions() {
     return new AnAction[]{
+      new StatusTextAction(),
       new PrevOccurrenceAction(),
       new NextOccurrenceAction(),
       new FindAllAction(),
@@ -313,9 +313,10 @@ public class EditorSearchSession implements SearchSession,
         status = ApplicationBundle.message("editorsearch.noselection");
         myComponent.setRegularBackground();
       } else {
+        int cursorIndex = sr.getCursorVisualIndex();
         status = tooManyMatches
                  ? ApplicationBundle.message("editorsearch.toomuch", mySearchResults.getMatchesLimit())
-                 : ApplicationBundle.message("editorsearch.matches", matches);
+                 : cursorIndex != -1 ? cursorIndex + "/" + matches : ApplicationBundle.message("editorsearch.matches", matches);
         if (!tooManyMatches && matches <= 0) {
           myComponent.setNotFoundBackground();
         }

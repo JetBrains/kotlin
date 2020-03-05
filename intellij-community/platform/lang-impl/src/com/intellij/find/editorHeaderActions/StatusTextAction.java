@@ -7,12 +7,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class StatusTextAction extends DumbAwareAction implements CustomComponentAction, LightEditCompatible {
   @Override
@@ -22,7 +19,6 @@ public class StatusTextAction extends DumbAwareAction implements CustomComponent
     JLabel label = (JLabel)e.getPresentation().getClientProperty(COMPONENT_KEY);
     if (label != null) {
       label.setText(statusText);
-      label.setVisible(StringUtil.isNotEmpty(statusText));
     }
   }
 
@@ -33,14 +29,12 @@ public class StatusTextAction extends DumbAwareAction implements CustomComponent
   @NotNull
   @Override
   public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
-    JLabel label = new JLabel() {
-      @Override
-      public Font getFont() {
-        Font font = super.getFont();
-        return font != null ? font.deriveFont(Font.BOLD) : null;
-      }
-    };
-    label.setBorder(JBUI.Borders.empty(2, 20, 0, 20));
+    JLabel label = new JLabel();
+    //noinspection HardCodedStringLiteral
+    label.setText("9888 results");
+    label.setPreferredSize(label.getPreferredSize());
+    label.setText(null);
+    label.setHorizontalAlignment(SwingConstants.CENTER);
     return label;
   }
 }
