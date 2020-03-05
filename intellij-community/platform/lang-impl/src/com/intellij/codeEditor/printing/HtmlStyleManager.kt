@@ -24,7 +24,7 @@ class HtmlStyleManager(val isInline: Boolean) {
 
   private val scheme = EditorColorsManager.getInstance().globalScheme
 
-  fun ensureStyles(hIterator: HighlighterIterator, methodSeparators: List<LineMarkerInfo<PsiElement>>) {
+  fun ensureStyles(hIterator: HighlighterIterator, methodSeparators: List<LineMarkerInfo<*>>) {
     while (!hIterator.atEnd()) {
       val textAttributes = hIterator.textAttributes
       if (!styleMap.containsKey(textAttributes)) {

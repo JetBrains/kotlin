@@ -46,7 +46,7 @@ public class HTMLTextPainter {
   private int myFirstLineNumber;
   private final boolean myPrintLineNumbers;
   private int myColumn;
-  private final List<LineMarkerInfo<PsiElement>> myMethodSeparators = new ArrayList<>();
+  private final List<LineMarkerInfo<?>> myMethodSeparators = new ArrayList<>();
   private int myCurrentMethodSeparator;
   private final Project myProject;
   private final HtmlStyleManager htmlStyleManager;
