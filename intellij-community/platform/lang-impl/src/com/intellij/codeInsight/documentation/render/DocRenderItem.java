@@ -180,7 +180,7 @@ class DocRenderItem {
     highlighter = editor.getMarkupModel()
       .addRangeHighlighter(textRange.getStartOffset(), textRange.getEndOffset(), 0, null, HighlighterTargetArea.EXACT_RANGE);
     AnAction toggleAction = new ToggleRenderingAction(this);
-    highlighter.setGutterIconRenderer(new MyGutterIconRenderer(toggleAction));
+    highlighter.setGutterIconRenderer(new MyGutterIconRenderer(toggleAction, AllIcons.Gutter.JavadocRead));
   }
 
   private int calcFoldStartOffset() {
@@ -351,11 +351,13 @@ class DocRenderItem {
     }
   }
 
-  private static class MyGutterIconRenderer extends GutterIconRenderer implements DumbAware {
+  static class MyGutterIconRenderer extends GutterIconRenderer implements DumbAware {
     private final AnAction action;
+    private final Icon icon;
 
-    private MyGutterIconRenderer(AnAction action) {
+    MyGutterIconRenderer(AnAction action, Icon icon) {
       this.action = action;
+      this.icon = icon;
     }
 
     @Override
@@ -371,7 +373,7 @@ class DocRenderItem {
     @NotNull
     @Override
     public Icon getIcon() {
-      return AllIcons.Toolwindows.Documentation;
+      return icon;
     }
 
     @NotNull
@@ -388,10 +390,11 @@ class DocRenderItem {
     @Nullable
     @Override
     public String getTooltipText() {
-      return XmlStringUtil.wrapInHtml(
-        CodeInsightBundle.message("doc.toggle.rendered.presentation") +
-        HelpTooltip.getShortcutAsHtml(KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_TOGGLE_RENDERED_DOC))
-      );
+      AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_TOGGLE_RENDERED_DOC);
+      if (action == null) return null;
+      String actionText = action.getTemplateText();
+      if (actionText == null) return null;
+      return XmlStringUtil.wrapInHtml(actionText + HelpTooltip.getShortcutAsHtml(KeymapUtil.getFirstKeyboardShortcutText(action)));
     }
 
     @Nullable

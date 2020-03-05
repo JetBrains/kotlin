@@ -185,6 +185,11 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
       DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT_CURRENT)
   };
 
+  private static final ColorDescriptor[] COLOR_DESCRIPTORS = {
+    new ColorDescriptor(OptionsBundle.message("options.language.defaults.doc.guide"),
+                        DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE, ColorDescriptor.Kind.FOREGROUND)
+  };
+
   @Nullable
   @Override
   public Icon getIcon() {
@@ -266,7 +271,7 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
 
   @Override
   public ColorDescriptor @NotNull [] getColorDescriptors() {
-    return ColorDescriptor.EMPTY_ARRAY;
+    return COLOR_DESCRIPTORS;
   }
 
   @NotNull
