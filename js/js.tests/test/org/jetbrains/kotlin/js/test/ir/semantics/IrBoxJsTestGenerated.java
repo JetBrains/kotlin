@@ -6479,9 +6479,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         public void testAllFilesPresentInPropertyAccess() throws Exception {
-            KotlinTestUtils
-                    .assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"),
-                                                                 Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("classUsesPackageProperties.kt")
@@ -6814,6 +6812,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
 
         public void testAllFilesPresentInRegression() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("companionObjectInExternalInterface.kt")
+        public void testCompanionObjectInExternalInterface() throws Exception {
+            runTest("js/js.translator/testData/box/regression/companionObjectInExternalInterface.kt");
         }
 
         @TestMetadata("enumEntryInitOrder.kt")

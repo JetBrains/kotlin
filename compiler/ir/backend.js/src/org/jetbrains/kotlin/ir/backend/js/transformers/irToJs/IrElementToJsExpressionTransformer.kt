@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -95,6 +95,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val obj = expression.symbol.owner
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
+
+        // External interfaces cannot normally have companion objects.
+        // However, stdlib uses them to simulate string literal unions
+        // TODO: Stop abusing this tech
+        if (obj.isCompanion && obj.parentAsClass.isInterface) {
+            return JsNullLiteral()
+        }
+
         return context.getRefForExternalClass(obj)
     }
 
