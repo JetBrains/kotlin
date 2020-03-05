@@ -304,7 +304,10 @@ class CallableReferencesCandidateFactory(
 
                 mappedArgumentTypes[index] = mappedArgument
             }
-            if (resolvedArgument == ResolvedCallArgument.DefaultArgument) defaults++
+            if (resolvedArgument == ResolvedCallArgument.DefaultArgument) {
+                defaults++
+                mappedArguments[valueParameter] = resolvedArgument
+            }
         }
         if (mappedArgumentTypes.any { it == null }) return null
 
@@ -317,9 +320,16 @@ class CallableReferencesCandidateFactory(
 
         val coercion = if (returnExpectedType.isUnit()) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
 
+        val adaptedArguments =
+            if (expectedType != null && ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType))
+                emptyMap()
+            else
+                mappedArguments
+
         return CallableReferenceAdaptation(
             @Suppress("UNCHECKED_CAST") (mappedArgumentTypes as Array<KotlinType>),
-            coercion, defaults, mappedArguments
+            coercion, defaults,
+            adaptedArguments
         )
     }
 

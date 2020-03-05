@@ -1378,6 +1378,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/constructorWithAdaptedArguments.kt");
             }
 
+            @TestMetadata("funWithDefaultParametersAsKCallableStar.kt")
+            public void testFunWithDefaultParametersAsKCallableStar() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/funWithDefaultParametersAsKCallableStar.kt");
+            }
+
             @TestMetadata("genericMember.kt")
             public void testGenericMember() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/genericMember.kt");
@@ -1386,6 +1391,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             @TestMetadata("importedFromObject.kt")
             public void testImportedFromObject() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/importedFromObject.kt");
+            }
+
+            @TestMetadata("kt37131.kt")
+            public void testKt37131() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/kt37131.kt");
             }
 
             @TestMetadata("typeArguments.kt")
