@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
@@ -27,4 +29,11 @@ class KotlinCommonCompilation(
         get() = PropertiesProvider(target.project).enableGranularSourceSetsMetadata == true && !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
+
+    override val friendArtifacts: FileCollection
+        get() = super.friendArtifacts.plus(run {
+            val project = target.project
+            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(target.project, defaultSourceSet)
+            project.files(friendSourceSets.mapNotNull { target.compilations.findByName(it.name)?.output?.classesDirs })
+        })
 }
