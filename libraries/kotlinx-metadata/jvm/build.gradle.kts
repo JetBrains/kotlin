@@ -48,11 +48,6 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
 }
 
-tasks.named("compileTestKotlin") {
-    jvmTarget = "1.8"
-    javaHome = rootProject.extra["JDK_18"] as String
-}
-
 if (deployVersion != null) {
     publish()
 }

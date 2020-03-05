@@ -16,7 +16,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
-import kotlin.text.Charsets.UTF_8
 
 class JarContentTest {
     @Test
@@ -27,7 +26,7 @@ class JarContentTest {
     }
 
     private fun checkClassesHasNoSpecificStringConstants(jar: File) {
-        val zipFile = ZipFile(jar, UTF_8)
+        val zipFile = ZipFile(jar)
         for (entry in zipFile.entries()) {
             if (!entry.name.endsWith(".class")) continue
 
