@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -60,13 +61,16 @@ abstract class ClassCodegen protected constructor(
     private val classOrigin = run {
         // The descriptor associated with an IrClass is never modified in lowerings, so it
         // doesn't reflect the state of the lowered class. To make the diagnostics work we
-        // pass in a wrapped descriptor instead.
+        // pass in a wrapped descriptor instead, except for lambdas where we use the descriptor
+        // of the original function.
         // TODO: Migrate class builders away from descriptors
         val descriptor = WrappedClassDescriptor().apply { bind(irClass) }
         val psiElement = context.psiSourceManager.findPsiElement(irClass)
         when (irClass.origin) {
             IrDeclarationOrigin.FILE_CLASS ->
                 JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, descriptor)
+            JvmLoweredDeclarationOrigin.LAMBDA_IMPL, JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ->
+                OtherOrigin(psiElement, irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.descriptor ?: descriptor)
             else ->
                 OtherOrigin(psiElement, descriptor)
         }
@@ -369,7 +373,19 @@ private val Visibility.flags: Int
     get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
 internal val IrDeclaration.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin(descriptor)
+    get() {
+        val klass = (this as? IrClass) ?: parentAsClass
+        return OtherOrigin(
+            // For declarations inside lambdas, produce a descriptor which refers back to the original function.
+            // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
+            // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.
+            if (klass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL || klass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) {
+                klass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.descriptor ?: descriptor
+            } else {
+                descriptor
+            }
+        )
+    }
 
 private fun IrClass.getSuperClassInfo(typeMapper: IrTypeMapper): IrSuperClassInfo {
     if (isInterface) {
