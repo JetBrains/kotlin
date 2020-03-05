@@ -172,7 +172,7 @@ abstract class KtCodeFragment(
     override fun getExceptionHandler() = exceptionHandler
 
     fun getContextContainingFile(): KtFile? {
-        return getOriginalContext()?.containingKtFile
+        return getOriginalContext()?.takeIf { it.isValid }?.containingKtFile
     }
 
     fun getOriginalContext(): KtElement? {
