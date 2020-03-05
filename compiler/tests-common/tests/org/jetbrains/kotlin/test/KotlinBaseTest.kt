@@ -94,12 +94,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         @JvmField val friendsSymbols: List<String>
     ) : Comparable<TestModule> {
 
-        private val dependencies = ArrayList<TestModule>()
-        private val friends = ArrayList<TestModule>()
-
-        fun getDependencies(): MutableList<TestModule> = dependencies
-
-        fun getFriends(): MutableList<TestModule> = friends
+        val dependencies: MutableList<TestModule> = arrayListOf()
+        val friends: MutableList<TestModule> = arrayListOf()
 
         override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
 
